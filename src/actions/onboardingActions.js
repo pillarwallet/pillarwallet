@@ -65,7 +65,7 @@ import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'ut
 import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
-import { parseNotificationMessage } from 'utils/notifications';
+import { mapInviteNotifications } from 'utils/notifications';
 
 // services
 import Storage from 'services/storage';
@@ -96,6 +96,7 @@ import { setRatesAction } from 'actions/ratesActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
+import type { RemoteNotification } from 'models/Notification';
 
 const storage = Storage.getInstance('db');
 
@@ -485,34 +486,27 @@ export const restoreAccessTokensAction = (walletId: string) => {
     const userAccessTokens = await api.fetchAccessTokens(walletId);
 
     // get connectionRequestedEvent & connectionAcceptedEvent notifications
-    const types = [
-      TYPE_RECEIVED,
-      TYPE_ACCEPTED,
-    ];
-    // TODO: add back-end notification model?
-    const rawNotifications = await api.fetchNotifications(walletId, types.join(' '));
-    if (isEmpty(rawNotifications)) return;
+    const types = [TYPE_RECEIVED, TYPE_ACCEPTED];
+    const remoteInviteNotifications: RemoteNotification[] = await api.fetchNotifications(walletId, types.join(' '));
+    if (isEmpty(remoteInviteNotifications)) return;
 
-    const notifications = rawNotifications
-      .map(parseNotificationMessage)
-      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
-      .sort((a, b) => b.createdAt - a.createdAt);
+    const mappedInviteNotifications = mapInviteNotifications(remoteInviteNotifications);
 
     // split into groups
-    let receivedConnectionRequests = notifications.filter(notification => notification.type === TYPE_RECEIVED);
-    let sentConnectionRequests = notifications.filter(notification => notification.type === TYPE_ACCEPTED);
+    let receivedConnectionReq = mappedInviteNotifications.filter(notification => notification.type === TYPE_RECEIVED);
+    let sentConnectionReq = mappedInviteNotifications.filter(notification => notification.type === TYPE_ACCEPTED);
 
     // remove duplicates
-    receivedConnectionRequests = uniqBy(receivedConnectionRequests, 'id');
-    sentConnectionRequests = uniqBy(sentConnectionRequests, 'id');
+    receivedConnectionReq = uniqBy(receivedConnectionReq, 'id');
+    sentConnectionReq = uniqBy(sentConnectionReq, 'id');
 
     userAccessTokens.forEach(token => {
       // check in received connection requests
-      let found = receivedConnectionRequests.find(({ id }) => id === token.contactId);
+      let found = receivedConnectionReq.find(({ id }) => id === token.contactId);
 
       // not found? check in sent connection requests
       if (!found) {
-        found = sentConnectionRequests.find(({ id }) => id === token.contactId);
+        found = sentConnectionReq.find(({ id }) => id === token.contactId);
       }
 
       // can't find again? then skip this connection

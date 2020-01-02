@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
-import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
 import { Sentry } from 'react-native-sentry';
@@ -35,9 +34,16 @@ import {
   MOONPAY_API_URL,
   MOONPAY_KEY,
 } from 'react-native-dotenv';
-import type { Asset } from 'models/Asset';
-import type { Transaction } from 'models/Transaction';
-import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
+
+// constants
+import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
+
+// utils
+import { transformAssetsToObject } from 'utils/assets';
+import { isTransactionEvent } from 'utils/history';
+
+// services
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
@@ -45,21 +51,26 @@ import {
   fetchTransactionReceipt,
 } from 'services/assets';
 import EthplorerSdk from 'services/EthplorerSdk';
-import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
-import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
-import { isTransactionEvent } from 'utils/history';
-import type { OAuthTokens } from 'utils/oAuth';
+
+// models, types
+import type { Asset } from 'models/Asset';
+import type { Transaction } from 'models/Transaction';
+import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
+import type { RemoteNotification } from 'models/Notification';
 import type {
   ConnectionIdentityKeyMap,
   ConnectionUpdateIdentityKeys,
   ConnectionPatchIdentityKeys,
 } from 'models/Connections';
+import type { OAuthTokens } from 'utils/oAuth';
+import type { ClaimTokenAction } from 'actions/referralsActions';
+
 import { getLimitedData } from 'utils/opensea';
 import { uniqBy } from 'utils/common';
 
-// temporary here
-import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
-import type { ClaimTokenAction } from 'actions/referralsActions';
+// other
+import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos'; // temporary here
+
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
@@ -383,7 +394,11 @@ SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddre
     .catch(() => ({ error: true }));
 };
 
-SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
+SDKWrapper.prototype.fetchNotifications = function (
+  walletId: string,
+  type: string,
+  fromTimestamp?: string,
+): Promise<RemoteNotification[]> {
   if (!walletId) return Promise.resolve([]);
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({

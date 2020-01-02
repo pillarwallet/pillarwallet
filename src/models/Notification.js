@@ -25,3 +25,20 @@ export type Notification = {
   messageType?: string,
   data: ?Object,
 };
+
+export type RemoteNotification = {
+  _id: string,
+  meta: Object,
+  payload: {
+    id?: string,
+    to?: string,
+    from?: string,
+    hash?: string,
+    status?: string,
+    msg?: string,
+    name?: string,
+    imageUrl: string,
+  },
+  type: string,
+  createdAt?: number,
+};

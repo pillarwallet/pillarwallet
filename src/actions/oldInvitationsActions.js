@@ -48,12 +48,13 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { generateAccessKey } from 'utils/invitations';
 import { uniqBy } from 'utils/common';
 import { getIdentityKeyPairs } from 'utils/connections';
-import { parseNotificationMessage } from 'utils/notifications';
+import { mapInviteNotifications } from 'utils/notifications';
 
 // models, types
 import type { ApiUser } from 'models/Contacts';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { RemoteNotification } from 'models/Notification';
 
 // local
 import { saveDbAction } from './dbActions';
@@ -91,12 +92,8 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       TYPE_DISCONNECTED,
     ];
 
-    // TODO: add back-end notification model?
-    const inviteNotifications = await api.fetchNotifications(walletId, types.join(' '));
-    const mappedInviteNotifications = inviteNotifications
-      .map(parseNotificationMessage)
-      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
-      .sort((a, b) => b.createdAt - a.createdAt);
+    const remoteInviteNotifications: RemoteNotification[] = await api.fetchNotifications(walletId, types.join(' '));
+    const mappedInviteNotifications = mapInviteNotifications(remoteInviteNotifications);
 
     const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
       const group = arr.filter(({ id: userId }) => userId === invitation.id);

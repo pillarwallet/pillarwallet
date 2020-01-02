@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
-import get from 'lodash.get';
 
 // constants
 import {
@@ -33,6 +32,8 @@ import {
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
+import type { RemoteNotification } from 'models/Notification';
+import isEmpty from 'lodash.isempty';
 
 
 const parseNotification = (notificationBody: string): ?Object => {
@@ -183,13 +184,27 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   return result;
 };
 
-export const parseNotificationMessage = (notification: Object): Object => {
-  const createdAt = get(notification, 'createdAt');
-  let parsedMessage = {};
-  try {
-    parsedMessage = JSON.parse(notification.payload.msg);
-  } catch (e) {
-    //
-  }
-  return { ...parsedMessage, createdAt };
-};
+export const mapInviteNotifications = (notifications: RemoteNotification[]): Object[] => notifications
+  .map(({ createdAt, payload }) => {
+    let notification: Object = {};
+
+    // note: createdAt is marked as optional in back-end schema
+    if (createdAt) {
+      notification = { createdAt };
+    }
+
+    // note: payload.msg is optional and per Sentry reports might not be JSON
+    if (payload.msg) {
+      try {
+        const parsedMessage = JSON.parse(payload.msg);
+        notification = { ...notification, ...parsedMessage };
+      } catch (e) {
+        //
+      }
+    }
+
+    return notification;
+  })
+  .filter(!isEmpty) // filter if notification empty after parsing
+  .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
+  .sort((a, b) => b.createdAt - a.createdAt);

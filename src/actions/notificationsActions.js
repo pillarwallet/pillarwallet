@@ -169,9 +169,9 @@ export const startListeningNotificationsAction = () => {
         let data;
         try {
           data = JSON.parse(response.data.msg);
-        } catch (e) {
+        } catch (error) {
           // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
-          Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response } });
+          Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response, error } });
           return; // unable to parse data, do not proceed
         }
 
