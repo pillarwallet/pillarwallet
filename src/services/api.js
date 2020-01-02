@@ -21,6 +21,7 @@ import get from 'lodash.get';
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
+import { Platform } from 'react-native';
 import { Sentry } from 'react-native-sentry';
 import {
   SDK_PROVIDER,
@@ -122,6 +123,12 @@ SDKWrapper.prototype.init = function (
     oAuthTokens: oAuthTokensStored,
     tokensFailedCallbackFn: onOAuthTokensFailed,
   });
+};
+
+SDKWrapper.prototype.supportHmac = function (): string {
+  return this.pillarWalletSdk.user.supportHmac(Platform.OS)
+    .then(({ data }) => data.hmac || '')
+    .catch(() => '');
 };
 
 SDKWrapper.prototype.listAccounts = function (walletId: string) {
@@ -431,7 +438,7 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
     .catch(() => []);
 };
 
-SDKWrapper.prototype.fetchICOs = function (userId: string) { //eslint-disable-line
+SDKWrapper.prototype.fetchICOs = function (userId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
     .then(({ data }) => data.data)
