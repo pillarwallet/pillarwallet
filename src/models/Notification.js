@@ -40,5 +40,5 @@ export type RemoteNotification = {
     imageUrl?: string,
   },
   type: string,
-  createdAt?: number,
+  createdAt: number,
 };

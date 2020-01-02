@@ -186,12 +186,7 @@ export const processNotification = (notification: Object, myEthAddress?: string)
 
 export const mapInviteNotifications = (notifications: RemoteNotification[]): Object[] => notifications
   .map(({ createdAt, payload }) => {
-    let notification: Object = {};
-
-    // note: createdAt is marked as optional in back-end schema
-    if (createdAt) {
-      notification = { createdAt };
-    }
+    let notification: Object = { createdAt };
 
     // note: payload.msg is optional and per Sentry reports might not be JSON
     if (payload.msg) {
