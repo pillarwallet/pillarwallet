@@ -98,7 +98,6 @@ import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
@@ -137,7 +136,6 @@ import {
   getAssetData,
   getAssetDataByAddress,
   getAssetsAsList,
-  getBalance,
   getPPNTokenAddress,
 } from 'utils/assets';
 import {
@@ -291,8 +289,7 @@ export const deploySmartWalletAction = () => {
     const gasInfo = get(getState(), 'history.gasInfo', {});
     const deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo);
     const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const balances = accountBalancesSelector(getState());
-    const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
+    const etherBalanceBN = smartWalletService.getAccountRealBalance();
     if (etherBalanceBN.lt(deployEstimateFeeBN)) {
       Toast.show({
         message: 'Not enough ETH to make deployment',
