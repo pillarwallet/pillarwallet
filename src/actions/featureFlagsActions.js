@@ -44,8 +44,11 @@ export const loadFeatureFlagsAction = (userInfo?: any) => {
       userInfo = await api.userInfo(walletId);
     }
 
-    // isTest check to run test suites against prod env
-    const userFeatureFlags = isProdEnv || isTest
+    /**
+     * (isProdEnv && !__DEV__) to make sure that it's really dev env and not prod env (mainnet) running in dev
+     * isTest check to run test suites against prod env
+     */
+    const userFeatureFlags = (isProdEnv && !__DEV__) || isTest
       ? get(userInfo, 'featureFlags', {})
       : DEVELOPMENT_FEATURE_FLAGS;
 
