@@ -37,7 +37,7 @@ export type RemoteNotification = {
     status?: string,
     msg?: string,
     name?: string,
-    imageUrl: string,
+    imageUrl?: string,
   },
   type: string,
   createdAt?: number,
