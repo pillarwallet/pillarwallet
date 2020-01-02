@@ -37,7 +37,7 @@ import type { RemoteNotification } from 'models/Notification';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
-// local
+// actions
 import { saveDbAction } from './dbActions';
 import { offlineApiCall } from './offlineApiActions';
 
