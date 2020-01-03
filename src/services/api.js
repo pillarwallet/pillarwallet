@@ -137,7 +137,7 @@ SDKWrapper.prototype.init = function (
 };
 
 SDKWrapper.prototype.supportHmac = function (): string {
-  return this.pillarWalletSdk.user.supportHmac(Platform.OS)
+  return this.pillarWalletSdk.user.supportHmac({ project: Platform.OS })
     .then(({ data }) => data.hmac || '')
     .catch(() => '');
 };
