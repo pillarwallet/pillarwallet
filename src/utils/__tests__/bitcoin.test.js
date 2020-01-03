@@ -17,48 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { unspentAmount, btcToSatoshis, extractBitcoinTransactions } from 'utils/bitcoin';
-import type { BitcoinUtxo } from 'models/Bitcoin';
-
-const buildUtxo = (values: $Shape<BitcoinUtxo>): BitcoinUtxo => ({
-  address: '<address>',
-  txid: '<txid>',
-  vout: 0,
-  scriptPubKey: '',
-  amount: 1.0,
-  satoshis: btcToSatoshis(1.0),
-  height: 0,
-  confirmations: 10,
-  ...values,
-});
+import { extractBitcoinTransactions } from 'utils/bitcoin';
 
 describe('Bitcoin utils', () => {
-  describe('unspentAmount', () => {
-    it('returns the total in satoshis', () => {
-      const transactions: BitcoinUtxo[] = [
-        buildUtxo({ satoshis: 1000 }),
-        buildUtxo({ satoshis: 500 }),
-      ];
-
-      const balance = unspentAmount(transactions);
-
-      expect(balance).toEqual(1500);
-    });
-
-    describe('with unconfirmed transactions', () => {
-      it('sums only confirmed transactions', () => {
-        const transactions: BitcoinUtxo[] = [
-          buildUtxo({ satoshis: 1000 }),
-          buildUtxo({ satoshis: 500, confirmations: 0 }),
-        ];
-
-        const balance = unspentAmount(transactions);
-
-        expect(balance).toEqual(1000);
-      });
-    });
-  });
-
   describe('extractBitcoinTransactions()', () => {
     const mockAddress = 'x1';
     const mockTXResult = [
@@ -69,6 +30,7 @@ describe('Bitcoin utils', () => {
         from: '2N9qAgGyvvSVJRGWvsseW13z9HuyvHnU3mo',
         createdAt: 1574763033.958,
         asset: 'BTC',
+        btcFee: 168,
         nbConfirmations: 0,
         status: 'pending',
         value: 1000000,
@@ -82,6 +44,7 @@ describe('Bitcoin utils', () => {
         from: mockAddress,
         createdAt: 1574760189.36,
         asset: 'BTC',
+        btcFee: 19367,
         nbConfirmations: 0,
         status: 'pending',
         value: 2649070,

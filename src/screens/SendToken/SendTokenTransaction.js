@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { View, TouchableOpacity } from 'react-native';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, MediumText } from 'components/Typography';
@@ -161,11 +162,11 @@ class SendTokenTransaction extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   executingExchangeTransaction,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
 });
 

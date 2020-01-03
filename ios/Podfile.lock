@@ -224,9 +224,9 @@ PODS:
     - Crashlytics
     - Fabric
     - React
-  - ReactNativePermissions (1.1.1):
+  - ReactNativePermissions (1.2.1):
     - React
-  - RNCAsyncStorage (1.6.2):
+  - RNCAsyncStorage (1.7.1):
     - React
   - RNColorMatrixImageFilters (5.1.4):
     - React
@@ -420,7 +420,7 @@ SPEC CHECKSUMS:
   react-native-udp: 1dc04d3429ff13a251126092feeb35e175a1b0d8
   react-native-webview: a42108b827082f8f0333529b0772102031d5960d
   ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
-  ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
+  ReactNativePermissions: c5be85159a946eed987b35333f848ba17c2ff2af
   RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc
   RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
   RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664

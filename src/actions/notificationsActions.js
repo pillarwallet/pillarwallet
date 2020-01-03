@@ -24,6 +24,8 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
+import get from 'lodash.get';
+import { Sentry } from 'react-native-sentry';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -70,6 +72,7 @@ import {
   CONNECTION_REQUESTED_EVENT,
   CONNECTION_COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
+import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 // services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
@@ -80,7 +83,6 @@ import { SOCKET } from 'services/sockets';
 
 // utils
 import { processNotification } from 'utils/notifications';
-import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -163,8 +165,17 @@ export const startListeningNotificationsAction = () => {
       contacts: { data: contacts },
     } = getState();
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
-      SOCKET.onMessage(async response => {
-        const data = JSON.parse(response.data.msg);
+      SOCKET.onMessage((response) => {
+        let data;
+        try {
+          data = JSON.parse(response.data.msg);
+        } catch (error) {
+          // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
+          Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response, error } });
+          return; // unable to parse data, do not proceed
+        }
+
+        const senderUserId = get(data, 'senderUserData.id');
 
         if (data.type === CONNECTION_REQUESTED_EVENT) {
           dispatch(fetchInviteNotificationsAction());
@@ -173,7 +184,7 @@ export const startListeningNotificationsAction = () => {
           data.type === CONNECTION_CANCELLED_EVENT ||
           data.type === CONNECTION_REJECTED_EVENT
         ) {
-          const updatedInvitations = invitations.filter(({ id }) => id !== data.senderUserData.id);
+          const updatedInvitations = invitations.filter(({ id }) => id !== senderUserId);
           dispatch({
             type: UPDATE_INVITATIONS,
             payload: updatedInvitations,
@@ -183,7 +194,7 @@ export const startListeningNotificationsAction = () => {
           data.type === CONNECTION_ACCEPTED_EVENT ||
           data.type === CONNECTION_DISCONNECTED_EVENT
         ) {
-          dispatch(updateConnectionsAction(data.senderUserData.id));
+          dispatch(updateConnectionsAction(senderUserId));
         }
         if (data.type === CONNECTION_COLLECTIBLE_EVENT) {
           dispatch(fetchAllCollectiblesDataAction());
@@ -213,13 +224,11 @@ export const startListeningNotificationsAction = () => {
       });
       return;
     }
-    let enabled = await firebase.messaging().hasPermission();
-    if (!enabled) {
+    const firebaseNotificationsEnabled = await firebase.messaging().hasPermission();
+    if (!firebaseNotificationsEnabled) {
       try {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
-        enabled = true;
-
         dispatch(fetchAllNotificationsAction());
         disabledPushNotificationsListener = setInterval(() => {
           dispatch(fetchAllNotificationsAction());

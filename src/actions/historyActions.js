@@ -63,7 +63,8 @@ import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import smartWalletService from 'services/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 
-// types
+// models, types
+import type { ApiNotification } from 'models/Notification';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -225,7 +226,12 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       TRANSACTION_CONFIRMATION_EVENT,
       TRANSACTION_CONFIRMATION_SENDER_EVENT,
     ];
-    const historyNotifications = await api.fetchNotifications(walletId, types.join(' '), d.toISOString());
+    const historyNotifications: ApiNotification[] = await api.fetchNotifications(
+      walletId,
+      types.join(' '),
+      d.toISOString(),
+    );
+
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
 

@@ -23,6 +23,7 @@ import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import {
@@ -64,12 +65,12 @@ import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'ut
 import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
+import { mapInviteNotifications } from 'utils/notifications';
 
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
-import SDKWrapper from 'services/api';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
@@ -94,12 +95,14 @@ import { setRatesAction } from 'actions/ratesActions';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
+import type SDKWrapper from 'services/api';
+import type { ApiNotification } from 'models/Notification';
 
 const storage = Storage.getInstance('db');
 
 const getTokenWalletAndRegister = async (
   privateKey: string,
-  api: Object, // FIXME: this should be api: SDKWrapper
+  api: SDKWrapper,
   user: Object,
   dispatch: Dispatch,
 ) => {
@@ -107,12 +110,12 @@ const getTokenWalletAndRegister = async (
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
   await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
+  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
-  const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
+  const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;
 
-  if (Object.keys(userInfo).length) {
+  if (userState === REGISTERED) {
     dispatch(saveDbAction('user', { user: userInfo }, true));
   }
 
@@ -164,6 +167,15 @@ const finishRegistration = async ({
   privateKey,
   address,
   isImported,
+}: {
+  api: SDKWrapper,
+  dispatch: Dispatch,
+  getState: GetState,
+  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser)
+  mnemonic: ?string,
+  privateKey: string,
+  address: string,
+  isImported: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -382,7 +394,7 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
   3) when user re-opened the app and sees RetryApiRegistration screen
  */
 export const registerOnBackendAction = () => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       wallet: {
         data: walletData,
@@ -415,7 +427,7 @@ export const registerOnBackendAction = () => {
       user,
       dispatch,
     );
-    if (!registrationSucceed) { return; }
+    if (!registrationSucceed) return;
 
     dispatch(logEventAction('user_created'));
 
@@ -436,7 +448,7 @@ export const registerOnBackendAction = () => {
 };
 
 export const validateUserDetailsAction = ({ username }: Object) => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -448,7 +460,8 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     await delay(200);
 
     api.init();
-    const apiUser = await api.usernameSearch(username);
+    // TODO: add back-end authenticated user model (not people related ApiUser)
+    const apiUser: Object = await api.usernameSearch(username);
     const usernameExists = apiUser.username === username;
     const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;
     let usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
@@ -467,39 +480,33 @@ export const validateUserDetailsAction = ({ username }: Object) => {
   };
 };
 
-export function restoreAccessTokensAction(walletId: string) {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+export const restoreAccessTokensAction = (walletId: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const restoredAccessTokens = [];
     const userAccessTokens = await api.fetchAccessTokens(walletId);
 
     // get connectionRequestedEvent & connectionAcceptedEvent notifications
-    const types = [
-      TYPE_RECEIVED,
-      TYPE_ACCEPTED,
-    ];
-    const rawNotifications = await api.fetchNotifications(walletId, types.join(' '));
-    if (!rawNotifications.length) return;
+    const types = [TYPE_RECEIVED, TYPE_ACCEPTED];
+    const inviteNotifications: ApiNotification[] = await api.fetchNotifications(walletId, types.join(' '));
+    if (isEmpty(inviteNotifications)) return;
 
-    const notifications = rawNotifications
-      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
-      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
-      .sort((a, b) => b.createdAt - a.createdAt);
+    const mappedInviteNotifications = mapInviteNotifications(inviteNotifications);
 
     // split into groups
-    let receivedConnectionRequests = notifications.filter(notification => notification.type === TYPE_RECEIVED);
-    let sentConnectionRequests = notifications.filter(notification => notification.type === TYPE_ACCEPTED);
+    let receivedConnectionReq = mappedInviteNotifications.filter(notification => notification.type === TYPE_RECEIVED);
+    let sentConnectionReq = mappedInviteNotifications.filter(notification => notification.type === TYPE_ACCEPTED);
 
     // remove duplicates
-    receivedConnectionRequests = uniqBy(receivedConnectionRequests, 'id');
-    sentConnectionRequests = uniqBy(sentConnectionRequests, 'id');
+    receivedConnectionReq = uniqBy(receivedConnectionReq, 'id');
+    sentConnectionReq = uniqBy(sentConnectionReq, 'id');
 
     userAccessTokens.forEach(token => {
       // check in received connection requests
-      let found = receivedConnectionRequests.find(({ id }) => id === token.contactId);
+      let found = receivedConnectionReq.find(({ id }) => id === token.contactId);
 
       // not found? check in sent connection requests
       if (!found) {
-        found = sentConnectionRequests.find(({ id }) => id === token.contactId);
+        found = sentConnectionReq.find(({ id }) => id === token.contactId);
       }
 
       // can't find again? then skip this connection
@@ -517,4 +524,4 @@ export function restoreAccessTokensAction(walletId: string) {
     });
     await dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
   };
-}
+};

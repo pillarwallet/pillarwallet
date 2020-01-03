@@ -22,7 +22,12 @@ Socket.prototype.onerror = function () {
 
 Socket.prototype.onMessage = function (callback: (data: any) => void) {
   this.socket.onmessage = function (event) {
-    const data = JSON.parse(event.data);
+    let data = {};
+    try {
+      data = JSON.parse(event.data);
+    } catch (e) {
+      //
+    }
     callback(data);
   };
 };

@@ -1,0 +1,26 @@
+diff --git a/node_modules/pouchdb-adapter-asyncstorage/src/asyncstorage_core.js b/node_modules/pouchdb-adapter-asyncstorage/src/asyncstorage_core.js
+index a4c817e..bfa4397 100644
+--- a/node_modules/pouchdb-adapter-asyncstorage/src/asyncstorage_core.js
++++ b/node_modules/pouchdb-adapter-asyncstorage/src/asyncstorage_core.js
+@@ -4,7 +4,7 @@
+  * Adapted from https://github.com/tradle/asyncstorage-down
+  */
+ 
+-import { AsyncStorage } from 'react-native'
++import AsyncStorage from '@react-native-community/async-storage';
+ import {
+   safeJsonParse,
+   safeJsonStringify
+diff --git a/node_modules/pouchdb-adapter-asyncstorage/src/index.js b/node_modules/pouchdb-adapter-asyncstorage/src/index.js
+index 39bad82..600514d 100644
+--- a/node_modules/pouchdb-adapter-asyncstorage/src/index.js
++++ b/node_modules/pouchdb-adapter-asyncstorage/src/index.js
+@@ -109,7 +109,7 @@ function AsyncStoragePouch (dbOpts, constuctorCallback) {
+ 
+ AsyncStoragePouch.valid = () => {
+   try {
+-    return require('react-native').AsyncStorage !== null
++    return require('@react-native-community/async-storage').default !== null
+   } catch (error) {
+     return false
+   }
