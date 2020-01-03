@@ -18,10 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Sentry } from 'react-native-sentry';
-import { generateAccessKey } from 'utils/invitations';
-import type { ApiUser } from 'models/Contacts';
-import { uniqBy } from 'utils/common';
-import { getIdentityKeyPairs } from 'utils/connections';
+
+// actions
+import { getExistingChatsAction } from 'actions/chatActions';
+import { restoreAccessTokensAction } from 'actions/onboardingActions';
+import { updateConnectionsAction } from 'actions/connectionsActions';
+import {
+  mapIdentityKeysAction,
+  prependConnectionKeyPairs,
+} from 'actions/connectionKeyPairActions';
+
+// constants
 import {
   ADD_INVITATION,
   TYPE_ACCEPTED,
@@ -36,17 +43,25 @@ import {
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
-import { getExistingChatsAction } from 'actions/chatActions';
-import { restoreAccessTokensAction } from 'actions/onboardingActions';
-import { updateConnectionsAction } from 'actions/connectionsActions';
-import {
-  mapIdentityKeysAction,
-  prependConnectionKeyPairs,
-} from 'actions/connectionKeyPairActions';
+
+// utils
+import { generateAccessKey } from 'utils/invitations';
+import { uniqBy } from 'utils/common';
+import { getIdentityKeyPairs } from 'utils/connections';
+import { mapInviteNotifications } from 'utils/notifications';
+
+// models, types
+import type { ApiUser } from 'models/Contacts';
+import type SDKWrapper from 'services/api';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { ApiNotification } from 'models/Notification';
+
+// local
 import { saveDbAction } from './dbActions';
 
+
 export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       invitations: { data: invitations },
       contacts: { data: contacts },
@@ -76,11 +91,9 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       TYPE_REJECTED,
       TYPE_DISCONNECTED,
     ];
-    const inviteNotifications = await api.fetchNotifications(walletId, types.join(' '));
-    const mappedInviteNotifications = inviteNotifications
-      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
-      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
-      .sort((a, b) => b.createdAt - a.createdAt);
+
+    const inviteNotifications: ApiNotification[] = await api.fetchNotifications(walletId, types.join(' '));
+    const mappedInviteNotifications = mapInviteNotifications(inviteNotifications);
 
     const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
       const group = arr.filter(({ id: userId }) => userId === invitation.id);
@@ -153,7 +166,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
 };
 
 export const sendOldInvitationAction = (user: ApiUser) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -205,7 +218,7 @@ export const sendOldInvitationAction = (user: ApiUser) => {
 };
 
 export const acceptOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -294,7 +307,7 @@ export const acceptOldInvitationAction = (invitation: Object) => {
 };
 
 export const cancelOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
@@ -339,7 +352,7 @@ export const cancelOldInvitationAction = (invitation: Object) => {
 };
 
 export const rejectOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
