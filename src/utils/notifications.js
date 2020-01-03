@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
+
+// constants
 import {
   TYPE_ACCEPTED,
   TYPE_CANCELLED,
@@ -30,6 +32,8 @@ import {
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
+import type { ApiNotification } from 'models/Notification';
+import isEmpty from 'lodash.isempty';
 
 
 const parseNotification = (notificationBody: string): ?Object => {
@@ -179,3 +183,23 @@ export const processNotification = (notification: Object, myEthAddress?: string)
 
   return result;
 };
+
+export const mapInviteNotifications = (notifications: ApiNotification[]): Object[] => notifications
+  .map(({ createdAt, payload }) => {
+    let notification: Object = { createdAt };
+
+    // note: payload.msg is optional and per Sentry reports might not be JSON
+    if (payload.msg) {
+      try {
+        const parsedMessage = JSON.parse(payload.msg);
+        notification = { ...notification, ...parsedMessage };
+      } catch (e) {
+        //
+      }
+    }
+
+    return notification;
+  })
+  .filter(({ createdAt, ...rest }) => !isEmpty(rest)) // filter if notification empty after parsing
+  .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
+  .sort((a, b) => b.createdAt - a.createdAt);

@@ -95,7 +95,13 @@ const threadJobWorkerSeed = (
         thread.postMessage(JSON.stringify(params));
 
         thread.onmessage = (message) => {
-          resolve(JSON.parse(message));
+          let parsedMessage = {};
+          try {
+            parsedMessage = JSON.parse(message);
+          } catch (e) {
+            //
+          }
+          resolve(parsedMessage);
           thread.terminate();
         };
       } catch (e) {
