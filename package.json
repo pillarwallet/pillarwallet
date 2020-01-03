@@ -160,7 +160,6 @@
     "native-base": "2.7.2",
     "patch-package": "^6.2.0",
     "polished": "^1.9.2",
-    "postinstall-postinstall": "^2.0.0",
     "pouchdb-adapter-asyncstorage": "^6.4.1",
     "pouchdb-react-native": "^6.4.1",
     "process": "^0.11.0",

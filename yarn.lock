@@ -10038,11 +10038,6 @@ postinstall-build@^5.0.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/postinstall-build/-/postinstall-build-5.0.3.tgz#238692f712a481d8f5bc8960e94786036241efc7"
   integrity sha1-I4aS9xKkgdj1vIlg6UeGA2JB78c=
 
-postinstall-postinstall@^2.0.0:
-  version "2.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/postinstall-postinstall/-/postinstall-postinstall-2.0.0.tgz#7ba6711b4420575c4f561638836a81faad47f43f"
-  integrity sha1-e6ZxG0QgV1xPVhY4g2qB+q1H9D8=
-
 pouchdb-abstract-mapreduce@6.4.3:
   version "6.4.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/pouchdb-abstract-mapreduce/-/pouchdb-abstract-mapreduce-6.4.3.tgz#0310053812d16ff9545a3db43f5e38a67a0133d7"
