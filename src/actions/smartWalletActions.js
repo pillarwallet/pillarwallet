@@ -1386,6 +1386,7 @@ export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions)
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       blockchainNetwork: { data: blockchainNetworks },
+      accounts: { data: accounts },
     } = getState();
 
     const standardSendFlow = NavigationActions.navigate({
@@ -1401,6 +1402,19 @@ export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions)
     if (isPillarPaymentNetworkActive(blockchainNetworks)) {
       if (!smartWalletService || !smartWalletService.sdkInitialized) {
         notifySmartWalletNotInitialized();
+        return;
+      }
+
+      const activeAccountAddress = getActiveAccountAddress(accounts);
+
+      // prevent PPN self sending
+      if (addressesEqual(navOptions.receiver, activeAccountAddress)) {
+        Toast.show({
+          title: 'Wrong receiver address',
+          message: 'Cannot send synthetic asset to yourself',
+          type: 'warning',
+          autoClose: false,
+        });
         return;
       }
 
