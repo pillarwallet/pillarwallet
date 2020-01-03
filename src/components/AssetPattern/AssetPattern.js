@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Dimensions, Image } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { CachedImage } from 'react-native-cached-image';
 import {
   ColorMatrix,
@@ -72,7 +72,7 @@ const noIconImageSource = require('assets/images/no_logo.png');
 const IconWrapper = styled.View`
   height: ${props => props.diameter}px;
   width: ${props => props.diameter}px;
-  border: 2px solid ${baseColors.white};
+  border: 2px solid ${themedColors.card};
   position: absolute;
   z-index: ${props => props.zIndex};
   top: ${props => props.top}px;
@@ -80,11 +80,11 @@ const IconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   elevation: ${props => props.addShadow ? props.elevation : 0};
-  shadow-color: ${baseColors.black};
+  shadow-color: ${themedColors.text};
   shadow-offset: ${props => props.addShadow ? '0px 3px' : 0};
   shadow-opacity: ${props => props.addShadow ? props.shadowOpacity : 0};
   shadow-radius: 6px;
-  background-color: ${baseColors.white};
+  background-color: ${themedColors.card};
 `;
 
 const NoIconImage = styled(CachedImage)`

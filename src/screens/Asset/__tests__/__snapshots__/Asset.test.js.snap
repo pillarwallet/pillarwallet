@@ -306,8 +306,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -315,7 +315,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "justifyContent": "center",
                     "left": 375,
                     "position": "absolute",
-                    "shadowColor": "#000000",
+                    "shadowColor": "#0A1427",
                     "shadowOffset": Object {
                       "height": 0,
                       "width": 0,
@@ -406,8 +406,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -415,7 +415,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "justifyContent": "center",
                     "left": 266.2,
                     "position": "absolute",
-                    "shadowColor": "#000000",
+                    "shadowColor": "#0A1427",
                     "shadowOffset": Object {
                       "height": 0,
                       "width": 0,
@@ -506,8 +506,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -515,7 +515,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "justifyContent": "center",
                     "left": 310.33333333333337,
                     "position": "absolute",
-                    "shadowColor": "#000000",
+                    "shadowColor": "#0A1427",
                     "shadowOffset": Object {
                       "height": 0,
                       "width": 0,
@@ -606,8 +606,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -615,7 +615,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "justifyContent": "center",
                     "left": 439.66666666666663,
                     "position": "absolute",
-                    "shadowColor": "#000000",
+                    "shadowColor": "#0A1427",
                     "shadowOffset": Object {
                       "height": 0,
                       "width": 0,
@@ -706,8 +706,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#ffffff",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
                     "borderStyle": "solid",
                     "borderWidth": 2,
                     "elevation": 0,
@@ -715,7 +715,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "justifyContent": "center",
                     "left": 483.8,
                     "position": "absolute",
-                    "shadowColor": "#000000",
+                    "shadowColor": "#0A1427",
                     "shadowOffset": Object {
                       "height": 0,
                       "width": 0,
@@ -1148,7 +1148,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#C6CACD",
+                        "color": "#8B939E",
                         "fontSize": 16,
                         "letterSpacing": 0.1,
                         "marginTop": -6,

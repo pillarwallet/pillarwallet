@@ -36,13 +36,12 @@ type Props = {
 const LabelText = styled(BaseText)`
   color: ${themedColors.secondaryText};
   font-size: ${fontSizes.medium}px;
-  padding-top: 10px;
+  padding: 10px 0;
 `;
 
 const BalanceText = styled(BaseText)`
   color: ${themedColors.text};
   font-size: ${fontSizes.giant}px;
-  padding-top: 10px;
 `;
 
 const BalanceWrapper = styled.View`
