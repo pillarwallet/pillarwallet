@@ -84,7 +84,7 @@ import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 
 const storage = Storage.getInstance('db');
 
