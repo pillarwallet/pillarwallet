@@ -31,8 +31,16 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 
-const safeImage = (url: string): string => {
-  return (/\.(jpg|png|gif)$/i).test(url) ? url : '';
+const parseCollectibleMedia = (data) => {
+  const {
+    image_url: fullImage = '',
+    image_preview_url: previewImage = '',
+  } = data;
+
+  return {
+    icon: previewImage || fullImage,
+    image: fullImage || previewImage,
+  };
 };
 
 const collectibleFromResponse = (responseItem: Object): Collectible => {
@@ -41,26 +49,23 @@ const collectibleFromResponse = (responseItem: Object): Collectible => {
     asset_contract: assetContract,
     name,
     description,
-    image_url: fullImage,
-    image_preview_url: preview,
   } = responseItem;
 
   const { name: category, address: contractAddress } = assetContract;
   const collectibleName = name || `${category} ${id}`;
 
-  const image = safeImage(fullImage);
-  const previewImage = safeImage(preview);
+  const { image, icon } = parseCollectibleMedia(responseItem);
 
   return {
     id,
     category,
-    image: image || previewImage,
     name: collectibleName,
     description,
-    icon: previewImage || image,
     contractAddress,
     assetContract: category,
     tokenType: COLLECTIBLES,
+    image,
+    icon,
   };
 };
 
@@ -101,24 +106,21 @@ const collectibleTransaction = (event) => {
     name,
     token_id: id,
     description,
-    image_preview_url: imagePreviewUrl,
-    image_url: imageUrl,
   } = asset;
   const { name: category, address: contractAddress } = assetContract;
   const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
 
   const collectibleName = name || `${category} ${id}`;
 
-  const previewIcon = safeImage(imagePreviewUrl);
-  const image = safeImage(imageUrl) || previewIcon;
+  const { image, icon } = parseCollectibleMedia(asset);
 
   const assetData = {
     id,
     category,
     name: collectibleName,
     description,
-    icon: previewIcon,
     image,
+    icon,
     contractAddress,
     assetContract: category,
     tokenType: COLLECTIBLES,
@@ -137,7 +139,7 @@ const collectibleTransaction = (event) => {
     blockNumber,
     status: 'confirmed',
     type: COLLECTIBLE_TRANSACTION,
-    icon: previewIcon,
+    icon,
     assetData,
   };
 };
