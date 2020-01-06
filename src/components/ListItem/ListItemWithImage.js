@@ -258,9 +258,9 @@ const IndicatorsRow = styled.View`
 const ActionLabel = styled.View`
   align-items: center;
   justify-content: center;
-  ${({ button, theme }) => button ? `border: 1px solid ${theme.colors.secondaryAccent}` : ''}
-  ${({ button }) => button ? 'border-radius: 3px;' : ''}
-  ${({ button }) => button ? 'height: 34px;' : ''}
+  ${({ button, theme }) => button && `border: 1px solid ${theme.colors.border}`}
+  ${({ button }) => button && 'border-radius: 3px;'}
+  ${({ button }) => button && 'height: 34px;'}
 `;
 
 const ActionLabelText = styled(BaseText)`
