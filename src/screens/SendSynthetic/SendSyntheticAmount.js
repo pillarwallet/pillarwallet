@@ -40,11 +40,12 @@ import { Wrapper } from 'components/Layout';
 import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
 
 // utils, services
-import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { formatAmount, formatFiat, isValidNumber, isValidNumberDecimals, parseNumber } from 'utils/common';
 import { getAssetData, getAssetsAsList, getRate } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
 import { getAmountFormFields } from 'utils/formHelpers';
+import { themedColors } from 'utils/themes';
 
 // constants
 import { defaultFiatCurrency, PLR } from 'constants/assetsConstants';
@@ -111,7 +112,6 @@ const generateFormStructure = (intentError: ?string, maxAmount: number, decimals
 const parseNumericAmount = value => parseNumber(get(value, 'amount', 0));
 
 const BackgroundWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
   flex: 1;
 `;
 
@@ -121,7 +121,7 @@ const FooterInner = styled.View`
   justify-content: flex-end;
   width: 100%;
   padding: ${spacing.large}px;
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${themedColors.surface};
 `;
 
 const SendTokenDetails = styled.View``;
@@ -138,7 +138,7 @@ const ActionsWrapper = styled.View`
 
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${UIColors.placeholderTextColor};
+  color: ${themedColors.secondaryText};
   margin-left: 4px;
 `;
 
