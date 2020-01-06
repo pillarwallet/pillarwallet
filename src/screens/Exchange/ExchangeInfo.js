@@ -44,8 +44,9 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 
 // utils
-import { baseColors, fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing, UIColors } from 'utils/variables';
 import { getProviderDisplayName } from 'utils/exchange';
+import { themedColors } from 'utils/themes';
 
 // models, types
 import type { Assets } from 'models/Asset';
@@ -89,7 +90,7 @@ const ProviderName = styled(BaseText)`
 
 const ProviderStatus = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${props => props.isPending ? baseColors.darkGray : baseColors.jadeGreen};
+  color: ${({ isPending, theme }) => isPending ? theme.colors.secondaryText : theme.colors.positive};
 `;
 
 const DisconnectButton = styled.TouchableOpacity`
@@ -99,7 +100,7 @@ const DisconnectButton = styled.TouchableOpacity`
 
 const DisconnectButtonLabel = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.blueViolet};
+  color: ${themedColors.negative};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
