@@ -73,6 +73,7 @@ import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtur
 
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
+export const API_REQUEST_TIMEOUT = 5000;
 
 type HistoryPayload = {
   address1: string,
@@ -133,6 +134,7 @@ SDKWrapper.prototype.init = function (
     oAuthTokens: oAuthTokensStored,
     tokensFailedCallbackFn: onOAuthTokensFailed,
   });
+  this.pillarWalletSdk.configuration.setRequestTimeout(API_REQUEST_TIMEOUT);
 };
 
 SDKWrapper.prototype.listAccounts = function (walletId: string) {
