@@ -143,7 +143,7 @@ class BTCView extends React.Component<Props, State> {
     const { address } = addresses[0];
 
     const addressBalance = balances[address];
-    const balance = addressBalance ? satoshisToBtc(addressBalance.balance) : 0;
+    const balance = addressBalance ? satoshisToBtc(addressBalance.confirmed) : 0;
     const transactionsHistory = extractBitcoinTransactions(address, transactions);
 
     return (

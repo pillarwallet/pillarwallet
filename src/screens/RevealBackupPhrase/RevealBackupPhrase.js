@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Dispatch } from 'reducers/rootReducer';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
@@ -33,7 +34,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
   navigation: NavigationScreenProp<*>,
-  resetIncorrectPassword: () => Function,
+  resetIncorrectPassword: () => void,
 };
 
 type State = {
@@ -110,7 +111,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
