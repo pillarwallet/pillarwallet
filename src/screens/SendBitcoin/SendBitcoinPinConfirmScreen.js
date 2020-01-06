@@ -34,8 +34,12 @@ import type { EthereumWallet } from 'models/Wallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: (wallet: EthereumWallet, transactionPayload: BitcoinTransactionPlan, navigate: Function) => Function,
-  resetIncorrectPassword: () => Function,
+  sendAsset: (
+    wallet: EthereumWallet,
+    transactionPayload: BitcoinTransactionPlan,
+    navigate: Function,
+  ) => void,
+  resetIncorrectPassword: () => void,
   logEvent: (name: string, properties: Object) => void,
 }
 
@@ -112,19 +116,11 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-  bitcoin,
-}) => ({
-  bitcoin,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (wallet: EthereumWallet, transaction: BitcoinTransactionPlan, callback) => {
-    dispatch(sendTransactionAction(wallet, transaction, callback));
-  },
+const mapDispatchToProps = (dispatch): $Shape<Props> => ({
+  sendAsset: (wallet: EthereumWallet, transaction: BitcoinTransactionPlan, callback) =>
+    dispatch(sendTransactionAction(wallet, transaction, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(SendBitcoinPinConfirmScreen);
+export default connect(null, mapDispatchToProps)(SendBitcoinPinConfirmScreen);

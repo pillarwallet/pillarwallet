@@ -98,7 +98,6 @@ import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
-import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
@@ -137,7 +136,6 @@ import {
   getAssetData,
   getAssetDataByAddress,
   getAssetsAsList,
-  getBalance,
   getPPNTokenAddress,
 } from 'utils/assets';
 import {
@@ -291,8 +289,7 @@ export const deploySmartWalletAction = () => {
     const gasInfo = get(getState(), 'history.gasInfo', {});
     const deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo);
     const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const balances = accountBalancesSelector(getState());
-    const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
+    const etherBalanceBN = smartWalletService.getAccountRealBalance();
     if (etherBalanceBN.lt(deployEstimateFeeBN)) {
       Toast.show({
         message: 'Not enough ETH to make deployment',
@@ -1389,6 +1386,7 @@ export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions)
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       blockchainNetwork: { data: blockchainNetworks },
+      accounts: { data: accounts },
     } = getState();
 
     const standardSendFlow = NavigationActions.navigate({
@@ -1404,6 +1402,19 @@ export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions)
     if (isPillarPaymentNetworkActive(blockchainNetworks)) {
       if (!smartWalletService || !smartWalletService.sdkInitialized) {
         notifySmartWalletNotInitialized();
+        return;
+      }
+
+      const activeAccountAddress = getActiveAccountAddress(accounts);
+
+      // prevent PPN self sending
+      if (addressesEqual(navOptions.receiver, activeAccountAddress)) {
+        Toast.show({
+          title: 'Wrong receiver address',
+          message: 'Cannot send synthetic asset to yourself',
+          type: 'warning',
+          autoClose: false,
+        });
         return;
       }
 

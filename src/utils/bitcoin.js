@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { MIN_CONFIRMATIONS } from 'constants/bitcoinConstants';
-import type { BitcoinUtxo, BTCTransaction, BitcoinBalance } from 'models/Bitcoin';
+import type { BTCTransaction, BitcoinBalance } from 'models/Bitcoin';
 import type { Rates } from 'models/Asset';
 
 import { BTC } from 'constants/assetsConstants';
@@ -27,17 +26,6 @@ import { getRate } from 'utils/assets';
 
 export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
 export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000);
-
-export const unspentAmount = (unspent: BitcoinUtxo[]): number => {
-  return unspent.reduce((acc: number, transaction: BitcoinUtxo): number => {
-    // Make sure we don't use unconfirmed transactions for the balance,
-    // since those transactions can still be rejected later by the network.
-    if (transaction.confirmations < MIN_CONFIRMATIONS) {
-      return acc;
-    }
-    return acc + transaction.satoshis;
-  }, 0);
-};
 
 const totalBitcoinBalance = (balances: BitcoinBalance) => {
   const addressesBalances = Object.keys(balances).map(key => balances[key]);

@@ -38,21 +38,19 @@ const address = 'mhQ51TfiyTdwxYDq42Wrz1LvLY7PbSEJ9w';
 const unspent: BitcoinUtxo[] = [
   {
     address,
-    txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
-    vout: 0,
+    mintTxid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+    mintIndex: 0,
     scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
-    amount: 1.3,
-    satoshis: 130000000,
+    value: 130000000,
     height: 1180957,
     confirmations: 14,
   },
   {
     address,
-    txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c8b',
-    vout: 1,
+    mintTxid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c8b',
+    mintIndex: 1,
     scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
-    amount: 0.9,
-    satoshis: 90000000,
+    value: 90000000,
     height: 1180957,
     confirmations: 9,
   },
@@ -90,14 +88,10 @@ describe('bitcoin service', () => {
     const utxos: BitcoinUtxo[] = [
       {
         address: 'mhQ51TfiyTdwxYDq42Wrz1LvLY7PbSEJ9w',
-        txid: '29bdf710c7eeeaca7305c96cac3d2a6b7b34a742b01d0a8ae1aa5b709298d70e',
         mintTxid: '29bdf710c7eeeaca7305c96cac3d2a6b7b34a742b01d0a8ae1aa5b709298d70e',
-        vout: 1,
         mintIndex: 1,
         scriptPubKey: '76a91414a2f1bf167a7835c98510fbe79c48d52fa16c6088ac',
-        amount: 0.01,
         value: 1000000,
-        satoshis: 1000000,
         height: 1570786,
         confirmations: 15,
       },
@@ -106,7 +100,7 @@ describe('bitcoin service', () => {
     it('works', async () => {
       const targetRoot = await rootFromMnemonic('target mnemonic', network);
       const targets: BitcoinTransactionTarget[] = [
-        { address: keyPairAddress(targetRoot) || '', value: 0.004 },
+        { address: keyPairAddress(targetRoot) || '', value: 40000 },
       ];
 
       const root = await rootFromMnemonic(mnemonic, network);
@@ -122,47 +116,46 @@ describe('bitcoin service', () => {
 
       expect(rawTransaction).toEqual(
         '01000000010ed79892705baae18a0a1db042a7347b6b2a3dac6cc90573caeaeec710f7bd29010000006' +
-        'b483045022100aab666740917393a1f3ae4ee047ae04dfeef846f46b74c85221be2b3f90b8e46022016' +
-        'b6a06079974b8b89b168642f7cf8c0e3f9c4d79389a5af37f2ab58b4c310b6012102f19b94963d08b6e' +
-        '553e36a13f244c177c1b868e696f01049454a846ff7c3ed3bffffffff02801a0600000000001976a914' +
-        '16820e3913b22035ff39a4076d20a73b7191123888accefb0800000000001976a91414a2f1bf167a783' +
-        '5c98510fbe79c48d52fa16c6088ac00000000',
+        'b483045022100dcc08ea6c74b2d2ddb36f7dc3c8cf2e4ab45ddecdef527a87d4bcd4a5c8ff9b00220270' +
+        'b93d079adb9b9dc981098262c074e5084a7e3ea79938b86ca0a02bf271530012102f19b94963d08b6e55' +
+        '3e36a13f244c177c1b868e696f01049454a846ff7c3ed3bffffffff01409c0000000000001976a914168' +
+        '20e3913b22035ff39a4076d20a73b7191123888ac00000000',
       );
     });
   });
 
   describe('collectOutputs', () => {
     describe('when one is enough', () => {
+      const sendAmount = 4000000;
       const targets: BitcoinTransactionTarget[] = [
-        { address, value: 4000000 },
+        { address, value: sendAmount },
       ];
-
-      it('uses only one input', () => {
-        const collected = collectOutputs(targets, SPEED_TYPES.SLOW, unspent, () => 'change');
-
-        expect(collected.inputs).toEqual([
-          {
-            address,
-            txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
-            vout: 0,
-            scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
-            amount: 1.3,
-            satoshis: 130000000,
-            // value is added because of coinselect, but it's not required
-            value: 130000000,
-            height: 1180957,
-            confirmations: 14,
-          },
-        ]);
-      });
 
       it('returns an output for change', () => {
         const collected = collectOutputs(targets, SPEED_TYPES.SLOW, unspent, () => 'change');
 
-        expect(collected.outputs).toEqual([
-          { address, value: 4000000, isChange: false },
-          { address: 'change', value: 125988750, isChange: true },
-        ]);
+        expect(collected).toMatchObject({
+          isValid: true,
+          inputs: [
+            {
+              address,
+              mintTxid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+              mintIndex: 0,
+              scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
+              value: 130000000,
+              height: 1180957,
+              confirmations: 14,
+            },
+          ],
+          outputs: [
+            { address, value: sendAmount, isChange: false },
+            {
+              address: 'change',
+              value: 130000000 - (collected.fee || 0) - sendAmount,
+              isChange: true,
+            },
+          ],
+        });
       });
 
       it('outputs and fee matches the input', () => {
@@ -176,7 +169,7 @@ describe('bitcoin service', () => {
         );
         const input = inputs.reduce(
           (acc: number, utxo: BitcoinUtxo): number => {
-            return acc + utxo.satoshis;
+            return acc + utxo.value;
           },
           0,
         );

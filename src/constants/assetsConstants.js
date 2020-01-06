@@ -59,6 +59,12 @@ export const SPEED_TYPES = {
   FAST: 'max',
 };
 
+export const SPEED_TYPE_LABELS = {
+  [SPEED_TYPES.SLOW]: 'Slow',
+  [SPEED_TYPES.NORMAL]: 'Normal',
+  [SPEED_TYPES.FAST]: 'Fast',
+};
+
 export const CURRENCY_SYMBOLS = {
   USD: '$',
   GBP: '£',

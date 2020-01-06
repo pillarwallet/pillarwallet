@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
 import { Switch } from 'native-base';
 import Header from 'components/Header';
@@ -371,12 +372,14 @@ class ParticipateScreen extends React.Component<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchICOFundingInstructions: (currency: string) =>
     dispatch(fetchICOFundingInstructionsAction(currency)),
 });
 
-const mapStateToProps = ({ rates: { data: rates } }) => ({
+const mapStateToProps = ({
+  rates: { data: rates },
+}: RootReducerState): $Shape<Props> => ({
   rates,
 });
 

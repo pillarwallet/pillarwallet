@@ -99,11 +99,14 @@ class FiatExchange extends React.Component<Props, State> {
   }
 
   sendWyreCallback = (event) => {
-    const data = JSON.parse(event.nativeEvent.data);
-
-    if (data) {
-      this.props.navigation.goBack(null);
+    let data;
+    try {
+      data = JSON.parse(event.nativeEvent.data);
+    } catch (e) {
+      //
     }
+    if (!data) return;
+    this.props.navigation.goBack(null);
   };
 
   render() {
