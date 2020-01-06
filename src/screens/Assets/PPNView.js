@@ -313,6 +313,7 @@ class PPNView extends React.Component<Props, State> {
           <Tabs
             tabs={historyTabs}
             wrapperStyle={{ paddingTop: 16 }}
+            activeTab={activeTab}
           />
           <ActivityFeed
             navigation={navigation}

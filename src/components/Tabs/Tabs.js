@@ -24,8 +24,8 @@ import { CachedImage } from 'react-native-cached-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { MediumText } from 'components/Typography';
-import { Shadow } from 'components/Shadow';
-import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Tab = {
   id: string,
@@ -38,7 +38,6 @@ type Tab = {
 }
 
 type Props = {
-  initialActiveTab?: string,
   title?: string,
   tabs: Tab[],
   bgColor?: string,
@@ -46,12 +45,7 @@ type Props = {
   isFloating?: boolean,
   coverColor?: string,
   onTabChange?: (isChanging?: boolean) => void,
-}
-
-type TabWrapperProps = {
-  children: React.Node,
-  width?: number,
-  showSVGShadow?: boolean,
+  activeTab: string,
 }
 
 type TabsComponentProps = {
@@ -62,57 +56,37 @@ type TabsComponentProps = {
   renderTabList: () => Array<React.Node>,
 }
 
-type State = {
-  activeTab: string,
-  tabLengths: Object,
-}
-
 const TabOuterWrapper = styled.View`
   background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
-  padding: 12px ${spacing.layoutSides}px;
+  padding: 12px ${spacing.large}px;
 `;
 
 const TabsWrapper = styled.View`
   flex-direction: row;
-  background-color: ${baseColors.pattensBlue};
+  background-color: ${themedColors.border};
   padding: 2px;
-  border-radius: 18px;
-  height: 36px;
-`;
-
-const TabSizer = styled.View`
-  flex-grow: 1;
-  position: relative;
+  border-radius: 6px;
 `;
 
 const TabItem = styled.TouchableOpacity`
-  height: ${props => props.isAndroid ? 53.5 : 32};
-  align-items: flex-start;
+  height: 28px;
+  align-items: center;
   justify-content: center;
-  background-color: ${props => props.active ? baseColors.white : 'transparent'};
-  border-radius: 16px;
+  border-radius: 4px;
   flex-direction: row;
   flex-grow: 1;
-  ${props => props.active
-    ? `
-    shadow-color: ${UIColors.tabShadowColor};
-    shadow-radius: 10px;
-    shadow-opacity: 1;
-    shadow-offset: 0px 7px;
-    `
-    : ''}
+  ${({ active, theme }) => active && `background-color: ${theme.colors.card};`}
 `;
 
 const TabItemIcon = styled(Icon)`
   font-size: ${fontSizes.regular}px;
   margin-right: 4px;
-  margin-top: 2px;
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
+  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.primary};
 `;
 
 const TabItemText = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
+  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.primary};
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -146,39 +120,12 @@ const Cover = styled.View`
   top: 0;
   left: 0;
   z-index: -1;
-  background-color: ${props => props.coverColor ? props.coverColor : UIColors.defaultBackgroundColor};
+  background-color: ${({ coverColor, theme }) => coverColor || theme.colors.surface};
   height: 30px;
   justify-content: flex-start;
   align-items: center;
   padding-top: 0px;
 `;
-
-
-const TabWrapper = (props: TabWrapperProps) => {
-  const {
-    children,
-    width,
-    showSVGShadow,
-  } = props;
-  if (showSVGShadow && width) {
-    return (
-      <Shadow
-        useSVGShadow
-        widthIOS={width}
-        heightIOS={32}
-        shadowColorOS="#d8d8d8"
-        shadowRadius={16}
-        shadowOpacity={0.3}
-        shadowOffsetY={3}
-        shadowOffsetX={0}
-        shadowBorder={8}
-      >
-        {children}
-      </Shadow>
-    );
-  }
-  return children;
-};
 
 const TabsComponent = (props: TabsComponentProps) => {
   const {
@@ -218,7 +165,7 @@ const UnreadBadge = styled.View`
   height: 24px;
   width: 24px;
   border-radius: 12px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${themedColors.primary};
   position: absolute;
   top: 4px;
   right: 2px;
@@ -228,7 +175,7 @@ const UnreadBadge = styled.View`
 
 const UnreadText = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${baseColors.white};
+  color: ${themedColors.control};
 `;
 
 const TabImage = styled(CachedImage)`
@@ -237,12 +184,7 @@ const TabImage = styled(CachedImage)`
   margin-right: 4px;
 `;
 
-export default class Tabs extends React.Component<Props, State> {
-  state = {
-    activeTab: this.props.initialActiveTab || this.props.tabs[0].id,
-    tabLengths: {},
-  };
-
+export default class Tabs extends React.PureComponent<Props> {
   renderIcon = (tab: Object) => {
     const {
       icon,
@@ -250,7 +192,7 @@ export default class Tabs extends React.Component<Props, State> {
       tabImageActive,
       id,
     } = tab;
-    const { activeTab } = this.state;
+    const { activeTab } = this.props;
     const isActive = activeTab === id;
     const tabImage = isActive ? tabImageActive : tabImageNormal;
 
@@ -270,8 +212,7 @@ export default class Tabs extends React.Component<Props, State> {
   };
 
   renderTabItems = (tabs: Tab[]) => {
-    const { activeTab, tabLengths } = this.state;
-    const { onTabChange } = this.props;
+    const { activeTab } = this.props;
 
     const tabItems = tabs.map(tab => {
       const isActive = activeTab === tab.id;
@@ -282,48 +223,22 @@ export default class Tabs extends React.Component<Props, State> {
         onPress,
       } = tab;
 
-      const tabSizerStyle = {};
-      if (Platform.OS === 'android') {
-        if (tabs.length === 2) {
-          tabSizerStyle.width = '50%';
-        } else {
-          tabSizerStyle.width = tabLengths[id];
-        }
-      }
-
       return (
-        <TabSizer
+        <TabItem
+          active={isActive}
+          onPress={() => {
+            requestAnimationFrame(() => {
+              onPress();
+            });
+          }}
           key={id}
-          style={tabSizerStyle}
         >
-          <TabWrapper showSVGShadow={isActive && Platform.OS === 'android' && tabLengths[id]} width={tabLengths[id]}>
-            <TabItem
-              activeOpacity={1}
-              active={isActive}
-              onPress={() => {
-                if (onTabChange) onTabChange(true);
-                this.setState({ activeTab: id });
-                requestAnimationFrame(() => {
-                  onPress();
-                  if (onTabChange) onTabChange();
-                });
-              }}
-              onLayout={(e) => {
-                if (tabLengths[id]) return;
-                const thisTabLength = e.nativeEvent.layout.width;
-                const newLengths = { ...tabLengths };
-                newLengths[id] = thisTabLength;
-                this.setState({ tabLengths: newLengths });
-              }}
-            >
-              <TextWrapper extraPadding={!!unread}>
-                {this.renderIcon(tab)}
-                <TabItemText active={isActive}>{name}</TabItemText>
-                {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
-              </TextWrapper>
-            </TabItem>
-          </TabWrapper>
-        </TabSizer>
+          <TextWrapper extraPadding={!!unread}>
+            {this.renderIcon(tab)}
+            <TabItemText active={isActive}>{name}</TabItemText>
+            {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
+          </TextWrapper>
+        </TabItem>
       );
     });
     return tabItems;

@@ -77,7 +77,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // utils
-import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -134,7 +134,6 @@ type State = {
   permissionsGranted: boolean,
   scrollY: Animated.Value,
   isScanning: boolean,
-  tabIsChanging: boolean,
 };
 
 const WalletConnectWrapper = styled.View`
@@ -179,7 +178,6 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: ALL,
     usernameWidth: 0,
     isScanning: false,
-    tabIsChanging: false,
   };
 
   componentDidMount() {
@@ -295,10 +293,6 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  onTabChange = (isChanging?: boolean) => {
-    this.setState({ tabIsChanging: isChanging });
-  };
-
   render() {
     const {
       cancelInvitation,
@@ -322,11 +316,7 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.props;
     const colors = getThemeColors(theme);
 
-    const {
-      activeTab,
-      isScanning,
-      tabIsChanging,
-    } = this.state;
+    const { activeTab, isScanning } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -423,7 +413,7 @@ class HomeScreen extends React.Component<Props, State> {
                   style={{
                     width: 8,
                     height: 8,
-                    backgroundColor: baseColors.sunYellow,
+                    backgroundColor: colors.indicator,
                     borderRadius: 4,
                     marginLeft: 4,
                     marginRight: -6,
@@ -480,7 +470,7 @@ class HomeScreen extends React.Component<Props, State> {
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
-            onTabChange={this.onTabChange}
+            activeTab={activeTab}
           />
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
@@ -491,7 +481,7 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={activeTab}
             hideTabs
             initialNumToRender={8}
-            wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
+            wrapperStyle={{ flexGrow: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
