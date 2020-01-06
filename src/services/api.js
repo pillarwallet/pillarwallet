@@ -42,15 +42,7 @@ import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-
-// services
-import {
-  fetchAssetBalances,
-  fetchLastBlockNumber,
-  fetchTransactionInfo,
-  fetchTransactionReceipt,
-} from 'services/assets';
-import EthplorerSdk from 'services/EthplorerSdk';
+import { uniqBy } from 'utils/common';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -65,11 +57,18 @@ import type {
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 
-import { getLimitedData } from 'utils/opensea';
-import { uniqBy } from 'utils/common';
-
 // other
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos'; // temporary here
+
+// services
+import {
+  fetchAssetBalances,
+  fetchLastBlockNumber,
+  fetchTransactionInfo,
+  fetchTransactionReceipt,
+} from './assets';
+import EthplorerSdk from './EthplorerSdk';
+import { getLimitedData } from './opensea';
 
 
 const USERNAME_EXISTS_ERROR_CODE = 409;

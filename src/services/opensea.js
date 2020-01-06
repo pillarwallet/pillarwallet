@@ -20,16 +20,23 @@
 import axios from 'axios';
 import { OPEN_SEA_API_KEY } from 'react-native-dotenv';
 
-const headers = {
-  Accept: 'application/json',
-  'Content-Type': 'application/json',
-  'X-API-KEY': OPEN_SEA_API_KEY,
+// services
+import { API_REQUEST_TIMEOUT } from './api';
+
+
+const requestConfig = {
+  timeout: API_REQUEST_TIMEOUT,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'X-API-KEY': OPEN_SEA_API_KEY,
+  },
 };
 
 export const getLimitedData =
   (url: string, data: Array<Object>, limit: number, offset: number,
     responseDataKey: string, resolve: Function, reject: Function) => {
-    axios.get(`${url}&limit=${limit}&offset=${offset}`, { headers })
+    axios.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig)
       .then(response => {
         const retrievedData = data.concat(response.data[responseDataKey]);
         const newOffset = offset + limit;
