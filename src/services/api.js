@@ -34,6 +34,7 @@ import {
   MOONPAY_API_URL,
   MOONPAY_KEY,
 } from 'react-native-dotenv';
+import axios, { AxiosResponse } from 'axios';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -73,6 +74,7 @@ import { getLimitedData } from './opensea';
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 export const API_REQUEST_TIMEOUT = 5000;
+export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
 
 type HistoryPayload = {
   address1: string,
@@ -383,15 +385,15 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
   const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
   return Promise.resolve()
-    .then(() => fetch(url, {
-      method: 'GET',
+    .then(() => axios.get(url, {
+      ...defaultAxiosRequestConfig,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'X-API-KEY': OPEN_SEA_API_KEY,
       },
     }))
-    .then(data => data.json())
+    .then(({ data }: AxiosResponse) => data)
     .catch(() => ({ error: true }));
 };
 
@@ -798,8 +800,8 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
   if (NETWORK_PROVIDER !== 'homestead') {
     const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
     return Promise.resolve()
-      .then(() => fetch(url))
-      .then(resp => resp.json())
+      .then(() => axios.get(url, defaultAxiosRequestConfig))
+      .then(({ data }: AxiosResponse) => data)
       .catch(() => []);
   }
   return Promise.resolve()
@@ -814,8 +816,8 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
   + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()
-    .then(() => fetch(url))
-    .then(resp => resp.json())
+    .then(() => axios.get(url, defaultAxiosRequestConfig))
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       if (data.totalAmount) {
         const {
@@ -847,8 +849,8 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
 
 SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
   const url = `${MOONPAY_API_URL}/v3/currencies`;
-  return fetch(url)
-    .then(resp => resp.json())
+  return axios.get(url, defaultAxiosRequestConfig)
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
     })
@@ -857,8 +859,8 @@ SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
 
 SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset: string, amount: number) {
   return Promise.resolve()
-    .then(() => fetch(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`))
-    .then(resp => resp.json())
+    .then(() => axios.get(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`, defaultAxiosRequestConfig))
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       if (data[fromAsset + toAsset]) {
         return {
@@ -880,8 +882,8 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
 };
 
 SDKWrapper.prototype.fetchSendWyreSupportedAssetsTickers = function () {
-  return fetch(`${SENDWYRE_API_URL}/v3/rates`)
-    .then(resp => resp.json())
+  return axios.get(`${SENDWYRE_API_URL}/v3/rates`, defaultAxiosRequestConfig)
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       const exchangePairs = Object.keys(data);
       const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>
