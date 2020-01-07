@@ -18,27 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableNativeFeedback, Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
 import Icon from 'components/Icon';
-
-const StyledItemTouchable = styled.TouchableHighlight`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const StyledItemView = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
+import NativeTouchable from 'components/NativeTouchable';
 
 const ItemRow = styled.View`
   flex-direction: row;
@@ -102,31 +89,6 @@ const ChevronIcon = styled(Icon)`
   font-size: ${fontSizes.small}px;
 `;
 
-const ButtonWrapper = ({ onPress, children }) => {
-  if (Platform.OS === 'android') {
-    return (
-      <TouchableNativeFeedback
-        onPress={onPress}
-        background={TouchableNativeFeedback.Ripple()}
-        disabled={!onPress}
-      >
-        <StyledItemView>
-          {children}
-        </StyledItemView>
-      </TouchableNativeFeedback>
-    );
-  }
-  return (
-    <StyledItemTouchable
-      onPress={onPress}
-      underlayColor={baseColors.lightGray}
-      disabled={!onPress}
-    >
-      {children}
-    </StyledItemTouchable>
-  );
-};
-
 type Props = {
   label: string,
   onPress?: ?Function,
@@ -155,7 +117,7 @@ export const ListItemChevron = (props: Props) => {
   } = props;
   return (
     <ListItem bordered={bordered} style={wrapperStyle}>
-      <ButtonWrapper onPress={onPress}>
+      <NativeTouchable onPress={onPress}>
         <ItemRow>
           <ContentWrapper>
             <TextWrapper>
@@ -179,7 +141,7 @@ export const ListItemChevron = (props: Props) => {
             />
           </AddonWrapper>
         </ItemRow>
-      </ButtonWrapper>
+      </NativeTouchable>
     </ListItem>
   );
 };
