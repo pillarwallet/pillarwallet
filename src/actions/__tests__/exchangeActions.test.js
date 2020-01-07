@@ -20,6 +20,7 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
+import axios from 'axios';
 import PillarSdk from 'services/api';
 import {
   SET_EXCHANGE_SEARCH_REQUEST,
@@ -66,23 +67,14 @@ const sendWyreOfferMock = {
   offerRestricted: null,
 };
 
-
 type SDK = {
   fetchMoonPayOffers: Function,
   fetchSendWyreOffers: Function,
 };
 
 const pillarSdk: SDK = new PillarSdk();
-pillarSdk.fetchMoonPayOffers = jest.fn(async () => {
-  return {
-    provider: PROVIDER_MOONPAY,
-  };
-});
-pillarSdk.fetchSendWyreOffers = jest.fn(async () => {
-  return {
-    provider: PROVIDER_SENDWYRE,
-  };
-});
+pillarSdk.fetchMoonPayOffers = jest.fn(() => Promise.resolve(({ provider: PROVIDER_MOONPAY })));
+pillarSdk.fetchSendWyreOffers = jest.fn(() => Promise.resolve(({ provider: PROVIDER_SENDWYRE })));
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
@@ -90,18 +82,17 @@ describe('Exchange Actions tests', () => {
   let store;
 
   beforeAll(() => {
-    // $FlowFixMe
-    global.fetch = jest.fn(async () => {
-      return {
-        json: () => {
-          return {
-            error: null,
-            isAllowed: true,
-            alpha2: 'US',
-          };
-        },
-      };
-    });
+    jest.spyOn(axios, 'get').mockImplementation(() => Promise.resolve({
+      data: {
+        error: null,
+        isAllowed: true,
+        alpha2: 'US',
+      },
+    }));
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   beforeEach(() => {
