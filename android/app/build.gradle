@@ -229,9 +229,6 @@ dependencies {
   implementation 'io.intercom.android:intercom-sdk-base:5.+'
   implementation 'io.intercom.android:intercom-sdk-fcm:5.+'
   implementation 'com.android.support:exifinterface:28.0.1'
-  implementation 'com.squareup.okhttp3:okhttp:3.4.1'
-  implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
-  implementation 'com.squareup.okio:okio:1.9.0'
   implementation project(':react-native-scrypt')
   implementation project(':lottie-react-native')
   implementation project(':rn-signal-protocol-messaging')
