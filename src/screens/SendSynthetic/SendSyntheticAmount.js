@@ -60,6 +60,7 @@ import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Trans
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import HeaderSyntheticAssetTitle from 'components/HeaderBlock/HeaderSyntheticAssetTitle';
 
+
 type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
@@ -70,6 +71,7 @@ type Props = {
   isOnline: boolean,
   fetchSingleAssetRates: (assetCode: string) => void,
   availableSyntheticAssets: SyntheticAsset[],
+  availableStake: string,
 };
 
 type State = {
@@ -81,14 +83,21 @@ type State = {
 
 const { Form } = t.form;
 
-const generateFormStructure = (intentError: ?string, maxAmount: number, decimals: number) => {
+const generateFormStructure = (
+  intentError: ?string,
+  maxAmount: number,
+  decimals: number,
+  availableStake: number,
+  exchangeRate: number,
+) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
     amount = amount.toString();
 
     return isValidNumber(amount)
       && isValidNumberDecimals(amount, decimals)
       && !intentError
-      && parseFloat(amount) <= maxAmount;
+      && parseNumber(amount) <= maxAmount
+      && parseNumber(amount) * exchangeRate <= availableStake;
   });
 
   Amount.getValidationErrorMessage = (amount) => {
@@ -100,6 +109,8 @@ const generateFormStructure = (intentError: ?string, maxAmount: number, decimals
       return 'Amount should not exceed the max available';
     } else if (!isValidNumberDecimals(amount, decimals)) {
       return 'Amount should not contain decimal places';
+    } else if (parseNumber(amount) * exchangeRate > availableStake) {
+      return `Not enough ${PLR}`;
     }
 
     return intentError;
@@ -154,7 +165,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   source: string;
   assetData: AssetData;
   availableSyntheticBalance: number;
-  availableMetaTokenBalance: number;
+  syntheticExchangeRate: number;
 
   constructor(props: Props) {
     super(props);
@@ -169,8 +180,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     this.assetData = getNavigationParam('assetData', {});
     const fetchedSyntheticAsset = availableSyntheticAssets.find(({ symbol }) => symbol === this.assetData.token);
     this.availableSyntheticBalance = get(fetchedSyntheticAsset, 'availableBalance', 0);
-    const initialExchangeRate = get(fetchedSyntheticAsset, 'exchangeRate', 0);
-    this.availableMetaTokenBalance = this.availableSyntheticBalance * initialExchangeRate;
+    this.syntheticExchangeRate = get(fetchedSyntheticAsset, 'exchangeRate', 0);
 
     const intentError = !this.availableSyntheticBalance
       ? 'Asset has no available liquidity'
@@ -285,7 +295,12 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { rates, baseFiatCurrency, isOnline } = this.props;
+    const {
+      rates,
+      baseFiatCurrency,
+      isOnline,
+      availableStake,
+    } = this.props;
     const {
       value,
       submitPressed,
@@ -298,7 +313,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
     // balances
     const balanceFormatted = formatAmount(this.availableSyntheticBalance);
-    const metaBalanceFormatted = formatAmount(this.availableMetaTokenBalance);
+    const metaBalanceFormatted = formatAmount(this.availableSyntheticBalance * this.syntheticExchangeRate);
 
     // value
     const currentAmount = parseNumericAmount(value);
@@ -314,7 +329,13 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
     // form
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const formStructure = generateFormStructure(intentError, this.availableSyntheticBalance, decimals);
+    const formStructure = generateFormStructure(
+      intentError,
+      this.availableSyntheticBalance,
+      decimals,
+      parseFloat(availableStake),
+      this.syntheticExchangeRate,
+    );
     const formFields = getAmountFormFields({
       icon,
       currency: symbol,
@@ -386,12 +407,14 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   session: { data: { isOnline } },
   synthetics: { data: availableSyntheticAssets },
+  paymentNetwork: { availableStake },
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   rates,
   baseFiatCurrency,
   isOnline,
   availableSyntheticAssets,
+  availableStake,
 });
 
 const structuredSelector = createStructuredSelector({

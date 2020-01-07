@@ -34,11 +34,15 @@ import {
 // utils, services
 import { getAssetData, getAssetsAsList } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
+import { parseNumber } from 'utils/common';
 
-// types
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+// selectors
 import { accountAssetsSelector } from 'selectors/assets';
+
+// models, types
 import type { SyntheticAsset } from 'models/Asset';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 
 export const initSyntheticsServiceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -92,7 +96,7 @@ export const fetchAvailableSyntheticAssetsAction = () => {
     // PLR is default available
     const defaultAvailableSyntheticAssets = [{
       ...getAssetData(assetsData, supportedAssets, PLR),
-      availableBalance: availableStake,
+      availableBalance: parseNumber(availableStake),
     }];
 
     const availableAssets: SyntheticAsset = syntheticAssets.reduce((availableList, syntheticAsset) => {
