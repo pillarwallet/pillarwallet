@@ -296,7 +296,7 @@ class PeopleScreen extends React.Component<Props, State> {
     });
   };
 
-  renderContact = (item) => {
+  renderContact = ({ item }) => {
     const { unread = 0, status = '' } = item;
     const unreadCount = unread > 9 ? '9+' : unread;
     const newMessageText = unread > 1 ? 'New Messages' : 'New Message';
