@@ -50,7 +50,6 @@ import {
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
-import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -67,7 +66,7 @@ import Spinner from 'components/Spinner';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import { isCaseInsensitiveMatch } from 'utils/common';
-import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // models
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
@@ -379,7 +378,6 @@ class Contact extends React.Component<Props, State> {
       relatedTransactions = [],
     } = this.state;
 
-    const currentTheme = getThemeType(theme);
     const colors = getThemeColors(theme);
     const contactName = navigation.getParam('username', '');
     const contact = navigation.getParam('contact', { username: contactName });
@@ -437,7 +435,6 @@ class Contact extends React.Component<Props, State> {
                 initialsSize={48}
                 diameter={184}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
-                noShadow={currentTheme === DARK_THEME}
               />
             </ProfileImageWrapper>
             {isAccepted &&
