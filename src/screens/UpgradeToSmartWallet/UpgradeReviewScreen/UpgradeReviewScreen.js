@@ -67,9 +67,10 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { Collectible } from 'models/Collectible';
 
 // utils
-import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { formatAmount, getGasPriceWei } from 'utils/common';
 import { getAssetsAsList, getBalance } from 'utils/assets';
+import { themedColors } from 'utils/themes';
 import { accountAssetsSelector } from 'selectors/assets';
 
 
@@ -116,7 +117,7 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 
@@ -292,7 +293,6 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review' }] }}
-        backgroundColor={baseColors.white}
       >
         <ScrollView>
           <Paragraph small style={{ margin: spacing.large }}>

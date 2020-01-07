@@ -1,6 +1,0 @@
-{
-  "name": "Market",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./Market.js"
-}

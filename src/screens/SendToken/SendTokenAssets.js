@@ -44,7 +44,7 @@ import DeploymentView from 'components/DeploymentView';
 
 import { formatAmount, formatMoney } from 'utils/common';
 import { getAssetsAsList, getBalance } from 'utils/assets';
-import { spacing, UIColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM, SMART_WALLET_INTRO } from 'constants/navigationConstants';
@@ -95,7 +95,6 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const ContentBackground = styled(Wrapper)`
    flex: 1;
-   background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const InnerWrapper = styled(Wrapper)`

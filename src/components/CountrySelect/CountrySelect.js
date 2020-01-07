@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import SearchBar from 'components/SearchBar';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Wrapper } from 'components/Layout';
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import countries from 'utils/countries.json';
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
@@ -81,7 +81,6 @@ export default class CountrySelect extends React.Component<Props, State> {
               autoCapitalize: 'none',
             }}
             placeholder="Search"
-            backgroundColor={baseColors.white}
           />
         </SearchBarWrapper>
         <FlatList

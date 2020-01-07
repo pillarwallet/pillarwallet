@@ -35,14 +35,15 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
-import { UIColors, spacing, baseColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 const FooterWrapper = styled.View`
   justify-content: center;
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.surface};
 `;
 
 type Props = {
@@ -130,7 +131,7 @@ class BackupPhrase extends React.Component<Props, State> {
           </FooterWrapper>
         )}
       >
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper regularPadding>
           <Paragraph style={{ marginTop: spacing.medium }}>
             Write down your 12 word backup phrase in the correct order.
           </Paragraph>

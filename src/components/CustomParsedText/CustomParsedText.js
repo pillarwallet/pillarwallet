@@ -1,16 +1,22 @@
 // @flow
 import React from 'react';
 import { Linking } from 'react-native';
-import { appFont, baseColors, UIColors } from 'utils/variables';
 import ParsedText from 'react-native-parsed-text';
+import { withTheme } from 'styled-components';
+import { appFont } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
 import { handleUrlPress } from 'utils/common';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
   text: string,
+  theme: Theme,
 }
 
 export const CustomParsedText = (props: Props) => {
+  const { theme } = props;
+  const colors = getThemeColors(theme);
   const onPhonePress = (phone) => {
     Linking.openURL(`tel:${phone}`);
   };
@@ -19,7 +25,7 @@ export const CustomParsedText = (props: Props) => {
     Linking.openURL(`mailto:${email}`);
   };
 
-  const linkStyle = { color: baseColors.clearBlue };
+  const linkStyle = { color: colors.primary };
 
   return (
     <ParsedText
@@ -27,7 +33,7 @@ export const CustomParsedText = (props: Props) => {
         fontFamily: appFont.regular,
         includeFontPadding: false,
         textAlignVertical: 'center',
-        color: UIColors.defaultTextColor,
+        color: colors.text,
       }}
       parse={[
         { type: 'url', style: linkStyle, onPress: (url) => handleUrlPress(url) },
@@ -39,4 +45,6 @@ export const CustomParsedText = (props: Props) => {
     </ParsedText>
   );
 };
+
+export default withTheme(CustomParsedText);
 

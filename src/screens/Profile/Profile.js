@@ -58,7 +58,8 @@ import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { fontTrackings, baseColors, spacing, fontStyles } from 'utils/variables';
+import { fontTrackings, spacing, fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
@@ -75,15 +76,13 @@ const chat = new ChatService();
 
 const ListWrapper = styled.View`
   padding-bottom: 40px;
-  background-color: ${baseColors.lighterGray};
 `;
 
 const ListSeparator = styled.View`
   padding: 20px ${spacing.rhythm}px;
   border-top-width: ${props => props.first ? 0 : '1px'};
   border-bottom-width: 1px;
-  border-color: ${baseColors.lightGray};
-  background-color: ${baseColors.lighterGray};
+  border-color: ${themedColors.border};
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -404,14 +403,13 @@ class Profile extends React.Component<Props, State> {
 
     const isWalletBackedUp = isImported || isBackedUp;
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
+      <Container inset={{ bottom: 0 }}>
         <Header white title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={showTrackingModal}
           fullScreen
           showHeader
           onModalHide={this.toggleTrackingModal}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -444,7 +442,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
         >
           <Wrapper flex={1}>
@@ -461,7 +458,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -480,7 +476,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -507,7 +502,6 @@ class Profile extends React.Component<Props, State> {
           title="Phone verification"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -529,7 +523,6 @@ class Profile extends React.Component<Props, State> {
           title="Claim tokens"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -550,7 +543,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -574,7 +566,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your base currency
@@ -840,7 +831,6 @@ class Profile extends React.Component<Props, State> {
               isVisible={showJoinBetaModal}
               fullScreen
               showHeader
-              backgroundColor={baseColors.snowWhite}
               onModalHidden={this.onJoinBetaModalHidden}
               avoidKeyboard
               title="join beta"
