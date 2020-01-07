@@ -879,10 +879,10 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.38.1666":
-  version "1.38.1666"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.38.1666.tgz#8a997e7b4129dc3c92bab26696b68e2ba017e9bd"
-  integrity sha1-ipl+e0Ep3DySurJmlraOK6AX6b0=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.39.1686":
+  version "1.39.1686"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.39.1686.tgz#c90740564713cb5f6a95d63a437f76f9635f59ac"
+  integrity sha1-yQdAVkcTy19qldY6Q392+WNfWaw=
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
@@ -10037,11 +10037,6 @@ postinstall-build@^5.0.1:
   version "5.0.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/postinstall-build/-/postinstall-build-5.0.3.tgz#238692f712a481d8f5bc8960e94786036241efc7"
   integrity sha1-I4aS9xKkgdj1vIlg6UeGA2JB78c=
-
-postinstall-postinstall@^2.0.0:
-  version "2.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/postinstall-postinstall/-/postinstall-postinstall-2.0.0.tgz#7ba6711b4420575c4f561638836a81faad47f43f"
-  integrity sha1-e6ZxG0QgV1xPVhY4g2qB+q1H9D8=
 
 pouchdb-abstract-mapreduce@6.4.3:
   version "6.4.3"
