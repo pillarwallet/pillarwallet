@@ -73,7 +73,7 @@ type SDK = {
 };
 
 const pillarSdk: SDK = new PillarSdk();
-pillarSdk.fetchMoonPayOffers = jest.fn(() => Promise.resolve(({ provider: PROVIDER_MOONPAY })));
+pillarSdk.fetchMoonPayOffers = jest.fn(() => Promise.resolve({ provider: PROVIDER_MOONPAY }));
 pillarSdk.fetchSendWyreOffers = jest.fn(() => Promise.resolve({ provider: PROVIDER_SENDWYRE }));
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
