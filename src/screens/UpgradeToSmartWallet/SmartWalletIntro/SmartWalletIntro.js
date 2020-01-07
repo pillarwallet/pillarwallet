@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { StyleSheet } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -33,8 +33,9 @@ import { LabelBadge } from 'components/LabelBadge';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 
-import { baseColors, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
+import { getThemeColors, themedColors } from 'utils/themes';
 // import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 // import { getRate } from 'utils/assets';
 
@@ -42,6 +43,7 @@ import { CHOOSE_ASSETS_TO_TRANSFER, EXCHANGE, ASSETS } from 'constants/navigatio
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import type { Theme } from 'models/Theme';
 // import smartWalletService from 'services/smartWallet';
 
 
@@ -50,6 +52,7 @@ type Props = {
   addNetwork: Function,
   baseFiatCurrency: ?string,
   deploySmartWallet: Function,
+  theme: Theme,
 }
 
 type State = {
@@ -62,18 +65,18 @@ const CustomWrapper = styled.View`
 `;
 
 const Title = styled(BoldText)`
-  color: ${baseColors.persianBlue};
+  color: ${themedColors.smartWalletText};
   ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
-  color: ${baseColors.persianBlue};
+  color: ${themedColors.smartWalletText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
 
 // const FeeText = styled(MediumText)`
-//   color: ${baseColors.darkGray};
+//   color: ${themedColors.secondaryText};
 //   font-size: ${fontSizes.rMedium}px;
 //   line-height: ${responsiveSize(22)}px;
 //   margin-top: ${responsiveSize(16)}px;
@@ -88,7 +91,7 @@ const ActionsWrapper = styled(Wrapper)`
   margin: 10px -20px 50px;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 
@@ -113,7 +116,9 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
       deploySmartWallet,
       // gasInfo,
       // rates,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
     const isDeploy = navigation.getParam('deploy', false);
 
     // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -129,7 +134,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ floating: true }}
-        backgroundColor={baseColors.zircon}
+        backgroundColor={colors.smartWalletSurface}
       >
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
@@ -156,17 +161,17 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
               title={isDeploy ? 'Deploy' : 'Proceed'}
               onPress={() => { this.setState({ showDeployPayOptions: true }); }}
               style={{
-                backgroundColor: baseColors.persianBlue,
+                backgroundColor: colors.smartWalletText,
                 marginTop: 40,
                 marginBottom: 20,
                 borderRadius: 6,
               }}
-              textStyle={{ color: baseColors.white }}
+              textStyle={{ color: colors.control }}
             />
             { /* <ListItemChevron
               label="Enable with PLR available"
               onPress={() => () => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
-              color={baseColors.persianBlue}
+              color={colors.smartWalletText}
               bordered
             /> */ }
           </ButtonWrapper>
@@ -187,7 +192,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
                     });
                   });
                 }}
-                color={baseColors.persianBlue}
+                color={colors.smartWalletText}
                 bordered
                 subtextAddon={(<LabelBadge label="NEW" />)}
               />
@@ -204,7 +209,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
                     }
                   });
                 }}
-                color={baseColors.persianBlue}
+                color={colors.smartWalletText}
                 bordered
               />
             </ActionsWrapper>
@@ -230,4 +235,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SmartWalletIntro);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(SmartWalletIntro));
