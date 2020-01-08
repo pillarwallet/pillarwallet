@@ -386,7 +386,6 @@ class Button extends React.Component<Props, State> {
   };
 
   render() {
-    // const customTheme = getTheme(this.props);
     const customTheme = themes[getThemeType(this.props)];
     const {
       disabled,
