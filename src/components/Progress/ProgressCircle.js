@@ -36,7 +36,7 @@ type Props = {
   theme: Theme,
 };
 
-class CircularProgress extends React.Component<Props, {}> {
+class CircularProgress extends React.Component<Props> {
   getCartesian(centerX: number, centerY: number, radius: number, angleInDeg: number) {
     const angleInRad = ((angleInDeg - 90) * Math.PI) / 180.0;
     return {
