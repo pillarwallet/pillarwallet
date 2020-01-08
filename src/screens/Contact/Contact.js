@@ -430,7 +430,6 @@ class Contact extends React.Component<Props, State> {
                 borderWidth={4}
                 initialsSize={48}
                 diameter={184}
-                // style={{ backgroundColor: baseColors.geyser }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
               />
             </ProfileImageWrapper>
