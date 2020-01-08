@@ -92,26 +92,32 @@ export const fetchAvailableSyntheticAssetsAction = () => {
 
     const result = await syntheticsService.getDataFromLiquidityPool().catch(() => []);
     const syntheticAssets = get(result, 'output.liquidityPools', []);
+    const syntheticExchangeRates = get(result, 'output.rates', []);
 
     // PLR is default available
     const defaultAvailableSyntheticAssets = [{
       ...getAssetData(assetsData, supportedAssets, PLR),
       availableBalance: parseNumber(availableStake),
+      exchangeRate: 1,
     }];
 
-    const availableAssets: SyntheticAsset = syntheticAssets.reduce((availableList, syntheticAsset) => {
-      const assetSymbol = get(syntheticAsset, 'token.symbol');
-      const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
-      const availableBalance = Number(get(syntheticAsset, 'value', 0));
-      if (!isEmpty(assetData)) {
-        availableList.push({
-          ...assetData,
-          availableBalance,
-          exchangeRate: 1.2, // TODO: wire with updated back-end response
-        });
-      }
-      return availableList;
-    }, defaultAvailableSyntheticAssets);
+    const availableAssets: SyntheticAsset = syntheticAssets
+      .reduce((availableList, syntheticAsset) => {
+        const assetSymbol = get(syntheticAsset, 'token.symbol');
+        const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
+        const availableBalance = Number(get(syntheticAsset, 'value', 0));
+        const assetExchangeRate = syntheticExchangeRates.find(({ from }) => from === assetSymbol);
+        if (!isEmpty(assetData) && !isEmpty(assetExchangeRate)) {
+          availableList.push({
+            ...assetData,
+            availableBalance,
+            exchangeRate: assetExchangeRate.rate,
+          });
+        }
+        return availableList;
+      }, defaultAvailableSyntheticAssets)
+      .filter(({ exchangeRate = 0 }) => exchangeRate !== 0);
+
 
     dispatch({ type: SET_AVAILABLE_SYNTHETIC_ASSETS, payload: availableAssets });
   };

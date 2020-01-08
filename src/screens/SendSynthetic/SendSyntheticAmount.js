@@ -110,7 +110,7 @@ const generateFormStructure = (
     } else if (!isValidNumberDecimals(amount, decimals)) {
       return 'Amount should not contain decimal places';
     } else if (parseNumber(amount) * exchangeRate > availableStake) {
-      return `Not enough ${PLR}`;
+      return 'Not enough PLR, please top up';
     }
 
     return intentError;
@@ -291,7 +291,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
   useMaxValue = () => {
     const amount = formatAmount(this.availableSyntheticBalance);
-    this.setState({ value: { amount } });
+    this.setState({ value: { amount } }, () => this.syntheticsForm.validate()); // set and validate
   };
 
   render() {
