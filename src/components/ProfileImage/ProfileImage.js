@@ -21,7 +21,7 @@ import * as React from 'react';
 import { ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
 import { themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
@@ -41,10 +41,11 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.needBackground ? themedColors.userAvatar : baseColors.lightGray)};
+  background-color: ${({ needBackground, theme }) =>
+    needBackground ? theme.colors.userAvatar : theme.colors.secondaryAccent};
   ${props => (props.additionalContainerStyle)};
   position: relative;
-  border: ${props => `${props.borderWidth}px solid ${props.borderColor || baseColors.white}`};
+  border: ${({ borderWidth, borderColor, theme }) => `${borderWidth}px solid ${borderColor || theme.colors.card}`};
   overflow: hidden;
   justify-content: center;
   align-items: center;
@@ -60,7 +61,7 @@ const InnerBackground = styled.View`
 
 const InnerUsername = styled(MediumText)`
   font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
-  color: ${baseColors.white};
+  color: ${themedColors.control};
 `;
 
 type Props = {

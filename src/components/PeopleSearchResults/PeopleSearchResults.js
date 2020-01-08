@@ -26,7 +26,8 @@ import unionBy from 'lodash.unionby';
 import intersectionBy from 'lodash.intersectionby';
 import { TYPE_INVITE, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
-import { baseColors, fontSizes, fontStyles, itemSizes, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, itemSizes, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { SubHeadingMedium, BaseText } from 'components/Typography';
@@ -46,11 +47,10 @@ const ContactCardList = styled.FlatList`
 `;
 
 const LocalContacts = styled.View`
-  background-color: ${baseColors.lighterGray};
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const LocalContactsScrollView = styled.ScrollView`
@@ -73,7 +73,7 @@ const LocalContactsItem = styled.TouchableOpacity`
 
 const LocalContactsItemName = styled(BaseText)`
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   padding: 0 4px;
   margin-top: 3px;
 `;

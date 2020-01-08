@@ -63,10 +63,10 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
 
 // utils
-import { baseColors, UIColors } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import { isCaseInsensitiveMatch } from 'utils/common';
+import { themedColors } from 'utils/themes';
 
 // models
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
@@ -91,9 +91,8 @@ const CircleButtonsWrapper = styled.View`
     android: '0px',
   })};
   padding-bottom: 30px;
-  background-color: ${baseColors.snowWhite};
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
   justify-content: center;
   align-items: center;
   flex-direction: row;
@@ -104,7 +103,6 @@ const EmptyStateWrapper = styled.View`
 `;
 
 const ContentWrapper = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
   padding-top: ${Platform.select({
     ios: '25px',
     android: '19px',
@@ -410,7 +408,6 @@ class Contact extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={isAccepted ? baseColors.white : UIColors.defaultBackgroundColor}
         inset={{ bottom: 'never' }}
         headerProps={{ centerItems: [{ title: contactUsername }] }}
       >
@@ -433,7 +430,6 @@ class Contact extends React.Component<Props, State> {
                 borderWidth={4}
                 initialsSize={48}
                 diameter={184}
-                style={{ backgroundColor: baseColors.geyser }}
                 imageUpdateTimeStamp={displayContact.lastUpdateTime}
               />
             </ProfileImageWrapper>

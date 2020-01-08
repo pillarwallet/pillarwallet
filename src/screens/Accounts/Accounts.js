@@ -30,7 +30,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Loader from 'components/Loader';
-import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import { BaseText } from 'components/Typography';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import { ScrollWrapper } from 'components/Layout';

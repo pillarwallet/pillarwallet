@@ -20,8 +20,8 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { MediumText, BaseText } from 'components/Typography';
-import { fontTrackings, baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
-import styled from 'styled-components/native';
+import { fontTrackings, fontSizes, spacing, fontStyles } from 'utils/variables';
+import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
@@ -33,6 +33,8 @@ import {
   TYPE_ACCEPTED,
 } from 'constants/invitationsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
+import { getThemeColors, themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 const genericToken = require('assets/images/tokens/genericToken.png');
 
@@ -47,9 +49,10 @@ type Props = {
   touchDisabled?: boolean,
   imageDiameter?: number,
   imageWrapperStyle?: Object,
+  theme: Theme,
 }
 
-const getEventInfo = (eventType, eventStatus) => {
+const getEventInfo = (eventType, eventStatus, colors) => {
   if (eventType === TRANSACTION_EVENT) {
     const isConfirmed = eventStatus === TX_CONFIRMED_STATUS;
     const isFailed = eventStatus === TX_FAILED_STATUS;
@@ -57,55 +60,49 @@ const getEventInfo = (eventType, eventStatus) => {
     if (isConfirmed) {
       return {
         title: 'Success',
-        background: baseColors.freshEucalyptus,
         iconName: 'tick-circle',
+        iconColor: colors.positive,
       };
     }
     if (isFailed) {
       return {
         title: 'Failed',
-        background: baseColors.burningFire,
         iconName: 'warning-circle',
+        iconColor: colors.negative,
       };
     }
     return {
       title: 'Pending',
-      background: baseColors.burningFire,
       iconName: 'pending-circle',
     };
   }
   if (eventStatus === TYPE_RECEIVED) {
     return {
       title: 'Incoming connection',
-      background: baseColors.rose,
       iconName: 'connection-circle',
     };
   }
   if (eventStatus === TYPE_ACCEPTED) {
     return {
       title: 'Connection established',
-      background: baseColors.cerulean,
       iconName: 'connection-circle',
     };
   }
   if (eventType === COLLECTIBLE_TRANSACTION) {
     return {
       title: eventStatus === COLLECTIBLE_SENT ? 'Collectible sent' : 'Collectible received',
-      background: baseColors.shark,
       iconName: null,
     };
   }
   if (eventType === BADGE_REWARD_EVENT) {
     return {
       title: 'Badge received',
-      background: baseColors.shark,
       iconName: null,
     };
   }
 
   return {
     title: 'Requested',
-    background: baseColors.electricBlue,
     iconName: 'connection-circle',
   };
 };
@@ -116,9 +113,10 @@ const Wrapper = styled.View`
   border-top-right-radius: 30px;
   overflow: hidden;
   padding: ${spacing.mediumLarge}px 50px;
-  background-color: ${props => props.background};
   align-items: center;
   justify-content: center;
+  border-bottom-width: 1px;
+  border-bottom-color: ${themedColors.border};
 `;
 
 const CloseIcon = styled(IconButton)`
@@ -136,7 +134,6 @@ const CloseIcon = styled(IconButton)`
 const EventTitle = styled(MediumText)`
   ${fontStyles.large};
   letter-spacing: ${fontTrackings.tiny}px;
-  color: ${baseColors.white};
   margin: 2px 0;
   text-align: center;
 `;
@@ -144,7 +141,6 @@ const EventTitle = styled(MediumText)`
 const EventSubtitle = styled(BaseText)`
   ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.mediumLarge}px;
-  color: ${baseColors.white};
   margin: 2px 0;
   text-align: center;
 `;
@@ -167,7 +163,7 @@ const ImageTouchable = styled.TouchableOpacity`
   margin-top: 12px;
   justify-content: center;
   align-items: center;
-  background-color: ${baseColors.lightGray};
+  background-color: ${themedColors.secondaryAccent};
 `;
 
 const EventHeader = (props: Props) => {
@@ -182,17 +178,19 @@ const EventHeader = (props: Props) => {
     touchDisabled,
     imageDiameter,
     imageWrapperStyle,
+    theme,
   } = props;
 
-  const thisEvent = getEventInfo(eventType, eventStatus);
+  const colors = getThemeColors(theme);
+  const thisEvent = getEventInfo(eventType, eventStatus, colors);
   // in case iconUrl is an empty string, but it's an COLLECTIBLE TRX event
   const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION || eventType === BADGE_REWARD_EVENT;
 
   return (
-    <Wrapper background={thisEvent.background}>
+    <Wrapper>
       <CloseIcon
         icon="close"
-        color={baseColors.white}
+        color={colors.text}
         onPress={onClose}
         fontSize={fontSizes.medium}
       />
@@ -202,7 +200,7 @@ const EventHeader = (props: Props) => {
       <EventIcon
         name={thisEvent.iconName}
         style={{
-          color: baseColors.white,
+          color: thisEvent.iconColor || colors.primary,
           fontSize: 58,
         }}
       />}
@@ -225,4 +223,4 @@ const EventHeader = (props: Props) => {
   );
 };
 
-export default EventHeader;
+export default withTheme(EventHeader);
