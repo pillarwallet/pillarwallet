@@ -45,10 +45,11 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
 import { formatAmount, formatAmountDisplay, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
+import { themedColors } from 'utils/themes';
 
 // models, types
 import type { GasInfo } from 'models/GasInfo';
@@ -82,7 +83,6 @@ const Value = styled(MediumText)`
 
 const LabelSub = styled(BaseText)`
   margin-top: 5px;
-  color: ${baseColors.black};
   ${fontStyles.regular};
 `;
 
@@ -99,7 +99,7 @@ const ButtonWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 
@@ -121,7 +121,7 @@ const WalletSwitcher = styled.TouchableOpacity`
 `;
 
 const SeparatorValue = styled(Value)`
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   margin: 0px 8px;
 `;
 
@@ -134,7 +134,7 @@ const ChevronWrapper = styled.View`
 
 const SelectorChevron = styled(Icon)`
   font-size: 8px;
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
 `;
 
 type Props = {

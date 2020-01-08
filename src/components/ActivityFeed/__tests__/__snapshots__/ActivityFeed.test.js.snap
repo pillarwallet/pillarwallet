@@ -165,8 +165,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                 "justifyContent": "center",
                 "opacity": 1,
                 "paddingBottom": 8,
-                "paddingLeft": 20,
-                "paddingRight": 20,
+                "paddingLeft": 16,
+                "paddingRight": 16,
                 "paddingTop": 8,
                 "width": "100%",
               }
@@ -190,7 +190,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#ffffff",
+                      "backgroundColor": "#FFFFFF",
                       "borderColor": "#EDEDED",
                       "borderRadius": 28,
                       "borderStyle": "solid",
@@ -567,8 +567,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                 "justifyContent": "center",
                 "opacity": 1,
                 "paddingBottom": 8,
-                "paddingLeft": 20,
-                "paddingRight": 20,
+                "paddingLeft": 16,
+                "paddingRight": 16,
                 "paddingTop": 8,
                 "width": "100%",
               }
@@ -592,7 +592,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#ffffff",
+                      "backgroundColor": "#FFFFFF",
                       "borderColor": "#EDEDED",
                       "borderRadius": 28,
                       "borderStyle": "solid",

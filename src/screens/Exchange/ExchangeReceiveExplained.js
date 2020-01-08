@@ -25,18 +25,17 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
 
 // util
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
 const SeparatorValue = styled(Paragraph)`
-  color: ${baseColors.coolGrey};
   padding: 0px 8px;
 `;
 
-const ArrowSymbol = () => <SeparatorValue>&nbsp;&rarr;&nbsp;</SeparatorValue>;
+const ArrowSymbol = () => <SeparatorValue light>&nbsp;&rarr;&nbsp;</SeparatorValue>;
 
 class ExchangeReceiveExplained extends React.Component<Props> {
   assetSymbol: string;

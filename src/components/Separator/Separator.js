@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   spaceOnLeft?: number,
@@ -32,7 +32,7 @@ const SeparatorWrapper = styled.View`
 const SeparatorLine = styled.View`
   width: 100%;
   height: 1px;
-  background-color: ${UIColors.defaultDividerColor};
+  background-color: ${themedColors.border};
 `;
 
 const Separator = (props: Props) => {

@@ -24,8 +24,8 @@ import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import { baseColors, fontStyles } from 'utils/variables';
-
+import { fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   messages?: Array<string>,
@@ -50,7 +50,7 @@ const ContentHolder = styled.View`
 
 const MessageText = styled(MediumText)`
   ${fontStyles.large};
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   position: absolute;
   top: 62px;
   left: 0;

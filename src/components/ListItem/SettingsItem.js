@@ -19,11 +19,13 @@
 */
 import * as React from 'react';
 import { Platform, TouchableNativeFeedback, StyleSheet } from 'react-native';
-import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import styled, { withTheme } from 'styled-components/native';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { Switch, Badge as NBBadge } from 'native-base';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
+import { getThemeColors, themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   label: string,
@@ -34,6 +36,7 @@ type Props = {
   value?: ?string | ?boolean,
   disabled?: ?boolean,
   bordered?: ?boolean,
+  theme: Theme,
 }
 
 const StyledItemTouchable = styled.TouchableHighlight`
@@ -56,11 +59,11 @@ const ItemLabelHolder = styled.View`
   justify-content: space-between;
   align-items: center;
   padding: 22px ${spacing.large}px 24px;
- ${props => props.bordered
+ ${({ bordered, theme }) => bordered
     ? `
     border-bottom-width: ${StyleSheet.hairlineWidth}px;
     border-top-width: ${StyleSheet.hairlineWidth}px;
-    border-color: ${baseColors.mediumLightGray};
+    border-color: ${theme.colors.border};
     `
     : ''}
 `;
@@ -78,7 +81,7 @@ const Badge = styled(NBBadge)`
 `;
 
 const BadgeText = styled(BaseText)`
-  color: ${baseColors.white};
+  color: ${themedColors.control};
   font-size: ${fontSizes.small}px;
   text-align: center;
   width: 100%;
@@ -86,13 +89,13 @@ const BadgeText = styled(BaseText)`
 `;
 
 const ItemLabel = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   ${fontStyles.big};
 `;
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.medium}px;
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   flex-wrap: wrap;
   text-align: center;
   margin-left: ${spacing.medium}px
@@ -103,7 +106,7 @@ const ItemValue = styled(BaseText)`
 const WarningIcon = styled(Icon)`
   font-size: ${fontSizes.big}px;
   margin-right: 10px;
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
 `;
 
 const ListAddon = styled.View`
@@ -115,7 +118,8 @@ const ListAddon = styled.View`
   min-width: 70px;
 `;
 
-const ButtonWrapper = ({ onPress, children }) => {
+const ButtonWrapper = ({ onPress, children, theme }) => {
+  const colors = getThemeColors(theme);
   if (Platform.OS === 'android') {
     return (
       <TouchableNativeFeedback
@@ -131,14 +135,14 @@ const ButtonWrapper = ({ onPress, children }) => {
   return (
     <StyledItemTouchable
       onPress={onPress}
-      underlayColor={baseColors.lightGray}
+      underlayColor={colors.secondaryAccent}
     >
       {children}
     </StyledItemTouchable>
   );
 };
 
-export default class SettingsListItem extends React.Component<Props> {
+class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
     const {
       label,
@@ -184,6 +188,7 @@ export default class SettingsListItem extends React.Component<Props> {
       onPress,
       toggle,
       value,
+      theme,
     } = this.props;
 
     let processedValue;
@@ -201,9 +206,11 @@ export default class SettingsListItem extends React.Component<Props> {
     }
 
     return (
-      <ButtonWrapper onPress={onPress}>
+      <ButtonWrapper onPress={onPress} theme={theme}>
         {this.renderContent(processedValue)}
       </ButtonWrapper>
     );
   }
 }
+
+export default withTheme(SettingsListItem);

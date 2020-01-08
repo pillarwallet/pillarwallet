@@ -23,7 +23,6 @@ import { Animated, Dimensions, Keyboard, PanResponder } from 'react-native';
 import SearchBar from 'components/SearchBar';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation } from 'react-navigation';
-import { baseColors } from 'utils/variables';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -50,7 +49,7 @@ const SearchBarWrapper = styled.View`
   width: 100%;
   position: relative;
   z-index: 101;
-  background-color: ${props => props.isFocused ? baseColors.white : 'transparent'};
+  background-color: ${({ isFocused, theme }) => isFocused ? theme.colors.card : 'transparent'};
 `;
 
 const FullScreenOverlayWrapper = styled.View`

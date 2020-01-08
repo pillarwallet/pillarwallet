@@ -19,10 +19,13 @@
 */
 import * as React from 'react';
 import { ImageBackground, Image } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { baseColors, fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import { getThemeType, themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   disabled?: boolean,
@@ -32,6 +35,14 @@ type Props = {
   fontIcon?: string,
   fontIconStyle?: Object,
   showIndicator?: boolean,
+  theme: Theme,
+}
+
+type ButtonIconWrapperProps = {
+  disabled?: boolean,
+  showIndicator?: boolean,
+  theme: Theme,
+  children: React.Node,
 }
 
 const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
@@ -42,14 +53,27 @@ const CircleButtonWrapper = styled.TouchableOpacity`
   padding: 8px 4px 0px;
 `;
 
-const CircleButtonIconWrapper = styled.View`
-  border-radius: 46;
-  width: 92px;
-  height: 92px;
+const ButtonWrapperStyles = `
   justify-content: center;
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+const CircleButtonIconWrapper = styled.View`
+  border-radius: 46px;
+  width: 92px;
+  height: 92px;
+  ${ButtonWrapperStyles}
+`;
+
+const ButtonWrapper = styled.View`
+  border-radius: 32px;
+  width: 64px;
+  height: 64px;
+  margin: 14px;
+  ${ButtonWrapperStyles}
+  background-color: ${themedColors.card};
 `;
 
 const CircleButtonIcon = styled(Image)`
@@ -61,7 +85,7 @@ const CircleButtonIcon = styled(Image)`
 `;
 
 const CircleButtonText = styled(BaseText)`
-  color: ${props => props.disabled ? baseColors.mediumGray : baseColors.electricBlue};
+  color: ${({ disabled, theme }) => disabled ? theme.colors.secondaryText : theme.colors.primary};
   opacity: ${props => props.disabled ? 0.7 : 1};
   text-align: center;
   font-size: ${fontSizes.medium}px;
@@ -72,7 +96,7 @@ const CircleButtonText = styled(BaseText)`
 const Indicator = styled.View`
   width: 12px;
   height: 12px;
-  background-color: ${baseColors.sunYellow};
+  background-color: ${themedColors.indicator};
   border-radius: 6px;
   position: absolute;
   top: 17px;
@@ -82,16 +106,48 @@ const Indicator = styled.View`
 const actionButtonBackground = require('assets/images/bg_action_button.png');
 const actionButtonBackgroundDisabled = require('assets/images/bg_action_button_disabled.png');
 
+const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
+  const {
+    disabled,
+    showIndicator,
+    theme,
+    children,
+  } = props;
+  const themeType = getThemeType(theme);
+
+  if (themeType === DARK_THEME) {
+    return (
+      <ButtonWrapper>
+        {children}
+        {showIndicator && <Indicator />}
+      </ButtonWrapper>
+    );
+  }
+  return (
+    <ImageBackground
+      source={disabled ? actionButtonBackgroundDisabled : actionButtonBackground}
+      style={{ width: 92, height: 92 }}
+    >
+      <CircleButtonIconWrapper
+        disabled={disabled}
+        colors={CircleButtonIconWrapperColors}
+      >
+        {children}
+        {showIndicator && <Indicator />}
+      </CircleButtonIconWrapper>
+    </ImageBackground>
+  );
+};
 
 const CircleButton = (props: Props) => {
   const {
     disabled,
-    onPress,
     icon,
-    label,
     fontIcon,
     fontIconStyle,
-    showIndicator,
+    onPress,
+    label,
+    theme,
   } = props;
 
   return (
@@ -99,36 +155,26 @@ const CircleButton = (props: Props) => {
       disabled={disabled}
       onPress={() => onPress()}
     >
-      <ImageBackground
-        source={disabled ? actionButtonBackgroundDisabled : actionButtonBackground}
-        style={{ width: 92, height: 92 }}
-      >
-        <CircleButtonIconWrapper
+      <ButtonIconWrapper {...props} theme={theme}>
+        {!!icon &&
+        <CircleButtonIcon
           disabled={disabled}
-          colors={CircleButtonIconWrapperColors}
-        >
-          {!!icon &&
-          <CircleButtonIcon
-            disabled={disabled}
-            source={icon}
-            resizeMode="contain"
-            resizeMethod="resize"
-          />}
-          {!!fontIcon &&
-          <Icon
-            name={fontIcon}
-            style={{
-              fontSize: fontSizes.big,
-              color: baseColors.electricBlue,
-              alignSelf: 'center',
-              ...fontIconStyle,
-              opacity: disabled ? 0.3 : 1,
-            }}
-          />}
-          {showIndicator && <Indicator />}
-        </CircleButtonIconWrapper>
-
-      </ImageBackground>
+          source={icon}
+          resizeMode="contain"
+          resizeMethod="resize"
+        />}
+        {!!fontIcon &&
+        <Icon
+          name={fontIcon}
+          style={{
+            fontSize: fontSizes.big,
+            color: baseColors.electricBlue,
+            alignSelf: 'center',
+            ...fontIconStyle,
+            opacity: disabled ? 0.3 : 1,
+          }}
+        />}
+      </ButtonIconWrapper>
       <CircleButtonText disabled={disabled}>
         {label}
       </CircleButtonText>
@@ -136,4 +182,4 @@ const CircleButton = (props: Props) => {
   );
 };
 
-export default CircleButton;
+export default withTheme(CircleButton);

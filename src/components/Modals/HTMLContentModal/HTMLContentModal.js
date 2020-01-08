@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import Modal from 'react-native-modal';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { StyleSheet, ScrollView } from 'react-native';
 import HTMLView from 'react-native-htmlview';
 import get from 'lodash.get';
@@ -29,16 +29,19 @@ import Spinner from 'components/Spinner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // utils
-import { fontSizes, lineHeights, baseColors, appFont, spacing } from 'utils/variables';
+import { fontSizes, lineHeights, appFont, spacing } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
 
 // types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   htmlEndpoint: string,
   onModalHide?: Function,
   isVisible: boolean,
   modalHide: Function,
+  theme: Theme,
 };
 
 type State = {
@@ -61,33 +64,32 @@ const ActivityIndicatorWrapper = styled.View`
   justify-content: center;
 `;
 
-const commonTextStyle = {
-  color: 'black',
-  fontFamily: appFont.regular,
-};
-
 const boldStyle = { fontFamily: appFont.medium };
 
-const baseStyles = StyleSheet.create({
-  b: boldStyle,
-  strong: boldStyle,
-  a: {
-    ...boldStyle,
-    color: baseColors.electricBlue,
-    fontSize: fontSizes.regular,
-    lineHeight: lineHeights.regular,
-  },
-  li: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-  p: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-  h1: { ...boldStyle, fontSize: fontSizes.giant, lineHeight: lineHeights.giant },
-  h2: { ...boldStyle, fontSize: fontSizes.large, lineHeight: lineHeights.large },
-  h3: { ...boldStyle, fontSize: fontSizes.big, lineHeight: lineHeights.big },
-  h4: { ...boldStyle, fontSize: fontSizes.medium, lineHeight: lineHeights.medium },
-  h5: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-  h6: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
-});
+const baseStyles = (colors) => {
+  return (
+    StyleSheet.create({
+      b: boldStyle,
+      strong: boldStyle,
+      a: {
+        ...boldStyle,
+        color: colors.primary,
+        fontSize: fontSizes.regular,
+        lineHeight: lineHeights.regular,
+      },
+      li: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+      p: { fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+      h1: { ...boldStyle, fontSize: fontSizes.giant, lineHeight: lineHeights.giant },
+      h2: { ...boldStyle, fontSize: fontSizes.large, lineHeight: lineHeights.large },
+      h3: { ...boldStyle, fontSize: fontSizes.big, lineHeight: lineHeights.big },
+      h4: { ...boldStyle, fontSize: fontSizes.medium, lineHeight: lineHeights.medium },
+      h5: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+      h6: { ...boldStyle, fontSize: fontSizes.regular, lineHeight: lineHeights.regular },
+    })
+  );
+};
 
-export default class HTMLContentModal extends React.Component<Props, State> {
+class HTMLContentModal extends React.Component<Props, State> {
   scrollViewRef: React.ElementRef<ScrollView>;
 
   constructor(props: Props) {
@@ -157,6 +159,7 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     const {
       isVisible,
       modalHide,
+      theme,
     } = this.props;
     const {
       htmlData,
@@ -168,6 +171,13 @@ export default class HTMLContentModal extends React.Component<Props, State> {
 
     const animationInTiming = 400;
     const animationOutTiming = 400;
+
+    const colors = getThemeColors(theme);
+
+    const commonTextStyle = {
+      color: colors.text,
+      fontFamily: appFont.regular,
+    };
 
     return (
       <Modal
@@ -214,7 +224,7 @@ export default class HTMLContentModal extends React.Component<Props, State> {
               <HTMLView
                 value={htmlData}
                 textComponentProps={{ style: commonTextStyle }}
-                stylesheet={baseStyles}
+                stylesheet={baseStyles(colors)}
                 renderNode={this.renderNode}
                 style={{ marginBottom: 10 }}
                 paragraphBreak={null}
@@ -226,3 +236,5 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     );
   }
 }
+
+export default withTheme(HTMLContentModal);
