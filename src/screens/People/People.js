@@ -126,7 +126,7 @@ const InnerWrapper = styled.View`
 `;
 
 const ReferralCTAWrapper = styled.View`
-yarn   padding: 38px 30px 0 30px;
+  padding: 38px 30px 0 30px;
   border-radius: 6px;
   border: 1px solid ${themedColors.border};
   position: relative;
