@@ -24,7 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
-import { BaseText } from 'components/Typography';
+import { withTheme } from 'styled-components';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
@@ -105,6 +105,7 @@ import LogoutPendingScreen from 'screens/LogoutPending';
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
+import { BaseText } from 'components/Typography';
 
 // actions
 import {
@@ -228,9 +229,12 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
 // utils
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { getThemeColors } from 'utils/themes';
+
+import type { Theme } from 'models/Theme';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -341,8 +345,13 @@ const homeFlow = createStackNavigator({
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
-  const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
+const tabBarIcon = ({
+  iconActive,
+  icon,
+  hasIndicator,
+  theme,
+}) => ({ focused }) => {
+  const colors = getThemeColors(theme);
 
   return (
     <View style={{ padding: 4 }}>
@@ -350,16 +359,17 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
         style={{
           width: 24,
           height: 24,
+          tintColor: focused ? colors.primary : colors.secondaryText,
         }}
         resizeMode="contain"
         source={focused ? iconActive : icon}
       />
-      {!!hasAddon && (
+      {!!hasIndicator && (
         <View
           style={{
             width: 8,
             height: 8,
-            backgroundColor: notificationColor,
+            backgroundColor: colors.indicator,
             borderRadius: 4,
             position: 'absolute',
             top: 4,
@@ -371,18 +381,21 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
   );
 };
 
-const tabBarLabel = labelText => ({ focused, tintColor }) => (
-  <BaseText
-    style={{
-      fontSize: fontSizes.regular,
-      color: focused ? tintColor : baseColors.mediumGray,
-      textAlign: 'center',
-    }}
-    numberOfLines={1}
-  >
-    {labelText}
-  </BaseText>
-);
+const tabBarLabel = ({ text, theme }) => ({ focused }) => {
+  const colors = getThemeColors(theme);
+  return (
+    <BaseText
+      style={{
+        fontSize: fontSizes.regular,
+        color: focused ? colors.primary : colors.secondaryText,
+        textAlign: 'center',
+      }}
+      numberOfLines={1}
+    >
+      {text}
+    </BaseText>
+  );
+};
 
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
@@ -390,46 +403,55 @@ const tabNavigation = createBottomTabNavigator(
     [HOME_TAB]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(
-          iconHomeActive,
-          iconHome,
-          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount),
-        ),
-        tabBarLabel: tabBarLabel('Home'),
+        tabBarIcon: tabBarIcon({
+          iconActive: iconHomeActive,
+          icon: iconHome,
+          hasIndicator: !navigation.isFocused() && (screenProps.hasUnreadNotifications
+            || !!screenProps.intercomNotificationsCount),
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Home', theme: screenProps.theme }),
       }),
     },
     [ASSETS]: {
       screen: assetsFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
-        tabBarLabel: tabBarLabel('Assets'),
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconWalletActive,
+          icon: iconWallet,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Assets', theme: screenProps.theme }),
       }),
     },
     [PEOPLE]: {
       screen: peopleFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(
-          iconPeopleActive,
-          iconPeople,
-          !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
-        tabBarLabel: tabBarLabel('People'),
+        tabBarIcon: tabBarIcon({
+          iconActive: iconPeopleActive,
+          icon: iconPeople,
+          hasIndicator: !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'People', theme: screenProps.theme }),
       }),
     },
     [EXCHANGE_TAB]: {
       screen: exchangeFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),
-        tabBarLabel: tabBarLabel('Exchange'),
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconExchangeActive,
+          icon: iconExchange,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Exchange', theme: screenProps.theme }),
       }),
     },
   }, {
     tabBarOptions: {
-      activeTintColor: UIColors.primary,
-      inactiveTintColor: 'gray',
-      activeBackgroundColor: 'white',
-      inactiveBackgroundColor: 'white',
       style: {
-        backgroundColor: 'white',
         elevation: 14,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -2 },
@@ -671,6 +693,7 @@ type Props = {
   isOnline: boolean,
   initSignal: Function,
   endWalkthrough: () => void,
+  theme: Theme,
 }
 
 type State = {
@@ -819,6 +842,7 @@ class AppFlow extends React.Component<Props, State> {
       navigation,
       backupStatus,
       smartWalletFeatureEnabled,
+      theme,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
@@ -837,6 +861,7 @@ class AppFlow extends React.Component<Props, State> {
           intercomNotificationsCount,
           isWalletBackedUp,
           smartWalletFeatureEnabled,
+          theme,
         }}
         navigation={navigation}
       />
@@ -907,4 +932,4 @@ const ConnectedAppFlow = connect(
 ConnectedAppFlow.router = AppFlowNavigation.router;
 ConnectedAppFlow.defaultNavigationOptions = AppFlowNavigation.defaultNavigationOptions;
 
-export default ConnectedAppFlow;
+export default withTheme(ConnectedAppFlow);

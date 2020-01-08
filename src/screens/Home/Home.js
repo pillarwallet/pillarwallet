@@ -33,7 +33,7 @@ import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -138,7 +138,7 @@ type State = {
 };
 
 const WalletConnectWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.large}px 0;
+  padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
   background-color: ${themedColors.surface};
   width: 100%;
 `;
@@ -146,11 +146,11 @@ const WalletConnectWrapper = styled.View`
 const ListHeader = styled(MediumText)`
   color: ${themedColors.accent};
   ${fontStyles.regular};
-  margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
+  margin: ${spacing.medium}px ${spacing.layoutSides}px ${spacing.small}px;
 `;
 
 const BadgesWrapper = styled.View`
-  padding: ${spacing.medium}px 0;
+  padding-top: ${spacing.medium}px;
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${themedColors.border};
@@ -464,8 +464,8 @@ class HomeScreen extends React.Component<Props, State> {
               horizontal
               keyExtractor={(item) => (item.id.toString())}
               renderItem={this.renderBadge}
-              style={{ width: '100%' }}
-              contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle }}
+              style={{ width: '100%', paddingBottom: spacing.medium }}
+              contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
               initialNumToRender={5}
               ListEmptyComponent={(
                 <EmptyStateWrapper>

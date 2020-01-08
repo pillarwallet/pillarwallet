@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { BaseText, Paragraph } from 'components/Typography';
 
 type Props = {
@@ -35,7 +35,6 @@ const EmptySectionTextWrapper = styled.View`
 
 const EmptySectionTitle = styled(BaseText)`
   ${fontStyles.big};
-  color: ${baseColors.slateBlack};
   margin-bottom: 6px;
   text-align: center;
 `;

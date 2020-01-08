@@ -18,11 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, appFont, spacing } from 'utils/variables';
+import styled, { withTheme } from 'styled-components/native';
 import { Animated, Dimensions, Keyboard } from 'react-native';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+
+import { fontSizes, appFont, spacing } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
+
+import type { Theme } from 'models/Theme';
 
 const { width } = Dimensions.get('window');
 const componentWidth = width - (spacing.large * 2);
@@ -55,7 +59,7 @@ const InputField = styled.TextInput`
   flex: 1;
   height: 42px;
   padding-left: 14px;
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   font-size: ${fontSizes.regular}px;
   font-family: ${appFont.regular};
 `;
@@ -63,7 +67,7 @@ const InputField = styled.TextInput`
 const InputIcon = styled(IconButton)`
   flex: 0 0 20px;
   position: absolute;
-  right: 12px;
+  right: 10px;
   top: 7px;
 `;
 
@@ -86,6 +90,7 @@ type Props = {
   inputRef?: Object,
   customCloseAction?: Function,
   forceShowCloseButton?: boolean,
+  theme: Theme,
 };
 
 type State = {
@@ -183,24 +188,26 @@ class SearchBar extends React.Component<Props, State> {
       inputRef,
       customCloseAction,
       forceShowCloseButton,
+      theme,
     } = this.props;
     const {
       animShrink,
       isFocused,
     } = this.state;
     const { value = '' } = inputProps;
+    const colors = getThemeColors(theme);
 
     return (
       <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
         <Animated.View
           style={{
             ...animatedInputFieldStyles,
-            borderColor: isFocused ? UIColors.focusedBorderColor : baseColors.solitude,
+            borderColor: isFocused ? colors.primary : colors.tertiary,
             width: animShrink.interpolate({
               inputRange: [0, 1],
               outputRange: ['0%', '1%'],
             }),
-            backgroundColor: backgroundColor || baseColors.white,
+            backgroundColor: backgroundColor || colors.tertiary,
           }}
         >
           <InputField
@@ -210,7 +217,7 @@ class SearchBar extends React.Component<Props, State> {
             onBlur={this.handleBlur}
             value={value}
             placeholder={placeholder}
-            placeholderTextColor={UIColors.placeholderTextColor}
+            placeholderTextColor={colors.secondaryText}
             underlineColorAndroid="transparent"
             autoCorrect={false}
             innerRef={inputRef}
@@ -221,14 +228,14 @@ class SearchBar extends React.Component<Props, State> {
             iconStyle={{
               width: 24,
               height: 24,
-              color: baseColors.electricBlue,
+              color: colors.primary,
               fontSize: 24,
             }}
           />
         </Animated.View>
         {(isFocused || !!value || forceShowCloseButton) &&
         <CancelButton onPress={customCloseAction || this.handleCancel}>
-          <BaseText style={{ color: baseColors.electricBlue }}>Close</BaseText>
+          <BaseText style={{ color: colors.primary }}>Close</BaseText>
         </CancelButton>
         }
       </SearchHolder>
@@ -236,4 +243,4 @@ class SearchBar extends React.Component<Props, State> {
   }
 }
 
-export default SearchBar;
+export default withTheme(SearchBar);

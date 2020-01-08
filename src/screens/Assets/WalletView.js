@@ -453,7 +453,7 @@ class WalletView extends React.Component<Props, State> {
           searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
           onSearchChange={this.handleSearchChange}
           wrapperStyle={{
-            paddingHorizontal: spacing.large,
+            paddingHorizontal: spacing.layoutSides,
             paddingVertical: spacing.mediumLarge,
             marginBottom: searchMarginBottom,
           }}

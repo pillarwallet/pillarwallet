@@ -19,17 +19,19 @@
 */
 import * as React from 'react';
 import { Dimensions } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
+import { spacing, fontSizes, fontStyles } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { responsiveSize } from 'utils/ui';
 import { noop } from 'utils/common';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   icon?: string,
@@ -51,6 +53,7 @@ type Props = {
   onSettingsLoadingPress?: Function,
   settingsIconSource?: string,
   sidePaddingsForWidth?: number,
+  theme: Theme,
 }
 
 const ItemWrapper = styled.View`
@@ -73,25 +76,25 @@ const CardContent = styled.View`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   font-size: ${fontSizes.big}px;
   line-height: 24px;
 `;
 
 const CardSubtitle = styled(BaseText)`
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   ${fontStyles.medium};
 `;
 
 const CheckIcon = styled(Icon)`
   font-size: ${fontSizes.rSmall}px;
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
   align-self: flex-start;
 `;
 
 const SettingsIcon = styled(Icon)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.malibu};
+  color: ${themedColors.primary};
 `;
 
 const IconWrapper = styled.View`
@@ -105,11 +108,11 @@ const CardImage = styled(CachedImage)`
   height: ${iconRadius}px;
   width: ${iconRadius}px;
   border-radius: ${iconRadius / 2}px;
-  background-color: ${baseColors.darkGray};
+  background-color: ${themedColors.secondaryAccent};
 `;
 const SettingsLabel = styled(MediumText)`
   ${fontStyles.rRegular};
-  color: ${baseColors.malibu};
+  color: ${themedColors.primary};
   margin-top: 4px;
 `;
 
@@ -147,7 +150,7 @@ const SettingsIconComponent = (props) => {
   );
 };
 
-export const SettingsItemCarded = (props: Props) => {
+const SettingsItemCarded = (props: Props) => {
   const {
     title,
     subtitle,
@@ -163,8 +166,10 @@ export const SettingsItemCarded = (props: Props) => {
     settingsLabel,
     isLoading,
     sidePaddingsForWidth,
+    theme,
   } = props;
 
+  const colors = getThemeColors(theme);
   const buttonSideLength = responsiveSize(84);
   const settingsActionOnLoading = onSettingsLoadingPress || noop;
   const settingsAction = isLoading ? settingsActionOnLoading : onSettingsPress;
@@ -190,7 +195,7 @@ export const SettingsItemCarded = (props: Props) => {
           justifyContent: 'center',
           flexWrap: 'wrap',
           borderWidth: 2,
-          borderColor: isActive ? baseColors.electricBlue : baseColors.white,
+          borderColor: isActive ? colors.primary : 'transparent',
           borderRadius: 6,
         }}
         onPress={onMainPress}
@@ -250,3 +255,5 @@ export const SettingsItemCarded = (props: Props) => {
     </ItemWrapper>
   );
 };
+
+export default withTheme(SettingsItemCarded);

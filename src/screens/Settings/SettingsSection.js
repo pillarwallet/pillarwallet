@@ -27,15 +27,16 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 
 // utils
-import { baseColors, UIColors, fontStyles, spacing } from 'utils/variables';
+import { UIColors, fontStyles, spacing } from 'utils/variables';
 import { ListCard } from 'components/ListItem/ListCard';
+import { themedColors } from 'utils/themes';
 
 const SectionHeader = styled(MediumText)`
-  color: ${baseColors.blueYonder};
+  color: ${themedColors.accent};
   ${fontStyles.regular};
   margin-top: ${spacing.large}px;
   margin-bottom: 9px;
-  margin-horizontal: ${spacing.large}px;
+  margin-horizontal: ${spacing.layoutSides}px;
 `;
 
 const Separator = styled.View`
@@ -58,7 +59,7 @@ const Section = (props: Props) => {
         keyExtractor={item => item.key}
         data={sectionItems}
         style={{ marginTop: -spacing.medium }}
-        contentContainerStyle={{ width: '100%', paddingHorizontal: spacing.large, paddingTop: spacing.medium }}
+        contentContainerStyle={{ width: '100%', paddingHorizontal: spacing.layoutSides, paddingTop: spacing.medium }}
         renderItem={({ item }) => {
           const {
             title,
@@ -89,7 +90,7 @@ const Section = (props: Props) => {
   }
 
   return (
-    <View style={{ paddingHorizontal: spacing.large }}>
+    <View style={{ paddingHorizontal: spacing.layoutSides }}>
       <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }}>
         <FlatList
           keyExtractor={item => item.key}

@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import Modal from 'react-native-modal';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import Header from 'components/Header';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -27,6 +27,8 @@ import { Wrapper } from 'components/Layout';
 import { spacing, baseColors, UIColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
 import { Keyboard } from 'react-native';
+import { getThemeColors, themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 export type ScrollToProps = {
   x?: number,
@@ -63,23 +65,22 @@ type Props = {
   scrollOffsetMax?: ?number,
   handleScrollTo?: (ScrollToProps) => void,
   onSwipeComplete?: () => void,
+  theme: Theme,
 };
 
 const themes = {
   default: {
     padding: `0 ${spacing.rhythm}px`,
     borderRadius: '30px',
-    background: UIColors.defaultBackgroundColor,
   },
   fullScreen: {
     padding: 0,
     borderRadius: 0,
-    background: UIColors.defaultBackgroundColor,
   },
   eventDetail: {
     padding: 0,
     borderRadius: '30px',
-    background: 'transparent',
+    isTransparent: true,
   },
 };
 
@@ -119,7 +120,7 @@ const ModalBackground = styled.View`
   box-shadow: 0px 2px 7px rgba(0,0,0,.1);
   elevation: 1;
   margin-top: auto;
-  background-color: ${props => props.customTheme.background};
+  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.card};
 `;
 
 const ModalSubtitle = styled(SubTitle)`
@@ -148,15 +149,14 @@ const ModalOverflow = styled.View`
   width: 100%;
   height: 100px;
   margin-bottom: -100px;
-  background-color: ${baseColors.white};
+  background-color: ${themedColors.card};
 `;
 
-export default class SlideModal extends React.Component<Props, *> {
+class SlideModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
     subtitleStyles: {},
     titleStyles: {},
-    backgroundColor: baseColors.lightGray,
   };
 
   hideModal = () => {
@@ -200,7 +200,7 @@ export default class SlideModal extends React.Component<Props, *> {
       showHeader,
       centerTitle,
       noWrapTitle,
-      backgroundColor,
+      backgroundColor: bgColor,
       avoidKeyboard,
       eventDetail,
       scrollOffset,
@@ -208,16 +208,19 @@ export default class SlideModal extends React.Component<Props, *> {
       titleStyles,
       noSwipeToDismiss,
       scrollOffsetMax,
+      theme,
     } = this.props;
 
     const customTheme = getTheme(this.props);
+    const colors = getThemeColors(theme);
+    const backgroundColor = bgColor || colors.surface;
 
     const showModalHeader = !fullScreen || showHeader;
 
     const modalInner = (
       <React.Fragment>
         {showModalHeader &&
-          <HeaderWrapper fullScreen={fullScreen}>
+          <HeaderWrapper>
             <Header
               noMargin={!fullScreen}
               centerTitle={centerTitle}
@@ -316,3 +319,5 @@ export default class SlideModal extends React.Component<Props, *> {
     );
   }
 }
+
+export default withTheme(SlideModal);
