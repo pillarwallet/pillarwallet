@@ -24,6 +24,7 @@ import { Keyboard, Alert, FlatList } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
+import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
@@ -35,7 +36,6 @@ import TextInput from 'components/TextInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Spinner from 'components/Spinner';
-import HeaderSyntheticAssetTitle from 'components/HeaderBlock/HeaderSyntheticAssetTitle';
 
 // constants
 import { COLLECTIBLES, BTC } from 'constants/assetsConstants';
@@ -51,7 +51,7 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { addressValidator } from 'utils/validators';
 import { isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 
 // selectors
@@ -90,12 +90,18 @@ type State = {
 
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
   background-color: ${themedColors.card};
   border-bottom-color: ${themedColors.border};
   border-bottom-width: 1px;
+`;
+
+const ImageIcon = styled(CachedImage)`
+  width: 6px;
+  height: 12px;
 `;
 
 const { Form } = t.form;
@@ -368,15 +374,19 @@ class SendTokenContacts extends React.Component<Props, State> {
     const showContacts = isCollectible || token !== BTC;
     const tokenName = (isCollectible ? (name || token) : token) || 'asset';
 
-    const headerTitle = this.isPPNTransaction
-      ? { customTitle: <HeaderSyntheticAssetTitle title="Send" symbol={tokenName} /> }
-      : { title: `Send ${tokenName}` };
+    const headerTitleItems = this.isPPNTransaction
+      ? [
+        { title: 'Send' },
+        { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
+        { title: tokenName, color: baseColors.electricBlueIntense },
+      ]
+      : [{ title: `Send ${tokenName}` }];
 
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [headerTitle] }}
+        headerProps={{ centerItems: headerTitleItems }}
         inset={{ bottom: 0 }}
       >
         <FormWrapper>

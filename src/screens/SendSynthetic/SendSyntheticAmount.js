@@ -28,6 +28,7 @@ import t from 'tcomb-form-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
+import { CachedImage } from 'react-native-cached-image';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -41,7 +42,7 @@ import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
 import { fetchSingleAssetRatesAction } from 'actions/ratesActions';
 
 // utils, services
-import { fontStyles, spacing } from 'utils/variables';
+import { baseColors, fontStyles, spacing } from 'utils/variables';
 import { formatAmount, formatFiat, isValidNumber, isValidNumberDecimals, parseNumber } from 'utils/common';
 import { getAssetData, getAssetsAsList, getRate } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
@@ -59,7 +60,6 @@ import { accountAssetsSelector } from 'selectors/assets';
 import type { Asset, AssetData, Assets, Rates, SyntheticAsset } from 'models/Asset';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import HeaderSyntheticAssetTitle from 'components/HeaderBlock/HeaderSyntheticAssetTitle';
 
 
 type Props = {
@@ -81,6 +81,8 @@ type State = {
   intentError: ?string,
   inputHasError: boolean,
 };
+
+const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const { Form } = t.form;
 
@@ -157,6 +159,11 @@ const HelperText = styled(BaseText)`
 
 const TextRow = styled.View`
   flex-direction: row;
+`;
+
+const ImageIcon = styled(CachedImage)`
+  width: 6px;
+  height: 12px;
 `;
 
 class SendSyntheticAmount extends React.Component<Props, State> {
@@ -352,7 +359,13 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ customTitle: <HeaderSyntheticAssetTitle title="Send" symbol={symbol} /> }] }}
+        headerProps={{
+          centerItems: [
+            { title: 'Send' },
+            { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
+            { title: symbol, color: baseColors.electricBlueIntense },
+          ],
+        }}
         keyboardAvoidFooter={(
           <FooterInner>
             {showFeesLabel && <Label small>No fees - paid by Pillar</Label>}

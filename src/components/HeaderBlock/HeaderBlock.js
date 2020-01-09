@@ -245,31 +245,36 @@ class HeaderBlock extends React.Component<Props> {
   renderSideItems = (item, type = '') => {
     const { navigation, theme, onClose } = this.props;
     const colors = getThemeColors(theme);
+    const { style: itemStyle = {} } = item;
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
     if (item.user || item.userIcon) {
       return this.renderUser(!item.userIcon);
     }
-    if (item.title || item.customTitle) {
-      const titleItemKey = item.title || `${type}-${item.key}`;
+    if (item.title) {
       return (
-        <View style={{ ...commonStyle, flexDirection: 'row', flexWrap: 'wrap' }} key={titleItemKey}>
-          {!item.title && item.customTitle}
-          {!item.customTitle &&
-            <HeaderTitleText
-              style={item.color ? { color: item.color } : {}}
-              onPress={item.onPress}
-              centerText={type === CENTER}
-            >
-              {item.title}
-            </HeaderTitleText>
-          }
+        <View
+          style={{
+            ...commonStyle,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            ...itemStyle,
+          }}
+          key={item.title}
+        >
+          <HeaderTitleText
+            style={item.color ? { color: item.color } : {}}
+            onPress={item.onPress}
+            centerText={type === CENTER}
+          >
+            {item.title}
+          </HeaderTitleText>
         </View>
       );
     }
     if (item.icon) {
       return (
-        <View style={{ marginRight: -10, ...commonStyle }} key={item.icon}>
+        <View style={{ marginRight: -10, ...commonStyle, ...itemStyle }} key={item.icon}>
           <ActionIcon
             icon={item.icon}
             color={item.color || colors.text}
@@ -283,7 +288,11 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.iconSource) {
       return (
-        <TouchableOpacity onPress={item.onPress} key={item.key || item.iconSource} style={commonStyle}>
+        <TouchableOpacity
+          onPress={item.onPress}
+          key={item.key || item.iconSource}
+          style={{ ...commonStyle, ...itemStyle }}
+        >
           <IconImage source={item.iconSource} />
           {!!item.indicator && <Indicator />}
         </TouchableOpacity>
@@ -295,7 +304,7 @@ class HeaderBlock extends React.Component<Props> {
           onPress={item.onPress}
           key={item.link}
           withBackground={item.withBackground}
-          style={commonStyle}
+          style={{ ...commonStyle, ...itemStyle }}
         >
           <ButtonLabel>{item.link}</ButtonLabel>
           {item.addon}
@@ -314,7 +323,15 @@ class HeaderBlock extends React.Component<Props> {
       }
 
       return (
-        <View style={{ ...wrapperStyle, marginTop: -20, marginBottom: -20 }} key="close">
+        <View
+          style={{
+            ...wrapperStyle,
+            marginTop: -20,
+            marginBottom: -20,
+            ...itemStyle,
+          }}
+          key="close"
+        >
           <CloseIcon
             icon="close"
             color={colors.text}
@@ -326,10 +343,10 @@ class HeaderBlock extends React.Component<Props> {
       );
     }
     if (item.actionButton) {
-      return (<HeaderActionButton {...item.actionButton} wrapperStyle={commonStyle} />);
+      return (<HeaderActionButton {...item.actionButton} wrapperStyle={{ ...commonStyle, ...itemStyle }} />);
     }
     if (item.custom) {
-      return <View key={item.key || 'custom'} style={commonStyle}>{item.custom}</View>;
+      return <View key={item.key || 'custom'} style={{ ...commonStyle, ...itemStyle }}>{item.custom}</View>;
     }
     return null;
   };
