@@ -17,7 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { SYNTHETICS_URL } from 'react-native-dotenv';
+
+import { API_REQUEST_TIMEOUT } from './api';
+
 
 type SyntheticsConfig = {
   accessToken: string,
@@ -37,6 +41,7 @@ class SyntheticsService {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
+      timeout: API_REQUEST_TIMEOUT,
     };
   }
 
@@ -46,44 +51,40 @@ class SyntheticsService {
    * assetTo – asset symbol code
    */
   createExchangeIntent(assetToRecipient: string, assetToQuantity: number, assetTo: string) {
-    const urlPath = 'exchange/intent';
-    const body = JSON.stringify({
+    return axios.post(buildApiUrl('exchange/intent'), this.buildRequestConfigWithData({
       assetToRecipient,
       assetToQuantity,
       assetTo,
-    });
-    return fetch(buildApiUrl(urlPath), {
-      ...this.apiConfig,
-      method: 'POST',
-      body,
-    })
+    }))
       .then(this.handleResponse)
-      .catch(error => ({ error }));
+      .catch((error: AxiosError) => ({ error }));
   }
 
   commitTransaction(transactionId: string, transactionHash: string) {
-    const urlPath = 'exchange/commit';
-    const body = JSON.stringify({ transactionId, transactionHash });
-    return fetch(buildApiUrl(urlPath), {
-      ...this.apiConfig,
-      method: 'POST',
-      body,
-    })
+    return axios.post(buildApiUrl('exchange/commit'), this.buildRequestConfigWithData({
+      transactionId,
+      transactionHash,
+    }))
       .then(this.handleResponse)
-      .catch(error => ({ error }));
+      .catch((error: AxiosError) => ({ error }));
   }
 
   getDataFromLiquidityPool() {
-    const urlPath = 'exchange/data';
-    return fetch(buildApiUrl(urlPath))
+    return axios.get(buildApiUrl('exchange/data'), this.apiConfig)
       .then(this.handleResponse)
-      .catch(error => ({ error }));
+      .catch((error: AxiosError) => ({ error }));
   }
 
-  async handleResponse(responseResult: any) {
-    const response = await responseResult.json();
-    if (response.statusCode === 200) return response;
-    return Promise.reject(response);
+  handleResponse(response: AxiosResponse) {
+    if (response.status === 200) return response.data;
+    return Promise.reject(response.data);
+  }
+
+  buildRequestConfigWithData(data: Object) {
+    return {
+      ...this.apiConfig,
+      data: JSON.stringify(data),
+    };
   }
 }
 

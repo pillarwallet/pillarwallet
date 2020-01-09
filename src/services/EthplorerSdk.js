@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
+import axios, { AxiosResponse } from 'axios';
+
 import type {
   GetAddressHistoryParams,
   GetAddressHistoryResponse,
@@ -31,6 +33,9 @@ import type {
   GetTokenPriceHistoryGroupedResponse,
   GetTxInfoResponse,
 } from 'models/EthplorerSdkTypes';
+
+import { API_REQUEST_TIMEOUT } from './api';
+
 
 export function parseEthValue(value: number): string {
   let parsed = new BigNumber(10 ** 18).multipliedBy(value);
@@ -151,7 +156,7 @@ class EthplorerSdk {
   pubRequest(uri: string, params: string[] = []) {
     params.push(`apiKey=${this.apiKey}`);
     const url = `${this.baseURL}${uri}?${params.join('&')}`;
-    return fetch(url).then(data => data.json());
+    return axios.get(url, { timeout: API_REQUEST_TIMEOUT }).then(({ data }: AxiosResponse) => data);
   }
 }
 
