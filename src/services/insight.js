@@ -22,24 +22,19 @@ import { BITCOIN_INSIGHT_URL, BITCOIN_NETWORK } from 'react-native-dotenv';
 
 import { defaultAxiosRequestConfig } from './api';
 
-const buildRequestConfig = (data?: Object) => {
-  const requestConfig = {
-    ...defaultAxiosRequestConfig,
-    headers: {
-      Accept: 'application/json',
-    },
-  };
+const requestConfig = {
+  ...defaultAxiosRequestConfig,
+  headers: {
+    Accept: 'application/json',
+  },
+};
 
-  if (!data) return requestConfig;
-
-  return {
-    ...requestConfig,
-    headers: {
-      ...requestConfig.headers,
-      'Content-Type': 'application/json',
-    },
-    data: JSON.stringify(data),
-  };
+const postRequestConfig = {
+  ...requestConfig,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
 };
 
 const BTC_NET = BITCOIN_NETWORK === 'testnet' ? BITCOIN_NETWORK : 'mainnet';
@@ -52,23 +47,27 @@ const validateResponse = (name: string) => (response: AxiosResponse) => {
 };
 
 export const sendRawTransactionToNode = (rawtx: string) => axios
-  .post(`${BITCOIN_INSIGHT_URL}/tx/send?chain=BTC&network=${BTC_NET}`, buildRequestConfig({ rawTx: rawtx }))
+  .post(
+    `${BITCOIN_INSIGHT_URL}/tx/send?chain=BTC&network=${BTC_NET}`,
+    JSON.stringify({ rawTx: rawtx }),
+    postRequestConfig,
+  )
   .then(validateResponse('sendRawTransactionToNode'));
 
 export const getAddressUtxosFromNode = (address: string) => axios
-  .get(`${BITCOIN_INSIGHT_URL}/address/${address}/?unspent=true`, buildRequestConfig())
+  .get(`${BITCOIN_INSIGHT_URL}/address/${address}/?unspent=true`, requestConfig)
   .then(validateResponse('getAddressUtxosFromNode'));
 
 export const getAddressBalanceFromNode = (address: string) => axios
-  .get(`${BITCOIN_INSIGHT_URL}/address/${address}/balance`, buildRequestConfig())
+  .get(`${BITCOIN_INSIGHT_URL}/address/${address}/balance`, requestConfig)
   .then(validateResponse('getAddressBalanceFromNode'));
 
 export const getBTCTransactionsFromNode = (address: string) => axios
-  .get(`${BITCOIN_INSIGHT_URL}/address/${address}/txs?limit=0`, buildRequestConfig())
+  .get(`${BITCOIN_INSIGHT_URL}/address/${address}/txs?limit=0`, requestConfig)
   .then(validateResponse('getBTCTransactionsFromNode'))
   .then(txs => Promise.all(
     txs.map(e =>
-      axios.get(`${BITCOIN_INSIGHT_URL}/tx/${e.mintTxid}/populated`, buildRequestConfig())
+      axios.get(`${BITCOIN_INSIGHT_URL}/tx/${e.mintTxid}/populated`, requestConfig)
         .then(({ data }: AxiosResponse) => data)
         .then(txDetails => ({ ...e, details: txDetails }))
         .catch(() => ({ ...e, details: null })),
