@@ -94,10 +94,12 @@ export const fetchAvailableSyntheticAssetsAction = () => {
     const syntheticAssets = get(result, 'output.liquidityPools', []);
     const syntheticExchangeRates = get(result, 'output.rates', []);
 
+    const stakedPLR = parseNumber(availableStake);
+
     // PLR is default available
     const defaultAvailableSyntheticAssets = [{
       ...getAssetData(assetsData, supportedAssets, PLR),
-      availableBalance: parseNumber(availableStake),
+      availableBalance: stakedPLR,
       exchangeRate: 1,
     }];
 
@@ -105,13 +107,25 @@ export const fetchAvailableSyntheticAssetsAction = () => {
       .reduce((availableList, syntheticAsset) => {
         const assetSymbol = get(syntheticAsset, 'token.symbol');
         const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
-        const availableBalance = Number(get(syntheticAsset, 'value', 0));
+        const syntheticBalanceInPool = Number(get(syntheticAsset, 'value', 0));
         const assetExchangeRate = syntheticExchangeRates.find(({ from }) => from === assetSymbol);
         if (!isEmpty(assetData) && !isEmpty(assetExchangeRate)) {
+          /**
+           * calculate available balance according to how much PLR user has staked
+           * and how much of synthetic asset is available in pool
+           * i. e. if user has staked more than available in pool then max available amount is what's in the pool
+           * otherwise max available amount is according toi how much user has staked
+           */
+          const { rate: exchangeRate } = assetExchangeRate;
+          const syntheticBalanceByStaked = stakedPLR / exchangeRate;
+          const availableBalance = syntheticBalanceInPool < syntheticBalanceByStaked
+            ? syntheticBalanceInPool
+            : syntheticBalanceByStaked;
+
           availableList.push({
             ...assetData,
             availableBalance,
-            exchangeRate: assetExchangeRate.rate,
+            exchangeRate,
           });
         }
         return availableList;

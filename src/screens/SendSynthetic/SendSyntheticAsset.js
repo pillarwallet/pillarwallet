@@ -37,7 +37,7 @@ import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 
 // utils, services
 import { spacing } from 'utils/variables';
-import { formatMoney } from 'utils/common';
+import { formatAmount } from 'utils/common';
 
 // constants
 import { SEND_SYNTHETIC_UNAVAILABLE, SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
@@ -87,7 +87,7 @@ class SendSyntheticAsset extends React.Component<Props> {
 
     const { navigation } = this.props;
     const isAvailable = availableBalance > 0;
-    const balanceFormatted = isAvailable ? formatMoney(availableBalance) : '0';
+    const balanceFormatted = isAvailable ? formatAmount(availableBalance) : '0';
     const availableLabel = isAvailable ? 'In pool' : 'Unavailable';
     const assetData: AssetData = {
       token: assetSymbol,

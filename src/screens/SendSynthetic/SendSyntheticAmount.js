@@ -90,8 +90,6 @@ const generateFormStructure = (
   intentError: ?string,
   maxAmount: number,
   decimals: number,
-  availableStake: number,
-  exchangeRate: number,
 ) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
     amount = amount.toString();
@@ -99,8 +97,7 @@ const generateFormStructure = (
     return isValidNumber(amount)
       && isValidNumberDecimals(amount, decimals)
       && !intentError
-      && parseNumber(amount) <= maxAmount
-      && parseNumber(amount) * exchangeRate <= availableStake;
+      && parseNumber(amount) <= maxAmount;
   });
 
   Amount.getValidationErrorMessage = (amount) => {
@@ -112,8 +109,6 @@ const generateFormStructure = (
       return 'Amount should not exceed the max available';
     } else if (!isValidNumberDecimals(amount, decimals)) {
       return 'Amount should not contain decimal places';
-    } else if (parseNumber(amount) * exchangeRate > availableStake) {
-      return 'Not enough PLR, please top up';
     }
 
     return intentError;
@@ -306,7 +301,6 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
       isOnline,
-      availableStake,
     } = this.props;
     const {
       value,
@@ -340,8 +334,6 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       intentError,
       this.availableSyntheticBalance,
       decimals,
-      parseFloat(availableStake),
-      this.syntheticExchangeRate,
     );
     const formFields = getAmountFormFields({
       icon,
