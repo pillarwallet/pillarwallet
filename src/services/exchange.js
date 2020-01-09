@@ -204,11 +204,4 @@ export default class ExchangeService {
       .then(({ data }: AxiosResponse) => data)
       .catch(() => []);
   }
-
-  buildRequestConfigWithData(data: Object) {
-    return {
-      ...this.apiConfig,
-      data: JSON.stringify(data),
-    };
-  }
 }
