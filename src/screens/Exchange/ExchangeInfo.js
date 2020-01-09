@@ -44,7 +44,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 
 // utils
-import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { getProviderDisplayName } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
 
@@ -224,7 +224,7 @@ class ExchangeInfo extends React.Component<Props, State> {
         }}
         inset={{ bottom: 'never' }}
       >
-        <ScrollWrapper color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper>
           {!isEmpty(connectedProviders) &&
           <React.Fragment>
             <SectionTitle>Connected exchanges:</SectionTitle>

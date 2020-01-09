@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { SYNTHETICS_CONTRACT_ADDRESS } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -36,8 +36,9 @@ import TextInput from 'components/TextInput';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // util
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
+import { getThemeColors } from 'utils/themes';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -47,6 +48,7 @@ import type { Asset } from 'models/Asset';
 import type { SyntheticTransaction } from 'models/Transaction';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -55,6 +57,7 @@ type Props = {
   availableStake: number,
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  theme: Theme,
 };
 
 type State = {
@@ -128,7 +131,9 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
       availableStake,
       contacts,
       contactsSmartAddresses,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     const {
       fromAmount,
@@ -151,7 +156,7 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
           customOnBack: this.handleBack,
         }}
       >
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper regularPadding>
           <View>
             {!!recipientUsername &&
             <LabeledRow>
@@ -191,7 +196,7 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
             />
           }
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <Button
@@ -226,4 +231,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(SendSyntheticConfirm);
+export default withTheme(connect(combinedMapStateToProps)(SendSyntheticConfirm));

@@ -36,7 +36,7 @@ import { TooltipButton } from 'components/Button';
 import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 
 // utils, services
-import { spacing, UIColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { formatMoney } from 'utils/common';
 
 // constants
@@ -64,7 +64,6 @@ const InnerWrapper = styled(Wrapper)`
 
 const ContentBackground = styled(Wrapper)`
   flex: 1;
-  background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');

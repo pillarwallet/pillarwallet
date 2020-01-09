@@ -44,7 +44,7 @@ const ItemRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: ${spacing.large}px;
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
   min-height: 90px;
 `;
 
@@ -64,23 +64,23 @@ const AddonWrapper = styled.View`
 `;
 
 const ListItem = styled.View`
-  ${props => props.bordered
+  ${({ bordered, theme }) => bordered
     ? `
     border-bottom-width: ${StyleSheet.hairlineWidth}px;
     border-top-width: ${StyleSheet.hairlineWidth}px;
-    border-color: ${baseColors.mediumLightGray};
+    border-color: ${theme.colors.border};
     `
     : ''}
 `;
 
 const ItemLabel = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${props => props.color ? props.color : baseColors.electricBlue};
+  color: ${({ color, theme }) => color || theme.colors.primary};
 `;
 
 const SubText = styled(BaseText)`
   ${fontStyles.small};
-  color: ${props => props.color ? props.color : baseColors.darkGray};
+  color: ${({ color, theme }) => color || theme.colors.secondaryText};
   margin-top: 4px;
 `;
 
@@ -90,10 +90,16 @@ const ItemAddon = styled.View`
   align-items: center;
   margin-left: ${spacing.medium}px;
   padding-bottom: 2px;
-  
-`;const Row = styled.View`
+`;
+
+const Row = styled.View`
   flex-direction: row;
   align-items: center;
+`;
+
+const ChevronIcon = styled(Icon)`
+  color: ${({ color, theme }) => color || theme.colors.primary};
+  font-size: ${fontSizes.small}px;
 `;
 
 const ButtonWrapper = ({ onPress, children }) => {
@@ -166,13 +172,10 @@ export const ListItemChevron = (props: Props) => {
           </ContentWrapper>
           <AddonWrapper>
             {rightAddon}
-            <Icon
+            <ChevronIcon
               name="chevron-right"
-              style={{
-                fontSize: fontSizes.small,
-                color: color || baseColors.electricBlue,
-                ...chevronStyle,
-              }}
+              color={color}
+              style={chevronStyle}
             />
           </AddonWrapper>
         </ItemRow>
