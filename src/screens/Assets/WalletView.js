@@ -466,9 +466,9 @@ class WalletView extends React.Component<Props, State> {
         />}
         {!isInSearchAndFocus && !blockAssetsView &&
         <Tabs
-          initialActiveTab={activeTab}
           tabs={assetsTabs}
           wrapperStyle={{ paddingBottom: 0 }}
+          activeTab={activeTab}
         />}
         {isSearching &&
         <SearchSpinner center>
