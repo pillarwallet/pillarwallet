@@ -393,12 +393,10 @@ class SendSyntheticAmount extends React.Component<Props, State> {
               </TouchableOpacity>
             </ActionsWrapper>
             <TextRow>
-              <SendTokenDetailsValue>
-                {balanceFormatted} {symbol}&nbsp;
-                {symbol !== PLR && `(${metaBalanceFormatted} ${PLR})`}
-              </SendTokenDetailsValue>
+              <SendTokenDetailsValue>{balanceFormatted} {symbol}</SendTokenDetailsValue>
               <HelperText>{totalInFiatFormatted}</HelperText>
             </TextRow>
+            {symbol !== PLR && <SendTokenDetailsValue>{`(${metaBalanceFormatted} ${PLR})`}</SendTokenDetailsValue>}
           </Wrapper>
         </BackgroundWrapper>
       </ContainerWithHeader>
