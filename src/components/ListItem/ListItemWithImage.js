@@ -258,7 +258,7 @@ const IndicatorsRow = styled.View`
 const ActionLabel = styled.View`
   align-items: center;
   justify-content: center;
-  ${({ button, theme }) => button ? `border: 1px solid ${theme.colors.secondaryAccent}` : ''}
+  ${({ button, theme }) => button && `border: 1px solid ${theme.colors.border}`}
   ${({ button }) => button && 'border-radius: 3px;'}
   ${({ button }) => button && 'height: 34px;'}
 `;
@@ -400,7 +400,7 @@ const ImageAddon = (props: Props) => {
             name={imageAddonIconName}
             color={iconColor}
             fontSize={30}
-            style={{ lineHeight: 30, width: 30 }}
+            style={{ lineHeight: 30, width: 30, height: 30 }}
           />
         </IconCircle>
       </ImageAddonHolder>

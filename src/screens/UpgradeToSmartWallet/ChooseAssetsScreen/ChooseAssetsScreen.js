@@ -370,7 +370,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             onSearchFocus={() => this.setState({ disableScroll: true })}
             onSearchBlur={() => this.setState({ disableScroll: false })}
           />
-          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />
+          <Tabs tabs={assetsTabs} activeTab={activeTab} />
           {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
           {activeTab === COLLECTIBLES && this.renderCollectibles()}
         </ScrollView>

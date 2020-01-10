@@ -388,7 +388,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       topOffset,
       children,
       sheetHeight,
-      tabs,
+      tabs = [],
       activeTab,
       inverse,
       sheetWrapperStyle,
@@ -396,6 +396,8 @@ export default class BottomSheet extends React.Component<Props, State> {
       onHeaderLayout,
       constantScreenHeight,
     } = this.props;
+
+    const firstTab = tabs.length ? tabs[0].id : '';
 
     const openedSheetHeight = constantScreenHeight - topOffset;
 
@@ -502,7 +504,6 @@ export default class BottomSheet extends React.Component<Props, State> {
               <Cover />
               {!!tabs &&
               <Tabs
-                initialActiveTab={activeTab}
                 tabs={tabs}
                 wrapperStyle={{
                   position: 'absolute',
@@ -511,6 +512,7 @@ export default class BottomSheet extends React.Component<Props, State> {
                   zIndex: 2,
                   width: '100%',
                 }}
+                activeTab={activeTab || firstTab}
               />
               }
             </FloatingHeader>
