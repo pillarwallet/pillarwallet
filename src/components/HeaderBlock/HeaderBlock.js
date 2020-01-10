@@ -107,7 +107,6 @@ const HeaderTitle = styled(MediumText)`
 const UserButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  margin-right: ${spacing.medium}px;
 `;
 
 const CenterItems = styled.View`
@@ -349,7 +348,14 @@ class HeaderBlock extends React.Component<Props> {
           borderWidth={0}
         />
         {showName &&
-        <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginRight: spacing.medium,
+          }}
+        >
           <HeaderTitle style={{ marginLeft: 8 }}>{user.username}</HeaderTitle>
         </View>}
       </UserButton>
