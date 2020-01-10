@@ -29,7 +29,7 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
 import { setTopLevelNavigator } from 'services/navigation';
-import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
+import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
@@ -47,6 +47,7 @@ import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import configureStore from './src/configureStore';
 
@@ -70,7 +71,7 @@ type Props = {
   executeDeepLink: Function,
   activeWalkthroughSteps: Steps,
   themeType: string,
-  changeAppTheme: () => void,
+  changeAppTheme: (themeType: string) => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -172,7 +173,7 @@ class App extends React.Component<Props, *> {
                 setTopLevelNavigator(node);
               }}
             />
-            {!!__DEV__ &&
+            {!!SHOW_THEME_TOGGLE &&
             <TouchableOpacity
               style={{
                 padding: 20,
@@ -181,7 +182,10 @@ class App extends React.Component<Props, *> {
                 alignItems: 'center',
                 backgroundColor: colors.card,
               }}
-              onPress={changeAppTheme}
+              onPress={() => {
+                const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+                changeAppTheme(themeToChangeTo);
+              }}
             >
               <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
             </TouchableOpacity>}
@@ -210,7 +214,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
-  changeAppTheme: () => dispatch(changeAppThemeAction()),
+  changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

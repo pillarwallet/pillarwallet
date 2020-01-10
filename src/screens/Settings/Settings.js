@@ -32,6 +32,7 @@ import {
   changeUseBiometricsAction,
   saveOptOutTrackingAction,
   setUserJoinedBetaAction,
+  changeAppThemeAction,
 } from 'actions/appSettingsActions';
 import { lockScreenAction, logoutAction, resetIncorrectPasswordAction } from 'actions/authActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
@@ -63,6 +64,7 @@ import {
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 // utils
 import { isProdEnv } from 'utils/environment';
@@ -70,7 +72,7 @@ import { fontTrackings, spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getBiometryType } from 'utils/settings';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, getThemeType } from 'utils/themes';
 
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
@@ -113,10 +115,18 @@ type Props = {
   logoutUser: () => void,
   accounts: Accounts,
   theme: Theme,
+  changeAppTheme: (themeType: string) => void,
 }
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
+
+const getUserFriendlyThemeName = (currentTheme) => {
+  if (currentTheme === DARK_THEME) {
+    return 'Dark';
+  }
+  return 'Light';
+};
 
 export const KEY_SECTION = 'KEY_SECTION';
 
@@ -269,6 +279,20 @@ const formCurrencyItems = (that) => {
   ];
 };
 
+const formThemeItems = (that) => {
+  const { theme } = that.props;
+  const currentTheme = getThemeType(theme);
+  const themeName = getUserFriendlyThemeName(currentTheme);
+  return [
+    {
+      key: 'theme',
+      title: 'Theme',
+      value: themeName,
+      onPress: () => that.setState({ visibleModal: 'theme' }),
+    },
+  ];
+};
+
 const formKeyItems = (that) => {
   const { backupStatus } = that.props;
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
@@ -329,7 +353,17 @@ const codeFormFields = [{
   },
 }];
 
-const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
+const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
+const themesToSelect = [
+  {
+    name: getUserFriendlyThemeName(LIGHT_THEME),
+    value: LIGHT_THEME,
+  },
+  {
+    name: getUserFriendlyThemeName(DARK_THEME),
+    value: DARK_THEME,
+  },
+];
 
 class Settings extends React.Component<Props, State> {
   scrollView: ScrollView;
@@ -408,6 +442,12 @@ class Settings extends React.Component<Props, State> {
     this.toggleSlideModalOpen(null);
   };
 
+  handleThemeUpdate = ({ theme }: Object) => {
+    const { changeAppTheme } = this.props;
+    changeAppTheme(theme);
+    this.toggleSlideModalOpen(null);
+  };
+
   handleJoinBetaModalClose = () => {
     // this is needed so that toast message can be shown in settings instead of slide modal that closes
     if (this.state.joinBetaPressed) {
@@ -465,12 +505,13 @@ class Settings extends React.Component<Props, State> {
     );
   };
 
-  renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
+  renderListItem = (field: string, onSelect: Function, currentValue) => ({ item: { name, value } }: Object) => {
     return (
       <SettingsListItem
-        key={name}
+        key={value}
         label={name}
-        onPress={() => onSelect({ [field]: name })}
+        isSelected={value === currentValue}
+        onPress={() => onSelect({ [field]: value })}
       />
     );
   };
@@ -489,6 +530,7 @@ class Settings extends React.Component<Props, State> {
       optOutTracking,
       accounts,
       theme,
+      baseFiatCurrency,
     } = this.props;
 
     const {
@@ -500,6 +542,7 @@ class Settings extends React.Component<Props, State> {
     const debugItems = formDebbugItems(this);
     const hasSmartWallet = userHasSmartWallet(accounts);
     const colors = getThemeColors(theme);
+    const currentTheme = getThemeType(theme);
 
     return (
       <ContainerWithHeader
@@ -524,6 +567,11 @@ class Settings extends React.Component<Props, State> {
           <SettingsSection
             sectionTitle="Currency"
             sectionItems={formCurrencyItems(this)}
+          />
+
+          <SettingsSection
+            sectionTitle="Theme"
+            sectionItems={formThemeItems(this)}
           />
 
           {!isProdEnv &&
@@ -676,7 +724,25 @@ class Settings extends React.Component<Props, State> {
           </SettingsModalTitle>
           <FlatList
             data={currencies}
-            renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
+            renderItem={this.renderListItem(
+              'currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)}
+            keyExtractor={({ name }) => name}
+          />
+        </SlideModal>
+
+        {/* THEME */}
+        <SlideModal
+          isVisible={visibleModal === 'theme'}
+          fullScreen
+          showHeader
+          onModalHide={this.toggleSlideModalOpen}
+        >
+          <SettingsModalTitle extraHorizontalSpacing>
+            Choose theme
+          </SettingsModalTitle>
+          <FlatList
+            data={themesToSelect}
+            renderItem={this.renderListItem('theme', this.handleThemeUpdate, currentTheme)}
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
@@ -813,6 +879,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
+  changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Settings));
