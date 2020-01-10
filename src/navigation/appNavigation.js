@@ -100,6 +100,7 @@ import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfi
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
+import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -223,6 +224,8 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
+  RECOVERY_PORTAL_FLOW,
+  RECOVERY_PORTAL_SETUP_INTRO,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -630,6 +633,12 @@ const tankWithdrawalFlow = createStackNavigator({
 
 tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const recoveryPortalFlow = createStackNavigator({
+  [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
+}, StackNavigatorConfig);
+
+recoveryPortalFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -655,6 +664,7 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
+    [RECOVERY_PORTAL_FLOW]: recoveryPortalFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
   },
   modalTransition,
