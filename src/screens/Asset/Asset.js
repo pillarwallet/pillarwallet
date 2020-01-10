@@ -185,6 +185,7 @@ const SyntheticAssetIcon = styled(CachedImage)`
   height: 24px;
   margin-right: 4px;
   margin-top: 1px;
+  tint-color: ${themedColors.primary};
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning.png');
