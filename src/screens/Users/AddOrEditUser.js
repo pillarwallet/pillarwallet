@@ -32,9 +32,10 @@ import ProfileImage from 'components/ProfileImage';
 import { TextLink } from 'components/Typography';
 import Camera from 'components/Camera';
 
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import countries from 'utils/countries.json';
 import { isProdEnv } from 'utils/environment';
+import { themedColors } from 'utils/themes';
 
 import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
 
@@ -81,8 +82,8 @@ const ProfileImagePlaceholder = styled.View`
   border-radius: 48px;
   align-items: center;
   justify-content: center;
-  background-color: ${baseColors.white};
-  border: 2px dashed ${baseColors.mediumLightGray};
+  background-color: ${themedColors.card};
+  border: 2px dashed ${themedColors.border};
 `;
 
 const BlankAvatar = styled(CachedImage)`
@@ -182,7 +183,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
     return (
       <ContainerWithHeader
-        color={baseColors.white}
         headerProps={{
           centerItems: [
             { title: 'User settings' },

@@ -5,7 +5,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
   style={
     Array [
       Object {
-        "backgroundColor": "#ffffff",
         "flexBasis": 0,
         "flexGrow": 1,
         "flexShrink": 1,
@@ -355,7 +354,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       }
                     >
                       <Text
-                        color="#FD3300"
+                        color="#0A1427"
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
@@ -367,7 +366,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                             },
                             Array [
                               Object {
-                                "color": "#FD3300",
+                                "color": "#0A1427",
                                 "fontSize": 18,
                                 "lineHeight": 28,
                                 "textAlign": "right",
@@ -407,7 +406,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
   style={
     Array [
       Object {
-        "backgroundColor": "#ffffff",
         "flexBasis": 0,
         "flexGrow": 1,
         "flexShrink": 1,
@@ -757,7 +755,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       }
                     >
                       <Text
-                        color="#FD3300"
+                        color="#0A1427"
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
@@ -769,7 +767,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                             },
                             Array [
                               Object {
-                                "color": "#FD3300",
+                                "color": "#0A1427",
                                 "fontSize": 18,
                                 "lineHeight": 28,
                                 "textAlign": "right",

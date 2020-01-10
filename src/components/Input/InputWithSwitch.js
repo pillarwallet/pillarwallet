@@ -17,8 +17,10 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { Switch, Input } from 'native-base';
+
+import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
@@ -30,9 +32,9 @@ const StyledItemView = styled.View`
   justify-content: space-between;
   align-items: center;
   padding: 9px ${spacing.large}px 0;
-  background-color: ${baseColors.white};
-  border-bottom-color: ${({ hasErrors }) => hasErrors ? baseColors.fireEngineRed : baseColors.lightGray};
-  border-top-color: ${({ hasErrors }) => hasErrors ? baseColors.fireEngineRed : baseColors.lightGray};
+  background-color: ${themedColors.card};
+  border-bottom-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
+  border-top-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
   height: 60px;
@@ -49,7 +51,7 @@ const ItemLabelHolder = styled.View`
 
 const ItemLabel = styled(MediumText)`
   ${fontStyles.small};
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   flex-wrap: wrap;
   width: 100%;
   margin-bottom: 6px;
@@ -57,14 +59,14 @@ const ItemLabel = styled(MediumText)`
 
 const ErrorMessage = styled(BaseText)`
   ${fontStyles.small};
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
   flex-wrap: wrap;
   width: 100%;
   padding: ${spacing.small}px ${spacing.large}px;
 `;
 
 const ItemValue = styled(Input)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   font-size: ${fontSizes.medium}px;
   flex-wrap: wrap;
   width:100%;
@@ -73,7 +75,6 @@ const ItemValue = styled(Input)`
 `;
 
 const SelectedOption = styled(BaseText)`
-  color: ${baseColors.slateBlack};
   ${fontStyles.medium};
   flex-wrap: wrap;
   flex: 1;
@@ -87,7 +88,7 @@ const VerifyView = styled.View`
 `;
 
 const VerifyLabel = styled(BaseText)`
-  color: ${({ isVerified }) => isVerified ? baseColors.eucalypus : baseColors.brightBlue};
+  color: ${({ isVerified, theme }) => isVerified ? theme.colors.positive : theme.colors.primary};
   ${fontStyles.regular};
   margin: 0 4px 0;
 `;
@@ -106,6 +107,12 @@ const ItemAddon = styled.View`
 const ModalTitle = styled(MediumText)`
   ${fontStyles.big};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
+`;
+
+const CheckIcon = styled(Icon)`
+  color: ${themedColors.positive};
+  font-size: 8px;
+  margin-left: 4px;
 `;
 
 type InputProps = {
@@ -241,16 +248,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
             <VerifyLabel isVerified={isVerified}>
               {isVerified ? 'Verified' : 'Verify'}
             </VerifyLabel>
-            {isVerified &&
-            <Icon
-              name="check"
-              style={{
-                color: baseColors.eucalypus,
-                fontSize: 8,
-                marginLeft: 4,
-              }}
-            />
-            }
+            {isVerified && <CheckIcon name="check" />}
           </VerifyView>
           }
 
@@ -272,7 +270,6 @@ export default class InputWithSwitch extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleModal}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
         >
           <Wrapper flex={1}>

@@ -26,7 +26,6 @@ import { connect } from 'react-redux';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 import { ListCard } from 'components/ListItem/ListCard';
-import { baseColors } from 'utils/variables';
 import { lockScreenAction, logoutAction } from 'actions/authActions';
 
 type Props = {
@@ -83,7 +82,7 @@ class UserSettings extends React.PureComponent<Props> {
     return (
       <ListCard
         title={title}
-        titleStyle={{ color: labelColor || baseColors.slateBlack }}
+        titleStyle={labelColor && { color: labelColor }}
         subtitle={body}
         action={action}
         disabled={disabled}
@@ -97,7 +96,6 @@ class UserSettings extends React.PureComponent<Props> {
     const userSettings = getUserSettings(this);
     return (
       <ContainerWithHeader
-        color={baseColors.white}
         headerProps={{ centerItems: [{ title: 'User settings' }] }}
         inset={{ bottom: 'never' }}
       >

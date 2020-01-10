@@ -57,7 +57,7 @@ export const darkThemeColors = {
   tertiary: '#171F31',
   control: '#FCFDFF',
   warning: 'blue', // TODO: add correct one when added to Design System
-  indicator: 'blue', // TODO: add correct one when added to Design System
+  indicator: '#F8E71C', // TODO: add correct one when added to Design System
   userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
   legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
   smartWallet: '#3C71FE', // TODO: add correct one when added to Design System

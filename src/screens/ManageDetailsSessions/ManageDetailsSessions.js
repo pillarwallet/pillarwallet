@@ -205,7 +205,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
           sideFlex: 2,
         }}
       >
-        <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />
+        <Tabs tabs={sessionTabs} activeTab={activeTab} />
         <SheetContentWrapper>{content}</SheetContentWrapper>
       </ContainerWithHeader>
     );

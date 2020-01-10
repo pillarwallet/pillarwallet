@@ -42,6 +42,8 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   forceRetry?: boolean,
+  wrapperStyle?: Object,
+  noPadding?: boolean,
 }
 
 const MessageTitle = styled(MediumText)`
@@ -69,6 +71,8 @@ class DeploymentView extends React.PureComponent<Props> {
       smartWalletState,
       accounts,
       forceRetry,
+      wrapperStyle,
+      noPadding,
     } = this.props;
     const { title, message: bodyText } = message;
 
@@ -83,7 +87,11 @@ class DeploymentView extends React.PureComponent<Props> {
       ].includes(smartWalletStatus.status);
 
     return (
-      <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
+      <Wrapper
+        regularPadding={!noPadding}
+        center
+        style={{ marginTop: 40, marginBottom: spacing.large, ...wrapperStyle }}
+      >
         <MessageTitle>{title}</MessageTitle>
         <Message>{bodyText}</Message>
         <Wrapper style={{ margin: spacing.small, width: '100%', alignItems: 'center' }}>

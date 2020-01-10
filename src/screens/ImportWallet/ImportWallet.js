@@ -436,6 +436,7 @@ class ImportWallet extends React.Component<Props, State> {
       tWordsPhrase,
       isScanning,
       currentBPWord,
+      activeTab,
     } = this.state;
 
     const restoreWalletTabs = [
@@ -490,7 +491,7 @@ class ImportWallet extends React.Component<Props, State> {
         )}
       >
         <ScrollWrapper disableAutomaticScroll keyboardShouldPersistTaps="always">
-          <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} />
+          <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
           <Wrapper regularPadding>
             <InputWrapper>
               <FormWrapper>
