@@ -25,7 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
-import { MediumText, BoldText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 
 // utils
@@ -47,7 +47,7 @@ const Title = styled(BoldText)`
   ${fontStyles.rGiant};
 `;
 
-const BodyText = styled(MediumText)`
+const BodyText = styled(BaseText)`
   color: #ec9700;
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
