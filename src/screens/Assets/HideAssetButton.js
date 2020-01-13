@@ -40,9 +40,11 @@ const HideButtonWrapper = styled.TouchableOpacity`
 
 const HideButtonLabel = styled(BaseText)`
   color: ${themedColors.negative};
-  font-size: ${props => props.expanded ? fontSizes.regular : fontSizes.small}px;
+  ${({ expanded, disabled }) => `
+    font-size: ${expanded ? fontSizes.regular : fontSizes.small}px;
+    opacity: ${disabled ? 0.5 : 1}
+  `}
   margin-top: 8px;
-  opacity: ${props => props.disabled ? 0.5 : 1}
 `;
 
 const TurnOffIcon = styled(Icon)`
