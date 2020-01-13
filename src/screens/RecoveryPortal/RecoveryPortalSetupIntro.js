@@ -22,6 +22,9 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 
+// constants
+import { RECOVERY_PORTAL_SIGN_UP } from 'constants/navigationConstants';
+
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
@@ -29,7 +32,7 @@ import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 
 // utils
-import { fontStyles } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
 
@@ -55,7 +58,7 @@ const BodyText = styled(BaseText)`
 
 const ButtonWrapper = styled(Wrapper)`
   margin: 30px 0 50px;
-  padding: 0 46px;
+  padding: 0 ${spacing.rhythm}px;
 `;
 
 const FeatureIcon = styled(CachedImage)`
@@ -64,7 +67,7 @@ const FeatureIcon = styled(CachedImage)`
   margin-bottom: 24px;
 `;
 
-const smartWalletIcon = require('assets/images/logo_recovery_device.png');
+const deviceRecoveryIcon = require('assets/images/logo_recovery_device.png');
 
 const RecoveryPortalSetupIntro = (props: Props) => (
   <ContainerWithHeader
@@ -73,7 +76,7 @@ const RecoveryPortalSetupIntro = (props: Props) => (
   >
     <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
       <CustomWrapper>
-        <FeatureIcon source={smartWalletIcon} />
+        <FeatureIcon source={deviceRecoveryIcon} />
         <Title>Recovery device</Title>
         <BodyText>
           Recovery agents are individuals, services or secondary devices, like,
@@ -85,7 +88,7 @@ const RecoveryPortalSetupIntro = (props: Props) => (
         <Button
           block
           title="Next"
-          onPress={() => {}}
+          onPress={() => props.navigation.navigate(RECOVERY_PORTAL_SIGN_UP)}
         />
       </ButtonWrapper>
     </ScrollWrapper>

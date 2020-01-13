@@ -97,6 +97,9 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
+import RecoveryPortalSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSignUp';
+import RecoveryPortalConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalConnectDevice';
+import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -217,6 +220,9 @@ import {
   UNSETTLED_ASSETS_FLOW,
   RECOVERY_PORTAL_FLOW,
   RECOVERY_PORTAL_SETUP_INTRO,
+  RECOVERY_PORTAL_SIGN_UP,
+  RECOVERY_PORTAL_CONNECT_DEVICE,
+  RECOVERY_PORTAL_SETUP_COMPLETE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -615,6 +621,9 @@ tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const recoveryPortalFlow = createStackNavigator({
   [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
+  [RECOVERY_PORTAL_SIGN_UP]: RecoveryPortalSignUpScreen,
+  [RECOVERY_PORTAL_CONNECT_DEVICE]: RecoveryPortalConnectDeviceScreen,
+  [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
 }, StackNavigatorConfig);
 
 recoveryPortalFlow.navigationOptions = hideTabNavigatorOnChildView;
