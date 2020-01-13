@@ -100,7 +100,7 @@ const Status = ({ isActive }) => {
   );
 };
 
-export const HeaderActionButton = (props: Props) => {
+const HeaderActionButton = (props: Props) => {
   const {
     label,
     onPress,
@@ -118,3 +118,6 @@ export const HeaderActionButton = (props: Props) => {
     </HeaderButtonRounded>
   );
 };
+
+export default HeaderActionButton;
+

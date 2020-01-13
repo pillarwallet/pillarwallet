@@ -40,7 +40,7 @@ const CheckboxBox = styled.View`
   ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};
   ${({ rounded, active, theme }) => rounded && active && theme.current === LIGHT_THEME
     ? `
-      shadow-color: #000000';
+      shadow-color: #000000;
       shadow-radius: 3px;
       shadow-opacity: 0.15;
       shadow-offset: 0px 2px;

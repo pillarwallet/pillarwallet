@@ -37,22 +37,23 @@ import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 
 // utils, services
 import { spacing } from 'utils/variables';
-import { formatMoney } from 'utils/common';
+import { formatAmount } from 'utils/common';
 
 // constants
 import { SEND_SYNTHETIC_UNAVAILABLE, SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 
 // models, types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Asset } from 'models/Asset';
+import type { SyntheticAsset, AssetData } from 'models/Asset';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
+import { TOKENS } from 'constants/assetsConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAvailableSyntheticAssets: () => void,
-  availableSyntheticAssets: Asset[],
+  availableSyntheticAssets: SyntheticAsset[],
   isFetchingSyntheticAssets: boolean,
 };
 
@@ -72,22 +73,31 @@ class SendSyntheticAsset extends React.Component<Props> {
     this.props.fetchAvailableSyntheticAssets();
   }
 
-  renderAsset = ({ item }: { item: Asset }) => {
+  renderAsset = ({ item }: { item: SyntheticAsset }) => {
     // asset should not render
     const {
       symbol: assetSymbol,
       name: assetName,
-      amount: assetAmount,
       iconUrl,
+      address: contractAddress,
+      decimals,
+      availableBalance = 0,
     } = item;
     if (assetsConfig[assetSymbol] && !assetsConfig[assetSymbol].send) return null;
 
     const { navigation } = this.props;
-    const balance = assetAmount || 0;
-    const isAvailable = balance > 0;
-    const balanceFormatted = isAvailable ? formatMoney(balance) : '0';
-    const availableLabel = isAvailable ? 'Available' : 'Unavailable';
-    const onPress = isAvailable ? () => navigation.navigate(SEND_TOKEN_CONTACTS, { assetData: item }) : null;
+    const isAvailable = availableBalance > 0;
+    const balanceFormatted = isAvailable ? formatAmount(availableBalance) : '0';
+    const availableLabel = isAvailable ? 'Available for use' : 'Unavailable';
+    const assetData: AssetData = {
+      token: assetSymbol,
+      name: assetName,
+      icon: iconUrl,
+      tokenType: TOKENS,
+      contractAddress,
+      decimals,
+    };
+    const onPress = isAvailable ? () => navigation.navigate(SEND_TOKEN_CONTACTS, { assetData }) : null;
 
     return (
       <ListItemWithImage
@@ -96,7 +106,7 @@ class SendSyntheticAsset extends React.Component<Props> {
         itemImageUrl={`${SDK_PROVIDER}/${iconUrl}?size=3`}
         fallbackSource={genericToken}
         balance={{
-          balance: balanceFormatted,
+          syntheticBalance: balanceFormatted,
           value: availableLabel,
           token: assetSymbol,
           custom: !isAvailable && (
