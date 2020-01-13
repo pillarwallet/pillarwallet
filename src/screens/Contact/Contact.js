@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -66,7 +66,7 @@ import Spinner from 'components/Spinner';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import { isCaseInsensitiveMatch } from 'utils/common';
-import { themedColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // models
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
@@ -74,6 +74,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Badges } from 'models/Badge';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -137,6 +138,7 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   contactsSmartAddresses: ContactSmartAddressData[],
   syncContactsSmartAddresses: Function,
+  theme: Theme,
 };
 
 type State = {
@@ -366,6 +368,7 @@ class Contact extends React.Component<Props, State> {
       smartWalletState,
       accounts,
       // contactsBadges,
+      theme,
     } = this.props;
     const {
       showManageContactModal,
@@ -375,6 +378,7 @@ class Contact extends React.Component<Props, State> {
       relatedTransactions = [],
     } = this.state;
 
+    const colors = getThemeColors(theme);
     const contactName = navigation.getParam('username', '');
     const contact = navigation.getParam('contact', { username: contactName });
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
@@ -449,14 +453,15 @@ class Contact extends React.Component<Props, State> {
                     onPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
                     showIndicator={!!unreadChats.length}
                   />
-                  {disableSend &&
-                  <DeploymentView
-                    message={sendingBlockedMessage}
-                    buttonLabel="Deploy Smart Wallet"
-                    buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-                  />
-                  }
                 </CircleButtonsWrapper>
+                {disableSend &&
+                <DeploymentView
+                  message={sendingBlockedMessage}
+                  buttonLabel="Deploy Smart Wallet"
+                  buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+                  wrapperStyle={{ borderColor: colors.border, borderBottomWidth: 1, paddingBottom: 40 }}
+                  noPadding
+                />}
                 <ActivityFeed
                   feedTitle="Activity"
                   noBorder
@@ -574,4 +579,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(Contact));

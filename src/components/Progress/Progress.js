@@ -19,10 +19,12 @@
 */
 import * as React from 'react';
 import { Platform, Animated, Easing } from 'react-native';
-import styled from 'styled-components/native/index';
+import styled, { withTheme } from 'styled-components/native/index';
 import LinearGradient from 'react-native-linear-gradient';
-import { baseColors, fontStyles, spacing, fontTrackings } from 'utils/variables';
+import { fontStyles, spacing, fontTrackings } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
+import type { Theme } from 'models/Theme';
 import ProgressCircle from './ProgressCircle';
 
 type Props = {
@@ -31,6 +33,7 @@ type Props = {
   currentStatusValue: number,
   circle: boolean,
   children?: React.Node,
+  theme: Theme,
 };
 
 
@@ -42,7 +45,7 @@ type State = {
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.card};
   padding: 1px 0;
   align-items: center;
   justify-content: flex-start;
@@ -62,7 +65,7 @@ const AnimatedStyledLinearGradient = Animated.createAnimatedComponent(StyledLine
 const ProgressLabel = styled(MediumText)`
   ${fontStyles.tiny};
   letter-spacing: ${fontTrackings.tiny};
-  color: ${props => props.outside ? baseColors.oliveDrab : baseColors.white};
+  color: ${({ outside, theme }) => outside ? theme.colors.primary : theme.colors.control};
   position: ${props => props.outside ? 'relative' : 'absolute'};
   top: ${Platform.select({
     ios: props => props.outside ? 'auto' : '1px',
@@ -88,7 +91,7 @@ const getAdjustedProgressInPercent = (percents) => {
 
 const AnimatedProgressCircle = Animated.createAnimatedComponent(ProgressCircle);
 
-export default class Progress extends React.Component<Props, State> {
+class Progress extends React.Component<Props, State> {
   static defaultProps = {
     circle: false,
   };
@@ -160,7 +163,10 @@ export default class Progress extends React.Component<Props, State> {
     const {
       circle,
       children,
+      theme,
     } = this.props;
+
+    const colors = getThemeColors(theme);
 
     if (circle) {
       return (
@@ -178,7 +184,7 @@ export default class Progress extends React.Component<Props, State> {
         <AnimatedStyledLinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          colors={[baseColors.mantis, baseColors.oliveDrab]}
+          colors={[colors.primary, colors.accent]}
           full={progress === 100}
           style={{
             width: progressAnimated.interpolate({
@@ -193,3 +199,5 @@ export default class Progress extends React.Component<Props, State> {
     );
   }
 }
+
+export default withTheme(Progress);

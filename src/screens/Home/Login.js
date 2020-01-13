@@ -40,7 +40,8 @@ import { approveLoginAttemptAction } from 'actions/deepLinkActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // utils
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,7 +61,7 @@ const Description = styled(Paragraph)`
 
 const DescriptionWarning = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
 `;
 
 export const LoadingSpinner = styled(Spinner)`
@@ -108,7 +109,7 @@ class LoginScreen extends React.Component<Props, State> {
       ? 'Add your email'
       : 'Confirm login';
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
+      <Container inset={{ bottom: 0 }}>
         <Header
           title="confirm login"
           centerTitle

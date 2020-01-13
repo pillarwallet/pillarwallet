@@ -20,10 +20,10 @@
 import * as React from 'react';
 import { ImageBackground, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { baseColors, fontSizes, fontTrackings } from 'utils/variables';
+import { fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { getThemeType, themedColors } from 'utils/themes';
+import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -150,6 +150,8 @@ const CircleButton = (props: Props) => {
     theme,
   } = props;
 
+  const colors = getThemeColors(theme);
+
   return (
     <CircleButtonWrapper
       disabled={disabled}
@@ -168,7 +170,7 @@ const CircleButton = (props: Props) => {
           name={fontIcon}
           style={{
             fontSize: fontSizes.big,
-            color: baseColors.electricBlue,
+            color: colors.primary,
             alignSelf: 'center',
             ...fontIconStyle,
             opacity: disabled ? 0.3 : 1,

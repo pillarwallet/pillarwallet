@@ -27,8 +27,8 @@ import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { baseColors } from 'utils/variables';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { themedColors } from 'utils/themes';
 
 
 type Props = {
@@ -46,7 +46,7 @@ const PrivateKeyWrapper = styled(Paragraph)`
   padding: 10px;
   border-radius: 12px;
   border-width: 0.5;
-  border-color: ${baseColors.mediumGray};
+  border-color: ${themedColors.border};
   border-style: solid;
 `;
 

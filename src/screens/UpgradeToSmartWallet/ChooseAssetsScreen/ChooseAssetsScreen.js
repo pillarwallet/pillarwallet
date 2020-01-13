@@ -34,7 +34,7 @@ import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import Toast from 'components/Toast';
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
@@ -355,7 +355,6 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Choose assets to transfer' }],
           rightItems: [hasAssetsSelected ? { link: 'Edit', onPress: this.onEditPress } : {}],
         }}
-        backgroundColor={baseColors.white}
       >
         <ScrollView
           stickyHeaderIndices={[1]}
@@ -370,7 +369,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
             onSearchFocus={() => this.setState({ disableScroll: true })}
             onSearchBlur={() => this.setState({ disableScroll: false })}
           />
-          <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />
+          <Tabs tabs={assetsTabs} activeTab={activeTab} />
           {activeTab === TOKENS && this.renderAssets(nonEmptyAssets)}
           {activeTab === COLLECTIBLES && this.renderCollectibles()}
         </ScrollView>

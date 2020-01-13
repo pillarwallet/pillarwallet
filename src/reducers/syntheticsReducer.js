@@ -22,10 +22,10 @@ import {
   SET_AVAILABLE_SYNTHETIC_ASSETS,
 } from 'constants/syntheticsConstants';
 
-import type { Asset } from 'models/Asset';
+import type { SyntheticAsset } from 'models/Asset';
 
 export type SyntheticsReducerState = {
-  data: Asset[],
+  data: SyntheticAsset[],
   isFetching: boolean,
 };
 
