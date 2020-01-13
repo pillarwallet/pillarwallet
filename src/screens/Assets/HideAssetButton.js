@@ -49,8 +49,10 @@ const HideButtonLabel = styled(BaseText)`
 
 const TurnOffIcon = styled(Icon)`
   color: ${themedColors.negative};
-  font-size: ${props => props.expanded ? fontSizes.big : fontSizes.medium}px;
-  opacity: ${props => props.disabled ? 0.5 : 1}
+  ${({ expanded, disabled }) => `
+    font-size: ${expanded ? fontSizes.big : fontSizes.medium}px;
+    opacity: ${disabled ? 0.5 : 1}
+  `}
 `;
 
 const HideAssetButton = (props: Props) => {
