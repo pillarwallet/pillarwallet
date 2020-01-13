@@ -25,6 +25,7 @@ import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import { Appearance } from 'react-native-appearance';
 
 // actions
 import {
@@ -64,7 +65,7 @@ import {
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME, DARK_PREFERENCE, NO_THEME_PREFERENCE } from 'constants/appSettingsConstants';
 
 // utils
 import { isProdEnv } from 'utils/environment';
@@ -72,7 +73,7 @@ import { fontTrackings, spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getBiometryType } from 'utils/settings';
-import { getThemeColors, getThemeType } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
@@ -115,17 +116,28 @@ type Props = {
   logoutUser: () => void,
   accounts: Accounts,
   theme: Theme,
-  changeAppTheme: (themeType: string) => void,
+  themeType: string,
+  isSetAsSystemPrefTheme: boolean,
+  changeAppTheme: (themeType: string, shouldSetAsPref: boolean) => void,
 }
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
+const SYSTEM_DEFAULT_THEME = 'system_default_theme';
+
 const getUserFriendlyThemeName = (currentTheme) => {
   if (currentTheme === DARK_THEME) {
     return 'Dark';
+  } else if (currentTheme === SYSTEM_DEFAULT_THEME) {
+    return 'System default';
   }
   return 'Light';
+};
+
+const getThemeTypeByPreference = (preference) => {
+  if (preference === DARK_PREFERENCE) return DARK_THEME;
+  return LIGHT_THEME;
 };
 
 export const KEY_SECTION = 'KEY_SECTION';
@@ -280,9 +292,8 @@ const formCurrencyItems = (that) => {
 };
 
 const formThemeItems = (that) => {
-  const { theme } = that.props;
-  const currentTheme = getThemeType(theme);
-  const themeName = getUserFriendlyThemeName(currentTheme);
+  const { themeType: currentTheme, isSetAsSystemPrefTheme } = that.props;
+  const themeName = isSetAsSystemPrefTheme ? 'System default' : getUserFriendlyThemeName(currentTheme);
   return [
     {
       key: 'theme',
@@ -393,6 +404,13 @@ class Settings extends React.Component<Props, State> {
       .catch(() => null);
     const scrollTo = navigation.getParam('scrollTo');
     if (scrollTo) this.setSectionToScrollTo(scrollTo);
+    const defaultPreference = Appearance.getColorScheme();
+    if (defaultPreference !== NO_THEME_PREFERENCE) {
+      themesToSelect.push({
+        name: getUserFriendlyThemeName(SYSTEM_DEFAULT_THEME),
+        value: SYSTEM_DEFAULT_THEME,
+      });
+    }
   }
 
   clearLocalStorage() {
@@ -443,8 +461,11 @@ class Settings extends React.Component<Props, State> {
   };
 
   handleThemeUpdate = ({ theme }: Object) => {
+    const setAsPref = theme === SYSTEM_DEFAULT_THEME;
+    const themeToSet = theme === SYSTEM_DEFAULT_THEME ? getThemeTypeByPreference(Appearance.getColorScheme()) : theme;
+
     const { changeAppTheme } = this.props;
-    changeAppTheme(theme);
+    changeAppTheme(themeToSet, setAsPref);
     this.toggleSlideModalOpen(null);
   };
 
@@ -531,6 +552,8 @@ class Settings extends React.Component<Props, State> {
       accounts,
       theme,
       baseFiatCurrency,
+      themeType,
+      isSetAsSystemPrefTheme,
     } = this.props;
 
     const {
@@ -542,7 +565,8 @@ class Settings extends React.Component<Props, State> {
     const debugItems = formDebbugItems(this);
     const hasSmartWallet = userHasSmartWallet(accounts);
     const colors = getThemeColors(theme);
-    const currentTheme = getThemeType(theme);
+    const pickedThemeValue = isSetAsSystemPrefTheme ? SYSTEM_DEFAULT_THEME : themeType;
+
 
     return (
       <ContainerWithHeader
@@ -742,7 +766,7 @@ class Settings extends React.Component<Props, State> {
           </SettingsModalTitle>
           <FlatList
             data={themesToSelect}
-            renderItem={this.renderListItem('theme', this.handleThemeUpdate, currentTheme)}
+            renderItem={this.renderListItem('theme', this.handleThemeUpdate, pickedThemeValue)}
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
@@ -850,6 +874,8 @@ const mapStateToProps = ({
       baseFiatCurrency,
       optOutTracking = false,
       userJoinedBeta = false,
+      themeType,
+      isSetAsSystemPrefTheme,
     },
   },
   notifications: { intercomNotificationsCount },
@@ -865,6 +891,8 @@ const mapStateToProps = ({
   useBiometrics,
   smartWalletFeatureEnabled,
   userJoinedBeta,
+  themeType,
+  isSetAsSystemPrefTheme,
   accounts,
 });
 
@@ -879,7 +907,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
+  changeAppTheme: (themeType: string, shouldSetAsPref: boolean) => dispatch(
+    changeAppThemeAction(themeType, shouldSetAsPref),
+  ),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Settings));

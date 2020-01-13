@@ -17,7 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { LIGHT_THEME, UPDATE_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
+import { Appearance } from 'react-native-appearance';
+
+import {
+  DARK_PREFERENCE, DARK_THEME,
+  LIGHT_THEME,
+  UPDATE_APP_SETTINGS,
+  USER_JOINED_BETA_SETTING,
+} from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -172,20 +179,37 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   };
 };
 
+export const handleSystemDefaultThemeChangeAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { themeType, isSetAsSystemPrefTheme } },
+    } = getState();
 
-export const changeAppThemeAction = (themeType: string) => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
+    if (!isSetAsSystemPrefTheme) return;
+    const defaultThemePreference = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+    if (defaultThemePreference === themeType) return;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType: defaultThemePreference } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { themeType },
+      payload: { themeType: defaultThemePreference },
+    });
+  };
+};
+
+export const changeAppThemeAction = (themeType: string, setAsPreferred?: boolean) => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred },
     });
   };
 };
 
 export const setAppThemeAction = () => {
   return (dispatch: Dispatch) => {
-    const themeType = LIGHT_THEME; // TODO: get theme based on user preferences;
+    const themeType = LIGHT_THEME;
 
     dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
     dispatch({

@@ -28,6 +28,7 @@ import { Sentry } from 'react-native-sentry';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
+import { AppearanceProvider } from 'react-native-appearance';
 import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -164,35 +165,37 @@ class App extends React.Component<Props, *> {
     if (!isFetched) return null;
 
     return (
-      <ThemeProvider theme={theme}>
-        <React.Fragment>
-          <Root>
-            <RootNavigation
-              ref={(node) => {
-                if (!node) return;
-                setTopLevelNavigator(node);
-              }}
-            />
-            {!!SHOW_THEME_TOGGLE &&
-            <TouchableOpacity
-              style={{
-                padding: 20,
-                borderWidth: 1,
-                borderColor: colors.border,
-                alignItems: 'center',
-                backgroundColor: colors.card,
-              }}
-              onPress={() => {
-                const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
-                changeAppTheme(themeToChangeTo);
-              }}
-            >
-              <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
-            </TouchableOpacity>}
-            {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
-          </Root>
-        </React.Fragment>
-      </ThemeProvider>
+      <AppearanceProvider>
+        <ThemeProvider theme={theme}>
+          <React.Fragment>
+            <Root>
+              <RootNavigation
+                ref={(node) => {
+                  if (!node) return;
+                  setTopLevelNavigator(node);
+                }}
+              />
+              {!!SHOW_THEME_TOGGLE &&
+              <TouchableOpacity
+                style={{
+                  padding: 20,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  alignItems: 'center',
+                  backgroundColor: colors.card,
+                }}
+                onPress={() => {
+                  const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+                  changeAppTheme(themeToChangeTo);
+                }}
+              >
+                <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
+              </TouchableOpacity>}
+              {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
+            </Root>
+          </React.Fragment>
+        </ThemeProvider>
+      </AppearanceProvider>
     );
   }
 }

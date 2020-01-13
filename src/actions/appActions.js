@@ -76,7 +76,7 @@ import {
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 import { loadBitcoinAddressesAction } from 'actions/bitcoinActions';
-import { setAppThemeAction } from 'actions/appSettingsActions';
+import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
 
@@ -92,9 +92,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
     await storage.migrateFromPouchDB();
 
-    // $FlowFixMe
+    // $FlowFixMeappSettings
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
-
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings, api);
 
@@ -224,10 +223,16 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       // check if current user has theme set and set it to default if
       const hasTheme = get(appSettings, 'themeType');
+      // check if theme is set to system's default
+      const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
       if (!hasTheme) {
         dispatch(setAppThemeAction());
+      }
+
+      if (isThemeSetAsSystemDefault) {
+        dispatch(handleSystemDefaultThemeChangeAction());
       }
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
