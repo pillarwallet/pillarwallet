@@ -28,8 +28,8 @@ import {
   Keyboard,
 } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
 import { getiOSNavbarHeight } from 'utils/common';
+import { themedColors } from 'utils/themes';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import Tabs from 'components/Tabs';
 import Title from 'components/Title';
@@ -84,9 +84,9 @@ const Sheet = styled.View`
   position: absolute;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-  background-color: ${baseColors.white};
+  background-color: ${themedColors.card};
   elevation: 10;
-  shadow-color: ${baseColors.black};
+  shadow-color: #000000;
   shadow-radius: 10px;
   shadow-opacity: 0.2;
   shadow-offset: 0px 11px;
@@ -137,7 +137,7 @@ const HandlebarsWrapper = styled.View`
 const Handlebar = styled.View`
   height: 5px;
   width: 20px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${themedColors.primary};
   position: absolute;
   top: 2px;
   border-radius: 6px;
@@ -154,7 +154,7 @@ const ClickableBackdrop = styled.View`
   right: 0;
   bottom: 0;
   z-index: 10;
-  background-color: ${baseColors.black};
+  background-color: #000000;
 `;
 
 const AnimatedSheet = Animated.createAnimatedComponent(Sheet);

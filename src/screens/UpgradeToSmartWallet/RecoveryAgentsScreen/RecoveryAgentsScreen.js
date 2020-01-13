@@ -30,7 +30,8 @@ import Checkbox from 'components/Checkbox';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { CONTACT, CHOOSE_ASSETS_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 // import orderBy from 'lodash.orderby';
@@ -49,7 +50,7 @@ type State = {
 };
 
 const FooterInner = styled.View`
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.surface};
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;
@@ -159,7 +160,6 @@ class RecoveryAgentsScreen extends React.Component<Props, State> {
           onSearchChange={this.handleSearchChange}
           itemSearchState={query.length >= 2}
           navigation={navigation}
-          backgroundColor={baseColors.white}
         /> */ }
         <Header
           title="recovery agents"

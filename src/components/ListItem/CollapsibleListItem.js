@@ -18,13 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Animated, Easing, TouchableNativeFeedback, Platform } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import styled from 'styled-components/native';
 import Collapsible from 'react-native-collapsible';
 
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import NativeTouchable from 'components/NativeTouchable';
 
 type Props = {
   label?: string,
@@ -39,20 +41,6 @@ type Props = {
   collapseWrapperStyle?: Object,
   noRipple?: boolean,
 }
-
-const StyledItemTouchable = styled.TouchableOpacity`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const StyledItemView = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
 
 const ItemLabelHolder = styled.View`
   display: flex;
@@ -104,38 +92,11 @@ const CollapseWrapper = styled.View`
   ${props => props.noPadding ? '' : 'padding: 4px 16px 10px 36px;'}
 `;
 
-const ButtonWrapper = (props) => {
-  const {
-    onPress,
-    children,
-    collapseContent,
-    noRipple,
-  } = props;
-
-  if (Platform.OS === 'ios' || noRipple) {
-    return (
-      <StyledItemTouchable
-        onPress={onPress}
-        underlayColor={baseColors.lightGray}
-        disabled={!onPress || !collapseContent}
-      >
-        {children}
-      </StyledItemTouchable>
-    );
-  }
-
-  return (
-    <TouchableNativeFeedback
-      onPress={onPress}
-      background={TouchableNativeFeedback.Ripple()}
-      disabled={!onPress || !collapseContent}
-    >
-      <StyledItemView>
-        {children}
-      </StyledItemView>
-    </TouchableNativeFeedback>
-  );
-};
+const ChevronIcon = styled(Icon)`
+  font-size: ${fontSizes.tiny}px;
+  color: ${themedColors.secondaryText};
+  align-self: center;
+`;
 
 export default class CollapsibleListItem extends React.Component<Props> {
   spinValue = new Animated.Value(0);
@@ -175,14 +136,7 @@ export default class CollapsibleListItem extends React.Component<Props> {
           <Animated.View
             style={{ transform: [{ rotate: spinAngle }] }}
           >
-            <Icon
-              name="chevron-right"
-              style={{
-                fontSize: fontSizes.tiny,
-                color: baseColors.coolGrey,
-                alignSelf: 'center',
-              }}
-            />
+            <ChevronIcon name="chevron-right" />
           </Animated.View>
         </ListAddon>
       );
@@ -231,9 +185,9 @@ export default class CollapsibleListItem extends React.Component<Props> {
 
     return (
       <ListItem style={wrapperStyle}>
-        <ButtonWrapper onPress={onPress} collapseContent={collapseContent} noRipple={noRipple}>
+        <NativeTouchable onPress={onPress} disabled={!collapseContent} noRipple={noRipple}>
           {this.renderSectionToggle()}
-        </ButtonWrapper>
+        </NativeTouchable>
         <Collapsible collapsed={!open}>
           <CollapseWrapper noPadding={noPadding} style={collapseWrapperStyle}>
             {collapseContent}

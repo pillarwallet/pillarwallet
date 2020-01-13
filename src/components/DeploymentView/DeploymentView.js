@@ -28,8 +28,9 @@ import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { themedColors } from 'utils/themes';
 
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -54,7 +55,7 @@ const MessageTitle = styled(MediumText)`
 const Message = styled(BaseText)`
   padding-top: ${spacing.small}px;
   ${fontStyles.regular}
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   text-align: center;
 `;
 

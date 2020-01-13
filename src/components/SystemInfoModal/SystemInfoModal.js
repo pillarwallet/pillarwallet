@@ -31,7 +31,8 @@ import {
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
-import { baseColors, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 const LabeledRow = styled.View`
   margin: 6px 0;
@@ -39,7 +40,7 @@ const LabeledRow = styled.View`
 
 const Label = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   letter-spacing: 0.5;
 `;
 

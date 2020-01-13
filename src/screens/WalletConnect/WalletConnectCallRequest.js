@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { utils, Interface } from 'ethers';
@@ -32,7 +32,8 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import { rejectCallRequestAction } from 'actions/walletConnectActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { spacing, fontSizes, baseColors, UIColors, fontStyles } from 'utils/variables';
+import { spacing, fontSizes, fontStyles } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
 import { calculateGasEstimate } from 'services/assets';
@@ -48,6 +49,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 import type { CallRequest } from 'models/WalletConnect';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,6 +62,7 @@ type Props = {
   gasInfo: GasInfo,
   fetchGasInfo: Function,
   activeAccountAddress: string,
+  theme: Theme,
 };
 
 type State = {
@@ -86,7 +89,7 @@ const LabelSub = styled(Label)`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 
@@ -274,8 +277,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       contacts,
       balances,
       session,
+      theme,
     } = this.props;
     const { gasLimit } = this.state;
+    const colors = getThemeColors(theme);
 
     const { request } = this;
     const {
@@ -325,7 +330,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         const recipientUsername = getUserName(contact);
 
         body = (
-          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <ScrollWrapper regularPadding>
             <LabeledRow>
               <Label>Request From</Label>
               <Value>{name}</Value>
@@ -398,7 +403,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         address = params[0]; // eslint-disable-line
         message = params[1]; // eslint-disable-line
         body = (
-          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <ScrollWrapper regularPadding>
             <LabeledRow>
               <Label>Address</Label>
               <Value>{address}</Value>
@@ -416,7 +421,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         address = params[1]; // eslint-disable-line
         message = utils.toUtf8String(params[0]);
         body = (
-          <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+          <ScrollWrapper regularPadding>
             <LabeledRow>
               <Label>Address</Label>
               <Value>{address}</Value>
@@ -442,7 +447,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         }}
       >
         {body}
-        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <OptionButton
@@ -494,4 +499,4 @@ const mapDispatchToProps = dispatch => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen));

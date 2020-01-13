@@ -31,12 +31,13 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { BaseText } from 'components/Typography';
-import { baseColors, fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
+import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { addAssetsToSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 import { formatAmount, parseNumber, isValidNumber } from 'utils/common';
 import { getAssetsAsList, getBalance } from 'utils/assets';
+import { themedColors } from 'utils/themes';
 import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -67,7 +68,7 @@ const ErrorHolder = styled.View`
 `;
 
 const ErrorText = styled(BaseText)`
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
   ${fontStyles.medium};
   width: 100%;
   text-align: right;
@@ -201,7 +202,6 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
             onSearchChange={this.handleSearchChange}
             itemSearchState={query.length >= 2}
             navigation={navigation}
-            backgroundColor={baseColors.white}
             wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
             onSearchFocus={() => this.setState({ disableScroll: true })}
             onSearchBlur={() => this.setState({ disableScroll: false })}

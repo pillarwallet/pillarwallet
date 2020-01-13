@@ -31,10 +31,11 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 
 // constants
 import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -58,7 +59,7 @@ const getTransactionErrorMessage = (error: string): string => {
 };
 
 const CancelText = styled(MediumText)`
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
   font-size: ${fontSizes.medium}px;
 `;
 

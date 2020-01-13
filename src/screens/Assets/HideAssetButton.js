@@ -21,7 +21,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   onPress: Function,
@@ -34,27 +35,31 @@ const HideButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   flex: 1;
+  background-color: ${themedColors.surface};
 `;
 
 const HideButtonLabel = styled(BaseText)`
-  color: ${baseColors.burningFire};
-  font-size: ${props => props.expanded ? fontSizes.regular : fontSizes.small}px;
+  color: ${themedColors.negative};
+  ${({ expanded, disabled }) => `
+    font-size: ${expanded ? fontSizes.regular : fontSizes.small}px;
+    opacity: ${disabled ? 0.5 : 1}
+  `}
   margin-top: 8px;
-  opacity: ${props => props.disabled ? 0.5 : 1}
+`;
+
+const TurnOffIcon = styled(Icon)`
+  color: ${themedColors.negative};
+  ${({ expanded, disabled }) => `
+    font-size: ${expanded ? fontSizes.big : fontSizes.medium}px;
+    opacity: ${disabled ? 0.5 : 1}
+  `}
 `;
 
 const HideAssetButton = (props: Props) => {
   const { onPress, expanded, disabled } = props;
   return (
     <HideButtonWrapper onPress={onPress}>
-      <Icon
-        name="turn-off"
-        style={{
-          color: baseColors.burningFire,
-          fontSize: expanded ? fontSizes.big : fontSizes.medium,
-          opacity: disabled ? 0.5 : 1,
-        }}
-      />
+      <TurnOffIcon name="turn-off" disabled={disabled} />
       <HideButtonLabel expanded={expanded} disabled={disabled}>
         Hide
       </HideButtonLabel>
