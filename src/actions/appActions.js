@@ -92,7 +92,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
     await storage.migrateFromPouchDB();
 
-    // $FlowFixMeappSettings
+    // $FlowFixMe
     const appSettings = await loadAndMigrate('app_settings', dispatch, getState);
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings, api);
