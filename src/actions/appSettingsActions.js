@@ -20,7 +20,8 @@
 import { Appearance } from 'react-native-appearance';
 
 import {
-  DARK_PREFERENCE, DARK_THEME,
+  DARK_PREFERENCE,
+  DARK_THEME,
   LIGHT_THEME,
   UPDATE_APP_SETTINGS,
   USER_JOINED_BETA_SETTING,
@@ -215,6 +216,16 @@ export const setAppThemeAction = () => {
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: { themeType },
+    });
+  };
+};
+
+export const markThemeAlertAsShownAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { seenThemeAlert: true } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { seenThemeAlert: true },
     });
   };
 };

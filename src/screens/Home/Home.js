@@ -18,13 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Animated, RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
+import { Animated, RefreshControl, Platform, View, ScrollView, FlatList, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
+import { Appearance } from 'react-native-appearance';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
@@ -50,6 +51,7 @@ import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import { DARK_PREFERENCE, DARK_THEME } from 'constants/appSettingsConstants';
 
 // actions
 import {
@@ -71,6 +73,7 @@ import {
 } from 'actions/walletConnectActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { markThemeAlertAsShownAction, changeAppThemeAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -125,6 +128,9 @@ type Props = {
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
   baseFiatCurrency: ?string,
+  markThemeAlertAsShown: () => void,
+  changeAppTheme: (themeType: string) => void,
+  seenThemeAlert: boolean,
 };
 
 type State = {
@@ -181,7 +187,12 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { logScreenView, fetchBadges, fetchBadgeAwardHistory } = this.props;
+    const {
+      logScreenView,
+      fetchBadges,
+      fetchBadgeAwardHistory,
+      seenThemeAlert,
+    } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -194,6 +205,9 @@ class HomeScreen extends React.Component<Props, State> {
     });
     fetchBadges();
     fetchBadgeAwardHistory();
+
+    const defaultPreference = Appearance.getColorScheme();
+    if (defaultPreference === DARK_PREFERENCE && !seenThemeAlert) this.showDarkModeAlert();
   }
 
   componentWillUnmount() {
@@ -216,6 +230,22 @@ class HomeScreen extends React.Component<Props, State> {
 
     return !isEq;
   }
+
+  showDarkModeAlert = () => {
+    const { markThemeAlertAsShown, changeAppTheme } = this.props;
+    markThemeAlertAsShown();
+    Alert.alert(
+      'Dark mode available',
+      'Would you like to turn on Dark mode now? You can always switch between modes in settings.',
+      [
+        { text: 'Cancel' },
+        {
+          text: 'Turn on',
+          onPress: () => changeAppTheme(DARK_THEME),
+        },
+      ],
+    );
+  };
 
   closeCamera = () => this.setState({ showCamera: false });
 
@@ -506,7 +536,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   session: { data: { isOnline } },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, seenThemeAlert } },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -521,6 +551,7 @@ const mapStateToProps = ({
   isOnline,
   userEvents,
   baseFiatCurrency,
+  seenThemeAlert,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -548,6 +579,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
+  markThemeAlertAsShown: () => dispatch(markThemeAlertAsShownAction()),
+  changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

@@ -405,7 +405,8 @@ class Settings extends React.Component<Props, State> {
     const scrollTo = navigation.getParam('scrollTo');
     if (scrollTo) this.setSectionToScrollTo(scrollTo);
     const defaultPreference = Appearance.getColorScheme();
-    if (defaultPreference !== NO_THEME_PREFERENCE) {
+    if (defaultPreference !== NO_THEME_PREFERENCE
+      && !themesToSelect.some(({ value }) => value === SYSTEM_DEFAULT_THEME)) {
       themesToSelect.push({
         name: getUserFriendlyThemeName(SYSTEM_DEFAULT_THEME),
         value: SYSTEM_DEFAULT_THEME,
