@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Animated, TouchableOpacity } from 'react-native';
+import { Animated, TouchableOpacity } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { Theme } from 'models/Theme';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -49,6 +49,12 @@ const Toggle = styled.View`
   width: ${TOGGLE_DIAMETER}px;
   height: ${TOGGLE_DIAMETER}px;
   border-radius: ${TOGGLE_DIAMETER}px;
+`;
+
+const SwitcherWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  ${({ disabled }) => disabled && 'opacity: 0.4;'}
 `;
 
 const AnimatedToggle = Animated.createAnimatedComponent(Toggle);
@@ -94,13 +100,7 @@ class Switcher extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
 
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          opacity: disabled ? 0.4 : 1,
-        }}
-      >
+      <SwitcherWrapper disabled={disabled}>
         <TouchableOpacity
           style={{
             justifyContent: 'center',
@@ -116,11 +116,11 @@ class Switcher extends React.Component<Props, State> {
           <AnimatedToggle
             isOn={isOn}
             style={{
-            transform: [{ translateX: offsetX }],
-          }}
+              transform: [{ translateX: offsetX }],
+            }}
           />
         </TouchableOpacity>
-      </View>
+      </SwitcherWrapper>
     );
   }
 }
