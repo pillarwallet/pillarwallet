@@ -49,7 +49,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 export type SmartWalletReducerState = {
   upgradeDismissed: boolean,
   sdkInitialized: boolean,
-  connectedAccount: SmartWalletConnectedAccount,
+  connectedAccount: $Shape<SmartWalletConnectedAccount>,
   accounts: SmartWalletAccount[],
   upgrade: {
     status: ?string,
