@@ -74,7 +74,7 @@ import { getLimitedData } from './opensea';
 
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
-export const API_REQUEST_TIMEOUT = 5000;
+export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
 
 type HistoryPayload = {

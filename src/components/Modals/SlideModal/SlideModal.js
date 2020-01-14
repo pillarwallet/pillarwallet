@@ -24,7 +24,7 @@ import Header from 'components/Header';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
-import { spacing, baseColors, UIColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
 import { Keyboard } from 'react-native';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -125,7 +125,7 @@ const ModalBackground = styled.View`
 
 const ModalSubtitle = styled(SubTitle)`
   padding: 10px 0;
-  color: ${UIColors.primary};
+  color: ${themedColors.primary};
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -288,7 +288,7 @@ class SlideModal extends React.Component<Props, *> {
         onModalShow={onModalShow}
         onBackdropPress={this.hideModal}
         backdropOpacity={fullScreen ? 1 : 0.7}
-        backdropColor={fullScreen ? backgroundColor : baseColors.black}
+        backdropColor={fullScreen ? backgroundColor : '#000000'}
         onBackButtonPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}

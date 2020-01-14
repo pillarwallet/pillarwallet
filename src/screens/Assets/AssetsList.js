@@ -45,7 +45,8 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -95,7 +96,7 @@ const ListHeaderWrapper = styled.View`
 
 const HeaderTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.blueYonder};
+  color: ${themedColors.accent};
 `;
 
 class AssetsList extends React.Component<Props, State> {
@@ -232,7 +233,6 @@ class AssetsList extends React.Component<Props, State> {
               disabled={disableRemove}
             />
             ),
-          backgroundColor: baseColors.white,
         }]}
         backgroundColor="transparent"
         sensitivity={10}

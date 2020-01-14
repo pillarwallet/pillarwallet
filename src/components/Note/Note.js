@@ -22,7 +22,8 @@ import { Text } from 'react-native';
 import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 import { BaseText } from 'components/Typography';
-import { baseColors, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   note: string,
@@ -33,15 +34,14 @@ type Props = {
 const NoteWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-  background-color: ${baseColors.patternsBlue};
-  border: 1px solid ${baseColors.spindle};
+  background-color: ${themedColors.accent};
+  border: 1px solid ${themedColors.border};
   padding: 6px 12px;
   border-radius: 4px;
 `;
 
 const NoteText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.danube};
 `;
 
 const NoteEmoji = styled(Emoji)`

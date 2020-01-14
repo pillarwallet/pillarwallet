@@ -33,7 +33,8 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
@@ -66,7 +67,7 @@ const getTransactionErrorMessage = (error: string): string => {
 };
 
 const CancelText = styled(MediumText)`
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
   font-size: ${fontSizes.medium}px;
 `;
 

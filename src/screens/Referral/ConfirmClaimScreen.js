@@ -29,7 +29,8 @@ import Button from 'components/Button';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
 import AssetPattern from 'components/AssetPattern';
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { claimTokensAction } from 'actions/referralsActions';
 import ProcessingClaim from './ProcessingClaim';
 import ErrorClaim from './ErrorClaim';
@@ -59,7 +60,7 @@ const TokenValue = styled(MediumText)`
 
 const TextCode = styled(LightText)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   text-align: center;
   margin-bottom: 30px;
 `;

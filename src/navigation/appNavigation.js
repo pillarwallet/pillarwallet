@@ -57,9 +57,6 @@ import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibl
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
 import LoginScreen from 'screens/Home/Login';
-import ParticipateScreen from 'screens/Participate';
-import InstructionsScreen from 'screens/Participate/Instructions';
-import ConfirmScreen from 'screens/Participate/Confirm';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
@@ -70,7 +67,6 @@ import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
-import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
 import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScreen';
 import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
@@ -166,10 +162,6 @@ import {
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
   AUTH_FLOW,
-  PARTICIPATE_IN_ICO_FLOW,
-  ICO_PARTICIPATE,
-  ICO_INSTRUCTIONS,
-  ICO_CONFIRM,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -184,7 +176,6 @@ import {
   OTP,
   CONFIRM_CLAIM,
   UPGRADE_TO_SMART_WALLET_FLOW,
-  UPGRADE_INTRO,
   UPGRADE_INFO,
   RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
@@ -524,16 +515,6 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
-// PARTICIPATE IN ICO FLOW
-const participateInICOFlow = createStackNavigator(
-  {
-    [ICO_PARTICIPATE]: ParticipateScreen,
-    [ICO_INSTRUCTIONS]: InstructionsScreen,
-    [ICO_CONFIRM]: ConfirmScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
 // WALLET BACKUP IN SETTINGS FLOW
 const backupWalletFlow = createStackNavigator({
   [BACKUP_PHRASE]: BackupPhraseScreen,
@@ -543,7 +524,6 @@ const backupWalletFlow = createStackNavigator({
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
-  [UPGRADE_INTRO]: UpgradeIntroScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
@@ -641,7 +621,6 @@ const AppFlowNavigation = createStackNavigator(
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
-    [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,

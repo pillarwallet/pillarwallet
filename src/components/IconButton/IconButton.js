@@ -18,11 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { StyleSheet } from 'react-native';
 import Icon from 'components/Icon';
 import { MediumText } from 'components/Typography';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 export type Props = {
   icon: string,
@@ -35,6 +37,8 @@ export type Props = {
   margin?: number,
   iconText?: string,
   horizontalAlign?: string,
+  theme: Theme,
+  secondary?: boolean,
 }
 
 const IconButtonWrapper = styled.TouchableOpacity`
@@ -44,7 +48,7 @@ const IconButtonWrapper = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(MediumText)`
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
   font-size: ${fontSizes.small}px;
 `;
 
@@ -60,14 +64,18 @@ const IconButton = (props: Props) => {
     iconText,
     iconStyle = {},
     horizontalAlign,
+    secondary,
+    theme,
   } = props;
+  const colors = getThemeColors(theme);
+  const iconColor = secondary ? colors.secondaryText : color;
   const iconParams = {
     active: false,
     name: icon,
     style: {
       paddingTop: 0,
       fontSize,
-      color,
+      color: iconColor,
       marginLeft: margin,
       marginRight: margin,
       marginTop: margin,
@@ -84,4 +92,4 @@ const IconButton = (props: Props) => {
   );
 };
 
-export default IconButton;
+export default withTheme(IconButton);

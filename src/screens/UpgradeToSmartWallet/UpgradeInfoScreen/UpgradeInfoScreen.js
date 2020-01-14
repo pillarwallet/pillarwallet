@@ -25,7 +25,8 @@ import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { Paragraph, MediumText, BaseText } from 'components/Typography';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { RECOVERY_AGENTS } from 'constants/navigationConstants';
 
 type Props = {
@@ -33,7 +34,7 @@ type Props = {
 };
 
 const WhiteWrapper = styled.View`
-  background-color: ${baseColors.white};
+  background-color: ${themedColors.card};
   border-bottom-width: 1px;
   border-bottom-color: #ededed;
   padding-bottom: 18px;
@@ -54,7 +55,7 @@ const TextWrapper = styled.View`
 
 const ExplanationTitle = styled(MediumText)`
   ${fontStyles.big};
-  color: ${baseColors.midnight};
+  color: ${themedColors.accent};
 `;
 
 const BodyWrapper = styled(BaseText)`
@@ -64,7 +65,7 @@ const BodyWrapper = styled(BaseText)`
 
 const ExplanationBody = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${baseColors.midnight};
+  color: ${themedColors.accent};
   flex: 1;
 `;
 
@@ -76,7 +77,7 @@ const ExplanationEmoji = styled(Emoji)`
 `;
 
 const Footer = styled.View`
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.surface};
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;
