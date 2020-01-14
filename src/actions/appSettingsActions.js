@@ -208,9 +208,9 @@ export const changeAppThemeAction = (themeType: string, setAsPreferred?: boolean
   };
 };
 
-export const setAppThemeAction = () => {
+export const setAppThemeAction = (theme?: string) => {
   return (dispatch: Dispatch) => {
-    const themeType = LIGHT_THEME;
+    const themeType = theme || LIGHT_THEME;
 
     dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
     dispatch({

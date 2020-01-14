@@ -360,7 +360,7 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
           error,
         },
       });
-      return {};
+      return { error: true };
     });
 };
 

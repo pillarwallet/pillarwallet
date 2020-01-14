@@ -20,7 +20,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
+import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity, Alert } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
@@ -28,7 +28,7 @@ import { Sentry } from 'react-native-sentry';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
-import { AppearanceProvider } from 'react-native-appearance';
+import { Appearance, AppearanceProvider } from 'react-native-appearance';
 import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -39,7 +39,7 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { changeAppThemeAction } from 'actions/appSettingsActions';
+import { changeAppThemeAction, markThemeAlertAsShownAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -48,7 +48,7 @@ import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import configureStore from './src/configureStore';
 
@@ -73,6 +73,8 @@ type Props = {
   activeWalkthroughSteps: Steps,
   themeType: string,
   changeAppTheme: (themeType: string) => void,
+  markThemeAlertAsShown: () => void,
+  seenThemeAlert: boolean,
 }
 
 class App extends React.Component<Props, *> {
@@ -122,6 +124,11 @@ class App extends React.Component<Props, *> {
     startListeningOnOpenNotification();
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { isFetched } = this.props;
+    if (isFetched && !prevProps.isFetched) this.showDarkModeAlert();
+  }
+
   setOnlineStatus = isOnline => {
     const {
       updateSessionNetworkStatus,
@@ -150,6 +157,26 @@ class App extends React.Component<Props, *> {
     const { url: deepLink } = event;
     if (deepLink === undefined) return;
     executeDeepLink(deepLink);
+  };
+
+  showDarkModeAlert = () => {
+    const { markThemeAlertAsShown, changeAppTheme, seenThemeAlert } = this.props;
+    if (seenThemeAlert) return;
+    const defaultPreference = Appearance.getColorScheme();
+    if (defaultPreference === DARK_PREFERENCE) {
+      markThemeAlertAsShown();
+      Alert.alert(
+        'Dark mode available',
+        'Would you like to turn on Dark mode now? You can always switch between modes in settings.',
+        [
+          { text: 'Cancel', onPress: () => markThemeAlertAsShown() },
+          {
+            text: 'Turn on',
+            onPress: () => changeAppTheme(DARK_THEME),
+          },
+        ],
+      );
+    }
   };
 
   render() {
@@ -201,12 +228,13 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType } },
+  appSettings: { isFetched, data: { themeType, seenThemeAlert } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   activeWalkthroughSteps,
+  seenThemeAlert,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -218,6 +246,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
+  markThemeAlertAsShown: () => dispatch(markThemeAlertAsShownAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
