@@ -461,8 +461,7 @@ class Contact extends React.Component<Props, State> {
                   buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
                   wrapperStyle={{ borderColor: colors.border, borderBottomWidth: 1, paddingBottom: 40 }}
                   noPadding
-                />
-                }
+                />}
                 <ActivityFeed
                   feedTitle="Activity"
                   noBorder

@@ -400,7 +400,7 @@ const ImageAddon = (props: Props) => {
             name={imageAddonIconName}
             color={iconColor}
             fontSize={30}
-            style={{ lineHeight: 30, width: 30 }}
+            style={{ lineHeight: 30, width: 30, height: 30 }}
           />
         </IconCircle>
       </ImageAddonHolder>

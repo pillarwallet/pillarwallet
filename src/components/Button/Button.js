@@ -396,7 +396,7 @@ class Button extends React.Component<Props, State> {
       theme,
     } = this.props;
 
-    const updatedColors = themeColors(theme)[(getThemeType(this.props, true))];
+    const updatedColors = themeColors(theme)[getThemeType(this.props, true)];
     const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
 
     return (

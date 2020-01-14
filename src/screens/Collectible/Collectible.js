@@ -113,7 +113,7 @@ const CloseIcon = styled(IconButton)`
   width: 58px;
 `;
 
-const ImageCloseIcon = (props: {onPress: () => void, colors: ThemeColors}) => {
+const ImageCloseIcon = (props: { onPress: () => void, colors: ThemeColors }) => {
   return (
     <IconWrapper>
       <CloseIcon

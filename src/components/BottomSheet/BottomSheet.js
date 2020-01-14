@@ -154,7 +154,7 @@ const ClickableBackdrop = styled.View`
   right: 0;
   bottom: 0;
   z-index: 10;
-  background-color: #000000';
+  background-color: #000000;
 `;
 
 const AnimatedSheet = Animated.createAnimatedComponent(Sheet);
