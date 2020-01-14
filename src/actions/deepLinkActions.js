@@ -19,7 +19,6 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
-import url from 'url';
 import Toast from 'components/Toast';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -30,14 +29,11 @@ import { isNavigationAllowed } from 'utils/navigation';
 
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { validateDeepLink } from 'utils/deepLink';
 
 type ApproveLoginQuery = {
   loginToken?: string,
 };
-
-const allowedDeepLinkProtocols = [
-  'pillarwallet:',
-];
 
 const beginApproveLogin = (query: ApproveLoginQuery) => {
   const { loginToken: loginAttemptToken } = query;
@@ -60,11 +56,10 @@ const beginApproveLogin = (query: ApproveLoginQuery) => {
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
-    const params = url.parse(deepLink, true);
-    if (isEmpty(params)) return;
-    const { host, protocol, query = {} } = params;
-    if (!allowedDeepLinkProtocols.includes(protocol)) return;
-    switch (host) {
+    const validatedDeepLink = validateDeepLink(deepLink);
+    if (!isEmpty(validatedDeepLink)) return;
+    const { action, query } = validatedDeepLink;
+    switch (action) {
       case 'referral':
         const referralCode = get(query, 'code');
         if (referralCode) {
@@ -77,6 +72,7 @@ export const executeDeepLinkAction = (deepLink: string) => {
         }
         break;
       case 'approve':
+        if (!query) break;
         beginApproveLogin(query);
         break;
       case 'shapeshift':
@@ -84,6 +80,9 @@ export const executeDeepLinkAction = (deepLink: string) => {
         const authStatus = get(query, 'status');
         if (!authStatus || !shapeshiftTokenHash) break;
         dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        break;
+      case 'recoveryportal':
+        console.log('executeDeepLinkAction recoveryportal: ', query);
         break;
       default:
         break;

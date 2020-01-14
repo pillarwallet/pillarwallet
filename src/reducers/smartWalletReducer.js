@@ -36,7 +36,11 @@ import {
   SET_ASSET_TRANSFER_GAS_LIMIT,
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
 } from 'constants/smartWalletConstants';
-import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
+import type {
+  SmartWalletAccount,
+  SmartWalletConnectedAccount,
+  SmartWalletDeploymentError,
+} from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { SmartWalletTransferTransaction } from 'models/Transaction';
@@ -45,7 +49,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 export type SmartWalletReducerState = {
   upgradeDismissed: boolean,
   sdkInitialized: boolean,
-  connectedAccount: Object,
+  connectedAccount: SmartWalletConnectedAccount,
   accounts: SmartWalletAccount[],
   upgrade: {
     status: ?string,

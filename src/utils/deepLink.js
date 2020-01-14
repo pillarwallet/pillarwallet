@@ -17,26 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BigNumber } from 'ethers/utils';
-import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
+import urlTools from 'url';
+import isEmpty from 'lodash.isempty';
 
-export type SmartWalletAccount = {
-  address: string,
-  deployMode: string,
-  id: number,
-  state: string,
-  updatedAt: Date,
+const allowedDeepLinkProtocols = [
+  'pillarwallet:',
+];
+
+export const validateDeepLink = (url: string): { action?: string, query?: Object } => {
+  const params = urlTools.parse(url, true);
+  if (isEmpty(params)) return {};
+  const { protocol } = params;
+  if (!allowedDeepLinkProtocols.includes(protocol)) return {};
+  const { host: action, query = {} } = params;
+  return { action, query };
 };
-
-export type SmartWalletConnectedAccount = {
-  ensName: ?string,
-  address: string,
-  activeDeviceAddress: string,
-  type: ?string,
-  state: string,
-  nextState: ?string,
-  balance: { real: BigNumber, virtual: BigNumber },
-  updatedAt: Date,
-};
-
-export type SmartWalletDeploymentError = $Keys<typeof SMART_WALLET_DEPLOYMENT_ERRORS>;
