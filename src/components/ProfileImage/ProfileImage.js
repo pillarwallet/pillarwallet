@@ -19,13 +19,15 @@
 */
 import * as React from 'react';
 import { ImageBackground } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
-import { themedColors } from 'utils/themes';
+import { getThemeType, themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
+import type { Theme } from 'models/Theme';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 const CircleImage = styled(CachedImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -79,6 +81,7 @@ type Props = {
   initialsSize?: number,
   noShadow?: boolean,
   showProfileImage?: boolean,
+  theme: Theme,
 }
 
 const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
@@ -142,8 +145,10 @@ const ProfileImage = (props: Props) => {
     initialsSize,
     noShadow,
     showProfileImage = true,
+    theme,
   } = props;
 
+  const themeType = getThemeType(theme);
   const diameterWithBorder = diameter + (borderWidth * 2) + (borderSpacing * 2);
 
   const renderDefaultImage = () => (
@@ -158,7 +163,7 @@ const ProfileImage = (props: Props) => {
   };
 
   return (
-    <Wrapper noShadow={noShadow} diameter={diameterWithBorder}>
+    <Wrapper noShadow={noShadow || themeType === DARK_THEME} diameter={diameterWithBorder}>
       {showProfileImage &&
         <ImageTouchable
           additionalContainerStyle={containerStyle}
@@ -189,4 +194,4 @@ const ProfileImage = (props: Props) => {
   );
 };
 
-export default ProfileImage;
+export default withTheme(ProfileImage);

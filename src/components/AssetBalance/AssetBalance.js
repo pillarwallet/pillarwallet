@@ -25,7 +25,8 @@ import type { Rates } from 'models/Asset';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
-import { fontStyles, spacing, fontSizes, baseColors } from 'utils/variables';
+import { fontStyles, spacing, fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { formatAmount, formatFiat } from 'utils/common';
 import { getRate } from 'utils/assets';
 
@@ -44,13 +45,12 @@ const BalanceWrapper = styled.View`
 
 const Balance = styled(BaseText)`
   font-size: ${fontSizes.giant}px;
-  color: ${baseColors.slateBlack};
 `;
 
 const ValueInFiat = styled(BaseText)`
   ${fontStyles.small};
   text-align: center;
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
 `;
 
 const AssetBalance = (props: Props) => {

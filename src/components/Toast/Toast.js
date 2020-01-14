@@ -24,9 +24,10 @@ import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
-import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { MediumText, BaseText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
+import type { ThemeColors } from 'models/Theme';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -48,11 +49,11 @@ const toastInitialOptions: ToastOptions = {
   message: '',
 };
 
-const typeColors = {
-  warning: baseColors.vividOrange,
-  info: baseColors.brightBlue,
-  success: baseColors.limeGreen,
-};
+const typeColors = (colors: ThemeColors) => ({
+  warning: colors.negative,
+  info: colors.primary,
+  success: colors.positive,
+});
 
 const typeIcons = {
   warning: 'warning-circle',
@@ -82,9 +83,6 @@ const ToastWrapper = styled.View`
   left: 0;
   top: 0;
   width: 100%;
-  border-left-width: ${spacing.rhythm / 2}px;
-  border-style: solid;
-  border-color: ${props => props.borderColor};
   shadow-color: #333;
   shadow-offset: 0 2px;
   shadow-opacity: 0.25;
@@ -123,7 +121,12 @@ const ToastBody = styled(BaseText)`
   color: ${themedColors.secondaryText};
 `;
 
-export default class Toast extends React.Component<{}, State> {
+const ToastIcon = styled(Icon)`
+  color: ${({ iconType, theme }) => typeColors(theme.colors)[iconType]}
+  font-size: ${fontSizes.large}px;
+`;
+
+class Toast extends React.Component<{}, State> {
   timeout: TimeoutID;
 
   state = {
@@ -240,24 +243,20 @@ export default class Toast extends React.Component<{}, State> {
           transform: [{ translateY: animation }],
         }}
         opacity={+!!this.state.toastOptions.message}
-        borderColor={typeColors[toastOptions.type]}
       >
         <ToastHolder forceInset={{ top: 'always', bottom: 'never' }}>
           <ContentWrapper androidStatusbarHeight={StatusBar.currentHeight}>
             <IconHolder>
-              <Icon
+              <ToastIcon
                 name={typeIcons[toastOptions.type]}
-                style={{
-                  color: typeColors[toastOptions.type],
-                  fontSize: fontSizes.large,
-                }}
+                iconType={toastOptions.type}
               />
             </IconHolder>
             {this.renderTextWrapper()}
             <IconButton
               onPress={this.handleClose}
               icon="close"
-              color={baseColors.mediumGray}
+              secondary
               style={{
                 flex: 2,
                 justifyContent: 'center',
@@ -280,3 +279,5 @@ export default class Toast extends React.Component<{}, State> {
     );
   }
 }
+
+export default Toast;

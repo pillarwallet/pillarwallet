@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Animated, TouchableHighlight } from 'react-native';
 import { BaseText } from 'components/Typography';
 import styled, { withTheme } from 'styled-components/native';
-import { baseColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
@@ -40,7 +40,7 @@ const CheckboxBox = styled.View`
   ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};
   ${({ rounded, active, theme }) => rounded && active && theme.current === LIGHT_THEME
     ? `
-      shadow-color: ${baseColors.black};
+      shadow-color: #000000;
       shadow-radius: 3px;
       shadow-opacity: 0.15;
       shadow-offset: 0px 2px;

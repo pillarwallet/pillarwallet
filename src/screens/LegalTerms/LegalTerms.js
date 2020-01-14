@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native/index';
+import styled, { withTheme } from 'styled-components/native/index';
 
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -36,16 +36,19 @@ import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 
 import { registerWalletAction } from 'actions/onboardingActions';
-import { fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, fontTrackings } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
 
 import PrivateKeyModal from 'screens/LegalTerms/PrivateKeyModal';
 import BackupPhraseModal from 'screens/LegalTerms/BackupPhraseModal';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   generateEncryptedWallet: () => void,
   navigation: NavigationScreenProp<*>,
   onboarding: Object,
   backupStatus: Object,
+  theme: Theme,
 };
 
 type State = {
@@ -141,7 +144,8 @@ class LegalTerms extends React.Component<Props, State> {
       scrollOffset,
     } = this.state;
 
-    const { backupStatus } = this.props;
+    const { backupStatus, theme } = this.props;
+    const colors = getThemeColors(theme);
     const { isBackedUp, isImported } = backupStatus;
     const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3 && userCheck4);
     const isWalletBackedUp = isImported || isBackedUp;
@@ -149,7 +153,7 @@ class LegalTerms extends React.Component<Props, State> {
     return (
       <Container>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} white />
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper regularPadding>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
             With great power comes great responsibility. Make sure you are aware of the following.
           </Paragraph>
@@ -208,7 +212,7 @@ class LegalTerms extends React.Component<Props, State> {
           </Checkbox>
 
         </ScrollWrapper>
-        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer backgroundColor={colors.surface}>
           <MultiButtonWrapper>
             <Button
               block
@@ -279,4 +283,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   generateEncryptedWallet: () => dispatch(registerWalletAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LegalTerms);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(LegalTerms));

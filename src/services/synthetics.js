@@ -51,20 +51,21 @@ class SyntheticsService {
    * assetTo – asset symbol code
    */
   createExchangeIntent(assetToRecipient: string, assetToQuantity: number, assetTo: string) {
-    return axios.post(buildApiUrl('exchange/intent'), this.buildRequestConfigWithData({
-      assetToRecipient,
-      assetToQuantity,
-      assetTo,
-    }))
+    return axios.post(
+      buildApiUrl('exchange/intent'),
+      JSON.stringify({ assetToRecipient, assetToQuantity, assetTo }),
+      this.apiConfig,
+    )
       .then(this.handleResponse)
       .catch((error: AxiosError) => ({ error }));
   }
 
   commitTransaction(transactionId: string, transactionHash: string) {
-    return axios.post(buildApiUrl('exchange/commit'), this.buildRequestConfigWithData({
-      transactionId,
-      transactionHash,
-    }))
+    return axios.post(
+      buildApiUrl('exchange/commit'),
+      JSON.stringify({ transactionId, transactionHash }),
+      this.apiConfig,
+    )
       .then(this.handleResponse)
       .catch((error: AxiosError) => ({ error }));
   }
@@ -78,13 +79,6 @@ class SyntheticsService {
   handleResponse(response: AxiosResponse) {
     if (response.status === 200) return response.data;
     return Promise.reject(response.data);
-  }
-
-  buildRequestConfigWithData(data: Object) {
-    return {
-      ...this.apiConfig,
-      data: JSON.stringify(data),
-    };
   }
 }
 

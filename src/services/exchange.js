@@ -140,13 +140,21 @@ export default class ExchangeService {
   }
 
   takeOffer(order: OfferRequest) {
-    return axios.post(buildApiUrl('orders', '2.0'), this.buildRequestConfigWithData(order))
+    return axios.post(
+      buildApiUrl('orders', '2.0'),
+      JSON.stringify(order),
+      this.apiConfig,
+    )
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));
   }
 
   setTokenAllowance(request: TokenAllowanceRequest) {
-    return axios.post(buildApiUrl('orders/allowance', '2.0'), this.buildRequestConfigWithData(request))
+    return axios.post(
+      buildApiUrl('orders/allowance', '2.0'),
+      JSON.stringify(request),
+      this.apiConfig,
+    )
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));
   }
@@ -195,12 +203,5 @@ export default class ExchangeService {
     return axios.get(buildApiUrl('shims/assets', '1.0'))
       .then(({ data }: AxiosResponse) => data)
       .catch(() => []);
-  }
-
-  buildRequestConfigWithData(data: Object) {
-    return {
-      ...this.apiConfig,
-      data: JSON.stringify(data),
-    };
   }
 }
