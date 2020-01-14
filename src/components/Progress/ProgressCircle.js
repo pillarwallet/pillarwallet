@@ -20,7 +20,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { Svg, Path, G, Defs, LinearGradient, Stop, Text } from 'react-native-svg';
-import { baseColors, fontSizes } from 'utils/variables';
+import { withTheme } from 'styled-components';
+import { fontSizes } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   circleSize: number,
@@ -30,9 +33,10 @@ type Props = {
   children?: React.Node,
   label: string,
   progress: number,
+  theme: Theme,
 };
 
-export default class CircularProgress extends React.Component<Props, {}> {
+class CircularProgress extends React.Component<Props> {
   getCartesian(centerX: number, centerY: number, radius: number, angleInDeg: number) {
     const angleInRad = ((angleInDeg - 90) * Math.PI) / 180.0;
     return {
@@ -59,7 +63,10 @@ export default class CircularProgress extends React.Component<Props, {}> {
       children,
       label,
       progress,
+      theme,
     } = this.props;
+
+    const colors = getThemeColors(theme);
 
     const paddingX = 40;
     const paddingY = 30;
@@ -94,7 +101,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
     const labelX = end.x + labelCirclePaddingX;
     const labelY = end.y + labelCirclePaddingY;
 
-    const strokeType = progress < 10 ? baseColors.mantis : 'url(#grad)';
+    const strokeType = progress < 10 ? colors.primary : 'url(#grad)';
 
     const dxPos = () => {
       if (progress === 100 || progress === 0 || progress === 0.5 || progress === 50.5) {
@@ -120,14 +127,14 @@ export default class CircularProgress extends React.Component<Props, {}> {
               y2="100%"
               spreadMethod="pad"
             >
-              <Stop offset="0%" stopColor={baseColors.mantis} stopOpacity="1" />
-              <Stop offset="100%" stopColor={baseColors.oliveDrab} stopOpacity="1" />
+              <Stop offset="0%" stopColor={colors.primary} stopOpacity="1" />
+              <Stop offset="100%" stopColor={colors.accent} stopOpacity="1" />
             </LinearGradient>
           </Defs>
           <G>
             <Path
               d={backgroundPath}
-              stroke={baseColors.snowWhite}
+              stroke={colors.control}
               strokeWidth={22}
               fill="transparent"
               x={paddingX}
@@ -148,7 +155,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
               dy={5}
               dx={dxPos()}
               fontSize={fontSizes.tiny}
-              fill={baseColors.darkGray}
+              fill={colors.secondaryText}
               textAnchor="middle"
             >
               {label}%
@@ -164,3 +171,5 @@ export default class CircularProgress extends React.Component<Props, {}> {
     );
   }
 }
+
+export default withTheme(CircularProgress);

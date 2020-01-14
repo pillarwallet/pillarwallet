@@ -19,31 +19,22 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { fontSizes } from 'utils/variables';
+import { MediumText } from 'components/Typography';
 
 type Props = {
-  children?: React.Node,
-};
+  centerText?: boolean,
+  color?: string,
+  style?: Object,
+}
 
-const FormDividerBackground = styled.View`
-  width: 100%;
-  padding: 10px;
-  background-color: ${baseColors.lightGray};
+const StyledText = styled(MediumText)`
+  font-size: ${fontSizes.medium}px;
+  line-height: 26px;
+  color: ${({ color, theme }) => color || theme.colors.text};
+  text-align: ${props => props.centerText ? 'center' : 'left'};
 `;
 
-const FormDividerText = styled(BaseText)`
-  color: ${baseColors.darkGray};
-`;
+const HeaderTitleText = (props: Props) => <StyledText {...props} />;
 
-const FormDivider = (props: Props) => {
-  return (
-    <FormDividerBackground>
-      <FormDividerText>
-        {props.children}
-      </FormDividerText>
-    </FormDividerBackground>
-  );
-};
-
-export default FormDivider;
+export default HeaderTitleText;

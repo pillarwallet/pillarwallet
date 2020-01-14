@@ -21,8 +21,10 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { View, StyleSheet } from 'react-native';
-import { baseColors, spacing } from 'utils/variables';
 import { connect } from 'react-redux';
+
+import { themedColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -58,7 +60,7 @@ const Footer = styled.View`
 
 const ListItems = styled.View`
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 export class ContactInfo extends React.Component<Props, State> {
@@ -153,7 +155,6 @@ export class ContactInfo extends React.Component<Props, State> {
     const dataQR = this.getDataQR();
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
         headerProps={{
           centerItems: [{ title: 'User info' }],
           rightItems: [{ close: true }],

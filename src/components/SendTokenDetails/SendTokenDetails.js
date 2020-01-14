@@ -20,7 +20,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Label, BaseText } from 'components/Typography';
-import { fontStyles, UIColors } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { formatAmount, formatFiat } from 'utils/common';
 import { getRate } from 'utils/assets';
 import type { Rates } from 'models/Asset';
@@ -40,7 +41,7 @@ const Details = styled.View``;
 
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${UIColors.placeholderTextColor};
+  color: ${themedColors.secondaryText};
   margin-left: 4px;
 `;
 

@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { withTheme } from 'styled-components';
 
 // constants
 import {
@@ -34,7 +35,10 @@ import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
 // utils
-import { baseColors, fontSizes, lineHeights } from 'utils/variables';
+import { fontSizes, lineHeights } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
+
+import type { Theme } from 'models/Theme';
 
 /* eslint max-len:0 */
 const subtitleDescription = {
@@ -59,6 +63,7 @@ type Props = {
   showConfirmationModal: boolean,
   manageContactType: string,
   contact: Object,
+  theme: Theme,
 };
 
 const ConnectionConfirmationModal = (props: Props) => {
@@ -68,7 +73,9 @@ const ConnectionConfirmationModal = (props: Props) => {
     showConfirmationModal,
     manageContactType,
     contact,
+    theme,
   } = props;
+  const colors = getThemeColors(theme);
 
   const { username, status } = contact;
   let contactType = manageContactType;
@@ -90,7 +97,7 @@ const ConnectionConfirmationModal = (props: Props) => {
       noClose
       subtitle={subtitle}
       subtitleStyles={{
-        color: baseColors.darkGray,
+        color: colors.secondaryText,
         fontSize: fontSizes.medium,
         lineHeight: lineHeights.medium,
         letterSpacing: 0.1,
@@ -118,4 +125,4 @@ const ConnectionConfirmationModal = (props: Props) => {
   );
 };
 
-export default ConnectionConfirmationModal;
+export default withTheme(ConnectionConfirmationModal);

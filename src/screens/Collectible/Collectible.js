@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
 import isEqual from 'lodash.isequal';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
@@ -39,8 +39,9 @@ import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 
 import { isIphoneX } from 'utils/common';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountHistorySelector } from 'selectors/history';
@@ -49,6 +50,7 @@ import type { Collectible } from 'models/Collectible';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Theme, ThemeColors } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -58,6 +60,7 @@ type Props = {
   history: Object[],
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
+  theme: Theme,
 };
 
 type State = {|
@@ -72,10 +75,8 @@ const ActionButtonsWrapper = styled.View`
     ios: '10px',
     android: '30px',
   })};
-  background-color: ${baseColors.snowWhite};
   border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
   margin-top: 4px;
 `;
 
@@ -112,12 +113,12 @@ const CloseIcon = styled(IconButton)`
   width: 58px;
 `;
 
-const ImageCloseIcon = (props: {onPress: () => void}) => {
+const ImageCloseIcon = (props: { onPress: () => void, colors: ThemeColors }) => {
   return (
     <IconWrapper>
       <CloseIcon
         icon="close"
-        color={baseColors.white}
+        color={props.colors.control}
         onPress={props.onPress}
         fontSize={fontSizes.medium}
         horizontalAlign="center"
@@ -167,6 +168,8 @@ class CollectibleScreen extends React.Component<Props, State> {
   renderImageView(collectible: Collectible) {
     const { isImageViewVisible } = this.state;
     const { image, name } = collectible;
+    const { theme } = this.props;
+    const colors = getThemeColors(theme);
 
     const imageViewImages = [
       {
@@ -181,7 +184,7 @@ class CollectibleScreen extends React.Component<Props, State> {
         imageIndex={0}
         isVisible={isImageViewVisible}
         onClose={this.onCloseImageView}
-        controls={{ close: ImageCloseIcon }}
+        controls={{ close: (props) => <ImageCloseIcon {...props} colors={colors} /> }}
       />
     );
   }
@@ -283,4 +286,4 @@ const combinedMapStateToProps = (state: RootReducerState) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(CollectibleScreen);
+export default withTheme(connect(combinedMapStateToProps)(CollectibleScreen));
