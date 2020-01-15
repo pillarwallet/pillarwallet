@@ -1989,6 +1989,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                         theme={
                           Object {
                             "colors": Object {
+                              "PPNSurface": "#0a0c78",
+                              "PPNText": "#f33726",
                               "accent": "#818EB3",
                               "bitcoinWallet": "#F79319",
                               "border": "#007AFF",
@@ -2003,6 +2005,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "secondaryAccent": "#EBF0F5",
                               "secondaryText": "#8B939E",
                               "smartWallet": "#3C71FE",
+                              "smartWalletSurface": "#f3f7ff",
+                              "smartWalletText": "#1D24D8",
                               "surface": "#007AFF",
                               "tertiary": "#EBF0F6",
                               "text": "#FCFDFF",
