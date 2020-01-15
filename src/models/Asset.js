@@ -77,3 +77,8 @@ export type AssetTransfer = {
   amount: number,
   gasLimit?: number,
 };
+
+export type SyntheticAsset = Asset & {
+  availableBalance: number,
+  exchangeRate?: number,
+};
