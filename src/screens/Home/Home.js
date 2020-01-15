@@ -75,6 +75,7 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
 import { spacing, fontStyles } from 'utils/variables';
@@ -125,6 +126,7 @@ type Props = {
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
   baseFiatCurrency: ?string,
+  activeBlockchainNetwork: ?string,
 };
 
 type State = {
@@ -181,7 +183,11 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { logScreenView, fetchBadges, fetchBadgeAwardHistory } = this.props;
+    const {
+      logScreenView,
+      fetchBadges,
+      fetchBadgeAwardHistory,
+    } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -313,6 +319,7 @@ class HomeScreen extends React.Component<Props, State> {
       badgesEvents,
       theme,
       baseFiatCurrency,
+      activeBlockchainNetwork,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -321,7 +328,7 @@ class HomeScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = mapTransactionsHistory(
+    const transactionsOnMainnet = activeBlockchainNetwork === 'BITCOIN' ? history : mapTransactionsHistory(
       tokenTxHistory,
       contacts,
       contactsSmartAddresses,
@@ -526,6 +533,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
+  activeBlockchainNetwork: activeBlockchainSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
