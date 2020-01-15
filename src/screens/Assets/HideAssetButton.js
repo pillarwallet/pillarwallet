@@ -58,7 +58,7 @@ const TurnOffIcon = styled(Icon)`
 const HideAssetButton = (props: Props) => {
   const { onPress, expanded, disabled } = props;
   return (
-    <HideButtonWrapper onPress={onPress}>
+    <HideButtonWrapper onPress={onPress} activeOpacity={0.8}>
       <TurnOffIcon name="turn-off" disabled={disabled} />
       <HideButtonLabel expanded={expanded} disabled={disabled}>
         Hide
