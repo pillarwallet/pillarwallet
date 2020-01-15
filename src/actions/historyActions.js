@@ -155,6 +155,10 @@ export const fetchBTCTransactionsHistoryAction = () => {
       history: { data: currentHistory },
     } = getState();
 
+    if (isEmpty(addresses)) {
+      return;
+    }
+
     const btcAddress = addresses[0].address;
     const extracted = extractBitcoinTransactions(btcAddress, transactions);
 
