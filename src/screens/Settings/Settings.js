@@ -61,6 +61,8 @@ import {
   CHANGE_PIN_FLOW,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   REVEAL_BACKUP_PHRASE,
+  RECOVERY_PORTAL_SETUP_INTRO,
+  MANAGE_CONNECTED_DEVICES,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 
@@ -284,16 +286,21 @@ const formKeyItems = (that) => {
   ];
 };
 
-const formSmartWalletItems = () => {
+const formSmartWalletItems = (that) => {
   return [
     {
-      key: 'linkDevice',
-      title: 'Link to another device',
-      body: 'Manage this user on different devices simultaneously',
-      onPress: () => noop(),
-      label: 'soon',
+      key: 'recoveryPortal',
+      title: 'Recovery Portal',
+      body: 'Manage recovery devices',
+      onPress: that.navigateToRecoveryPortal,
       minHeight: 96,
-      disabled: true,
+    },
+    {
+      key: 'connectedDevices',
+      title: 'Manage connected device',
+      body: 'Manage this user on different devices simultaneously',
+      onPress: that.navigateToConnectedDevices,
+      minHeight: 96,
     },
   ];
 };
@@ -431,6 +438,16 @@ class Settings extends React.Component<Props, State> {
   //     navigation.navigate(CONTACT_INFO);
   //   });
   // }
+
+  navigateToRecoveryPortal = () => {
+    const { navigation } = this.props;
+    navigation.navigate(RECOVERY_PORTAL_SETUP_INTRO);
+  };
+
+  navigateToConnectedDevices = () => {
+    const { navigation } = this.props;
+    navigation.navigate(MANAGE_CONNECTED_DEVICES);
+  };
 
   navigateToBackup = () => {
     const { navigation, backupStatus } = this.props;
@@ -576,7 +593,7 @@ class Settings extends React.Component<Props, State> {
           {!!hasSmartWallet && smartWalletFeatureEnabled &&
           <SettingsSection
             sectionTitle="Smart Wallet"
-            sectionItems={formSmartWalletItems()}
+            sectionItems={formSmartWalletItems(this)}
             isCardsList
           />}
 

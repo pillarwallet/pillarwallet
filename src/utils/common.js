@@ -34,7 +34,7 @@ import {
   DeviceEventEmitter,
 } from 'react-native';
 import { providers, utils } from 'ethers';
-import { format as formatDate } from 'date-fns';
+import { format as formatDate, isToday, isYesterday } from 'date-fns';
 import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
@@ -430,6 +430,16 @@ type GroupedAndSortedData = {
   data: any[],
 };
 
+export const humanizeDateString = (date: Date): string => {
+  // by default don't show the year if the event happened this year
+  if (isToday(date)) return 'Today';
+  if (isYesterday(date)) return 'Yesterday';
+  const dateFormat = date.getFullYear() === new Date().getFullYear()
+    ? 'MMM D'
+    : 'MMM D YYYY';
+  return formatDate(date, dateFormat);
+};
+
 // all default values makes common sense and usage
 export const groupAndSortByDate = (
   data: any[],
@@ -444,11 +454,7 @@ export const groupAndSortByDate = (
       : listItem[dateField];
     const itemCreatedDate = new Date(dateValue);
     const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
-    // don't show the year if the event happened this year
-    const titleDateFormat = itemCreatedDate.getFullYear() === new Date().getFullYear()
-      ? 'MMM D'
-      : 'MMM D YYYY';
-    const sectionTitle = formatDate(itemCreatedDate, titleDateFormat);
+    const sectionTitle = humanizeDateString(itemCreatedDate);
     const existingSection = grouped.find(({ date }) => date === formattedDate);
     if (!existingSection) {
       grouped.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });

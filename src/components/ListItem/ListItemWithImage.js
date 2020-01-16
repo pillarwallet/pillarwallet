@@ -58,7 +58,8 @@ type Props = {
   itemStatusIcon?: string,
   valueColor?: ?string,
   buttonActionLabel?: string,
-  labelAsButton?: boolean,
+  actionLabelAsButton?: boolean,
+  customLabel?: React.Node,
   buttonAction?: Function,
   secondaryButton?: boolean,
   actionLabel?: ?string,
@@ -95,7 +96,7 @@ type AddonProps = {
   itemStatusIcon?: string,
   valueColor?: ?string,
   buttonActionLabel?: string,
-  labelAsButton?: boolean,
+  actionLabelAsButton?: boolean,
   buttonAction?: () => void,
   secondaryButton?: boolean,
   actionLabel?: ?string,
@@ -429,7 +430,7 @@ const Addon = (props: AddonProps) => {
     itemStatusIcon,
     valueColor,
     buttonActionLabel,
-    labelAsButton,
+    actionLabelAsButton,
     buttonAction,
     secondaryButton,
     actionLabel,
@@ -454,8 +455,8 @@ const Addon = (props: AddonProps) => {
 
   if (actionLabel) {
     return (
-      <ActionLabel button={labelAsButton}>
-        <ActionLabelText button={labelAsButton} color={labelAsButton ? colors.primary : actionLabelColor}>
+      <ActionLabel button={actionLabelAsButton}>
+        <ActionLabelText button={actionLabelAsButton} color={actionLabelAsButton ? colors.primary : actionLabelColor}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>
@@ -578,6 +579,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       hasShadow,
       imageWrapperStyle,
       theme,
+      customLabel,
     } = this.props;
 
     const type = getType(this.props);
@@ -593,9 +595,10 @@ class ListItemWithImage extends React.Component<Props, {}> {
           <View style={{ flex: 1 }}>
             <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
               <Column type={type} style={{ flexGrow: 1 }}>
-                {!!label &&
+                {(!!label || !!customLabel) &&
                 <Row>
-                  <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>
+                  {!!customLabel && customLabel}
+                  {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
                   {(type === CHAT_ITEM && !!timeSent) &&
                   <TimeWrapper>
                     <TimeSent>{timeSent}</TimeSent>

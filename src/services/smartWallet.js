@@ -417,6 +417,11 @@ class SmartWallet {
     return this.sdk.createAccountDevice(address).catch(() => null);
   }
 
+
+  removeAccountDevice(address: string) {
+    return this.sdk.removeAccountDevice(address).catch(() => null);
+  }
+
   handleError(error: any) {
     console.error('SmartWallet handleError: ', error);
   }

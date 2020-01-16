@@ -100,6 +100,7 @@ import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortal
 import RecoveryPortalSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSignUp';
 import RecoveryPortalConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalConnectDevice';
 import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
+import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -223,6 +224,7 @@ import {
   RECOVERY_PORTAL_SIGN_UP,
   RECOVERY_PORTAL_CONNECT_DEVICE,
   RECOVERY_PORTAL_SETUP_COMPLETE,
+  MANAGE_CONNECTED_DEVICES,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -340,6 +342,7 @@ const homeFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
+  [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
   [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 

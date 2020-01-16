@@ -262,6 +262,13 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
   };
 };
 
+export const fetchConnectedAccountAction = () => {
+  return async (dispatch: Dispatch) => {
+    const account = await smartWalletService.fetchConnectedAccount();
+    dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, account });
+  };
+};
+
 export const deploySmartWalletAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -327,8 +334,7 @@ export const deploySmartWalletAction = () => {
 
     // update accounts info
     await dispatch(loadSmartWalletAccountsAction());
-    const account = await smartWalletService.fetchConnectedAccount();
-    dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, account });
+    await dispatch(fetchConnectedAccountAction());
   };
 };
 
@@ -1636,6 +1642,33 @@ export const addAccountDeviceAction = (deviceAddress: string) => {
       });
       return;
     }
+    // TODO: dispatch device add history entry
     dispatch({ type: ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
+    dispatch(fetchConnectedAccountAction());
+  };
+};
+
+export const removeAccountDeviceAction = (deviceAddress: string) => {
+  return async (dispatch: Dispatch) => {
+    // TODO: should we estimate and undeploy?
+    console.log('deviceAddress: ', deviceAddress);
+    const accountDeviceRemoved = await smartWalletService.removeAccountDevice(deviceAddress);
+    console.log('accountDeviceRemoved: ', accountDeviceRemoved);
+    if (!accountDeviceRemoved) {
+      Toast.show({
+        message: 'Unable to remove linked account device',
+        type: 'warning',
+        title: 'Cannot remove device',
+        autoClose: false,
+      });
+      return;
+    }
+    Toast.show({
+      message: 'Device has been removed!',
+      type: 'success',
+      title: 'Success',
+      autoClose: true,
+    });
+    dispatch(fetchConnectedAccountAction());
   };
 };

@@ -24,7 +24,7 @@ import { themedColors } from 'utils/themes';
 export const BaseText = styled.Text`
   font-family: ${appFont.regular};
   text-align-vertical: center;
-  color: ${themedColors.text};
+  color: ${({ color }) => color || themedColors.text};
 `;
 
 export const BoldText = styled(BaseText)`
@@ -42,7 +42,7 @@ export const LightText = styled(BaseText)`
 export const MediumText = styled(BaseText)`
   font-family: ${appFont.medium};
   text-align-vertical: center;
-  color: ${themedColors.text};
+  color: ${({ color }) => color || themedColors.text};
 `;
 
 export const Title = styled(BaseText)`
