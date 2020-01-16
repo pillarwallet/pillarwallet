@@ -7,16 +7,12 @@
     </style>
 
     <style name="LightTheme" parent="AppTheme">
-        <item name="textColor">#0A1427</item>
-        <item name="colorAccent">#007AFF</item>
         <item name="backgroundColor">@color/background_light</item>
         <item name="splashIcon">@drawable/logo_light_mode</item>
         <item name="android:colorBackground">@color/background_light</item>
     </style>
 
     <style name="DarkTheme" parent="AppTheme">
-        <item name="textColor">#B1BBD9</item>
-        <item name="colorAccent">#007AFF</item>
         <item name="backgroundColor">@color/background_dark</item>
         <item name="splashIcon">@drawable/logo_dark_mode</item>
         <item name="android:colorBackground">@color/background_dark</item>
