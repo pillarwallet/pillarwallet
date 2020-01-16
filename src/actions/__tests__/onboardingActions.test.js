@@ -161,6 +161,7 @@ describe('Wallet actions', () => {
       accounts: { data: [mockSmartWalletAccount] },
       featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       history: { data: {} },
+      appSettings: {},
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -228,6 +229,7 @@ describe('Wallet actions', () => {
       smartWallet: { upgrade: { status: null } },
       assets: { data: {} },
       history: { data: {} },
+      appSettings: {},
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -308,6 +310,7 @@ describe('Wallet actions', () => {
       featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       assets: { data: {} },
       history: { data: {} },
+      appSettings: {},
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
