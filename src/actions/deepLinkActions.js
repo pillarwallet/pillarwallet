@@ -19,17 +19,29 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
-import Toast from 'components/Toast';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { updateNavigationLastScreenState, navigate } from 'services/navigation';
-import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
-import { LOGIN, CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
-import { isNavigationAllowed } from 'utils/navigation';
 
+// actions
+import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
+
+// constants
+import { LOGIN, CONFIRM_CLAIM, HOME, RECOVERY_PORTAL_CONNECT_DEVICE } from 'constants/navigationConstants';
+
+// components
+import Toast from 'components/Toast';
+
+// utils
+import { isNavigationAllowed } from 'utils/navigation';
+import { validateDeepLink } from 'utils/deepLink';
+
+// services
+import { updateNavigationLastScreenState, navigate } from 'services/navigation';
+
+// types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { validateDeepLink } from 'utils/deepLink';
+
 
 type ApproveLoginQuery = {
   loginToken?: string,
@@ -57,8 +69,9 @@ const beginApproveLogin = (query: ApproveLoginQuery) => {
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
     const validatedDeepLink = validateDeepLink(deepLink);
-    if (!isEmpty(validatedDeepLink)) return;
+    if (isEmpty(validatedDeepLink)) return;
     const { action, query } = validatedDeepLink;
+    // NOTE: actions (hosts) are parsed in lowercase
     switch (action) {
       case 'referral':
         const referralCode = get(query, 'code');
@@ -72,17 +85,25 @@ export const executeDeepLinkAction = (deepLink: string) => {
         }
         break;
       case 'approve':
-        if (!query) break;
-        beginApproveLogin(query);
+        if (query) {
+          beginApproveLogin(query);
+        }
         break;
       case 'shapeshift':
         const shapeshiftTokenHash = get(query, 'auth');
         const authStatus = get(query, 'status');
-        if (!authStatus || !shapeshiftTokenHash) break;
-        dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        if (authStatus && shapeshiftTokenHash) {
+          dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        }
         break;
-      case 'recoveryportal':
-        console.log('executeDeepLinkAction recoveryportal: ', query);
+      case 'addrecoveryportaldevice':
+        const deviceAddress = get(query, 'address');
+        if (deviceAddress) {
+          navigate(NavigationActions.navigate({
+            routeName: RECOVERY_PORTAL_CONNECT_DEVICE,
+            params: { deviceAddress },
+          }));
+        }
         break;
       default:
         break;

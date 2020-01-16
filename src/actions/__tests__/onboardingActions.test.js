@@ -90,7 +90,6 @@ const mockWallet: Object = {
 const mockSmartWalletAccountApiData = {
   id: 123,
   address: 'publicAddress',
-  deployMode: 'Unsecured',
   ensName: null,
   state: 'Created',
   nextState: null,

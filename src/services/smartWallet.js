@@ -190,7 +190,7 @@ class SmartWallet {
     return this.fetchConnectedAccount();
   }
 
-  async deploy() {
+  async deployAccount() {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
 
     const accountBalance = this.getAccountRealBalance();
@@ -198,6 +198,20 @@ class SmartWallet {
 
     if (totalCost && accountBalance.gte(totalCost)) {
       return this.sdk.deployAccount(deployEstimate);
+    }
+
+    console.log('insufficient balance: ', deployEstimate, accountBalance);
+    return null;
+  }
+
+  async deployAccountDevice(deviceAddress: string) {
+    const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
+
+    const accountBalance = this.getAccountRealBalance();
+    const { totalCost } = parseEstimatePayload(deployEstimate);
+
+    if (totalCost && accountBalance.gte(totalCost)) {
+      return this.sdk.submitAccountTransaction(deployEstimate);
     }
 
     console.log('insufficient balance: ', deployEstimate, accountBalance);
@@ -368,6 +382,11 @@ class SmartWallet {
     return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
   }
 
+  async estimateAccountDeviceDeployment(deviceAddress: string, gasInfo: GasInfo) {
+    const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(() => {});
+    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
+  }
+
   async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo) {
     const {
       recipient,
@@ -392,6 +411,10 @@ class SmartWallet {
     return this.sdk.getConnectedAccountTransaction(hash)
       .then(({ state }) => state)
       .catch(() => null);
+  }
+
+  addAccountDevice(address: string) {
+    return this.sdk.createAccountDevice(address).catch(() => null);
   }
 
   handleError(error: any) {

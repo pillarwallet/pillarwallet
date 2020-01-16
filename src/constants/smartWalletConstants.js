@@ -49,3 +49,4 @@ export const SET_ASSET_TRANSFER_GAS_LIMIT = 'SET_ASSET_TRANSFER_GAS_LIMIT';
 export const SET_COLLECTIBLE_TRANSFER_GAS_LIMIT = 'SET_COLLECTIBLE_TRANSFER_GAS_LIMIT';
 export const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 export const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
+export const ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE = 'ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE';

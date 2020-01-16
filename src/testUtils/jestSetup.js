@@ -205,7 +205,6 @@ jest.mock('react-native-fabric', () => {
 const mockSmartWalletAccount = {
   id: 123,
   address: 'publicAddress',
-  deployMode: 'Unsecured',
   ensName: null,
   state: 'Created',
   nextState: null,

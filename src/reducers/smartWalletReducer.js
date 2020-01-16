@@ -35,10 +35,11 @@ import {
   RESET_SMART_WALLET_DEPLOYMENT,
   SET_ASSET_TRANSFER_GAS_LIMIT,
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
+  ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
 } from 'constants/smartWalletConstants';
 import type {
   SmartWalletAccount,
-  SmartWalletConnectedAccount,
+  ConnectedSmartWalletAccount,
   SmartWalletDeploymentError,
 } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
@@ -49,7 +50,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 export type SmartWalletReducerState = {
   upgradeDismissed: boolean,
   sdkInitialized: boolean,
-  connectedAccount: $Shape<SmartWalletConnectedAccount>,
+  connectedAccount: $Shape<ConnectedSmartWalletAccount>,
   accounts: SmartWalletAccount[],
   upgrade: {
     status: ?string,
@@ -248,6 +249,18 @@ export default function smartWalletReducer(
               return updated;
             }, state.upgrade.transfer.collectibles),
           },
+        },
+      };
+    case ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE:
+      return {
+        ...state,
+        ...state,
+        connectedAccount: {
+          ...state.connectedAccount,
+          devices: [
+            action.payload,
+            ...state.connectedAccount.devices,
+          ],
         },
       };
     default:

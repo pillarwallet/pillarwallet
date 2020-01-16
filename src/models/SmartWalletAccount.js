@@ -17,26 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BigNumber } from 'ethers/utils';
+import { IAccount, IAccountDevice } from '@smartwallet/sdk/build/interfaces';
 import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
-export type SmartWalletAccount = {
-  address: string,
-  deployMode: string,
-  id: number,
-  state: string,
-  updatedAt: Date,
+export type SmartWalletAccount = IAccount;
+
+export type SmartWalletAccountDevice = IAccountDevice;
+
+export type ConnectedSmartWalletAccount = {
+  ...SmartWalletAccount,
+  activeDeviceAddress: string,
+  devices: SmartWalletAccountDevice[],
 };
 
-export type SmartWalletConnectedAccount = {
-  ensName: ?string,
-  address: string,
-  activeDeviceAddress: string,
-  type: ?string,
-  state: string,
-  nextState: ?string,
-  balance: { real: BigNumber, virtual: BigNumber },
-  updatedAt: Date,
-};
 
 export type SmartWalletDeploymentError = $Keys<typeof SMART_WALLET_DEPLOYMENT_ERRORS>;

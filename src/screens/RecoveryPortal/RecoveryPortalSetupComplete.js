@@ -16,9 +16,9 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Alert, TouchableOpacity } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { Alert, BackHandler, Platform, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
 import { BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
@@ -67,50 +67,68 @@ const skipPrompt = (callback) => Alert.alert(
   { cancelable: true },
 );
 
-const RecoveryPortalConnectDevice = (props: Props) => {
-  const { isBackedUp, isImported, navigation } = props;
-  const isWalletBackupNeeded = !isImported && !isBackedUp;
-  return (
-    <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: 'Recovery Portal' }] }}
-    >
-      <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
-        <Wrapper flex={1} center regularPadding>
-          <Animation source={animationSuccess} />
-          <Title center>Recovery device setup is now complete</Title>
-          <Paragraph small>
-            It is important that you also write down and secure your private key back up phrase
-            in order to recover your primary Pillar account. This is the only way to recover your
-            password to the Pillar Recovery Portal. Pillar cannot help you retrieve your wallet.
-          </Paragraph>
-          {isWalletBackupNeeded &&
-            <Button
-              block
-              title="Backup my Private Key"
-              onPress={() => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW)}
-              marginTop={50}
-              marginBottom={spacing.large}
-            />
-          }
-          {isWalletBackupNeeded &&
-            <TouchableOpacity onPress={() => skipPrompt(() => navigation.dismiss())}>
-              <DangerTextLink>Skip (at my own risk)</DangerTextLink>
-            </TouchableOpacity>
-          }
-          {!isWalletBackupNeeded &&
-            <Button
-              block
-              title="Magic"
-              onPress={() => navigation.dismiss()}
-              marginTop={50}
-            />
-          }
-        </Wrapper>
-      </ScrollWrapper>
-    </ContainerWithHeader>
-  );
-};
+class RecoveryPortalConnectDevice extends React.PureComponent<Props> {
+  componentDidMount() {
+    if (Platform.OS !== 'android') return;
+    BackHandler.addEventListener('hardwareBackPress', this.handleBack);
+  }
 
+  componentWillUnmount() {
+    if (Platform.OS !== 'android') return;
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBack);
+  }
+
+  handleBack = () => this.props.navigation.dismiss();
+
+  render() {
+    const { isBackedUp, isImported, navigation } = this.props;
+    const isWalletBackupNeeded = !isImported && !isBackedUp;
+    return (
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: 'Recovery Portal' }],
+          rightItems: [{ close: true }],
+          noBack: true,
+          onClose: this.handleBack,
+        }}
+      >
+        <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
+          <Wrapper flex={1} center regularPadding>
+            <Animation source={animationSuccess} />
+            <Title center>Recovery device setup is now complete</Title>
+            <Paragraph small>
+              It is important that you also write down and secure your private key back up phrase
+              in order to recover your primary Pillar account. This is the only way to recover your
+              password to the Pillar Recovery Portal. Pillar cannot help you retrieve your wallet.
+            </Paragraph>
+            {isWalletBackupNeeded &&
+              <Button
+                block
+                title="Backup my Private Key"
+                onPress={() => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW)}
+                marginTop={50}
+                marginBottom={spacing.large}
+              />
+            }
+            {isWalletBackupNeeded &&
+              <TouchableOpacity onPress={() => skipPrompt(this.handleBack)}>
+                <DangerTextLink>Skip (at my own risk)</DangerTextLink>
+              </TouchableOpacity>
+            }
+            {!isWalletBackupNeeded &&
+              <Button
+                block
+                title="Magic"
+                onPress={() => navigation.dismiss()}
+                marginTop={50}
+              />
+            }
+          </Wrapper>
+        </ScrollWrapper>
+      </ContainerWithHeader>
+    );
+  }
+}
 
 const mapStateToProps = ({
   wallet: { backupStatus: { isBackedUp, isImported } },

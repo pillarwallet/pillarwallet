@@ -164,7 +164,7 @@ PODS:
     - React
   - react-native-udp (2.6.0):
     - React
-  - react-native-webview (5.12.0):
+  - react-native-webview (8.0.3):
     - React
   - React/ART (0.59.10):
     - React/Core
@@ -418,7 +418,7 @@ SPEC CHECKSUMS:
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
   react-native-randombytes: d3184d351604f78e019535178766590188bbc133
   react-native-udp: 1dc04d3429ff13a251126092feeb35e175a1b0d8
-  react-native-webview: a42108b827082f8f0333529b0772102031d5960d
+  react-native-webview: ad9581723f4d401c22cb3a371811d4dc9310df56
   ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
   ReactNativePermissions: c5be85159a946eed987b35333f848ba17c2ff2af
   RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc

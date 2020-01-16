@@ -39,41 +39,27 @@ import { validateDeepLink } from 'utils/deepLink';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { SmartWalletConnectedAccount } from 'models/SmartWalletAccount';
+import type { ConnectedSmartWalletAccount } from 'models/SmartWalletAccount';
 
 
 type Props = {
   navigation: NavigationScreenProp,
-  connectedSmartWallet: SmartWalletConnectedAccount,
+  connectedSmartWallet: ConnectedSmartWalletAccount,
   executeDeepLink: (deepLink: string) => void,
 };
 
 type State = {
-  currentWebViewUrl: string,
-  loadingFromDeepLink: boolean,
+  currentWebViewUrl: ?string,
+  checkingNewUrl: boolean,
 };
 
 class RecoveryPortalSignUp extends React.Component<Props, State> {
   webViewRef: WebView;
-  initialUrl: string;
-
-  constructor(props: Props) {
-    super(props);
-    const { connectedSmartWallet } = props;
-    const { address: accountAddress, activeDeviceAddress } = connectedSmartWallet;
-
-    this.initialUrl = [
-      RECOVERY_PORTAL_URL,
-      RECOVERY_PORTAL_URL_PATHS.SIGN_UP,
-      accountAddress,
-      activeDeviceAddress,
-    ].join('/');
-
-    this.state = {
-      currentWebViewUrl: this.initialUrl,
-      loadingFromDeepLink: false,
-    };
-  }
+  initialUrl: ?string = null;
+  state = {
+    currentWebViewUrl: null,
+    checkingNewUrl: false,
+  };
 
   componentDidMount() {
     if (Platform.OS !== 'android') return;
@@ -89,7 +75,8 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
 
   handleNavigationBack = () => {
     const { currentWebViewUrl } = this.state;
-    if (!this.webViewRef || this.initialUrl.includes(currentWebViewUrl)) {
+    if (!this.webViewRef
+      || (this.initialUrl && currentWebViewUrl && this.initialUrl.includes(currentWebViewUrl))) {
       const { navigation } = this.props;
       navigation.goBack();
       return;
@@ -98,20 +85,46 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
   };
 
   onNavigationStateChange = (webViewNavigationState) => {
-    const currentWebViewUrl = get(webViewNavigationState, 'url');
-    console.log('onNavigationStateChange:', currentWebViewUrl);
-    if (!currentWebViewUrl) return;
-    // might be deep link, let's parse it right away
-    if (!isEmpty(validateDeepLink(currentWebViewUrl))) {
-      const { executeDeepLink } = this.props;
-      this.setState({ loadingFromDeepLink: true }, () => executeDeepLink(currentWebViewUrl));
-      return;
-    }
-    this.setState({ currentWebViewUrl });
+    const { checkingNewUrl, currentWebViewUrl: lastWebViewUrl } = this.state;
+    if (checkingNewUrl) return;
+    this.setState({ checkingNewUrl: true }, () => {
+      const currentWebViewUrl = get(webViewNavigationState, 'url');
+      if (!this.initialUrl) this.initialUrl = currentWebViewUrl;
+      if (!currentWebViewUrl) return;
+      // if initial url was set then new url might be deep link, let's parse it right away
+      if (lastWebViewUrl && !isEmpty(validateDeepLink(currentWebViewUrl))) {
+        const { executeDeepLink } = this.props;
+        // redirect to last url because deep link is detected as new page
+        this.webViewRef.stopLoading();
+        this.webViewRef.injectJavaScript(`window.location = "${lastWebViewUrl}";`);
+        this.setState({ checkingNewUrl: false }, () => executeDeepLink(currentWebViewUrl));
+        return;
+      }
+      if (lastWebViewUrl
+        && lastWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_OUT)
+        && currentWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_IN)) {
+        // covers scenario if user logged out (sign-out) on webview and sign in becomes is present home
+        this.initialUrl = currentWebViewUrl;
+      }
+      this.setState({ currentWebViewUrl, checkingNewUrl: false });
+    });
   };
 
   render() {
-    const { loadingFromDeepLink } = this.state;
+    const {
+      connectedSmartWallet: {
+        address: accountAddress,
+        activeDeviceAddress,
+      },
+    } = this.props;
+
+    const signUpUrl = [
+      RECOVERY_PORTAL_URL,
+      RECOVERY_PORTAL_URL_PATHS.SIGN_UP,
+      accountAddress,
+      activeDeviceAddress,
+    ].join('/');
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -120,19 +133,16 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
         }}
       >
         <Wrapper style={{ flex: 1 }} regularPadding>
-          {!loadingFromDeepLink &&
-            <WebView
-              ref={(ref) => { this.webViewRef = ref; }}
-              source={{ uri: this.initialUrl }}
-              onNavigationStateChange={this.onNavigationStateChange}
-              renderLoading={this.renderWebViewLoading}
-              originWhitelist={['*']}
-              hideKeyboardAccessoryView
-              startInLoadingState
-              incognito
-            />
-          }
-          {loadingFromDeepLink && this.renderWebViewLoading()}
+          <WebView
+            ref={(ref) => { this.webViewRef = ref; }}
+            source={{ uri: signUpUrl }}
+            onNavigationStateChange={this.onNavigationStateChange}
+            renderLoading={this.renderWebViewLoading}
+            originWhitelist={['*']}
+            hideKeyboardAccessoryView
+            startInLoadingState
+            incognito
+          />
         </Wrapper>
       </ContainerWithHeader>
     );

@@ -51,6 +51,7 @@ import {
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
   PAYMENT_COMPLETED,
   PAYMENT_PROCESSED,
+  ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -121,7 +122,11 @@ import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
-import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
+import type {
+  SmartWalletAccount,
+  SmartWalletAccountDevice,
+  SmartWalletDeploymentError,
+} from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
@@ -146,6 +151,7 @@ import {
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
+
 
 const storage = Storage.getInstance('db');
 
@@ -305,7 +311,7 @@ export const deploySmartWalletAction = () => {
       return;
     }
 
-    const deployTxHash = await smartWalletService.deploy();
+    const deployTxHash = await smartWalletService.deployAccount();
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
       return;
@@ -1591,5 +1597,21 @@ export const getAssetTransferGasLimitsAction = () => {
           }),
         );
     });
+  };
+};
+
+export const addAccountDeviceAction = (deviceAddress: string) => {
+  return async (dispatch: Dispatch) => {
+    const accountDevice: SmartWalletAccountDevice = await smartWalletService.addAccountDevice(deviceAddress);
+    if (!accountDevice) {
+      Toast.show({
+        message: 'Failed to add device to Smart Wallet account',
+        type: 'warning',
+        title: 'Cannot add device',
+        autoClose: false,
+      });
+      return;
+    }
+    dispatch({ type: ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
   };
 };
