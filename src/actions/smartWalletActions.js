@@ -328,10 +328,7 @@ export const deploySmartWalletAction = () => {
     // update accounts info
     await dispatch(loadSmartWalletAccountsAction());
     const account = await smartWalletService.fetchConnectedAccount();
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      account,
-    });
+    dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, account });
   };
 };
 
@@ -761,19 +758,46 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       Sentry.captureMessage('Missing Smart Wallet SDK constant', { extra: { path } });
     }
 
-    // on wallet deployed
-    const accountState = get(getState(), 'smartWallet.upgrade.status', '');
+    /**
+     * This event can happen not just on single device deployment, but
+     * on initial account deployment as well, this is because initial account
+     * deployment deploys both.
+     *
+     * Before showing notification we must should properly find out if
+     * it's single device deployment or initial account deployment.
+     */
     if (event.name === ACCOUNT_DEVICE_UPDATED) {
-      const newAccountState = get(event, 'payload.state', '');
-      const deployedAccountState = get(sdkConstants, 'AccountStates.Deployed', '');
-      if (newAccountState === deployedAccountState && accountState !== deployedAccountState) {
-        dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
-        Toast.show({
-          message: 'Your Smart wallet has been deployed',
-          type: 'success',
-          title: 'Success',
-          autoClose: true,
-        });
+      // current upgrade (initial account deployment) status and state
+      const accountUpgradeStatus = get(getState(), 'smartWallet.upgrade.status', '');
+      const currentAccountState = get(getState(), 'smartWallet.connectedAccount.state', '');
+
+      // incoming deployment state from event
+      const newAccountDeviceState = get(event, 'payload.state', '');
+
+      // just a constant for comparing deployed state
+      const deployedDeviceState = get(sdkConstants, 'AccountDeviceStates.Deployed', '');
+
+      // check if new account device state state is "deployed"
+      if (newAccountDeviceState === deployedDeviceState) {
+        // check if wallet smart wallet account device is deployed
+        if (currentAccountState !== deployedDeviceState
+          && accountUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+          dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+          Toast.show({
+            message: 'Your Smart Wallet has been deployed',
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+        } else {
+          // otherwise it's actual smart wallet device deployment
+          Toast.show({
+            message: 'New Smart Wallet device has been connected', // do not confuse users about device "deployment"
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
+        }
       }
     }
 
