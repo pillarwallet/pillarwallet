@@ -87,6 +87,7 @@ import {
   ACCOUNTS,
   SEND_SYNTHETIC_AMOUNT,
 } from 'constants/navigationConstants';
+import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -117,6 +118,8 @@ import {
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { getWalletsCreationEventsAction } from 'actions//userEventsActions';
+import { setConnectedDevicesAction } from 'actions/connectedDevicesActions';
 
 // types
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
@@ -131,11 +134,16 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
 import type { SendNavigateOptions } from 'models/Navigation';
+import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
-import { isConnectedToSmartAccount, isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import {
+  isSmartWalletDeviceDeployed,
+  isConnectedToSmartAccount,
+  isHiddenUnsettledTransaction,
+} from 'utils/smartWallet';
 import {
   addressesEqual,
   getAssetData,
@@ -150,7 +158,6 @@ import {
   parseTokenAmount,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { getWalletsCreationEventsAction } from './userEventsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -167,6 +174,11 @@ const notifySmartWalletNotInitialized = () => {
     autoClose: false,
   });
 };
+
+const mapToConnectedDevice = (smartWalletAccountDevice: SmartWalletAccountDevice): ConnectedDevice => ({
+  category: DEVICE_CATEGORIES.SMART_WALLET_DEVICE,
+  address: smartWalletAccountDevice.device.address,
+});
 
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Dispatch) => {
@@ -241,6 +253,21 @@ export const resetSmartWalletDeploymentDataAction = () => {
   };
 };
 
+export const setSmartWalletConnectedAccount = (connectedAccount: SmartWalletAccount) => {
+  return async (dispatch: Dispatch) => {
+    const smartWalletAccountDevices = get(connectedAccount, 'devices', []);
+    dispatch(setConnectedDevicesAction(smartWalletAccountDevices.map(mapToConnectedDevice)));
+    dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: connectedAccount });
+  };
+};
+
+export const fetchConnectedAccountAction = () => {
+  return async (dispatch: Dispatch) => {
+    const connectedAccount = await smartWalletService.fetchConnectedAccount();
+    await dispatch(setSmartWalletConnectedAccount(connectedAccount));
+  };
+};
+
 export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
@@ -254,18 +281,8 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
       });
       return;
     }
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: connectedAccount,
-    });
+    await dispatch(setSmartWalletConnectedAccount(connectedAccount));
     await dispatch(setActiveAccountAction(accountId));
-  };
-};
-
-export const fetchConnectedAccountAction = () => {
-  return async (dispatch: Dispatch) => {
-    const account = await smartWalletService.fetchConnectedAccount();
-    dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, account });
   };
 };
 
@@ -1630,45 +1647,62 @@ export const getAssetTransferGasLimitsAction = () => {
   };
 };
 
-export const addAccountDeviceAction = (deviceAddress: string) => {
-  return async (dispatch: Dispatch) => {
-    const accountDevice: SmartWalletAccountDevice = await smartWalletService.addAccountDevice(deviceAddress);
+export const addSmartWalletAccountDeviceAction = (deviceAddress: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    await dispatch(fetchConnectedAccountAction());
+
+    // checking new device
+    const accountDevices = get(getState(), 'smartWallet.connectedAccount.devices');
+    const existingDevice = accountDevices.find(({ device }) => addressesEqual(device.address, deviceAddress));
+    let accountDevice: SmartWalletAccountDevice;
+
+    if (existingDevice) {
+      // check if device is already deployed or being deployed
+      if (isSmartWalletDeviceDeployed(existingDevice)) return;
+      accountDevice = existingDevice;
+    }
+
     if (!accountDevice) {
+      accountDevice = await smartWalletService.addAccountDevice(deviceAddress);
+      if (!accountDevice) {
+        Toast.show({
+          message: 'Failed to add device to Smart Wallet account',
+          type: 'warning',
+          title: 'Cannot add device',
+          autoClose: false,
+        });
+        return;
+      }
+      dispatch({ type: ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
+    }
+
+    // device deployment
+    await smartWalletService.addAccountDevice(deviceAddress);
+    await dispatch(fetchGasInfoAction());
+    const gasInfo = get(getState(), 'history.gasInfo', {});
+    const deployEstimateFee = await smartWalletService.estimateAccountDeviceDeployment(deviceAddress, gasInfo);
+    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
+    const etherBalanceBN = smartWalletService.getAccountRealBalance();
+    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
+      Toast.show({
+        message: 'Not enough ETH to add device',
+        type: 'warning',
+        title: 'Unable to add device',
+        autoClose: false,
+      });
+      return;
+    }
+
+    const accountDeviceDeploymentHash = await smartWalletService.deployAccountDevice(deviceAddress);
+    if (!accountDeviceDeploymentHash) {
+      // no transaction hash, unknown error occurred
       Toast.show({
         message: 'Failed to add device to Smart Wallet account',
         type: 'warning',
-        title: 'Cannot add device',
+        title: 'Unable to add device',
         autoClose: false,
       });
-      return;
     }
-    // TODO: dispatch device add history entry
-    dispatch({ type: ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
-    dispatch(fetchConnectedAccountAction());
-  };
-};
-
-export const removeAccountDeviceAction = (deviceAddress: string) => {
-  return async (dispatch: Dispatch) => {
-    // TODO: should we estimate and undeploy?
-    console.log('deviceAddress: ', deviceAddress);
-    const accountDeviceRemoved = await smartWalletService.removeAccountDevice(deviceAddress);
-    console.log('accountDeviceRemoved: ', accountDeviceRemoved);
-    if (!accountDeviceRemoved) {
-      Toast.show({
-        message: 'Unable to remove linked account device',
-        type: 'warning',
-        title: 'Cannot remove device',
-        autoClose: false,
-      });
-      return;
-    }
-    Toast.show({
-      message: 'Device has been removed!',
-      type: 'success',
-      title: 'Success',
-      autoClose: true,
-    });
-    dispatch(fetchConnectedAccountAction());
+    await dispatch(fetchConnectedAccountAction());
   };
 };

@@ -18,22 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import { utils } from 'ethers';
 import get from 'lodash.get';
-import { BigNumber } from 'bignumber.js';
 
 // actions
-import { addAccountDeviceAction } from 'actions/smartWalletActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
+import { addDeviceAction } from 'actions/connectedDevicesActions';
 
 // constants
 import { RECOVERY_PORTAL_SETUP_COMPLETE } from 'constants/navigationConstants';
+import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 
-// components
-import Toast from 'components/Toast';
+// utils
+import { addressesEqual } from 'utils/assets';
 
 // services
-import smartWalletService from 'services/smartWallet';
 import { navigate } from 'services/navigation';
 
 // types
@@ -42,36 +39,15 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    await dispatch(addAccountDeviceAction(deviceAddress));
-    await dispatch(fetchGasInfoAction());
-    const gasInfo = get(getState(), 'history.gasInfo', {});
-    const deployEstimateFee = await smartWalletService.estimateAccountDeviceDeployment(deviceAddress, gasInfo);
-    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const etherBalanceBN = smartWalletService.getAccountRealBalance();
-    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
-      Toast.show({
-        message: 'Not enough ETH to connect device',
-        type: 'warning',
-        title: 'Unable to connect Recovery Portal device',
-        autoClose: false,
-      });
-      return;
-    }
-
-    const accountDeviceDeploymentHash = await smartWalletService.deployAccountDevice(deviceAddress);
-    if (!accountDeviceDeploymentHash) {
-      Toast.show({
-        message: 'Failed to make transaction',
-        type: 'warning',
-        title: 'Unable to connect Recovery Portal device',
-        autoClose: false,
-      });
-      return;
-    }
-
+    await dispatch(addDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress));
+    const connectedDevices = get(getState(), 'connectedDevices.data', []);
+    const isDeviceConnected = connectedDevices.some(({ address }) => addressesEqual(address, deviceAddress));
+    if (!isDeviceConnected) return;
+    // new device added, complete, otherwise submit button will be unblocked as addingDeviceAddress was reset
     navigate(NavigationActions.navigate({
       routeName: RECOVERY_PORTAL_SETUP_COMPLETE,
-      params: { deviceAddress },
+      params: {},
     }));
   };
 };
+

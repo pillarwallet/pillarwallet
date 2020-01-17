@@ -254,12 +254,11 @@ export default function smartWalletReducer(
     case ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE:
       return {
         ...state,
-        ...state,
         connectedAccount: {
           ...state.connectedAccount,
           devices: [
-            action.payload,
             ...state.connectedAccount.devices,
+            action.payload,
           ],
         },
       };

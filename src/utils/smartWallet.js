@@ -253,3 +253,8 @@ export const isHiddenUnsettledTransaction = (
     [PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT].includes(tag)
       && transactionExtraContainsPaymentHash(paymentHash, extra),
   );
+
+export const isSmartWalletDeviceDeployed = (
+  device: $Shape<{ state: ?string, nextState: ?string }>,
+): boolean => [get(device, 'state'), get(device, 'nextState')]
+  .includes(sdkConstants.AccountDeviceStates.Deployed);

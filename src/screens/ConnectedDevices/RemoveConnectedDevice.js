@@ -31,7 +31,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { addRecoveryPortalDeviceAction } from 'actions/recoveryPortalActions';
+import { removeDeviceAction } from 'actions/connectedDevicesActions';
+
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -45,7 +46,11 @@ import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
-import { getRate, getBalance, addressesEqual } from 'utils/assets';
+import {
+  getRate,
+  getBalance,
+  addressesEqual,
+} from 'utils/assets';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -57,6 +62,8 @@ import { accountBalancesSelector } from 'selectors/balances';
 import type { Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
+import { RECOVERY_PORTAL_SETUP_COMPLETE } from 'constants/navigationConstants';
 
 
 type Props = {
@@ -68,8 +75,8 @@ type Props = {
   isOnline: boolean,
   baseFiatCurrency: ?string,
   rates: Rates,
-  addRecoveryPortalDevice: (deviceAddress: string) => void,
-  addingDeviceAddress: ?string,
+  removeDevice: (deviceAddress: string) => void,
+  removingDeviceAddress: ?string,
 };
 
 type State = {
@@ -109,7 +116,7 @@ const cancelPrompt = (callback) => Alert.alert(
   { cancelable: true },
 );
 
-class RecoveryPortalConnectDevice extends React.PureComponent<Props, State> {
+class RemoveConnectedDevice extends React.PureComponent<Props, State> {
   gasLimit: number = 0;
   deviceAddress: string;
   state = { deployEstimateFee: 0 };
@@ -125,12 +132,22 @@ class RecoveryPortalConnectDevice extends React.PureComponent<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isOnline, gasInfo } = this.props;
+    const {
+      isOnline,
+      gasInfo,
+      navigation,
+      removingDeviceAddress,
+    } = this.props;
+
     if (prevProps.isOnline !== isOnline && isOnline) {
       this.updateGasInfoAndBalances();
       this.updateDeviceDeploymentFee();
     } else if (!isEqual(prevProps.gasInfo, gasInfo)) {
       this.updateDeviceDeploymentFee();
+    }
+
+    if (!prevProps.removingDeviceAddress && removingDeviceAddress) {
+      navigation.navigate(RECOVERY_PORTAL_SETUP_COMPLETE);
     }
   }
 
@@ -150,7 +167,7 @@ class RecoveryPortalConnectDevice extends React.PureComponent<Props, State> {
       .catch(() => {});
   };
 
-  onNextClick = () => this.props.addRecoveryPortalDevice(this.deviceAddress);
+  onNextClick = () => this.props.removeDevice(this.deviceAddress);
 
   renderSpinner = () => <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>;
 
@@ -161,7 +178,7 @@ class RecoveryPortalConnectDevice extends React.PureComponent<Props, State> {
       rates,
       isOnline,
       navigation,
-      addingDeviceAddress,
+      removingDeviceAddress,
     } = this.props;
     const { deployEstimateFee } = this.state;
 
@@ -190,7 +207,7 @@ class RecoveryPortalConnectDevice extends React.PureComponent<Props, State> {
       : 'Confirm';
     const isSubmitDisabled = !isEmpty(errorMessage) || isGettingDeploymentFee;
 
-    const isDeviceBeingAdded = addressesEqual(addingDeviceAddress, this.deviceAddress);
+    const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, this.deviceAddress);
 
     return (
       <React.Fragment>
@@ -204,28 +221,28 @@ class RecoveryPortalConnectDevice extends React.PureComponent<Props, State> {
           {!isGettingDeploymentFee && <DetailsValue>{accountDeviceDeployFee}</DetailsValue>}
         </DetailsLine>
         {!isEmpty(errorMessage) && <WarningMessage small>{errorMessage}</WarningMessage>}
-        {!isDeviceBeingAdded &&
-          <View style={{ alignItems: 'center' }}>
-            <Button
-              block
-              disabled={isSubmitDisabled}
-              title={submitButtonTitle}
-              onPress={this.onNextClick}
-              marginBottom={spacing.large}
-            />
-            <TouchableOpacity onPress={() => cancelPrompt(() => navigation.goBack())}>
-              <TextLink>Cancel</TextLink>
-            </TouchableOpacity>
-          </View>
+        {!isDeviceBeingRemoved &&
+        <View style={{ alignItems: 'center' }}>
+          <Button
+            block
+            disabled={isSubmitDisabled}
+            title={submitButtonTitle}
+            onPress={this.onNextClick}
+            marginBottom={spacing.large}
+          />
+          <TouchableOpacity onPress={() => cancelPrompt(() => navigation.goBack())}>
+            <TextLink>Cancel</TextLink>
+          </TouchableOpacity>
+        </View>
         }
       </React.Fragment>
     );
   };
 
   render() {
-    const { gasInfo, addingDeviceAddress } = this.props;
-    const isDeviceBeingAdded = addressesEqual(addingDeviceAddress, this.deviceAddress);
-    const showSpinner = !gasInfo.isFetched || isDeviceBeingAdded;
+    const { gasInfo, removingDeviceAddress } = this.props;
+    const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, this.deviceAddress);
+    const showSpinner = !gasInfo.isFetched || isDeviceBeingRemoved;
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Confirm' }] }}
@@ -249,13 +266,13 @@ const mapStateToProps = ({
   history: { gasInfo },
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
-  connectedDevices: { addingDeviceAddress },
+  connectedDevices: { removingDeviceAddress },
 }: RootReducerState): $Shape<Props> => ({
   isOnline,
   gasInfo,
   baseFiatCurrency,
   rates,
-  addingDeviceAddress,
+  removingDeviceAddress,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -270,7 +287,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
-  addRecoveryPortalDevice: (deviceAddress: string) => dispatch(addRecoveryPortalDeviceAction(deviceAddress)),
+  removeDevice: (deviceAddress: string) => dispatch(
+    removeDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress),
+  ),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(RecoveryPortalConnectDevice);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(RemoveConnectedDevice);

@@ -69,7 +69,6 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 // utils
 import { isProdEnv } from 'utils/environment';
 import { fontTrackings, spacing, fontStyles } from 'utils/variables';
-import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getBiometryType } from 'utils/settings';
 import { getThemeColors } from 'utils/themes';

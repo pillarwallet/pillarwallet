@@ -15,13 +15,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Alert, FlatList, View } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import orderBy from 'lodash.orderby';
+import type { NavigationScreenProp } from 'react-navigation';
+
 
 // actions
-import { removeAccountDeviceAction } from 'actions/smartWalletActions';
+import { fetchConnectedAccountAction } from 'actions/smartWalletActions';
+
+// constants
+import { REMOVE_CONNECTED_DEVICE } from 'constants/navigationConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -43,10 +48,11 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
+  navigation: NavigationScreenProp,
   activeDeviceAddress: string,
   devices: SmartWalletAccountDevice[],
   theme: Theme,
-  removeAccountDevice: (deviceAddress: string) => void,
+  fetchConnectedAccount: () => void,
 };
 
 type State = {
@@ -64,19 +70,23 @@ const RemoveAction = styled.TouchableOpacity`
   color: ${themedColors.negative};
 `;
 
-const removePrompt = (callback) => Alert.alert(
-  'Are you sure?',
-  'You are going to remove the link between this device and your account.' +
-  '\n\nPlease make sure you have all your funds backed up.',
-  [
-    { text: 'Confirm remove', onPress: () => callback() },
-    { text: 'Cancel', style: 'cancel' },
-  ],
-  { cancelable: true },
-);
+// const removePrompt = (callback) => Alert.alert(
+//   'Are you sure?',
+//   'You are going to remove the link between this device and your account.' +
+//   '\n\nPlease make sure you have all your funds backed up.',
+//   [
+//     { text: 'Confirm remove', onPress: () => callback() },
+//     { text: 'Cancel', style: 'cancel' },
+//   ],
+//   { cancelable: true },
+// );
 
 class ManageConnectedDevices extends React.Component<Props, State> {
   state = {};
+
+  componentDidMount() {
+    this.props.fetchConnectedAccount();
+  }
 
   componentDidUpdate(prevProps: Props) {
     if (this.state.removingDeviceAddress
@@ -87,13 +97,7 @@ class ManageConnectedDevices extends React.Component<Props, State> {
 
   resetRemovingDeviceAddress = () => this.setState({ removingDeviceAddress: '' });
 
-  removeDevice = (deviceAddress: string) => {
-    const { removeAccountDevice } = this.props;
-    removePrompt(() => this.setState(
-      { removingDeviceAddress: deviceAddress },
-      () => removeAccountDevice(deviceAddress),
-    ));
-  };
+  removeDevice = (deviceAddress: string) => this.props.navigation.navigate(REMOVE_CONNECTED_DEVICE, { deviceAddress });
 
   renderListItem = ({ item }) => {
     const { theme, activeDeviceAddress } = this.props;
@@ -131,7 +135,7 @@ class ManageConnectedDevices extends React.Component<Props, State> {
   };
 
   render() {
-    const { devices } = this.props;
+    const { devices, fetchConnectedAccount } = this.props;
     const devicesByLatest = orderBy(devices, ['updatedAt'], ['desc']);
     const emptyStyle = { justifyContent: 'center', alignItems: 'center' };
     return (
@@ -143,6 +147,12 @@ class ManageConnectedDevices extends React.Component<Props, State> {
           initialNumToRender={9}
           style={[{ flex: 1 }, !devices.length && emptyStyle]}
           ListEmptyComponent={<EmptyStateParagraph title="No Connected Devices" />}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => fetchConnectedAccount()}
+            />
+          }
         />
       </ContainerWithHeader>
     );
@@ -157,7 +167,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  removeAccountDevice: (deviceAddress: string) => dispatch(removeAccountDeviceAction(deviceAddress)),
+  fetchConnectedAccount: () => dispatch(fetchConnectedAccountAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ManageConnectedDevices));

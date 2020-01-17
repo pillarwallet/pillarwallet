@@ -67,7 +67,7 @@ const skipPrompt = (callback) => Alert.alert(
   { cancelable: true },
 );
 
-class RecoveryPortalConnectDevice extends React.PureComponent<Props> {
+class RecoveryPortalSetupComplete extends React.PureComponent<Props> {
   componentDidMount() {
     if (Platform.OS !== 'android') return;
     BackHandler.addEventListener('hardwareBackPress', this.handleBack);
@@ -137,4 +137,4 @@ const mapStateToProps = ({
   isImported,
 });
 
-export default connect(mapStateToProps)(RecoveryPortalConnectDevice);
+export default connect(mapStateToProps)(RecoveryPortalSetupComplete);
