@@ -31,8 +31,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { removeDeviceAction } from 'actions/connectedDevicesActions';
-
+import { removeSmartWalletAccountDeviceAction } from 'actions/smartWalletActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -62,8 +61,6 @@ import { accountBalancesSelector } from 'selectors/balances';
 import type { Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
-import { RECOVERY_PORTAL_SETUP_COMPLETE } from 'constants/navigationConstants';
 
 
 type Props = {
@@ -75,7 +72,7 @@ type Props = {
   isOnline: boolean,
   baseFiatCurrency: ?string,
   rates: Rates,
-  removeDevice: (deviceAddress: string) => void,
+  removeSmartWalletAccountDevice: (deviceAddress: string) => void,
   removingDeviceAddress: ?string,
 };
 
@@ -116,7 +113,7 @@ const cancelPrompt = (callback) => Alert.alert(
   { cancelable: true },
 );
 
-class RemoveConnectedDevice extends React.PureComponent<Props, State> {
+class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State> {
   gasLimit: number = 0;
   deviceAddress: string;
   state = { deployEstimateFee: 0 };
@@ -132,22 +129,12 @@ class RemoveConnectedDevice extends React.PureComponent<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      isOnline,
-      gasInfo,
-      navigation,
-      removingDeviceAddress,
-    } = this.props;
-
+    const { isOnline, gasInfo } = this.props;
     if (prevProps.isOnline !== isOnline && isOnline) {
       this.updateGasInfoAndBalances();
       this.updateDeviceDeploymentFee();
     } else if (!isEqual(prevProps.gasInfo, gasInfo)) {
       this.updateDeviceDeploymentFee();
-    }
-
-    if (!prevProps.removingDeviceAddress && removingDeviceAddress) {
-      navigation.navigate(RECOVERY_PORTAL_SETUP_COMPLETE);
     }
   }
 
@@ -167,7 +154,7 @@ class RemoveConnectedDevice extends React.PureComponent<Props, State> {
       .catch(() => {});
   };
 
-  onNextClick = () => this.props.removeDevice(this.deviceAddress);
+  onNextClick = () => this.props.removeSmartWalletAccountDevice(this.deviceAddress);
 
   renderSpinner = () => <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>;
 
@@ -204,7 +191,7 @@ class RemoveConnectedDevice extends React.PureComponent<Props, State> {
     const isGettingDeploymentFee = isOnline && parseFloat(deployEstimateFee.toString()) <= 0;
     const submitButtonTitle = isGettingDeploymentFee
       ? 'Getting fee..'
-      : 'Confirm';
+      : 'Confirm Remove';
     const isSubmitDisabled = !isEmpty(errorMessage) || isGettingDeploymentFee;
 
     const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, this.deviceAddress);
@@ -212,11 +199,11 @@ class RemoveConnectedDevice extends React.PureComponent<Props, State> {
     return (
       <React.Fragment>
         <DetailsLine>
-          <DetailsTitle>Recovery Portal device address</DetailsTitle>
+          <DetailsTitle>Device address</DetailsTitle>
           <DetailsValue>{this.deviceAddress}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
-          <DetailsTitle>Est. fee for connect transaction</DetailsTitle>
+          <DetailsTitle>Est. fee for removing device</DetailsTitle>
           {isGettingDeploymentFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           {!isGettingDeploymentFee && <DetailsValue>{accountDeviceDeployFee}</DetailsValue>}
         </DetailsLine>
@@ -287,9 +274,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
-  removeDevice: (deviceAddress: string) => dispatch(
-    removeDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress),
+  removeSmartWalletAccountDevice: (deviceAddress: string) => dispatch(
+    removeSmartWalletAccountDeviceAction(deviceAddress),
   ),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(RemoveConnectedDevice);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(RemoveSmartWalletConnectedDevice);

@@ -21,7 +21,7 @@ import { NavigationActions } from 'react-navigation';
 import get from 'lodash.get';
 
 // actions
-import { addDeviceAction } from 'actions/connectedDevicesActions';
+import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
 
 // constants
 import { RECOVERY_PORTAL_SETUP_COMPLETE } from 'constants/navigationConstants';
@@ -39,7 +39,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    await dispatch(addDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress));
+    await dispatch(addConnectedDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress));
     const connectedDevices = get(getState(), 'connectedDevices.data', []);
     const isDeviceConnected = connectedDevices.some(({ address }) => addressesEqual(address, deviceAddress));
     if (!isDeviceConnected) return;

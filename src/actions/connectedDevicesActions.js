@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { NavigationActions } from 'react-navigation';
 import get from 'lodash.get';
 
 // actions
@@ -29,10 +30,14 @@ import {
   SET_CONNECTED_DEVICES,
   RESET_ADDING_CONNECTED_DEVICE_ADDRESS,
 } from 'constants/connectedDevicesConstants';
+import { REMOVE_SMART_WALLET_CONNECTED_DEVICE } from 'constants/navigationConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
 import { isSmartWalletDeviceDeployed } from 'utils/smartWallet';
+
+// services
+import { navigate } from 'services/navigation';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -45,7 +50,7 @@ export const setConnectedDevicesAction = (devices: ConnectedDevice[]) => ({
   payload: devices,
 });
 
-export const addDeviceAction = (deviceCategory: string, deviceAddress: string) => {
+export const addConnectedDeviceAction = (deviceCategory: string, deviceAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_ADDING_CONNECTED_DEVICE_ADDRESS, payload: deviceAddress });
     if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
@@ -82,10 +87,14 @@ export const addDeviceAction = (deviceCategory: string, deviceAddress: string) =
   };
 };
 
-export const removeDeviceAction = (deviceCategory: string, deviceAddress: string) => {
+export const removeConnectedDeviceAction = ({ category: deviceCategory }: ConnectedDevice) => {
   return async () => {
-    console.log('deviceCategory: ', deviceAddress);
-    console.log('deviceAddress: ', deviceAddress);
+    if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
+      navigate(NavigationActions.navigate({
+        routeName: REMOVE_SMART_WALLET_CONNECTED_DEVICE,
+        params: {},
+      }));
+    }
   };
 };
 

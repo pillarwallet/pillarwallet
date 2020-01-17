@@ -815,7 +815,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         } else {
           // otherwise it's actual smart wallet device deployment
           Toast.show({
-            message: 'New Smart Wallet device has been connected', // do not confuse users about device "deployment"
+            message: 'New Smart Wallet device has been added', // do not confuse users about device "deployment"
             type: 'success',
             title: 'Success',
             autoClose: true,
@@ -1704,5 +1704,11 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string) => {
       });
     }
     await dispatch(fetchConnectedAccountAction());
+  };
+};
+
+export const removeSmartWalletAccountDeviceAction = (deviceAddress: string) => {
+  return async () => {
+    console.log('deviceAddress: ', deviceAddress);
   };
 };

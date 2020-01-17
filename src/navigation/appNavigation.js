@@ -101,7 +101,7 @@ import RecoveryPortalSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSig
 import RecoveryPortalConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalConnectDevice';
 import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
 import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
-import RemoveConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveConnectedDevice';
+import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -227,7 +227,7 @@ import {
   RECOVERY_PORTAL_SETUP_COMPLETE,
   MANAGE_CONNECTED_DEVICES,
   CONNECTED_DEVICES_FLOW,
-  REMOVE_CONNECTED_DEVICE,
+  REMOVE_SMART_WALLET_CONNECTED_DEVICE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -635,7 +635,7 @@ recoveryPortalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const connectedDevicesFlow = createStackNavigator({
   [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
-  [REMOVE_CONNECTED_DEVICE]: RemoveConnectedDeviceScreen,
+  [REMOVE_SMART_WALLET_CONNECTED_DEVICE]: RemoveSmartWalletConnectedDeviceScreen,
 }, StackNavigatorConfig);
 
 connectedDevicesFlow.navigationOptions = hideTabNavigatorOnChildView;
