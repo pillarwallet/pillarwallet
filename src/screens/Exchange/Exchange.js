@@ -373,6 +373,7 @@ function SelectorInputTemplate(locals) {
     placeholder: placeholderInput,
     onSelectorOpen,
     selectorValue,
+    label,
   };
 
 
@@ -425,7 +426,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             autoCapitalize: 'words',
             template: SelectorInputTemplate,
             config: {
-              label: 'Selling',
+              label: 'Sell',
               hasInput: true,
               options: [],
               horizontalOptions: [],
@@ -449,7 +450,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           toInput: {
             template: SelectorInputTemplate,
             config: {
-              label: 'Buying',
+              label: 'Buy',
               options: [],
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'select asset',

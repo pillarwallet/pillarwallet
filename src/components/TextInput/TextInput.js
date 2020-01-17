@@ -82,6 +82,7 @@ type InputPropsType = {
   multiline?: boolean,
   onSelectorOpen?: () => void,
   onSelectorChange?: () => void,
+  label?: string,
 }
 
 type Props = {
@@ -308,6 +309,10 @@ const EmptyStateWrapper = styled(Wrapper)`
   align-items: center;
 `;
 
+const InputLabel = styled(MediumText)`
+  margin-bottom: 8px;
+`;
+
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
   searchInput: RNInput;
@@ -501,7 +506,7 @@ class TextInput extends React.Component<Props, State> {
       inputWrapperStyle = {},
     } = this.props;
     const colors = getThemeColors(theme);
-    const { value = '', selectorValue = {} } = inputProps;
+    const { value = '', selectorValue = {}, label } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
 
@@ -561,6 +566,9 @@ class TextInput extends React.Component<Props, State> {
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
         {!!errorMessage && !!errorMessageOnTop &&
           <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
+        }
+        {!!label &&
+          <InputLabel>{label}</InputLabel>
         }
         <ItemHolder error={!!errorMessage}>
           <Item
