@@ -87,12 +87,15 @@ export const addConnectedDeviceAction = (deviceCategory: string, deviceAddress: 
   };
 };
 
-export const removeConnectedDeviceAction = ({ category: deviceCategory }: ConnectedDevice) => {
+export const removeConnectedDeviceAction = ({
+  category: deviceCategory,
+  address: deviceAddress,
+}: ConnectedDevice) => {
   return async () => {
     if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
       navigate(NavigationActions.navigate({
         routeName: REMOVE_SMART_WALLET_CONNECTED_DEVICE,
-        params: {},
+        params: { deviceAddress },
       }));
     }
   };
