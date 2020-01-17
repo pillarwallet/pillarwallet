@@ -22,7 +22,7 @@ import { FlatList, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { TYPE_RECEIVED, TYPE_REJECTED } from 'constants/invitationsConstants';
-import { spacing, UIColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -34,6 +34,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { createAlert } from 'utils/alerts';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -93,7 +94,6 @@ class ConnectionRequests extends React.Component<Props> {
           keyExtractor={(item) => item.id}
           renderItem={this.renderInvitation}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-          style={{ backgroundColor: UIColors.defaultBackgroundColor }}
           contentContainerStyle={{
             paddingVertical: spacing.large,
             paddingTop: spacing.medium,
@@ -112,11 +112,11 @@ class ConnectionRequests extends React.Component<Props> {
 
 const mapStateTopProps = ({
   invitations: { data: invitations },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   invitations,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),

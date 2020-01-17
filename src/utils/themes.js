@@ -41,6 +41,10 @@ export const lightThemeColors = {
   smartWallet: '#3C71FE', // NOT IN DS BUT CURRENTLY REQUIRED
   bitcoinWallet: '#F79319', // NOT IN DS BUT CURRENTLY REQUIRED
   orange: '#f57c00',
+  PPNText: '#f33726',
+  PPNSurface: '#0a0c78',
+  smartWalletText: '#1D24D8',
+  smartWalletSurface: '#f3f7ff',
 };
 
 export const darkThemeColors = {
@@ -57,12 +61,16 @@ export const darkThemeColors = {
   tertiary: '#171F31',
   control: '#FCFDFF',
   warning: 'blue', // TODO: add correct one when added to Design System
-  indicator: 'blue', // TODO: add correct one when added to Design System
+  indicator: '#F8E71C', // TODO: add correct one when added to Design System
   userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
   legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
   smartWallet: '#3C71FE', // TODO: add correct one when added to Design System
   bitcoinWallet: '#F79319', // TODO: add correct one when added to Design System
   orange: '#f57c00',
+  PPNText: '#f33726',
+  PPNSurface: '#0a0c78',
+  smartWalletText: '#1D24D8',
+  smartWalletSurface: '#f3f7ff',
 };
 
 export const themedColors = {
@@ -141,6 +149,22 @@ export const themedColors = {
   orange: theme('current', {
     lightTheme: lightThemeColors.orange,
     darkTheme: darkThemeColors.orange,
+  }),
+  PPNText: theme('current', {
+    lightTheme: lightThemeColors.PPNText,
+    darkTheme: darkThemeColors.PPNText,
+  }),
+  PPNSurface: theme('current', {
+    lightTheme: lightThemeColors.PPNSurface,
+    darkTheme: darkThemeColors.PPNSurface,
+  }),
+  smartWalletText: theme('current', {
+    lightTheme: lightThemeColors.smartWalletText,
+    darkTheme: darkThemeColors.smartWalletText,
+  }),
+  smartWalletSurface: theme('current', {
+    lightTheme: lightThemeColors.smartWalletSurface,
+    darkTheme: darkThemeColors.smartWalletSurface,
   }),
 };
 

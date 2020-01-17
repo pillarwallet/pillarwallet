@@ -15,8 +15,6 @@ PODS:
     - Fabric (~> 1.7.13)
   - DoubleConversion (1.1.6)
   - Fabric (1.7.13)
-  - Firebase/Analytics (5.0.1):
-    - Firebase/Core
   - Firebase/Auth (5.0.1):
     - Firebase/CoreOnly
     - FirebaseAuth (= 5.0.0)
@@ -40,15 +38,9 @@ PODS:
   - Firebase/Performance (5.0.1):
     - Firebase/Core
     - FirebasePerformance (= 2.0.0)
-  - Firebase/RemoteConfig (5.0.1):
-    - Firebase/Core
-    - FirebaseRemoteConfig (= 3.0.0)
   - Firebase/Storage (5.0.1):
     - Firebase/CoreOnly
     - FirebaseStorage (= 3.0.0)
-  - FirebaseABTesting (2.0.0):
-    - FirebaseCore (~> 5.0)
-    - Protobuf (~> 3.5)
   - FirebaseAnalytics (5.0.0):
     - FirebaseCore (~> 5.0)
     - FirebaseInstanceID (~> 3.0)
@@ -90,13 +82,6 @@ PODS:
     - GoogleToolboxForMac/Logger (~> 2.1)
     - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.5)
-  - FirebaseRemoteConfig (3.0.0):
-    - FirebaseABTesting (~> 2.0)
-    - FirebaseAnalytics (~> 5.0)
-    - FirebaseCore (~> 5.0)
-    - FirebaseInstanceID (~> 3.0)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - Protobuf (~> 3.5)
   - FirebaseStorage (3.0.0):
     - FirebaseCore (~> 5.0)
@@ -245,9 +230,9 @@ PODS:
     - Crashlytics
     - Fabric
     - React
-  - ReactNativePermissions (1.1.1):
+  - ReactNativePermissions (1.2.1):
     - React
-  - RNCAsyncStorage (1.6.2):
+  - RNCAsyncStorage (1.7.1):
     - React
   - RNColorMatrixImageFilters (5.1.4):
     - React
@@ -277,7 +262,6 @@ DEPENDENCIES:
   - Crashlytics (~> 3.10.4)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Fabric (~> 1.7.5)
-  - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Core (~> 5.0.0)
   - Firebase/Database
@@ -285,7 +269,6 @@ DEPENDENCIES:
   - Firebase/Firestore
   - Firebase/Messaging
   - Firebase/Performance
-  - Firebase/RemoteConfig
   - Firebase/Storage
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
@@ -331,7 +314,6 @@ SPEC REPOS:
     - Crashlytics
     - Fabric
     - Firebase
-    - FirebaseABTesting
     - FirebaseAnalytics
     - FirebaseAuth
     - FirebaseCore
@@ -341,7 +323,6 @@ SPEC REPOS:
     - FirebaseInstanceID
     - FirebaseMessaging
     - FirebasePerformance
-    - FirebaseRemoteConfig
     - FirebaseStorage
     - FirebaseSwizzlingUtilities
     - GoogleToolboxForMac
@@ -417,7 +398,6 @@ SPEC CHECKSUMS:
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   Fabric: 25d0963b691fc97be566392243ff0ecef5a68338
   Firebase: d6861c2059d8c32d1e6dd8932e22ada346d90a3a
-  FirebaseABTesting: 1f50b8d50f5e3469eea54e7463a7b7fe221d1f5e
   FirebaseAnalytics: 19812b49fa5f283dd6b23edf8a14b5d477029ab8
   FirebaseAuth: acbeef02fe7c3a26624e309849f3fe30c84115af
   FirebaseCore: cafc814b2d84fc8733f09e653041cc2165332ad7
@@ -427,7 +407,6 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
   FirebaseMessaging: f2360a966ecfb0d14facf0fbdf306efc2df0ddbe
   FirebasePerformance: 1ec6c40e5dad2543ca4c4f25d15168bde6322c2c
-  FirebaseRemoteConfig: 3c57e4644bd6976b671ae0b725cd709f198bd1f5
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
   FirebaseSwizzlingUtilities: 6c22677c50d0b6f5f0dc637c1233f13694a3003f
   Folly: de497beb10f102453a1afa9edbf8cf8a251890de
@@ -453,7 +432,7 @@ SPEC CHECKSUMS:
   react-native-udp: 1dc04d3429ff13a251126092feeb35e175a1b0d8
   react-native-webview: a42108b827082f8f0333529b0772102031d5960d
   ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
-  ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
+  ReactNativePermissions: c5be85159a946eed987b35333f848ba17c2ff2af
   RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc
   RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
   RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664

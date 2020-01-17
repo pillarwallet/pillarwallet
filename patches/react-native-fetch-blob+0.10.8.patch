@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-fetch-blob/index.js b/node_modules/react-native-fetch-blob/index.js
+index c8ed1a9..805bb63 100644
+--- a/node_modules/react-native-fetch-blob/index.js
++++ b/node_modules/react-native-fetch-blob/index.js
+@@ -7,7 +7,6 @@ import {
+   DeviceEventEmitter,
+   NativeAppEventEmitter,
+   Platform,
+-  AsyncStorage,
+   AppState,
+ } from 'react-native'
+ import type {

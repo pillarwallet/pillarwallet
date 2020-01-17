@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontStyles } from 'utils/variables';
+import { fontSizes, fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { LightText, MediumText } from 'components/Typography';
 import Animation from 'components/Animation';
 
@@ -16,7 +17,7 @@ const Status = styled(MediumText)`
 
 const Text = styled(LightText)`
   ${fontStyles.medium};
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   text-align: center;
 `;
 

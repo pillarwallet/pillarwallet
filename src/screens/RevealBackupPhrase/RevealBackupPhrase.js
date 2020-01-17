@@ -21,19 +21,20 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Dispatch } from 'reducers/rootReducer';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { baseColors } from 'utils/variables';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { themedColors } from 'utils/themes';
 
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
   navigation: NavigationScreenProp<*>,
-  resetIncorrectPassword: () => Function,
+  resetIncorrectPassword: () => void,
 };
 
 type State = {
@@ -45,7 +46,7 @@ const PrivateKeyWrapper = styled(Paragraph)`
   padding: 10px;
   border-radius: 12px;
   border-width: 0.5;
-  border-color: ${baseColors.mediumGray};
+  border-color: ${themedColors.border};
   border-style: solid;
 `;
 
@@ -110,7 +111,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

@@ -259,7 +259,7 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
 
   assets = assets.map(token => {
     // rename HOT to HOLO
-    if (token.toUpperCase() !== HOT) {
+    if (token.toUpperCase() === HOT) {
       return HOLO;
     }
     return token;

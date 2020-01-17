@@ -40,14 +40,16 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { baseColors, fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TopUpFee } from 'models/PaymentNetwork';
 import type { Assets, Balances, Rates } from 'models/Asset';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
@@ -77,7 +79,7 @@ const SendTokenDetailsValue = styled(BaseText)`
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
   margin-bottom: ${spacing.rhythm / 2}px;
-  color: ${UIColors.placeholderTextColor};
+  color: ${themedColors.secondaryText};
   margin-left: 4px;
 `;
 
@@ -98,10 +100,10 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
   session: Object,
-  estimateTopUpVirtualAccount: Function,
+  estimateTopUpVirtualAccount: () => void,
   topUpFee: TopUpFee,
   rates: Rates,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
 };
 
 type State = {
@@ -216,7 +218,6 @@ class FundTank extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
-        backgroundColor={baseColors.white}
         keyboardAvoidFooter={(
           <FooterInner>
             {!topUpFee.isFetched && <Spinner width={20} height={20} />}
@@ -253,7 +254,7 @@ class FundTank extends React.Component<Props, State> {
               </TextRow>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>Send All</TextLink>
+              <TextLink>Send all</TextLink>
             </TouchableOpacity>
           </ActionsWrapper>
         </Wrapper>
@@ -267,7 +268,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   paymentNetwork: { topUpFee },
   appSettings: { data: { baseFiatCurrency } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   topUpFee,
@@ -279,12 +280,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   estimateTopUpVirtualAccount: () => dispatch(estimateTopUpVirtualAccountAction()),
 });
 

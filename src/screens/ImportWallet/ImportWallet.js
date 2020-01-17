@@ -46,10 +46,11 @@ import Button from 'components/Button';
 import Icon from 'components/Icon';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
-  importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
-  importWalletFromPrivateKey: (privateKey: string) => Function,
+  importWalletFromTWordsPhrase: (tWordsPhrase: string) => void,
+  importWalletFromPrivateKey: (privateKey: string) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   resetWalletError: Function,
@@ -135,7 +136,7 @@ const ButtonIcon = styled(CachedImage)`
   height: 24px;
   width: 24px;
   justify-content: center;
-  margin-right: 8px; 
+  margin-right: 8px;
 `;
 
 const ButtonInner = styled.View`
@@ -294,7 +295,8 @@ class ImportWallet extends React.Component<Props, State> {
             additionalStyle={{ textAlign: 'center' }}
             errorMessageStyle={{ textAlign: 'center' }}
             onLayout={() => {
-              this.privKeyInput._root.focus();
+              if (!this.privKeyInput) return;
+              this.privKeyInput.focus();
             }}
           />
         </React.Fragment>
@@ -312,7 +314,8 @@ class ImportWallet extends React.Component<Props, State> {
           }}
           errorMessage={tabsInfo[activeTab].errorMessage}
           onLayout={() => {
-            this.devPhraseInput._root.focus();
+            if (!this.devPhraseInput) return;
+            this.devPhraseInput.focus();
           }}
         />
       );
@@ -332,7 +335,8 @@ class ImportWallet extends React.Component<Props, State> {
           additionalStyle={{ textAlign: 'center' }}
           errorMessage={tabsInfo[activeTab].errorMessage}
           onLayout={() => {
-            this.backupPhraseInput._root.focus();
+            if (!this.backupPhraseInput) return;
+            this.backupPhraseInput.focus();
           }}
         />
       </React.Fragment>
@@ -432,6 +436,7 @@ class ImportWallet extends React.Component<Props, State> {
       tWordsPhrase,
       isScanning,
       currentBPWord,
+      activeTab,
     } = this.state;
 
     const restoreWalletTabs = [
@@ -486,7 +491,7 @@ class ImportWallet extends React.Component<Props, State> {
         )}
       >
         <ScrollWrapper disableAutomaticScroll keyboardShouldPersistTaps="always">
-          <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} />
+          <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
           <Wrapper regularPadding>
             <InputWrapper>
               <FormWrapper>
@@ -505,9 +510,9 @@ class ImportWallet extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   importWalletFromTWordsPhrase: (tWordsPhrase) => {
     dispatch(importWalletFromTWordsPhraseAction(tWordsPhrase));
   },

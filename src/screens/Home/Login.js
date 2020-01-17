@@ -23,6 +23,8 @@ import { connect } from 'react-redux';
 import Header from 'components/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 // components
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -38,7 +40,8 @@ import { approveLoginAttemptAction } from 'actions/deepLinkActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // utils
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -58,7 +61,7 @@ const Description = styled(Paragraph)`
 
 const DescriptionWarning = styled(MediumText)`
   ${fontStyles.medium};
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
 `;
 
 export const LoadingSpinner = styled(Spinner)`
@@ -106,7 +109,7 @@ class LoginScreen extends React.Component<Props, State> {
       ? 'Add your email'
       : 'Confirm login';
     return (
-      <Container color={baseColors.white} inset={{ bottom: 0 }}>
+      <Container inset={{ bottom: 0 }}>
         <Header
           title="confirm login"
           centerTitle
@@ -140,11 +143,11 @@ class LoginScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });

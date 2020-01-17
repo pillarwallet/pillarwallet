@@ -29,7 +29,7 @@ import type {
 } from 'models/Asset';
 import get from 'lodash.get';
 import { ETH, BTC } from 'constants/assetsConstants';
-import { formatAmount, isCaseInsensitiveMatch } from 'utils/common';
+import { formatFiat, formatAmount, isCaseInsensitiveMatch } from 'utils/common';
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
   return a.symbol.localeCompare(b.symbol);
@@ -102,6 +102,17 @@ export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string):
   }
 
   return tokenRate(rates, token, fiatCurrency);
+};
+
+export const getFormattedRate = (
+  rates: Rates,
+  amount: number,
+  token: string,
+  fiatCurrency: string,
+): string => {
+  const amountInFiat = amount * getRate(rates, token, fiatCurrency);
+
+  return formatFiat(amountInFiat, fiatCurrency);
 };
 
 export const calculateMaxAmount = (token: string, balance: number | string, txFeeInWei: BigNumber): number => {

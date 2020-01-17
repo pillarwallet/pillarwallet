@@ -45,7 +45,8 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -53,6 +54,7 @@ import assetsConfig from 'configs/assetsConfig';
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -71,7 +73,7 @@ type Props = {
   balance: number,
   rates: Object,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   assetsLayout: string,
   activeAccount: ?Account,
   paymentNetworkBalances: Balances,
@@ -94,7 +96,7 @@ const ListHeaderWrapper = styled.View`
 
 const HeaderTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.blueYonder};
+  color: ${themedColors.accent};
 `;
 
 class AssetsList extends React.Component<Props, State> {
@@ -231,7 +233,6 @@ class AssetsList extends React.Component<Props, State> {
               disabled={disableRemove}
             />
             ),
-          backgroundColor: baseColors.white,
         }]}
         backgroundColor="transparent"
         sensitivity={10}
@@ -326,7 +327,7 @@ class AssetsList extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   assetsLayout,
@@ -339,12 +340,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
 });
 

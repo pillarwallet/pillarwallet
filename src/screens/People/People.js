@@ -26,7 +26,7 @@ import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Icon as NIcon } from 'native-base';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
@@ -68,12 +68,14 @@ import {
   STATUS_BLOCKED,
 } from 'constants/connectionsConstants';
 
-// models
+// models/types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SearchResults } from 'models/Contacts';
+import type { Theme } from 'models/Theme';
 
 // utils
-import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 const referralImage = require('assets/images/referral_gift.png');
 
@@ -82,7 +84,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   padding-left: 30px;
   border-bottom-width: 1px;
   border-top-width: 1px;
-  border-color: ${UIColors.defaultBorderColor};
+  border-color: ${themedColors.border};
   align-items: center;
   flex-direction: row;
 `;
@@ -93,7 +95,7 @@ const ConnectionRequestBannerText = styled(BaseText)`
 
 const ConnectionRequestBannerIcon = styled(NIcon)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
 `;
@@ -106,23 +108,21 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${props => props.backgroundColor || baseColors.electricBlue}
-  padding: 3px 0;
-  margin-top: 2px;
+  background-color: ${themedColors.secondaryText}
+  padding: 3px;
   margin-right: 1px;
   align-items: center;
   justify-content: center;
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.small}px;
-  line-height: ${props => props.fontSize || fontSizes.small}px;
-  color: ${baseColors.white};
+  font-size: 10px;
+  line-height: 10px;
+  color: ${themedColors.control};
 `;
 
 const InnerWrapper = styled.View`
   flex: 1;
-  background-color: ${baseColors.white};
 `;
 
 const ReferralCTAWrapper = styled.View`
@@ -162,19 +162,20 @@ const MIN_QUERY_LENGTH = 2;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  searchContacts: (query: string) => Function,
+  searchContacts: (query: string) => void,
   searchResults: SearchResults,
   contactState: ?string,
   user: Object,
-  fetchInviteNotifications: Function,
-  disconnectContact: Function,
-  muteContact: Function,
-  blockContact: Function,
-  resetSearchContactsState: Function,
+  fetchInviteNotifications: () => void,
+  disconnectContact: (contactId: string) => void,
+  muteContact: (contactId: string, mute: boolean) => void,
+  blockContact: (contactId: string, block: boolean) => void,
+  resetSearchContactsState: () => void,
   invitations: Object[],
   localContacts: Object[],
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
+  theme: Theme,
 }
 
 type ConnectionStatusProps = {
@@ -202,7 +203,7 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
       break;
   }
   return (
-    <ItemBadge backgroundColor={baseColors.pinkishGrey}>
+    <ItemBadge>
       <BadgeIcon name={iconName} />
     </ItemBadge>
   );
@@ -326,7 +327,7 @@ class PeopleScreen extends React.Component<Props, State> {
             textStyle={{ marginTop: 6, fontSize: fontSizes.small }}
           />
         ),
-        backgroundColor: baseColors.white,
+        backgroundColor: 'transparent',
       };
     });
   };
@@ -360,9 +361,8 @@ class PeopleScreen extends React.Component<Props, State> {
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
           customAddon={([STATUS_MUTED, STATUS_BLOCKED].includes(status)) ? <ConnectionStatus status={status} /> : null}
-          rightColumnInnerStyle={{ flexDirection: 'row-reverse', paddingTop: spacing.small }}
+          rightColumnInnerStyle={{ flexDirection: 'row-reverse' }}
           noSeparator
-          hasShadow
         />
       </Swipeout>
     );
@@ -401,10 +401,12 @@ class PeopleScreen extends React.Component<Props, State> {
       navigation,
       invitations,
       chats,
+      theme,
     } = this.props;
 
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
+    const colors = getThemeColors(theme);
 
     return (
       <React.Fragment>
@@ -413,12 +415,12 @@ class PeopleScreen extends React.Component<Props, State> {
           searchInputPlaceholder="Search or add people"
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={!!contactState}
-          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+          wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.mediumLarge }}
         />
         {!inSearchMode && !!pendingConnectionRequests &&
         <ConnectionRequestBanner
           onPress={this.handleConnectionsRequestBannerPress}
-          underlayColor={baseColors.lightGray}
+          underlayColor={colors.secondaryAccent}
         >
           <React.Fragment>
             <ConnectionRequestBannerText>
@@ -535,7 +537,6 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
         headerProps={{ leftItems: [{ user: true }] }}
         inset={{ bottom: 0 }}
       >
@@ -582,7 +583,7 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   searchResults,
   contactState,
   localContacts,
@@ -590,8 +591,8 @@ const mapStateToProps = ({
   chats,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  searchContacts: (query) => dispatch(searchContactsAction(query)),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  searchContacts: (query: string) => dispatch(searchContactsAction(query)),
   resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
@@ -600,4 +601,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PeopleScreen));

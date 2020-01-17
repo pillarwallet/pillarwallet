@@ -28,8 +28,9 @@ import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { themedColors } from 'utils/themes';
 
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -42,6 +43,8 @@ type Props = {
   smartWalletState: Object,
   accounts: Accounts,
   forceRetry?: boolean,
+  wrapperStyle?: Object,
+  noPadding?: boolean,
 }
 
 const MessageTitle = styled(MediumText)`
@@ -52,7 +55,7 @@ const MessageTitle = styled(MediumText)`
 const Message = styled(BaseText)`
   padding-top: ${spacing.small}px;
   ${fontStyles.regular}
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   text-align: center;
 `;
 
@@ -69,6 +72,8 @@ class DeploymentView extends React.PureComponent<Props> {
       smartWalletState,
       accounts,
       forceRetry,
+      wrapperStyle,
+      noPadding,
     } = this.props;
     const { title, message: bodyText } = message;
 
@@ -83,7 +88,11 @@ class DeploymentView extends React.PureComponent<Props> {
       ].includes(smartWalletStatus.status);
 
     return (
-      <Wrapper regularPadding center style={{ marginTop: 40, marginBottom: spacing.large }}>
+      <Wrapper
+        regularPadding={!noPadding}
+        center
+        style={{ marginTop: 40, marginBottom: spacing.large, ...wrapperStyle }}
+      >
         <MessageTitle>{title}</MessageTitle>
         <Message>{bodyText}</Message>
         <Wrapper style={{ margin: spacing.small, width: '100%', alignItems: 'center' }}>

@@ -20,8 +20,9 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import Animation from 'components/Animation';
-import { baseColors, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { BoldText } from 'components/Typography';
+import { themedColors } from 'utils/themes';
 
 const Status = styled.View`
   flex-direction: row;
@@ -34,7 +35,7 @@ const StatusIcon = styled.View`
   height: 8px;
   width: 8px;
   border-radius: 4px;
-  background-color: ${baseColors.fruitSalad};
+  background-color: ${themedColors.positive};
   position: absolute;
   top: 7px;
   left: 7px;
@@ -42,7 +43,7 @@ const StatusIcon = styled.View`
 
 const StatusText = styled(BoldText)`
   ${fontStyles.tiny};
-  color: ${baseColors.fruitSalad};
+  color: ${themedColors.positive};
   letter-spacing: 0.15px;
   margin-top: 2px;
 `;

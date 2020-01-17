@@ -22,16 +22,28 @@ import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+
 import { SEND_BITCOIN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
+
+import { fontSizes, spacing } from 'utils/variables';
+import { satoshisToBtc } from 'utils/bitcoin';
+import { getFormattedRate } from 'utils/assets';
+import { formatUnits } from 'utils/common';
+import { themedColors } from 'utils/themes';
+
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { AssetData, Rates } from 'models/Asset';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  bitcoin: Object,
+  baseFiatCurrency: ?string,
+  rates: Rates,
 };
 
 type State = {
@@ -44,7 +56,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.surface};
 `;
 
 const LabeledRow = styled.View`
@@ -57,10 +69,14 @@ const Value = styled(MediumText)`
 
 class SendBitcoinConfirm extends React.Component<Props, State> {
   source: string;
+  assetData: AssetData;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
-    this.source = this.props.navigation.getParam('source', '');
+
+    const { navigation } = this.props;
+    this.assetData = navigation.getParam('assetData', {});
+    this.source = navigation.getParam('source', '');
   }
 
   handleFormSubmit = () => {
@@ -76,13 +92,24 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
   render() {
     const {
       navigation,
+      rates,
+      baseFiatCurrency,
     } = this.props;
+    const { token, decimals } = this.assetData;
     const {
       outputs,
+      fee,
     } = navigation.getParam('transactionPayload', {});
 
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const output = outputs[0];
-    const { value: amount, address: to } = output;
+    const { value, address: to } = output;
+    const amount = satoshisToBtc(value);
+    const feeInBtc = satoshisToBtc(fee);
+    const formattedFeeInBtc = formatUnits(`${fee || ''}`, decimals);
+    const formattedAmountInBtc = formatUnits(value.toString(), decimals);
+    const formattedAmountInFiat = getFormattedRate(rates, amount, token, fiatCurrency);
+    const formattedFeeInFiat = getFormattedRate(rates, feeInBtc, token, fiatCurrency);
 
     return (
       <ContainerWithHeader
@@ -99,11 +126,15 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
         >
           <LabeledRow>
             <Label>Amount</Label>
-            <Value>{amount} BTC</Value>
+            <Value>{formattedAmountInBtc} BTC ({formattedAmountInFiat})</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Recipient Address</Label>
             <Value>{to}</Value>
+          </LabeledRow>
+          <LabeledRow>
+            <Label>Total fee</Label>
+            <Value>{formattedFeeInBtc} BTC ({formattedFeeInFiat})</Value>
           </LabeledRow>
         </ScrollWrapper>
       </ContainerWithHeader>
@@ -112,9 +143,11 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  bitcoin,
-}) => ({
-  bitcoin,
+  appSettings: { data: { baseFiatCurrency } },
+  rates: { data: rates },
+}: RootReducerState): $Shape<Props> => ({
+  baseFiatCurrency,
+  rates,
 });
 
 export default connect(mapStateToProps)(SendBitcoinConfirm);

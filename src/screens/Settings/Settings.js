@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -66,14 +66,17 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 
 // utils
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
+import { fontTrackings, spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getBiometryType } from 'utils/settings';
+import { getThemeColors } from 'utils/themes';
 
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Accounts } from 'models/Account';
+import type { Theme } from 'models/Theme';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // partials
 import { SettingsSection } from './SettingsSection';
@@ -85,7 +88,7 @@ type State = {
   leaveBetaPressed: boolean,
   setBiometrics: ?{
     enabled: boolean,
-    privateKey: ?string,
+    privateKey?: string,
   },
   scrollToSection: string,
 };
@@ -95,20 +98,21 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
   intercomNotificationsCount: number,
-  cleanSmartWalletAccounts: Function,
-  changeUseBiometrics: (enabled: boolean, privateKey: ?string) => Function,
-  resetIncorrectPassword: () => Function,
-  saveBaseFiatCurrency: (currency: ?string) => Function,
+  cleanSmartWalletAccounts: () => void,
+  changeUseBiometrics: (enabled: boolean, privateKey?: string) => void,
+  resetIncorrectPassword: () => void,
+  saveBaseFiatCurrency: (currency: string) => void,
   baseFiatCurrency: ?string,
   smartWalletFeatureEnabled: boolean,
   saveOptOutTracking: (status: boolean) => void,
   optOutTracking: boolean,
-  setUserJoinedBeta: Function,
+  setUserJoinedBeta: (status: boolean) => void,
   userJoinedBeta: boolean,
   backupStatus: BackupStatus,
   lockScreen: () => void,
   logoutUser: () => void,
   accounts: Accounts,
+  theme: Theme,
 }
 
 const storage = Storage.getInstance('db');
@@ -294,7 +298,7 @@ const formSmartWalletItems = () => {
   ];
 };
 
-const formMiscItems = (that) => {
+const formMiscItems = (that, colors) => {
   return [
     {
       key: 'closeAndLock',
@@ -309,7 +313,7 @@ const formMiscItems = (that) => {
       body: 'Wipe all data on this device',
       onPress: that.deleteWallet,
       minHeight: 96,
-      titleStyle: { color: baseColors.redDamask },
+      titleStyle: { color: colors.negative },
     },
   ];
 };
@@ -371,7 +375,7 @@ class Settings extends React.Component<Props, State> {
     this.setState({ visibleModal });
   };
 
-  handleChangeUseBiometrics = (enabled, privateKey) => {
+  handleChangeUseBiometrics = (enabled: boolean, privateKey?: string) => {
     this.setState({
       visibleModal: null,
       setBiometrics: {
@@ -484,6 +488,7 @@ class Settings extends React.Component<Props, State> {
       smartWalletFeatureEnabled,
       optOutTracking,
       accounts,
+      theme,
     } = this.props;
 
     const {
@@ -494,6 +499,7 @@ class Settings extends React.Component<Props, State> {
 
     const debugItems = formDebbugItems(this);
     const hasSmartWallet = userHasSmartWallet(accounts);
+    const colors = getThemeColors(theme);
 
     return (
       <ContainerWithHeader
@@ -576,7 +582,7 @@ class Settings extends React.Component<Props, State> {
 
           <SettingsSection
             sectionTitle="More"
-            sectionItems={formMiscItems(this)}
+            sectionItems={formMiscItems(this, colors)}
             isCardsList
           />
 
@@ -596,8 +602,7 @@ class Settings extends React.Component<Props, State> {
             <CheckPin
               onPinValid={
                 (pin, { privateKey }) => this.handleChangeUseBiometrics(
-                  !useBiometrics,
-                  !useBiometrics ? privateKey : null,
+                  !useBiometrics, !useBiometrics ? privateKey : undefined,
                 )
               }
             />
@@ -643,7 +648,6 @@ class Settings extends React.Component<Props, State> {
           title="Claim tokens"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -666,7 +670,6 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your base currency
@@ -684,7 +687,6 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
           title="Usage analytics"
         >
@@ -714,7 +716,6 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'joinBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleJoinBetaModalClose}
           avoidKeyboard
           title="Smart Wallet Early Access"
@@ -722,10 +723,10 @@ class Settings extends React.Component<Props, State> {
         >
           <StyledWrapper regularPadding flex={1}>
             <Paragraph small>
-              By choosing to upgrade your wallet, you will be added to our Firebase Analytics data collection.
+              By choosing this you will be added to our Analytics data collection.
               Through this, Pillar will collect your username in order to enable new features and monitor your new
               wallet experience for any bugs and/or crashes.
-              You can choose to leave the Smart Wallet Early Access program and Firebase Analytics collection any time
+              You can choose to leave the Early Access program at any time
               via the &quot;System&quot; under Settings.
             </Paragraph>
             <Button
@@ -743,7 +744,6 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'leaveBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleLeaveBetaModalClose}
           avoidKeyboard
           title="Leaving Early Access program"
@@ -752,16 +752,16 @@ class Settings extends React.Component<Props, State> {
           <StyledWrapper regularPadding flex={1}>
             <View>
               <Paragraph small>
-                By confirming, you will leave the Smart Wallet Early Access program. As a result, your access to the
-                Smart Wallet, Pillar Payment Network and any funds stored on them will be lost.
+                By confirming, you will leave the Early Access program. As a result, your access to the
+                Smart Wallet, Pillar Payment Network, Bitcoin Wallet and any funds stored on them will be lost.
               </Paragraph>
               <Paragraph small>
                 We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
                 Based Wallet before leaving this Program.
               </Paragraph>
               <Paragraph small>
-                If you wish to re-gain early access to Smart Wallet (and re-gain access to the funds on your Smart
-                Wallet), you will need to apply again.
+                If you wish to re-gain early access to Smart Wallet or Bitcoin Wallet (and re-gain access to the funds
+                on your Smart Wallet or Bitcoin Wallet), you will need to apply again.
               </Paragraph>
             </View>
             <Button
@@ -785,17 +785,15 @@ const mapStateToProps = ({
       optOutTracking = false,
       userJoinedBeta = false,
     },
-    data: appSettings,
   },
   notifications: { intercomNotificationsCount },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
   baseFiatCurrency,
   intercomNotificationsCount,
-  appSettings,
   optOutTracking,
   backupStatus,
   useBiometrics,
@@ -804,10 +802,12 @@ const mapStateToProps = ({
   accounts,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
+  changeUseBiometrics: (enabled: boolean, privateKey?: string) => dispatch(
+    changeUseBiometricsAction(enabled, privateKey),
+  ),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
@@ -815,4 +815,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logoutUser: () => dispatch(logoutAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Settings));

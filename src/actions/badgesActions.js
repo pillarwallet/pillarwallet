@@ -1,5 +1,28 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import isEmpty from 'lodash.isempty';
+
+// components
+import Toast from 'components/Toast';
+
+// constants
 import {
   UPDATE_BADGES,
   ADD_CONTACT_BADGES,
@@ -8,13 +31,16 @@ import {
   BADGE_REWARD_EVENT,
   SET_BADGE_AWARD_EVENTS,
 } from 'constants/badgesConstants';
-import Toast from 'components/Toast';
-import SDKWrapper from 'services/api';
 
+// models, types
+import type { ApiNotification } from 'models/Notification';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
 
+// actions
 import { saveDbAction } from './dbActions';
 import { offlineApiCall } from './offlineApiActions';
+
 
 export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -86,7 +112,7 @@ export const fetchBadgeAwardHistoryAction = () => {
     const {
       user: { data: { walletId } },
     } = getState();
-    const badgeAwardEvents = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
+    const badgeAwardEvents: ApiNotification[] = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
     const badgeAwardEventsWithRequiredData = badgeAwardEvents.filter(({ payload }) => !!payload.name);
     const formattedBadgeAwardEvents = badgeAwardEventsWithRequiredData
       .map(({

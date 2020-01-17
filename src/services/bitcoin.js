@@ -39,7 +39,6 @@ import {
   getAddressBalanceFromNode,
   getBTCTransactionsFromNode,
 } from 'services/insight';
-import { btcToSatoshis } from 'utils/bitcoin';
 
 const bip39 = require('bip39');
 const bip32 = require('bip32');
@@ -47,13 +46,12 @@ const coinselect = require('coinselect');
 
 const NETWORK = networks[DEFAULT_BTC_NETWORK];
 
-const feeRateFromSpeed = (speed: string): number => {
+export const feeRateFromSpeed = (speed: string): number => {
   switch (speed) {
-    // TODO: define rates
-    case SPEED_TYPES.SLOW: return 50;
-    case SPEED_TYPES.NORMAL: return 50;
-    case SPEED_TYPES.FAST: return 50;
-    default: return 50;
+    case SPEED_TYPES.SLOW: return 8;
+    case SPEED_TYPES.NORMAL: return 22;
+    default:
+    case SPEED_TYPES.FAST: return 35;
   }
 };
 
@@ -71,12 +69,11 @@ export const collectOutputs = (
 ): BitcoinTransactionPlan => {
   const feeRate = feeRateFromSpeed(speed);
 
-  const utxos = unspent.map(utxo => ({ ...utxo, value: utxo.satoshis }));
   const {
     inputs,
     outputs,
     fee,
-  } = coinselect(utxos, targets, feeRate);
+  } = coinselect(unspent, targets, feeRate);
 
   if (!inputs || !outputs) {
     return {
@@ -106,7 +103,6 @@ export const collectOutputs = (
 
 export const sendRawTransaction = async (rawTx: string): Promise<string> => {
   return sendRawTransactionToNode(rawTx)
-    .then(response => response.json())
     .then(({ txid }) => txid)
     .catch(() => null);
 };
@@ -115,41 +111,22 @@ export const transactionFromPlan = (
   plan: BitcoinTransactionPlan,
   inputSigner: (address: string) => ECPair,
   networkName?: string,
-): ?string => {
+): string => {
   const txb = new TransactionBuilder(selectNetwork(networkName));
   txb.setVersion(1);
 
-  const feeRate = feeRateFromSpeed(SPEED_TYPES.NORMAL);
-  const plannedOutputs = plan.outputs.map(outs => ({ ...outs, value: btcToSatoshis(Number(outs.value)) }));
-  const utxos = plan.inputs.map(utxo => ({
-    ...utxo,
-    txid: utxo.mintTxid,
-    value: utxo.value,
-  }));
-  const {
-    inputs,
-    outputs,
-  } = coinselect(utxos, plannedOutputs, feeRate);
-
-  if (!inputs && !outputs) {
-    return null;
-  }
-  inputs.forEach(utxo => {
+  plan.inputs.forEach(utxo => {
     txb.addInput(
-      utxo.txid,
+      utxo.mintTxid,
       utxo.mintIndex,
     );
   });
-  outputs.forEach(out => {
-    if (out.address) {
-      txb.addOutput(out.address, out.value);
-    } else {
-      txb.addOutput(inputs[0].address, out.value);
-    }
+  plan.outputs.forEach(out => {
+    txb.addOutput(out.address, out.value);
   });
 
   let utxoIndex = 0;
-  inputs.forEach(({ address }) => {
+  plan.inputs.forEach(({ address }) => {
     const keyPair = inputSigner(address);
 
     txb.sign({
@@ -159,7 +136,8 @@ export const transactionFromPlan = (
     });
   });
 
-  return txb.build().toHex();
+  const built = txb.build();
+  return built.toHex();
 };
 
 export const rootFromMnemonic = async (mnemonic: string, networkName?: string): ECPair => {
@@ -181,21 +159,10 @@ export const keyPairAddress = (keyPair: ECPair): ?string => {
   }
 };
 
-export const importKeyPair = (s: string, networkName?: string): ECPair => {
-  return ECPair.fromWIF(s, selectNetwork(networkName));
-};
+export const importKeyPair = (s: string, networkName?: string): ECPair => ECPair.fromWIF(s, selectNetwork(networkName));
 
-export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {
-  return getAddressUtxosFromNode(address)
-    .then(response => response.json());
-};
+export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => getAddressUtxosFromNode(address);
 
-export const getAddressBalance = (address: string): Promise<BTCBalance> => {
-  return getAddressBalanceFromNode(address)
-    .then(response => response.json());
-};
+export const getAddressBalance = (address: string): Promise<BTCBalance> => getAddressBalanceFromNode(address);
 
-export const getBTCTransactions = (address: string): Promise<BTCTransaction[]> => {
-  return getBTCTransactionsFromNode(address)
-    .then(response => response);
-};
+export const getBTCTransactions = (address: string): Promise<BTCTransaction[]> => getBTCTransactionsFromNode(address);

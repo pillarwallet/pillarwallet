@@ -21,8 +21,12 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Modal from 'react-native-modal';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import ImagePicker from 'react-native-image-crop-picker';
+import { RNCamera } from 'react-native-camera';
+import { connect } from 'react-redux';
+import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg';
+
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
@@ -30,12 +34,15 @@ import { Footer } from 'components/Layout';
 import IconButton from 'components/IconButton';
 import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
-import { RNCamera } from 'react-native-camera';
-import { connect } from 'react-redux';
+
 import { updateUserAvatarAction } from 'actions/userActions';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/appSettingsActions';
+
+import { fontSizes } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
+
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme, ThemeColors } from 'models/Theme';
 
 type Props = {
   onModalHide?: Function,
@@ -47,6 +54,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   handleImagePick: Function,
   isPickingImage: boolean,
+  theme: Theme,
 };
 
 type State = {
@@ -61,6 +69,8 @@ type State = {
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
+const FRONT_FLASH_COLOR = '#ffe8ce';
 
 const HeaderWrapper = styled.SafeAreaView`
   margin-bottom: auto;
@@ -81,7 +91,7 @@ const FrontFlash = styled.View`
   position: absolute;
   top: 0;
   left: 0;
-  background-color: ${baseColors.blanchedAlmond};
+  background-color: ${FRONT_FLASH_COLOR};
 `;
 
 const NoPermissions = styled.View`
@@ -96,7 +106,7 @@ const PreviewWrapper = styled.View`
   height: 160px;
   border-radius: 80px;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
 `;
 
 const ImageCircle = styled.Image`
@@ -115,7 +125,7 @@ const ResultScreen = styled.View`
   justify-content: center;
   align-items: center;
   padding: 30px;
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${themedColors.surface};
   z-index: 10;
 `;
 
@@ -139,7 +149,7 @@ const CameraButtonOuter = styled.TouchableOpacity`
 const CameraButtonInner = styled.View`
   width: 26px;
   height: 26px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${themedColors.primary};
 `;
 
 const FooterInner = styled.View`
@@ -306,7 +316,7 @@ class Camera extends React.Component<Props, State> {
     );
   };
 
-  renderBottomBar = () => {
+  renderBottomBar = (colors: ThemeColors) => {
     return (
       <Footer>
         <FooterInner>
@@ -314,16 +324,16 @@ class Camera extends React.Component<Props, State> {
             icon="gallery"
             onPress={this.openGallery}
             fontSize={fontSizes.large}
-            color={baseColors.white}
+            color={colors.control}
           />
-          <CameraButtonOuter onPress={this.takePicture} >
+          <CameraButtonOuter onPress={this.takePicture}>
             <CameraButtonInner />
           </CameraButtonOuter>
           <IconButton
             icon="flip"
             onPress={this.handleCameraFlip}
             fontSize={fontSizes.large}
-            color={baseColors.white}
+            color={colors.control}
           />
         </FooterInner>
       </Footer>
@@ -337,7 +347,8 @@ class Camera extends React.Component<Props, State> {
       isHardwareFlashOn,
       isFrontFlashVisible,
     } = this.state;
-    const { isVisible } = this.props;
+    const { isVisible, theme } = this.props;
+    const colors = getThemeColors(theme);
 
     const cutOutD = screenWidth - 40;
     const cutOutR = cutOutD / 2;
@@ -348,7 +359,7 @@ class Camera extends React.Component<Props, State> {
     a ${cutOutR},${cutOutR} 0 1,0 ${cutOutD},0
     a ${cutOutR},${cutOutR} 0 1,0 -${cutOutD},0
     `;
-    const overlayColor = isFlashOn && cameraType === FRONT ? baseColors.blanchedAlmond : baseColors.black;
+    const overlayColor = isFlashOn && cameraType === FRONT ? FRONT_FLASH_COLOR : '#000000';
     const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
     return (
       <React.Fragment>
@@ -392,7 +403,7 @@ class Camera extends React.Component<Props, State> {
             cy={screenHeight / 2}
             r={cutOutR}
             fill="none"
-            stroke={baseColors.white}
+            stroke={colors.control}
             strokeWidth="2"
           />
         </SvgOverlay>
@@ -400,7 +411,7 @@ class Camera extends React.Component<Props, State> {
         <HeaderWrapperCamera>
           <Header light flexStart onClose={this.closeCamera} onBack={this.handleFlash} backIcon={flashIcon} />
         </HeaderWrapperCamera>
-        {this.renderBottomBar()}
+        {this.renderBottomBar(colors)}
       </React.Fragment>
     );
   };
@@ -451,11 +462,10 @@ class Camera extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user } }) => ({ user });
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapStateToProps = ({ user: { data: user } }: RootReducerState): $Shape<Props> => ({ user });
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
   handleImagePick: (isPickingImage: boolean) => dispatch(handleImagePickAction(isPickingImage)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Camera);
-
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Camera));

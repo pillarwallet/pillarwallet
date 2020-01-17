@@ -30,7 +30,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Loader from 'components/Loader';
-import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import { BaseText } from 'components/Typography';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import { ScrollWrapper } from 'components/Layout';
@@ -42,8 +42,9 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -164,7 +165,12 @@ const FooterWrapper = styled.View`
 const FooterParagraph = styled(BaseText)`
   ${fontStyles.regular};
   text-align: center;
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
+`;
+
+const ToggleText = styled(BaseText)`
+  margin-right: -10px;
+  color: ${themedColors.secondaryText};
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
@@ -470,9 +476,9 @@ class AccountsScreen extends React.Component<Props, State> {
         open={isLegacyWalletVisible}
         onPress={() => this.setState({ isLegacyWalletVisible: !isLegacyWalletVisible })}
         customToggle={(
-          <BaseText style={{ marginRight: -10, color: baseColors.coolGrey }}>
+          <ToggleText>
             Legacy wallet (advanced)
-          </BaseText>
+          </ToggleText>
         )}
         toggleWrapperStyle={{
           justifyContent: 'flex-start',
@@ -604,12 +610,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state: RootReducerState) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),

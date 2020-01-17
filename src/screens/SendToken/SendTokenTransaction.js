@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { View, TouchableOpacity } from 'react-native';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, MediumText } from 'components/Typography';
@@ -32,7 +33,8 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
@@ -65,7 +67,7 @@ const getTransactionErrorMessage = (error: string): string => {
 };
 
 const CancelText = styled(MediumText)`
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
   font-size: ${fontSizes.medium}px;
 `;
 
@@ -161,11 +163,11 @@ class SendTokenTransaction extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   executingExchangeTransaction,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
 });
 

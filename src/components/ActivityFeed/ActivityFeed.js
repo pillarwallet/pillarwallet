@@ -23,7 +23,7 @@ import isEqual from 'lodash.isequal';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { SYNTHETICS_CONTRACT_ADDRESS } from 'react-native-dotenv';
 
@@ -32,6 +32,7 @@ import type { SyntheticTransaction, Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { Theme } from 'models/Theme';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -53,8 +54,9 @@ import {
   formatUnits,
   groupAndSortByDate,
 } from 'utils/common';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { findMatchingContact } from 'utils/contacts';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // constants
 import {
@@ -72,6 +74,7 @@ import {
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import {
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
@@ -90,14 +93,13 @@ const ActivityFeedList = styled.SectionList`
 `;
 
 const ActivityFeedWrapper = styled.View`
-  background-color: ${props => props.color ? props.color : baseColors.white};
   flex: 1;
 `;
 
 const ActivityFeedHeader = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 0;
   border-top-width: ${props => props.noBorder ? 0 : '1px'};
-  border-top-color: ${baseColors.mediumLightGray};
+  border-top-color: ${themedColors.border};
 `;
 
 const SectionHeaderWrapper = styled.View`
@@ -107,7 +109,7 @@ const SectionHeaderWrapper = styled.View`
 
 const SectionHeader = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -145,7 +147,6 @@ type Props = {
   esData?: Object,
   contacts: ApiUser[],
   feedTitle?: string,
-  backgroundColor?: string,
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
   noBorder?: boolean,
@@ -164,6 +165,7 @@ type Props = {
   emptyState?: EmptyState,
   supportedAssets: Asset[],
   bitcoinAddresses: BitcoinAddress[],
+  theme: Theme,
 }
 
 type FeedItemTransaction = {
@@ -319,13 +321,16 @@ class ActivityFeed extends React.Component<Props, State> {
       contactsSmartAddresses,
       supportedAssets,
       bitcoinAddresses,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
     const itemStatusIcon = notificationStatus === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
     const trxData = {};
 
     if (type === TRANSACTION_EVENT) {
+      let transactionEventActionLabel;
       const tag = get(notification, 'tag', '');
       const isReceived = addressesEqual(notification.to, activeAccountAddress)
         || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
@@ -390,6 +395,14 @@ class ActivityFeed extends React.Component<Props, State> {
         trxData.txType = 'Withdrawal';
         trxData.hideAmount = true;
         trxData.hideSender = true;
+      } else if (tag === PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT) {
+        nameOrAddress = 'Smart Wallet';
+        imageProps.itemImageSource = smartWalletIcon;
+        trxData.hideSender = true;
+        trxData.hideAmount = true;
+        transactionEventActionLabel = 'Deployed'; // note: label will be hidden if tx is pending
+        trxData.txType = 'Deployment';
+        itemValue = null;
       }
 
       // centers line right addons side vertically if status is present
@@ -439,7 +452,7 @@ class ActivityFeed extends React.Component<Props, State> {
       if (!imageProps.itemImageSource) {
         if (!isContact || showArrowsOnly) {
           imageProps.iconName = directionIcon;
-          imageProps.iconColor = baseColors.slateBlack;
+          imageProps.iconColor = colors.text;
         } else if (isContact) {
           imageProps.avatarUrl = contact.profileImage;
         }
@@ -455,12 +468,13 @@ class ActivityFeed extends React.Component<Props, State> {
             }, type, notificationStatus)}
           label={nameOrAddress}
           subtext={subtext}
+          actionLabel={transactionEventActionLabel}
           navigateToProfile={isContact ? navigateToContact : null}
           itemValue={itemValue}
           itemStatusIcon={itemStatusIcon}
           rightColumnInnerStyle={rightColumnInnerStyle}
           customAddonAlignLeft={customAddonAlignLeft}
-          valueColor={isReceived ? baseColors.jadeGreen : baseColors.scarlet}
+          valueColor={isReceived ? colors.positive : colors.text}
           imageUpdateTimeStamp={contact.lastUpdateTime || 0}
           customAddon={customAddon}
           diameter={56}
@@ -487,11 +501,11 @@ class ActivityFeed extends React.Component<Props, State> {
           imageAddonIconName={(Object.keys(contact).length === 0 || showArrowsOnly) && !invertAddon
             ? directionIcon.toLowerCase()
             : undefined}
-          iconColor={baseColors.slateBlack}
+          iconColor={colors.text}
           iconName={invertAddon ? directionIcon.toLowerCase() : null}
           itemStatusIcon={itemStatusIcon}
           actionLabel={directionIcon}
-          actionLabelColor={isReceived ? baseColors.jadeGreen : null}
+          actionLabelColor={isReceived ? colors.positive : null}
           diameter={56}
         />
       );
@@ -589,7 +603,6 @@ class ActivityFeed extends React.Component<Props, State> {
     const {
       feedTitle,
       navigation,
-      backgroundColor,
       wrapperStyle,
       noBorder,
       contentContainerStyle,
@@ -612,6 +625,8 @@ class ActivityFeed extends React.Component<Props, State> {
       maxScrollOffset,
     } = this.state;
 
+    const firstTab = tabs.length ? tabs[0].id : '';
+
     const additionalContentContainerStyle = !formattedFeedData.length
       ? { justifyContent: 'center', flex: 1 }
       : {};
@@ -619,17 +634,17 @@ class ActivityFeed extends React.Component<Props, State> {
     const tabsProps = tabs.map(({ data, emptyState, ...necessaryTabProps }) => necessaryTabProps);
 
     return (
-      <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
+      <ActivityFeedWrapper style={wrapperStyle}>
         {!!feedTitle &&
         <ActivityFeedHeader noBorder={noBorder}>
           <Title subtitle title={feedTitle} noMargin />
         </ActivityFeedHeader>}
         {tabs.length > 1 && !hideTabs &&
           <Tabs
-            initialActiveTab={activeTab}
             tabs={tabsProps}
             wrapperStyle={{ paddingTop: 0 }}
             onTabChange={this.onTabChange}
+            activeTab={activeTab || firstTab}
           />
         }
         {!tabIsChanging &&
@@ -712,4 +727,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(ActivityFeed);
+export default withTheme(connect(combinedMapStateToProps)(ActivityFeed));

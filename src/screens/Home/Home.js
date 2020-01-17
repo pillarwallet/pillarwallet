@@ -33,7 +33,7 @@ import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -41,6 +41,7 @@ import Toast from 'components/Toast';
 import { Banner } from 'components/Banner';
 
 // constants
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
@@ -76,9 +77,10 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -90,6 +92,7 @@ import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -114,7 +117,7 @@ type Props = {
   badges: Badges,
   fetchBadges: Function,
   connectors: Connector[],
-  pendingConnector?: Connector,
+  pendingConnector: ?Connector,
   logScreenView: (view: string, screen: string) => void,
   activeAccount: ?Account,
   contactsSmartAddresses: ContactSmartAddressData[],
@@ -124,6 +127,8 @@ type Props = {
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
+  baseFiatCurrency: ?string,
+  activeBlockchainNetwork: ?string,
 };
 
 type State = {
@@ -133,18 +138,11 @@ type State = {
   permissionsGranted: boolean,
   scrollY: Animated.Value,
   isScanning: boolean,
-  tabIsChanging: boolean,
   isReferralBannerVisible: boolean,
 };
 
-const BalanceWrapper = styled.View`
-  padding: 8px ${spacing.layoutSides}px;
-  width: 100%;
-  background-color: ${themedColors.surface};
-`;
-
 const WalletConnectWrapper = styled.View`
-  padding: ${spacing.layoutSides}px ${spacing.layoutSides}px 5px;
+  padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
   background-color: ${themedColors.surface};
   border-color: ${themedColors.border};
   border-top-width: 1px;
@@ -155,12 +153,14 @@ const WalletConnectWrapper = styled.View`
 const ListHeader = styled(MediumText)`
   color: ${themedColors.accent};
   ${fontStyles.regular};
-  margin: 0 ${spacing.layoutSides}px 30px ${spacing.layoutSides}px;
+  margin: ${spacing.medium}px ${spacing.layoutSides}px ${spacing.small}px;
 `;
 
 const BadgesWrapper = styled.View`
-  padding: ${spacing.medium}px 0;
-  background-color: ${themedColors.card};
+  padding-top: ${spacing.medium}px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${themedColors.border};
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -187,12 +187,15 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: ALL,
     usernameWidth: 0,
     isScanning: false,
-    tabIsChanging: false,
     isReferralBannerVisible: true,
   };
 
   componentDidMount() {
-    const { logScreenView, fetchBadges, fetchBadgeAwardHistory } = this.props;
+    const {
+      logScreenView,
+      fetchBadges,
+      fetchBadgeAwardHistory,
+    } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -304,10 +307,6 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  onTabChange = (isChanging?: boolean) => {
-    this.setState({ tabIsChanging: isChanging });
-  };
-
   render() {
     const {
       cancelInvitation,
@@ -327,19 +326,20 @@ class HomeScreen extends React.Component<Props, State> {
       userEvents,
       badgesEvents,
       theme,
+      baseFiatCurrency,
+      activeBlockchainNetwork,
     } = this.props;
 
     const {
       activeTab,
       isScanning,
-      tabIsChanging,
       isReferralBannerVisible,
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = mapTransactionsHistory(
+    const transactionsOnMainnet = activeBlockchainNetwork === 'BITCOIN' ? history : mapTransactionsHistory(
       tokenTxHistory,
       contacts,
       contactsSmartAddresses,
@@ -411,6 +411,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
     const colors = getThemeColors(theme);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
       <ContainerWithHeader
@@ -431,7 +432,7 @@ class HomeScreen extends React.Component<Props, State> {
                   style={{
                     width: 8,
                     height: 8,
-                    backgroundColor: baseColors.sunYellow,
+                    backgroundColor: colors.indicator,
                     borderRadius: 4,
                     marginLeft: 4,
                     marginRight: -6,
@@ -452,9 +453,19 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <BalanceWrapper>
-            <PortfolioBalance />
-          </BalanceWrapper>
+          <PortfolioBalance fiatCurrency={fiatCurrency} />
+          <WalletConnectWrapper>
+            <SettingsItemCarded
+              title="Manage Sessions"
+              subtitle={sessionsLabel}
+              onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
+              onSettingsPress={this.openQRScanner}
+              onSettingsLoadingPress={this.cancelWaiting}
+              isLoading={!!pendingConnector}
+              settingsIconSource={iconConnect}
+              settingsLabel="Connect"
+            />
+          </WalletConnectWrapper>
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
@@ -462,8 +473,8 @@ class HomeScreen extends React.Component<Props, State> {
               horizontal
               keyExtractor={(item) => (item.id.toString())}
               renderItem={this.renderBadge}
-              style={{ width: '100%' }}
-              contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle }}
+              style={{ width: '100%', paddingBottom: spacing.medium }}
+              contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
               initialNumToRender={5}
               ListEmptyComponent={(
                 <EmptyStateWrapper>
@@ -505,7 +516,7 @@ class HomeScreen extends React.Component<Props, State> {
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
-            onTabChange={this.onTabChange}
+            activeTab={activeTab}
           />
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
@@ -516,7 +527,7 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={activeTab}
             hideTabs
             initialNumToRender={8}
-            wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
+            wrapperStyle={{ flexGrow: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
@@ -541,7 +552,8 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   session: { data: { isOnline } },
   userEvents: { data: userEvents },
-}) => ({
+  appSettings: { data: { baseFiatCurrency } },
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
   invitations,
@@ -554,19 +566,21 @@ const mapStateToProps = ({
   accounts,
   isOnline,
   userEvents,
+  baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
+  activeBlockchainNetwork: activeBlockchainSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),

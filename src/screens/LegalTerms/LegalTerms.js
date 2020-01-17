@@ -18,29 +18,37 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native/index';
+import styled, { withTheme } from 'styled-components/native/index';
+
+import { BACKUP_PHRASE } from 'constants/navigationConstants';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 import Header from 'components/Header';
 import { Paragraph, TextLink, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Checkbox from 'components/Checkbox';
-import { connect } from 'react-redux';
-import { registerWalletAction } from 'actions/onboardingActions';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import { fontSizes, fontStyles, fontTrackings, UIColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
-import { BACKUP_PHRASE } from 'constants/navigationConstants';
-import PrivateKeyModal from './PrivateKeyModal';
-import BackupPhraseModal from './BackupPhraseModal';
+
+import { registerWalletAction } from 'actions/onboardingActions';
+import { fontSizes, fontStyles, fontTrackings } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
+
+import PrivateKeyModal from 'screens/LegalTerms/PrivateKeyModal';
+import BackupPhraseModal from 'screens/LegalTerms/BackupPhraseModal';
+import type { Theme } from 'models/Theme';
 
 type Props = {
-  generateEncryptedWallet: () => Function,
+  generateEncryptedWallet: () => void,
   navigation: NavigationScreenProp<*>,
   onboarding: Object,
   backupStatus: Object,
+  theme: Theme,
 };
 
 type State = {
@@ -136,7 +144,8 @@ class LegalTerms extends React.Component<Props, State> {
       scrollOffset,
     } = this.state;
 
-    const { backupStatus } = this.props;
+    const { backupStatus, theme } = this.props;
+    const colors = getThemeColors(theme);
     const { isBackedUp, isImported } = backupStatus;
     const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3 && userCheck4);
     const isWalletBackedUp = isImported || isBackedUp;
@@ -144,7 +153,7 @@ class LegalTerms extends React.Component<Props, State> {
     return (
       <Container>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} white />
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper regularPadding>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
             With great power comes great responsibility. Make sure you are aware of the following.
           </Paragraph>
@@ -203,7 +212,7 @@ class LegalTerms extends React.Component<Props, State> {
           </Checkbox>
 
         </ScrollWrapper>
-        <Footer backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer backgroundColor={colors.surface}>
           <MultiButtonWrapper>
             <Button
               block
@@ -263,12 +272,15 @@ class LegalTerms extends React.Component<Props, State> {
 }
 
 
-const mapStateToProps = ({ wallet: { onboarding, backupStatus } }) => ({ onboarding, backupStatus });
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  generateEncryptedWallet: () => {
-    dispatch(registerWalletAction());
-  },
+const mapStateToProps = ({
+  wallet: { onboarding, backupStatus },
+}: RootReducerState): $Shape<Props> => ({
+  onboarding,
+  backupStatus,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LegalTerms);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  generateEncryptedWallet: () => dispatch(registerWalletAction()),
+});
+
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(LegalTerms));

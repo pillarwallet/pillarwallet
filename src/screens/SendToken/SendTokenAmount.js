@@ -74,15 +74,14 @@ class SendTokenAmount extends React.Component<Props> {
 
   updateTransactionSpeed = (speed: string) => {
     this.props.updateAppSettings('transactionSpeed', speed);
-  }
+  };
 
-  selectAmountComponent(token: string) {
+  selectAmountComponent = (token: string) => {
     if (token === BTC) {
       return SendBTCAmount;
     }
-
     return SendETHTokens;
-  }
+  };
 
   render() {
     const {
@@ -136,12 +135,12 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
 });
 

@@ -24,6 +24,7 @@ import { Keyboard, Alert, FlatList } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
+import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
@@ -50,7 +51,7 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { addressValidator } from 'utils/validators';
 import { isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 
 // selectors
@@ -70,9 +71,9 @@ type Props = {
   accounts: Accounts,
   localContacts: Object[],
   wallet: Object,
-  navigateToSendTokenAmount: Function,
+  navigateToSendTokenAmount: (options: SendNavigateOptions) => void,
   contactsSmartAddressesSynced: boolean,
-  syncContactsSmartAddresses: Function,
+  syncContactsSmartAddresses: () => void,
   contactsSmartAddresses: ContactSmartAddressData[],
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
@@ -89,12 +90,18 @@ type State = {
 
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
   background-color: ${themedColors.card};
   border-bottom-color: ${themedColors.border};
   border-bottom-width: 1px;
+`;
+
+const ImageIcon = styled(CachedImage)`
+  width: 6px;
+  height: 12px;
 `;
 
 const { Form } = t.form;
@@ -365,14 +372,21 @@ class SendTokenContacts extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     const showContacts = isCollectible || token !== BTC;
-    const defaultAssetName = this.isPPNTransaction ? 'synthetic asset' : 'asset';
-    const tokenName = isCollectible ? (name || token) : (token || defaultAssetName);
-    const headerTitle = `Send ${tokenName}`;
+    const tokenName = (isCollectible ? (name || token) : token) || 'asset';
+
+    const headerTitleItems = this.isPPNTransaction
+      ? [
+        { title: 'Send' },
+        { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
+        { title: tokenName, color: baseColors.electricBlueIntense },
+      ]
+      : [{ title: `Send ${tokenName}` }];
+
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: headerTitle }] }}
+        headerProps={{ centerItems: headerTitleItems }}
         inset={{ bottom: 0 }}
       >
         <FormWrapper>
@@ -424,12 +438,12 @@ const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   navigateToSendTokenAmount: (options: SendNavigateOptions) => dispatch(navigateToSendTokenAmountAction(options)),
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });

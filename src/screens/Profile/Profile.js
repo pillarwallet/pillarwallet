@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import * as Keychain from 'react-native-keychain';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
@@ -57,7 +58,8 @@ import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { fontTrackings, baseColors, spacing, fontStyles } from 'utils/variables';
+import { fontTrackings, spacing, fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
@@ -74,15 +76,13 @@ const chat = new ChatService();
 
 const ListWrapper = styled.View`
   padding-bottom: 40px;
-  background-color: ${baseColors.lighterGray};
 `;
 
 const ListSeparator = styled.View`
   padding: 20px ${spacing.rhythm}px;
   border-top-width: ${props => props.first ? 0 : '1px'};
   border-bottom-width: 1px;
-  border-color: ${baseColors.lightGray};
-  background-color: ${baseColors.lighterGray};
+  border-color: ${themedColors.border};
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -160,26 +160,26 @@ const fullNameFormFields = [{
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
-  saveBaseFiatCurrency: (currency: ?string) => Function,
+  saveBaseFiatCurrency: (currency: string) => void,
   baseFiatCurrency: ?string,
   appSettings: Object,
   intercomNotificationsCount: number,
-  updateAssetsLayout: (value: string) => Function,
-  updateUser: (walletId: string, field: Object, callback?: Function) => Function,
-  createOneTimePassword: (walletId: string, field: Object, callback?: Function) => Function,
-  resetIncorrectPassword: () => Function,
-  lockScreen: () => Function,
-  logoutUser: () => Function,
+  updateAssetsLayout: (value: string) => void,
+  updateUser: (walletId: string, field: Object, callback?: Function) => void,
+  createOneTimePassword: (walletId: string, field: Object, callback?: Function) => void,
+  resetIncorrectPassword: () => void,
+  lockScreen: () => void,
+  logoutUser: () => void,
   backupStatus: Object,
   useBiometrics: ?boolean,
-  changeUseBiometrics: (enabled: boolean, privateKey: string) => Function,
+  changeUseBiometrics: (enabled: boolean, privateKey: string) => void,
   cleanSmartWalletAccounts: Function,
   smartWalletFeatureEnabled: boolean,
   logScreenView: (view: string, screen: string) => void,
   logEvent: (name: string) => void,
   saveOptOutTracking: (status: boolean) => void,
   optOutTracking: boolean,
-  setUserJoinedBeta: Function,
+  setUserJoinedBeta: (status: boolean) => void,
   userJoinedBeta: boolean,
 }
 
@@ -403,14 +403,13 @@ class Profile extends React.Component<Props, State> {
 
     const isWalletBackedUp = isImported || isBackedUp;
     return (
-      <Container inset={{ bottom: 0 }} color={baseColors.white}>
+      <Container inset={{ bottom: 0 }}>
         <Header white title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={showTrackingModal}
           fullScreen
           showHeader
           onModalHide={this.toggleTrackingModal}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -443,7 +442,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
         >
           <Wrapper flex={1}>
@@ -460,7 +458,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -479,7 +476,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -506,7 +502,6 @@ class Profile extends React.Component<Props, State> {
           title="Phone verification"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -528,7 +523,6 @@ class Profile extends React.Component<Props, State> {
           title="Claim tokens"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -549,7 +543,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -573,7 +566,6 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your base currency
@@ -839,7 +831,6 @@ class Profile extends React.Component<Props, State> {
               isVisible={showJoinBetaModal}
               fullScreen
               showHeader
-              backgroundColor={baseColors.snowWhite}
               onModalHidden={this.onJoinBetaModalHidden}
               avoidKeyboard
               title="join beta"
@@ -848,11 +839,10 @@ class Profile extends React.Component<Props, State> {
               <StyledWrapper regularPadding flex={1}>
                 <Description small>
                   {
-                    'By joining the beta program, you will be added to our Firebase Analytics data collection.' +
-                    'Through this, Pillar will collect your username in order to enable beta features and monitor ' +
-                    'your wallet experience for any bugs and/or crashes while testing the new functionality. ' +
-                    'You can opt out of the beta program and Firebase Analytics collection at any time ' +
-                    'via the "System" under Settings.'
+                    'By choosing this you will be added to our Analytics data collection.' +
+                    'Through this, Pillar will collect your username in order to enable' +
+                    'new features and monitor your new wallet experience for any bugs and/or crashes.' +
+                    'You can choose to leave the Early Access program at any time via the "System" under Settings.'
                   }
                 </Description>
                 <Button
@@ -886,7 +876,7 @@ const mapStateToProps = ({
   notifications: { intercomNotificationsCount },
   wallet: { backupStatus },
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
   baseFiatCurrency,
   intercomNotificationsCount,
@@ -898,12 +888,12 @@ const mapStateToProps = ({
   userJoinedBeta,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  updateUser: (walletId: string, field: Object, callback: Function) =>
+  updateUser: (walletId: string, field: Object, callback?: Function) =>
     dispatch(updateUserAction(walletId, field, callback)),
-  createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
+  createOneTimePassword: (walletId: string, field: Object, callback?: Function) =>
     dispatch(createOneTimePasswordAction(walletId, field, callback)),
   updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),

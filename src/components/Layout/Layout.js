@@ -165,7 +165,7 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       scrollEventThrottle={scrollEventThrottle}
       onContentSizeChange={onContentSizeChange}
       style={{
-        paddingHorizontal: regularPadding ? 20 : 0,
+        paddingHorizontal: regularPadding ? spacing.layoutSides : 0,
         backgroundColor: color || 'transparent',
         flex: 1,
         height: '100%',

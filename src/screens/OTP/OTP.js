@@ -21,6 +21,9 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+
+import type { VerificationPhoneAction } from 'actions/userActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { Paragraph, Label } from 'components/Typography';
 import { Center, Container, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
@@ -28,7 +31,6 @@ import { Picker } from 'native-base';
 import countries from 'utils/countries.json';
 import Header from 'components/Header';
 import { createOneTimePasswordAction, verifyPhoneAction } from 'actions/userActions';
-import type { VerificationPhoneAction } from 'actions/userActions';
 import SMSConfirmationInput from './SMSConfirmationInput';
 
 type Props = {
@@ -36,7 +38,7 @@ type Props = {
   createOneTimePassword: Function,
   user: Object,
   navigation: NavigationScreenProp<*>,
-}
+};
 
 const SMSConfirmationLabel = styled(Label)`
   text-align: center;
@@ -89,14 +91,14 @@ class OTP extends React.Component<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
+const mapStateToProps = ({ user: { data: user } }: RootReducerState): $Shape<Props> => ({
+  user,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   confirmOTP: (props: VerificationPhoneAction, callback: Function) => dispatch(verifyPhoneAction(props, callback)),
   createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
     dispatch(createOneTimePasswordAction(walletId, field, callback)),
-});
-
-const mapStateToProps = ({ user: { data: user } }) => ({
-  user,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OTP);

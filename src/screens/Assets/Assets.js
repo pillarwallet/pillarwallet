@@ -34,13 +34,14 @@ import Button from 'components/Button';
 import { Container } from 'components/Layout';
 
 // types
-import type { Assets, Asset } from 'models/Asset';
+import type { Assets } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts, Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // actions
 import { fetchInitialAssetsAction } from 'actions/assetsActions';
@@ -74,17 +75,11 @@ import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
 
 type Props = {
-  fetchInitialAssets: () => Function,
+  fetchInitialAssets: () => void,
   assets: Assets,
   collectibles: Collectible[],
-  wallet: Object,
-  rates: Object,
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
-  assetsLayout: string,
-  assetsSearchResults: Asset[],
-  assetsSearchState: string,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
@@ -341,27 +336,16 @@ class AssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
-  wallet: { data: wallet, backupStatus },
-  assets: {
-    assetsState,
-    assetsSearchState,
-    assetsSearchResults,
-  },
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout }, useBiometrics = false } },
+  wallet: { backupStatus },
+  assets: { assetsState },
+  appSettings: { data: { useBiometrics = false } },
   badges: { data: badges },
   smartWallet: smartWalletState,
   blockchainNetwork: { data: blockchainNetworks },
-}) => ({
-  wallet,
+}: RootReducerState): $Shape<Props> => ({
   backupStatus,
   accounts,
   assetsState,
-  assetsSearchState,
-  assetsSearchResults,
-  rates,
-  baseFiatCurrency,
-  assetsLayout,
   useBiometrics,
   badges,
   smartWalletState,
@@ -381,7 +365,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchInitialAssets: () => dispatch(fetchInitialAssetsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

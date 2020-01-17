@@ -21,18 +21,19 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { BottomTabBar } from 'react-navigation-tabs';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
-
-// const HiddenTabItemView = () => {
-//   return <View style={{ display: 'none' }} />;
-// };
+import { withTheme } from 'styled-components';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   screenProps: {
     smartWalletFeatureEnabled: boolean,
-  }
+  },
+  theme: Theme,
+  style?: Object,
 };
 
-export default class CustomTabBarComponent extends React.Component<Props> {
+class CustomTabBarComponent extends React.Component<Props> {
   /**
    * if the return is false or undefined then the default button component is rendered
    * otherwise let's pass hidden tab item
@@ -50,15 +51,25 @@ export default class CustomTabBarComponent extends React.Component<Props> {
   };
 
   render() {
-    return Platform.select({
-      ios: <BottomTabBar
-        {...this.props}
-        getButtonComponent={({ route }) => this.getButtonComponent(route)}
-      />,
-      android: <AndroidTabBarComponent
-        {...this.props}
-        getButtonComponent={({ route }) => this.getButtonComponent(route)}
-      />,
-    });
+    const { theme, style = {} } = this.props;
+    const colors = getThemeColors(theme);
+    const customStyle = { ...style, backgroundColor: colors.card };
+
+    return (
+      Platform.select({
+        ios: <BottomTabBar
+          {...this.props}
+          style={customStyle}
+          getButtonComponent={({ route }) => this.getButtonComponent(route)}
+        />,
+        android: <AndroidTabBarComponent
+          {...this.props}
+          style={customStyle}
+          getButtonComponent={({ route }) => this.getButtonComponent(route)}
+        />,
+      })
+    );
   }
 }
+
+export default withTheme(CustomTabBarComponent);

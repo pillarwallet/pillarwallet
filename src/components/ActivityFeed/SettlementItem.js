@@ -25,7 +25,8 @@ import BigNumber from 'bignumber.js';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText } from 'components/Typography';
 import TankAssetBalance from 'components/TankAssetBalance';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { getAssetData } from 'utils/assets';
 import { formatAmount, formatUnits } from 'utils/common';
@@ -56,7 +57,7 @@ const ListWrapper = styled.View`
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.jadeGreen};
+  color: ${themedColors.primary};
   text-align: right;
 `;
 

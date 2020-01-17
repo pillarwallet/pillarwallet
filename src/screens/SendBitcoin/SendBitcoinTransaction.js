@@ -31,10 +31,11 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 
 // constants
 import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -44,12 +45,12 @@ const animationSuccess = require('assets/animations/transactionSentConfirmationA
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
 const transactionSuccessText =
-  'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
+  'It will be settled in a few moments, depending on your fee price settings and Bitcoin network load';
 
 const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
-    'transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
-    'replacement transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
+    'transaction underpriced': 'Not enough BTC to cover the transaction fee. Top up your BTC balance',
+    'replacement transaction underpriced': 'Not enough BTC to cover the transaction fee. Top up your BTC balance',
     'is not owned': 'You do not longer own this collectible',
     'can not be transferred': 'This collectible can not be transferred',
   };
@@ -58,7 +59,7 @@ const getTransactionErrorMessage = (error: string): string => {
 };
 
 const CancelText = styled(MediumText)`
-  color: ${baseColors.burningFire};
+  color: ${themedColors.negative};
   font-size: ${fontSizes.medium}px;
 `;
 

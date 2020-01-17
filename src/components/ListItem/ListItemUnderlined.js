@@ -19,9 +19,10 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { TextLink, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   label: string,
@@ -43,7 +44,7 @@ const ItemWrapper = styled.View`
 const ItemLabel = styled(MediumText)`
   text-align:center;
   ${fontStyles.small};
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
 `;
 
 const ItemValueHolder = styled.View`
@@ -74,7 +75,7 @@ const Column = styled.View`
   justify-content: flex-end;
   padding-right: ${spacing.mediumLarge}px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.gallery};
+  border-color: ${themedColors.border};
 `;
 
 const ListItemUnderlined = (props: Props) => {

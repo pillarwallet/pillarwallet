@@ -25,18 +25,17 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
 
 // util
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
 const SeparatorValue = styled(Paragraph)`
-  color: ${baseColors.coolGrey};
   padding: 0px 8px;
 `;
 
-const ArrowSymbol = () => <SeparatorValue>&nbsp;&rarr;&nbsp;</SeparatorValue>;
+const ArrowSymbol = () => <SeparatorValue light>&nbsp;&rarr;&nbsp;</SeparatorValue>;
 
 class ExchangeReceiveExplained extends React.Component<Props> {
   assetSymbol: string;
@@ -63,11 +62,13 @@ class ExchangeReceiveExplained extends React.Component<Props> {
       >
         <Wrapper flex={1} center regularPadding>
           <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-            <Paragraph>Currently only exchange</Paragraph>
-            <Paragraph style={{ paddingBottom: spacing.rhythm }}>
+            <Paragraph center>Currently only exchange</Paragraph>
+            <Paragraph center style={{ paddingBottom: spacing.rhythm }}>
               to <ArrowSymbol /> Legacy Wallet is available.
             </Paragraph>
-            <Paragraph>We are working on <ArrowSymbol /> Smart Wallet destination for exchanged tokens.</Paragraph>
+            <Paragraph center>
+              We are working on <ArrowSymbol /> Smart Wallet destination for exchanged tokens.
+            </Paragraph>
           </View>
         </Wrapper>
       </ContainerWithHeader>

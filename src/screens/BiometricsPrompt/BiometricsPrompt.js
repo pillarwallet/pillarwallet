@@ -24,6 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
 import type { NavigationScreenProp } from 'react-navigation';
 
+import type { Dispatch } from 'reducers/rootReducer';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -109,7 +110,7 @@ class BiometricsPrompt extends React.Component<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   registerWallet: (setBiometrics) => dispatch(registerWalletAction(setBiometrics)),
 });
 

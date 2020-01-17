@@ -141,6 +141,7 @@ import {
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import {
   keyPairAddress,
@@ -174,6 +175,7 @@ import type {
 
 import { initialAssets } from 'fixtures/assets';
 
+import { addNewAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
@@ -215,7 +217,7 @@ const updateBTCTransactions = (
 ): UpdateBTCTransactionsAction => ({
   type: UPDATE_BITCOIN_TRANSACTIONS,
   address,
-  transactions,
+  transactions: transactions.filter(tx => !!tx.details),
 });
 
 const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
@@ -270,6 +272,7 @@ export const loadBitcoinAddressesAction = () => {
 
     if (loaded.length) {
       dispatch(setBitcoinAddressesAction(loaded));
+      dispatch(addNewAccountAction(loaded[0], ACCOUNT_TYPES.BITCOIN_WALLET));
     }
   };
 };
@@ -411,10 +414,36 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
   };
 };
 
-export const refreshBTCTransactionsAction = (force: boolean) => {
+
+export const addBTCAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { data: assets, supportedAssets },
+      bitcoin: { data: { addresses } },
+    } = getState();
+    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+      const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
+      if (btcAsset) {
+        const updatedSupportedAssets = supportedAssets.concat(btcAsset);
+        assets[addresses[0].address] = { BTC: btcAsset };
+        dispatch({
+          type: UPDATE_ASSETS,
+          payload: assets,
+        });
+        dispatch(saveDbAction('assets', { assets }, true));
+        dispatch({
+          type: UPDATE_SUPPORTED_ASSETS,
+          payload: updatedSupportedAssets,
+        });
+        dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
+      }
+    }
+  };
+};
+
+export const refreshBTCTransactionsAction = (force: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
       bitcoin: { data: { addresses } },
     } = getState();
 
@@ -422,25 +451,9 @@ export const refreshBTCTransactionsAction = (force: boolean) => {
     if (!addressesToUpdate.length) {
       return;
     }
+    await dispatch(addBTCAssetsAction());
 
     await Promise.all(addressesToUpdate.map(({ address }) => {
-      if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
-        const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
-        if (btcAsset) {
-          supportedAssets.push(btcAsset);
-          assets[address] = { BTC: btcAsset };
-          dispatch({
-            type: UPDATE_ASSETS,
-            payload: assets,
-          });
-          dispatch(saveDbAction('assets', { assets }, true));
-          dispatch({
-            type: UPDATE_SUPPORTED_ASSETS,
-            payload: supportedAssets,
-          });
-          dispatch(saveDbAction('supportedAssets', { supportedAssets }, true));
-        }
-      }
       return fetchBTCTransactionsAction(address)
         .then(action => dispatch(action))
         .catch(fetchBTCTransactionsFailed);

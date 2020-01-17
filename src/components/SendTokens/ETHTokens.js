@@ -58,7 +58,7 @@ import type { SessionData } from 'models/Session';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
+import { ETH, SPEED_TYPES, SPEED_TYPE_LABELS } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -128,12 +128,6 @@ type State = {
 
 const { Form } = t.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
-
-const SPEED_TYPE_LABELS = {
-  [SPEED_TYPES.SLOW]: 'Slow',
-  [SPEED_TYPES.NORMAL]: 'Normal',
-  [SPEED_TYPES.FAST]: 'Fast',
-};
 
 class SendETHTokens extends React.Component<Props, State> {
   _form: t.form;
@@ -450,7 +444,7 @@ class SendETHTokens extends React.Component<Props, State> {
               />
               {!calculatingMaxValue &&
                 <TouchableOpacity onPress={this.useMaxValue}>
-                  <TextLink>Send All</TextLink>
+                  <TextLink>Send all</TextLink>
                 </TouchableOpacity>
               }
               {calculatingMaxValue && <Spinner width={20} height={20} />}
@@ -479,7 +473,7 @@ const mapStateToProps = ({
   gasInfo,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 

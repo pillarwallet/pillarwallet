@@ -18,33 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableNativeFeedback, Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
 import Icon from 'components/Icon';
-
-const StyledItemTouchable = styled.TouchableHighlight`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const StyledItemView = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
+import NativeTouchable from 'components/NativeTouchable';
 
 const ItemRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: ${spacing.large}px;
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
   min-height: 90px;
 `;
 
@@ -64,23 +51,23 @@ const AddonWrapper = styled.View`
 `;
 
 const ListItem = styled.View`
-  ${props => props.bordered
+  ${({ bordered, theme }) => bordered
     ? `
     border-bottom-width: ${StyleSheet.hairlineWidth}px;
     border-top-width: ${StyleSheet.hairlineWidth}px;
-    border-color: ${baseColors.mediumLightGray};
+    border-color: ${theme.colors.border};
     `
     : ''}
 `;
 
 const ItemLabel = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${props => props.color ? props.color : baseColors.electricBlue};
+  color: ${({ color, theme }) => color || theme.colors.primary};
 `;
 
 const SubText = styled(BaseText)`
   ${fontStyles.small};
-  color: ${props => props.color ? props.color : baseColors.darkGray};
+  color: ${({ color, theme }) => color || theme.colors.secondaryText};
   margin-top: 4px;
 `;
 
@@ -90,36 +77,17 @@ const ItemAddon = styled.View`
   align-items: center;
   margin-left: ${spacing.medium}px;
   padding-bottom: 2px;
-  
-`;const Row = styled.View`
+`;
+
+const Row = styled.View`
   flex-direction: row;
   align-items: center;
 `;
 
-const ButtonWrapper = ({ onPress, children }) => {
-  if (Platform.OS === 'android') {
-    return (
-      <TouchableNativeFeedback
-        onPress={onPress}
-        background={TouchableNativeFeedback.Ripple()}
-        disabled={!onPress}
-      >
-        <StyledItemView>
-          {children}
-        </StyledItemView>
-      </TouchableNativeFeedback>
-    );
-  }
-  return (
-    <StyledItemTouchable
-      onPress={onPress}
-      underlayColor={baseColors.lightGray}
-      disabled={!onPress}
-    >
-      {children}
-    </StyledItemTouchable>
-  );
-};
+const ChevronIcon = styled(Icon)`
+  color: ${({ color, theme }) => color || theme.colors.primary};
+  font-size: ${fontSizes.small}px;
+`;
 
 type Props = {
   label: string,
@@ -149,7 +117,7 @@ export const ListItemChevron = (props: Props) => {
   } = props;
   return (
     <ListItem bordered={bordered} style={wrapperStyle}>
-      <ButtonWrapper onPress={onPress}>
+      <NativeTouchable onPress={onPress}>
         <ItemRow>
           <ContentWrapper>
             <TextWrapper>
@@ -166,17 +134,14 @@ export const ListItemChevron = (props: Props) => {
           </ContentWrapper>
           <AddonWrapper>
             {rightAddon}
-            <Icon
+            <ChevronIcon
               name="chevron-right"
-              style={{
-                fontSize: fontSizes.small,
-                color: color || baseColors.electricBlue,
-                ...chevronStyle,
-              }}
+              color={color}
+              style={chevronStyle}
             />
           </AddonWrapper>
         </ItemRow>
-      </ButtonWrapper>
+      </NativeTouchable>
     </ListItem>
   );
 };

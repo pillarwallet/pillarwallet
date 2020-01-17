@@ -24,6 +24,8 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
+import get from 'lodash.get';
+import { Sentry } from 'react-native-sentry';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -70,6 +72,7 @@ import {
   CONNECTION_REQUESTED_EVENT,
   CONNECTION_COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
+import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 // services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
@@ -80,7 +83,10 @@ import { SOCKET } from 'services/sockets';
 
 // utils
 import { processNotification } from 'utils/notifications';
-import { STATUS_MUTED } from 'constants/connectionsConstants';
+
+// types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
 
 const storage = Storage.getInstance('db');
 
@@ -107,13 +113,16 @@ function checkForSupportAlert(messageData) {
 }
 
 export const startListeningIntercomNotificationsAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { user } = await storage.get('user');
     if (!user) return;
     const { username } = user;
+    const supportHmac = await api.supportHmac();
+
     Intercom.handlePushMessage();
     Intercom.registerIdentifiedUser({ userId: username });
     Intercom.updateUser({ user_id: username, name: username });
+    Intercom.setUserHash(supportHmac);
     intercomNotificationsListener = ({ count }) => dispatch({
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
       payload: count,
@@ -135,19 +144,19 @@ export const stopListeningIntercomNotificationsAction = () => {
 };
 
 export const setUnreadNotificationsStatusAction = (status: boolean) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: status });
   };
 };
 
 export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: status });
   };
 };
 
 export const fetchAllNotificationsAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
     dispatch(fetchSmartWalletTransactionsAction());
     dispatch(fetchInviteNotificationsAction());
@@ -156,15 +165,24 @@ export const fetchAllNotificationsAction = () => {
 };
 
 export const startListeningNotificationsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { data: wallet },
       invitations: { data: invitations },
       contacts: { data: contacts },
     } = getState();
     if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
-      SOCKET.onMessage(async response => {
-        const data = JSON.parse(response.data.msg);
+      SOCKET.onMessage((response) => {
+        let data;
+        try {
+          data = JSON.parse(response.data.msg);
+        } catch (error) {
+          // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
+          Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response, error } });
+          return; // unable to parse data, do not proceed
+        }
+
+        const senderUserId = get(data, 'senderUserData.id');
 
         if (data.type === CONNECTION_REQUESTED_EVENT) {
           dispatch(fetchInviteNotificationsAction());
@@ -173,7 +191,7 @@ export const startListeningNotificationsAction = () => {
           data.type === CONNECTION_CANCELLED_EVENT ||
           data.type === CONNECTION_REJECTED_EVENT
         ) {
-          const updatedInvitations = invitations.filter(({ id }) => id !== data.senderUserData.id);
+          const updatedInvitations = invitations.filter(({ id }) => id !== senderUserId);
           dispatch({
             type: UPDATE_INVITATIONS,
             payload: updatedInvitations,
@@ -183,7 +201,7 @@ export const startListeningNotificationsAction = () => {
           data.type === CONNECTION_ACCEPTED_EVENT ||
           data.type === CONNECTION_DISCONNECTED_EVENT
         ) {
-          dispatch(updateConnectionsAction(data.senderUserData.id));
+          dispatch(updateConnectionsAction(senderUserId));
         }
         if (data.type === CONNECTION_COLLECTIBLE_EVENT) {
           dispatch(fetchAllCollectiblesDataAction());
@@ -213,19 +231,19 @@ export const startListeningNotificationsAction = () => {
       });
       return;
     }
-    let enabled = await firebase.messaging().hasPermission();
-    if (!enabled) {
+    const firebaseNotificationsEnabled = await firebase.messaging().hasPermission();
+    if (!firebaseNotificationsEnabled) {
       try {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
-        enabled = true;
-
         dispatch(fetchAllNotificationsAction());
         disabledPushNotificationsListener = setInterval(() => {
           dispatch(fetchAllNotificationsAction());
         }, 30000);
         return;
-      } catch (err) { } // eslint-disable-line
+      } catch (err) {
+        //
+      }
     }
 
     if (notificationsListener) return;
@@ -254,6 +272,7 @@ export const startListeningNotificationsAction = () => {
         const contact = contacts.find(c => c.username === notification.navigationParams.username);
         if (contact) {
           if (!!navParams.username && navParams.username === contact.username) {
+            // $FlowFixMe - profileImage can be undefined
             dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
             return;
           }
@@ -284,7 +303,7 @@ export const startListeningNotificationsAction = () => {
 };
 
 export const stopListeningNotificationsAction = () => {
-  return async (dispatch: Function) => { // eslint-disable-line
+  return async () => {
     if (disabledPushNotificationsListener) clearInterval(disabledPushNotificationsListener);
     if (!notificationsListener) return;
     notificationsListener();
@@ -293,7 +312,7 @@ export const stopListeningNotificationsAction = () => {
 };
 
 export const startListeningOnOpenNotificationAction = () => {
-  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
+  return async (dispatch: Dispatch) => {
     await SOCKET.init();
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
@@ -359,7 +378,7 @@ export const startListeningOnOpenNotificationAction = () => {
 };
 
 export const stopListeningOnOpenNotificationAction = () => {
-  return (dispatch: Function) => { // eslint-disable-line
+  return () => {
     if (!notificationsOpenerListener) return;
     notificationsOpenerListener();
     notificationsOpenerListener = null;
@@ -367,7 +386,7 @@ export const stopListeningOnOpenNotificationAction = () => {
 };
 
 export const startListeningChatWebSocketAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
     const chatWebSocket = chat.getWebSocketInstance();
@@ -439,6 +458,7 @@ export const startListeningChatWebSocketAction = () => {
 
             if (contact) {
               if (!!navParams.username && navParams.username === contact.username) {
+                // $FlowFixMe - profileImage can be undefined
                 dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
                 return;
               }

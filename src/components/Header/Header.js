@@ -19,12 +19,14 @@
 */
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { TextLink, BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import IconButton from 'components/IconButton';
-import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   onBack?: Function,
@@ -52,17 +54,18 @@ type Props = {
   headerRightAddon?: React.Node,
   pushRightAddonToTheSide?: boolean,
   white?: boolean,
+  theme: Theme,
 }
 
 const Wrapper = styled.View`
   border-bottom-width: 0;
-  padding: ${props => props.noPadding ? 0 : '0 20px'};
+  padding: ${props => props.noPadding ? 0 : `0 ${spacing.layoutSides}px`};
   z-index: 10;
-  ${props => props.white
+  ${({ white, theme }) => white
     ? `
-      background-color: ${baseColors.white};
+      background-color: ${theme.colors.card};
       border-bottom-width: 1px;
-      border-bottom-color: ${baseColors.mediumLightGray};
+      border-bottom-color: ${theme.colors.border};
     `
     : ''}
 `;
@@ -86,7 +89,7 @@ const BackIcon = styled(IconButton)`
 `;
 
 const CloseIconText = styled(BaseText)`
-  color: ${props => props.light ? baseColors.white : baseColors.darkGray};
+  color: ${({ light, theme }) => light ? theme.colors.control : theme.colors.text};
   font-size: ${fontSizes.small}px;
 `;
 
@@ -154,12 +157,14 @@ const Header = (props: Props) => {
     headerRightAddon,
     pushRightAddonToTheSide,
     white,
+    theme,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle || headerRightAddon;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
+  const colors = getThemeColors(theme);
 
   const getHeaderRightFlex = () => {
     if (headerRightFlex) {
@@ -190,7 +195,7 @@ const Header = (props: Props) => {
           {onBack &&
             <BackIcon
               icon={backIcon || 'back'}
-              color={light ? baseColors.white : UIColors.defaultNavigationColor}
+              color={light ? colors.control : colors.text}
               onPress={() => onBack()}
               fontSize={fontSizes.large}
               horizontalAlign="flex-start"
@@ -227,7 +232,7 @@ const Header = (props: Props) => {
               <IconWrapper>
                 <NextIcon
                   icon={nextIcon}
-                  color={light ? baseColors.white : UIColors.primary}
+                  color={light ? colors.control : colors.primary}
                   onPress={onNextPress}
                   fontSize={nextIconSize || fontSizes.medium}
                   horizontalAlign="flex-end"
@@ -242,7 +247,7 @@ const Header = (props: Props) => {
                 }
                 <CloseIcon
                   icon="close"
-                  color={light ? baseColors.white : UIColors.defaultNavigationColor}
+                  color={light ? colors.control : colors.text}
                   onPress={onClose}
                   fontSize={fontSizes.medium}
                   horizontalAlign="center"
@@ -256,4 +261,4 @@ const Header = (props: Props) => {
   );
 };
 
-export default Header;
+export default withTheme(Header);

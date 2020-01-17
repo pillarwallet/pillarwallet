@@ -17,10 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BITCOIN_NETWORK } from 'react-native-dotenv';
+
 export const SET_BITCOIN_ADDRESSES = 'SET_BITCOIN_ADDRESSES';
 export const CREATED_BITCOIN_ADDRESS = 'CREATED_BITCOIN_ADDRESS';
 export const BITCOIN_WALLET_CREATION_FAILED = 'BITCOIN_WALLET_CREATION_FAILED';
-export const DEFAULT_BTC_NETWORK = process.env.BITCOIN_NETWORK || 'testnet';
+export const DEFAULT_BTC_NETWORK = BITCOIN_NETWORK || 'testnet';
 export const UPDATE_BITCOIN_BALANCE = 'UPDATE_BITCOIN_BALANCE';
 export const UPDATE_UNSPENT_TRANSACTIONS = 'UPDATE_UNSPENT_TRANSACTIONS';
 export const UPDATE_BITCOIN_TRANSACTIONS = 'UPDATE_BITCOIN_TRANSACTIONS';

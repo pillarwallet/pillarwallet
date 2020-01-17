@@ -18,24 +18,29 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Swiper from 'react-native-swiper';
+import { CachedImage } from 'react-native-cached-image';
+import { connect } from 'react-redux';
+
 import { IMPORT_WALLET } from 'constants/navigationConstants';
 import { Footer } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BoldText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
-import { fontSizes, baseColors, fontStyles } from 'utils/variables';
+import { fontSizes, fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
-import { CachedImage } from 'react-native-cached-image';
-import { connect } from 'react-redux';
+
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   navigateToNewWalletPage: Function,
+  theme: Theme,
 }
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
@@ -46,12 +51,12 @@ const PillarLogo = styled(CachedImage)`
 `;
 
 const Title = styled(BoldText)`
-  color: ${baseColors.pomegranate};
+  color: ${themedColors.PPNText};
   ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${themedColors.PPNText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
@@ -107,12 +112,15 @@ class Welcome extends React.Component<Props> {
         </Slide>
       );
     });
-  }
+  };
 
   render() {
+    const { theme } = this.props;
+    const colors = getThemeColors(theme);
+
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.ultramarine}
+        backgroundColor={colors.PPNSurface}
         headerProps={{
           floating: true,
           transparent: true,
@@ -129,8 +137,8 @@ class Welcome extends React.Component<Props> {
           <Swiper
             containerStyle={{ width: '100%' }}
             paginationStyle={{ paddingLeft: 46, paddingRight: 55, justifyContent: 'flex-start' }}
-            dotColor={baseColors.white}
-            activeDotColor={baseColors.pomegranate}
+            dotColor={colors.control}
+            activeDotColor={colors.PPNText}
           >
             {this.renderSlides()}
           </Swiper>
@@ -157,4 +165,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(Welcome);
+export default withTheme(connect(null, mapDispatchToProps)(Welcome));

@@ -22,7 +22,8 @@ import { View } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
 
 type Props = {
@@ -39,7 +40,7 @@ const Wrapper = styled.View`
 `;
 
 const BalanceInTank = styled(BaseText)`
-  color: ${baseColors.electricBlueIntense};
+  color: ${themedColors.primary};
   font-size: ${fontSizes.big}px;
 `;
 

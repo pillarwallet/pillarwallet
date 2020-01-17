@@ -25,6 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Balances } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Accounts } from 'models/Account';
@@ -43,7 +44,7 @@ import DeploymentView from 'components/DeploymentView';
 
 import { formatAmount, formatMoney } from 'utils/common';
 import { getAssetsAsList, getBalance } from 'utils/assets';
-import { spacing, UIColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM, SMART_WALLET_INTRO } from 'constants/navigationConstants';
@@ -57,11 +58,11 @@ import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork'
 import { accountAssetsSelector } from 'selectors/assets';
 
 type Props = {
-  fetchAssetsBalances: () => Function,
+  fetchAssetsBalances: () => void,
   assets: Assets,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
-  fetchAllCollectiblesData: Function,
+  fetchAllCollectiblesData: () => void,
   collectibles: Collectible[],
   paymentNetworkBalances: Balances,
   accounts: Accounts,
@@ -94,7 +95,6 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 const ContentBackground = styled(Wrapper)`
    flex: 1;
-   background-color: ${UIColors.defaultBackgroundColor};
 `;
 
 const InnerWrapper = styled(Wrapper)`
@@ -303,7 +303,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         {!disableSend &&
         <ContentBackground>
           <InnerWrapper>
-            <Tabs initialActiveTab={activeTab} tabs={assetsTabs} isFloating />
+            <Tabs tabs={assetsTabs} isFloating activeTab={activeTab} />
             {activeTab === TOKENS && this.renderAssets()}
             {activeTab === COLLECTIBLES && this.renderCollectibles()}
           </InnerWrapper>
@@ -316,7 +316,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   accounts,
   smartWalletState,
 });
@@ -328,12 +328,12 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });

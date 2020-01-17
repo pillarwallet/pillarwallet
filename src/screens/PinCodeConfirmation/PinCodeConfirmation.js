@@ -24,6 +24,7 @@ import * as Keychain from 'react-native-keychain';
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { MediumText } from 'components/Typography';
@@ -33,7 +34,7 @@ import { BIOMETRICS_PROMPT, PIN_CODE_CONFIRMATION } from 'constants/navigationCo
 import { fontStyles, spacing } from 'utils/variables';
 
 type Props = {
-  confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => Function,
+  confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => void,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
 };
@@ -125,10 +126,14 @@ class PinCodeConfirmation extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({
+  wallet,
+}: RootReducerState): $Shape<Props> => ({
+  wallet,
+});
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  confirmPinForNewWallet: (pin, shouldRegisterWallet) => {
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => {
     dispatch(confirmPinForNewWalletAction(pin, shouldRegisterWallet));
   },
 });

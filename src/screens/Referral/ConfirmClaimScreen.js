@@ -21,15 +21,17 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { ClaimTokenAction } from 'actions/referralsActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { LightText, MediumText } from 'components/Typography';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
 import AssetPattern from 'components/AssetPattern';
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { claimTokensAction } from 'actions/referralsActions';
-import type { ClaimTokenAction } from 'actions/referralsActions';
 import ProcessingClaim from './ProcessingClaim';
 import ErrorClaim from './ErrorClaim';
 
@@ -58,7 +60,7 @@ const TokenValue = styled(MediumText)`
 
 const TextCode = styled(LightText)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   text-align: center;
   margin-bottom: 30px;
 `;
@@ -129,11 +131,13 @@ class ConfirmClaimScreen extends React.Component<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   claimTokens: (props: ClaimTokenAction, callback: Function) => dispatch(claimTokensAction(props, callback)),
 });
 
-const mapStateToProps = ({ user: { data: user } }) => ({
+const mapStateToProps = ({
+  user: { data: user },
+}: RootReducerState): $Shape<Props> => ({
   user,
 });
 

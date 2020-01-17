@@ -38,6 +38,7 @@ import type { Assets, Asset } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -47,7 +48,7 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 
 // utils
-import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
+import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import {
   formatFullAmount,
   noop,
@@ -59,6 +60,7 @@ import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 import { btcToSatoshis } from 'utils/bitcoin';
+import { themedColors } from 'utils/themes';
 
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
@@ -134,12 +136,12 @@ const ContentWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   overflow: hidden;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.card};
 `;
 
 const EventBody = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.card};
 `;
 
 const EventProfileImage = styled(ProfileImage)`
@@ -147,7 +149,7 @@ const EventProfileImage = styled(ProfileImage)`
 
 const ButtonsWrapper = styled.View`
   padding: 6px ${spacing.mediumLarge}px ${spacing.large}px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.card};
 `;
 
 const EventButton = styled(Button)`
@@ -165,7 +167,7 @@ const EventRow = styled.View`
 
 const EventBodyTitle = styled(MediumText)`
   ${fontStyles.big};
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${({ color, theme }) => color || theme.colors.text};
   margin: 0 10px 2px;
   text-align: center;
 `;
@@ -362,6 +364,7 @@ class EventDetails extends React.Component<Props, State> {
         isPPNTransaction,
         tag,
         extra,
+        btcFee,
       } = txInfo;
 
       const isReceived = addressesEqual(to, activeAccountAddress)
@@ -452,6 +455,12 @@ class EventDetails extends React.Component<Props, State> {
           <ListItemUnderlined
             label="TRANSACTION FEE"
             value={freeTx ? 'free' : `${utils.formatEther(fee.toString())} ETH`}
+          />
+          }
+          {!!btcFee &&
+          <ListItemUnderlined
+            label="TRANSACTION FEE"
+            value={`${formatUnits(btcFee, decimals)} BTC`}
           />
           }
           {!!hasNote && showNote &&
@@ -807,7 +816,7 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   txNotes: { data: txNotes },
   accounts: { data: accounts },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   txNotes,
   contactsSmartAddresses,
@@ -823,12 +832,12 @@ const structuredSelector = createStructuredSelector({
   bitcoinAddresses: bitcoinAddressSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });

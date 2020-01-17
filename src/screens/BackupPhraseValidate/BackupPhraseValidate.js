@@ -20,14 +20,17 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { UIColors, fontSizes, baseColors, spacing } from 'utils/variables';
-import styled from 'styled-components/native';
+import { fontSizes, spacing } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
+import styled, { withTheme } from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { Paragraph, Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
 import { backupWalletAction } from 'actions/walletActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 type State = {
   enteredWords: string[],
@@ -39,6 +42,7 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   backupWallet: Function,
+  theme: Theme,
 };
 
 const WordInputFields = styled.View`
@@ -46,10 +50,11 @@ const WordInputFields = styled.View`
 `;
 
 const MnemonicPhraseWord = styled.TouchableOpacity`
-  background-color: ${props => (props.disabled ? UIColors.disabled : UIColors.primary)};
+  background-color: ${themedColors.primary};
   border-radius: 6;
   padding: 14px 5px;
   margin: 0 2.5px 5px;
+  ${({ disabled }) => disabled && 'opacity: 0.5;'}
 `;
 
 const MnemonicPhraseWordText = styled(MediumText)`
@@ -66,10 +71,10 @@ const WordInputWrapper = styled.View`
 `;
 
 const WordInput = styled.View`
-  background-color: ${props => (props.filled ? UIColors.primary : 'transparent')};
+  ${({ filled, theme }) => filled && `background-color: ${theme.colors.primary}`};
   border-width: 1;
   border-style: ${props => (props.filled ? 'solid' : 'dashed')};
-  border-color: ${props => (props.filled ? 'transparent' : UIColors.defaultBorderColor)};;
+  border-color:   ${({ filled, theme }) => filled ? 'transparent' : theme.colors.border};
   border-radius: 6px;
   height: 34px;
   flex: 1;
@@ -103,7 +108,7 @@ const ShuffledWordWrapper = styled.View`
 `;
 
 const ErrorParagraph = styled(Paragraph)`
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
 `;
 
 const FooterWrapper = styled.View`
@@ -111,7 +116,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.surface};
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
@@ -172,10 +177,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   }
 
   renderInputFields = () => {
-    const { onboarding: wallet } = this.props.wallet;
+    const { theme, wallet: { onboarding: wallet } } = this.props;
     const { wordsToValidate } = wallet.mnemonic;
     const { enteredWords } = this.state;
     const mnemonicList = wallet.mnemonic.original.split(' ');
+    const colors = getThemeColors(theme);
 
     return [...Array(wordsToValidate.length)]
       .map((el, i) => {
@@ -190,7 +196,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
                 icon="close"
                 onPress={this.handleLastWordRemoval}
                 fontSize={fontSizes.medium}
-                color={UIColors.primary}
+                color={colors.primary}
               />
             }
           </WordInputWrapper>
@@ -274,9 +280,9 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   backupWallet: () => dispatch(backupWalletAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BackupPhraseValidate);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(BackupPhraseValidate));
