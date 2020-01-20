@@ -103,7 +103,6 @@ class App extends React.Component<Props, *> {
     } = this.props;
     const isOnline = await NetInfo.isConnected.fetch();
     this.setOnlineStatus(isOnline); // set initial online status
-    SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
@@ -118,6 +117,12 @@ class App extends React.Component<Props, *> {
       .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { isFetched } = this.props;
+    const { isFetched: prevIsFetched } = prevProps;
+    if (isFetched && !prevIsFetched) SplashScreen.hide();
   }
 
   setOnlineStatus = isOnline => {
