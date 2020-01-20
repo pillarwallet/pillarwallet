@@ -1998,6 +1998,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "control": "#FCFDFF",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
+                              "navbarItems": "#D4D9DB",
                               "negative": "#BD573A",
                               "orange": "#f57c00",
                               "positive": "#2AA057",

@@ -35,6 +35,7 @@ export const lightThemeColors = {
   tertiary: '#EBF0F6',
   control: '#FCFDFF',
   warning: '#ECA93A',
+  navbarItems: '#D4D9DB', // NOT IN DS BUT CURRENTLY REQUIRED
   indicator: '#F8E71C', // NOT IN DS BUT CURRENTLY REQUIRED
   userAvatar: '#d1d9e4', // NOT IN DS BUT CURRENTLY REQUIRED
   legacyWallet: '#FA574F', // NOT IN DS BUT CURRENTLY REQUIRED
@@ -61,6 +62,7 @@ export const darkThemeColors = {
   tertiary: '#171F31',
   control: '#FCFDFF',
   warning: 'blue', // TODO: add correct one when added to Design System
+  navbarItems: '#D4D9DB', // TODO: add correct one when added to Design System
   indicator: '#F8E71C', // TODO: add correct one when added to Design System
   userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
   legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
@@ -129,6 +131,10 @@ export const themedColors = {
   indicator: theme('current', {
     lightTheme: lightThemeColors.indicator,
     darkTheme: darkThemeColors.indicator,
+  }),
+  navbarItems: theme('current', {
+    lightTheme: lightThemeColors.navbarItems,
+    darkTheme: darkThemeColors.navbarItems,
   }),
   userAvatar: theme('current', {
     lightTheme: lightThemeColors.userAvatar,
