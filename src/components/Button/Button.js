@@ -124,76 +124,85 @@ const themes = {
   },
 };
 
-const themeColors = (theme) => {
-  const colors = getThemeColors(theme);
-  return ({
+const themeColors = (theme: Theme) => {
+  const {
+    primary,
+    tertiary,
+    secondaryText,
+    control,
+    negative,
+  } = getThemeColors(theme);
+
+  return {
     primary: {
-      surface: colors.primary,
-      text: colors.control,
-      border: colors.primary,
+      surface: primary,
+      text: control,
+      border: primary,
     },
     primaryInverted: {
       surface: 'transparent',
-      text: colors.primary,
+      text: primary,
     },
     dangerInverted: {
       surface: 'transparent',
-      text: colors.negative,
-      border: colors.negative,
+      text: negative,
+      border: negative,
     },
     secondary: {
       surface: 'transparent',
-      text: colors.primary,
+      text: primary,
     },
     secondaryTransparent: {
       background: 'transparent',
-      text: colors.control,
-      border: colors.primary,
+      text: control,
+      border: primary,
     },
     secondaryTransparentDisabled: {
       background: 'transparent',
-      text: colors.secondaryText,
+      text: secondaryText,
     },
     secondaryDanger: {
       surface: 'transparent',
-      text: colors.negative,
+      text: negative,
     },
     danger: {
-      background: colors.negative,
-      text: colors.control,
+      background: negative,
+      text: control,
     },
     dark: {
-      background: colors.tertiary,
-      color: colors.control,
-      borderColor: colors.tertiary,
+      background: tertiary,
+      color: control,
+      borderColor: tertiary,
     },
     disabled: {
-      surface: colors.primary,
-      text: colors.control,
-      border: colors.primary,
+      surface: primary,
+      text: control,
+      border: primary,
     },
     disabledTransparent: {
-      surface: colors.primary,
-      text: colors.control,
-      border: colors.primary,
+      surface: primary,
+      text: control,
+      border: primary,
     },
     squarePrimary: {
       surface: 'transparent',
-      text: colors.primary,
+      text: primary,
       border: 'transparent',
     },
     squareDanger: {
       surface: 'transparent',
-      text: colors.negative,
+      text: negative,
       border: 'transparent',
     },
-  });
+  };
 };
 
 const getButtonHeight = (props) => {
   if (props.height) {
     return `${props.height}px`;
-  } else if (props.small) {
+  }
+
+  if (props.small) {
     return '34px';
   }
 
@@ -203,9 +212,13 @@ const getButtonHeight = (props) => {
 const getButtonWidth = (props) => {
   if (props.square) {
     return getButtonHeight(props);
-  } else if (props.block) {
+  }
+
+  if (props.block) {
     return '100%';
-  } else if (props.width) {
+  }
+
+  if (props.width) {
     return props.width;
   }
 
@@ -215,20 +228,29 @@ const getButtonWidth = (props) => {
 const getButtonPadding = (props) => {
   if (props.noPadding) {
     return '0';
-  } else if (props.small || props.block) {
+  }
+
+  if (props.small || props.block) {
     return `${spacing.rhythm}px`;
-  } else if (props.square) {
+  }
+
+  if (props.square) {
     return '4px';
   }
+
   return `${spacing.rhythm * 1.5}px`;
 };
 
 const getButtonFontSize = (props) => {
   if (props.listItemButton) {
     return `${fontSizes.regular}px`;
-  } else if (props.small) {
+  }
+
+  if (props.small) {
     return `${fontSizes.regular}px`;
-  } else if (props.extraSmall) {
+  }
+
+  if (props.extraSmall) {
     return `${fontSizes.small}px`;
   }
   return `${fontSizes.big}px`;
@@ -310,7 +332,7 @@ const NextIcon = styled(Icon)`
   transform: rotate(180deg);
 `;
 
-const getThemeType = (props: Props, isForColors) => {
+const getThemeType = (props: Props, isForColors?: boolean) => {
   if (props.secondary && props.danger) {
     return 'secondaryDanger';
   }

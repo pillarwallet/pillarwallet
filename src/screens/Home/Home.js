@@ -454,18 +454,6 @@ class HomeScreen extends React.Component<Props, State> {
             />}
         >
           <PortfolioBalance fiatCurrency={fiatCurrency} />
-          <WalletConnectWrapper>
-            <SettingsItemCarded
-              title="Manage Sessions"
-              subtitle={sessionsLabel}
-              onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
-              onSettingsPress={this.openQRScanner}
-              onSettingsLoadingPress={this.cancelWaiting}
-              isLoading={!!pendingConnector}
-              settingsIconSource={iconConnect}
-              settingsLabel="Connect"
-            />
-          </WalletConnectWrapper>
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
