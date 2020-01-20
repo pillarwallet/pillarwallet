@@ -45,6 +45,8 @@ import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetwork
 
 import Toast from 'components/Toast';
 
+import { initialAssets as assetFixtures } from 'fixtures/assets';
+
 import { transferSigned } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
@@ -690,6 +692,13 @@ export const loadSupportedAssetsAction = () => {
     if (!isOnline) return;
 
     const supportedAssets = await api.fetchSupportedAssets(walletId);
+
+    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+      const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
+      if (btcAsset) {
+        supportedAssets.push(btcAsset);
+      }
+    }
 
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;

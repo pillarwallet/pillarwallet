@@ -34,10 +34,15 @@ import {
 // utils, services
 import { getAssetData, getAssetsAsList } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
+import { parseNumber } from 'utils/common';
 
-// types
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+// selectors
 import { accountAssetsSelector } from 'selectors/assets';
+
+// models, types
+import type { SyntheticAsset } from 'models/Asset';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 
 export const initSyntheticsServiceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -87,27 +92,46 @@ export const fetchAvailableSyntheticAssetsAction = () => {
 
     const result = await syntheticsService.getDataFromLiquidityPool().catch(() => []);
     const syntheticAssets = get(result, 'output.liquidityPools', []);
+    const syntheticExchangeRates = get(result, 'output.rates', []);
+
+    const stakedPLR = parseNumber(availableStake);
 
     // PLR is default available
     const defaultAvailableSyntheticAssets = [{
       ...getAssetData(assetsData, supportedAssets, PLR),
-      amount: availableStake,
-      isSynthetic: true,
+      availableBalance: stakedPLR,
+      exchangeRate: 1,
     }];
 
-    const availableAssets = syntheticAssets.reduce((availableList, syntheticAsset) => {
-      const assetSymbol = get(syntheticAsset, 'token.symbol');
-      const assetBalance = Number(get(syntheticAsset, 'value', 0));
-      const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
-      if (!isEmpty(assetData)) {
-        availableList.push({
-          ...assetData,
-          amount: assetBalance,
-          isSynthetic: true,
-        });
-      }
-      return availableList;
-    }, defaultAvailableSyntheticAssets);
+    const availableAssets: SyntheticAsset = syntheticAssets
+      .reduce((availableList, syntheticAsset) => {
+        const assetSymbol = get(syntheticAsset, 'token.symbol');
+        const assetData = getAssetData(assetsData, supportedAssets, assetSymbol);
+        const syntheticBalanceInPool = Number(get(syntheticAsset, 'value', 0));
+        const assetExchangeRate = syntheticExchangeRates.find(({ from }) => from === assetSymbol);
+        if (!isEmpty(assetData) && !isEmpty(assetExchangeRate)) {
+          /**
+           * calculate available balance according to how much PLR user has staked
+           * and how much of synthetic asset is available in pool
+           * i. e. if user has staked more than available in pool then max available amount is what's in the pool
+           * otherwise max available amount is according toi how much user has staked
+           */
+          const { rate: exchangeRate } = assetExchangeRate;
+          const syntheticBalanceByStaked = stakedPLR / exchangeRate;
+          const availableBalance = syntheticBalanceInPool < syntheticBalanceByStaked
+            ? syntheticBalanceInPool
+            : syntheticBalanceByStaked;
+
+          availableList.push({
+            ...assetData,
+            availableBalance,
+            exchangeRate,
+          });
+        }
+        return availableList;
+      }, defaultAvailableSyntheticAssets)
+      .filter(({ exchangeRate = 0 }) => exchangeRate !== 0);
+
 
     dispatch({ type: SET_AVAILABLE_SYNTHETIC_ASSETS, payload: availableAssets });
   };

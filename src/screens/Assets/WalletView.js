@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
+import { Keyboard, SectionList, Platform, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
@@ -60,6 +60,7 @@ import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import DeploymentView from 'components/DeploymentView';
+import Switcher from 'components/Switcher';
 
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -246,9 +247,9 @@ class WalletView extends React.Component<Props, State> {
           fallbackSource={genericToken}
           small
         >
-          <Switch
-            onValueChange={() => this.handleAssetToggle(asset, isAdded)}
-            value={!!isAdded}
+          <Switcher
+            onToggle={() => this.handleAssetToggle(asset, isAdded)}
+            isOn={!!isAdded}
           />
         </ListItemWithImage>
       );

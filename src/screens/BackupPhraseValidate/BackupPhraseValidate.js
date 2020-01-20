@@ -177,8 +177,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   }
 
   renderInputFields = () => {
-    const { theme, wallet: _wallet } = this.props;
-    const { onboarding: wallet } = _wallet;
+    const { theme, wallet: { onboarding: wallet } } = this.props;
     const { wordsToValidate } = wallet.mnemonic;
     const { enteredWords } = this.state;
     const mnemonicList = wallet.mnemonic.original.split(' ');
