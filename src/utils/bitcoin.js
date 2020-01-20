@@ -30,7 +30,7 @@ export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000
 const totalBitcoinBalance = (balances: BitcoinBalance) => {
   const addressesBalances = Object.keys(balances).map(key => balances[key]);
 
-  return addressesBalances.reduce((acc, { balance }) => acc + balance, 0);
+  return addressesBalances.reduce((acc, { confirmed: balance }) => acc + balance, 0);
 };
 
 export const calculateBitcoinBalanceInFiat = (
