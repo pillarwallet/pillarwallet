@@ -408,6 +408,7 @@ function SelectorInputTemplate(locals) {
         horizontalOptionsTitle: 'FIAT',
         fullWidth: !hasInput,
         selectorModalTitle: label,
+        selectorPlaceholder: placeholderSelector,
       }}
       getInputRef={inputRef}
     />
@@ -471,7 +472,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               label: 'Buy',
               options: [],
               wrapperStyle: { marginTop: spacing.mediumLarge },
-              placeholderSelector: 'select asset',
+              placeholderSelector: 'Select asset',
               onSelectorOpen: this.blurFromInput,
             },
           },

@@ -242,9 +242,8 @@ const ValueWrapper = styled.View`
   align-items: center;
 `;
 
-const Placeholder = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+const Placeholder = styled(MediumText)`
+  ${fontStyles.big};
 `;
 
 const SelectorValue = styled(MediumText)`
@@ -582,7 +581,7 @@ class TextInput extends React.Component<Props, State> {
               onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
               disabled={selectorOptionsCount < 1}
             >
-              {Object.keys(selector).length
+              {selector.value
                 ? (
                   <ValueWrapper>
                     <Image
