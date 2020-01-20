@@ -1,6 +1,8 @@
 package com.pillarproject.wallet;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.bridge.ReactContext;
@@ -11,8 +13,24 @@ import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import io.branch.rnbranch.RNBranchModule;
+import org.devio.rn.splashscreen.SplashScreen;
 
 public class MainActivity extends ReactActivity {
+    protected void onCreate(Bundle savedInstanceState) {
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                setTheme(R.style.DarkTheme);
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                setTheme(R.style.LightTheme);
+                break;
+            default:
+                setTheme(R.style.LightTheme);
+        }
+        SplashScreen.show(this, true);
+        super.onCreate(savedInstanceState);
+    }
+
     @Override
     public void invokeDefaultOnBackPressed() {
         moveTaskToBack(true);
@@ -31,7 +49,7 @@ public class MainActivity extends ReactActivity {
         super.onStart();
         RNBranchModule.initSession(getIntent().getData(), this);
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();

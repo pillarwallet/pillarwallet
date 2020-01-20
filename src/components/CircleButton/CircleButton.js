@@ -99,8 +99,8 @@ const Indicator = styled.View`
   background-color: ${themedColors.indicator};
   border-radius: 6px;
   position: absolute;
-  top: 17px;
-  right: 17px;
+  top: ${({ topPos }) => topPos}px;
+  right: ${({ rightPos }) => rightPos}px;
 `;
 
 const actionButtonBackground = require('assets/images/bg_action_button.png');
@@ -119,7 +119,7 @@ const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
     return (
       <ButtonWrapper>
         {children}
-        {showIndicator && <Indicator />}
+        {showIndicator && <Indicator topPos={4} rightPos={4} />}
       </ButtonWrapper>
     );
   }
@@ -133,7 +133,7 @@ const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
         colors={CircleButtonIconWrapperColors}
       >
         {children}
-        {showIndicator && <Indicator />}
+        {showIndicator && <Indicator topPos={17} rightPos={17} />}
       </CircleButtonIconWrapper>
     </ImageBackground>
   );
