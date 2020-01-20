@@ -22,7 +22,7 @@ import * as React from 'react';
 import { Alert, Platform, Linking, AppState, BackHandler, View } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import {
   GiftedChat,
   Bubble,
@@ -47,6 +47,7 @@ import {
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ApiUser } from 'models/Contacts';
+import type { Theme, ThemeColors } from 'models/Theme';
 
 // constants
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
@@ -71,9 +72,10 @@ import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // utils
-import { baseColors, fontSizes, spacing, lineHeights, appFont } from 'utils/variables';
+import { fontSizes, spacing, lineHeights, appFont } from 'utils/variables';
 import { isIphoneX, handleUrlPress } from 'utils/common';
 import { getUserName, isContactAvailable } from 'utils/contacts';
+import { getThemeColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -93,6 +95,7 @@ type Props = {
   logScreenView: Function,
   logEvent: Function,
   isOnline: boolean,
+  theme: Theme,
 }
 
 type State = {
@@ -121,7 +124,7 @@ const TimeWrapper = styled.View`
 `;
 
 // chat elements
-const renderDay = (props: DayProps) => (
+const renderDay = (props: DayProps, colors) => (
   <Day
     {...props}
     containerStyle={{
@@ -129,7 +132,7 @@ const renderDay = (props: DayProps) => (
       marginBottom: 36,
     }}
     textStyle={{
-      color: baseColors.darkGray,
+      color: colors.secondaryText,
       fontSize: fontSizes.small,
       fontFamily: appFont.regular,
       fontWeight: 'normal',
@@ -138,17 +141,17 @@ const renderDay = (props: DayProps) => (
   />
 );
 
-const renderTime = (props: TimeProps) => (
+const renderTime = (props: TimeProps, colors: ThemeColors) => (
   <Time
     {...props}
     textStyle={{
       right: {
-        color: baseColors.darkGray,
+        color: colors.secondaryText,
         fontFamily: appFont.regular,
         fontSize: fontSizes.small,
       },
       left: {
-        color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
+        color: isWarningMessage(props.currentMessage.type) ? colors.control : colors.secondaryText,
         fontFamily: appFont.regular,
         fontSize: fontSizes.small,
       },
@@ -157,7 +160,7 @@ const renderTime = (props: TimeProps) => (
   />
 );
 
-const renderSend = (props: SendProps) => (
+const renderSend = (props: SendProps, colors: ThemeColors) => (
   <Send
     {...props}
     containerStyle={{
@@ -175,26 +178,27 @@ const renderSend = (props: SendProps) => (
     <Icon
       name="send-message"
       style={{
-        color: baseColors.brightBlue,
+        color: colors.primary,
         fontSize: fontSizes.large,
       }}
     />
   </Send>
 );
 
-const renderInputToolbar = (props: InputToolbarProps) => (
+const renderInputToolbar = (props: InputToolbarProps, colors: ThemeColors) => (
   <InputToolbar
     {...props}
-    renderSend={renderSend}
+    renderSend={(_props) => renderSend(_props, colors)}
     primaryStyle={{
       justifyContent: 'center',
       alignItems: 'flex-start',
       minHeight: INPUT_HEIGHT,
     }}
     containerStyle={{
-      bottom: 2,
       paddingLeft: 8,
-      borderColor: baseColors.lightGray,
+      borderTopColor: colors.tertiary,
+      borderTopWidth: 1,
+      backgroundColor: colors.card,
       margin: 0,
     }}
 
@@ -224,20 +228,20 @@ const renderMessage = (props: MessageProps) => (
   />
 );
 
-const parsePatterns = () => [
+const parsePatterns = (props, colors: ThemeColors) => [
   {
     type: 'url',
-    style: { color: baseColors.clearBlue },
+    style: { color: colors.primary },
     onPress: (url) => handleUrlPress(url),
   },
   {
     type: 'email',
-    style: { color: baseColors.clearBlue },
+    style: { color: colors.primary },
     onPress: (email) => Linking.openURL(`mailto:${email}`),
   },
   {
     type: 'phone',
-    style: { color: baseColors.clearBlue },
+    style: { color: colors.primary },
     onPress: (phone) => Linking.openURL(`tel:${phone}`),
   },
 ];
@@ -364,11 +368,9 @@ class Chat extends React.Component<Props, State> {
       <ProfileImage
         uri={profileImage}
         userName={username}
-        diameter={32}
+        diameter={48}
         onPress={this.handleOnContactPress}
-        textStyle={{
-          fontSize: 16,
-        }}
+        initialsSize={16}
         noShadow
         borderWidth={0}
       />
@@ -390,7 +392,7 @@ class Chat extends React.Component<Props, State> {
     );
   };
 
-  renderComposer = (props: ComposerProps) => {
+  renderComposer = (props: ComposerProps, colors) => {
     return (
       <Composer
         {...props}
@@ -404,56 +406,69 @@ class Chat extends React.Component<Props, State> {
           fontSize: fontSizes.regular,
           lineHeight: lineHeights.regular,
           fontFamily: appFont.regular,
+          color: colors.text,
         }}
         placeholder="Type your message here"
+        placeholderTextColor={colors.secondaryText}
       />
     );
   };
 
-  renderBubble = (props: BubbleProps) => {
+  renderBubble = (props: BubbleProps, colors: ThemeColors) => {
     const isWarning = isWarningMessage(props.currentMessage.type);
     return (<Bubble
       {...props}
       textStyle={{
         left: {
-          color: isWarning ? baseColors.white : baseColors.slateBlack,
+          color: isWarning ? colors.control : colors.text,
           fontSize: fontSizes.regular,
+          lineHeight: lineHeights.regular,
           fontFamily: appFont.regular,
         },
         right: {
-          color: baseColors.slateBlack,
+          color: colors.text,
           fontSize: fontSizes.regular,
+          lineHeight: lineHeights.regular,
           fontFamily: appFont.regular,
         },
       }}
       wrapperStyle={{
         left: {
-          backgroundColor: isWarning ? baseColors.brightBlue : baseColors.zumthor,
+          backgroundColor: isWarning ? colors.primary : colors.tertiary,
           borderRadius: 5,
           borderWidth: 1,
-          borderColor: isWarning ? baseColors.brightBlue : baseColors.tropicalBlue,
+          borderColor: isWarning ? colors.primary : colors.tertiary,
           maxWidth: 262,
           marginTop: 4,
           paddingHorizontal: 2,
           paddingTop: 2,
-          minWidth: 120,
+          minWidth: 230,
+          marginLeft: 6,
         },
         right: {
-          backgroundColor: baseColors.white,
+          backgroundColor: colors.card,
           borderRadius: 5,
           borderWidth: 1,
-          borderColor: baseColors.tropicalBlue,
+          borderColor: colors.tertiary,
           maxWidth: 262,
           marginTop: 4,
           paddingHorizontal: 2,
           paddingTop: 2,
-          minWidth: 120,
+          minWidth: 230,
           marginLeft: 20,
+        },
+      }}
+      bottomContainerStyle={{
+        left: {
+          marginTop: 8,
+        },
+        right: {
+          marginTop: 8,
         },
       }}
       renderTime={() => (
         <TimeWrapper>
-          {renderTime(props)}
+          {renderTime(props, colors)}
         </TimeWrapper>
       )}
       touchableProps={{
@@ -467,6 +482,11 @@ class Chat extends React.Component<Props, State> {
               'We are using end-to-end encryption. You or your interlocutor should update chat keys.',
             );
           }
+        },
+      }}
+      containerToNextStyle={{
+        left: {
+          marginLeft: 22,
         },
       }}
     />);
@@ -524,6 +544,7 @@ class Chat extends React.Component<Props, State> {
   render() {
     const {
       messages,
+      theme,
     } = this.props;
     const {
       contact,
@@ -531,7 +552,9 @@ class Chat extends React.Component<Props, State> {
       chatText,
       isFetching,
     } = this.state;
+    const { profileImage, username } = contact;
 
+    const colors = getThemeColors(theme);
     const title = getUserName(contact);
 
     let messagesToShow = [];
@@ -549,13 +572,27 @@ class Chat extends React.Component<Props, State> {
     }
 
     const renderInputToolbarWrapper = (toolbarProps) => isContactAvailable(contact)
-      ? renderInputToolbar(toolbarProps)
+      ? renderInputToolbar(toolbarProps, colors)
       : null;
 
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title, onPress: this.handleOnContactPress }] }}
+        headerProps={{
+          centerItems: [{ title, onPress: this.handleOnContactPress }],
+          rightItems: [{
+            custom: (
+              <ProfileImage
+                uri={profileImage}
+                userName={username}
+                diameter={24}
+                onPress={this.handleOnContactPress}
+                initialsSize={12}
+                noShadow
+                borderWidth={0}
+              />),
+          }],
+        }}
         customOnBack={this.handleChatDismissal}
       >
         <Wrapper fullScreen flex={1}>
@@ -571,19 +608,25 @@ class Chat extends React.Component<Props, State> {
               messages={messagesToShow}
               onSend={msgs => this.onSend(msgs)}
               user={{ _id: this.props.user.username }}
-              renderBubble={this.renderBubble}
+              renderBubble={(props) => this.renderBubble(props, colors)}
               renderAvatar={this.renderAvatar}
-              renderComposer={this.renderComposer}
+              renderComposer={(props) => this.renderComposer(props, colors)}
               renderInputToolbar={renderInputToolbarWrapper}
-              renderDay={renderDay}
+              renderDay={(props) => renderDay(props, colors)}
               loadEarlier={showLoadEarlierButton}
               onLoadEarlier={this.handleLoadEarlier}
               renderLoadEarlier={renderLoadEarlier}
               renderMessage={renderMessage}
               renderTime={renderTime}
               minInputToolbarHeight={INPUT_HEIGHT}
-              parsePatterns={parsePatterns}
+              parsePatterns={(props) => parsePatterns(props, colors)}
               renderSystemMessage={this.renderCustomSystemMessage}
+              listViewProps={{
+                contentContainerStyle: {
+                  justifyContent: 'flex-end',
+                  paddingTop: 20,
+                },
+              }}
             />
           }
         </Wrapper>
@@ -624,4 +667,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Chat));
