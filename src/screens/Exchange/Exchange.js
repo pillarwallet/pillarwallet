@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, TextInput as RNTextInput, View } from 'react-native';
+import { FlatList, TextInput as RNTextInput, View, ScrollView } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -37,13 +37,13 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText, Paragraph } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // actions
 import {
@@ -74,7 +74,7 @@ import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from '
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -90,7 +90,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme, ThemeColors } from 'models/Theme';
 
 // partials
-import { ExchangeStatus } from './ExchangeStatus';
+import ExchangeStatus from './ExchangeStatus';
 
 const CardWrapper = styled.TouchableOpacity`
   width: 100%;
@@ -132,7 +132,8 @@ const CardText = styled(BaseText)`
 
 const ListHeader = styled.View`
   width: 100%;
-  align-items: center;
+  align-items: flex-start;
+  margin-bottom: 8px;
 `;
 
 const CardButton = styled.TouchableOpacity`
@@ -148,8 +149,8 @@ const ButtonLabel = styled(BaseText)`
 `;
 
 const FormWrapper = styled.View`
-  padding: 0 ${spacing.large}px;
-  margin-top: ${spacing.large}px;
+  padding: ${({ bottomPadding }) => `${spacing.large}px ${spacing.layoutSides}px ${bottomPadding}px`};
+  background-color: ${themedColors.surface};
 `;
 
 const ProviderIcon = styled(CachedImage)`
@@ -160,6 +161,21 @@ const ProviderIcon = styled(CachedImage)`
 const ESWrapper = styled.View`
   width: 100%;
   align-items: center;
+`;
+
+const PromoWrapper = styled.View`
+  width: 100%;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: ${themedColors.card};
+  padding: ${spacing.layoutSides}px;
+`;
+
+const PromoText = styled(BaseText)`
+  ${fontStyles.medium};
+  color: ${themedColors.secondaryText};
+ text-align: center;
 `;
 
 const CardNote = styled(BaseText)`
@@ -211,6 +227,7 @@ type State = {
   // offer id will be passed to prevent double clicking
   pressedOfferId: string,
   pressedTokenAllowanceId: string,
+  isSubmitted: boolean,
 };
 
 const getAvailable = (_min, _max, rate) => {
@@ -409,6 +426,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed: false,
       pressedOfferId: '',
       pressedTokenAllowanceId: '',
+      isSubmitted: false,
       value: {
         fromInput: {
           selector: {},
@@ -508,7 +526,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       fiatExchangeSupportedAssets,
       navigation,
       oAuthAccessToken,
-      resetOffers,
     } = this.props;
 
     const fromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol');
@@ -533,10 +550,16 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again
-      resetOffers();
+      this.resetSearch();
       this.triggerSearch();
     }
   }
+
+  resetSearch = () => {
+    const { resetOffers } = this.props;
+    resetOffers();
+    this.setState({ isSubmitted: false });
+  };
 
   checkIfAssetsExchangeIsAllowed = () => {
     const { accounts, smartWalletState, smartWalletFeatureEnabled } = this.props;
@@ -629,6 +652,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = this.state;
     const amount = parseFloat(amountString);
     if (!from || !to || !amount) return;
+    this.setState({ isSubmitted: true });
     searchOffers(from, to, amount);
   };
 
@@ -760,7 +784,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   setFromAmount = amount => {
-    this.props.resetOffers(); // reset all cards before they change according to input values
+    this.resetSearch(); // reset all cards before they change according to input values
     this.setState(prevState => ({
       value: {
         ...prevState.value,
@@ -1009,7 +1033,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleFormChange = (value: Object) => {
-    this.props.resetOffers(); // reset all cards before they change according to input values
+    this.resetSearch(); // reset all cards before they change according to input values
     this.setState({ value });
     this.updateOptions(value);
     if (!this.exchangeForm.getValue()) return; // this validates form!
@@ -1083,6 +1107,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       value,
       formOptions,
+      isSubmitted,
     } = this.state;
     const { fromInput } = value;
     const { selector: selectedFromOption } = fromInput;
@@ -1113,6 +1138,17 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
     const colors = getThemeColors(theme);
+    const scrollContentStyle = {
+      backgroundColor: isSubmitted ? colors.surface : colors.card,
+      height: !reorderedOffers.length ? '100%' : 'auto',
+    };
+
+    const flatListContentStyle = {
+      width: '100%',
+      paddingHorizontal: spacing.layoutSides,
+      paddingVertical: 10,
+      flex: !isSubmitted ? 1 : 0,
+    };
 
     return (
       <ContainerWithHeader
@@ -1130,10 +1166,11 @@ class ExchangeScreen extends React.Component<Props, State> {
           forceRetry={!!deploymentData.error}
         />}
         {!blockView &&
-        <ScrollWrapper
+        <ScrollView
           keyboardShouldPersistTaps="handled"
+          contentContainerStyle={scrollContentStyle}
         >
-          <FormWrapper>
+          <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
             <Form
               ref={node => { this.exchangeForm = node; }}
               type={formStructure}
@@ -1156,25 +1193,35 @@ class ExchangeScreen extends React.Component<Props, State> {
             data={reorderedOffers}
             keyExtractor={(item) => item._id}
             style={{ width: '100%' }}
-            contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
+            contentContainerStyle={flatListContentStyle}
             renderItem={(props) => this.renderOffers(props, disableNonFiatExchange, colors)}
-            ListHeaderComponent={!isEmpty(reorderedOffers)
-              ? (
-                <ListHeader>
-                  <ExchangeStatus />
-                </ListHeader>)
-              : null
-            }
-            ListEmptyComponent={(
-              <ESWrapper style={{ marginTop: '15%' }}>
-                <ExchangeStatus />
-                <Paragraph small style={{ textAlign: 'center' }}>
-                  {'If there are any matching offers\nthey will appear live here'}
-                </Paragraph>
-              </ESWrapper>
+            ListHeaderComponent={(
+              <ListHeader>
+                <ExchangeStatus isVisible={isSubmitted} />
+              </ListHeader>
             )}
+            ListEmptyComponent={isSubmitted
+              ? (
+                <ESWrapper style={{ marginTop: '15%' }}>
+                  <EmptyStateParagraph
+                    title="No live offers"
+                    bodyText="Currently no matching offers from exchange services are provided.
+                    New offers may appear at any time — don’t miss it."
+                    large
+                    wide
+                  />
+                </ESWrapper>
+              )
+              : (
+                <PromoWrapper>
+                  <PromoText>
+                    Aggregated from many decentralized exchanges and token swap services
+                  </PromoText>
+                </PromoWrapper>
+              )
+            }
           />
-        </ScrollWrapper>}
+        </ScrollView>}
       </ContainerWithHeader>
     );
   }

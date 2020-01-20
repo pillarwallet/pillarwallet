@@ -18,17 +18,23 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Animated } from 'react-native';
 import styled from 'styled-components/native';
-import Animation from 'components/Animation';
 import { fontStyles } from 'utils/variables';
-import { BoldText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
 
 const Status = styled.View`
   flex-direction: row;
-  height: 50px;
-  justify-content: flex-start;
+  height: 22px;
+  justify-content: center;
   align-items: center;
+`;
+
+const StatusText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${themedColors.positive};
+  letter-spacing: 0.15px;
 `;
 
 const StatusIcon = styled.View`
@@ -36,32 +42,88 @@ const StatusIcon = styled.View`
   width: 8px;
   border-radius: 4px;
   background-color: ${themedColors.positive};
-  position: absolute;
-  top: 7px;
-  left: 7px;
+  margin-left: 8px;
 `;
 
-const StatusText = styled(BoldText)`
-  ${fontStyles.tiny};
-  color: ${themedColors.positive};
-  letter-spacing: 0.15px;
-  margin-top: 2px;
-`;
+const AnimatedStatusIcon = Animated.createAnimatedComponent(StatusIcon);
+const AnimatedStatus = Animated.createAnimatedComponent(Status);
 
-const IconHolder = styled.View`
-  position: relative;
-`;
+type State = {
+  indicatorFadeValue: Animated.Value,
+  statusFadeValue: Animated.Value,
+}
 
-const animationSource = require('assets/animations/livePulsatingAnimation.json');
+type Props = {
+  isVisible: boolean,
+}
 
-export const ExchangeStatus = () => {
-  return (
-    <Status>
-      <IconHolder>
-        <Animation source={animationSource} style={{ height: 22, width: 22 }} loop speed={0.9} />
-        <StatusIcon />
-      </IconHolder>
-      <StatusText>ACTIVE</StatusText>
-    </Status>
-  );
-};
+class ExchangeStatus extends React.Component<Props, State> {
+  blinkInterval: IntervalID;
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      indicatorFadeValue: new Animated.Value(1),
+      statusFadeValue: new Animated.Value(props.isVisible ? 1 : 0),
+    };
+  }
+
+  componentDidMount = () => {
+    const { isVisible } = this.props;
+    if (isVisible) this.startBlinking();
+  };
+
+  startBlinking = () => {
+    const { indicatorFadeValue } = this.state;
+    requestAnimationFrame(() => {
+      this.blinkInterval = setInterval(() => {
+        const toValue = indicatorFadeValue._value ? 0 : 1;
+        Animated.timing(
+          indicatorFadeValue,
+          {
+            toValue,
+            duration: 300,
+          },
+        ).start();
+      }, 700);
+    });
+  };
+
+  componentDidUpdate(prevProps: Props) {
+    const { isVisible } = this.props;
+    const { statusFadeValue } = this.state;
+    const toValue = isVisible && !prevProps.isVisible ? 1 : 0;
+    if ((isVisible !== prevProps.isVisible)) {
+      if (toValue) {
+        this.startBlinking();
+      } else {
+        clearInterval(this.blinkInterval);
+      }
+      requestAnimationFrame(() => {
+        Animated.timing(
+          statusFadeValue,
+          {
+            toValue,
+            duration: 500,
+          },
+        ).start();
+      });
+    }
+  }
+
+  componentWillUnmount = () => {
+    clearInterval(this.blinkInterval);
+  };
+
+  render() {
+    const { indicatorFadeValue, statusFadeValue } = this.state;
+
+    return (
+      <AnimatedStatus style={{ opacity: statusFadeValue }}>
+        <StatusText>Updated in realtime</StatusText>
+        <AnimatedStatusIcon style={{ opacity: indicatorFadeValue }} />
+      </AnimatedStatus>
+    );
+  }
+}
+
+export default ExchangeStatus;
