@@ -21,6 +21,10 @@ import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
 import get from 'lodash.get';
 
+// actions
+import { loadBitcoinAddressesAction } from 'actions/bitcoinActions';
+import { setAppThemeAction } from 'actions/appSettingsActions';
+
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
@@ -74,11 +78,11 @@ import {
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
 
-import { loadBitcoinAddressesAction } from 'actions/bitcoinActions';
-import { setAppThemeAction } from 'actions/appSettingsActions';
-
+// utils
 import { getWalletFromStorage } from 'utils/wallet';
+
 
 const storage = Storage.getInstance('db');
 
@@ -189,6 +193,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { userEvents = [] } = await storage.get('userEvents');
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
+
+      const { removingConnectedDeviceAddress } = await storage.get('connectedDevices');
+      dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: removingConnectedDeviceAddress });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

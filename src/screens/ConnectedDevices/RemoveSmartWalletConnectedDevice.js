@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -31,7 +31,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { removeSmartWalletAccountDeviceAction } from 'actions/smartWalletActions';
+import { removeConnectedDeviceAction } from 'actions/connectedDevicesActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -61,6 +61,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import type { Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 
 type Props = {
@@ -72,7 +73,7 @@ type Props = {
   isOnline: boolean,
   baseFiatCurrency: ?string,
   rates: Rates,
-  removeSmartWalletAccountDevice: (deviceAddress: string) => void,
+  removeConnectedDevice: (device: ConnectedDevice) => void,
   removingDeviceAddress: ?string,
 };
 
@@ -103,24 +104,14 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
-const cancelPrompt = (callback) => Alert.alert(
-  'Are you sure?',
-  'You are going to cancel Recovery Portal setup.',
-  [
-    { text: 'Confirm cancel', onPress: () => callback() },
-    { text: 'Dismiss', style: 'cancel' },
-  ],
-  { cancelable: true },
-);
-
 class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State> {
   gasLimit: number = 0;
-  deviceAddress: string;
+  device: ConnectedDevice;
   state = { deployEstimateFee: 0 };
 
   constructor(props: Props) {
     super(props);
-    this.deviceAddress = props.navigation.getParam('deviceAddress', '');
+    this.device = props.navigation.getParam('device', '');
   }
 
   componentDidMount() {
@@ -149,12 +140,12 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
     const { deployEstimateFee: currentDeployEstimateFee } = this.state;
     // set "getting fee" (fee is 0) state
     if (currentDeployEstimateFee !== 0) this.setState({ deployEstimateFee: 0 });
-    smartWalletService.estimateAccountDeviceDeployment(this.deviceAddress, gasInfo)
+    smartWalletService.estimateAccountDeviceDeployment(this.device.address, gasInfo)
       .then(deployEstimateFee => this.setState({ deployEstimateFee }))
       .catch(() => {});
   };
 
-  onNextClick = () => this.props.removeSmartWalletAccountDevice(this.deviceAddress);
+  onNextClick = () => this.props.removeConnectedDevice(this.device);
 
   renderSpinner = () => <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>;
 
@@ -168,6 +159,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
       removingDeviceAddress,
     } = this.props;
     const { deployEstimateFee } = this.state;
+    const { address: deviceAddress } = this.device;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const fiatSymbol = getCurrencySymbol(fiatCurrency);
@@ -183,7 +175,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
 
     let errorMessage = '';
     if (!isOnline) {
-      errorMessage = 'You need to be online in order to connect Recovery Portal as device.';
+      errorMessage = 'You need to be online in order to remove device.';
     } else if (notEnoughEtherForContractDeployment) {
       errorMessage = 'There is not enough balance.';
     }
@@ -194,13 +186,13 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
       : 'Confirm Remove';
     const isSubmitDisabled = !isEmpty(errorMessage) || isGettingDeploymentFee;
 
-    const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, this.deviceAddress);
+    const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, deviceAddress);
 
     return (
       <React.Fragment>
         <DetailsLine>
           <DetailsTitle>Device address</DetailsTitle>
-          <DetailsValue>{this.deviceAddress}</DetailsValue>
+          <DetailsValue>{deviceAddress}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
           <DetailsTitle>Est. fee for removing device</DetailsTitle>
@@ -209,18 +201,18 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
         </DetailsLine>
         {!isEmpty(errorMessage) && <WarningMessage small>{errorMessage}</WarningMessage>}
         {!isDeviceBeingRemoved &&
-        <View style={{ alignItems: 'center' }}>
-          <Button
-            block
-            disabled={isSubmitDisabled}
-            title={submitButtonTitle}
-            onPress={this.onNextClick}
-            marginBottom={spacing.large}
-          />
-          <TouchableOpacity onPress={() => cancelPrompt(() => navigation.goBack())}>
-            <TextLink>Cancel</TextLink>
-          </TouchableOpacity>
-        </View>
+          <View style={{ alignItems: 'center' }}>
+            <Button
+              block
+              disabled={isSubmitDisabled}
+              title={submitButtonTitle}
+              onPress={this.onNextClick}
+              marginBottom={spacing.large}
+            />
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TextLink>Cancel</TextLink>
+            </TouchableOpacity>
+          </View>
         }
       </React.Fragment>
     );
@@ -228,7 +220,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
 
   render() {
     const { gasInfo, removingDeviceAddress } = this.props;
-    const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, this.deviceAddress);
+    const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, this.device.address);
     const showSpinner = !gasInfo.isFetched || isDeviceBeingRemoved;
     return (
       <ContainerWithHeader
@@ -236,7 +228,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
           <Paragraph small style={{ margin: spacing.large }}>
-            Please confirm that the details below are correct before connecting Recovery Portal as device.
+            Please confirm that the details below are correct before removing device.
           </Paragraph>
           <DetailsWrapper>
             {showSpinner && this.renderSpinner()}
@@ -274,9 +266,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
-  removeSmartWalletAccountDevice: (deviceAddress: string) => dispatch(
-    removeSmartWalletAccountDeviceAction(deviceAddress),
-  ),
+  removeConnectedDevice: (device: ConnectedDevice) => dispatch(removeConnectedDeviceAction(device)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(RemoveSmartWalletConnectedDevice);

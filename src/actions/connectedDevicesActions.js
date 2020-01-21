@@ -17,11 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
 import get from 'lodash.get';
-
-// actions
-import { addSmartWalletAccountDeviceAction } from 'actions/smartWalletActions';
 
 // constants
 import {
@@ -29,20 +25,21 @@ import {
   DEVICE_CATEGORIES,
   SET_CONNECTED_DEVICES,
   RESET_ADDING_CONNECTED_DEVICE_ADDRESS,
+  SET_REMOVING_CONNECTED_DEVICE_ADDRESS,
 } from 'constants/connectedDevicesConstants';
-import { REMOVE_SMART_WALLET_CONNECTED_DEVICE } from 'constants/navigationConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
 import { isSmartWalletDeviceDeployed } from 'utils/smartWallet';
 
-// services
-import { navigate } from 'services/navigation';
-
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { SmartWalletAccountDevice } from 'models/SmartWalletAccount';
+
+// actions
+import { addSmartWalletAccountDeviceAction, removeSmartWalletAccountDeviceAction } from './smartWalletActions';
+import { saveDbAction } from './dbActions';
 
 
 export const setConnectedDevicesAction = (devices: ConnectedDevice[]) => ({
@@ -69,13 +66,12 @@ export const addConnectedDeviceAction = (deviceCategory: string, deviceAddress: 
         return;
       }
 
-      console.log('newSmartWalletAccountDevice: ', newSmartWalletAccountDevice);
-
       // device was added and deployed, add to connected devices
       const connectedDevices = get(getState(), 'connectedDevices.data');
       const newDevice: ConnectedDevice = {
         category: DEVICE_CATEGORIES.SMART_WALLET_DEVICE,
         address: deviceAddress,
+        updatedAt: newSmartWalletAccountDevice.updatedAt,
       };
       const updatedDevices = connectedDevices
         .filter(({ address }) => addressesEqual(address, deviceAddress))
@@ -83,7 +79,7 @@ export const addConnectedDeviceAction = (deviceCategory: string, deviceAddress: 
       dispatch(setConnectedDevicesAction(updatedDevices));
       dispatch({ type: RESET_ADDING_CONNECTED_DEVICE_ADDRESS });
     }
-    // TODO: add history entry
+    // TODO: add history entry for added device
   };
 };
 
@@ -91,13 +87,19 @@ export const removeConnectedDeviceAction = ({
   category: deviceCategory,
   address: deviceAddress,
 }: ConnectedDevice) => {
-  return async () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: deviceAddress });
     if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
-      navigate(NavigationActions.navigate({
-        routeName: REMOVE_SMART_WALLET_CONNECTED_DEVICE,
-        params: { deviceAddress },
-      }));
+      await dispatch(removeSmartWalletAccountDeviceAction(deviceAddress));
+      const smartWalletAccountDevices = get(getState(), 'smartWallet.connectedAccount.devices', []);
+      const smartWalletAccountDevice: ?SmartWalletAccountDevice = smartWalletAccountDevices.find(
+        ({ device }) => addressesEqual(device.address, deviceAddress),
+      );
+      // if not found then it might be removed, else check state
+      dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: deviceAddress }));
+      console.log('smartWalletAccountDevice: ', smartWalletAccountDevice);
     }
+    // TODO: add history entry for removed device
   };
 };
 

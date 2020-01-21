@@ -22,4 +22,5 @@ import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 export type ConnectedDevice = {
   category: $Keys<typeof DEVICE_CATEGORIES>,
   address: string,
+  updatedAt: Date,
 }

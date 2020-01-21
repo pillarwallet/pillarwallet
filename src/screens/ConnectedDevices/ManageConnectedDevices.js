@@ -19,10 +19,14 @@ import { FlatList, RefreshControl, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import orderBy from 'lodash.orderby';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchConnectedAccountAction } from 'actions/smartWalletActions';
-import { removeConnectedDeviceAction } from 'actions/connectedDevicesActions';
+
+// constants
+import { REMOVE_SMART_WALLET_CONNECTED_DEVICE } from 'constants/navigationConstants';
+import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -42,17 +46,13 @@ import type { Theme } from 'models/Theme';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-
 type Props = {
+  navigation: NavigationScreenProp<*>,
   activeDeviceAddress: string,
   devices: ConnectedDevice[],
   theme: Theme,
   fetchConnectedAccount: () => void,
-  removeDevice: (device: ConnectedDevice) => void,
-};
-
-type State = {
-  removingDeviceAddress?: string,
+  removingDeviceAddress: ?string,
 };
 
 const ItemTitle = styled(BaseText)`
@@ -77,28 +77,22 @@ const RemoveAction = styled.TouchableOpacity`
 //   { cancelable: true },
 // );
 
-class ManageConnectedDevices extends React.Component<Props, State> {
-  state = {};
-
+class ManageConnectedDevices extends React.Component<Props> {
   componentDidMount() {
     this.props.fetchConnectedAccount();
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (this.state.removingDeviceAddress
-      && prevProps.devices.length !== this.props.devices.length) {
-      this.resetRemovingDeviceAddress();
+  removeDevice = (device: ConnectedDevice) => {
+    if (device.category === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
+      this.props.navigation.navigate(REMOVE_SMART_WALLET_CONNECTED_DEVICE, { device });
     }
-  }
-
-  resetRemovingDeviceAddress = () => this.setState({ removingDeviceAddress: '' });
+  };
 
   renderListItem = ({ item }) => {
-    const { theme, activeDeviceAddress, removeDevice } = this.props;
-    const { removingDeviceAddress } = this.state;
+    const { theme, activeDeviceAddress, removingDeviceAddress } = this.props;
     const colors = getThemeColors(theme);
-    const deviceAddress = item.device.address;
-    const deviceDate = humanizeDateString(item.updatedAt);
+    const { updatedAt, address: deviceAddress } = item;
+    const deviceDate = humanizeDateString(updatedAt);
     const isCurrentDevice = addressesEqual(activeDeviceAddress, deviceAddress);
     const deviceBeingRemoved = addressesEqual(removingDeviceAddress, deviceAddress);
     return (
@@ -118,7 +112,7 @@ class ManageConnectedDevices extends React.Component<Props, State> {
           <View>
             {deviceBeingRemoved && <Spinner width={20} height={20} />}
             {!deviceBeingRemoved &&
-              <RemoveAction onPress={() => removeDevice(item)}>
+              <RemoveAction onPress={() => this.removeDevice(item)}>
                 <BaseText color={colors.negative}>Remove</BaseText>
               </RemoveAction>
             }
@@ -136,7 +130,7 @@ class ManageConnectedDevices extends React.Component<Props, State> {
       <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Manage devices' }] }}>
         <FlatList
           data={devicesByLatest}
-          keyExtractor={({ device: { address } }) => `${address}`}
+          keyExtractor={({ address }) => `${address}`}
           renderItem={this.renderListItem}
           initialNumToRender={9}
           style={[{ flex: 1 }, !devices.length && emptyStyle]}
@@ -154,15 +148,16 @@ class ManageConnectedDevices extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  smartWallet: { connectedAccount: { devices, activeDeviceAddress } },
+  smartWallet: { connectedAccount: { activeDeviceAddress } },
+  connectedDevices: { data: devices, removingDeviceAddress },
 }: RootReducerState): $Shape<Props> => ({
   activeDeviceAddress,
   devices,
+  removingDeviceAddress,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchConnectedAccount: () => dispatch(fetchConnectedAccountAction()),
-  removeDevice: (device: ConnectedDevice) => dispatch(removeConnectedDeviceAction(device)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ManageConnectedDevices));

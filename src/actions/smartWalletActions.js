@@ -175,9 +175,13 @@ const notifySmartWalletNotInitialized = () => {
   });
 };
 
-const mapToConnectedDevice = (smartWalletAccountDevice: SmartWalletAccountDevice): ConnectedDevice => ({
+const mapToConnectedDevice = ({
+  device: { address },
+  updatedAt,
+}: SmartWalletAccountDevice): ConnectedDevice => ({
   category: DEVICE_CATEGORIES.SMART_WALLET_DEVICE,
-  address: smartWalletAccountDevice.device.address,
+  address,
+  updatedAt,
 });
 
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
@@ -1708,7 +1712,32 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string) => {
 };
 
 export const removeSmartWalletAccountDeviceAction = (deviceAddress: string) => {
-  return async () => {
-    console.log('deviceAddress: ', deviceAddress);
+  return async (dispatch: Dispatch, getState: GetState) => {
+    await dispatch(fetchGasInfoAction());
+    const gasInfo = get(getState(), 'history.gasInfo', {});
+    const deployEstimateFee = await smartWalletService.estimateAccountDeviceUnDeployment(deviceAddress, gasInfo);
+    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
+    const etherBalanceBN = smartWalletService.getAccountRealBalance();
+    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
+      Toast.show({
+        message: 'Not enough ETH to remove device',
+        type: 'warning',
+        title: 'Unable to remove device',
+        autoClose: false,
+      });
+      return;
+    }
+
+    const accountDeviceUNDeploymentHash = await smartWalletService.unDeployAccountDevice(deviceAddress);
+    if (!accountDeviceUNDeploymentHash) {
+      // no transaction hash, unknown error occurred
+      Toast.show({
+        message: 'Failed to remove device to Smart Wallet account',
+        type: 'warning',
+        title: 'Unable to add device',
+        autoClose: false,
+      });
+    }
+    await dispatch(fetchConnectedAccountAction());
   };
 };
