@@ -47,6 +47,7 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        RNBranchModule.setDebug();
         RNBranchModule.initSession(getIntent().getData(), this);
     }
 

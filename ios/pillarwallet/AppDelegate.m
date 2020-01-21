@@ -18,6 +18,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     #ifdef DEBUG
+      [Branch setUseTestBranchKey:YES];
       [RNBranch useTestInstance];
     #endif
     [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];

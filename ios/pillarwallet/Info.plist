@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>branch_app_domain</key>
-	<string>pillar-test.test-app.link</string>
-	<key>branch_key</key>
-	<string>key_test_oiTImTrfiylvqLPEwmW95lmozCbVSvXY</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -86,7 +82,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Pillar Wallet to use your location</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Pillar Wallet to access your device's accelerometer</string>
+	<string>Allow Pillar Wallet to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -139,5 +135,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>branch_app_domain</key>
+	<string>abgsz.test-app.link</string>
+	<key>branch_key</key>
+	<string>key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a</string>
 </dict>
 </plist>
