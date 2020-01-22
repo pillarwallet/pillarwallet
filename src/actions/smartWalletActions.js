@@ -175,14 +175,19 @@ const notifySmartWalletNotInitialized = () => {
   });
 };
 
-const mapToConnectedDevice = ({
-  device: { address },
-  updatedAt,
-}: SmartWalletAccountDevice): ConnectedDevice => ({
-  category: DEVICE_CATEGORIES.SMART_WALLET_DEVICE,
-  address,
-  updatedAt,
-});
+const mapToConnectedDevices = (
+  smartWalletDevices: SmartWalletAccountDevice[],
+): ConnectedDevice[] => smartWalletDevices
+  // extensions are SDK internal device types which should not be managed manually
+  .filter(({ type }) => type !== sdkConstants.AccountDeviceTypes.Extension)
+  .map(({
+    device: { address },
+    updatedAt,
+  }: SmartWalletAccountDevice) => ({
+    category: DEVICE_CATEGORIES.SMART_WALLET_DEVICE,
+    address,
+    updatedAt,
+  }));
 
 export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
   return async (dispatch: Dispatch) => {
@@ -260,7 +265,8 @@ export const resetSmartWalletDeploymentDataAction = () => {
 export const setSmartWalletConnectedAccount = (connectedAccount: SmartWalletAccount) => {
   return async (dispatch: Dispatch) => {
     const smartWalletAccountDevices = get(connectedAccount, 'devices', []);
-    dispatch(setConnectedDevicesAction(smartWalletAccountDevices.map(mapToConnectedDevice)));
+    const mapped = mapToConnectedDevices(smartWalletAccountDevices);
+    dispatch(setConnectedDevicesAction(mapped));
     dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: connectedAccount });
   };
 };
