@@ -281,7 +281,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
   border-color: ${({ theme }) => theme.colors.border};
-  border-width: ${props => props.customTheme.borderWidth};
+  border-width: ${props => props.customTheme.borderWidth || '0'};
   border-style: solid;
   flex-direction: ${props => props.customTheme.flexDirection ? props.customTheme.flexDirection : 'row'}
   ${props => props.customTheme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
