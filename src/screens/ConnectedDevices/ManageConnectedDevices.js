@@ -15,7 +15,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import orderBy from 'lodash.orderby';
@@ -23,10 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchConnectedAccountAction } from 'actions/smartWalletActions';
-
-// constants
-import { REMOVE_SMART_WALLET_CONNECTED_DEVICE } from 'constants/navigationConstants';
-import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
+import { confirmConnectedDeviceRemoveAction } from 'actions/connectedDevicesActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -46,6 +43,7 @@ import type { Theme } from 'models/Theme';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   activeDeviceAddress: string,
@@ -53,6 +51,7 @@ type Props = {
   theme: Theme,
   fetchConnectedAccount: () => void,
   removingDeviceAddress: ?string,
+  confirmConnectedDeviceRemove: (device: ConnectedDevice) => void,
 };
 
 const ItemTitle = styled(BaseText)`
@@ -66,27 +65,16 @@ const RemoveAction = styled.TouchableOpacity`
   color: ${themedColors.negative};
 `;
 
-// const removePrompt = (callback) => Alert.alert(
-//   'Are you sure?',
-//   'You are going to remove the link between this device and your account.' +
-//   '\n\nPlease make sure you have all your funds backed up.',
-//   [
-//     { text: 'Confirm remove', onPress: () => callback() },
-//     { text: 'Cancel', style: 'cancel' },
-//   ],
-//   { cancelable: true },
-// );
+const HorizontalView = styled.View`
+  flex-direction: row;
+`;
 
 class ManageConnectedDevices extends React.Component<Props> {
   componentDidMount() {
     this.props.fetchConnectedAccount();
   }
 
-  removeDevice = (device: ConnectedDevice) => {
-    if (device.category === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
-      this.props.navigation.navigate(REMOVE_SMART_WALLET_CONNECTED_DEVICE, { device });
-    }
-  };
+  removeDevice = (device: ConnectedDevice) => this.props.confirmConnectedDeviceRemove(device);
 
   renderListItem = ({ item }) => {
     const { theme, activeDeviceAddress, removingDeviceAddress } = this.props;
@@ -94,29 +82,36 @@ class ManageConnectedDevices extends React.Component<Props> {
     const { updatedAt, address: deviceAddress } = item;
     const deviceDate = humanizeDateString(updatedAt);
     const isCurrentDevice = addressesEqual(activeDeviceAddress, deviceAddress);
-    const deviceBeingRemoved = addressesEqual(removingDeviceAddress, deviceAddress);
+    const anyDeviceBeingRemoved = !!removingDeviceAddress;
+    const thisDeviceBeingRemoved = addressesEqual(removingDeviceAddress, deviceAddress);
     return (
       <ListItemWithImage
         subtext={deviceDate}
         // itemImageUrl={fullIconUrl}
         // fallbackSource={genericToken}
         customLabel={(
-          <View style={{ width: '60%', flexDirection: 'row' }}>
+          <HorizontalView style={{ width: '60%' }}>
             <ItemTitle numberOfLines={1} >Device </ItemTitle>
             <ItemTitle numberOfLines={1} ellipsizeMode="middle">{deviceAddress}</ItemTitle>
-          </View>
+          </HorizontalView>
         )}
       >
         {isCurrentDevice && <MediumText color={colors.secondaryText}>This device</MediumText>}
-        {!isCurrentDevice &&
-          <View>
-            {deviceBeingRemoved && <Spinner width={20} height={20} />}
-            {!deviceBeingRemoved &&
-              <RemoveAction onPress={() => this.removeDevice(item)}>
-                <BaseText color={colors.negative}>Remove</BaseText>
-              </RemoveAction>
-            }
-          </View>
+        {thisDeviceBeingRemoved &&
+          <HorizontalView>
+            <BaseText color={colors.secondaryText}>Removing</BaseText>
+            <Spinner style={{ marginLeft: 7 }} width={20} height={20} />
+          </HorizontalView>
+        }
+        {!thisDeviceBeingRemoved && !isCurrentDevice && anyDeviceBeingRemoved &&
+          <RemoveAction onPress={() => this.removeDevice(item)}>
+            <BaseText color={colors.secondaryText}>On hold</BaseText>
+          </RemoveAction>
+        }
+        {!isCurrentDevice && !anyDeviceBeingRemoved &&
+          <RemoveAction onPress={() => this.removeDevice(item)}>
+            <BaseText color={colors.negative}>Remove</BaseText>
+          </RemoveAction>
         }
       </ListItemWithImage>
     );
@@ -158,6 +153,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchConnectedAccount: () => dispatch(fetchConnectedAccountAction()),
+  confirmConnectedDeviceRemove: (device: ConnectedDevice) => dispatch(confirmConnectedDeviceRemoveAction(device)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ManageConnectedDevices));

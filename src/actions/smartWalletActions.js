@@ -119,7 +119,7 @@ import {
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { getWalletsCreationEventsAction } from 'actions//userEventsActions';
-import { setConnectedDevicesAction } from 'actions/connectedDevicesActions';
+import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from 'actions/connectedDevicesActions';
 
 // types
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
@@ -773,6 +773,22 @@ export const syncVirtualAccountTransactionsAction = () => {
   };
 };
 
+export const removeSmartWalletAccountDeviceAction = (deviceAddress: string) => {
+  return async (dispatch: Dispatch) => {
+    const deviceRemoved = await smartWalletService.removeAccountDevice(deviceAddress);
+    if (!deviceRemoved) {
+      Toast.show({
+        message: 'Device remove failed',
+        type: 'warning',
+        title: 'Unable to remove device',
+        autoClose: false,
+      });
+      return;
+    }
+    await dispatch(fetchConnectedAccountAction());
+  };
+};
+
 export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!event) return;
@@ -806,13 +822,17 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
       // incoming deployment state from event
       const newAccountDeviceState = get(event, 'payload.state', '');
+      const newAccountDeviceNextState = get(event, 'payload.nextState', '');
+      const eventAccountDeviceAddress = get(event, 'payload.device.address', '');
 
       // just a constant for comparing deployed state
       const deployedDeviceState = get(sdkConstants, 'AccountDeviceStates.Deployed', '');
+      const createdDeviceState = get(sdkConstants, 'AccountDeviceStates.Created', '');
 
-      // check if new account device state state is "deployed"
-      if (newAccountDeviceState === deployedDeviceState) {
-        // check if wallet smart wallet account device is deployed
+      // check if new account device state state is "deployed" and next state is not "created" (means undeployment)
+      if (newAccountDeviceState === deployedDeviceState
+        && newAccountDeviceNextState !== createdDeviceState) {
+        // check if current wallet smart wallet account device is deployed
         if (currentAccountState !== deployedDeviceState
           && accountUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
           dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
@@ -831,6 +851,16 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             autoClose: true,
           });
         }
+      }
+
+      const removingConnectedDeviceAddress = get(getState(), 'connectedDevices.removingDeviceAddress');
+      if (removingConnectedDeviceAddress
+        && newAccountDeviceState === createdDeviceState
+        && addressesEqual(eventAccountDeviceAddress, removingConnectedDeviceAddress)) {
+        await dispatch(removeSmartWalletAccountDeviceAction(eventAccountDeviceAddress));
+        dispatch(completeConnectedDeviceRemoveAction(eventAccountDeviceAddress, true));
+      } else {
+        dispatch(fetchConnectedAccountAction());
       }
     }
 
@@ -1717,7 +1747,7 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string) => {
   };
 };
 
-export const removeSmartWalletAccountDeviceAction = (deviceAddress: string) => {
+export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     await dispatch(fetchGasInfoAction());
     const gasInfo = get(getState(), 'history.gasInfo', {});
@@ -1744,6 +1774,7 @@ export const removeSmartWalletAccountDeviceAction = (deviceAddress: string) => {
         autoClose: false,
       });
     }
+
     await dispatch(fetchConnectedAccountAction());
   };
 };

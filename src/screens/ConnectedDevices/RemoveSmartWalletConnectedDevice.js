@@ -145,7 +145,11 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
       .catch(() => {});
   };
 
-  onNextClick = () => this.props.removeConnectedDevice(this.device);
+  onNextClick = () => {
+    const { navigation, removeConnectedDevice } = this.props;
+    removeConnectedDevice(this.device);
+    navigation.goBack();
+  };
 
   renderSpinner = () => <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>;
 

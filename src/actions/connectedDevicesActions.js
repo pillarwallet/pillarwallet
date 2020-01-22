@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import { Alert } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 
 // constants
 import {
@@ -26,11 +28,19 @@ import {
   SET_CONNECTED_DEVICES,
   RESET_ADDING_CONNECTED_DEVICE_ADDRESS,
   SET_REMOVING_CONNECTED_DEVICE_ADDRESS,
+  RESET_REMOVING_CONNECTED_DEVICE_ADDRESS,
 } from 'constants/connectedDevicesConstants';
+import { REMOVE_SMART_WALLET_CONNECTED_DEVICE } from 'constants/navigationConstants';
+
+// components
+import Toast from 'components/Toast';
 
 // utils
 import { addressesEqual } from 'utils/assets';
 import { isSmartWalletDeviceDeployed } from 'utils/smartWallet';
+
+// services
+import { navigate } from 'services/navigation';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -38,9 +48,31 @@ import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { SmartWalletAccountDevice } from 'models/SmartWalletAccount';
 
 // actions
-import { addSmartWalletAccountDeviceAction, removeSmartWalletAccountDeviceAction } from './smartWalletActions';
+import {
+  addSmartWalletAccountDeviceAction,
+  removeSmartWalletAccountDeviceAction,
+  removeDeployedSmartWalletAccountDeviceAction,
+} from './smartWalletActions';
 import { saveDbAction } from './dbActions';
 
+
+const removePrompt = (callback) => Alert.alert(
+  'Are you sure?',
+  'You are going to remove the link between this device and your account.' +
+  '\n\nPlease make sure you have all your funds backed up.',
+  [
+    { text: 'Confirm remove', onPress: () => callback() },
+    { text: 'Cancel', style: 'cancel' },
+  ],
+  { cancelable: true },
+);
+
+const getConnectedSmartWalletDevice = (getState: GetState, deviceAddress: string): ?SmartWalletAccountDevice => {
+  const smartWalletAccountDevices = get(getState(), 'smartWallet.connectedAccount.devices', []);
+  return smartWalletAccountDevices.find(
+    ({ device }) => addressesEqual(device.address, deviceAddress),
+  );
+};
 
 export const setConnectedDevicesAction = (devices: ConnectedDevice[]) => ({
   type: SET_CONNECTED_DEVICES,
@@ -83,23 +115,74 @@ export const addConnectedDeviceAction = (deviceCategory: string, deviceAddress: 
   };
 };
 
+export const completeConnectedDeviceRemoveAction = (deviceAddress: string, fromTransaction?: boolean) => {
+  return async (dispatch: Dispatch) => {
+    if (fromTransaction) {
+      dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: null }));
+      Toast.show({
+        message: 'Connected device has been removed',
+        type: 'success',
+        title: 'Success',
+        autoClose: true,
+      });
+    }
+    dispatch({ type: RESET_REMOVING_CONNECTED_DEVICE_ADDRESS });
+    console.log('completed device removal for: ', deviceAddress);
+    // TODO: add history entry for removed device
+  };
+};
+
 export const removeConnectedDeviceAction = ({
   category: deviceCategory,
   address: deviceAddress,
 }: ConnectedDevice) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    let removingWthTransaction = false;
     dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: deviceAddress });
     if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
-      await dispatch(removeSmartWalletAccountDeviceAction(deviceAddress));
-      const smartWalletAccountDevices = get(getState(), 'smartWallet.connectedAccount.devices', []);
-      const smartWalletAccountDevice: ?SmartWalletAccountDevice = smartWalletAccountDevices.find(
-        ({ device }) => addressesEqual(device.address, deviceAddress),
-      );
-      // if not found then it might be removed, else check state
-      dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: deviceAddress }));
-      console.log('smartWalletAccountDevice: ', smartWalletAccountDevice);
+      if (!isSmartWalletDeviceDeployed(getConnectedSmartWalletDevice(getState, deviceAddress))) {
+        await dispatch(removeSmartWalletAccountDeviceAction(deviceAddress));
+      } else {
+        await dispatch(removeDeployedSmartWalletAccountDeviceAction(deviceAddress));
+        // transaction might take some time so let's save the state and don't reset it
+        removingWthTransaction = true;
+      }
     }
-    // TODO: add history entry for removed device
+    if (removingWthTransaction) {
+      dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: deviceAddress }));
+      return;
+    }
+    dispatch(completeConnectedDeviceRemoveAction(deviceAddress));
+  };
+};
+
+export const confirmConnectedDeviceRemoveAction = (device: ConnectedDevice) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    removePrompt(async () => {
+      const { category: deviceCategory, address: deviceAddress } = device;
+      // might be more categories, i.e. wallet connect dapps
+      if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
+        const smartWalletAccountDevice = getConnectedSmartWalletDevice(getState, deviceAddress);
+        if (!smartWalletAccountDevice) {
+          Toast.show({
+            message: 'Matching Smart Wallet device not found',
+            type: 'warning',
+            title: 'Unable to remove device',
+            autoClose: false,
+          });
+          return;
+        }
+        // if state is deployed then we need to undeploy device first
+        if (isSmartWalletDeviceDeployed(smartWalletAccountDevice)) {
+          navigate(NavigationActions.navigate({
+            routeName: REMOVE_SMART_WALLET_CONNECTED_DEVICE,
+            params: { device },
+          }));
+          return;
+        }
+        dispatch(removeConnectedDeviceAction(device));
+      }
+    });
   };
 };
 
