@@ -238,7 +238,7 @@ class SmartWallet {
     const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
     return {
       ...account,
-      devices,
+      devices: get(devices, 'items', []),
     };
   }
 
