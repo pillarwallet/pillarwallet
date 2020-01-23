@@ -198,7 +198,7 @@ class SmartWallet {
   ) {
     const backendAccounts = await api.listAccounts(walletId);
     const registerOnBackendPromises = smartAccounts.map(async account => {
-      const backendAccount = backendAccounts.find(({ ethAddress }) => addressesEqual(ethAddress, account.address));
+      const backendAccount = backendAccounts.some(({ ethAddress }) => addressesEqual(ethAddress, account.address));
       if (!backendAccount) {
         return api.registerSmartWallet({
           walletId,
