@@ -113,6 +113,7 @@ import {
   sendSignedAssetTransactionAction,
   resetLocalNonceToTransactionCountAction,
   fetchAssetsBalancesAction,
+  fetchInitialAssetsAction,
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/historyActions';
@@ -210,6 +211,7 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
+      dispatch(fetchInitialAssetsAction(false));
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
