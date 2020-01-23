@@ -19,14 +19,13 @@
 */
 import * as React from 'react';
 import { AppState } from 'react-native';
-import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import get from 'lodash.get';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { checkAuthAction } from 'actions/authActions';
-import { Container, Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -48,12 +47,6 @@ type State = {
   biometricsShown: boolean,
   lastAppState: string,
 }
-
-const CheckPinWrapper = styled(Wrapper)`
-  margin-top: auto;
-  height: 100%;
-  flex: 1;
-`;
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
@@ -143,7 +136,7 @@ class CheckPin extends React.Component<Props, State> {
     }
 
     return (
-      <CheckPinWrapper>
+      <Container>
         {showError}
         <PinCode
           onPinEntered={this.handlePinSubmit}
@@ -151,7 +144,7 @@ class CheckPin extends React.Component<Props, State> {
           showForgotButton={false}
           pinError={!!pinError}
         />
-      </CheckPinWrapper>
+      </Container>
     );
   }
 }
