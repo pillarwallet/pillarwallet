@@ -324,7 +324,7 @@ export const deploySmartWalletAction = () => {
     const account = await smartWalletService.fetchConnectedAccount();
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      account,
+      payload: account,
     });
   };
 };
