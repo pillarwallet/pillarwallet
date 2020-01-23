@@ -135,7 +135,7 @@ export const initDefaultAccountAction = (walletAddress: string, walletId: string
   };
 };
 
-export const addNewAccountAction = (
+export const addAccountAction = (
   accountAddress: string,
   type: AccountTypes,
   accountExtra?: AccountExtra,
