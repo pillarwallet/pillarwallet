@@ -37,8 +37,20 @@ import TextInput from 'components/TextInput';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
-// models, types
-
+const INSIGHT_ITEMS = [
+  {
+    title: 'Share your link',
+    body: 'Invite your friends to join Pillar',
+  },
+  {
+    title: 'Give Smart Wallet for free',
+    body: 'Friends who install Pillar with your link will get free Smart Wallet activation.',
+  },
+  {
+    title: 'Get free PLR',
+    body: 'Earn meta-tokens for referring friends.',
+  },
+];
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -67,7 +79,7 @@ const ExplanationText = styled(MediumText)`
 
 const { Form } = t.form;
 
-function ReferralEmailInputTemplate(locals) {
+const ReferralEmailInputTemplate = (locals) => {
   const {
     config: {
       onIconPress,
@@ -115,9 +127,9 @@ function ReferralEmailInputTemplate(locals) {
       hideErrorMessage={hideErrorMessage}
     />
   );
-}
+};
 
-function getReferralFormFields(config: Object): Object {
+const getReferralFormFields = (config: Object): Object => {
   return {
     fields: {
       email: {
@@ -126,7 +138,7 @@ function getReferralFormFields(config: Object): Object {
       },
     },
   };
-}
+};
 
 class ReferFriends extends React.Component<Props, State> {
   referForm: t.form;
@@ -185,20 +197,7 @@ class ReferFriends extends React.Component<Props, State> {
         <ScrollView>
           <Insight
             isVisible
-            insightNumberedList={[
-              {
-                title: 'Share your link',
-                body: 'Invite your friends to join Pillar',
-              },
-              {
-                title: 'Give Smart Wallet for free',
-                body: 'Friends who install Pillar with your link will get free Smart Wallet activation.',
-              },
-              {
-                title: 'Get free PLR',
-                body: 'Earn meta-tokens for referring friends.',
-              },
-            ]}
+            insightNumberedList={INSIGHT_ITEMS}
           />
           <FormWrapper>
             <Form

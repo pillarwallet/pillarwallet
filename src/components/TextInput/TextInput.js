@@ -486,6 +486,16 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  onWrapperPress = () => {
+    const { multilineInputField: { _root } } = this;
+
+    if (!_root) {
+      return;
+    }
+
+    _root.focus();
+  };
+
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
     const {
@@ -660,7 +670,7 @@ class TextInput extends React.Component<Props, State> {
               {!!loading && <Spinner width={30} height={30} />}
             </RightSideWrapper>}
             {!!buttonProps &&
-            <ButtonWrapper activeOpacity={1} onPress={() => this.multilineInputField._root.focus()}>
+            <ButtonWrapper activeOpacity={1} onPress={this.onWrapperPress}>
               <Button height={48} {...buttonProps} />
             </ButtonWrapper>}
           </Item>
