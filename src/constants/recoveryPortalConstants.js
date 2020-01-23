@@ -21,4 +21,5 @@ export const RECOVERY_PORTAL_URL_PATHS = {
   SIGN_UP: 'sign-up/pillar',
   SIGN_IN: 'sign-in',
   SIGN_OUT: 'sign-out',
+  RECOVER_DEVICE: 'recover-device',
 };
