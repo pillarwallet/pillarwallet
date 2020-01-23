@@ -107,7 +107,6 @@ class App extends React.Component<Props, *> {
     } = this.props;
     const isOnline = await NetInfo.isConnected.fetch();
     this.setOnlineStatus(isOnline); // set initial online status
-    SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
@@ -126,7 +125,11 @@ class App extends React.Component<Props, *> {
 
   componentDidUpdate(prevProps: Props) {
     const { isFetched } = this.props;
-    if (isFetched && !prevProps.isFetched) this.showDarkModeAlert();
+    const { isFetched: prevIsFetched } = prevProps;
+    if (isFetched && !prevIsFetched) {
+      SplashScreen.hide();
+      this.showDarkModeAlert();
+    }
   }
 
   setOnlineStatus = isOnline => {

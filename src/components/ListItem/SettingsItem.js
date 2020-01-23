@@ -21,10 +21,11 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { Switch, Badge as NBBadge } from 'native-base';
+import { Badge as NBBadge } from 'native-base';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import NativeTouchable from 'components/NativeTouchable';
+import Switcher from 'components/Switcher';
 import { themedColors } from 'utils/themes';
 
 type Props = {
@@ -137,10 +138,10 @@ class SettingsListItem extends React.Component<Props> {
       <ItemLabelHolder bordered={bordered}>
         <ItemLabel primary={isSelected}>{label}</ItemLabel>
         <ListAddon>
-          <Switch
+          <Switcher
+            isOn={processedValue}
+            onToggle={onPress}
             disabled={disabled}
-            onValueChange={onPress}
-            value={processedValue}
           />
         </ListAddon>
       </ItemLabelHolder>

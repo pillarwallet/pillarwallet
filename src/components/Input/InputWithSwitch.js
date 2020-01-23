@@ -17,13 +17,14 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { Switch, Input } from 'native-base';
+import { Input } from 'native-base';
 
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
+import Switcher from 'components/Switcher';
 import SelectList from './SelectList';
 
 const StyledItemView = styled.View`
@@ -254,9 +255,9 @@ export default class InputWithSwitch extends React.Component<Props, State> {
 
           {!!hasSwitch &&
           <ItemAddon>
-            <Switch
-              onValueChange={() => {}} // todo
-              value={{}} // todo
+            <Switcher
+              onToggle={() => {}} // todo
+              isOn={{}} // todo
             />
           </ItemAddon>}
         </StyledItemView>

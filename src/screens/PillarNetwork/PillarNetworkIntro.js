@@ -18,9 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
+import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -30,18 +32,18 @@ import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import { LabelBadge } from 'components/LabelBadge';
+import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 
-import { baseColors, fontStyles } from 'utils/variables';
-import { responsiveSize } from 'utils/ui';
 import { ASSETS, SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
-import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
-
+import { fontStyles } from 'utils/variables';
+import { responsiveSize } from 'utils/ui';
 import { delay } from 'utils/common';
 import { getActiveAccount } from 'utils/accounts';
+import { getThemeColors, themedColors } from 'utils/themes';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 import { ensureSmartAccountConnectedAction, setPLRTankAsInitAction } from 'actions/smartWalletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -50,9 +52,8 @@ import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActio
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
-import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -64,6 +65,7 @@ type Props = {
   smartWalletState: Object,
   setPLRTankAsInit: Function,
   setActiveBlockchainNetwork: Function,
+  theme: Theme,
 }
 type State = {
   showPinScreenForAction: boolean,
@@ -76,12 +78,12 @@ const CustomWrapper = styled.View`
 `;
 
 const Title = styled(BoldText)`
-  color: ${baseColors.pomegranate};
+  color: ${themedColors.PPNText};
   ${fontStyles.rJumbo};
 `;
 
 const BodyText = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${themedColors.PPNText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(26)}px;
 `;
@@ -100,12 +102,12 @@ const ContentWrapper = styled.View`
 `;
 
 const Label = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${themedColors.PPNText};
   ${fontStyles.rLarge};
 `;
 
 const Subtext = styled(MediumText)`
-  color: ${baseColors.pomegranate};
+  color: ${themedColors.PPNText};
   ${fontStyles.rBig};
   margin-top: ${responsiveSize(10)}px;
 `;
@@ -196,7 +198,13 @@ class PillarNetworkIntro extends React.Component<Props, State> {
 
   render() {
     const { showPinScreenForAction, processingCreate } = this.state;
-    const { smartWalletState, accounts, navigation } = this.props;
+    const {
+      smartWalletState,
+      accounts,
+      navigation,
+      theme,
+    } = this.props;
+    const colors = getThemeColors(theme);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const needsSmartWallet = !smartWalletStatus.hasAccount;
 
@@ -207,7 +215,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
           transparent: true,
           light: true,
         }}
-        backgroundColor={baseColors.ultramarine}
+        backgroundColor={colors.PPNSurface}
       >
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
@@ -222,8 +230,8 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             </BodyText>
             <LabelBadge
               label="COMING SOON"
-              containerStyle={{ backgroundColor: baseColors.darkOrange, marginTop: 57, paddingVertical: 2 }}
-              labelStyle={{ color: baseColors.ultramarine, fontSize: responsiveSize(11) }}
+              containerStyle={{ backgroundColor: colors.orange, marginTop: 57, paddingVertical: 2 }}
+              labelStyle={{ color: colors.PPNText, fontSize: responsiveSize(11) }}
             />
             <BodyText style={{ marginTop: 10 }}>
               Draw from your PLR tank to send whatever you’d like.
@@ -237,7 +245,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
                     name="check"
                     style={{
                       fontSize: responsiveSize(13),
-                      color: baseColors.pomegranate,
+                      color: colors.PPNText,
                       marginTop: responsiveSize(12),
                     }}
                   />
@@ -255,11 +263,11 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             wrapperStyle={{
               marginTop: 46,
               marginBottom: 70,
-              borderColor: baseColors.pomegranate,
+              borderColor: colors.PPNText,
             }}
             label="Enable Smart wallet to create Tank"
             onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
-            color={baseColors.pomegranate}
+            color={colors.PPNText}
             bordered
           />}
           {!needsSmartWallet &&
@@ -269,12 +277,12 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               title="Go to PLR Tank"
               onPress={() => this.setState({ showPinScreenForAction: true, processingCreate: true })}
               style={{
-                backgroundColor: baseColors.pomegranate,
+                backgroundColor: colors.PPNText,
                 marginTop: 40,
                 marginBottom: 20,
                 opacity: needsSmartWallet ? 0.3 : 1,
               }}
-              textStyle={{ color: baseColors.ultramarine }}
+              textStyle={{ color: colors.PPNSurface }}
               isLoading={processingCreate}
             />
           </ButtonWrapper>}
@@ -314,4 +322,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PillarNetworkIntro);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PillarNetworkIntro));
