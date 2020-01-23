@@ -776,10 +776,10 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     // manual transactions tracker
     if (event.name === ACCOUNT_TRANSACTION_UPDATED) {
       const {
-        history: { data: currentHistory },
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
       } = getState();
+      let { history: { data: currentHistory } } = getState();
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
@@ -804,6 +804,25 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             status: TX_CONFIRMED_STATUS,
           });
           await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
+
+          const { txUpdated, updatedHistory } = updateHistoryRecord(
+            currentHistory,
+            txHash,
+            (transaction) => ({
+              ...transaction,
+              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
+              gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+              status: TX_CONFIRMED_STATUS,
+            }));
+
+          if (txUpdated) {
+            dispatch(saveDbAction('history', { history: updatedHistory }, true));
+            dispatch({
+              type: SET_HISTORY,
+              payload: updatedHistory,
+            });
+            currentHistory = getState().history.data;
+          }
         }
         dispatch(checkAssetTransferTransactionsAction());
       }
@@ -852,6 +871,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
               type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
               payload: txHash,
             });
+            currentHistory = getState().history.data;
           }
         } else {
           dispatch(fetchSmartWalletTransactionsAction());
