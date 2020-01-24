@@ -22,7 +22,11 @@ import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
 
-import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import {
+  SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_DEPLOYMENT_ERRORS,
+  SMART_WALLET_UPGRADE_STATUSES
+} from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
@@ -225,6 +229,14 @@ export const parseSmartWalletTransactions = (
       transaction = {
         ...transaction,
         tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
+      };
+    } else if (transactionType === AccountTransactionTypes.UpdateAccountEnsName) {
+      transaction = {
+        ...transaction,
+        tag: SET_SMART_WALLET_ACCOUNT_ENS,
+        extra: {
+          ensName: get(fromDetails, 'account.ensName'),
+        },
       };
     }
 

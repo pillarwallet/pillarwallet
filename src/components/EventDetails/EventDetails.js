@@ -88,6 +88,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -397,14 +398,16 @@ class EventDetails extends React.Component<Props, State> {
       const showProfileImage = !relatedUser.type;
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
-      const freeTx = isPPNTransaction;
+      const freeTx = isPPNTransaction || tag === SET_SMART_WALLET_ACCOUNT_ENS;
 
       const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
       let showNote = true;
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
-      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT || tag === PAYMENT_NETWORK_ACCOUNT_TOPUP ||
-        tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
+      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT
+        || tag === PAYMENT_NETWORK_ACCOUNT_TOPUP
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+      ) {
         showNote = false;
       }
 
@@ -449,6 +452,12 @@ class EventDetails extends React.Component<Props, State> {
               const formattedValue = +formatAmount(formatUnits(rawValue.toString(), assetDecimals));
               return <MediumText key={hash}> {formattedValue} {symbol}</MediumText>;
             })}
+          />
+          }
+          {tag === SET_SMART_WALLET_ACCOUNT_ENS &&
+          <ListItemUnderlined
+            label="Address"
+            value={extra.ensName || ''}
           />
           }
           {showFeeBlock &&

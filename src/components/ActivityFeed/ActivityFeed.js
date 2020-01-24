@@ -82,6 +82,7 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
+import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
@@ -402,7 +403,14 @@ class ActivityFeed extends React.Component<Props, State> {
         trxData.hideAmount = true;
         transactionEventActionLabel = 'Deployed'; // note: label will be hidden if tx is pending
         trxData.txType = 'Deployment';
-        itemValue = null;
+        itemValue = '';
+      } else if (tag === SET_SMART_WALLET_ACCOUNT_ENS) {
+        nameOrAddress = 'Register ENS name';
+        imageProps.itemImageSource = smartWalletIcon;
+        trxData.hideSender = true;
+        trxData.hideAmount = true;
+        trxData.txType = 'Register ENS name';
+        itemValue = '';
       }
 
       // centers line right addons side vertically if status is present

@@ -34,6 +34,7 @@ import {
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
+  SET_SMART_WALLET_ACCOUNT_ENS,
   ADD_SMART_WALLET_UPGRADE_ASSETS,
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   DISMISS_SMART_WALLET_UPGRADE,
@@ -116,7 +117,11 @@ import {
   fetchInitialAssetsAction,
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import {
+  fetchGasInfoAction,
+  fetchSmartWalletTransactionsAction,
+  insertTransactionAction,
+} from 'actions/historyActions';
 
 // types
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
@@ -130,7 +135,7 @@ import type { SendNavigateOptions } from 'models/Navigation';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountAddress, getActiveAccountId, normalizeForEns } from 'utils/accounts';
 import { isConnectedToSmartAccount, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import {
   addressesEqual,
@@ -183,7 +188,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 
     const smartAccounts = await smartWalletService.getAccounts();
     if (!smartAccounts.length && privateKey) {
-      const newSmartAccount = await smartWalletService.createAccount();
+      const newSmartAccount = await smartWalletService.createAccount(user.username);
       if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
     dispatch({
@@ -748,10 +753,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!event) return;
 
+    const ACCOUNT_UPDATED = get(sdkModules, 'Api.EventNames.AccountUpdated', '');
     const ACCOUNT_DEVICE_UPDATED = get(sdkModules, 'Api.EventNames.AccountDeviceUpdated', '');
     const ACCOUNT_TRANSACTION_UPDATED = get(sdkModules, 'Api.EventNames.AccountTransactionUpdated', '');
     const ACCOUNT_PAYMENT_UPDATED = get(sdkModules, 'Api.EventNames.AccountPaymentUpdated', '');
     const ACCOUNT_VIRTUAL_BALANCE_UPDATED = get(sdkModules, 'Api.EventNames.AccountVirtualBalanceUpdated', '');
+    const TRANSACTION_CREATED = get(sdkConstants, 'AccountTransactionStates.Created', '');
     const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
     const transactionTypes = get(sdkConstants, 'AccountTransactionTypes', {});
 
@@ -790,6 +797,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const txGasInfo = get(event, 'payload.gas', {});
       const txSenderAddress = get(event, 'payload.from.account.address', '');
+      const txSenderEnsName = get(event, 'payload.from.account.ensName', '');
       const txType = get(event, 'payload.transactionType', '');
       const txFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
@@ -883,6 +891,25 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         }
         dispatch(fetchAssetsBalancesAction());
       }
+
+      if (txStatus === TRANSACTION_CREATED && txType === transactionTypes.UpdateAccountEnsName) {
+        const { txUpdated, updatedHistory } = updateHistoryRecord(
+          currentHistory,
+          txHash,
+          (transaction) => ({
+            ...transaction,
+            extra: { ensName: txSenderEnsName },
+          }));
+
+        if (txUpdated) {
+          dispatch(saveDbAction('history', { history: updatedHistory }, true));
+          dispatch({
+            type: SET_HISTORY,
+            payload: updatedHistory,
+          });
+          currentHistory = getState().history.data;
+        }
+      }
     }
 
     if (event.name === ACCOUNT_VIRTUAL_BALANCE_UPDATED) {
@@ -935,6 +962,17 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         dispatch(syncVirtualAccountTransactionsAction());
       }
     }
+
+    if (event.name === ACCOUNT_UPDATED && !event.payload.nextState) {
+      // update account info
+      await dispatch(loadSmartWalletAccountsAction());
+      const account = await smartWalletService.fetchConnectedAccount();
+      dispatch({
+        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+        payload: account,
+      });
+    }
+
     console.log(event);
   };
 };
@@ -1475,7 +1513,7 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
 
     const smartAccounts = await smartWalletService.getAccounts();
     if (!smartAccounts.length && createNewAccount) {
-      const newSmartAccount = await smartWalletService.createAccount();
+      const newSmartAccount = await smartWalletService.createAccount(user.username);
       if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
     dispatch({
@@ -1531,6 +1569,9 @@ export const getAssetTransferGasLimitsAction = () => {
           },
         },
       },
+      user: {
+        data: user,
+      },
     } = getState();
     const from = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
@@ -1554,7 +1595,7 @@ export const getAssetTransferGasLimitsAction = () => {
        */
       let tempAccount;
       if (smartWalletSdkInitialized) {
-        tempAccount = await smartWalletService.createAccount();
+        tempAccount = await smartWalletService.createAccount(user.username);
       } else {
         tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
       }
@@ -1612,5 +1653,31 @@ export const getAssetTransferGasLimitsAction = () => {
           }),
         );
     });
+  };
+};
+
+export const setSmartWalletEnsNameAction = (username: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+    const { accounts: { data: accounts } } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    const normalizedUsername = normalizeForEns(username);
+
+    const hash = await smartWalletService.setAccountEnsName(username);
+    if (!hash) return;
+
+    const historyTx = buildHistoryTransaction({
+      from: accountAddress,
+      hash,
+      to: accountAddress,
+      value: '0',
+      asset: ETH,
+      tag: SET_SMART_WALLET_ACCOUNT_ENS,
+      extra: {
+        ensName: normalizedUsername,
+      },
+    });
+    dispatch(insertTransactionAction(historyTx, accountId));
   };
 };

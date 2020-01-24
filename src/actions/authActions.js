@@ -47,7 +47,7 @@ import {
   LOGOUT_PENDING,
 } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
+import { SET_USERNAME, UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -157,6 +157,11 @@ export const loginAction = (
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
+
+      if (user.username) {
+        dispatch({ type: SET_USERNAME, payload: user.username });
+      }
+
       if (userState === REGISTERED) {
         // signal credentials
         const signalCredentials = {
