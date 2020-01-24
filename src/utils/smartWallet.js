@@ -25,7 +25,7 @@ import BigNumber from 'bignumber.js';
 import {
   SET_SMART_WALLET_ACCOUNT_ENS,
   SMART_WALLET_DEPLOYMENT_ERRORS,
-  SMART_WALLET_UPGRADE_STATUSES
+  SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
