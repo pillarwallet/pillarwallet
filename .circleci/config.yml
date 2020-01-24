@@ -626,7 +626,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/git_tags_and_versioning
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
@@ -636,7 +636,6 @@ workflows:
                   - feature/git_tags_and_versioning
       - publish_releases_to_github:
           requires:
-            - hockeyapp_ios
             - hockeyapp_android            
       - slack-prod-approval:
           requires:
