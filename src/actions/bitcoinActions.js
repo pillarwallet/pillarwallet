@@ -175,7 +175,7 @@ import type {
 
 import { initialAssets } from 'fixtures/assets';
 
-import { addNewAccountAction } from 'actions/accountsActions';
+import { addAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
@@ -272,7 +272,7 @@ export const loadBitcoinAddressesAction = () => {
 
     if (loaded.length) {
       dispatch(setBitcoinAddressesAction(loaded));
-      dispatch(addNewAccountAction(loaded[0], ACCOUNT_TYPES.BITCOIN_WALLET));
+      dispatch(addAccountAction(loaded[0], ACCOUNT_TYPES.BITCOIN_WALLET));
     }
   };
 };
