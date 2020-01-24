@@ -1573,11 +1573,12 @@ export const getAssetTransferGasLimitsAction = () => {
         data: user,
       },
     } = getState();
+
+    let to;
     const from = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
     const collectibles = collectiblesByAccount[accountId];
     const smartWalletSdkInitialized = smartWalletService.sdkInitialized;
-    let to;
 
     /**
      * if sdk was initialized then it was initialized with wallet's PK
@@ -1614,24 +1615,21 @@ export const getAssetTransferGasLimitsAction = () => {
       // init already contains smart accounts, let's grab address from first one
       ([{ address: to }] = smartAccounts); // first account address
     }
-    let estimateTransaction = {
-      from,
-      to,
-    };
+
     // $FlowFixMe
-    [...transferAssets, ...transferCollectibles].map(({ name, key, amount }) => {
+    [...transferAssets, ...transferCollectibles].forEach(({ name, key, amount }) => {
       let dispatchType: string;
-      if (key) {
-        const {
-          id: tokenId,
-          contractAddress,
-        } = collectibles.find(({ assetContract, name: contractName }) =>
-          `${assetContract}${contractName}` === key,
-        ) || {};
-        // collectible
+      let estimateTransaction = { from, to };
+
+      if (key) { // send collectible
+        const collectible = collectibles
+          .find(({ assetContract, name: contractName }) => `${assetContract}${contractName}` === key);
+        if (!collectible) return null;
+
+        const { id: tokenId, contractAddress } = collectible;
         estimateTransaction = { ...estimateTransaction, tokenId, contractAddress };
         dispatchType = SET_COLLECTIBLE_TRANSFER_GAS_LIMIT;
-      } else {
+      } else { // send asset
         const asset = supportedAssets.find(a => a.name === name);
         estimateTransaction = {
           ...estimateTransaction,
@@ -1642,6 +1640,7 @@ export const getAssetTransferGasLimitsAction = () => {
         };
         dispatchType = SET_ASSET_TRANSFER_GAS_LIMIT;
       }
+
       return calculateGasEstimate(estimateTransaction)
         .then(gasLimit =>
           dispatch({
