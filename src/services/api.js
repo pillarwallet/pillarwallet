@@ -390,7 +390,7 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
-  const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
+  const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`;
   return Promise.resolve()
     .then(() => axios.get(url, {
       ...defaultAxiosRequestConfig,
