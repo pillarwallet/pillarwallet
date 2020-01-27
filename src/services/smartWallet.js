@@ -29,9 +29,12 @@ import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { Sentry } from 'react-native-sentry';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 import type { GasInfo } from 'models/GasInfo';
+import type { SmartWalletAccount } from 'models/SmartWalletAccount';
+import type SDKWrapper from 'services/api';
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
 import { SPEED_TYPES } from 'constants/assetsConstants';
 
@@ -154,7 +157,7 @@ class SmartWallet {
     subscribedToEvents = true;
   }
 
-  async getAccounts() {
+  async getAccounts(): Promise<SmartWalletAccount[]> {
     const accounts = await this.sdk.getConnectedAccounts()
       .then(({ items = [] }) => items)
       .catch(() => []);
@@ -184,6 +187,31 @@ class SmartWallet {
       ...account,
       devices,
     };
+  }
+
+  async syncSmartAccountsWithBackend(
+    api: SDKWrapper,
+    smartAccounts: SmartWalletAccount[],
+    walletId: string,
+    privateKey: string,
+    fcmToken: string,
+  ) {
+    const backendAccounts = await api.listAccounts(walletId);
+    const registerOnBackendPromises = smartAccounts.map(async account => {
+      const backendAccount = backendAccounts.some(({ ethAddress }) => addressesEqual(ethAddress, account.address));
+      if (!backendAccount) {
+        return api.registerSmartWallet({
+          walletId,
+          privateKey,
+          ethAddress: account.address,
+          fcmToken,
+        });
+      }
+      return Promise.resolve();
+    });
+    return Promise
+      .all(registerOnBackendPromises)
+      .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
   async deploy() {
@@ -238,7 +266,7 @@ class SmartWallet {
     const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
     return {
       ...account,
-      devices,
+      devices: get(devices, 'items', []),
     };
   }
 
@@ -395,6 +423,13 @@ class SmartWallet {
 
   handleError(error: any) {
     console.error('SmartWallet handleError: ', error);
+  }
+
+  reportError(errorMessge: string, errorData: Object) {
+    Sentry.captureMessage(errorMessge, { extra: errorData });
+    if (__DEV__) {
+      console.log(errorMessge, errorData); // eslint-disable-line
+    }
   }
 
   async reset() {
