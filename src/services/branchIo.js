@@ -19,8 +19,12 @@
 */
 import branch from 'react-native-branch';
 
-export const getUserReferralLink = async (): Promise<string> => {
-  const branchIoUniversalObject = await branch.createBranchUniversalObject(`referral-link-${+new Date()}`);
+export const getUserReferralLink = async (username: string): Promise<string> => {
+  const branchIoUniversalObject = await branch.createBranchUniversalObject(`${username}-referral-link-${+new Date()}`, {
+    contentMetadata: {
+      customMetadata: { username },
+    },
+  });
   const result = await branchIoUniversalObject.generateShortUrl({ feature: 'referral', channel: 'app' });
   return result.url;
 };

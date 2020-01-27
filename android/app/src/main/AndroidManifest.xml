@@ -34,6 +34,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove"/>
 
+
     <!-- ADD TEST PERMISSIONS HERE -->
 
     <uses-feature android:glEsVersion="0x00020000" android:required="false" />
@@ -292,7 +293,6 @@
         <!-- Branch init -->
         <meta-data android:name="io.branch.sdk.BranchKey" android:value="@string/branch_io_key_live" />
         <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="@string/branch_io_key_test" />
-        <meta-data android:name="io.branch.sdk.TestMode" android:value="true" />
 
         <!-- Branch install referrer tracking (optional) -->
         <receiver android:name="io.branch.referral.InstallListener" android:exported="true">

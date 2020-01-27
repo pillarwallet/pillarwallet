@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import branchIo from 'react-native-branch';
 import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -42,11 +43,15 @@ import { loadFeatureFlagsAction } from './featureFlagsActions';
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
     const settings = { optOutTracking: status };
-
     if (status) {
       dispatch(logEventAction('tracking_opted_out'));
     } else {
       dispatch(logEventAction('tracking_opted_in'));
+    }
+    try {
+      await branchIo.disableTracking(status);
+    } catch (e) {
+      // catch exception if native module failed by any reason
     }
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });

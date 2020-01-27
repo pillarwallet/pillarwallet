@@ -204,7 +204,12 @@ dependencies {
   implementation 'com.google.android.gms:play-services-maps:15.0.0'
   implementation 'com.google.android.gms:play-services-auth:15.0.0'
   implementation 'com.google.android.gms:play-services-location:15.0.0'
-//  compile 'com.google.android.gms:play-services-ads:15.0.0'
+
+  // branch.io
+  implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching
+  implementation 'com.android.support:customtabs:28.0.0' // optional, Chrome Tab matching (enables 100% guaranteed matching based on cookies), androidx.browser:browser works just the same
+
+
   annotationProcessor 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
   implementation "com.raizlabs.android:DBFlow-Core:2.2.1"
   implementation "com.raizlabs.android:DBFlow:2.2.1"

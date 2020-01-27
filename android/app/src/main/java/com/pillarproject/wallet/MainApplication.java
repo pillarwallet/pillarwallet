@@ -12,6 +12,7 @@ import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
 
 import io.branch.referral.Branch;
+import io.branch.rnbranch.RNBranchModule;
 import io.branch.rnbranch.RNBranchPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.mattblock.reactnative.inappbrowser.RNInAppBrowserPackage;
@@ -122,7 +123,7 @@ public class MainApplication extends Application implements ShareApplication, Re
   @Override
   public void onCreate() {
     super.onCreate();
-    Branch.getAutoInstance(this);
+    RNBranchModule.getAutoInstance(this);
     final Fabric fabric = new Fabric.Builder(this)
             .kits(new Crashlytics(), new Answers())
             .build();
