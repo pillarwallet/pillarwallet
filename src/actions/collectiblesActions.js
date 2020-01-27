@@ -144,6 +144,17 @@ const collectibleTransaction = (event) => {
   };
 };
 
+const isCollectibleTransaction = (event: Object): boolean => {
+  const { asset } = event;
+  // NOTE: for some rare transactions we don't have information about the asset sent
+  if (!asset) return false;
+
+  const { asset_contract: assetContract } = asset;
+  if (!assetContract) return false;
+
+  return assetContract.schema_name === 'ERC721';
+};
+
 export const fetchCollectiblesHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -156,9 +167,8 @@ export const fetchCollectiblesHistoryAction = () => {
 
     if (response.error || !response.asset_events) return;
 
-    // NOTE: for some rare transactions we don't have information about the asset sent
     const accountCollectiblesHistory = response.asset_events
-      .filter(event => !!event.asset)
+      .filter(isCollectibleTransaction)
       .map(collectibleTransaction);
 
     const updatedCollectiblesHistory = {
