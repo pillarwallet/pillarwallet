@@ -19,14 +19,14 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { BackHandler, Keyboard, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import get from 'lodash.get';
 import { RECOVERY_PORTAL_URL } from 'react-native-dotenv';
 import { WebView } from 'react-native-webview';
 import type { NavigationScreenProp } from 'react-navigation';
-// import isEmpty from 'lodash.isempty';
+import type { Input } from 'native-base';
 
 // actions
 import {
@@ -86,8 +86,6 @@ type State = {
   backupPhrase: Object,
   currentWordIndex: number,
   currentBPWord: string,
-  currentRecoveryPortalWebViewUrl: ?string,
-  checkingNewRecoveryPortalUrl: boolean,
 };
 
 const DEV = 'DEV';
@@ -190,11 +188,8 @@ const getButtonLabel = (currentWordIndex, error) => {
 const iconReceive = require('assets/icons/icon_receive.png');
 
 class ImportWallet extends React.Component<Props, State> {
-  backupPhraseInput: Object;
-  privKeyInput: Object;
-  devPhraseInput: Object;
+  currentInputRef: Input;
   recoveryPortalWebViewRef: WebView;
-  initialRecoveryPortalUrl: ?string = null;
 
   state = {
     privateKey: '',
@@ -207,32 +202,6 @@ class ImportWallet extends React.Component<Props, State> {
     isScanning: false,
     activeTab: TWORDSPHRASE,
     inputEnabled: false,
-    currentRecoveryPortalWebViewUrl: null,
-    checkingNewRecoveryPortalUrl: false,
-  };
-
-  componentDidMount() {
-    if (Platform.OS !== 'android' && this.state.activeTab !== WEB_RECOVERY_PORTAL) return;
-    BackHandler.addEventListener('hardwareBackPress', this.handleRecoveryPortalNavigationBack);
-  }
-
-  componentWillUnmount() {
-    if (Platform.OS !== 'android' && this.state.activeTab !== WEB_RECOVERY_PORTAL) return;
-    BackHandler.removeEventListener('hardwareBackPress', this.handleRecoveryPortalNavigationBack);
-  }
-
-  handleRecoveryPortalNavigationBack = () => {
-    const { currentRecoveryPortalWebViewUrl } = this.state;
-    if (!this.recoveryPortalWebViewRef
-      || (this.initialRecoveryPortalUrl
-        && currentRecoveryPortalWebViewUrl
-        && this.initialRecoveryPortalUrl.includes(currentRecoveryPortalWebViewUrl)
-      )) {
-      const { navigation } = this.props;
-      navigation.goBack();
-      return;
-    }
-    this.recoveryPortalWebViewRef.goBack();
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -302,12 +271,11 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleValueChange = (field) => (value) => {
+    if (field === 'webRecoveryPortal') return;
     if (field === 'currentBPWord') {
       this.onBackupPhraseWordChange(value);
     } else {
-      this.setState({
-        [field]: value,
-      });
+      this.setState({ [field]: value });
     }
     this.props.resetWalletError();
   };
@@ -321,39 +289,47 @@ class ImportWallet extends React.Component<Props, State> {
   renderWebViewLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
 
   onRecoveryPortalWebViewNavigationStateChange = (webViewNavigationState) => {
-    const {
-      checkingNewRecoveryPortalUrl: checkingNewUrl,
-      currentRecoveryPortalWebViewUrl: lastWebViewUrl,
-    } = this.state;
-    if (checkingNewUrl) return;
-    this.setState({ checkingNewRecoveryPortalUrl: true }, () => {
-      const currentWebViewUrl = get(webViewNavigationState, 'url');
-      if (!this.initialRecoveryPortalUrl) this.initialRecoveryPortalUrl = currentWebViewUrl;
-      if (!currentWebViewUrl) return;
-      // if initial url was set then new url might be deep link, let's parse it right away
-      // if (lastWebViewUrl && !isEmpty(validateDeepLink(currentWebViewUrl))) {
-      //   const { executeDeepLink } = this.props;
-      //   // redirect to last url because deep link is detected as new page
-      //   this.recoveryPortalWebViewRef.stopLoading();
-      //   this.recoveryPortalWebViewRef.injectJavaScript(`window.location = "${lastWebViewUrl}";`);
-      //   this.setState({ checkingNewUrl: false }, () => executeDeepLink(currentWebViewUrl));
-      //   return;
-      // }
-      if (lastWebViewUrl
-        && lastWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_OUT)
-        && currentWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_IN)) {
-        // covers scenario if user logged out (sign-out) on webview and sign in becomes is present home
-        this.initialRecoveryPortalUrl = currentWebViewUrl;
-      }
-      this.setState({
-        currentRecoveryPortalWebViewUrl: currentWebViewUrl,
-        checkingNewRecoveryPortalUrl: false,
-      });
-    });
+    const currentUrl = get(webViewNavigationState, 'url');
+    const deviceAddressQuery = '?deviceAddress=abc';
+    // if it's recovery address then inject current device address to url query param
+    if (currentUrl.includes(RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE)
+      && !currentUrl.includes(deviceAddressQuery)
+      && this.recoveryPortalWebViewRef) {
+      const recoverDeviceUrl = `${RECOVERY_PORTAL_URL}/${RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE}`;
+      this.recoveryPortalWebViewRef.stopLoading();
+      this.recoveryPortalWebViewRef.injectJavaScript(
+        `window.location = "${recoverDeviceUrl}${deviceAddressQuery}";`,
+      );
+    }
+  };
+
+  renderWebRecoveryPortalWebView = () => {
+    return (
+      <WebView
+        ref={(ref) => { this.recoveryPortalWebViewRef = ref; }}
+        source={{ uri: RECOVERY_PORTAL_URL }}
+        onNavigationStateChange={this.onRecoveryPortalWebViewNavigationStateChange}
+        renderLoading={this.renderWebViewLoading}
+        originWhitelist={['*']}
+        hideKeyboardAccessoryView
+        startInLoadingState
+        incognito
+      />
+    );
+  };
+
+  setInputRef = (inputRef) => {
+    this.currentInputRef = inputRef;
+  };
+
+  focusInputOnLayout = () => {
+    if (!this.currentInputRef) return;
+    this.currentInputRef.focus();
   };
 
   renderForm = (tabsInfo) => {
     const { activeTab, backupPhrase, currentWordIndex } = this.state;
+
     const inputProps = {
       onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
       value: tabsInfo[activeTab].value,
@@ -367,7 +343,7 @@ class ImportWallet extends React.Component<Props, State> {
         <React.Fragment>
           <Label style={{ marginBottom: 20 }}>Paste your private key</Label>
           <TextInput
-            getInputRef={(ref) => { this.privKeyInput = ref; }}
+            getInputRef={this.setInputRef}
             inputProps={{
               ...inputProps,
               multiline: true,
@@ -377,10 +353,7 @@ class ImportWallet extends React.Component<Props, State> {
             errorMessage={tabsInfo[activeTab].errorMessage}
             additionalStyle={{ textAlign: 'center' }}
             errorMessageStyle={{ textAlign: 'center' }}
-            onLayout={() => {
-              if (!this.privKeyInput) return;
-              this.privKeyInput.focus();
-            }}
+            onLayout={this.focusInputOnLayout}
           />
         </React.Fragment>
       );
@@ -389,36 +362,14 @@ class ImportWallet extends React.Component<Props, State> {
     if (activeTab === DEV) {
       return (
         <TextInput
-          getInputRef={(ref) => { this.devPhraseInput = ref; }}
+          getInputRef={this.setInputRef}
           inputProps={{
             ...inputProps,
             multiline: true,
             numberOfLines: 2,
           }}
           errorMessage={tabsInfo[activeTab].errorMessage}
-          onLayout={() => {
-            if (!this.devPhraseInput) return;
-            this.devPhraseInput.focus();
-          }}
-        />
-      );
-    }
-
-    if (activeTab === WEB_RECOVERY_PORTAL) {
-      const recoveryUrl = `${[
-        RECOVERY_PORTAL_URL,
-        RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE,
-      ].join('/')}?deviceAddress=abc`;
-      return (
-        <WebView
-          ref={(ref) => { this.recoveryPortalWebViewRef = ref; }}
-          source={{ uri: recoveryUrl }}
-          onNavigationStateChange={this.onRecoveryPortalWebViewNavigationStateChange}
-          renderLoading={this.renderWebViewLoading}
-          originWhitelist={['*']}
-          hideKeyboardAccessoryView
-          startInLoadingState
-          incognito
+          onLayout={this.focusInputOnLayout}
         />
       );
     }
@@ -432,14 +383,11 @@ class ImportWallet extends React.Component<Props, State> {
         </Row>
         <Label>{`Word ${currentWordIndex}`}</Label>
         <TextInput
-          getInputRef={(ref) => { this.backupPhraseInput = ref; }}
+          getInputRef={this.setInputRef}
           inputProps={inputProps}
           additionalStyle={{ textAlign: 'center' }}
           errorMessage={tabsInfo[activeTab].errorMessage}
-          onLayout={() => {
-            if (!this.backupPhraseInput) return;
-            this.backupPhraseInput.focus();
-          }}
+          onLayout={this.focusInputOnLayout}
         />
       </React.Fragment>
     );
@@ -585,6 +533,8 @@ class ImportWallet extends React.Component<Props, State> {
       WEB_RECOVERY_PORTAL: {
         inputLabel: 'Recovery Portal',
         changeName: 'webRecoveryPortal',
+        value: null,
+        errorMessage: null,
       },
       DEV: {
         inputLabel: 'Backup phrase',
@@ -593,6 +543,8 @@ class ImportWallet extends React.Component<Props, State> {
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
     };
+
+    const isRecoveryPortalTab = activeTab === WEB_RECOVERY_PORTAL;
 
     return (
       <ContainerWithHeader
@@ -603,14 +555,19 @@ class ImportWallet extends React.Component<Props, State> {
           </FooterWrapper>
         )}
       >
-        <ScrollWrapper disableAutomaticScroll keyboardShouldPersistTaps="always">
+        <ScrollWrapper
+          contentContainerStyle={{ flex: 1 }}
+          keyboardShouldPersistTaps="always"
+          disableAutomaticScroll
+        >
           <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
-          <Wrapper regularPadding style={{ flex: 1 }}>
-            <InputWrapper>
-              <FormWrapper>
-                {this.renderForm(tabsInfo)}
-              </FormWrapper>
-            </InputWrapper>
+          <Wrapper style={{ flex: 1 }} regularPadding>
+            {isRecoveryPortalTab && this.renderWebRecoveryPortalWebView()}
+            {!isRecoveryPortalTab &&
+              <InputWrapper>
+                <FormWrapper>{this.renderForm(tabsInfo)}</FormWrapper>
+              </InputWrapper>
+            }
           </Wrapper>
         </ScrollWrapper>
         <QRCodeScanner
