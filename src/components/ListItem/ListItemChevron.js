@@ -95,6 +95,7 @@ type Props = {
   addon?: React.Node,
   bordered?: boolean,
   color?: string,
+  chevronColor?: string,
   subtext?: string,
   subtextAddon?: React.Node,
   wrapperStyle?: Object,
@@ -110,6 +111,7 @@ export const ListItemChevron = (props: Props) => {
     subtextAddon,
     bordered,
     color,
+    chevronColor,
     subtext,
     wrapperStyle,
     chevronStyle,
@@ -136,7 +138,7 @@ export const ListItemChevron = (props: Props) => {
             {rightAddon}
             <ChevronIcon
               name="chevron-right"
-              color={color}
+              color={chevronColor || color}
               style={chevronStyle}
             />
           </AddonWrapper>

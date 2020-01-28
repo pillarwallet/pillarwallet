@@ -96,7 +96,7 @@ class Welcome extends React.Component<Props, State> {
         >
           <Button roundedCorners marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
           <ButtonText
-            buttonText="Restore wallet"
+            buttonText="Recover wallet"
             onPress={this.navigateToWalletImportPage}
             fontSize={fontSizes.big}
           />
