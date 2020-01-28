@@ -160,6 +160,7 @@ const themeColors = (theme) => {
     },
     danger: {
       background: colors.negative,
+      surface: colors.danger,
       text: colors.control,
     },
     dark: {
