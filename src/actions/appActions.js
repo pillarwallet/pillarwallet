@@ -221,15 +221,17 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
+      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+
       // check if current user has theme set and set it to default if
       const hasTheme = get(appSettings, 'themeType');
-      // check if theme is set to system's default
-      const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
-      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
       if (!hasTheme) {
         dispatch(setAppThemeAction());
       }
+
+      // check if theme is set to system's default
+      const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
 
       if (isThemeSetAsSystemDefault) {
         dispatch(handleSystemDefaultThemeChangeAction());

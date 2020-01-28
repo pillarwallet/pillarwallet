@@ -527,7 +527,7 @@ class Settings extends React.Component<Props, State> {
     );
   };
 
-  renderListItem = (field: string, onSelect: Function, currentValue) => ({ item: { name, value } }: Object) => {
+  renderListItem = (field: string, onSelect: Function, currentValue: string) => ({ item: { name, value } }: Object) => {
     return (
       <SettingsListItem
         key={value}
