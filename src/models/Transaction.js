@@ -38,6 +38,7 @@ export type SyntheticTransaction = {
   toAmount: number,
   toAssetCode: string,
   toAddress: string,
+  receiverEnsName?: string,
 };
 
 export type SyntheticTransactionExtra = {

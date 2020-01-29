@@ -164,6 +164,7 @@ const ImageIcon = styled(CachedImage)`
 class SendSyntheticAmount extends React.Component<Props, State> {
   syntheticsForm: t.form;
   receiver: string;
+  receiverEnsName: string;
   source: string;
   assetData: AssetData;
   availableSyntheticBalance: number;
@@ -178,6 +179,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
     this.source = getNavigationParam('source', '');
     this.receiver = getNavigationParam('receiver', '');
+    this.receiverEnsName = getNavigationParam('receiverEnsName');
 
     this.assetData = getNavigationParam('assetData', {});
     const fetchedSyntheticAsset = availableSyntheticAssets.find(({ symbol }) => symbol === this.assetData.token);
@@ -241,6 +243,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         // go through regular confirm as PLR is staked by the user already so he owns it
         const transactionPayload: TokenTransactionPayload = {
           to: this.receiver,
+          receiverEnsName: this.receiverEnsName,
           amount,
           gasLimit: 0,
           gasPrice: 0,
@@ -272,6 +275,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
               toAmount: amount,
               toAssetCode: assetCode,
               toAddress: this.receiver,
+              receiverEnsName: this.receiverEnsName,
             };
             Keyboard.dismiss();
             navigation.navigate(SEND_SYNTHETIC_CONFIRM, {
