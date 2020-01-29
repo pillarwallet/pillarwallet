@@ -99,6 +99,7 @@ const BackgroundWrapper = styled.View`
 type Props = {
   assetData: AssetData,
   receiver: string,
+  receiverEnsName: string,
   source: string,
   navigation: NavigationScreenProp<*>,
   balances: Balances,
@@ -188,22 +189,34 @@ class SendETHTokens extends React.Component<Props, State> {
   handleFormSubmit = async () => {
     const { submitPressed } = this.state;
     if (submitPressed) return;
+
     this.formSubmitted = true;
     this.setState({ submitPressed: true });
+
     const value = this._form.getValue();
     if (!value) return;
-    const { receiver, assetData, source } = this.props;
+
+    const {
+      receiver,
+      receiverEnsName,
+      assetData,
+      source,
+      navigation,
+      activeAccount,
+    } = this.props;
     const txFeeInWei = await this.getTxFeeInWei();
+
     // $FlowFixMe
     let transactionPayload: TokenTransactionPayload = {
       to: receiver,
+      receiverEnsName,
       amount: value.amount,
       txFeeInWei,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
       decimals: assetData.decimals,
     };
-    const { navigation, activeAccount } = this.props;
+
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
       const { gasLimit } = this.state;
       const transactionSpeed = this.getTxSpeed();
@@ -215,7 +228,9 @@ class SendETHTokens extends React.Component<Props, State> {
         txSpeed: transactionSpeed,
       };
     }
+
     Keyboard.dismiss();
+
     this.setState({ submitPressed: false }, () => {
       navigation.navigate(SEND_TOKEN_CONFIRM, {
         transactionPayload,

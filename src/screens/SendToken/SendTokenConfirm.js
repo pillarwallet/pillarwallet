@@ -100,6 +100,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
     const {
       amount,
       to,
+      receiverEnsName,
       txFeeInWei,
       symbol,
     } = navigation.getParam('transactionPayload', {});
@@ -129,6 +130,12 @@ class SendTokenConfirm extends React.Component<Props, State> {
           <LabeledRow>
             <Label>Recipient Username</Label>
             <Value>{recipientUsername}</Value>
+          </LabeledRow>
+          }
+          {!!receiverEnsName &&
+          <LabeledRow>
+            <Label>Recipient ENS name</Label>
+            <Value>{receiverEnsName}</Value>
           </LabeledRow>
           }
           {!!userAccount &&

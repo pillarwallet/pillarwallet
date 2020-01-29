@@ -35,7 +35,7 @@ import {
 } from 'react-native';
 import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
-import { INFURA_PROJECT_ID } from 'react-native-dotenv';
+import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
@@ -338,6 +338,11 @@ export const getEthereumProvider = (network: string) => {
   // Creating a provider to automatically fallback onto Etherscan
   // if INFURA is down
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
+};
+
+export const validateEnsName = (ensName: string) => {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  return provider.resolveName(ensName);
 };
 
 export const padWithZeroes = (value: string, length: number): string => {

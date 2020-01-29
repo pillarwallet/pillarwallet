@@ -277,6 +277,7 @@ export const sendAssetAction = (
     const symbol = get(transaction, 'symbol', '');
     const allowancePayload = get(transaction, 'extra.allowance', {});
     const usePPN = get(transaction, 'usePPN', false);
+    const receiverEnsName = get(transaction, 'receiverEnsName');
 
     if (tokenType === COLLECTIBLES) {
       await dispatch(fetchCollectiblesAction());
@@ -449,6 +450,10 @@ export const sendAssetAction = (
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      }
+
+      if (receiverEnsName) {
+        // dispatch({ type: ADD_ENS_MAPPING, payload: { receiverEnsName, to } });
       }
     }
 

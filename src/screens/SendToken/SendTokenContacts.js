@@ -48,11 +48,12 @@ import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
 // utils
-import { addressValidator } from 'utils/validators';
-import { isCaseInsensitiveMatch } from 'utils/common';
+import { addressValidator, isEnsName } from 'utils/validators';
+import { validateEnsName, isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { themedColors } from 'utils/themes';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -64,7 +65,6 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
 import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { themedColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -82,10 +82,12 @@ type Props = {
 
 type State = {
   isScanning: boolean,
+  isValidatingEns: boolean,
   value: {
     address: string,
   },
   formStructure: t.struct,
+  formOptions: Object,
 };
 
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
@@ -118,6 +120,7 @@ function AddressInputTemplate(locals) {
     maxLength: 42,
     letterSpacing: 0.1,
     fontSize: fontSizes.medium,
+    autoCapitalize: 'none',
   };
 
   return (
@@ -177,8 +180,10 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     this.state = {
       isScanning: false,
+      isValidatingEns: false,
       value: { address: '' },
       formStructure: getFormStructure(this.props.wallet.address, token),
+      formOptions: generateFormOptions({ onIconPress: this.handleQRScannerOpen }),
     };
   }
 
@@ -193,10 +198,38 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({ value });
   };
 
-  handleFormSubmit = () => {
+  handleFormSubmit = async () => {
     const value = this._form.getValue();
     if (!value) return;
-    this.navigateToNextScreen(value.address);
+
+    const { token } = this.assetData;
+    let ensName = '';
+    let receiverAddress = value.address;
+
+    if (isEnsName(value.address) && token !== BTC) {
+      this.setState({ isValidatingEns: true });
+      const resolvedAddress = await validateEnsName(value.address);
+      if (!resolvedAddress) {
+        this.setInvalidEns();
+        return;
+      }
+      ensName = value.address;
+      receiverAddress = resolvedAddress;
+    }
+
+    this.setState({ isValidatingEns: false }, () => this.navigateToNextScreen(receiverAddress, ensName));
+  };
+
+  setInvalidEns = () => {
+    const options = t.update(this.state.formOptions, {
+      fields: {
+        address: {
+          hasError: { $set: true },
+          error: { $set: 'Address not found' },
+        },
+      },
+    });
+    this.setState({ isValidatingEns: false, formOptions: options });
   };
 
   handleQRScannerOpen = async () => {
@@ -271,7 +304,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
   };
 
-  navigateToNextScreen(receiverAddress) {
+  navigateToNextScreen(receiverAddress: string, receiverEnsName?: string) {
     const { navigation, navigateToSendTokenAmount } = this.props;
 
     if (this.assetData.tokenType === COLLECTIBLES) {
@@ -279,6 +312,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         assetData: this.assetData,
         receiver: receiverAddress,
         source: 'Contact',
+        receiverEnsName,
       });
       return;
     }
@@ -286,6 +320,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       assetData: this.assetData,
       receiver: receiverAddress,
       source: 'Contact',
+      receiverEnsName,
     });
   }
 
@@ -364,12 +399,17 @@ class SendTokenContacts extends React.Component<Props, State> {
       contactsSmartAddressesSynced,
       isOnline,
     } = this.props;
+    const {
+      isScanning,
+      isValidatingEns,
+      formStructure,
+      formOptions,
+      value,
+    } = this.state;
+
     const { tokenType, name, token } = this.assetData;
     const isCollectible = tokenType === COLLECTIBLES;
-
-    const { isScanning, formStructure, value } = this.state;
     const isSearchQueryProvided = !!(value && value.address.length);
-    const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     const showContacts = isCollectible || token !== BTC;
     const tokenName = (isCollectible ? (name || token) : token) || 'asset';
@@ -383,6 +423,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       : [{ title: `Send ${tokenName}` }];
 
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
+    const submitDisabled = !value.address.length || isValidatingEns;
 
     return (
       <ContainerWithHeader
@@ -410,7 +451,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         />
         {isSearchQueryProvided &&
           <Footer keyboardVerticalOffset={35}>
-            <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
+            <Button flexRight small disabled={submitDisabled} title="Next" onPress={this.handleFormSubmit} />
           </Footer>
         }
       </ContainerWithHeader>
