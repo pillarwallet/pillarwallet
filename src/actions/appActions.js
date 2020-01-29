@@ -74,11 +74,13 @@ import {
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 
 import { loadBitcoinAddressesAction } from 'actions/bitcoinActions';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
+
 
 const storage = Storage.getInstance('db');
 
@@ -221,6 +223,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
+
+      const { ensRegistry = {} } = await storage.get('ensRegistry');
+      dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
       // check if current user has theme set and set it to default if
       const hasTheme = get(appSettings, 'themeType');

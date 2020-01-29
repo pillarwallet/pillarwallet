@@ -84,6 +84,7 @@ import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction } from './ratesActions';
+import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -453,7 +454,7 @@ export const sendAssetAction = (
       }
 
       if (receiverEnsName) {
-        // dispatch({ type: ADD_ENS_MAPPING, payload: { receiverEnsName, to } });
+        dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
       }
     }
 
