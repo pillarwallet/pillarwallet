@@ -198,26 +198,30 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({ value });
   };
 
-  handleFormSubmit = async () => {
-    const value = this._form.getValue();
-    if (!value) return;
-
+  validateAndNavigate = async (address: string) => {
     const { token } = this.assetData;
     let ensName = '';
-    let receiverAddress = value.address;
+    let receiverAddress = address;
 
-    if (isEnsName(value.address) && token !== BTC) {
+    if (isEnsName(address) && token !== BTC) {
       this.setState({ isValidatingEns: true });
-      const resolvedAddress = await validateEnsName(value.address);
+      const resolvedAddress = await validateEnsName(address);
       if (!resolvedAddress) {
         this.setInvalidEns();
         return;
       }
-      ensName = value.address;
+      ensName = address;
       receiverAddress = resolvedAddress;
     }
 
     this.setState({ isValidatingEns: false }, () => this.navigateToNextScreen(receiverAddress, ensName));
+  };
+
+  handleFormSubmit = () => {
+    const value = this._form.getValue();
+    if (!value) return;
+
+    this.validateAndNavigate(value.address);
   };
 
   setInvalidEns = () => {
@@ -250,7 +254,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   handleQRRead = (address: string) => {
     this.setState({ value: { ...this.state.value, address }, isScanning: false }, () => {
-      this.navigateToNextScreen(address);
+      this.validateAndNavigate(address);
     });
   };
 
