@@ -62,6 +62,7 @@ import userEventsReducer from './userEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
+import recoveryPortalReducer from './recoveryPortalReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -103,6 +104,7 @@ import type { UserEventsReducerAction, UserEventsReducerState } from './userEven
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
+import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -141,6 +143,7 @@ export type RootReducerState = {|
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
   connectedDevices: ConnectedDevicesReducerState,
+  recoveryPortal: RecoveryPortalReducerState,
 |};
 
 type RootReducerAction =
@@ -164,7 +167,8 @@ type RootReducerAction =
   | WalkthroughsReducerAction
   | DbAction
   | SyntheticsReducerAction
-  | ConnectedDevicesReducerAction;
+  | ConnectedDevicesReducerAction
+  | RecoveryPortalReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -213,6 +217,7 @@ const appReducer = combineReducers({
   walkthroughs: walkthroughsReducer,
   synthetics: syntheticsReducer,
   connectedDevices: connectedDevicesReducer,
+  recoveryPortal: recoveryPortalReducer,
 });
 
 export const initialState = appReducer(undefined, {});

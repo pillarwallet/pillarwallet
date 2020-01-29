@@ -19,6 +19,9 @@
 */
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
+import shuffle from 'shuffle-array';
+
+// constants
 import {
   UPDATE_WALLET_MNEMONIC,
   IMPORT_ERROR,
@@ -33,24 +36,40 @@ import {
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
+  UPDATE_WALLET_STATE,
+  ENCRYPTING,
+  GENERATE_ENCRYPTED_WALLET,
 } from 'constants/walletConstants';
 import { PIN_CODE_CONFIRMATION, NEW_PROFILE } from 'constants/navigationConstants';
-import shuffle from 'shuffle-array';
-import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
+
+// utils
+import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
+import { delay } from 'utils/common';
+
+// services
 import { navigate } from 'services/navigation';
-import { logEventAction } from 'actions/analyticsActions';
+
+// types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
+
+// actions
+import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 import { registerWalletAction } from './onboardingActions';
 
+
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     try {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
 
       api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
+      // TODO: fix flow for "addressValidationResponse.walletId" after adding types to action
+      // $FlowFixMe
       if (addressValidationResponse.walletId) {
         apiUser = {
           id: addressValidationResponse.id,
@@ -80,7 +99,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
 };
 
 export const importWalletFromPrivateKeyAction = (privateKey: string) => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
@@ -88,6 +107,8 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
+      // TODO: fix flow for "addressValidationResponse.walletId" after adding types to action
+      // $FlowFixMe
       if (addressValidationResponse.walletId) {
         apiUser = {
           id: addressValidationResponse.id,
@@ -117,7 +138,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
 };
 
 export const navigateToNewWalletPageAction = () => {
-  return async (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     dispatch({ type: RESET_WALLET_IMPORT });
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
@@ -137,7 +158,7 @@ const NUM_WORDS_TO_CHECK = 3;
  * @param {String} mnemonicPhrase
  */
 export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
-  return async (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     mnemonicPhrase = generateMnemonicPhrase(mnemonicPhrase);
     const mnemonicList = mnemonicPhrase.split(' ');
     const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
@@ -155,7 +176,7 @@ export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
 };
 
 export const setPinForNewWalletAction = (pin: string) => {
-  return async (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     dispatch({
       type: NEW_WALLET_SET_PIN,
       payload: pin,
@@ -165,7 +186,7 @@ export const setPinForNewWalletAction = (pin: string) => {
 };
 
 export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?: boolean) => {
-  return async (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     dispatch({
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
@@ -176,7 +197,7 @@ export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?:
 };
 
 export const backupWalletAction = () => {
-  return async (dispatch: Function) => {
+  return (dispatch: Dispatch) => {
     dispatch(saveDbAction('wallet', {
       wallet: {
         backupStatus: { isBackedUp: true },
@@ -189,14 +210,10 @@ export const backupWalletAction = () => {
   };
 };
 
-export const removePrivateKeyFromMemoryAction = () => {
-  return async (dispatch: Function) => {
-    dispatch({ type: REMOVE_PRIVATE_KEY });
-  };
-};
+export const removePrivateKeyFromMemoryAction = () => ({ type: REMOVE_PRIVATE_KEY });
 
 export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
-  return async (dispatch: Function, getState: () => Object) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { wallet: { pinAttemptsCount } } = getState();
     const newCount = isInvalidPin ? pinAttemptsCount + 1 : 0;
     const currentTimeStamp = isInvalidPin ? Date.now() : 0;
@@ -213,5 +230,40 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
         lastPinAttempt: currentTimeStamp,
       },
     }));
+  };
+};
+
+export const encryptAndSaveWalletAction = (
+  pin: string,
+  wallet: Object,
+  isImported: boolean,
+  isBackedUp: boolean,
+  isRecoveryPending?: boolean = false,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { wallet: { walletState } } = getState();
+
+    // might be already in ENCRYPTING state, i.e. on pin change
+    if (walletState !== ENCRYPTING) {
+      dispatch({ type: UPDATE_WALLET_STATE, payload: ENCRYPTING });
+    }
+
+    await delay(50);
+    const saltedPin = await getSaltedPin(pin, dispatch);
+    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
+      .then(JSON.parse)
+      .catch(() => ({}));
+
+    dispatch(saveDbAction('wallet', {
+      wallet: {
+        ...encryptedWallet,
+        backupStatus: { isImported, isBackedUp, isRecoveryPending },
+      },
+    }));
+
+    dispatch({
+      type: GENERATE_ENCRYPTED_WALLET,
+      payload: { address: wallet.address },
+    });
   };
 };

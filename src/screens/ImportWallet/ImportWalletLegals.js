@@ -127,7 +127,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={({
-          centerItems: [{ title: 'Re-import wallet' }],
+          centerItems: [{ title: 'Recover wallet' }],
           customOnBack: this.handleBackAction,
         })}
       >

@@ -27,8 +27,6 @@ import isEmpty from 'lodash.isempty';
 
 // constants
 import {
-  ENCRYPTING,
-  GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
   REGISTERING,
@@ -40,7 +38,12 @@ import {
   INVALID_USERNAME,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, HOME } from 'constants/navigationConstants';
+import {
+  APP_FLOW,
+  NEW_WALLET,
+  HOME,
+  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
+} from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { TYPE_ACCEPTED, TYPE_RECEIVED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -61,7 +64,7 @@ import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConstants';
 
 // utils
-import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
+import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
 import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
@@ -80,7 +83,7 @@ import {
   managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import { generateWalletMnemonicAction } from 'actions/walletActions';
+import { encryptAndSaveWalletAction, generateWalletMnemonicAction } from 'actions/walletActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -97,6 +100,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 import type { ApiNotification } from 'models/Notification';
+import type { BackupStatus } from 'reducers/walletReducer';
 
 const storage = Storage.getInstance('db');
 
@@ -248,15 +252,6 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
 export const registerWalletAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
-    const {
-      mnemonic,
-      pin,
-      importedWallet,
-      apiUser,
-    } = currentState.wallet.onboarding;
-
-    const mnemonicPhrase = mnemonic.original;
-    const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
     // STEP 0: Clear local storage and reset app state
     await storage.removeAll();
@@ -280,6 +275,16 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
     dispatch({ type: SET_FEATURE_FLAGS, payload: {} });
     dispatch({ type: SET_USER_EVENTS, payload: [] });
 
+    const {
+      mnemonic,
+      pin,
+      importedWallet,
+      apiUser,
+    } = currentState.wallet.onboarding;
+
+    const mnemonicPhrase = mnemonic.original;
+    const { isBackedUp, isImported, isRecoveryPending }: BackupStatus = currentState.wallet.backupStatus;
+
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
     await delay(50);
@@ -296,38 +301,27 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
     }
 
     // STEP 3: encrypt the wallet
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: ENCRYPTING,
-    });
-    await delay(50);
-    const saltedPin = await getSaltedPin(pin, dispatch);
-    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
-      .then(JSON.parse)
-      .catch(() => ({}));
-
-    dispatch(saveDbAction('wallet', {
-      wallet: {
-        ...encryptedWallet,
-        backupStatus: { isImported: !!importedWallet, isBackedUp },
-      },
-    }));
+    await dispatch(encryptAndSaveWalletAction(pin, wallet, !!importedWallet, isBackedUp, isRecoveryPending));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
     const user = apiUser.username ? { username: apiUser.username } : {};
     dispatch(saveDbAction('user', { user }));
-    dispatch({
-      type: GENERATE_ENCRYPTED_WALLET,
-      payload: {
-        address: wallet.address,
-      },
-    });
 
     // STEP 4: Initialize SDK and register user
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
     });
+
+    // checks if wallet import is pending and in this state we don't want to auth any users yet
+    if (isRecoveryPending) {
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }),
+      }));
+      return;
+    }
 
     api.init();
     const {

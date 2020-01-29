@@ -19,23 +19,35 @@
 */
 import { NavigationActions } from 'react-navigation';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+import { ethers } from 'ethers';
+import { sdkConstants } from '@smartwallet/sdk';
+import { Api } from '@smartwallet/sdk/build/modules';
 
 // actions
 import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
+import { generateWalletMnemonicAction } from 'actions/walletActions';
 
 // constants
-import { RECOVERY_PORTAL_SETUP_COMPLETE } from 'constants/navigationConstants';
+import { RECOVERY_PORTAL_SETUP_COMPLETE, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
+import {
+  RESET_RECOVERY_PORTAL_TEMPORARY_WALLET,
+  SET_RECOVERY_PORTAL_TEMPORARY_WALLET,
+} from 'constants/recoveryPortalConstants';
+import { SET_WALLET_RECOVERY_PENDING } from 'constants/walletConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
+import { generateMnemonicPhrase } from 'utils/wallet';
 
 // services
 import { navigate } from 'services/navigation';
+import smartWalletInstance from 'services/smartWallet';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
+import type { EthereumWallet } from 'models/Wallet';
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -48,6 +60,63 @@ export const addRecoveryPortalDeviceAction = (deviceAddress: string) => {
       routeName: RECOVERY_PORTAL_SETUP_COMPLETE,
       params: {},
     }));
+  };
+};
+
+export const checkSmartWalletRecoverState = (event: Api.IEvent) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const eventName = get(event, 'name');
+    const transactionType = get(event, 'payload.state');
+    const transactionHash = get(event, 'payload.hash');
+    if (eventName === Api.EventNames.AccountTransactionUpdated
+      && !isEmpty(transactionHash)
+      && !isEmpty(transactionType)) {
+      if (transactionType === sdkConstants.AccountTransactionStates.Created) {
+        // device was connected to account
+        const { recoveryPortal: { temporaryWallet } } = getState();
+        if (!temporaryWallet) return;
+        const accounts = await smartWalletInstance.getAccounts();
+        // if account is attached to current instance then this means that new device has been connected
+        if (!isEmpty(accounts)) {
+          await smartWalletInstance.connectAccount(accounts[0].address);
+          // we can add wallet to onboarding reducer and move with PIN screen to encrypt it
+          dispatch(generateWalletMnemonicAction(temporaryWallet.mnemonic));
+          // reset temporary wallet
+          dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
+          // set recovery pending state, will be saved once PIN is set along with encrypted wallet
+          dispatch({ type: SET_WALLET_RECOVERY_PENDING });
+          // move to pin screen to encrypt wallet while recoverry pending
+          navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+        }
+        return;
+      }
+      if (transactionType === sdkConstants.AccountTransactionStates.Completed) {
+        // TODO: if wallet ios not yet encrypted don't do anything to avoid race condition
+        console.log('sdkConstants.AccountTransactionStates.Completed');
+      }
+    }
+  };
+};
+
+export const initRecoveryPortalWalletRecoverAction = () => {
+  return async (dispatch: Dispatch) => {
+    // make sure everything is reset
+    dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
+    await smartWalletInstance.reset();
+
+    // let's create new temporary wallet
+    const mnemonic = generateMnemonicPhrase();
+    const { address, privateKey, path } = ethers.Wallet.fromMnemonic(mnemonic);
+    const wallet: EthereumWallet = {
+      address,
+      privateKey,
+      mnemonic,
+      path,
+    };
+
+    // set temporary smart wallet and subscribe for events
+    await smartWalletInstance.init(wallet.privateKey, dispatch, checkSmartWalletRecoverState);
+    dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
   };
 };
 

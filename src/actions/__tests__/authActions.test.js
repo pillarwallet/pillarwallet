@@ -82,7 +82,6 @@ describe('Auth actions', () => {
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
-      { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
         type: DECRYPT_WALLET,
         payload: {
@@ -91,6 +90,7 @@ describe('Auth actions', () => {
         },
       },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
+      { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
     ];
 
     const pin = '123456';
@@ -108,9 +108,9 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
-      { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: { ...mockWallet, privateKey: undefined } },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
+      { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
     ];
 

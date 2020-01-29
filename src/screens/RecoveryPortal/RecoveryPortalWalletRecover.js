@@ -19,12 +19,11 @@ import { BackHandler, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 import { RECOVERY_PORTAL_URL } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { initRecoveryPortalWalletRecoverAction } from 'actions/recoveryPortalActions';
 
 // constants
 import { RECOVERY_PORTAL_URL_PATHS } from 'constants/recoveryPortalConstants';
@@ -34,18 +33,15 @@ import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 
-// util
-import { validateDeepLink } from 'utils/deepLink';
-
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { ConnectedSmartWalletAccount } from 'models/SmartWalletAccount';
+import type { EthereumWallet } from 'models/Wallet';
 
 
 type Props = {
   navigation: NavigationScreenProp,
-  connectedSmartWallet: ConnectedSmartWalletAccount,
-  executeDeepLink: (deepLink: string) => void,
+  temporaryWallet: ?EthereumWallet,
+  initRecoveryPortalWalletRecover: () => void,
 };
 
 type State = {
@@ -53,15 +49,16 @@ type State = {
   checkingNewUrl: boolean,
 };
 
-class RecoveryPortalSignUp extends React.Component<Props, State> {
+class RecoveryPortalWalletRecover extends React.Component<Props, State> {
   webViewRef: WebView;
-  initialUrl: ?string = null;
+  initialUrl: ?string;
   state = {
     currentWebViewUrl: null,
     checkingNewUrl: false,
   };
 
   componentDidMount() {
+    this.props.initRecoveryPortalWalletRecover();
     if (Platform.OS !== 'android') return;
     BackHandler.addEventListener('hardwareBackPress', this.handleNavigationBack);
   }
@@ -71,7 +68,7 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
     BackHandler.removeEventListener('hardwareBackPress', this.handleNavigationBack);
   }
 
-  renderWebViewLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
+  renderLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
 
   handleNavigationBack = () => {
     const { currentWebViewUrl } = this.state;
@@ -93,17 +90,19 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
       // set actual initial url
       if (!this.initialUrl) this.initialUrl = currentWebViewUrl;
 
-      // if previous url was set (navigation happened) then new url might be deep link, let's parse it right away
-      if (lastWebViewUrl && !isEmpty(validateDeepLink(currentWebViewUrl))) {
-        const { executeDeepLink } = this.props;
-        // redirect to last url because deep link is detected as new page
-
-        // set webview browser nav to previous http url and not follow deep link as url
-        this.webViewRef.stopLoading();
-        this.webViewRef.injectJavaScript(`window.location = "${lastWebViewUrl}";`);
-
-        this.setState({ checkingNewUrl: false }, () => executeDeepLink(currentWebViewUrl));
-        return;
+      // if it's recovery address then inject current device address to url query param
+      const { temporaryWallet } = this.props;
+      if (temporaryWallet) {
+        const deviceAddressQuery = `?deviceAddress=${temporaryWallet.address}`;
+        if (currentWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE)
+          && !currentWebViewUrl.includes(deviceAddressQuery)
+          && this.webViewRef) {
+          this.webViewRef.stopLoading();
+          this.webViewRef.injectJavaScript(`
+          window.history.replaceState(null, null, "${RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE}${deviceAddressQuery}");
+        `);
+          this.webViewRef.reload();
+        }
       }
 
       // covers scenario if user logged out (sign-out) on webview and sign in becomes is present home
@@ -118,38 +117,29 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      connectedSmartWallet: {
-        address: accountAddress,
-        activeDeviceAddress,
-      },
-    } = this.props;
-
-    const signUpUrl = [
-      RECOVERY_PORTAL_URL,
-      RECOVERY_PORTAL_URL_PATHS.SIGN_UP,
-      accountAddress,
-      activeDeviceAddress,
-    ].join('/');
+    const { temporaryWallet } = this.props;
 
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Recovery Portal Sign Up' }],
+          centerItems: [{ title: 'Recovery Portal' }],
           customOnBack: this.handleNavigationBack,
         }}
       >
         <Wrapper style={{ flex: 1 }} regularPadding>
-          <WebView
-            ref={(ref) => { this.webViewRef = ref; }}
-            source={{ uri: signUpUrl }}
-            onNavigationStateChange={this.onNavigationStateChange}
-            renderLoading={this.renderWebViewLoading}
-            originWhitelist={['*']}
-            hideKeyboardAccessoryView
-            startInLoadingState
-            incognito
-          />
+          {!temporaryWallet && this.renderLoading()}
+          {!!temporaryWallet &&
+            <WebView
+              ref={(ref) => { this.webViewRef = ref; }}
+              source={{ uri: RECOVERY_PORTAL_URL }}
+              onNavigationStateChange={this.onNavigationStateChange}
+              renderLoading={this.renderLoading}
+              originWhitelist={['*']}
+              hideKeyboardAccessoryView
+              startInLoadingState
+              incognito
+            />
+          }
         </Wrapper>
       </ContainerWithHeader>
     );
@@ -157,13 +147,13 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  smartWallet: { connectedAccount: connectedSmartWallet },
+  recoveryPortal: { temporaryWallet },
 }: RootReducerState): $Shape<Props> => ({
-  connectedSmartWallet,
+  temporaryWallet,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
+  initRecoveryPortalWalletRecover: () => dispatch(initRecoveryPortalWalletRecoverAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecoveryPortalSignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(RecoveryPortalWalletRecover);

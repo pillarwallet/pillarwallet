@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+export const RESET_RECOVERY_PORTAL_TEMPORARY_WALLET = 'RESET_RECOVERY_PORTAL_TEMPORARY_WALLET';
+export const SET_RECOVERY_PORTAL_TEMPORARY_WALLET = 'SET_RECOVERY_PORTAL_TEMPORARY_WALLET';
 export const RECOVERY_PORTAL_URL_PATHS = {
   SIGN_UP: 'sign-up/pillar',
   SIGN_IN: 'sign-in',

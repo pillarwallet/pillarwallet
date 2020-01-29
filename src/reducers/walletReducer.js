@@ -39,6 +39,7 @@ import {
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
+  SET_WALLET_RECOVERY_PENDING,
 } from 'constants/walletConstants';
 import { SigningKey } from 'ethers/utils/signing-key';
 
@@ -50,6 +51,7 @@ export type Wallet = {|
 export type BackupStatus = {|
   isImported: boolean,
   isBackedUp: boolean,
+  isRecoveryPending: boolean,
 |};
 
 export type ImportedWallet = {
@@ -96,6 +98,7 @@ const initialState = {
   backupStatus: {
     isImported: false,
     isBackedUp: false,
+    isRecoveryPending: false,
   },
   error: null,
 };
@@ -167,6 +170,11 @@ const walletReducer = (
         ...state,
         pinAttemptsCount,
         lastPinAttempt,
+      };
+    case SET_WALLET_RECOVERY_PENDING:
+      return {
+        ...state,
+        backupStatus: { ...state.backupStatus, isRecoveryPending: true },
       };
     default:
       return state;

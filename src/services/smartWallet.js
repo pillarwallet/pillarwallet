@@ -133,7 +133,7 @@ class SmartWallet {
     }
   }
 
-  async init(privateKey: string, dispatch?: Function) {
+  async init(privateKey: string, dispatch?: Function, dispatchAction?: Function) {
     if (this.sdkInitialized) return;
 
     await this.sdk
@@ -144,15 +144,17 @@ class SmartWallet {
       });
 
     if (this.sdkInitialized) {
-      this.subscribeToEvents(dispatch);
+      this.subscribeToEvents(dispatch, dispatchAction);
     }
     // TODO: remove private key from smart wallet sdk
   }
 
-  subscribeToEvents(dispatch?: Function) {
+  subscribeToEvents(dispatch?: Function, dispatchAction?: Function) {
     if (subscribedToEvents || !dispatch) return;
     this.sdk.event$.subscribe(event => {
-      if (dispatch) dispatch(onSmartWalletSdkEventAction(event));
+      if (!dispatch) return;
+      if (!dispatchAction) dispatchAction = onSmartWalletSdkEventAction;
+      dispatch(dispatchAction(event));
     });
     subscribedToEvents = true;
   }

@@ -102,6 +102,7 @@ import RecoveryPortalConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPo
 import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
 import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
 import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
+import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryPending';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -228,6 +229,7 @@ import {
   MANAGE_CONNECTED_DEVICES,
   CONNECTED_DEVICES_FLOW,
   REMOVE_SMART_WALLET_CONNECTED_DEVICE,
+  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -667,6 +669,7 @@ const AppFlowNavigation = createStackNavigator(
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
     [RECOVERY_PORTAL_FLOW]: recoveryPortalFlow,
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
+    [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
     [LOGOUT_PENDING]: LogoutPendingScreen,
   },
   modalTransition,
@@ -731,7 +734,18 @@ class AppFlow extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       initWalletConnect,
       startListeningForBalanceChange,
+      backupStatus,
     } = this.props;
+
+    /**
+     * If wallet recovery is pending do not initiate any listeners
+     * as we block user from accessing wallet, only pending screen is accessed.
+     *
+     * In future we can maybe unlock certain listeners/actions
+     * depending on chosen product/business logic.
+     */
+    if (backupStatus.isRecoveryPending) return;
+
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchAssetsBalances();
@@ -795,7 +809,12 @@ class AppFlow extends React.Component<Props, State> {
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
       stopListeningForBalanceChange,
+      backupStatus,
     } = this.props;
+
+    // case per what's defined on componentWillMount
+    if (backupStatus.isRecoveryPending) return;
+
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     stopListeningChatWebSocket();
@@ -856,9 +875,11 @@ class AppFlow extends React.Component<Props, State> {
       smartWalletFeatureEnabled,
       theme,
     } = this.props;
-    if (!userState) return null;
-    if (userState === PENDING) {
-      return <RetryApiRegistration />;
+
+    // wallet might be created, but recovery is pending and no user assigned yet
+    if (!backupStatus.isRecoveryPending) {
+      if (!userState) return null;
+      if (userState === PENDING) return <RetryApiRegistration />;
     }
 
     const { isImported, isBackedUp } = backupStatus;

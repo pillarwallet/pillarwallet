@@ -22,9 +22,6 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import get from 'lodash.get';
-import { RECOVERY_PORTAL_URL } from 'react-native-dotenv';
-import { WebView } from 'react-native-webview';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Input } from 'native-base';
 
@@ -44,7 +41,6 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import Icon from 'components/Icon';
-import Spinner from 'components/Spinner';
 
 // constants
 import {
@@ -54,14 +50,11 @@ import {
   IMPORT_WALLET_TWORDS_PHRASE,
   TWORDSPHRASE,
   PRIVATEKEY,
-  WEB_RECOVERY_PORTAL,
 } from 'constants/walletConstants';
-import { RECOVERY_PORTAL_URL_PATHS } from 'constants/recoveryPortalConstants';
 
 // utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-// import { validateDeepLink } from 'utils/deepLink';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -189,7 +182,6 @@ const iconReceive = require('assets/icons/icon_receive.png');
 
 class ImportWallet extends React.Component<Props, State> {
   currentInputRef: Input;
-  recoveryPortalWebViewRef: WebView;
 
   state = {
     privateKey: '',
@@ -271,7 +263,6 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleValueChange = (field) => (value) => {
-    if (field === 'webRecoveryPortal') return;
     if (field === 'currentBPWord') {
       this.onBackupPhraseWordChange(value);
     } else {
@@ -284,38 +275,6 @@ class ImportWallet extends React.Component<Props, State> {
     this.setState({
       activeTab,
     });
-  };
-
-  renderWebViewLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
-
-  onRecoveryPortalWebViewNavigationStateChange = (webViewNavigationState) => {
-    const currentUrl = get(webViewNavigationState, 'url');
-    const deviceAddressQuery = '?deviceAddress=abc';
-    // if it's recovery address then inject current device address to url query param
-    if (currentUrl.includes(RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE)
-      && !currentUrl.includes(deviceAddressQuery)
-      && this.recoveryPortalWebViewRef) {
-      const recoverDeviceUrl = `${RECOVERY_PORTAL_URL}/${RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE}`;
-      this.recoveryPortalWebViewRef.stopLoading();
-      this.recoveryPortalWebViewRef.injectJavaScript(
-        `window.location = "${recoverDeviceUrl}${deviceAddressQuery}";`,
-      );
-    }
-  };
-
-  renderWebRecoveryPortalWebView = () => {
-    return (
-      <WebView
-        ref={(ref) => { this.recoveryPortalWebViewRef = ref; }}
-        source={{ uri: RECOVERY_PORTAL_URL }}
-        onNavigationStateChange={this.onRecoveryPortalWebViewNavigationStateChange}
-        renderLoading={this.renderWebViewLoading}
-        originWhitelist={['*']}
-        hideKeyboardAccessoryView
-        startInLoadingState
-        incognito
-      />
-    );
   };
 
   setInputRef = (inputRef) => {
@@ -437,8 +396,6 @@ class ImportWallet extends React.Component<Props, State> {
           </ScannerButton>
         </ButtonsWrapper>
       );
-    } else if (activeTab === WEB_RECOVERY_PORTAL) {
-      return null;
     }
 
     return (
@@ -502,11 +459,6 @@ class ImportWallet extends React.Component<Props, State> {
         name: 'Private key',
         onPress: () => this.setActiveTab(PRIVATEKEY),
       },
-      {
-        id: WEB_RECOVERY_PORTAL,
-        name: 'Recovery Portal',
-        onPress: () => this.setActiveTab(WEB_RECOVERY_PORTAL),
-      },
     ];
 
     if (__DEV__) {
@@ -530,12 +482,6 @@ class ImportWallet extends React.Component<Props, State> {
         value: privateKey,
         errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
       },
-      WEB_RECOVERY_PORTAL: {
-        inputLabel: 'Recovery Portal',
-        changeName: 'webRecoveryPortal',
-        value: null,
-        errorMessage: null,
-      },
       DEV: {
         inputLabel: 'Backup phrase',
         changeName: 'tWordsPhrase',
@@ -543,8 +489,6 @@ class ImportWallet extends React.Component<Props, State> {
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
     };
-
-    const isRecoveryPortalTab = activeTab === WEB_RECOVERY_PORTAL;
 
     return (
       <ContainerWithHeader
@@ -561,13 +505,10 @@ class ImportWallet extends React.Component<Props, State> {
           disableAutomaticScroll
         >
           <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
-          <Wrapper style={{ flex: 1 }} regularPadding>
-            {isRecoveryPortalTab && this.renderWebRecoveryPortalWebView()}
-            {!isRecoveryPortalTab &&
-              <InputWrapper>
-                <FormWrapper>{this.renderForm(tabsInfo)}</FormWrapper>
-              </InputWrapper>
-            }
+          <Wrapper regularPadding>
+            <InputWrapper>
+              <FormWrapper>{this.renderForm(tabsInfo)}</FormWrapper>
+            </InputWrapper>
           </Wrapper>
         </ScrollWrapper>
         <QRCodeScanner
