@@ -53,7 +53,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
       api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      if (!addressValidationResponse.error) {
+      if (addressValidationResponse.walletId) {
         apiUser = {
           id: addressValidationResponse.id,
           walletId: addressValidationResponse.walletId,
@@ -90,7 +90,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      if (!addressValidationResponse.error) {
+      if (addressValidationResponse.walletId) {
         apiUser = {
           id: addressValidationResponse.id,
           walletId: addressValidationResponse.walletId,
