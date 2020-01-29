@@ -93,6 +93,7 @@ export type TokenTransactionPayload = {
 
 export type CollectibleTransactionPayload = {
   to: string,
+  receiverEnsName?: string,
   name: string,
   contractAddress: ?string,
   tokenType: string,
