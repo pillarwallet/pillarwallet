@@ -18,8 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { toChecksumAddress } from '@netgum/utils';
-
 // constants
 import { ADD_ENS_REGISTRY_RECORD } from 'constants/ensRegistryConstants';
 
@@ -33,10 +31,9 @@ import { saveDbAction } from './dbActions';
 export const addEnsRegistryRecordAction = (address: string, ensName: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { ensRegistry } = getState();
-    address = toChecksumAddress(address);
     if (ensRegistry[address]) return;
 
-    dispatch(saveDbAction('ensRegistry', { [address]: ensName }));
+    dispatch(saveDbAction('ensRegistry', { ensRegistry: { [address]: ensName } }));
     dispatch({
       type: ADD_ENS_REGISTRY_RECORD,
       payload: {
