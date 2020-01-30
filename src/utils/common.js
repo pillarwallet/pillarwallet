@@ -429,11 +429,11 @@ export const formatUnits = (val: string = '0', decimals: number) => {
   return formattedUnits;
 };
 
-type GroupedAndSortedData = {
+type GroupedAndSortedData = {|
   title: string,
   date: string,
   data: any[],
-};
+|};
 
 // all default values makes common sense and usage
 export const groupAndSortByDate = (

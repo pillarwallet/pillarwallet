@@ -32,13 +32,15 @@ import isEmpty from 'lodash.isempty';
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 import { CachedImage } from 'react-native-cached-image';
 
-// models
+// types
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Asset } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+
 // components
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -98,6 +100,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 // local components
 import EventHeader from './EventHeader';
 
+
 type Props = {
   transaction: Transaction,
   contacts: ApiUser[],
@@ -123,11 +126,12 @@ type Props = {
   getMaxScrollOffset?: (number) => number,
   accounts: Accounts,
   bitcoinAddresses: BitcoinAddress[],
-}
+  ensRegistry: EnsRegistry,
+};
 
-type State = {
+type State = {|
   containerHeight: ?number,
-}
+|};
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -324,16 +328,23 @@ class EventDetails extends React.Component<Props, State> {
       || {};
   };
 
+  wasTransactionReceived = (txReceiver: string, txTag?: string = ''): boolean => {
+    const { activeAccountAddress, bitcoinAddresses } = this.props;
+    const wasReceived = addressesEqual(txReceiver, activeAccountAddress)
+      || txTag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+      || bitcoinAddresses.some(e => e.address === txReceiver);
+    return wasReceived;
+  };
+
   renderEventBody = (eventType) => {
     const {
       eventData,
-      activeAccountAddress,
       history,
       txNotes,
       assets,
       supportedAssets,
       accounts,
-      bitcoinAddresses,
+      ensRegistry,
     } = this.props;
     const {
       hideAmount,
@@ -368,9 +379,7 @@ class EventDetails extends React.Component<Props, State> {
         btcFee,
       } = txInfo;
 
-      const isReceived = addressesEqual(to, activeAccountAddress)
-        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-        || bitcoinAddresses.some(e => e.address === to);
+      const isReceived = this.wasTransactionReceived(to, tag);
       const toMyself = isReceived && addressesEqual(from, to);
       let transactionNote = note;
       if (txNotes && txNotes.length > 0) {
@@ -388,8 +397,11 @@ class EventDetails extends React.Component<Props, State> {
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedAddress = isReceived ? from : to;
       const relatedUser = isReceived ? senderContact : recipientContact;
-      // $FlowFixMe
-      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || relatedAddress;
+      let relatedUserTitle = relatedUser.username
+        // $FlowFixMe
+        || getAccountName(relatedUser.type, accounts)
+        || ensRegistry[relatedAddress]
+        || relatedAddress;
       if (addressesEqual(to, from)) {
         relatedUserTitle = 'My account';
       }
@@ -491,7 +503,7 @@ class EventDetails extends React.Component<Props, State> {
         gasPrice,
       } = eventData;
 
-      const isReceived = addressesEqual(to, activeAccountAddress);
+      const isReceived = this.wasTransactionReceived(to);
       const toMyself = isReceived && addressesEqual(from, to);
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       let transactionNote = note;
@@ -506,10 +518,12 @@ class EventDetails extends React.Component<Props, State> {
       const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
-      // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || (isReceived
-        ? `${from.slice(0, 7)}…${from.slice(-7)}`
-        : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      const relatedAddress = isReceived ? from : to;
+      const relatedUserTitle = relatedUser.username
+        // $FlowFixMe
+        || getAccountName(relatedUser.type, accounts)
+        || ensRegistry[relatedAddress]
+        || relatedAddress;
       const relatedUserProfileImage = relatedUser.profileImage || null;
       // $FlowFixMe
       const showProfileImage = !relatedUser.type;
@@ -825,12 +839,14 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   txNotes: { data: txNotes },
   accounts: { data: accounts },
+  ensRegistry: { data: ensRegistry },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   txNotes,
   contactsSmartAddresses,
   inactiveAccounts: getInactiveUserAccounts(accounts),
   accounts,
+  ensRegistry,
 });
 
 const structuredSelector = createStructuredSelector({

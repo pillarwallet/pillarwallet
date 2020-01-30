@@ -27,12 +27,14 @@ import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { SYNTHETICS_CONTRACT_ADDRESS } from 'react-native-dotenv';
 
-// models
+// types
 import type { SyntheticTransaction, Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { Theme } from 'models/Theme';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -121,12 +123,12 @@ const EmptyStateWrapper = styled.View`
   justify-content: center;
 `;
 
-type EmptyState = {
+type EmptyState = {|
   title?: string,
   textBody?: string,
-}
+|};
 
-type Tab = {
+type Tab = {|
   id: string,
   name: string,
   icon?: string,
@@ -136,7 +138,7 @@ type Tab = {
   tabImageActive?: string,
   data: Object[],
   emptyState?: EmptyState,
-}
+|};
 
 type Props = {
   activeAccountAddress: string,
@@ -167,9 +169,10 @@ type Props = {
   supportedAssets: Asset[],
   bitcoinAddresses: BitcoinAddress[],
   theme: Theme,
-}
+  ensRegistry: EnsRegistry,
+};
 
-type FeedItemTransaction = {
+type FeedItemTransaction = {|
   username?: string,
   to: string,
   from: string,
@@ -187,9 +190,9 @@ type FeedItemTransaction = {
   tokenId?: string,
   _id: string,
   type: string,
-}
+|};
 
-type FeedItemConnection = {
+type FeedItemConnection = {|
   id: string,
   ethAddress: string,
   username: string,
@@ -198,25 +201,25 @@ type FeedItemConnection = {
   updatedAt: string,
   status: string,
   type: string,
-}
+|};
 
-type FeedSection = {
+type FeedSection = {|
   title: string,
   date: string,
   data: Array<FeedItemTransaction | FeedItemConnection>,
-}
+|};
 
-type State = {
+type State = {|
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
   eventType: string,
   eventStatus: string,
   tabIsChanging: boolean,
   formattedFeedData: FeedSection[],
-  emptyStateData: EmptyState,
+  emptyStateData: EmptyState | {},
   scrollOffset: ?number,
   maxScrollOffset: ?number,
-}
+|};
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
@@ -323,6 +326,7 @@ class ActivityFeed extends React.Component<Props, State> {
       supportedAssets,
       bitcoinAddresses,
       theme,
+      ensRegistry,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -340,7 +344,9 @@ class ActivityFeed extends React.Component<Props, State> {
       const { decimals = 18 } = getAssetData(assets, supportedAssets, notification.asset);
       const value = formatUnits(notification.value, decimals);
       const formattedValue = formatAmount(value);
-      let nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
+      let nameOrAddress = notification.username
+        || ensRegistry[address]
+        || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '' : '-';
 
@@ -718,9 +724,11 @@ class ActivityFeed extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-}) => ({
+  ensRegistry: { data: ensRegistry },
+}: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
+  ensRegistry,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -730,7 +738,7 @@ const structuredSelector = createStructuredSelector({
   bitcoinAddresses: bitcoinAddressSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState) => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });

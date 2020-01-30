@@ -23,7 +23,7 @@ import {
   RESET_ENS_REGISTRY_DATA,
 } from 'constants/ensRegistryConstants';
 
-type EnsRegistry = {
+export type EnsRegistry = {
   [ethAddress: string]: string, // { [ethAddress]: ensName }
 };
 
