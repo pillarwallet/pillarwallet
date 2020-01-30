@@ -315,7 +315,6 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          leftItems: [{ user: true }],
           rightItems: [{
             actionButton: {
               key: 'manageAccounts',
@@ -325,6 +324,7 @@ class AssetsScreen extends React.Component<Props, State> {
               ...customHeaderButtonProps,
             },
           }],
+          noBack: true,
         }}
         inset={{ bottom: 0 }}
       >

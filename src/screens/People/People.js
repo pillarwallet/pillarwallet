@@ -492,7 +492,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ leftItems: [{ user: true }] }}
+        headerProps={{ noBack: true, centerItems: [{ title: 'People' }] }}
         inset={{ bottom: 0 }}
       >
         <ScrollView
