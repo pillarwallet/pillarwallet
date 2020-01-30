@@ -21,7 +21,6 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { StyleSheet } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 // import { utils } from 'ethers';
@@ -40,11 +39,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 // import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
 // import { getRate } from 'utils/assets';
 
-import {
-  CHOOSE_ASSETS_TO_TRANSFER,
-  EXCHANGE, ASSETS,
-  UPGRADE_TO_SMART_WALLET_FLOW,
-} from 'constants/navigationConstants';
+import { CHOOSE_ASSETS_TO_TRANSFER, EXCHANGE, ASSETS } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
@@ -210,10 +205,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
                       deploySmartWallet();
                       navigation.navigate(ASSETS);
                     } else {
-                      navigation.navigate({
-                        routeName: UPGRADE_TO_SMART_WALLET_FLOW,
-                        action: NavigationActions.navigate(CHOOSE_ASSETS_TO_TRANSFER),
-                      });
+                      navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
                     }
                   });
                 }}
