@@ -181,6 +181,7 @@ jobs:
           command: |
             APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
             mkdir -p /tmp/workspace/build-num
+            mkdir -p /tmp/workspace/releases
             cd /tmp/workspace/build-num
             echo ${APP_BUILD_NUMBER} > app_build_number.txt
       - persist_to_workspace:
@@ -342,11 +343,12 @@ jobs:
     docker:
       - image: cibuilds/github:0.10
     steps:
+      - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - run:
           name: Publish releases to GitHub
-          command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ./releases/              
+          command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1}  /tmp/workspace/releases             
 
   slack-prod-approval:
     executor: node8-executor
