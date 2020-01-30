@@ -67,6 +67,7 @@ import { themedColors } from 'utils/themes';
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
+import { lookupAddressAction } from 'actions/ensRegistryActions';
 
 // constants
 import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
@@ -127,6 +128,7 @@ type Props = {
   accounts: Accounts,
   bitcoinAddresses: BitcoinAddress[],
   ensRegistry: EnsRegistry,
+  lookupAddress: (address: string) => void,
 };
 
 type State = {|
@@ -215,6 +217,8 @@ class EventDetails extends React.Component<Props, State> {
       getTxNoteByContact,
       contacts,
       history,
+      ensRegistry,
+      lookupAddress,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
@@ -232,6 +236,12 @@ class EventDetails extends React.Component<Props, State> {
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
       updateTransactionStatus(eventData.hash);
+    }
+
+    const isReceived = this.wasTransactionReceived(txInfo.to, txInfo.tag);
+    const relatedAddress = isReceived ? txInfo.from : txInfo.to;
+    if (!ensRegistry[relatedAddress]) {
+      lookupAddress(relatedAddress);
     }
   }
 
@@ -865,6 +875,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
+  lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EventDetails);

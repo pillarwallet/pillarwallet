@@ -24,6 +24,9 @@ import { ADD_ENS_REGISTRY_RECORD } from 'constants/ensRegistryConstants';
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
+// utils
+import { lookupAddress } from 'utils/common';
+
 // actions
 import { saveDbAction } from './dbActions';
 
@@ -41,5 +44,17 @@ export const addEnsRegistryRecordAction = (address: string, ensName: string) => 
         ensName,
       },
     });
+  };
+};
+
+export const lookupAddressAction = (address: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { ensRegistry } = getState();
+    if (ensRegistry[address]) return;
+
+    const ensName = await lookupAddress(address);
+    if (ensName) {
+      dispatch(addEnsRegistryRecordAction(address, ensName));
+    }
   };
 };

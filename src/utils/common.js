@@ -345,6 +345,17 @@ export const resolveEnsName = (ensName: string): Promise<?string> => {
   return provider.resolveName(ensName);
 };
 
+export const lookupAddress = async (address: string): Promise<?string> => {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let ensName;
+  try {
+    ensName = await provider.lookupAddress(address);
+  } catch (_) {
+    //
+  }
+  return ensName;
+};
+
 export const padWithZeroes = (value: string, length: number): string => {
   let myString = value;
 
