@@ -39,12 +39,14 @@ import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import { logEventAction } from 'actions/analyticsActions';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 import { registerWalletAction } from './onboardingActions';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     try {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
 
@@ -80,7 +82,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
 };
 
 export const importWalletFromPrivateKeyAction = (privateKey: string) => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
@@ -117,7 +119,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
 };
 
 export const navigateToNewWalletPageAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({ type: RESET_WALLET_IMPORT });
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
@@ -137,7 +139,7 @@ const NUM_WORDS_TO_CHECK = 3;
  * @param {String} mnemonicPhrase
  */
 export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     mnemonicPhrase = generateMnemonicPhrase(mnemonicPhrase);
     const mnemonicList = mnemonicPhrase.split(' ');
     const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
@@ -155,7 +157,7 @@ export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
 };
 
 export const setPinForNewWalletAction = (pin: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({
       type: NEW_WALLET_SET_PIN,
       payload: pin,
@@ -165,18 +167,20 @@ export const setPinForNewWalletAction = (pin: string) => {
 };
 
 export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?: boolean) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { themeType } } } = getState();
+
     dispatch({
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
 
-    if (shouldRegisterWallet) dispatch(registerWalletAction());
+    if (shouldRegisterWallet) dispatch(registerWalletAction(false, themeType));
   };
 };
 
 export const backupWalletAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch(saveDbAction('wallet', {
       wallet: {
         backupStatus: { isBackedUp: true },
@@ -190,13 +194,13 @@ export const backupWalletAction = () => {
 };
 
 export const removePrivateKeyFromMemoryAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({ type: REMOVE_PRIVATE_KEY });
   };
 };
 
 export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
-  return async (dispatch: Function, getState: () => Object) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: { pinAttemptsCount } } = getState();
     const newCount = isInvalidPin ? pinAttemptsCount + 1 : 0;
     const currentTimeStamp = isInvalidPin ? Date.now() : 0;

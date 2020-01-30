@@ -125,6 +125,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
+import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 // constants
 import {
@@ -673,6 +674,7 @@ type Props = {
   initSignal: Function,
   endWalkthrough: () => void,
   theme: Theme,
+  handleSystemDefaultThemeChange: () => void,
 }
 
 type State = {
@@ -783,6 +785,7 @@ class AppFlow extends React.Component<Props, State> {
       isBrowsingWebView,
       stopListeningForBalanceChange,
       endWalkthrough,
+      handleSystemDefaultThemeChange,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -807,6 +810,7 @@ class AppFlow extends React.Component<Props, State> {
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
       startListeningChatWebSocket();
+      handleSystemDefaultThemeChange();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -902,6 +906,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
   initSignal: () => dispatch(signalInitAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
+  handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });
 
 const ConnectedAppFlow = connect(

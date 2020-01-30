@@ -17,6 +17,9 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
+import android.content.Intent;
+import android.content.res.Configuration;
+
 public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
@@ -45,7 +48,7 @@ public class MainActivity extends ReactActivity {
     protected String getMainComponentName() {
         return "pillarwallet";
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
@@ -87,5 +90,14 @@ public class MainActivity extends ReactActivity {
                 return new RNGestureHandlerEnabledRootView(MainActivity.this);
             }
         };
+    }
+
+    // react-native-appearance
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Intent intent = new Intent("onConfigurationChanged");
+        intent.putExtra("newConfig", newConfig);
+        sendBroadcast(intent);
     }
 }
