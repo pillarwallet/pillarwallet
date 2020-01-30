@@ -362,7 +362,7 @@ jobs:
       - run:
           name: Set tag and publish releases to GitHub
           command: |
-            TAG_VERSION="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             echo $TAG_VERSION
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${TAG_VERSION} /tmp/workspace/releases/             
 
@@ -634,7 +634,7 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - build-and-test       
+      - build-and-test
       - hockeyapp_ios:
           requires:
             - build-and-test
@@ -648,10 +648,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/git_tags_and_versioning
-      - publish_releases_to_github:
-          requires:
-            - hockeyapp_android            
+                  - feature/git_tags_and_versioning            
       - slack-prod-approval:
           requires:
             - build-and-test
@@ -659,6 +656,13 @@ workflows:
             branches:
               only:
                   - master
+      - get-latest-tag:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                  - feature/git_tags_and_versioning
       - release_to_prod:
           type: approval
           requires:
@@ -673,3 +677,6 @@ workflows:
       - prod_android:
           requires:
             - release_to_prod
+      - publish_releases_to_github:
+          requires:
+            - hockeyapp_android
