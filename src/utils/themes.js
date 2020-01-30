@@ -46,6 +46,7 @@ export const lightThemeColors = {
   PPNSurface: '#0a0c78',
   smartWalletText: '#1D24D8',
   smartWalletSurface: '#f3f7ff',
+  danger: '#ff0005',
 };
 
 export const darkThemeColors = {
@@ -73,6 +74,7 @@ export const darkThemeColors = {
   PPNSurface: '#0a0c78',
   smartWalletText: '#1D24D8',
   smartWalletSurface: '#f3f7ff',
+  danger: '#ff0005',
 };
 
 export const themedColors = {
@@ -171,6 +173,10 @@ export const themedColors = {
   smartWalletSurface: theme('current', {
     lightTheme: lightThemeColors.smartWalletSurface,
     darkTheme: darkThemeColors.smartWalletSurface,
+  }),
+  danger: theme('current', {
+    lightTheme: lightThemeColors.danger,
+    darkTheme: darkThemeColors.danger,
   }),
 };
 

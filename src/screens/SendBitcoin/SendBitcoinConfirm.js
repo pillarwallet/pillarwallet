@@ -114,7 +114,7 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>

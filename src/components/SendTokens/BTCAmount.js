@@ -311,7 +311,7 @@ class BTCAmount extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Send BTC' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner>
             <TouchableOpacity onPress={this.changeFee}>
               <SendTokenDetailsValue>
