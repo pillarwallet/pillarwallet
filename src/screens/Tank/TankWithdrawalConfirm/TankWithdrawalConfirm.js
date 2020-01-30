@@ -114,7 +114,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <Button
               disabled={!session.isOnline || !withdrawalFee.isFetched || buttonSubmitted}

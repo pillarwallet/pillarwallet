@@ -182,13 +182,14 @@ export const setPinForNewWalletAction = (pin: string) => {
 };
 
 export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?: boolean) => {
-  return (dispatch: Dispatch) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { themeType } } } = getState();
     dispatch({
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
 
-    if (shouldRegisterWallet) dispatch(registerWalletAction());
+    if (shouldRegisterWallet) dispatch(registerWalletAction(false, themeType));
   };
 };
 
@@ -209,7 +210,7 @@ export const backupWalletAction = () => {
 export const removePrivateKeyFromMemoryAction = () => ({ type: REMOVE_PRIVATE_KEY });
 
 export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
-  return (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: { pinAttemptsCount } } = getState();
     const newCount = isInvalidPin ? pinAttemptsCount + 1 : 0;
     const currentTimeStamp = isInvalidPin ? Date.now() : 0;

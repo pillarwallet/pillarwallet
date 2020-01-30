@@ -380,3 +380,6 @@ jest.setMock('services/insight', {
       txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
     }),
 });
+
+jest.setMock('react-native-appearance', {});
+

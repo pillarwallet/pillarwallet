@@ -348,15 +348,18 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   // TODO: handle 404 and other errors in different ways (e.response.status === 404)
 };
 
-type ValidatedUser = $Shape<{
+type ValidatedUserResponse = $Shape<{
   id: string,
   walletId: string,
   username: string,
   profileImage: string,
   profileLargeImage: string,
+  error: boolean,
 }>;
 
-SDKWrapper.prototype.validateAddress = function (blockchainAddress: string): Promise<ValidatedUser> {
+SDKWrapper.prototype.validateAddress = function (
+  blockchainAddress: string,
+): Promise<ValidatedUserResponse> {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
@@ -368,7 +371,7 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string): Pro
           error,
         },
       });
-      return {};
+      return { error: true };
     });
 };
 

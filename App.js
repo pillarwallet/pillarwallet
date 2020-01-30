@@ -20,7 +20,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
+import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity, Alert } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
@@ -28,8 +28,9 @@ import { Sentry } from 'react-native-sentry';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
+import { Appearance, AppearanceProvider } from 'react-native-appearance';
 import { setTopLevelNavigator } from 'services/navigation';
-import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
+import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
@@ -38,7 +39,7 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { changeAppThemeAction } from 'actions/appSettingsActions';
+import { changeAppThemeAction, markThemeAlertAsShownAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -47,6 +48,7 @@ import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
+import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import configureStore from './src/configureStore';
 
@@ -70,7 +72,9 @@ type Props = {
   executeDeepLink: Function,
   activeWalkthroughSteps: Steps,
   themeType: string,
-  changeAppTheme: () => void,
+  changeAppTheme: (themeType: string) => void,
+  markThemeAlertAsShown: () => void,
+  seenThemeAlert: boolean,
 }
 
 class App extends React.Component<Props, *> {
@@ -122,7 +126,10 @@ class App extends React.Component<Props, *> {
   componentDidUpdate(prevProps: Props) {
     const { isFetched } = this.props;
     const { isFetched: prevIsFetched } = prevProps;
-    if (isFetched && !prevIsFetched) SplashScreen.hide();
+    if (isFetched && !prevIsFetched) {
+      SplashScreen.hide();
+      this.showDarkModeAlert();
+    }
   }
 
   setOnlineStatus = isOnline => {
@@ -155,6 +162,26 @@ class App extends React.Component<Props, *> {
     executeDeepLink(deepLink);
   };
 
+  showDarkModeAlert = () => {
+    const { markThemeAlertAsShown, changeAppTheme, seenThemeAlert } = this.props;
+    if (seenThemeAlert) return;
+    const defaultPreference = Appearance.getColorScheme();
+    if (defaultPreference === DARK_PREFERENCE) {
+      markThemeAlertAsShown();
+      Alert.alert(
+        'Dark mode available',
+        'Would you like to turn on Dark mode now? You can always switch between modes in settings.',
+        [
+          { text: 'Cancel', onPress: () => markThemeAlertAsShown() },
+          {
+            text: 'Turn on',
+            onPress: () => changeAppTheme(DARK_THEME),
+          },
+        ],
+      );
+    }
+  };
+
   render() {
     const {
       isFetched,
@@ -168,43 +195,49 @@ class App extends React.Component<Props, *> {
     if (!isFetched) return null;
 
     return (
-      <ThemeProvider theme={theme}>
-        <React.Fragment>
-          <Root>
-            <RootNavigation
-              ref={(node) => {
-                if (!node) return;
-                setTopLevelNavigator(node);
-              }}
-            />
-            {!!__DEV__ &&
-            <TouchableOpacity
-              style={{
-                padding: 20,
-                borderWidth: 1,
-                borderColor: colors.border,
-                alignItems: 'center',
-                backgroundColor: colors.card,
-              }}
-              onPress={changeAppTheme}
-            >
-              <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
-            </TouchableOpacity>}
-            {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
-          </Root>
-        </React.Fragment>
-      </ThemeProvider>
+      <AppearanceProvider>
+        <ThemeProvider theme={theme}>
+          <React.Fragment>
+            <Root>
+              <RootNavigation
+                ref={(node) => {
+                  if (!node) return;
+                  setTopLevelNavigator(node);
+                }}
+              />
+              {!!SHOW_THEME_TOGGLE &&
+              <TouchableOpacity
+                style={{
+                  padding: 20,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  alignItems: 'center',
+                  backgroundColor: colors.card,
+                }}
+                onPress={() => {
+                  const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+                  changeAppTheme(themeToChangeTo);
+                }}
+              >
+                <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
+              </TouchableOpacity>}
+              {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
+            </Root>
+          </React.Fragment>
+        </ThemeProvider>
+      </AppearanceProvider>
     );
   }
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType } },
+  appSettings: { isFetched, data: { themeType, seenThemeAlert } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   activeWalkthroughSteps,
+  seenThemeAlert,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -215,7 +248,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
-  changeAppTheme: () => dispatch(changeAppThemeAction()),
+  changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
+  markThemeAlertAsShown: () => dispatch(markThemeAlertAsShownAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

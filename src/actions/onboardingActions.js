@@ -88,7 +88,12 @@ import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction, changeUseBiometricsAction, updateAppSettingsAction } from 'actions/appSettingsActions';
+import {
+  setAppThemeAction,
+  changeUseBiometricsAction,
+  updateAppSettingsAction,
+  markThemeAlertAsShownAction,
+} from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -250,7 +255,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
   navigate(navigateToAssetsAction);
 };
 
-export const registerWalletAction = (enableBiometrics?: boolean) => {
+export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
 
@@ -261,7 +266,11 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
     dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: RESET_APP_SETTINGS, payload: {} });
-    dispatch(setAppThemeAction()); // as appSettings gets overwritten
+
+    // manage theme as appSettings gets overwritten
+    dispatch(setAppThemeAction(themeToStore));
+    dispatch(markThemeAlertAsShownAction());
+
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
     dispatch({ type: UPDATE_BALANCES, payload: {} });
