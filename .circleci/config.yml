@@ -338,15 +338,15 @@ jobs:
           path: android/app/build/outputs/apk
           destination: apks
 
-  # publish_releases_to_github:
-  #   docker:
-  #     - image: cibuilds/github:0.10
-  #   steps:
-  #     - attach_workspace: &attach_workspace
-  #         at: /tmp/workspace
-  #     - run:
-  #         name: Publish releases to GitHub
-  #         command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${APP_BUILD_NUMBER} ./releases/              
+  publish_releases_to_github:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - run:
+          name: Publish releases to GitHub
+          command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ./releases/              
 
   slack-prod-approval:
     executor: node8-executor
@@ -631,9 +631,9 @@ workflows:
             branches:
               only:
                   - feature/git_tags_and_versioning
-      # - publish_releases_to_github:
-      #     requires:
-      #       - hockeyapp_android            
+      - publish_releases_to_github:
+          requires:
+            - hockeyapp_android            
       - slack-prod-approval:
           requires:
             - build-and-test
