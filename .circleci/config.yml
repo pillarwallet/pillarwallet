@@ -211,6 +211,7 @@ jobs:
           command: |
             TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
             cd /tmp/workspace/build-num
+            echo $TAG_VERSION
             echo $TAG_VERSION > gh_tag_version.txt
       - persist_to_workspace:
           root: /tmp/workspace
@@ -655,6 +656,7 @@ workflows:
       - hockeyapp_android:
           requires:
             - build-and-test
+            - get-latest-tag
           filters:
             branches:
               only:
