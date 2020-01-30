@@ -21,6 +21,8 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import { Sentry } from 'react-native-sentry';
+import { toChecksumAddress } from '@netgum/utils';
+
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -303,7 +305,8 @@ export const sendAssetAction = (
     let historyTx;
     const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-    const { to, note } = transaction;
+    const to = toChecksumAddress(transaction.to);
+    const { note } = transaction;
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
