@@ -179,7 +179,7 @@ jobs:
       - run:
           name: Save build number
           command: |
-            APP_BUILD_NUMBER=${CIRCLE_TAG}
+            APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
             mkdir -p /tmp/workspace/build-num
             cd /tmp/workspace/build-num
             echo ${APP_BUILD_NUMBER} > app_build_number.txt
@@ -230,7 +230,7 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            npm version $(APP_BUILD_NUMBER)
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -307,7 +307,7 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            npm version $(APP_BUILD_NUMBER)
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -338,15 +338,15 @@ jobs:
           path: android/app/build/outputs/apk
           destination: apks
 
-  publish_releases_to_github:
-    docker:
-      - image: cibuilds/github:0.10
-    steps:
-      - attach_workspace: &attach_workspace
-          at: /tmp/workspace
-      - run:
-          name: Publish releases to GitHub
-          command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${APP_BUILD_NUMBER} ./releases/              
+  # publish_releases_to_github:
+  #   docker:
+  #     - image: cibuilds/github:0.10
+  #   steps:
+  #     - attach_workspace: &attach_workspace
+  #         at: /tmp/workspace
+  #     - run:
+  #         name: Publish releases to GitHub
+  #         command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${APP_BUILD_NUMBER} ./releases/              
 
   slack-prod-approval:
     executor: node8-executor
@@ -616,10 +616,7 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - build-and-test:
-          filters:
-            tags:
-              only: /^\d+\.\d+\.\d+$/          
+      - build-and-test       
       - hockeyapp_ios:
           requires:
             - build-and-test
@@ -634,9 +631,9 @@ workflows:
             branches:
               only:
                   - feature/git_tags_and_versioning
-      - publish_releases_to_github:
-          requires:
-            - hockeyapp_android            
+      # - publish_releases_to_github:
+      #     requires:
+      #       - hockeyapp_android            
       - slack-prod-approval:
           requires:
             - build-and-test
