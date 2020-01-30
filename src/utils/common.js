@@ -340,7 +340,7 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
-export const validateEnsName = (ensName: string) => {
+export const resolveEnsName = (ensName: string): Promise<?string> => {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.resolveName(ensName);
 };

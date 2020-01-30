@@ -49,7 +49,7 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
 // utils
 import { addressValidator, isEnsName } from 'utils/validators';
-import { validateEnsName, isCaseInsensitiveMatch } from 'utils/common';
+import { resolveEnsName, isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
@@ -205,7 +205,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     if (isEnsName(address) && token !== BTC) {
       this.setState({ isValidatingEns: true });
-      const resolvedAddress = await validateEnsName(address);
+      const resolvedAddress = await resolveEnsName(address);
       if (!resolvedAddress) {
         this.setInvalidEns();
         return;
