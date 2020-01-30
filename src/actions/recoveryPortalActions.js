@@ -32,7 +32,6 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import {
   RECOVERY_PORTAL_SETUP_COMPLETE,
   SET_WALLET_PIN_CODE,
-  RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
 } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import {
