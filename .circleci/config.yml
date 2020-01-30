@@ -209,9 +209,14 @@ jobs:
       - run:
           name: Fetch and set the latest GitHub tag
           command: |
-            cd /tmp/workspace/build-num
             TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+            cd /tmp/workspace/build-num
             echo $TAG_VERSION > gh_tag_version.txt
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build-num
+            - releases
 
   hockeyapp_ios:
     executor: ios-executor
@@ -351,6 +356,11 @@ jobs:
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build-num
+            - releases
 
   publish_releases_to_github:
     docker:
