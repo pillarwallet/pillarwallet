@@ -200,6 +200,19 @@ jobs:
           name: Run validation
           command: yarn validate
 
+  get-latest-tag:
+    executor: node10-executor
+    steps:
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - run:
+          name: Fetch and set the latest GitHub tag
+          command: |
+            cd /tmp/workspace/build-num
+            TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+            echo $TAG_VERSION > gh_tag_version.txt
+
   hockeyapp_ios:
     executor: ios-executor
     steps:
@@ -334,7 +347,7 @@ jobs:
             cd android && bundle exec fastlane deploy_android_hockeyapp
       - run:
           name: prepare to archive apk file
-          command: cp ./android/app/build/outputs/apk/prod/staging/app-prod-staging.apk ./releases  
+          command: cp ./android/app/build/outputs/apk/prod/staging/app-prod-staging.apk /tmp/workspace/releases/app-prod-staging.apk
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
@@ -347,8 +360,11 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - run:
-          name: Publish releases to GitHub
-          command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1}  /tmp/workspace/releases             
+          name: Set tag and publish releases to GitHub
+          command: |
+            TAG_VERSION="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            echo $TAG_VERSION
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${TAG_VERSION} /tmp/workspace/releases/             
 
   slack-prod-approval:
     executor: node8-executor
