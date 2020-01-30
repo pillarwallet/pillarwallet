@@ -29,7 +29,11 @@ import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 
 // constants
-import { RECOVERY_PORTAL_SETUP_COMPLETE, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import {
+  RECOVERY_PORTAL_SETUP_COMPLETE,
+  SET_WALLET_PIN_CODE,
+  RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
+} from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import {
   RESET_RECOVERY_PORTAL_TEMPORARY_WALLET,
@@ -85,14 +89,19 @@ export const checkSmartWalletRecoverState = (event: Api.IEvent) => {
           dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
           // set recovery pending state, will be saved once PIN is set along with encrypted wallet
           dispatch({ type: SET_WALLET_RECOVERY_PENDING });
-          // move to pin screen to encrypt wallet while recoverry pending
+          // move to pin screen to encrypt wallet while recovery pending
           navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
         }
         return;
       }
       if (transactionType === sdkConstants.AccountTransactionStates.Completed) {
-        // TODO: if wallet ios not yet encrypted don't do anything to avoid race condition
-        console.log('sdkConstants.AccountTransactionStates.Completed');
+        const { devices = [], activeDeviceAddress } = await smartWalletInstance.getAccountDeviceData();
+        if (!activeDeviceAddress) return;
+
+        const thisDevice = devices.find(({ device: { address } }) => addressesEqual(activeDeviceAddress, address));
+        if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
+
+        console.log('RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE!!!!!', thisDevice);
       }
     }
   };

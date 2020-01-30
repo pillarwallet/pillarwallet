@@ -42,7 +42,7 @@ import {
   APP_FLOW,
   NEW_WALLET,
   HOME,
-  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
+  RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
 } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
@@ -318,7 +318,7 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
       navigate(NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }),
+        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE }),
       }));
       return;
     }

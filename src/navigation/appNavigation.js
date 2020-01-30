@@ -103,6 +103,7 @@ import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPo
 import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
 import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
 import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryPending';
+import RecoveryPortalWalletRecoveryCompleteSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryComplete';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -221,7 +222,8 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
-  RECOVERY_PORTAL_FLOW,
+  RECOVERY_PORTAL_SETUP_FLOW,
+  RECOVERY_PORTAL_RECOVERY_FLOW,
   RECOVERY_PORTAL_SETUP_INTRO,
   RECOVERY_PORTAL_SIGN_UP,
   RECOVERY_PORTAL_CONNECT_DEVICE,
@@ -230,6 +232,7 @@ import {
   CONNECTED_DEVICES_FLOW,
   REMOVE_SMART_WALLET_CONNECTED_DEVICE,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
+  RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -627,14 +630,14 @@ const tankWithdrawalFlow = createStackNavigator({
 
 tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-const recoveryPortalFlow = createStackNavigator({
+const recoveryPortalSetupFlow = createStackNavigator({
   [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
   [RECOVERY_PORTAL_SIGN_UP]: RecoveryPortalSignUpScreen,
   [RECOVERY_PORTAL_CONNECT_DEVICE]: RecoveryPortalConnectDeviceScreen,
   [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
 }, StackNavigatorConfig);
 
-recoveryPortalFlow.navigationOptions = hideTabNavigatorOnChildView;
+recoveryPortalSetupFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const connectedDevicesFlow = createStackNavigator({
   [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
@@ -642,6 +645,13 @@ const connectedDevicesFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 connectedDevicesFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const recoveryPortalRecoveryFlow = createStackNavigator({
+  [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
+  [RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE]: RecoveryPortalWalletRecoveryCompleteSceeen,
+}, StackNavigatorConfig);
+
+recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -667,9 +677,9 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
-    [RECOVERY_PORTAL_FLOW]: recoveryPortalFlow,
+    [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
+    [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
-    [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
     [LOGOUT_PENDING]: LogoutPendingScreen,
   },
   modalTransition,
