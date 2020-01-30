@@ -218,7 +218,7 @@ class FundTank extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner>
             {!topUpFee.isFetched && <Spinner width={20} height={20} />}
             {topUpFee.isFetched && <Label>Estimated fee {feeInEth} ETH</Label>}

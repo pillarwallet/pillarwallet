@@ -207,7 +207,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: `Send ${this.assetData.symbol} via PPN` }] }}
-        keyboardAvoidFooter={
+        footer={
           <FooterWrapper>
             {!!value && !!parseFloat(value.amount) &&
               <Button
