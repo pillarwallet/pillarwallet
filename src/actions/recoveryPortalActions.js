@@ -46,7 +46,7 @@ import { generateMnemonicPhrase } from 'utils/wallet';
 
 // services
 import { navigate } from 'services/navigation';
-import smartWalletInstance from 'services/smartWallet';
+import smartWalletService from 'services/smartWallet';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -66,7 +66,30 @@ export const addRecoveryPortalDeviceAction = (deviceAddress: string) => {
   };
 };
 
-export const checkSmartWalletRecoverState = (event: Api.IEvent) => {
+export const checkIfRecoveredSmartWalletFinishedAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    // in case deployment was faster than user encrypted the wallet (set pin flow)
+    const encryptedWalletAddress = get(getState(), 'wallet.data.address');
+    if (!encryptedWalletAddress) return;
+
+    if (isEmpty(smartWalletService.sdk.state.account)) {
+      const accounts = await smartWalletService.getAccounts();
+      if (isEmpty(accounts)) return;
+      await smartWalletService.connectAccount(accounts[0].address);
+    }
+    const { devices = [], activeDeviceAddress } = await smartWalletService.getAccountDeviceData();
+    if (!activeDeviceAddress) return;
+
+    const thisDevice = devices.find(({ device: { address } }) => addressesEqual(activeDeviceAddress, address));
+    if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
+
+    console.log('RECOVERY FINISHED!!!');
+    // 1. TODO: re-assign username
+    // 2. TODO: fire finish registration action
+  };
+};
+
+export const checkRecoveredSmartWalletStateAction = (event: Api.IEvent) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const eventName = get(event, 'name');
     const transactionType = get(event, 'payload.state');
@@ -78,10 +101,10 @@ export const checkSmartWalletRecoverState = (event: Api.IEvent) => {
         // device was connected to account
         const { recoveryPortal: { temporaryWallet } } = getState();
         if (!temporaryWallet) return;
-        const accounts = await smartWalletInstance.getAccounts();
+        const accounts = await smartWalletService.getAccounts();
         // if account is attached to current instance then this means that new device has been connected
         if (!isEmpty(accounts)) {
-          await smartWalletInstance.connectAccount(accounts[0].address);
+          await smartWalletService.connectAccount(accounts[0].address);
           // we can add wallet to onboarding reducer and move with PIN screen to encrypt it
           dispatch(generateWalletMnemonicAction(temporaryWallet.mnemonic));
           // reset temporary wallet
@@ -89,18 +112,12 @@ export const checkSmartWalletRecoverState = (event: Api.IEvent) => {
           // set recovery pending state, will be saved once PIN is set along with encrypted wallet
           dispatch({ type: SET_WALLET_RECOVERY_PENDING });
           // move to pin screen to encrypt wallet while recovery pending
-          navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+          navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE, params: { noBack: true } }));
         }
         return;
       }
       if (transactionType === sdkConstants.AccountTransactionStates.Completed) {
-        const { devices = [], activeDeviceAddress } = await smartWalletInstance.getAccountDeviceData();
-        if (!activeDeviceAddress) return;
-
-        const thisDevice = devices.find(({ device: { address } }) => addressesEqual(activeDeviceAddress, address));
-        if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
-
-        console.log('RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE!!!!!', thisDevice);
+        dispatch(checkIfRecoveredSmartWalletFinishedAction());
       }
     }
   };
@@ -110,7 +127,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
   return async (dispatch: Dispatch) => {
     // make sure everything is reset
     dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
-    await smartWalletInstance.reset();
+    await smartWalletService.reset();
 
     // let's create new temporary wallet
     const mnemonic = generateMnemonicPhrase();
@@ -123,8 +140,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
     };
 
     // set temporary smart wallet and subscribe for events
-    await smartWalletInstance.init(wallet.privateKey, dispatch, checkSmartWalletRecoverState);
+    await smartWalletService.init(wallet.privateKey, dispatch, checkRecoveredSmartWalletStateAction);
     dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
   };
 };
-

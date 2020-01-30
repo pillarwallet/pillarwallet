@@ -647,8 +647,8 @@ const connectedDevicesFlow = createStackNavigator({
 connectedDevicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const recoveryPortalRecoveryFlow = createStackNavigator({
-  [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
   [RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE]: RecoveryPortalWalletRecoveryCompleteSceeen,
+  [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
 }, StackNavigatorConfig);
 
 recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;

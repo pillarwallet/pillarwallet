@@ -90,6 +90,10 @@ import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
+import {
+  checkIfRecoveredSmartWalletFinishedAction,
+  checkRecoveredSmartWalletStateAction,
+} from './recoveryPortalActions';
 
 
 const Crashlytics = firebase.crashlytics();
@@ -265,7 +269,9 @@ export const loginAction = (
       dispatch(updatePinAttemptsAction(false));
 
       if (isWalletRecoveryPending) {
+        await smartWalletService.init(wallet.privateKey, dispatch, checkRecoveredSmartWalletStateAction);
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
+        dispatch(checkIfRecoveredSmartWalletFinishedAction());
         return;
       }
 

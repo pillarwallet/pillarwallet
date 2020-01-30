@@ -24,7 +24,7 @@ import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
 
-// util
+// utils
 import { spacing } from 'utils/variables';
 
 type Props = {

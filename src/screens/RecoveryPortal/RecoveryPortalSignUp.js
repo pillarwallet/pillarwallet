@@ -139,7 +139,7 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
           customOnBack: this.handleNavigationBack,
         }}
       >
-        <Wrapper style={{ flex: 1 }} regularPadding>
+        <Wrapper style={{ flex: 1 }}>
           <WebView
             ref={(ref) => { this.webViewRef = ref; }}
             source={{ uri: signUpUrl }}

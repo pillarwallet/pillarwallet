@@ -94,6 +94,7 @@ import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'ac
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
+import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPortalActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -320,6 +321,7 @@ export const registerWalletAction = (enableBiometrics?: boolean) => {
         params: {},
         action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE }),
       }));
+      dispatch(checkIfRecoveredSmartWalletFinishedAction());
       return;
     }
 

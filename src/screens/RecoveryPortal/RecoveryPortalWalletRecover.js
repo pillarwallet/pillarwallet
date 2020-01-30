@@ -41,6 +41,7 @@ import type { EthereumWallet } from 'models/Wallet';
 type Props = {
   navigation: NavigationScreenProp,
   temporaryWallet: ?EthereumWallet,
+  isRecoveryPending: boolean,
   initRecoveryPortalWalletRecover: () => void,
 };
 
@@ -117,7 +118,9 @@ class RecoveryPortalWalletRecover extends React.Component<Props, State> {
   };
 
   render() {
-    const { temporaryWallet } = this.props;
+    const { temporaryWallet, isRecoveryPending } = this.props;
+
+    const showWebView = !!temporaryWallet || isRecoveryPending;
 
     return (
       <ContainerWithHeader
@@ -126,9 +129,9 @@ class RecoveryPortalWalletRecover extends React.Component<Props, State> {
           customOnBack: this.handleNavigationBack,
         }}
       >
-        <Wrapper style={{ flex: 1 }} regularPadding>
-          {!temporaryWallet && this.renderLoading()}
-          {!!temporaryWallet &&
+        <Wrapper style={{ flex: 1 }}>
+          {!showWebView && this.renderLoading()}
+          {showWebView &&
             <WebView
               ref={(ref) => { this.webViewRef = ref; }}
               source={{ uri: RECOVERY_PORTAL_URL }}
@@ -147,9 +150,11 @@ class RecoveryPortalWalletRecover extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  wallet: { backupStatus: { isRecoveryPending } },
   recoveryPortal: { temporaryWallet },
 }: RootReducerState): $Shape<Props> => ({
   temporaryWallet,
+  isRecoveryPending,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

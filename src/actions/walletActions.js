@@ -68,8 +68,6 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
       api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      // TODO: fix flow for "addressValidationResponse.walletId" after adding types to action
-      // $FlowFixMe
       if (addressValidationResponse.walletId) {
         apiUser = {
           id: addressValidationResponse.id,
@@ -107,8 +105,6 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      // TODO: fix flow for "addressValidationResponse.walletId" after adding types to action
-      // $FlowFixMe
       if (addressValidationResponse.walletId) {
         apiUser = {
           id: addressValidationResponse.id,
