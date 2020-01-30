@@ -7,9 +7,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@feature/git_tags_and_versioning
+    - uses: actions/checkout@master
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.13.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        RELEASE_BRANCHES: feature/git_tags_and_versioning
