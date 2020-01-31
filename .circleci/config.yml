@@ -380,8 +380,8 @@ jobs:
           command: |
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             echo $TAG_VERSION
-            ghr -n "Pillarwallet Release $TAG_VERSION" $TAG_VERSION /tmp/workspace/android-release/
-            ghr -n "Pillarwallet Release $TAG_VERSION" $TAG_VERSION /tmp/workspace/ios-release/              
+            ghr $TAG_VERSION /tmp/workspace/android-release/
+            ghr $TAG_VERSION /tmp/workspace/ios-release/              
 
   slack-prod-approval:
     executor: node8-executor
