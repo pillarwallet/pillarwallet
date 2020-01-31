@@ -36,9 +36,9 @@ import TextInput from 'components/TextInput';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // util
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -82,7 +82,7 @@ const Value = styled(MediumText)`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 

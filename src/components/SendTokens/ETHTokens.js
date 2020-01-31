@@ -401,7 +401,7 @@ class SendETHTokens extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: `Send ${assetData.token}` }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner>
             {!!transactionSpeed &&
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
@@ -444,7 +444,7 @@ class SendETHTokens extends React.Component<Props, State> {
               />
               {!calculatingMaxValue &&
                 <TouchableOpacity onPress={this.useMaxValue}>
-                  <TextLink>Send All</TextLink>
+                  <TextLink>Send all</TextLink>
                 </TouchableOpacity>
               }
               {calculatingMaxValue && <Spinner width={20} height={20} />}

@@ -223,7 +223,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Withdraw from PLR tank' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner>
             {!withdrawalFee.isFetched && <Spinner width={20} height={20} />}
             {withdrawalFee.isFetched && <Label>Estimated fee {feeInEth} ETH</Label>}
@@ -259,7 +259,7 @@ class TankWithdrawal extends React.Component<Props, State> {
               </TextRow>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>Send All</TextLink>
+              <TextLink>Send all</TextLink>
             </TouchableOpacity>
           </ActionsWrapper>
         </Wrapper>

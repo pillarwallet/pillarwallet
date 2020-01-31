@@ -20,10 +20,10 @@
 import * as React from 'react';
 import { ImageBackground, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { baseColors, fontSizes, fontTrackings } from 'utils/variables';
+import { fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { getThemeType, themedColors } from 'utils/themes';
+import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -99,8 +99,8 @@ const Indicator = styled.View`
   background-color: ${themedColors.indicator};
   border-radius: 6px;
   position: absolute;
-  top: 17px;
-  right: 17px;
+  top: ${({ topPos }) => topPos}px;
+  right: ${({ rightPos }) => rightPos}px;
 `;
 
 const actionButtonBackground = require('assets/images/bg_action_button.png');
@@ -119,7 +119,7 @@ const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
     return (
       <ButtonWrapper>
         {children}
-        {showIndicator && <Indicator />}
+        {showIndicator && <Indicator topPos={4} rightPos={4} />}
       </ButtonWrapper>
     );
   }
@@ -133,7 +133,7 @@ const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
         colors={CircleButtonIconWrapperColors}
       >
         {children}
-        {showIndicator && <Indicator />}
+        {showIndicator && <Indicator topPos={17} rightPos={17} />}
       </CircleButtonIconWrapper>
     </ImageBackground>
   );
@@ -149,6 +149,8 @@ const CircleButton = (props: Props) => {
     label,
     theme,
   } = props;
+
+  const colors = getThemeColors(theme);
 
   return (
     <CircleButtonWrapper
@@ -168,7 +170,7 @@ const CircleButton = (props: Props) => {
           name={fontIcon}
           style={{
             fontSize: fontSizes.big,
-            color: baseColors.electricBlue,
+            color: colors.primary,
             alignSelf: 'center',
             ...fontIconStyle,
             opacity: disabled ? 0.3 : 1,

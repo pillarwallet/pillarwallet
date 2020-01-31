@@ -19,8 +19,8 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Switch, SectionList, Platform, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
-import styled from 'styled-components/native';
+import { Keyboard, SectionList, Platform, ScrollView, StyleSheet, RefreshControl, Alert } from 'react-native';
+import styled, { withTheme } from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
@@ -37,7 +37,7 @@ import Toast from 'components/Toast';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 
-import { baseColors, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 
 import {
   FETCHED,
@@ -60,12 +60,14 @@ import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import DeploymentView from 'components/DeploymentView';
+import Switcher from 'components/Switcher';
 
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 // actions
 import {
@@ -83,6 +85,7 @@ import { deploySmartWalletAction } from 'actions/smartWalletActions';
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // partials
 import CollectiblesList from './CollectiblesList';
@@ -117,6 +120,7 @@ type Props = {
   fetchAllCollectiblesData: Function,
   deploySmartWallet: Function,
   showDeploySmartWallet?: boolean,
+  theme: Theme,
 }
 
 type State = {
@@ -145,7 +149,7 @@ const ActionsWrapper = styled(Wrapper)`
   margin: 30px 0;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
@@ -243,9 +247,9 @@ class WalletView extends React.Component<Props, State> {
           fallbackSource={genericToken}
           small
         >
-          <Switch
-            onValueChange={() => this.handleAssetToggle(asset, isAdded)}
-            value={!!isAdded}
+          <Switcher
+            onToggle={() => this.handleAssetToggle(asset, isAdded)}
+            isOn={!!isAdded}
           />
         </ListItemWithImage>
       );
@@ -371,7 +375,9 @@ class WalletView extends React.Component<Props, State> {
       deploySmartWallet,
       fetchAssetsBalances,
       fetchAllCollectiblesData,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     // SEARCH
     const isSearchOver = assetsSearchState === FETCHED;
@@ -438,7 +444,7 @@ class WalletView extends React.Component<Props, State> {
           title={insightsTitle}
           insightChecklist={insightList}
           onClose={() => { hideInsight(); }}
-          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: baseColors.mediumLightGray }}
+          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         />
         {blockAssetsView &&
         <DeploymentView
@@ -555,4 +561,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView));
+export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView)));

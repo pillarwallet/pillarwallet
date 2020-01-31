@@ -21,7 +21,6 @@ import * as React from 'react';
 import { Platform, PixelRatio, View } from 'react-native';
 import { BoxShadow } from 'react-native-shadow';
 import styled from 'styled-components/native';
-import { UIColors } from 'utils/variables';
 import NativeAndroidShadow from './NativeAndroidShadow';
 
 type Props = {
@@ -65,7 +64,7 @@ export const Shadow = (props: Props) => {
     widthIOS = 100,
     heightIOS = 70,
     shadowColorAndroid = '#14105baa',
-    shadowColorOS = UIColors.cardShadowColor,
+    shadowColorOS = '#EEF3F9',
     useSVGShadow,
     shadowOpacity,
     wrapperStyle,

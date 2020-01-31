@@ -74,7 +74,7 @@ import { getLimitedData } from './opensea';
 
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
-export const API_REQUEST_TIMEOUT = 5000;
+export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
 
 type HistoryPayload = {
@@ -348,7 +348,7 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   // TODO: handle 404 and other errors in different ways (e.response.status === 404)
 };
 
-SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
+SDKWrapper.prototype.validateAddress = function (blockchainAddress: string): Object {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
@@ -360,7 +360,7 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
           error,
         },
       });
-      return {};
+      return { error: true };
     });
 };
 

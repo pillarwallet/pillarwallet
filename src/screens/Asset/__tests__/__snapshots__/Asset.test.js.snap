@@ -1989,11 +1989,14 @@ exports[`Asset renders the Asset correctly 1`] = `
                         theme={
                           Object {
                             "colors": Object {
+                              "PPNSurface": "#0a0c78",
+                              "PPNText": "#f33726",
                               "accent": "#818EB3",
                               "bitcoinWallet": "#F79319",
                               "border": "#007AFF",
                               "card": "#FFFFFF",
                               "control": "#FCFDFF",
+                              "danger": "#ff0005",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
                               "negative": "#BD573A",
@@ -2003,6 +2006,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "secondaryAccent": "#EBF0F5",
                               "secondaryText": "#8B939E",
                               "smartWallet": "#3C71FE",
+                              "smartWalletSurface": "#f3f7ff",
+                              "smartWalletText": "#1D24D8",
                               "surface": "#007AFF",
                               "tertiary": "#EBF0F6",
                               "text": "#FCFDFF",
@@ -2035,16 +2040,12 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
           </View>
           <View
-            borderColor="#2f86eb"
             opacity={0}
             style={
               Array [
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#2f86eb",
-                  "borderLeftWidth": 10,
-                  "borderStyle": "solid",
                   "elevation": 9,
                   "justifyContent": "center",
                   "left": 0,
@@ -2122,10 +2123,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                   <View
                     name="info-circle"
                     style={
-                      Object {
-                        "color": "#2f86eb",
-                        "fontSize": 24,
-                      }
+                      Array [
+                        Object {
+                          "color": "#007AFF",
+                          "fontSize": 24,
+                        },
+                        undefined,
+                      ]
                     }
                   />
                 </View>
@@ -2198,7 +2202,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         "alignItems": "center",
                         "alignSelf": "center",
                         "borderWidth": 0,
-                        "color": "#C6CACD",
+                        "color": "#8B939E",
                         "fontSize": undefined,
                         "justifyContent": "center",
                         "marginBottom": undefined,
@@ -2702,16 +2706,12 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
           </View>
           <View
-            borderColor="#2f86eb"
             opacity={0}
             style={
               Array [
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#2f86eb",
-                  "borderLeftWidth": 10,
-                  "borderStyle": "solid",
                   "elevation": 9,
                   "justifyContent": "center",
                   "left": 0,
@@ -2789,10 +2789,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                   <View
                     name="info-circle"
                     style={
-                      Object {
-                        "color": "#2f86eb",
-                        "fontSize": 24,
-                      }
+                      Array [
+                        Object {
+                          "color": "#007AFF",
+                          "fontSize": 24,
+                        },
+                        undefined,
+                      ]
                     }
                   />
                 </View>
@@ -2865,7 +2868,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         "alignItems": "center",
                         "alignSelf": "center",
                         "borderWidth": 0,
-                        "color": "#C6CACD",
+                        "color": "#8B939E",
                         "fontSize": undefined,
                         "justifyContent": "center",
                         "marginBottom": undefined,

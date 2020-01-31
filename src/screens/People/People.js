@@ -74,8 +74,7 @@ import type { Theme } from 'models/Theme';
 
 // utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
-import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -178,6 +177,7 @@ class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
   scrollViewRef: ScrollView;
+  flatListRef: FlatList;
   forceRender = false;
 
   constructor(props: Props) {
@@ -261,6 +261,12 @@ class PeopleScreen extends React.Component<Props, State> {
     });
   };
 
+  toggleScroll = (ref: Object, shouldAllowScroll: boolean) => {
+    if (ref && Object.keys(ref).length) {
+      ref.setNativeProps({ scrollEnabled: shouldAllowScroll });
+    }
+  };
+
   renderSwipeoutBtns = (data) => {
     const swipeButtons = [
       { actionType: MUTE, icon: 'mute', squarePrimary: true },
@@ -297,7 +303,7 @@ class PeopleScreen extends React.Component<Props, State> {
     });
   };
 
-  renderContact = (item, themeType) => {
+  renderContact = ({ item }) => {
     const { unread = 0, status = '' } = item;
     const unreadCount = unread > 9 ? '9+' : unread;
     const newMessageText = unread > 1 ? 'New Messages' : 'New Message';
@@ -312,9 +318,8 @@ class PeopleScreen extends React.Component<Props, State> {
         close={this.state.forceHideRemoval}
         buttonWidth={80}
         scroll={(shouldAllowScroll) => {
-          if (this.scrollViewRef && Object.keys(this.scrollViewRef).length) {
-            this.scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
-          }
+          this.toggleScroll(this.scrollViewRef, shouldAllowScroll);
+          this.toggleScroll(this.flatListRef, shouldAllowScroll);
         }}
       >
         <ListItemWithImage
@@ -328,7 +333,6 @@ class PeopleScreen extends React.Component<Props, State> {
           customAddon={([STATUS_MUTED, STATUS_BLOCKED].includes(status)) ? <ConnectionStatus status={status} /> : null}
           rightColumnInnerStyle={{ flexDirection: 'row-reverse' }}
           noSeparator
-          hasShadow={themeType === LIGHT_THEME}
         />
       </Swipeout>
     );
@@ -373,7 +377,6 @@ class PeopleScreen extends React.Component<Props, State> {
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const colors = getThemeColors(theme);
-    const themeType = getThemeType(theme);
 
     return (
       <React.Fragment>
@@ -411,10 +414,11 @@ class PeopleScreen extends React.Component<Props, State> {
           }
           {!inSearchMode && !!sortedLocalContacts.length &&
           <FlatList
+            ref={(ref) => { this.flatListRef = ref; }}
             data={sortedLocalContacts}
             extraData={chats}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => this.renderContact(item, themeType)}
+            renderItem={this.renderContact}
             initialNumToRender={8}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
@@ -488,7 +492,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ leftItems: [{ user: true }] }}
+        headerProps={{ noBack: true, centerItems: [{ title: 'People' }] }}
         inset={{ bottom: 0 }}
       >
         <ScrollView

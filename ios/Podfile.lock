@@ -145,6 +145,8 @@ PODS:
   - QBImagePickerController (3.4.0)
   - React (0.59.10):
     - React/Core (= 0.59.10)
+  - react-native-appearance (0.3.2):
+    - React
   - react-native-background-timer (2.1.1):
     - React
   - react-native-camera (2.6.0):
@@ -267,6 +269,7 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - Intercom (~> 5.2.1)
+  - react-native-appearance (from `../node_modules/react-native-appearance`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
@@ -342,6 +345,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   React:
     :path: "../node_modules/react-native"
+  react-native-appearance:
+    :path: "../node_modules/react-native-appearance"
   react-native-background-timer:
     :path: "../node_modules/react-native-background-timer"
   react-native-camera:
@@ -412,6 +417,7 @@ SPEC CHECKSUMS:
   Protobuf: 20d79da7f20b5928b80043b05080b816e802659e
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: 1d605e098d69bdf08960787f3446f0a9dc2e2ccf
+  react-native-appearance: 6f7d829e25310d7c45d4e8e75db3206315e39951
   react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
   react-native-camera: 9c50d7def800895e7991ccda6203929553ceec9c
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
@@ -433,6 +439,6 @@ SPEC CHECKSUMS:
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 13b038caf80119058ec2527d815eceaec9df94db
+PODFILE CHECKSUM: 6902eae1bc76c86917ae6ee098e1e2ff7e4fde55
 
 COCOAPODS: 1.5.3

@@ -484,7 +484,7 @@ class ImportWallet extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={({ centerItems: [{ title: 'Re-import wallet' }] })}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             {this.renderFooterButtons(tabsInfo)}
           </FooterWrapper>

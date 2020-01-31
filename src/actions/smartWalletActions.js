@@ -103,7 +103,7 @@ import { accountHistorySelector } from 'selectors/history';
 
 // actions
 import {
-  addNewAccountAction,
+  addAccountAction,
   setActiveAccountAction,
   switchAccountAction,
 } from 'actions/accountsActions';
@@ -113,6 +113,7 @@ import {
   sendSignedAssetTransactionAction,
   resetLocalNonceToTransactionCountAction,
   fetchAssetsBalancesAction,
+  fetchInitialAssetsAction,
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/historyActions';
@@ -121,7 +122,7 @@ import { fetchGasInfoAction, fetchSmartWalletTransactionsAction } from 'actions/
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
-import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
+import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
@@ -180,15 +181,9 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
     const { user = {} } = await storage.get('user');
     const { session: { data: session } } = getState();
 
-    const smartAccounts: SmartWalletAccount[] = await smartWalletService.getAccounts();
+    const smartAccounts = await smartWalletService.getAccounts();
     if (!smartAccounts.length && privateKey) {
       const newSmartAccount = await smartWalletService.createAccount();
-      await api.registerSmartWallet({
-        walletId: user.walletId,
-        privateKey,
-        ethAddress: newSmartAccount.address,
-        fcmToken: session.fcmToken,
-      });
       if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
     dispatch({
@@ -197,11 +192,22 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
     });
     await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
 
+    // register missed accounts on the backend
+    if (privateKey) {
+      await smartWalletService.syncSmartAccountsWithBackend(
+        api,
+        smartAccounts,
+        user.walletId,
+        privateKey,
+        session.fcmToken,
+      );
+    }
     const backendAccounts = await api.listAccounts(user.walletId);
-    const newAccountsPromises = smartAccounts.map(async account => {
-      return dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+
+    const accountsPromises = smartAccounts.map(async account => {
+      return dispatch(addAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
     });
-    await Promise.all(newAccountsPromises);
+    await Promise.all(accountsPromises);
   };
 };
 
@@ -210,6 +216,7 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
+      dispatch(fetchInitialAssetsAction(false));
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
@@ -312,7 +319,7 @@ export const deploySmartWalletAction = () => {
     }
     await dispatch(setSmartWalletDeploymentDataAction(deployTxHash));
 
-    // depends from where called status might be `deploying` already
+    // depends from where it's called status might already be `deploying`
     if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
       await dispatch(setSmartWalletUpgradeStatusAction(
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
@@ -324,7 +331,7 @@ export const deploySmartWalletAction = () => {
     const account = await smartWalletService.fetchConnectedAccount();
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      account,
+      payload: account,
     });
   };
 };
@@ -774,10 +781,10 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     // manual transactions tracker
     if (event.name === ACCOUNT_TRANSACTION_UPDATED) {
       const {
-        history: { data: currentHistory },
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
       } = getState();
+      let { history: { data: currentHistory } } = getState();
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
@@ -802,6 +809,25 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             status: TX_CONFIRMED_STATUS,
           });
           await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
+
+          const { txUpdated, updatedHistory } = updateHistoryRecord(
+            currentHistory,
+            txHash,
+            (transaction) => ({
+              ...transaction,
+              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
+              gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+              status: TX_CONFIRMED_STATUS,
+            }));
+
+          if (txUpdated) {
+            dispatch(saveDbAction('history', { history: updatedHistory }, true));
+            dispatch({
+              type: SET_HISTORY,
+              payload: updatedHistory,
+            });
+            currentHistory = getState().history.data;
+          }
         }
         dispatch(checkAssetTransferTransactionsAction());
       }
@@ -850,6 +876,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
               type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
               payload: txHash,
             });
+            currentHistory = getState().history.data;
           }
         } else {
           dispatch(fetchSmartWalletTransactionsAction());
@@ -1444,19 +1471,11 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { user = {} } = await storage.get('user');
-    const {
-      session: { data: session },
-    } = getState();
+    const { session: { data: session } } = getState();
 
-    const smartAccounts: SmartWalletAccount[] = await smartWalletService.getAccounts();
+    const smartAccounts = await smartWalletService.getAccounts();
     if (!smartAccounts.length && createNewAccount) {
       const newSmartAccount = await smartWalletService.createAccount();
-      await api.registerSmartWallet({
-        walletId: user.walletId,
-        privateKey,
-        ethAddress: newSmartAccount.address,
-        fcmToken: session.fcmToken,
-      });
       if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
     dispatch({
@@ -1465,25 +1484,18 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
     });
     await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
 
-    // register on backend missed accounts
-    let backendAccounts = await api.listAccounts(user.walletId);
-    const registerOnBackendPromises = smartAccounts.map(async account => {
-      const backendAccount = backendAccounts.find(({ ethAddress }) => addressesEqual(ethAddress, account.address));
-      if (!backendAccount) {
-        return api.registerSmartWallet({
-          walletId: user.walletId,
-          privateKey,
-          ethAddress: account.address,
-          fcmToken: session.fcmToken,
-        });
-      }
-      return Promise.resolve();
-    });
-    await Promise.all(registerOnBackendPromises);
-    backendAccounts = await api.listAccounts(user.walletId);
+    // register missed accounts on the backend
+    await smartWalletService.syncSmartAccountsWithBackend(
+      api,
+      smartAccounts,
+      user.walletId,
+      privateKey,
+      session.fcmToken,
+    );
+    const backendAccounts = await api.listAccounts(user.walletId);
 
     const newAccountsPromises = smartAccounts.map(async account => {
-      return dispatch(addNewAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+      return dispatch(addAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
     });
     await Promise.all(newAccountsPromises);
 
@@ -1523,21 +1535,30 @@ export const getAssetTransferGasLimitsAction = () => {
     const from = getActiveAccountAddress(accounts);
     const accountId = getActiveAccountId(accounts);
     const collectibles = collectiblesByAccount[accountId];
+    const smartWalletSdkInitialized = smartWalletService.sdkInitialized;
     let to;
+
     /**
-     * if sdk was initialized then it was initialized with wallet PK
-     * and if not, let's make temporary init and re-init will happen later
+     * if sdk was initialized then it was initialized with wallet's PK
+     * and if not, let's make a temporary init and re-init will happen later
      */
-    if (!smartWalletService.sdkInitialized) {
+    if (!smartWalletSdkInitialized) {
       await smartWalletService.sdk.initialize().catch(() => null);
     }
-    const smartAccounts = await smartWalletService.getAccounts().catch(() => null);
-    if (!smartAccounts || !smartAccounts.length) {
+
+    const smartAccounts = await smartWalletService.getAccounts();
+    if (!smartAccounts.length) {
       /**
-       * let's create account, it will be later fetched or new will be created if re-init happens
-       * we need smart wallet account address for precise gas limit calculation
+       * let's create an account, it will be fetched later or a new one will be created if the re-init happens
+       * we need the smart wallet account address for the precise gas limit calculation
        */
-      const tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
+      let tempAccount;
+      if (smartWalletSdkInitialized) {
+        tempAccount = await smartWalletService.createAccount();
+      } else {
+        tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
+      }
+
       if (!tempAccount) {
         Toast.show({
           message: 'Failed to create Smart Wallet account',

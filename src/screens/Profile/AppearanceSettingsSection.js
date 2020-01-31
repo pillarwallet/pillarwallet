@@ -25,7 +25,8 @@ import styled from 'styled-components/native';
 import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
 // utils
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -82,7 +83,6 @@ const AssetLayoutHolder = styled.View`
 `;
 
 const AssetsLayout = styled.View`
-  background: ${baseColors.lightGray};
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -95,6 +95,11 @@ const AssetsLayoutImage = styled(RNImage)`
   height: 194px;
   width: 132px;
   max-width: ${halfScreenWidth}px;
+`;
+
+const StyledText = styled(BaseText)`
+  font-size: ${fontSizes.medium}px;
+  color: ${themedColors.secondaryText};
 `;
 
 class AppearanceSettingsSection extends React.Component<Props, State> {
@@ -119,14 +124,9 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
       <TouchableOpacity key={id} onPress={() => this.handleAssetsLayoutSelect(id)}>
         <AssetLayoutHolder>
           <AssetsLayoutImage source={image} resizeMode="contain" />
-          <BaseText
-            style={{
-              fontSize: fontSizes.medium,
-              color: baseColors.darkGray,
-            }}
-          >
+          <StyledText>
             {name}
-          </BaseText>
+          </StyledText>
         </AssetLayoutHolder>
       </TouchableOpacity>
     ));
@@ -159,7 +159,6 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
           scrollOffset={scrollOffset}
         >
           <SettingsModalTitle extraHorizontalSpacing>

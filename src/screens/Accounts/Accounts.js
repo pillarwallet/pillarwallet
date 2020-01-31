@@ -42,8 +42,9 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -164,7 +165,12 @@ const FooterWrapper = styled.View`
 const FooterParagraph = styled(BaseText)`
   ${fontStyles.regular};
   text-align: center;
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
+`;
+
+const ToggleText = styled(BaseText)`
+  margin-right: -10px;
+  color: ${themedColors.secondaryText};
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
@@ -470,9 +476,9 @@ class AccountsScreen extends React.Component<Props, State> {
         open={isLegacyWalletVisible}
         onPress={() => this.setState({ isLegacyWalletVisible: !isLegacyWalletVisible })}
         customToggle={(
-          <BaseText style={{ marginRight: -10, color: baseColors.coolGrey }}>
+          <ToggleText>
             Legacy wallet (advanced)
-          </BaseText>
+          </ToggleText>
         )}
         toggleWrapperStyle={{
           justifyContent: 'flex-start',

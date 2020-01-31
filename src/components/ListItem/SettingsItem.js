@@ -18,14 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, TouchableNativeFeedback, StyleSheet } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import { StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { Switch, Badge as NBBadge } from 'native-base';
+import { Badge as NBBadge } from 'native-base';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { getThemeColors, themedColors } from 'utils/themes';
-import type { Theme } from 'models/Theme';
+import NativeTouchable from 'components/NativeTouchable';
+import Switcher from 'components/Switcher';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   label: string,
@@ -36,22 +37,8 @@ type Props = {
   value?: ?string | ?boolean,
   disabled?: ?boolean,
   bordered?: ?boolean,
-  theme: Theme,
+  isSelected?: boolean,
 }
-
-const StyledItemTouchable = styled.TouchableHighlight`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const StyledItemView = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
 
 const ItemLabelHolder = styled.View`
   flex: 1;
@@ -89,7 +76,7 @@ const BadgeText = styled(BaseText)`
 `;
 
 const ItemLabel = styled(MediumText)`
-  color: ${themedColors.text};
+  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.text};
   ${fontStyles.big};
 `;
 
@@ -118,30 +105,6 @@ const ListAddon = styled.View`
   min-width: 70px;
 `;
 
-const ButtonWrapper = ({ onPress, children, theme }) => {
-  const colors = getThemeColors(theme);
-  if (Platform.OS === 'android') {
-    return (
-      <TouchableNativeFeedback
-        onPress={onPress}
-        background={TouchableNativeFeedback.Ripple()}
-      >
-        <StyledItemView>
-          {children}
-        </StyledItemView>
-      </TouchableNativeFeedback>
-    );
-  }
-  return (
-    <StyledItemTouchable
-      onPress={onPress}
-      underlayColor={colors.secondaryAccent}
-    >
-      {children}
-    </StyledItemTouchable>
-  );
-};
-
 class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
     const {
@@ -152,13 +115,14 @@ class SettingsListItem extends React.Component<Props> {
       warningNotification,
       disabled,
       bordered,
+      isSelected,
     } = this.props;
 
     if (!toggle) {
       return (
         <ItemLabelHolder bordered={bordered}>
           <ListItemInnerWrapper>
-            <ItemLabel>{label}</ItemLabel>
+            <ItemLabel primary={isSelected}>{label}</ItemLabel>
             {!!processedValue && <ItemValue>{processedValue}</ItemValue>}
           </ListItemInnerWrapper>
           {!!(notificationsCount || warningNotification) &&
@@ -172,12 +136,12 @@ class SettingsListItem extends React.Component<Props> {
 
     return (
       <ItemLabelHolder bordered={bordered}>
-        <ItemLabel>{label}</ItemLabel>
+        <ItemLabel primary={isSelected}>{label}</ItemLabel>
         <ListAddon>
-          <Switch
+          <Switcher
+            isOn={processedValue}
+            onToggle={onPress}
             disabled={disabled}
-            onValueChange={onPress}
-            value={processedValue}
           />
         </ListAddon>
       </ItemLabelHolder>
@@ -188,7 +152,6 @@ class SettingsListItem extends React.Component<Props> {
       onPress,
       toggle,
       value,
-      theme,
     } = this.props;
 
     let processedValue;
@@ -206,11 +169,11 @@ class SettingsListItem extends React.Component<Props> {
     }
 
     return (
-      <ButtonWrapper onPress={onPress} theme={theme}>
+      <NativeTouchable onPress={onPress}>
         {this.renderContent(processedValue)}
-      </ButtonWrapper>
+      </NativeTouchable>
     );
   }
 }
 
-export default withTheme(SettingsListItem);
+export default SettingsListItem;
