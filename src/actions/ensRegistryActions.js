@@ -33,7 +33,7 @@ import { saveDbAction } from './dbActions';
 
 export const addEnsRegistryRecordAction = (address: string, ensName: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { ensRegistry } = getState();
+    const { ensRegistry: { data: ensRegistry } } = getState();
     if (ensRegistry[address]) return;
 
     dispatch(saveDbAction('ensRegistry', { ensRegistry: { [address]: ensName } }));
@@ -49,7 +49,7 @@ export const addEnsRegistryRecordAction = (address: string, ensName: string) => 
 
 export const lookupAddressAction = (address: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { ensRegistry } = getState();
+    const { ensRegistry: { data: ensRegistry } } = getState();
     if (ensRegistry[address]) return;
 
     const ensName = await lookupAddress(address);
