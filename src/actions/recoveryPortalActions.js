@@ -77,7 +77,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = () => {
       if (isEmpty(accounts)) return;
       await smartWalletService.connectAccount(accounts[0].address);
     }
-    const { devices = [], activeDeviceAddress } = await smartWalletService.getAccountDeviceData();
+    const { devices = [], activeDeviceAddress } = await smartWalletService.fetchConnectedAccount();
     if (!activeDeviceAddress) return;
 
     const thisDevice = devices.find(({ device: { address } }) => addressesEqual(activeDeviceAddress, address));
