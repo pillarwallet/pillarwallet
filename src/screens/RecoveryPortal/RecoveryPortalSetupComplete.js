@@ -32,7 +32,7 @@ import Animation from 'components/Animation';
 import ButtonText from 'components/ButtonText';
 
 // util
-import { fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 
 // models, types
@@ -121,6 +121,7 @@ class RecoveryPortalSetupComplete extends React.PureComponent<Props> {
                 buttonText="Skip (at my own risk)"
                 onPress={() => skipPrompt(this.handleBack)}
                 color={colors.negative}
+                fontSize={fontSizes.medium}
                 medium
               />
             }

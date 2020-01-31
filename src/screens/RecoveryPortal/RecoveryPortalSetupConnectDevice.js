@@ -42,7 +42,7 @@ import { Paragraph, BaseText, MediumText } from 'components/Typography';
 import ButtonText from 'components/ButtonText';
 
 // utils
-import { fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 import { formatAmount, getCurrencySymbol } from 'utils/common';
@@ -214,7 +214,11 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
               onPress={this.onNextClick}
               marginBottom={spacing.large}
             />
-            <ButtonText buttonText="Cancel" onPress={() => cancelPrompt(() => navigation.goBack())} />
+            <ButtonText
+              buttonText="Cancel"
+              onPress={() => cancelPrompt(() => navigation.goBack())}
+              fontSize={fontSizes.medium}
+            />
           </View>
         }
       </React.Fragment>
