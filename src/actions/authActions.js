@@ -269,8 +269,8 @@ export const loginAction = (
       dispatch(updatePinAttemptsAction(false));
 
       if (isWalletRecoveryPending) {
-        await smartWalletService.init(wallet.privateKey, dispatch, checkRecoveredSmartWalletStateAction);
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
+        await smartWalletService.init(wallet.privateKey, dispatch, checkRecoveredSmartWalletStateAction);
         dispatch(checkIfRecoveredSmartWalletFinishedAction());
         return;
       }

@@ -50,7 +50,7 @@ type State = {
   checkingNewUrl: boolean,
 };
 
-class RecoveryPortalWalletRecover extends React.Component<Props, State> {
+class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
   webViewRef: WebView;
   initialUrl: ?string;
   state = {
@@ -161,4 +161,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   initRecoveryPortalWalletRecover: () => dispatch(initRecoveryPortalWalletRecoverAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecoveryPortalWalletRecover);
+export default connect(mapStateToProps, mapDispatchToProps)(RecoveryPortalWalletRecovery);

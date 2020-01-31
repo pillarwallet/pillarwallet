@@ -20,7 +20,7 @@ import { withTheme } from 'styled-components';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
-import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVER } from 'constants/navigationConstants';
+import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY } from 'constants/navigationConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -62,7 +62,7 @@ const WalletRecoveryOptions = (props: Props) => {
 
   const recoveryOptions = [
     { title: 'Enter 12 words seed phrase or private key', route: IMPORT_WALLET },
-    { title: 'Use Recovery Portal (for Smart Wallet only)', route: RECOVERY_PORTAL_WALLET_RECOVER },
+    { title: 'Use Recovery Portal (for Smart Wallet only)', route: RECOVERY_PORTAL_WALLET_RECOVERY },
   ];
 
   return (
