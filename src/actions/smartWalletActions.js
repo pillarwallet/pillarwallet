@@ -152,6 +152,7 @@ import {
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
+import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 const storage = Storage.getInstance('db');
 
@@ -746,6 +747,8 @@ export const syncVirtualAccountTransactionsAction = () => {
     const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
     dispatch({ type: SET_HISTORY, payload: updatedHistory });
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+    dispatch(extractEnsInfoFromTransactionsAction(payments));
   };
 };
 

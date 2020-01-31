@@ -82,6 +82,7 @@ import {
 } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
+import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -208,6 +209,7 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     dispatch(getExistingTxNotesAction());
     syncAccountHistory(history, accountId, dispatch, getState);
+    dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
   };
 };
 
