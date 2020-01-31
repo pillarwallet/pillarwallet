@@ -28,24 +28,32 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 
 // constants
 import { RECOVERY_PORTAL_URL_PATHS } from 'constants/recoveryPortalConstants';
+import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // components
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
+import DeploymentView from 'components/DeploymentView';
 
 // util
 import { validateDeepLink } from 'utils/deepLink';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
-// types
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// models, types
+import type { Accounts } from 'models/Account';
 import type { ConnectedSmartWalletAccount } from 'models/SmartWalletAccount';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp,
   connectedSmartWallet: ConnectedSmartWalletAccount,
   executeDeepLink: (deepLink: string) => void,
+  accounts: Accounts,
+  smartWalletState: Object,
 };
 
 type State = {
@@ -123,6 +131,9 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
         address: accountAddress,
         activeDeviceAddress,
       },
+      accounts,
+      smartWalletState,
+      navigation,
     } = this.props;
 
     const signUpUrl = [
@@ -132,6 +143,16 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
       activeDeviceAddress,
     ].join('/');
 
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
+    const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+      ? {
+        title: 'To setup Recovery Portal you need to deploy Smart Wallet first',
+        message: 'You will have to pay a small fee',
+      }
+      : smartWalletStatus.sendingBlockedMessage || {};
+    const isRecoveryDisabled = !isEmpty(sendingBlockedMessage);
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -140,16 +161,25 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
         }}
       >
         <Wrapper style={{ flex: 1 }}>
-          <WebView
-            ref={(ref) => { this.webViewRef = ref; }}
-            source={{ uri: signUpUrl }}
-            onNavigationStateChange={this.onNavigationStateChange}
-            renderLoading={this.renderWebViewLoading}
-            originWhitelist={['*']}
-            hideKeyboardAccessoryView
-            startInLoadingState
-            incognito
-          />
+          {!!isRecoveryDisabled &&
+            <DeploymentView
+              message={sendingBlockedMessage}
+              buttonLabel="Deploy Smart Wallet"
+              buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
+            />
+          }
+          {!isRecoveryDisabled &&
+            <WebView
+              ref={(ref) => { this.webViewRef = ref; }}
+              source={{ uri: signUpUrl }}
+              onNavigationStateChange={this.onNavigationStateChange}
+              renderLoading={this.renderWebViewLoading}
+              originWhitelist={['*']}
+              hideKeyboardAccessoryView
+              startInLoadingState
+              incognito
+            />
+          }
         </Wrapper>
       </ContainerWithHeader>
     );
@@ -158,8 +188,12 @@ class RecoveryPortalSignUp extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   smartWallet: { connectedAccount: connectedSmartWallet },
+  smartWallet: smartWalletState,
+  accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   connectedSmartWallet,
+  smartWalletState,
+  accounts,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
