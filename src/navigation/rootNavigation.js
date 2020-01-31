@@ -38,7 +38,8 @@ import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
 import BiometricsPromptScreen from 'screens/BiometricsPrompt';
 import WalletRecoveryOptionsScreen from 'screens/ImportWallet/WalletRecoveryOptions';
-import RecoveryPortalRecoveryScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecovery';
+import RecoveryPortalWalletRecoveryIntroScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryIntro';
+import RecoveryPortalWalletRecoveryScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecovery';
 // import SandboxScreen from 'screens/Sandbox/Index';
 
 import { modalTransition } from 'utils/common';
@@ -65,6 +66,7 @@ import {
   BIOMETRICS_PROMPT,
   WALLET_RECOVERY_OPTIONS,
   RECOVERY_PORTAL_WALLET_RECOVERY,
+  RECOVERY_PORTAL_WALLET_RECOVERY_INTRO,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -94,7 +96,8 @@ const onBoardingFlow = createStackNavigator({
   [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
   [IMPORT_WALLET]: ImportWalletScreen,
   [WALLET_RECOVERY_OPTIONS]: WalletRecoveryOptionsScreen,
-  [RECOVERY_PORTAL_WALLET_RECOVERY]: RecoveryPortalRecoveryScreen,
+  [RECOVERY_PORTAL_WALLET_RECOVERY_INTRO]: RecoveryPortalWalletRecoveryIntroScreen,
+  [RECOVERY_PORTAL_WALLET_RECOVERY]: RecoveryPortalWalletRecoveryScreen,
   [SECURITY_CONFIRM]: SecurityConfirmScreen,
   [BACKUP_PHRASE]: BackupPhraseScreen,
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,

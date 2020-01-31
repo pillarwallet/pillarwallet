@@ -61,7 +61,7 @@ type State = {
   checkingNewUrl: boolean,
 };
 
-class RecoveryPortalSignUp extends React.Component<Props, State> {
+class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
   webViewRef: WebView;
   initialUrl: ?string = null;
   state = {
@@ -200,4 +200,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecoveryPortalSignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(RecoveryPortalSetupSignUp);

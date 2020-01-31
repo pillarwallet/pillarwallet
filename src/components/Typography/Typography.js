@@ -91,6 +91,6 @@ export const Label = styled(MediumText)`
 
 export const HelpText = styled(BaseText)`
   ${fontStyles.regular};
-  padding: 10px;
-  color: grey;
+  ${({ noPadding }) => !noPadding && 'padding: 10px;'}
+  color: ${({ color }) => color || 'grey'};
 `;

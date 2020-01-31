@@ -23,7 +23,7 @@ import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
-import { RECOVERY_PORTAL_SIGN_UP } from 'constants/navigationConstants';
+import { RECOVERY_PORTAL_SETUP_SIGN_UP } from 'constants/navigationConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -88,7 +88,7 @@ const RecoveryPortalSetupIntro = (props: Props) => (
         <Button
           block
           title="Next"
-          onPress={() => props.navigation.navigate(RECOVERY_PORTAL_SIGN_UP)}
+          onPress={() => props.navigation.navigate(RECOVERY_PORTAL_SETUP_SIGN_UP)}
         />
       </ButtonWrapper>
     </ScrollWrapper>

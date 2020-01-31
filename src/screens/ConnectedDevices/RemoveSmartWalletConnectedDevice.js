@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -38,7 +38,8 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
-import { Paragraph, BaseText, MediumText, TextLink } from 'components/Typography';
+import { Paragraph, BaseText, MediumText } from 'components/Typography';
+import ButtonText from 'components/ButtonText';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -213,9 +214,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
               onPress={this.onNextClick}
               marginBottom={spacing.large}
             />
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <TextLink>Cancel</TextLink>
-            </TouchableOpacity>
+            <ButtonText buttonText="Cancel" onPress={() => navigation.goBack()} />
           </View>
         }
       </React.Fragment>

@@ -97,8 +97,8 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
-import RecoveryPortalSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSignUp';
-import RecoveryPortalConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalConnectDevice';
+import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
+import RecoveryPortalSetupConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalSetupConnectDevice';
 import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
 import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
 import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
@@ -226,8 +226,8 @@ import {
   RECOVERY_PORTAL_SETUP_FLOW,
   RECOVERY_PORTAL_RECOVERY_FLOW,
   RECOVERY_PORTAL_SETUP_INTRO,
-  RECOVERY_PORTAL_SIGN_UP,
-  RECOVERY_PORTAL_CONNECT_DEVICE,
+  RECOVERY_PORTAL_SETUP_SIGN_UP,
+  RECOVERY_PORTAL_SETUP_CONNECT_DEVICE,
   RECOVERY_PORTAL_SETUP_COMPLETE,
   MANAGE_CONNECTED_DEVICES,
   CONNECTED_DEVICES_FLOW,
@@ -632,8 +632,8 @@ tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const recoveryPortalSetupFlow = createStackNavigator({
   [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
-  [RECOVERY_PORTAL_SIGN_UP]: RecoveryPortalSignUpScreen,
-  [RECOVERY_PORTAL_CONNECT_DEVICE]: RecoveryPortalConnectDeviceScreen,
+  [RECOVERY_PORTAL_SETUP_SIGN_UP]: RecoveryPortalSetupSignUpScreen,
+  [RECOVERY_PORTAL_SETUP_CONNECT_DEVICE]: RecoveryPortalSetupConnectDeviceScreen,
   [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
 }, StackNavigatorConfig);
 

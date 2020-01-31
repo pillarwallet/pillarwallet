@@ -16,8 +16,8 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Alert, BackHandler, Platform, TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
+import { Alert, BackHandler, Platform } from 'react-native';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
@@ -27,14 +27,16 @@ import { BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { BaseText, MediumText, Paragraph } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/Typography';
 import Animation from 'components/Animation';
+import ButtonText from 'components/ButtonText';
 
 // util
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
-// types
+// models, types
+import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 
@@ -42,6 +44,7 @@ type Props = {
   navigation: NavigationScreenProp,
   isBackedUp: boolean,
   isImported: boolean,
+  theme: Theme,
 };
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -50,11 +53,6 @@ const Title = styled(MediumText)`
   ${fontStyles.large};
   text-align: center;
   margin-bottom: ${spacing.small}px;
-`;
-
-export const DangerTextLink = styled(BaseText)`
-  ${fontStyles.medium};
-  color: ${themedColors.negative};
 `;
 
 const skipPrompt = (callback) => Alert.alert(
@@ -81,8 +79,16 @@ class RecoveryPortalSetupComplete extends React.PureComponent<Props> {
   handleBack = () => this.props.navigation.dismiss();
 
   render() {
-    const { isBackedUp, isImported, navigation } = this.props;
+    const {
+      isBackedUp,
+      isImported,
+      navigation,
+      theme,
+    } = this.props;
+
+    const colors = getThemeColors(theme);
     const isWalletBackupNeeded = !isImported && !isBackedUp;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -111,9 +117,12 @@ class RecoveryPortalSetupComplete extends React.PureComponent<Props> {
               />
             }
             {isWalletBackupNeeded &&
-              <TouchableOpacity onPress={() => skipPrompt(this.handleBack)}>
-                <DangerTextLink>Skip (at my own risk)</DangerTextLink>
-              </TouchableOpacity>
+              <ButtonText
+                buttonText="Skip (at my own risk)"
+                onPress={() => skipPrompt(this.handleBack)}
+                color={colors.negative}
+                medium
+              />
             }
             {!isWalletBackupNeeded &&
               <Button
@@ -137,4 +146,4 @@ const mapStateToProps = ({
   isImported,
 });
 
-export default connect(mapStateToProps)(RecoveryPortalSetupComplete);
+export default withTheme(connect(mapStateToProps)(RecoveryPortalSetupComplete));

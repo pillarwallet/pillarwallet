@@ -26,7 +26,7 @@ import isEmpty from 'lodash.isempty';
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
 
 // constants
-import { LOGIN, CONFIRM_CLAIM, HOME, RECOVERY_PORTAL_CONNECT_DEVICE } from 'constants/navigationConstants';
+import { LOGIN, CONFIRM_CLAIM, HOME, RECOVERY_PORTAL_SETUP_CONNECT_DEVICE } from 'constants/navigationConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -100,7 +100,7 @@ export const executeDeepLinkAction = (deepLink: string) => {
         const deviceAddress = get(query, 'address');
         if (deviceAddress) {
           navigate(NavigationActions.navigate({
-            routeName: RECOVERY_PORTAL_CONNECT_DEVICE,
+            routeName: RECOVERY_PORTAL_SETUP_CONNECT_DEVICE,
             params: { deviceAddress },
           }));
         }
