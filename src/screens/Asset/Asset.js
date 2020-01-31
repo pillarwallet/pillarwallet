@@ -45,7 +45,7 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
-import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC, ETH, USD } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
@@ -191,6 +191,8 @@ const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props, State> {
   forceRender = false;
+  isNavigatingToExchangeFlow = false;
+
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
@@ -236,8 +238,8 @@ class AssetScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
-  goToExchangeFlow = (fromAssetCode: string) => {
-    this.props.navigation.navigate(EXCHANGE, { fromAssetCode });
+  goToExchangeFlow = (fromAssetCode: string, toAssetCode?: string) => {
+    this.props.navigation.navigate(EXCHANGE, { fromAssetCode, toAssetCode });
   };
 
   openReceiveTokenModal = assetData => {
@@ -263,6 +265,20 @@ class AssetScreen extends React.Component<Props, State> {
       fetchAssetTransactions(token, indexFrom);
     }
   };
+
+  handleBuyTokens = () => {
+    // wait for the modal to be completely hidden and then navigate to exchange
+    // navigating while the modal is hiding leads to keyboard flickering etc.
+    this.isNavigatingToExchangeFlow = true;
+    this.setState({ activeModal: activeModalResetState });
+  };
+
+  handleModalHidden = () => {
+    if (this.isNavigatingToExchangeFlow) {
+      this.isNavigatingToExchangeFlow = false;
+      this.goToExchangeFlow(USD, ETH);
+    }
+  }
 
   render() {
     const {
@@ -417,6 +433,9 @@ class AssetScreen extends React.Component<Props, State> {
           token={assetData.token}
           tokenName={assetData.name}
           handleOpenShareDialog={this.handleOpenShareDialog}
+          showBuyTokensSection
+          handleBuyTokens={this.handleBuyTokens}
+          onModalHidden={this.handleModalHidden}
         />
         <SlideModal
           title={assetData.name}
