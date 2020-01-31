@@ -28,6 +28,7 @@ import Button from 'components/Button';
 import { MediumText, BaseText, Paragraph, HelpText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ButtonText from 'components/ButtonText';
+import Icon from 'components/Icon';
 
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -51,9 +52,20 @@ const Title = styled(MediumText)`
 
 const WarningTitle = styled(BaseText)`
   ${fontStyles.big};
+  color: ${themedColors.negative};
+`;
+
+const WarningIcon = styled(Icon)`
+  color: ${themedColors.negative};
+  font-size: ${fontSizes.medium}px;
+  margin-right: ${spacing.small}px;
+`;
+
+const WarningTitleRow = styled.View`
   margin-top: 20px;
   margin-bottom: ${spacing.small}px;
-  color: ${themedColors.negative};
+  flex-direction: row;
+  align-items: center;
 `;
 
 const RecoveryPortalWalletRecoveryIntro = (props: Props) => {
@@ -68,7 +80,10 @@ const RecoveryPortalWalletRecoveryIntro = (props: Props) => {
           have created previously with Pillar app. Log in to Recovery
           Portal and scan QR code from your linked device.
         </Paragraph>
-        <WarningTitle>Warning</WarningTitle>
+        <WarningTitleRow>
+          <WarningIcon name="warning" />
+          <WarningTitle>Warning</WarningTitle>
+        </WarningTitleRow>
         <HelpText color={colors.negative} noPadding>
           After recovering your Smart Wallet you will be given a new Key wallet.
           You will not be able to retain access to your old Key wallet attached to Smart Wallet
