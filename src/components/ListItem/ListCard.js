@@ -23,9 +23,10 @@ import { CachedImage } from 'react-native-cached-image';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
-import { fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
+import { LabelBadge } from 'components/LabelBadge';
 
 type Props = {
   iconSource?: string,
@@ -39,6 +40,10 @@ type Props = {
   contentWrapperStyle?: Object,
   disabled?: boolean,
   children?: React.Node,
+  labelBadge?: {
+    label: string,
+    color?: string,
+  },
 }
 
 const CardRow = styled.View`
@@ -102,6 +107,7 @@ export const ListCard = (props: Props) => {
     contentWrapperStyle,
     disabled,
     children,
+    labelBadge,
   } = props;
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
@@ -120,6 +126,12 @@ export const ListCard = (props: Props) => {
             <TitleWrapper>
               <CardTitle style={titleStyle}>{title}</CardTitle>
               {!!label && <Label>{label}</Label>}
+              {!!labelBadge && (
+                <LabelBadge
+                  label={labelBadge.label}
+                  labelStyle={{ fontSize: fontSizes.regular }}
+                  color={labelBadge.color}
+                />)}
             </TitleWrapper>
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
           </CardContent>
