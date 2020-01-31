@@ -1116,8 +1116,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          leftItems: [{ user: true }],
           rightItems,
+          noBack: true,
+          centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
       >

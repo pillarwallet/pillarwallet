@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
 import type { NavigationScreenProp } from 'react-navigation';
 
-import type { Dispatch } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -35,7 +35,8 @@ import { registerWalletAction } from 'actions/onboardingActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  registerWallet: (setBiometrics: boolean) => void,
+  registerWallet: (setBiometrics: boolean, themeToStore: string) => void,
+  themeType: string,
 };
 
 const touchIdImageSource = require('assets/images/touchId.png');
@@ -79,8 +80,8 @@ const getBiometryImage = (biometryType: string) => {
 
 class BiometricsPrompt extends React.Component<Props> {
   proceedToRegisterWallet = (setBiometrics: boolean) => {
-    const { registerWallet } = this.props;
-    registerWallet(setBiometrics);
+    const { registerWallet, themeType } = this.props;
+    registerWallet(setBiometrics, themeType);
   };
 
   render() {
@@ -110,8 +111,16 @@ class BiometricsPrompt extends React.Component<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  registerWallet: (setBiometrics) => dispatch(registerWalletAction(setBiometrics)),
+const mapStateToProps = ({
+  appSettings: { data: { themeType } },
+}: RootReducerState): $Shape<Props> => ({
+  themeType,
 });
 
-export default connect(null, mapDispatchToProps)(BiometricsPrompt);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  registerWallet: (setBiometrics, themeToStore) => dispatch(
+    registerWalletAction(setBiometrics, themeToStore),
+  ),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BiometricsPrompt);

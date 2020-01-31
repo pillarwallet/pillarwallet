@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { AppState } from 'react-native';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import get from 'lodash.get';
 
@@ -47,6 +48,12 @@ type State = {
   biometricsShown: boolean,
   lastAppState: string,
 }
+
+const CheckPinWrapper = styled(Container)`
+  margin-top: auto;
+  height: 100%;
+  flex: 1;
+`;
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
@@ -136,7 +143,7 @@ class CheckPin extends React.Component<Props, State> {
     }
 
     return (
-      <Container>
+      <CheckPinWrapper>
         {showError}
         <PinCode
           onPinEntered={this.handlePinSubmit}
@@ -144,7 +151,7 @@ class CheckPin extends React.Component<Props, State> {
           showForgotButton={false}
           pinError={!!pinError}
         />
-      </Container>
+      </CheckPinWrapper>
     );
   }
 }

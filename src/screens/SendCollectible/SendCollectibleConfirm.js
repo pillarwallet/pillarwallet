@@ -172,7 +172,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <Button
               disabled={!gasLimit || !session.isOnline || !gasInfo.isFetched || !canProceedTesting}

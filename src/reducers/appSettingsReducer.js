@@ -32,6 +32,8 @@ export type AppSettingsReducerState = {
     baseFiatCurrency: ?string,
     transactionSpeed: ?string,
     themeType: string,
+    isSetAsSystemPrefTheme: boolean,
+    seenThemeAlert: boolean,
     useBiometrics?: boolean,
     optOutTracking?: boolean,
   },
@@ -54,6 +56,8 @@ export const initialState: AppSettingsReducerState = {
     baseFiatCurrency: null,
     transactionSpeed: null,
     themeType: LIGHT_THEME,
+    isSetAsSystemPrefTheme: false,
+    seenThemeAlert: false,
   },
   isFetched: false,
 };
