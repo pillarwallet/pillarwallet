@@ -375,7 +375,7 @@ jobs:
           command: |
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             echo $TAG_VERSION
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r $CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ${TAG_VERSION} /tmp/workspace/releases/             
+            ghr $TAG_VERSION /tmp/workspace/releases/             
 
   slack-prod-approval:
     executor: node8-executor
