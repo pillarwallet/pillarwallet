@@ -43,6 +43,8 @@ import type { Theme } from 'models/Theme';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
+const iconPhone = require('assets/icons/icon_phone.png');
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -87,8 +89,8 @@ class ManageConnectedDevices extends React.Component<Props> {
     return (
       <ListItemWithImage
         subtext={deviceDate}
-        // itemImageUrl={fullIconUrl}
-        // fallbackSource={genericToken}
+        iconSource={iconPhone}
+        iconImageAutoWidth
         customLabel={(
           <HorizontalView style={{ width: '60%' }}>
             <ItemTitle numberOfLines={1} >Device </ItemTitle>

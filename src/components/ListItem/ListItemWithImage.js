@@ -88,6 +88,7 @@ type Props = {
   iconSource?: string,
   imageWrapperStyle?: Object,
   theme: Theme,
+  iconImageAutoWidth?: boolean,
 }
 
 type AddonProps = {
@@ -194,8 +195,8 @@ const ItemIcon = styled(Icon)`
 `;
 
 const IconImage = styled(CachedImage)`
-  width: 24px;
   height: 24px;
+  ${({ iconAutoWidth }) => !iconAutoWidth && 'width: 24px;'}
 `;
 
 const TokenImage = styled(CachedImage)`
@@ -343,6 +344,7 @@ const ItemImage = (props: Props) => {
     diameter,
     iconColor,
     iconSource,
+    iconImageAutoWidth,
   } = props;
 
   if (iconName) {
@@ -356,7 +358,11 @@ const ItemImage = (props: Props) => {
   if (iconSource) {
     return (
       <IconCircle diameter={diameter}>
-        <IconImage source={iconSource} />
+        <IconImage
+          iconImageAutoWidth={iconImageAutoWidth}
+          source={iconSource}
+          resizeMode={iconImageAutoWidth && 'contain'}
+        />
       </IconCircle>
     );
   }
