@@ -272,16 +272,16 @@ jobs:
           command: |
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             mkdir -p ./toArchive
+            mkdir -p /tmp/workspace/ios-release
             cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
-            cp ./ios/output/gym/pillarwallet-staging.ipa /tmp/workspace/releases/pillarwallet-$TAG_VERSION.ipa
+            cp ./ios/output/gym/pillarwallet-staging.ipa /tmp/workspace/ios-release/pillarwallet-ios-$TAG_VERSION.ipa
       - store_artifacts:
           path: ./toArchive
           destination: app_build
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - build-num
-            - releases
+            - ios-release
 
   hockeyapp_android:
     executor: android-executor
@@ -357,15 +357,16 @@ jobs:
             cd android && bundle exec fastlane deploy_android_hockeyapp
       - run:
           name: prepare to archive apk file
-          command: cp ./android/app/build/outputs/apk/prod/staging/app-prod-staging.apk /tmp/workspace/releases/pillarwallet-$TAG_VERSION.apk
+          command: |
+            mkdir -p /tmp/workspace/android-release
+            cp ./android/app/build/outputs/apk/prod/staging/app-prod-staging.apk /tmp/workspace/android-release/pillarwallet-android-$TAG_VERSION.apk
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - build-num
-            - releases
+            - android-release
 
   publish_releases_to_github:
     docker:
@@ -379,7 +380,8 @@ jobs:
           command: |
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             echo $TAG_VERSION
-            ghr $TAG_VERSION /tmp/workspace/releases/             
+            ghr -n "Pillarwallet Release $TAG_VERSION" $TAG_VERSION /tmp/workspace/android-release/
+            ghr -n "Pillarwallet Release $TAG_VERSION" $TAG_VERSION /tmp/workspace/ios-release/              
 
   slack-prod-approval:
     executor: node8-executor
