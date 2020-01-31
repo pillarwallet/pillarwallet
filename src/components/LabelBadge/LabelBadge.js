@@ -43,7 +43,10 @@ const Label = styled(MediumText)`
 
 export const LabelBadge = (props: Props) => {
   const {
-    label, containerStyle, labelStyle, color,
+    label,
+    containerStyle,
+    labelStyle,
+    color,
   } = props;
   return (
     <BadgeWrapper style={containerStyle} color={color}>
