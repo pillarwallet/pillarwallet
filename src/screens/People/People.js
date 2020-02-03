@@ -213,6 +213,7 @@ class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
   scrollViewRef: ScrollView;
+  flatListRef: FlatList;
   forceRender = false;
 
   constructor(props: Props) {
@@ -296,6 +297,12 @@ class PeopleScreen extends React.Component<Props, State> {
     });
   };
 
+  toggleScroll = (ref: Object, shouldAllowScroll: boolean) => {
+    if (ref && Object.keys(ref).length) {
+      ref.setNativeProps({ scrollEnabled: shouldAllowScroll });
+    }
+  };
+
   renderSwipeoutBtns = (data) => {
     const swipeButtons = [
       { actionType: MUTE, icon: 'mute', squarePrimary: true },
@@ -347,9 +354,8 @@ class PeopleScreen extends React.Component<Props, State> {
         close={this.state.forceHideRemoval}
         buttonWidth={80}
         scroll={(shouldAllowScroll) => {
-          if (this.scrollViewRef && Object.keys(this.scrollViewRef).length) {
-            this.scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
-          }
+          this.toggleScroll(this.scrollViewRef, shouldAllowScroll);
+          this.toggleScroll(this.flatListRef, shouldAllowScroll);
         }}
       >
         <ListItemWithImage
@@ -444,6 +450,7 @@ class PeopleScreen extends React.Component<Props, State> {
           }
           {!inSearchMode && !!sortedLocalContacts.length &&
           <FlatList
+            ref={(ref) => { this.flatListRef = ref; }}
             data={sortedLocalContacts}
             extraData={chats}
             keyExtractor={(item) => item.id}
@@ -537,7 +544,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ leftItems: [{ user: true }] }}
+        headerProps={{ noBack: true, centerItems: [{ title: 'People' }] }}
         inset={{ bottom: 0 }}
       >
         <ScrollView

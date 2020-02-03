@@ -14,6 +14,7 @@ import com.facebook.react.ReactApplication;
 import io.branch.referral.Branch;
 import io.branch.rnbranch.RNBranchModule;
 import io.branch.rnbranch.RNBranchPackage;
+import io.expo.appearance.RNCAppearancePackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.mattblock.reactnative.inappbrowser.RNInAppBrowserPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -67,6 +68,7 @@ public class MainApplication extends Application implements ShareApplication, Re
         new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
         new RNBranchPackage(),
+        new RNCAppearancePackage(),
         new AsyncStoragePackage(),
         new RNInAppBrowserPackage(),
         new RNGestureHandlerPackage(),

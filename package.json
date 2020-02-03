@@ -168,6 +168,7 @@
     "querystring-es3": "~0.2.0",
     "react": "^16.8.6",
     "react-native": "0.59.10",
+    "react-native-appearance": "^0.3.2",
     "react-native-background-timer": "2.1.1",
     "react-native-branch": "^4.2.1",
     "react-native-cached-image": "^1.4.3",

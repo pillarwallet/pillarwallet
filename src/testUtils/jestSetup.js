@@ -383,3 +383,5 @@ jest.setMock('services/insight', {
 });
 
 jest.mock('react-native-branch', () => jest.fn());
+
+jest.setMock('react-native-appearance', {});

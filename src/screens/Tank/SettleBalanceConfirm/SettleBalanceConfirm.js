@@ -158,7 +158,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <Button
               disabled={submitButtonDisabled}

@@ -94,7 +94,7 @@
 			remoteGlobalIDString = 832C81801AAF6DEF007FA2F7;
 			remoteInfo = RCTVibration;
 		};
-		041B3D8523C7346C00F871E0 /* PBXContainerItemProxy */ = {
+		0475C33B23C8BB3300BC4A18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 113115949D7043F5B6F906FF /* RNInAppBrowser.xcodeproj */;
 			proxyType = 2;
@@ -700,10 +700,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		041B3D8223C7346C00F871E0 /* Products */ = {
+		0475C33823C8BB3300BC4A18 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				041B3D8623C7346C00F871E0 /* libRNInAppBrowser.a */,
+				0475C33C23C8BB3300BC4A18 /* libRNInAppBrowser.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1233,7 +1233,7 @@
 					ProjectRef = 9DDE0EB81B5B432389D30BE2 /* RNFirebase.xcodeproj */;
 				},
 				{
-					ProductGroup = 699F5E842396444C0021F772 /* Products */;
+					ProductGroup = 0475C33823C8BB3300BC4A18 /* Products */;
 					ProjectRef = 113115949D7043F5B6F906FF /* RNInAppBrowser.xcodeproj */;
 				},
 				{
@@ -1324,11 +1324,11 @@
 			remoteRef = 00C302E31ABCB9EE00DB3ED1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		041B3D8623C7346C00F871E0 /* libRNInAppBrowser.a */ = {
+		0475C33C23C8BB3300BC4A18 /* libRNInAppBrowser.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRNInAppBrowser.a;
-			remoteRef = 041B3D8523C7346C00F871E0 /* PBXContainerItemProxy */;
+			remoteRef = 0475C33B23C8BB3300BC4A18 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		139105C11AF99BAD00B5F7CC /* libRCTSettings.a */ = {

@@ -139,5 +139,7 @@
 	<string>abgsz.test-app.link</string>
 	<key>branch_key</key>
 	<string>key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Automatic</string>
 </dict>
 </plist>
