@@ -282,6 +282,7 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [SETTINGS]: SettingsScreen,
+    [EXCHANGE]: ExchangeScreen,
   },
   StackNavigatorConfig,
 );
