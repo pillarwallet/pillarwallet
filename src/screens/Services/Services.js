@@ -102,6 +102,7 @@ class ServicesScreen extends React.Component<Props> {
         headerProps={{
           noBack: true,
           rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
+          leftItems: [{ title: 'Services' }],
         }}
         inset={{ bottom: 'never' }}
       >
