@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Clipboard, View, Image } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { TextLink, BaseText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import { spacing, fontStyles } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
@@ -28,11 +28,6 @@ import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import Toast from 'components/Toast';
 import { themedColors } from 'utils/themes';
-
-const AddressSectionWrapper = styled.View`
-  height: 300;
-  justify-content: flex-start;
-`;
 
 const BuyTokensWrapper = styled.View`
   background-color: ${themedColors.surface};
@@ -60,20 +55,14 @@ type Props = {
   showBuyTokensSection?: boolean,
 }
 
-const CopyAddressLink = styled.TouchableOpacity`
-  margin-top: ${spacing.rhythm}px;
-  margin-bottom: ${spacing.rhythm}px;
-  align-items: center;
-`;
-
 const QRCodeWrapper = styled.View`
-  flex: 1;
   align-items: center;
   justify-content: center;
 `;
 
 const WalletAddress = styled(BaseText)`
-  ${fontStyles.big};
+  ${fontStyles.regular};
+  margin: ${spacing.mediumLarge}px 0;
 `;
 
 const IconsContainer = styled.View`
@@ -125,22 +114,16 @@ export default class ReceiveModal extends React.Component<Props, *> {
       >
         <ContentWrapper>
           <WarningBanner rounded small />
-          <AddressSectionWrapper>
-            <QRCodeWrapper>
-              <View
-                style={{
-                  overflow: 'hidden',
-                }}
-              >
-                <QRCode value={address} size={160} />
-              </View>
-              <CopyAddressLink onPress={this.handleAddressClipboardSet}>
-                <TextLink>Copy wallet address to clipboard</TextLink>
-              </CopyAddressLink>
-
-              <WalletAddress>{address}</WalletAddress>
-            </QRCodeWrapper>
-          </AddressSectionWrapper>
+          <QRCodeWrapper>
+            <WalletAddress>{address}</WalletAddress>
+            <View
+              style={{
+                overflow: 'hidden',
+              }}
+            >
+              <QRCode value={address} size={160} />
+            </View>
+          </QRCodeWrapper>
           <Button
             title="Share Address"
             onPress={this.handleAddressShare}
