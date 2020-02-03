@@ -358,7 +358,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
             { title: symbol, color: baseColors.electricBlueIntense },
           ],
         }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner>
             {showFeesLabel && <Label small>No fees - paid by Pillar</Label>}
             {showNextButton &&

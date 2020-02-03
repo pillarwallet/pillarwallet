@@ -53,6 +53,7 @@ import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import * as connectionKeyActions from 'actions/connectionKeyPairActions';
@@ -170,6 +171,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
+      { type: UPDATE_APP_SETTINGS, payload: { seenThemeAlert: true } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -182,6 +184,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_FEATURE_FLAGS, payload: {} },
+      { type: SET_USER_EVENTS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -238,6 +241,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
+      { type: UPDATE_APP_SETTINGS, payload: { seenThemeAlert: true } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -250,6 +254,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_FEATURE_FLAGS, payload: {} },
+      { type: SET_USER_EVENTS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -319,6 +324,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: { themeType: LIGHT_THEME } },
+      { type: UPDATE_APP_SETTINGS, payload: { seenThemeAlert: true } },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
@@ -331,6 +337,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_FEATURE_FLAGS, payload: {} },
+      { type: SET_USER_EVENTS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },

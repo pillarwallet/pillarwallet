@@ -193,7 +193,7 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: 'Edit amount' }],
-          rightItems: [saveAvailable ? { label: 'Save', onPress: this.onNextPress } : {}],
+          rightItems: [saveAvailable ? { link: 'Save', onPress: this.onNextPress } : {}],
         }}
       >
         <ScrollView scrollEnabled={!disableScroll}>
