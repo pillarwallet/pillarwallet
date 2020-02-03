@@ -34,89 +34,91 @@ import { withTheme } from 'styled-components/native';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
-    theme: Theme,
-    offers: Offer[],
-    navigation: NavigationScreenProp<*>,
+  theme: Theme,
+  offers: Offer[],
+  navigation: NavigationScreenProp<*>,
 };
 
 class ServicesScreen extends React.Component<Props> {
-    getServices = () => {
-      const { navigation, theme, offers } = this.props;
-      const colors = getThemeColors(theme);
+  getServices = () => {
+    const { navigation, theme, offers } = this.props;
+    const colors = getThemeColors(theme);
 
-      const offersBadge = (offers && offers.length) ? {
-        label: `${offers.length} exchanges`,
-        color: colors.primary,
-      } : null;
+    const offersBadge = (offers && offers.length) ? {
+      label: `${offers.length} exchanges`,
+      color: colors.primary,
+    } : null;
 
-      return [
-        {
-          key: 'offersEngine',
-          title: 'Offers engine',
-          body: 'Aggregated offers from many decentralized exchanges and token swap services',
-          action: () => navigation.navigate(EXCHANGE),
-          labelBadge: offersBadge,
-        },
-        {
-          key: 'peerToPeerTrading',
-          title: 'Peer-to-peer trading',
-          body: 'Swap tokens directly with others. safe, secure, anonymous',
-          disabled: true,
-          label: 'soon',
-        },
-        {
-          key: 'buyCryptoWithFiat',
-          title: 'Buy crypto with fiat',
-          body: 'USD, GBP, EUR supported',
-          action: () => navigation.navigate(EXCHANGE, { fromAssetCode: USD, toAssetCode: ETH }),
-        },
-      ];
-    };
+    return [
+      {
+        key: 'offersEngine',
+        title: 'Offers engine',
+        body: 'Aggregated offers from many decentralized exchanges and token swap services',
+        action: () => navigation.navigate(EXCHANGE),
+        labelBadge: offersBadge,
+      },
+      {
+        key: 'peerToPeerTrading',
+        title: 'Peer-to-peer trading',
+        body: 'Swap tokens directly with others. safe, secure, anonymous',
+        disabled: true,
+        label: 'soon',
+      },
+      {
+        key: 'buyCryptoWithFiat',
+        title: 'Buy crypto with fiat',
+        body: 'USD, GBP, EUR supported',
+        action: () => navigation.navigate(EXCHANGE, { fromAssetCode: USD, toAssetCode: ETH }),
+      },
+    ];
+  };
 
-    renderServicesItem = ({ item }) => {
-      const {
-        title,
-        body,
-        action,
-        disabled,
-        label,
-        labelBadge,
-      } = item;
+  renderServicesItem = ({ item }) => {
+    const {
+      title,
+      body,
+      action,
+      disabled,
+      label,
+      labelBadge,
+    } = item;
 
-      return (
-        <ListCard
-          title={title}
-          subtitle={body}
-          action={action}
-          disabled={disabled}
-          label={label}
-          labelBadge={labelBadge}
-        />
-      );
-    }
+    return (
+      <ListCard
+        title={title}
+        subtitle={body}
+        action={action}
+        disabled={disabled}
+        label={label}
+        labelBadge={labelBadge}
+      />
+    );
+  }
 
-    render() {
-      const services = this.getServices();
-      return (
-        <ContainerWithHeader
-          headerProps={{
+  render() {
+    const services = this.getServices();
+    return (
+      <ContainerWithHeader
+        headerProps={{
           noBack: true,
           rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
         }}
-          inset={{ bottom: 'never' }}
-        >
-          <FlatList
-            data={services}
-            keyExtractor={(item) => item.key}
-            renderItem={this.renderServicesItem}
-            contentContainerStyle={{ width: '100%', padding: 20, paddingBottom: 40 }}
-          />
-        </ContainerWithHeader>
-      );
-    }
+        inset={{ bottom: 'never' }}
+      >
+        <FlatList
+          data={services}
+          keyExtractor={(item) => item.key}
+          renderItem={this.renderServicesItem}
+          contentContainerStyle={{ width: '100%', padding: 20, paddingBottom: 40 }}
+        />
+      </ContainerWithHeader>
+    );
+  }
 }
 
-const mapStateToProps = ({ exchange: { data: { offers } } }: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({
+  exchange: { data: { offers } },
+}: RootReducerState): $Shape<Props> => ({
   offers,
 });
 
