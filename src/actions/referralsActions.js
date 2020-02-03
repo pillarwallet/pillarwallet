@@ -17,20 +17,36 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import branch from 'react-native-branch';
+import branch, { BranchEvent } from 'react-native-branch';
+import get from 'lodash.get';
 
 // constants
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
+// services
+import { logEvent } from 'services/branchIo';
+
+// types
+import type SDKWrapper from 'services/api';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
+
 export type ClaimTokenAction = {
   walletId: string,
   code: string,
-}
+};
 
 let branchIoSubscription;
 
+export const completeRefferalsEventAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const walletId = get(getState(), 'user.data.walletId');
+    await logEvent(BranchEvent.CompleteRegistration, { walletId });
+  };
+};
+
 export const startReferralsListenerAction = () => {
-  return async () => {
+  return () => {
     if (branchIoSubscription) return;
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       console.log('error: ', error);
@@ -50,7 +66,7 @@ export const stopReferralsListenerAction = () => {
 
 // TODO: old one?
 export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const response = await api.claimTokens(props);
     const { responseStatus } = response;
 

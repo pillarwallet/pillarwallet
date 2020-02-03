@@ -17,7 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import branch from 'react-native-branch';
+import branch, { BranchEvent } from 'react-native-branch';
+
 
 export const getUserReferralLink = async (username: string): Promise<string> => {
   const branchIoUniversalObject = await branch.createBranchUniversalObject(`${username}-referral-link-${+new Date()}`, {
@@ -27,4 +28,9 @@ export const getUserReferralLink = async (username: string): Promise<string> => 
   });
   const result = await branchIoUniversalObject.generateShortUrl({ feature: 'referral', channel: 'app' });
   return result.url;
+};
+
+export const logEvent = async (eventName: string, customData?: Object): Promise<any> => {
+  const event = new BranchEvent(eventName, null, { customData });
+  return event.logEvent();
 };
