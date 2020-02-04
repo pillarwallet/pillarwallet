@@ -180,15 +180,17 @@ const Item = styled(NBItem)`
   min-height: 0;
   height: ${({ height }) => height}px;
   width: 100%;
+  margin: 0;
 `;
 
 const ItemHolder = styled.View`
   background-color: ${({ error, theme }) => error ? theme.colors.card : theme.colors.tertiary};
   border-radius: 4px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: ${({ error, theme }) => error ? theme.colors.negative : theme.colors.tertiary};
   position: relative;
+  overflow: hidden;
+  border-width: 1px;
+  border-color: transparent;
+  ${({ error, theme }) => `border-color: ${error ? theme.colors.negative : 'transparent'};`}
 `;
 
 const InputFooter = styled(View)`
@@ -205,7 +207,7 @@ const ButtonWrapper = styled.View`
 `;
 
 const LeftSideWrapper = styled.View`
-  padding-left: 16px;
+  padding-left: 14px;
   flex-direction: row;
   align-items: center;
   max-width: 25%;
@@ -234,8 +236,15 @@ const Selector = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0 10px 16px;
-  ${props => props.fullWidth ? 'flex: 1; padding-right: 14px;' : ''}
+  padding-left: 16px;
+  padding-right: 10px;
+  background-color: ${themedColors.card};
+  ${({ fullWidth, theme }) => fullWidth && `
+    flex: 1;
+    border: 1px solid ${theme.colors.secondaryAccent};
+    border-radius: 4px;
+  `}
+  margin: 0;
 `;
 
 const ValueWrapper = styled.View`
@@ -253,17 +262,10 @@ const SelectorValue = styled(MediumText)`
   margin-left: 8px;
 `;
 
-const ChevronWrapper = styled.View`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  margin-left: 15px;
-`;
-
 const SelectorChevron = styled(Icon)`
-  font-size: 8px;
+  font-size: 16px;
   color: ${themedColors.primary};
+  margin-left: 15px;
 `;
 
 const Wrapper = styled.View`
@@ -590,20 +592,7 @@ class TextInput extends React.Component<Props, State> {
                   </ValueWrapper>
                   )
                 : (<Placeholder>{selectorPlaceholder || 'select'}</Placeholder>)}
-              {selectorOptionsCount > 1 &&
-              <ChevronWrapper>
-                <SelectorChevron
-                  name="chevron-right"
-                  style={{ transform: [{ rotate: '-90deg' }] }}
-                />
-                <SelectorChevron
-                  name="chevron-right"
-                  style={{
-                    transform: [{ rotate: '90deg' }],
-                    marginTop: 4,
-                  }}
-                />
-              </ChevronWrapper>}
+              {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}
             </Selector>}
             {showLeftAddon &&
             <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>

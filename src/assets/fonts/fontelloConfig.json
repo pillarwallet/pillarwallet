@@ -661,6 +661,20 @@
       "search": [
         "ic_24_topup"
       ]
+    },
+    {
+      "uid": "67fa814376280a17d339397a8935d96f",
+      "css": "scale",
+      "code": 59482,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M685.9 581.9L498.4 811.1 310.9 581.9H685.9ZM498.4 180.9L685.9 410H310.9L498.4 180.9Z",
+        "width": 1000
+      },
+      "search": [
+        "scale"
+      ]
     }
   ]
 }
