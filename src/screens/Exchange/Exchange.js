@@ -404,11 +404,12 @@ function SelectorInputTemplate(locals) {
         options,
         horizontalOptions,
         showOptionsTitles: !isEmpty(horizontalOptions),
-        optionsTitle: 'CRYPTO',
-        horizontalOptionsTitle: 'FIAT',
+        optionsTitle: 'Crypto',
+        horizontalOptionsTitle: 'Fiat',
         fullWidth: !hasInput,
         selectorModalTitle: label,
         selectorPlaceholder: placeholderSelector,
+        optionsSearchPlaceholder: 'Asset search',
       }}
       getInputRef={inputRef}
     />
@@ -978,7 +979,11 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   generateAssetsOptions = (assets: Assets, selectedToSymbol?: string) => {
-    const { balances, paymentNetworkBalances, exchangeSupportedAssets } = this.props;
+    const {
+      balances,
+      exchangeSupportedAssets,
+      baseFiatCurrency,
+    } = this.props;
 
     if (selectedToSymbol && !exchangeSupportedAssets.some(({ symbol }) => symbol === selectedToSymbol)) return [];
 
@@ -987,7 +992,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         && !!exchangeSupportedAssets.some(asset => asset.symbol === symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
-        const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+        const assetBalanceInFiat = formatAmount(getBalance(balances, symbol));
+        const formattedBalanceInFiat = formatFiat(assetBalanceInFiat, baseFiatCurrency);
         return ({
           key: symbol,
           value: symbol,
@@ -996,7 +1002,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           symbol,
           ...rest,
           assetBalance,
-          paymentNetworkBalance,
+          formattedBalanceInFiat,
         });
       });
   };
@@ -1014,12 +1020,13 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   generateSupportedAssetsOptions = (assets: Asset[]) => {
     if (!Array.isArray(assets)) return [];
-    const { balances, paymentNetworkBalances } = this.props;
+    const { balances, baseFiatCurrency } = this.props;
     return [...assets] // prevent mutation of param
       .map(({ symbol, iconUrl, ...rest }) => {
         const rawAssetBalance = getBalance(balances, symbol);
         const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-        const paymentNetworkBalance = getBalance(paymentNetworkBalances, symbol);
+        const assetBalanceInFiat = rawAssetBalance ? formatAmount(getBalance(balances, symbol)) : null;
+        const formattedBalanceInFiat = assetBalanceInFiat ? formatFiat(assetBalanceInFiat, baseFiatCurrency) : null;
         return {
           key: symbol,
           value: symbol,
@@ -1028,7 +1035,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           symbol,
           ...rest,
           assetBalance,
-          paymentNetworkBalance,
+          formattedBalanceInFiat,
         };
       });
   };

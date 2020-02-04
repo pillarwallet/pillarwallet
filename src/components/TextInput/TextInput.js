@@ -28,20 +28,20 @@ import get from 'lodash.get';
 import { ETH } from 'constants/assetsConstants';
 
 import IconButton from 'components/IconButton';
-import { BaseText, MediumText, SubHeadingMedium } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
 import SearchBar from 'components/SearchBar';
 import { ScrollWrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
-import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ProfileImage from 'components/ProfileImage';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
-import { fontSizes, spacing, fontStyles, appFont, itemSizes } from 'utils/variables';
+import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { formatMoney, noop } from 'utils/common';
 
@@ -69,6 +69,7 @@ type SelectorOptions = {
   horizontalOptionsTitle?: string,
   optionsTitle?: string,
   selectorModalTitle?: string,
+  optionsSearchPlaceholder?: string,
 };
 
 type Value = string | number;
@@ -269,10 +270,7 @@ const Wrapper = styled.View`
 `;
 
 const SearchBarWrapper = styled.View`
-  padding: 0 ${spacing.large}px;
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${themedColors.border};
+  padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
 `;
 
 const HorizontalOptions = styled.View`
@@ -282,24 +280,22 @@ const HorizontalOptions = styled.View`
   padding-bottom: ${spacing.small}px;
 `;
 
-const HorizontalOptionsScrollView = styled.ScrollView`
-`;
-
 const HorizontalOptionItem = styled.TouchableOpacity`
   align-items: center;
-  width: ${itemSizes.avatarCircleMedium + 4}px;
-  margin: 0 8px;
+  width: 68px;
 `;
 
 const HorizontalOptionItemName = styled(BaseText)`
   ${fontStyles.small};
   color: ${themedColors.secondaryText};
   padding: 0 4px;
-  margin-top: 3px;
+  margin-top: 10px;
 `;
 
-const OptionsHeader = styled(SubHeadingMedium)`
-  margin: ${spacing.large}px ${spacing.large}px 0;
+const OptionsHeader = styled(MediumText)`
+  margin: ${spacing.large}px ${spacing.layoutSides}px 0;
+  ${fontStyles.regular};
+  color: ${themedColors.secondaryText};
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
@@ -406,10 +402,10 @@ class TextInput extends React.Component<Props, State> {
 
   renderOption = ({ item: option }: Object) => {
     const {
-      value,
       name,
       symbol,
       assetBalance,
+      formattedBalanceInFiat,
       paymentNetworkBalance,
     } = option;
     const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
@@ -419,44 +415,43 @@ class TextInput extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.selectValue(option)}
         label={name}
-        subtext={value}
         itemImageUrl={iconUrl || genericToken}
-        itemValue={assetBalance ? `${assetBalance} ${symbol}` : null}
         fallbackSource={genericToken}
-        customAddon={paymentNetworkBalance
-          ? (
-            <TankAssetBalance
-              amount={paymentNetworkBalanceFormatted}
-              isSynthetic={symbol !== ETH}
-            />)
-          : null
+        balance={!!formattedBalanceInFiat && {
+          balance: assetBalance,
+          value: formattedBalanceInFiat,
+          token: symbol,
+        }}
+        customAddon={!!paymentNetworkBalance &&
+          <TankAssetBalance
+            amount={paymentNetworkBalanceFormatted}
+            isSynthetic={symbol !== ETH}
+          />
         }
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}
       />
     );
   };
 
-  renderHorizontalOptions = (options: any) => {
-    return options
-      .map(option => {
-        const { name, icon } = option;
-        const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
-        return (
-          <HorizontalOptionItem
-            key={name}
-            onPress={() => this.selectValue(option)}
-          >
-            <ProfileImage
-              uri={iconUri}
-              userName={name}
-              diameter={itemSizes.avatarCircleMedium}
-              textStyle={{ fontSize: fontSizes.medium }}
-              noShadow
-            />
-            <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
-          </HorizontalOptionItem>
-        );
-      });
+  renderHorizontalOption = ({ item }) => {
+    const { name, icon } = item;
+    const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
+    return (
+      <HorizontalOptionItem
+        key={name}
+        onPress={() => this.selectValue(item)}
+      >
+        <ProfileImage
+          uri={iconUri}
+          userName={name}
+          diameter={64}
+          textStyle={{ fontSize: fontSizes.medium }}
+          noShadow
+          borderWidth="0"
+        />
+        <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
+      </HorizontalOptionItem>
+    );
   };
 
   selectValue = (selectedValue: Object) => {
@@ -528,6 +523,7 @@ class TextInput extends React.Component<Props, State> {
       horizontalOptionsTitle,
       optionsTitle,
       selectorModalTitle,
+      optionsSearchPlaceholder,
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
@@ -674,15 +670,22 @@ class TextInput extends React.Component<Props, State> {
         <SlideModal
           isVisible={showOptionsSelector}
           fullScreen
-          showHeader={!!selectorModalTitle}
           onModalShow={this.focusInput}
           onModalHidden={() => this.setState({ query: '' })}
           noSwipeToDismiss
           noClose
-          title={selectorModalTitle}
           backgroundColor={colors.card}
         >
-          <Wrapper flex={1}>
+          <ContainerWithHeader
+            headerProps={{
+              noPaddingTop: true,
+              customOnBack: () => {
+                this.setState({ showOptionsSelector: false, query: '' });
+                Keyboard.dismiss();
+              },
+              centerItems: [{ title: selectorModalTitle }],
+            }}
+          >
             <SearchBarWrapper>
               <SearchBar
                 inputProps={{
@@ -690,13 +693,10 @@ class TextInput extends React.Component<Props, State> {
                   value: query,
                   autoCapitalize: 'none',
                 }}
-                placeholder="Search for an asset"
+                placeholder={optionsSearchPlaceholder}
                 inputRef={ref => { this.searchInput = ref; }}
-                customCloseAction={() => {
-                  this.setState({ showOptionsSelector: false, query: '' });
-                  Keyboard.dismiss();
-                }}
-                forceShowCloseButton
+                noClose
+                marginBottom="0"
               />
             </SearchBarWrapper>
             <ScrollWrapper
@@ -708,13 +708,15 @@ class TextInput extends React.Component<Props, State> {
                 {(showOptionsTitles && !!horizontalOptionsTitle) &&
                 <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
                 }
-                <HorizontalOptionsScrollView
+                <FlatList
+                  data={filteredHorizontalListData}
+                  keyExtractor={({ name }) => name}
+                  renderItem={this.renderHorizontalOption}
                   keyboardShouldPersistTaps="always"
                   horizontal
-                  contentContainerStyle={{ paddingHorizontal: spacing.large / 2, paddingVertical: spacing.medium }}
-                >
-                  {this.renderHorizontalOptions(filteredHorizontalListData)}
-                </HorizontalOptionsScrollView>
+                  contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+                  ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
+                />
               </HorizontalOptions>
               }
               {!!filteredListData.length &&
@@ -723,7 +725,6 @@ class TextInput extends React.Component<Props, State> {
                 renderItem={this.renderOption}
                 keyExtractor={({ value: val }) => val}
                 keyboardShouldPersistTaps="handled"
-                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
                 initialNumToRender={10}
                 viewabilityConfig={viewConfig}
                 ListHeaderComponent={
@@ -745,7 +746,7 @@ class TextInput extends React.Component<Props, State> {
               </EmptyStateWrapper>
               }
             </ScrollWrapper>
-          </Wrapper>
+          </ContainerWithHeader>
         </SlideModal>
       </View>
     );
