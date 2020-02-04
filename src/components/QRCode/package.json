@@ -1,0 +1,6 @@
+{
+  "name": "QRCodeWithTheme",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./QRCodeWithTheme.js"
+}

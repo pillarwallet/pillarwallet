@@ -76,6 +76,7 @@ const TabItem = styled.TouchableOpacity`
   flex-direction: row;
   flex-grow: 1;
   ${({ active, theme }) => active && `background-color: ${theme.colors.card};`}
+  ${({ halfWidth }) => halfWidth && 'width: 50%;'}
 `;
 
 const TabItemIcon = styled(Icon)`
@@ -232,6 +233,7 @@ export default class Tabs extends React.PureComponent<Props> {
             });
           }}
           key={id}
+          halfWidth={tabs.length === 2}
         >
           <TextWrapper extraPadding={!!unread}>
             {this.renderIcon(tab)}
