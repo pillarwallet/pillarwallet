@@ -196,8 +196,7 @@ const ItemHolder = styled.View`
   position: relative;
   overflow: hidden;
   border-width: 1px;
-  border-color: transparent;
-  ${({ error, theme }) => `border-color: ${error ? theme.colors.negative : 'transparent'};`}
+  border-color: ${({ error, theme }) => error ? theme.colors.negative : 'transparent'};
 `;
 
 const InputFooter = styled(View)`
