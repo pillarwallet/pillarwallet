@@ -28,7 +28,6 @@ export const baseColors = {
   warmPurple: '#b2329c',
   brightPurple: '#4f1a91',
   electricBlue: '#007AFF',
-  electricBlueIntense: '#2329d6',
   duckEggBlue: '#e6eefa',
   selago: '#f6fafe',
   hawkesBlue: '#f0f7fe',

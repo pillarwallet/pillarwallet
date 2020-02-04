@@ -23,7 +23,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import t from 'tcomb-form-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -42,12 +42,12 @@ import { initSyntheticsServiceAction } from 'actions/syntheticsActions';
 import { fetchSingleAssetRatesAction } from 'actions/ratesActions';
 
 // utils, services
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { formatAmount, formatFiat, isValidNumber, isValidNumberDecimals, parseNumber } from 'utils/common';
 import { getAssetData, getAssetsAsList, getRate } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
 import { getAmountFormFields } from 'utils/formHelpers';
-import { themedColors } from 'utils/themes';
+import { themedColors, getThemeColors } from 'utils/themes';
 
 // constants
 import { defaultFiatCurrency, PLR } from 'constants/assetsConstants';
@@ -60,6 +60,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 import type { Asset, AssetData, Assets, Rates, SyntheticAsset } from 'models/Asset';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
@@ -73,6 +74,7 @@ type Props = {
   fetchSingleAssetRates: (assetCode: string) => void,
   availableSyntheticAssets: SyntheticAsset[],
   availableStake: string,
+  theme: Theme,
 };
 
 type State = {
@@ -159,6 +161,7 @@ const TextRow = styled.View`
 const ImageIcon = styled(CachedImage)`
   width: 6px;
   height: 12px;
+  tint-color: ${themedColors.primary};
 `;
 
 class SendSyntheticAmount extends React.Component<Props, State> {
@@ -301,6 +304,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
       isOnline,
+      theme,
     } = this.props;
     const {
       value,
@@ -349,13 +353,15 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       || !!intentError;
     const nextButtonTitle = 'Next';
 
+    const colors = getThemeColors(theme);
+
     return (
       <ContainerWithHeader
         headerProps={{
           centerItems: [
             { title: 'Send' },
             { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
-            { title: symbol, color: baseColors.electricBlueIntense },
+            { title: symbol, color: colors.primary },
           ],
         }}
         footer={(
@@ -434,4 +440,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchSingleAssetRates: (assetCode: string) => dispatch(fetchSingleAssetRatesAction(assetCode)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAmount);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAmount));
