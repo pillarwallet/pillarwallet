@@ -19,6 +19,7 @@
 */
 import branch, { BranchEvent } from 'react-native-branch';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
@@ -49,8 +50,9 @@ export const startReferralsListenerAction = () => {
   return () => {
     if (branchIoSubscription) return;
     branchIoSubscription = branch.subscribe(({ error, params }) => {
-      console.log('error: ', error);
+      if (!isEmpty(error)) return;
       console.log('params: ', params);
+      // TODO: check if referred install and show appropriate front-end flow
     });
   };
 };
