@@ -129,7 +129,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
             onPress={this.handleAddressShare}
             style={{
               marginBottom: 20,
-              marginTop: spacing.layoutSides,
+              marginTop: spacing.mediumLarge,
             }}
           />
         </ContentWrapper>

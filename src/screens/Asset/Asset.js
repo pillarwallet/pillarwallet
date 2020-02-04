@@ -45,7 +45,7 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
-import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC, ETH, USD } from 'constants/assetsConstants';
+import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
@@ -277,7 +277,9 @@ class AssetScreen extends React.Component<Props, State> {
   handleModalHidden = () => {
     if (this.isNavigatingToExchangeFlow) {
       this.isNavigatingToExchangeFlow = false;
-      this.goToExchangeFlow(USD, ETH);
+      const fiatCurrency = this.props.baseFiatCurrency || defaultFiatCurrency;
+      const { assetData: { token } } = this.props.navigation.state.params;
+      this.goToExchangeFlow(fiatCurrency, token);
     }
   }
 
