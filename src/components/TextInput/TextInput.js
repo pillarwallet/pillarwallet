@@ -20,7 +20,15 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Item as NBItem, Input } from 'native-base';
-import { View, Platform, TextInput as RNInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
+import {
+  View,
+  Platform,
+  TextInput as RNInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
@@ -33,7 +41,6 @@ import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
 import SearchBar from 'components/SearchBar';
-import { ScrollWrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -675,23 +682,23 @@ class TextInput extends React.Component<Props, State> {
               centerItems: [{ title: selectorModalTitle }],
             }}
           >
-            <SearchBarWrapper>
-              <SearchBar
-                inputProps={{
-                  onChange: this.handleSearch,
-                  value: query,
-                  autoCapitalize: 'none',
-                }}
-                placeholder={optionsSearchPlaceholder}
-                inputRef={ref => { this.searchInput = ref; }}
-                noClose
-                marginBottom="0"
-              />
-            </SearchBarWrapper>
-            <ScrollWrapper
+            <ScrollView
               contentContainerStyle={{ paddingBottom: 30 }}
-              disableOnAndroid
+              stickyHeaderIndices={[0]}
             >
+              <SearchBarWrapper>
+                <SearchBar
+                  inputProps={{
+                    onChange: this.handleSearch,
+                    value: query,
+                    autoCapitalize: 'none',
+                  }}
+                  placeholder={optionsSearchPlaceholder}
+                  inputRef={ref => { this.searchInput = ref; }}
+                  noClose
+                  marginBottom="0"
+                />
+              </SearchBarWrapper>
               {!!filteredHorizontalListData.length &&
               <HorizontalOptions>
                 {(showOptionsTitles && !!horizontalOptionsTitle) &&
@@ -734,7 +741,7 @@ class TextInput extends React.Component<Props, State> {
                 <EmptyStateParagraph title="Nothing found" />
               </EmptyStateWrapper>
               }
-            </ScrollWrapper>
+            </ScrollView>
           </ContainerWithHeader>
         </SlideModal>
       </View>
