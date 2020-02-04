@@ -40,7 +40,7 @@ const QRCodeWithTheme = (props: Props) => {
   const colors = getThemeColors(theme);
   return (
     <QRCode
-      getRef={(ref) => { if (getRef) getRef(ref); }}
+      getRef={getRef}
       value={value}
       size={size}
       color={colors.text}
