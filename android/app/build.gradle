@@ -75,6 +75,10 @@ android {
     // Deprecated. Used by net.openid:appauth
     vectorDrawables.useSupportLibrary = true
     missingDimensionStrategy 'react-native-camera', 'general'
+    resValue "string", "branch_io_app_link", "abgsz.test-app.link"
+    resValue "string", "branch_io_app_link_alternate", "abgsz-alternate.test-app.link"
+    resValue "string", "branch_io_key_live", ""
+    resValue "string", "branch_io_key_test", "key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a"
   }
   dexOptions {
     javaMaxHeapSize "1G"
@@ -117,6 +121,12 @@ android {
     }
     release {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+
+      // set branch.io string values to prod
+      resValue "string", "branch_io_app_link", "plr.app.link"
+      resValue "string", "branch_io_app_link_alternate", "plr-alternate.app.link"
+      resValue "string", "branch_io_key_live", System.getenv("BRANCH_IO_KEY_LIVE") ? System.getenv("BRANCH_IO_KEY_LIVE") : ""
+
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
