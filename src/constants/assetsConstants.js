@@ -39,6 +39,11 @@ export const GBP = 'GBP';
 export const USD = 'USD';
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
+export const LINK = 'LINK';
+export const BAT = 'BAT';
+export const AE = 'AE';
+export const MKR = 'MKR';
+export const USDT = 'USDT';
 
 export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
 export const BITCOIN_ADDRESS_PREFIX = 'bitcoin';
@@ -70,3 +75,13 @@ export const CURRENCY_SYMBOLS = {
   GBP: '£',
   EUR: '€',
 };
+
+export const POPULAR_SWAPS = [
+  { from: PLR, to: ETH },
+  { from: ETH, to: PLR },
+  { from: ETH, to: LINK },
+  { from: ETH, to: BAT },
+  { from: ETH, to: AE },
+  { from: ETH, to: MKR },
+  { from: PLR, to: USDT },
+];

@@ -2002,6 +2002,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "navbarItems": "#D4D9DB",
                               "negative": "#BD573A",
                               "orange": "#f57c00",
+                              "popularSwaps": "#d08cb1",
                               "positive": "#2AA057",
                               "primary": "#007AFF",
                               "secondaryAccent": "#EBF0F5",
