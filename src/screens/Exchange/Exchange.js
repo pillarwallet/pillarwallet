@@ -368,6 +368,7 @@ function SelectorInputTemplate(locals) {
       inputAddonText,
       inputRef,
       onSelectorOpen,
+      inputWrapperStyle,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -412,6 +413,7 @@ function SelectorInputTemplate(locals) {
         optionsSearchPlaceholder: 'Asset search',
       }}
       getInputRef={inputRef}
+      inputWrapperStyle={inputWrapperStyle}
     />
   );
 }
@@ -475,6 +477,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'Select asset',
               onSelectorOpen: this.blurFromInput,
+              inputWrapperStyle: { marginTop: 6 },
             },
           },
         },
