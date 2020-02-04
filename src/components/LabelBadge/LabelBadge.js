@@ -30,7 +30,7 @@ type Props = {
 }
 
 const BadgeWrapper = styled.View`
-  background-color: ${props => props.color || themedColors.positive};
+  background-color: ${({ color }) => color || themedColors.positive};
   padding: 3px 8px;
   border-radius: 12px;
   align-self: flex-start;

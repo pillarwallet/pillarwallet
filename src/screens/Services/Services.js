@@ -26,22 +26,26 @@ import Intercom from 'react-native-intercom';
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { EXCHANGE } from 'constants/navigationConstants';
-import { USD, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 import type { Offer } from 'models/Offer';
 import { withTheme } from 'styled-components/native';
 import type { RootReducerState } from 'reducers/rootReducer';
+import { spacing } from 'utils/variables';
 
 type Props = {
   theme: Theme,
   offers: Offer[],
   navigation: NavigationScreenProp<*>,
+  baseFiatCurrency: ?string,
 };
 
 class ServicesScreen extends React.Component<Props> {
   getServices = () => {
-    const { navigation, theme, offers } = this.props;
+    const {
+      navigation, theme, offers, baseFiatCurrency,
+    } = this.props;
     const colors = getThemeColors(theme);
 
     const offersBadge = (offers && offers.length) ? {
@@ -68,7 +72,12 @@ class ServicesScreen extends React.Component<Props> {
         key: 'buyCryptoWithFiat',
         title: 'Buy crypto with fiat',
         body: 'USD, GBP, EUR supported',
-        action: () => navigation.navigate(EXCHANGE, { fromAssetCode: USD, toAssetCode: ETH }),
+        action: () => navigation.navigate(
+          EXCHANGE,
+          {
+            fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
+            toAssetCode: ETH,
+          }),
       },
     ];
   };
@@ -110,7 +119,7 @@ class ServicesScreen extends React.Component<Props> {
           data={services}
           keyExtractor={(item) => item.key}
           renderItem={this.renderServicesItem}
-          contentContainerStyle={{ width: '100%', padding: 20, paddingBottom: 40 }}
+          contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
         />
       </ContainerWithHeader>
     );
@@ -119,8 +128,10 @@ class ServicesScreen extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { data: { offers } },
+  appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
   offers,
+  baseFiatCurrency,
 });
 
 export default withTheme(connect(mapStateToProps)(ServicesScreen));

@@ -131,7 +131,8 @@ export const ListCard = (props: Props) => {
                   label={labelBadge.label}
                   labelStyle={{ fontSize: fontSizes.regular }}
                   color={labelBadge.color}
-                />)}
+                />
+              )}
             </TitleWrapper>
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
           </CardContent>
