@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { Clipboard, View } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
 import { TextLink, BaseText } from 'components/Typography';
 import { Footer } from 'components/Layout';
 import { spacing, fontStyles } from 'utils/variables';
@@ -27,6 +26,7 @@ import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
+import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 
 const ContentWrapper = styled.View`
@@ -97,7 +97,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
                 overflow: 'hidden',
               }}
             >
-              <QRCode value={address} size={160} />
+              <QRCodeWithTheme value={address} size={160} />
             </View>
             <CopyAddressLink onPress={this.handleAddressClipboardSet}>
               <TextLink>Copy wallet address to clipboard</TextLink>

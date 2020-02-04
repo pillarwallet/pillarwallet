@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { Platform } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { IMPORT_WALLET_LEGALS } from 'constants/navigationConstants';
 import { Container, Footer, Wrapper } from 'components/Layout';
@@ -30,10 +30,14 @@ import { fontSizes } from 'utils/variables';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
+import type { Theme } from 'models/Theme';
+import { getThemeType } from 'utils/themes';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   navigateToNewWalletPage: Function,
+  theme: Theme,
 }
 
 type State = {
@@ -41,6 +45,7 @@ type State = {
 }
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
+const pillarLogoSourceDarkMode = require('assets/images/landing-pillar-logo-dark-theme.png');
 
 const PillarLogo = styled(CachedImage)`
   height: 60px;
@@ -82,6 +87,9 @@ class Welcome extends React.Component<Props, State> {
 
   render() {
     const { shouldAnimate } = this.state;
+    const { theme } = this.props;
+    const currentTheme = getThemeType(theme);
+    const logoSource = currentTheme === LIGHT_THEME ? pillarLogoSource : pillarLogoSourceDarkMode;
     return (
       <Container>
         <AnimatedBackground
@@ -89,7 +97,7 @@ class Welcome extends React.Component<Props, State> {
           disabledAnimation={Platform.OS === 'android' && Platform.Version < 24}
         />
         <Wrapper fullScreen center>
-          <PillarLogo source={pillarLogoSource} />
+          <PillarLogo source={logoSource} />
         </Wrapper>
         <Footer
           style={{ paddingBottom: 30 }}
@@ -113,4 +121,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(Welcome);
+export default withTheme(connect(null, mapDispatchToProps)(Welcome));
