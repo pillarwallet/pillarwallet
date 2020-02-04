@@ -48,6 +48,7 @@ const Icon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   margin-right: 4px;
+  tint-color: ${themedColors.primary};
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');

@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Alert, FlatList } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
@@ -51,7 +51,7 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { addressValidator } from 'utils/validators';
 import { isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 
 // selectors
@@ -64,7 +64,8 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
 import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+import { themedColors, getThemeColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -78,6 +79,7 @@ type Props = {
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
   activeAccount: ?Account,
+  theme: Theme,
 };
 
 type State = {
@@ -102,6 +104,7 @@ const FormWrapper = styled.View`
 const ImageIcon = styled(CachedImage)`
   width: 6px;
   height: 12px;
+  tint-color: ${themedColors.primary};
 `;
 
 const { Form } = t.form;
@@ -363,6 +366,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       localContacts = [],
       contactsSmartAddressesSynced,
       isOnline,
+      theme,
     } = this.props;
     const { tokenType, name, token } = this.assetData;
     const isCollectible = tokenType === COLLECTIBLES;
@@ -374,11 +378,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     const showContacts = isCollectible || token !== BTC;
     const tokenName = (isCollectible ? (name || token) : token) || 'asset';
 
+    const colors = getThemeColors(theme);
+
     const headerTitleItems = this.isPPNTransaction
       ? [
         { title: 'Send' },
         { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
-        { title: tokenName, color: baseColors.electricBlueIntense },
+        { title: tokenName, color: colors.primary },
       ]
       : [{ title: `Send ${tokenName}` }];
 
@@ -448,4 +454,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts));
