@@ -136,9 +136,9 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>branch_app_domain</key>
-	<string>abgsz.test-app.link</string>
+	<string>$(BRANCH_IO_APP_DOMAIN)</string>
 	<key>branch_key</key>
-	<string>key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a</string>
+	<string>$(BRANCH_IO__KEY_LIVE)</string>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>
 </dict>
