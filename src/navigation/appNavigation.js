@@ -351,7 +351,7 @@ const tabBarIcon = ({
         style={{
           width: 24,
           height: 24,
-          tintColor: focused ? colors.primary : colors.secondaryText,
+          tintColor: focused ? colors.primary : colors.navbarItems,
         }}
         resizeMode="contain"
         source={focused ? iconActive : icon}
@@ -379,7 +379,7 @@ const tabBarLabel = ({ text, theme }) => ({ focused }) => {
     <BaseText
       style={{
         fontSize: fontSizes.regular,
-        color: focused ? colors.primary : colors.secondaryText,
+        color: focused ? colors.primary : colors.navbarItems,
         textAlign: 'center',
       }}
       numberOfLines={1}

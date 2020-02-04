@@ -19,13 +19,13 @@
 */
 import * as React from 'react';
 import { Clipboard, View, Image } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
 import { BaseText } from 'components/Typography';
 import { spacing, fontStyles } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
+import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import { themedColors } from 'utils/themes';
 
@@ -121,7 +121,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
                 overflow: 'hidden',
               }}
             >
-              <QRCode value={address} size={160} />
+              <QRCodeWithTheme value={address} size={160} />
             </View>
           </QRCodeWrapper>
           <Button

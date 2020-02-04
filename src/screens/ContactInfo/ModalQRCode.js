@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
 import { View } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
 import styled from 'styled-components/native';
 import { Paragraph } from 'components/Typography';
+import QRCodeWithTheme from 'components/QRCode';
 import Share from 'react-native-share';
 
 type Props = {
@@ -57,7 +57,7 @@ class ModalQRCode extends React.Component<Props> {
         </Paragraph>
         <LabeledRow>
           <Value onPress={this.shareQROnSocialMedia}>
-            <QRCode
+            <QRCodeWithTheme
               value={data}
               size={180}
               getRef={ref => {
