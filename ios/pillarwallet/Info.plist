@@ -138,7 +138,7 @@
 	<key>branch_app_domain</key>
 	<string>$(BRANCH_IO_APP_DOMAIN)</string>
 	<key>branch_key</key>
-	<string>$(BRANCH_IO__KEY_LIVE)</string>
+	<string>$(BRANCH_IO_KEY_LIVE)</string>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>
 </dict>
