@@ -2,7 +2,7 @@ name: Bump version QA
 on:
   push:
     branches:
-      - feature/git_tags_and_versioning
+      - develop
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,5 +13,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
-        RELEASE_BRANCHES: feature/git_tags_and_versioning
+        RELEASE_BRANCHES: develop
         DEFAULT_BUMP: patch
