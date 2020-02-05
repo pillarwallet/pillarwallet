@@ -348,7 +348,7 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   // TODO: handle 404 and other errors in different ways (e.response.status === 404)
 };
 
-SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
+SDKWrapper.prototype.validateAddress = function (blockchainAddress: string): Object {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
@@ -360,7 +360,7 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
           error,
         },
       });
-      return {};
+      return { error: true };
     });
 };
 

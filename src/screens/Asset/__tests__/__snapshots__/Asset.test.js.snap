@@ -1802,7 +1802,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                             stroke={
                               Array [
                                 0,
-                                4278190080,
+                                4278850599,
                               ]
                             }
                             strokeDasharray={null}
@@ -1996,8 +1996,10 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "border": "#007AFF",
                               "card": "#FFFFFF",
                               "control": "#FCFDFF",
+                              "danger": "#ff0005",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
+                              "navbarItems": "#D4D9DB",
                               "negative": "#BD573A",
                               "orange": "#f57c00",
                               "positive": "#2AA057",

@@ -37,6 +37,7 @@ type Props = {
   value?: ?string | ?boolean,
   disabled?: ?boolean,
   bordered?: ?boolean,
+  isSelected?: boolean,
 }
 
 const ItemLabelHolder = styled.View`
@@ -75,7 +76,7 @@ const BadgeText = styled(BaseText)`
 `;
 
 const ItemLabel = styled(MediumText)`
-  color: ${themedColors.text};
+  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.text};
   ${fontStyles.big};
 `;
 
@@ -114,13 +115,14 @@ class SettingsListItem extends React.Component<Props> {
       warningNotification,
       disabled,
       bordered,
+      isSelected,
     } = this.props;
 
     if (!toggle) {
       return (
         <ItemLabelHolder bordered={bordered}>
           <ListItemInnerWrapper>
-            <ItemLabel>{label}</ItemLabel>
+            <ItemLabel primary={isSelected}>{label}</ItemLabel>
             {!!processedValue && <ItemValue>{processedValue}</ItemValue>}
           </ListItemInnerWrapper>
           {!!(notificationsCount || warningNotification) &&
@@ -134,7 +136,7 @@ class SettingsListItem extends React.Component<Props> {
 
     return (
       <ItemLabelHolder bordered={bordered}>
-        <ItemLabel>{label}</ItemLabel>
+        <ItemLabel primary={isSelected}>{label}</ItemLabel>
         <ListAddon>
           <Switcher
             isOn={processedValue}

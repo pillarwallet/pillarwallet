@@ -17,10 +17,36 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const UPDATE_APP_SETTINGS = 'UPDATE_APP_SETTINGS';
-export const RESET_APP_SETTINGS = 'RESET_APP_SETTINGS';
-export const LIGHT_THEME = 'lightTheme';
-export const DARK_THEME = 'darkTheme';
-export const DARK_PREFERENCE = 'dark'; // react-native-appearance variable
-export const NO_THEME_PREFERENCE = 'no_preference'; // react-native-appearance variable
-export const USER_JOINED_BETA_SETTING = 'userJoinedBeta';
+import * as React from 'react';
+import QRCode from 'react-native-qrcode-svg';
+import { withTheme } from 'styled-components/native/index';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+
+type Props = {
+  value: string,
+  size: number,
+  theme: Theme,
+  getRef?: (ref: QRCode) => void,
+};
+
+const QRCodeWithTheme = (props: Props) => {
+  const {
+    value,
+    size,
+    theme,
+    getRef,
+  } = props;
+  const colors = getThemeColors(theme);
+  return (
+    <QRCode
+      getRef={getRef}
+      value={value}
+      size={size}
+      color={colors.text}
+      backgroundColor={colors.card}
+    />
+  );
+};
+
+export default withTheme(QRCodeWithTheme);

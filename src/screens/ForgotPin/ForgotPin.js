@@ -64,7 +64,7 @@ class ForgotPin extends React.Component<Props, {}> {
           noBack: true,
           onClose: this.goBackToPin,
         })}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <FooterParagraph>
               It is impossible to restore your wallet without the backup, be careful.

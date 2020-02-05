@@ -419,7 +419,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         type = 'Message';
 
         address = params[1]; // eslint-disable-line
-        message = utils.toUtf8String(params[0]);
+        try {
+          message = utils.toUtf8String(params[0]);
+        } catch (e) {
+          ([message] = params);
+        }
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>

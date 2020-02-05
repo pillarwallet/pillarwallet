@@ -17,7 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
+import { Appearance } from 'react-native-appearance';
+
+import {
+  DARK_PREFERENCE,
+  DARK_THEME,
+  LIGHT_THEME,
+  UPDATE_APP_SETTINGS,
+  USER_JOINED_BETA_SETTING,
+} from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -172,14 +180,37 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   };
 };
 
-
-export const changeAppThemeAction = () => {
+export const handleSystemDefaultThemeChangeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { themeType: previousTheme } },
+      appSettings: { data: { themeType, isSetAsSystemPrefTheme } },
     } = getState();
 
-    const themeType = previousTheme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+    if (!isSetAsSystemPrefTheme) return;
+    const defaultThemePreference = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+    if (defaultThemePreference === themeType) return;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType: defaultThemePreference } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { themeType: defaultThemePreference },
+    });
+  };
+};
+
+export const changeAppThemeAction = (themeType: string, setAsPreferred?: boolean) => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred },
+    });
+  };
+};
+
+export const setAppThemeAction = (theme?: string) => {
+  return (dispatch: Dispatch) => {
+    const themeType = theme || LIGHT_THEME;
 
     dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
     dispatch({
@@ -189,14 +220,12 @@ export const changeAppThemeAction = () => {
   };
 };
 
-export const setAppThemeAction = () => {
+export const markThemeAlertAsShownAction = () => {
   return (dispatch: Dispatch) => {
-    const themeType = LIGHT_THEME; // TODO: get theme based on user preferences;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
+    dispatch(saveDbAction('app_settings', { appSettings: { seenThemeAlert: true } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { themeType },
+      payload: { seenThemeAlert: true },
     });
   };
 };

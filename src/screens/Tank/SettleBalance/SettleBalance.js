@@ -261,7 +261,7 @@ class SettleBalance extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Settle transactions' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>
             {!!txToSettle.length && (

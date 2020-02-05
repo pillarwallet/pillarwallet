@@ -176,6 +176,7 @@ const Icon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   margin-bottom: ${spacing.small}px;
+  tint-color: ${themedColors.primary};
 `;
 
 const viewTransactionOnBlockchain = (hash: string, asset?: ?string) => {
