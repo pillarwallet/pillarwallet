@@ -119,9 +119,8 @@ export const takeOfferAction = (
       provider,
       fromAssetAddress,
       toAssetAddress,
-      trackId,
     };
-    const order = await exchangeService.takeOffer(offerRequest);
+    const order = await exchangeService.takeOffer(offerRequest, trackId);
     const offerOrderData = get(order, 'data');
     if (isEmpty(offerOrderData) || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};

@@ -55,7 +55,6 @@ export type OfferRequest = {
   provider: string,
   fromAssetAddress: string,
   toAssetAddress: string,
-  trackId: string,
 }
 
 export type TokenAllowanceRequest = {

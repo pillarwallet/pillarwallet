@@ -139,11 +139,11 @@ export default class ExchangeService {
       .catch((error: AxiosError) => ({ error }));
   }
 
-  takeOffer(order: OfferRequest) {
+  takeOffer(order: OfferRequest, trackId: string) {
     return axios.post(
       buildApiUrl('orders', '2.0'),
       JSON.stringify(order),
-      { ...this.apiConfig, headers: { ...this.apiConfig.headers, trackid: order.trackId } },
+      { ...this.apiConfig, headers: { ...this.apiConfig.headers, trackid: trackId } },
     )
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));
