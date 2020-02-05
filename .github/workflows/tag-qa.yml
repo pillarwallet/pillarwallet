@@ -1,4 +1,4 @@
-name: Bump version
+name: Bump version QA
 on:
   push:
     branches:
@@ -14,3 +14,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         RELEASE_BRANCHES: feature/git_tags_and_versioning
+        DEFAULT_BUMP: patch
