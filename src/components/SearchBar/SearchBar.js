@@ -90,7 +90,7 @@ type CommonComponentsProps = {
   placeholder?: string,
   backgroundColor?: string,
   inputRef?: TextInput,
-}
+};
 
 type Props = CommonComponentsProps & {
   marginTop?: number,
@@ -118,7 +118,7 @@ type SearchInputProps = CommonComponentsProps & {
   onChange: (e: EventLike) => void,
   onBlur: () => void,
   handleSubmit: () => void,
-}
+};
 
 const SearchInput = (props: SearchInputProps) => {
   const {

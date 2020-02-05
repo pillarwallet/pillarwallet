@@ -74,18 +74,17 @@ class ExchangeStatus extends React.Component<Props, State> {
 
   startBlinking = () => {
     const { indicatorFadeValue } = this.state;
-    requestAnimationFrame(() => {
-      this.blinkInterval = setInterval(() => {
-        const toValue = indicatorFadeValue._value ? 0 : 1;
-        Animated.timing(
-          indicatorFadeValue,
+    this.blinkInterval = setInterval(() => {
+      const toValue = indicatorFadeValue._value ? 0 : 1;
+      requestAnimationFrame(() => {
+        Animated.timing(indicatorFadeValue,
           {
             toValue,
             duration: 300,
           },
         ).start();
-      }, 700);
-    });
+      });
+    }, 700);
   };
 
   componentDidUpdate(prevProps: Props) {
