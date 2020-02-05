@@ -631,13 +631,30 @@ export const startAssetsSearchAction = () => ({
 
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { assets: { supportedAssets } } = getState();
+    const search = query.toUpperCase();
+
+    const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
+      return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
+    });
+
+    if (filteredAssets.length > 0) {
+      dispatch({
+        type: UPDATE_ASSETS_SEARCH_RESULT,
+        payload: filteredAssets,
+      });
+
+      return;
+    }
+
     const { user: { data: { walletId } } } = getState();
 
-    const assets = await api.assetsSearch(query, walletId);
+    dispatch(startAssetsSearchAction());
 
+    const apiAssets = await api.assetsSearch(query, walletId);
     dispatch({
       type: UPDATE_ASSETS_SEARCH_RESULT,
-      payload: assets,
+      payload: apiAssets,
     });
   };
 };
