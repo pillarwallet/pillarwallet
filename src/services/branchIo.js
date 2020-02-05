@@ -20,13 +20,20 @@
 import branch, { BranchEvent } from 'react-native-branch';
 
 
-export const getUserReferralLink = async (username: string): Promise<string> => {
-  const branchIoUniversalObject = await branch.createBranchUniversalObject(`${username}-referral-link-${+new Date()}`, {
-    contentMetadata: {
-      customMetadata: { username },
-    },
+export const getUserReferralLink = async (
+  inviterWalletId: string,
+  data: Object,
+): Promise<string> => {
+  const branchIoUniversalObject = await branch.createBranchUniversalObject(
+    `${inviterWalletId}-referral-link-${+new Date()}`,
+    { contentMetadata: { customMetadata: { ...data, inviterWalletId } } },
+  );
+
+  const result = await branchIoUniversalObject.generateShortUrl({
+    feature: 'referral',
+    channel: 'app',
   });
-  const result = await branchIoUniversalObject.generateShortUrl({ feature: 'referral', channel: 'app' });
+
   return result.url;
 };
 

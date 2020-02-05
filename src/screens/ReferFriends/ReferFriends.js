@@ -19,23 +19,30 @@
 */
 import * as React from 'react';
 import { ScrollView, Share } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import t from 'tcomb-form-native';
 import styled, { withTheme } from 'styled-components/native';
 import get from 'lodash.get';
+import { connect } from 'react-redux';
+import type { NavigationScreenProp } from 'react-navigation';
 
-import { EmailStruct } from 'components/ProfileForm/profileFormDefs';
+// actions
+import { inviteByEmailAction } from 'actions/referralsActions';
 
 // components
 import { MediumText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Insight from 'components/Insight';
 import TextInput from 'components/TextInput';
+import { EmailStruct } from 'components/ProfileForm/profileFormDefs';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
+// types
+import type { Dispatch } from 'reducers/rootReducer';
+
 
 const INSIGHT_ITEMS = [
   {
@@ -54,6 +61,7 @@ const INSIGHT_ITEMS = [
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  inviteByEmail: (email: string) => void,
 };
 
 type Value = {
@@ -161,6 +169,8 @@ class ReferFriends extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
+    const email = get(this.state.value, 'email', '');
+    this.props.inviteByEmail(email);
     this.setState({ hideErrorMessage: false });
   };
 
@@ -227,4 +237,9 @@ class ReferFriends extends React.Component<Props, State> {
   }
 }
 
-export default withTheme(ReferFriends);
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  inviteByEmail: (email: string) => dispatch(inviteByEmailAction(email)),
+});
+
+export default withTheme(connect(null, mapDispatchToProps)(ReferFriends));

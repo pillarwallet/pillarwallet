@@ -25,7 +25,7 @@ import isEmpty from 'lodash.isempty';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
 // services
-import { logEvent } from 'services/branchIo';
+import { logEvent, getUserReferralLink } from 'services/branchIo';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -43,6 +43,17 @@ export const completeRefferalsEventAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const walletId = get(getState(), 'user.data.walletId');
     await logEvent(BranchEvent.CompleteRegistration, { walletId });
+  };
+};
+
+export const inviteByEmailAction = (email: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const walletId = get(getState(), 'user.data.walletId');
+    // TODO: get security token from back-end and attach when creating link
+    const inviteSecurityToken = 'inviteSecurityToken';
+    const inviteLink = await getUserReferralLink(walletId, { email, token: inviteSecurityToken });
+    console.log('inviteLink: ', inviteLink);
+    // TODO: send invite link to back-end
   };
 };
 
