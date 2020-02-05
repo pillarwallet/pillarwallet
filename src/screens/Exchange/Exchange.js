@@ -91,7 +91,7 @@ import type { Theme, ThemeColors } from 'models/Theme';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
-import { HotSwapsHorizontalList, HotSwapsGridList } from './HotSwapsList';
+import { HotSwapsHorizontalList } from './HotSwapsList';
 
 const CardWrapper = styled.TouchableOpacity`
   width: 100%;
@@ -1135,9 +1135,6 @@ class ExchangeScreen extends React.Component<Props, State> {
           keyboardShouldPersistTaps="handled"
         >
           <HotSwapsHorizontalList
-            onPress={(from, to) => this.setInitialSelection(from, to)}
-          />
-          <HotSwapsGridList
             onPress={(from, to) => this.setInitialSelection(from, to)}
           />
           <FormWrapper>

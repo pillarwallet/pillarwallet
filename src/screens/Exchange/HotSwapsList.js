@@ -25,6 +25,7 @@ import { themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
 import { POPULAR_SWAPS } from 'constants/assetsConstants';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 
 const { width: screenWidth } = Dimensions.get('window');
 const threeColumnsMinScreenWidth = 350;
@@ -63,6 +64,8 @@ const Pill = styled.TouchableOpacity`
   border-radius: 6px;
   padding: 10px ${({ grid }) => grid ? 10 : 20}px;
   align-items: center;
+  flex-direction: row;
+  justify-content: center;
   flex: ${({ grid }) => grid ? 1 : 0};
 `;
 
@@ -84,7 +87,11 @@ const SwapPill = (props: SwapPillProps) => {
 
   return (
     <Pill onPress={onPress} grid={grid} style={style}>
-      <SwapText>{from} → {to}</SwapText>
+      <SwapText>{from} </SwapText>
+      <SwapText style={{ transform: [{ scaleX: -1 }] }}>
+        <Icon name="back" />
+      </SwapText>
+      <SwapText> {to}</SwapText>
     </Pill>
   );
 };
