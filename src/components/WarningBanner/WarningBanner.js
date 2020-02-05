@@ -28,7 +28,6 @@ const WarningBannerBackground = styled.View`
   background-color: ${themedColors.negative};
   width: 100%;
   padding: ${props => props.small ? '8px' : '16px'};
-  margin-bottom: 20px;
   justify-content: center;
   border-radius: ${props => props.rounded ? '8px' : 0};
 `;
