@@ -79,6 +79,7 @@ export const takeOfferAction = (
   toAssetCode: string,
   fromAmount: number,
   provider: string,
+  trackId: string,
   callback: Function,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -118,6 +119,7 @@ export const takeOfferAction = (
       provider,
       fromAssetAddress,
       toAssetAddress,
+      trackId,
     };
     const order = await exchangeService.takeOffer(offerRequest);
     const offerOrderData = get(order, 'data');

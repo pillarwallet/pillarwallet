@@ -143,7 +143,7 @@ export default class ExchangeService {
     return axios.post(
       buildApiUrl('orders', '2.0'),
       JSON.stringify(order),
-      this.apiConfig,
+      { ...this.apiConfig, headers: { ...this.apiConfig.headers, trackid: order.trackId } },
     )
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));
