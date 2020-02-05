@@ -19,11 +19,12 @@
 */
 
 import * as React from 'react';
-import { FlatList, Image, Dimensions } from 'react-native';
+import { FlatList, Image, Dimensions, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
 import { POPULAR_SWAPS } from 'constants/assetsConstants';
+import { BaseText } from 'components/Typography';
 
 const { width: screenWidth } = Dimensions.get('window');
 const threeColumnsMinScreenWidth = 350;
@@ -37,6 +38,7 @@ type SwapPillProps = {
   to: string,
   grid: ?boolean,
   onPress: (from: string, to: string) => void,
+  style?: StyleSheet.Styles,
 };
 
 const WrappingContainer = styled.View`
@@ -50,34 +52,21 @@ const IconWrapper = styled.View`
   margin: 0 ${spacing.rhythm}px;
 `;
 
-const PopularSwapsText = styled.Text`
+const PopularSwapsText = styled(BaseText)`
   color: ${themedColors.popularSwaps};
   text-align: center;
+  ${fontStyles.tiny}
 `;
 
 const Pill = styled.TouchableOpacity`
-  background-color: ${themedColors.tertiary};
+  background-color: ${({ placeholder }) => placeholder ? 'transparent' : themedColors.tertiary};
   border-radius: 6px;
-  padding: 10px 20px;
-  margin: 0 2px;
-`;
-
-const GridPill = styled.TouchableOpacity`
-  background-color: ${themedColors.tertiary};
-  border-radius: 6px;
-  padding: 10px 10px;
-  margin: 5px;
-  flex: 1;
+  padding: 10px ${({ grid }) => grid ? 10 : 20}px;
   align-items: center;
+  flex: ${({ grid }) => grid ? 1 : 0};
 `;
 
-const PlaceholderPill = styled.View`
-  padding: 10px 10px;
-  margin: 5px;
-  flex: 1;
-`;
-
-const SwapText = styled.Text`
+const SwapText = styled(BaseText)`
   color: ${themedColors.primary};
   ${fontStyles.small}
 `;
@@ -90,14 +79,13 @@ const SwapPill = (props: SwapPillProps) => {
     to,
     grid = false,
     onPress,
+    style,
   } = props;
 
-  const PillComponent = grid ? GridPill : Pill;
-
   return (
-    <PillComponent onPress={onPress}>
+    <Pill onPress={onPress} grid={grid} style={style}>
       <SwapText>{from} → {to}</SwapText>
-    </PillComponent>
+    </Pill>
   );
 };
 
@@ -108,7 +96,15 @@ export const HotSwapsHorizontalList = (props: Props) => {
       <FlatList
         horizontal
         data={POPULAR_SWAPS}
-        renderItem={({ item }) => <SwapPill {...item} onPress={() => onPress(item.from, item.to)} />}
+        renderItem={
+          ({ item }) => (
+            <SwapPill
+              {...item}
+              onPress={() => onPress(item.from, item.to)}
+              style={{ marginHorizontal: 2 }}
+            />
+          )
+        }
         keyExtractor={item => `${item.from}-${item.to}`}
         ListHeaderComponent={
           <IconWrapper>
@@ -119,38 +115,55 @@ export const HotSwapsHorizontalList = (props: Props) => {
         contentContainerStyle={{
           alignItems: 'center',
           paddingVertical: spacing.mediumLarge,
+          paddingRight: spacing.mediumLarge,
         }}
       />
     </WrappingContainer>
   );
 };
 
-export const HotSwapsGridList = (props: Props) => {
-  const { onPress } = props;
-  // on small devices 3 columns will cause text lines to be broken
-  // on larger devices 2 columns will cause pills to be too wide
-  const columns = screenWidth >= threeColumnsMinScreenWidth ? 3 : 2;
-  const data = [...POPULAR_SWAPS];
-  while (data.length % columns !== 0) {
-    data.push({});
+export class HotSwapsGridList extends React.Component<Props> {
+  renderItem = ({ item }: {item: {from: string, to: string}}) => {
+    const { onPress } = this.props;
+    if (item.from) {
+      return (
+        <SwapPill
+          {...item}
+          onPress={() => onPress(item.from, item.to)}
+          grid
+          style={{ margin: spacing.mediumLarge / 2 }}
+        />
+      );
+    }
+    return (
+      <Pill
+        placeholder
+        grid
+        style={{ margin: spacing.mediumLarge / 2 }}
+      />
+    );
   }
 
-  return (
-    <FlatList
-      data={data}
-      columnWrapperStyle={{
-        paddingHorizontal: 15,
-        justifyContent: 'space-around',
-      }}
-      renderItem={
-        ({ item }) => {
-          return item.from ?
-            <SwapPill {...item} onPress={() => onPress(item.from, item.to)} grid /> :
-            <PlaceholderPill />;
-        }
-      }
-      keyExtractor={item => `${item.from}-${item.to}`}
-      numColumns={columns}
-    />
-  );
-};
+  render() {
+    // on small devices 3 columns will cause text lines to be broken
+    // on larger devices 2 columns will cause pills to be too wide
+    const columns = screenWidth >= threeColumnsMinScreenWidth ? 3 : 2;
+    const data = [...POPULAR_SWAPS];
+    while (data.length % columns !== 0) {
+      data.push({});
+    }
+
+    return (
+      <FlatList
+        data={data}
+        columnWrapperStyle={{
+          paddingHorizontal: spacing.layoutSides,
+          justifyContent: 'space-around',
+        }}
+        renderItem={this.renderItem}
+        keyExtractor={item => `${item.from}-${item.to}`}
+        numColumns={columns}
+      />
+    );
+  }
+}
