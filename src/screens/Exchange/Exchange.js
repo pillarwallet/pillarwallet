@@ -179,7 +179,7 @@ type Props = {
   assets: Assets,
   searchOffers: (string, string, number) => void,
   offers: Offer[],
-  takeOffer: (string, string, number, string, Function) => void,
+  takeOffer: (string, string, number, string, string, Function) => void,
   authorizeWithShapeshift: Function,
   balances: Balances,
   resetOffers: Function,
@@ -475,7 +475,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
-    const { fromAssetCode = defaultFrom, toAssetCode, fromAmount } = exchangeSearchRequest;
+    const { fromAmount } = exchangeSearchRequest;
+    const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest.fromAssetCode || defaultFrom;
+    const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest.toAssetCode;
     this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
     this.provideOptions();
     this.listeners = [
@@ -505,7 +507,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       assets,
       exchangeSupportedAssets,
       fiatExchangeSupportedAssets,
-      navigation,
       oAuthAccessToken,
       resetOffers,
     } = this.props;
@@ -522,14 +523,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       this.provideOptions();
     }
 
-    const fromAssetCode = navigation.getParam('fromAssetCode');
-    const toAssetCode = navigation.getParam('toAssetCode');
-    if (fromAssetCode || toAssetCode) {
-      const _fromAssetCode = fromAssetCode || fromAssetSymbol;
-      this.setInitialSelection(_fromAssetCode, toAssetCode);
-      // reset to prevent nav value change over newly selected
-      navigation.setParams({ fromAssetCode: null, toAssetCode: null });
-    }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again
       resetOffers();
@@ -704,13 +697,14 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAsset,
       toAsset,
       askRate,
+      trackId = '',
     } = offer;
     const { code: fromAssetCode } = fromAsset;
     const { code: toAssetCode } = toAsset;
     const amountToSell = parseFloat(selectedSellAmount);
     const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
+      takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, trackId, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
         setExecutingTransaction();
@@ -1117,7 +1111,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           rightItems,
-          noBack: true,
           centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
@@ -1235,8 +1228,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
     searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),
-  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, callback) => dispatch(
-    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, callback),
+  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback) => dispatch(
+    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetOffers: () => dispatch(resetOffersAction()),

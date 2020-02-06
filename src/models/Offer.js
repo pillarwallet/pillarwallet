@@ -34,6 +34,7 @@ export type Offer = {
   minQuantity: number,
   maxQuantity: number,
   allowanceSet: boolean,
+  trackId: string,
 }
 
 export type FiatOffer = {

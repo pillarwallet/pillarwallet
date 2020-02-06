@@ -96,6 +96,7 @@ import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfi
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
+import ServicesScreen from 'screens/Services';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -131,7 +132,7 @@ import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions
 import {
   ASSETS,
   ASSET,
-  EXCHANGE_TAB,
+  SERVICES_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
@@ -215,6 +216,7 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
+  SERVICES,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -234,11 +236,11 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new_light.png');
-const iconExchange = require('assets/icons/icon_services.png');
+const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
-const iconExchangeActive = require('assets/icons/icon_services_active.png');
+const iconServicesActive = require('assets/icons/icon_services_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
 const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
 
@@ -280,14 +282,16 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [SETTINGS]: SettingsScreen,
+    [EXCHANGE]: ExchangeScreen,
   },
   StackNavigatorConfig,
 );
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// EXCHANGE FLOW
-const exchangeFlow = createStackNavigator({
+// SERVICES FLOW
+const servicesFlow = createStackNavigator({
+  [SERVICES]: ServicesScreen,
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
@@ -296,7 +300,7 @@ const exchangeFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
-exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -429,16 +433,16 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel({ text: 'People', theme: screenProps.theme }),
       }),
     },
-    [EXCHANGE_TAB]: {
-      screen: exchangeFlow,
+    [SERVICES_TAB]: {
+      screen: servicesFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: tabBarIcon({
-          iconActive: iconExchangeActive,
-          icon: iconExchange,
+          iconActive: iconServicesActive,
+          icon: iconServices,
           hasIndicator: false,
           theme: screenProps.theme,
         }),
-        tabBarLabel: tabBarLabel({ text: 'Exchange', theme: screenProps.theme }),
+        tabBarLabel: tabBarLabel({ text: 'Services', theme: screenProps.theme }),
       }),
     },
   }, {
