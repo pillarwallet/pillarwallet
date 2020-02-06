@@ -22,6 +22,7 @@
 [include]
 
 [libs]
+<PROJECT_ROOT>/flow-typed
 node_modules/react-native/Libraries/react-native/react-native-interface.js
 node_modules/react-native/flow/
 
@@ -49,6 +50,53 @@ module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/Lib
 munge_underscores=true
 
 module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
+
+; ;;; custom paths start ;;;
+module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'
+module.name_mapper='^screens' -> '<PROJECT_ROOT>/src/screens'
+
+module.name_mapper='^actions\/\(.*\)$' -> '<PROJECT_ROOT>/src/actions/\1'
+module.name_mapper='^actions' -> '<PROJECT_ROOT>/src/actions'
+
+module.name_mapper='^assets\/\(.*\)$' -> '<PROJECT_ROOT>/src/assets/\1'
+module.name_mapper='^assets' -> '<PROJECT_ROOT>/src/assets'
+
+module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/src/components/\1'
+module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
+
+module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
+module.name_mapper='^constants' -> '<PROJECT_ROOT>/src/constants'
+
+module.name_mapper='^fixtures\/\(.*\)$' -> '<PROJECT_ROOT>/src/fixtures/\1'
+module.name_mapper='^fixtures' -> '<PROJECT_ROOT>/src/fixtures'
+
+module.name_mapper='^models\/\(.*\)$' -> '<PROJECT_ROOT>/src/models/\1'
+module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
+
+module.name_mapper='^navigation\/\(.*\)$' -> '<PROJECT_ROOT>/src/navigation/\1'
+module.name_mapper='^navigation' -> '<PROJECT_ROOT>/src/navigation'
+
+module.name_mapper='^reducers\/\(.*\)$' -> '<PROJECT_ROOT>/src/reducers/\1'
+module.name_mapper='^reducers' -> '<PROJECT_ROOT>/src/reducers'
+
+module.name_mapper='^services\/\(.*\)$' -> '<PROJECT_ROOT>/src/services/\1'
+module.name_mapper='^services' -> '<PROJECT_ROOT>/src/services'
+
+module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
+module.name_mapper='^utils' -> '<PROJECT_ROOT>/src/utils'
+
+module.name_mapper='^testUtils\/\(.*\)$' -> '<PROJECT_ROOT>/src/testUtils/\1'
+module.name_mapper='^testUtils' -> '<PROJECT_ROOT>/src/testUtils'
+
+module.name_mapper='^configs\/\(.*\)$' -> '<PROJECT_ROOT>/src/configs/\1'
+module.name_mapper='^configs' -> '<PROJECT_ROOT>/src/configs'
+
+module.name_mapper='^abi\/\(.*\)$' -> '<PROJECT_ROOT>/src/abi/\1'
+module.name_mapper='^abi' -> '<PROJECT_ROOT>/src/abi'
+
+module.name_mapper='^selectors\/\(.*\)$' -> '<PROJECT_ROOT>/src/selectors/\1'
+module.name_mapper='^selectors' -> '<PROJECT_ROOT>/src/selectors'
+; ;;; custom paths end ;;;
 
 module.file_ext=.js
 module.file_ext=.jsx
