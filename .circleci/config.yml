@@ -600,7 +600,11 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-#      - build-and-test
+      - build-and-test
+          filters:
+            branches:
+              ignore:
+                - fix/pure-react-native
       - hockeyapp_ios:
           requires:
             - build-and-test
