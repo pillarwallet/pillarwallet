@@ -1,0 +1,137 @@
+[ignore]
+; We fork some components by platform
+.*/*[.]android.js
+
+; Ignore ios
+<PROJECT_ROOT>/ios/.*
+
+; Ignore android
+<PROJECT_ROOT>/android/.*
+
+; Ignore templates for 'react-native init'
+<PROJECT_ROOT>/node_modules/react-native/local-cli/templates/.*
+
+; Ignore RN jest
+<PROJECT_ROOT>/node_modules/react-native/jest/.*
+
+; Ignore metro
+<PROJECT_ROOT>/node_modules/metro/.*
+
+
+; Ignore RNTester
+<PROJECT_ROOT>/node_modules/react-native/RNTester/.*
+
+; Ignore the website subdir
+<PROJECT_ROOT>/node_modules/react-native/website/.*
+
+; Ignore the Dangerfile
+<PROJECT_ROOT>/node_modules/react-native/danger/dangerfile.js
+
+; Ignore Fbemitter
+<PROJECT_ROOT>/node_modules/fbemitter/.*
+
+; Ignore "BUCK" generated dirs
+<PROJECT_ROOT>/node_modules/react-native/\.buckd/
+
+; Ignore unexpected extra "@providesModule"
+.*/node_modules/.*/node_modules/fbjs/.*
+
+; Ignore polyfills
+<PROJECT_ROOT>/node_modules/react-native/Libraries/polyfills/.*
+
+; Ignore duplicated react-native-linear-gradient
+<PROJECT_ROOT>/node_modules/react-native-linear-gradient/index.windows.js
+
+; Ignore various node_modules
+<PROJECT_ROOT>/node_modules/react-native-gesture-handler/.*
+<PROJECT_ROOT>/node_modules/xdl/.*
+<PROJECT_ROOT>/node_modules/reqwest/.*
+<PROJECT_ROOT>/node_modules/metro-bundler/.*
+<PROJECT_ROOT>/node_modules/findup/.*
+<PROJECT_ROOT>/node_modules/@react-native-community/async-storage/jest/.*
+
+[include]
+
+[libs]
+<PROJECT_ROOT>/flow-typed
+node_modules/react-native/Libraries/react-native/react-native-interface.js
+node_modules/react-native/flow/
+
+[options]
+emoji=true
+
+module.system=haste
+
+module.file_ext=.js
+module.file_ext=.jsx
+module.file_ext=.json
+module.file_ext=.ios.js
+
+munge_underscores=true
+
+module.name_mapper.extension='\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)' -> 'RelativeImageStub'
+
+module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'
+module.name_mapper='^screens' -> '<PROJECT_ROOT>/src/screens'
+
+module.name_mapper='^actions\/\(.*\)$' -> '<PROJECT_ROOT>/src/actions/\1'
+module.name_mapper='^actions' -> '<PROJECT_ROOT>/src/actions'
+
+module.name_mapper='^assets\/\(.*\)$' -> '<PROJECT_ROOT>/src/assets/\1'
+module.name_mapper='^assets' -> '<PROJECT_ROOT>/src/assets'
+
+module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/src/components/\1'
+module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
+
+module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
+module.name_mapper='^constants' -> '<PROJECT_ROOT>/src/constants'
+
+module.name_mapper='^fixtures\/\(.*\)$' -> '<PROJECT_ROOT>/src/fixtures/\1'
+module.name_mapper='^fixtures' -> '<PROJECT_ROOT>/src/fixtures'
+
+module.name_mapper='^models\/\(.*\)$' -> '<PROJECT_ROOT>/src/models/\1'
+module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
+
+module.name_mapper='^navigation\/\(.*\)$' -> '<PROJECT_ROOT>/src/navigation/\1'
+module.name_mapper='^navigation' -> '<PROJECT_ROOT>/src/navigation'
+
+module.name_mapper='^reducers\/\(.*\)$' -> '<PROJECT_ROOT>/src/reducers/\1'
+module.name_mapper='^reducers' -> '<PROJECT_ROOT>/src/reducers'
+
+module.name_mapper='^services\/\(.*\)$' -> '<PROJECT_ROOT>/src/services/\1'
+module.name_mapper='^services' -> '<PROJECT_ROOT>/src/services'
+
+module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
+module.name_mapper='^utils' -> '<PROJECT_ROOT>/src/utils'
+
+module.name_mapper='^testUtils\/\(.*\)$' -> '<PROJECT_ROOT>/src/testUtils/\1'
+module.name_mapper='^testUtils' -> '<PROJECT_ROOT>/src/testUtils'
+
+module.name_mapper='^configs\/\(.*\)$' -> '<PROJECT_ROOT>/src/configs/\1'
+module.name_mapper='^configs' -> '<PROJECT_ROOT>/src/configs'
+
+module.name_mapper='^abi\/\(.*\)$' -> '<PROJECT_ROOT>/src/abi/\1'
+module.name_mapper='^abi' -> '<PROJECT_ROOT>/src/abi'
+
+module.name_mapper='^selectors\/\(.*\)$' -> '<PROJECT_ROOT>/src/selectors/\1'
+module.name_mapper='^selectors' -> '<PROJECT_ROOT>/src/selectors'
+
+suppress_type=$FlowIssue
+suppress_type=$FlowFixMe
+suppress_type=$FlowFixMeProps
+suppress_type=$FlowFixMeState
+suppress_type=$FixMe
+
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(5[0-6]\\|[1-4][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native_oss[a-z,_]*\\)?)\\)
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(5[0-6]\\|[1-4][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native_oss[a-z,_]*\\)?)\\)?:? #[0-9]+
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+suppress_comment=\\(.\\|\n\\)*\\$FlowIgnore
+
+;unsafe.enable_getters_and_setters=true
+
+[untyped]
+<PROJECT_ROOT>/node_modules/react-native
+
+[version]
+^0.70.0
