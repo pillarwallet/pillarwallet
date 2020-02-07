@@ -762,7 +762,13 @@ SDKWrapper.prototype.connectionsCount = function (walletId: string) {
 SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (!Array.isArray(data)) {
+        Sentry.captureMessage('Wrong Identity Keys received', { extra: { data } });
+        return [];
+      }
+      return data;
+    })
     .catch(() => []);
 };
 
