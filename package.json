@@ -16,7 +16,6 @@
     "lint:fix": "eslint --fix .",
     "flow": "flow",
     "flow-stop": "flow stop",
-    "flow-typed": "flow-typed install",
     "validate": "run-s flow test lint",
     "jest": "jest --colors",
     "jest-watch": "jest --colors --watchAll",
@@ -89,6 +88,7 @@
     "react-native-cookies": "https://github.com/joeferraro/react-native-cookies.git",
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^1.5.0",
+    "react-native-dotenv": "^0.2.0",
     "react-native-emoji": "^1.6.0",
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-fabric": "0.5.2",
@@ -151,15 +151,10 @@
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/runtime": "^7.8.4",
+    "babel-eslint": "^8.2.2",
     "babel-jest": "^25.1.0",
-    "jest": "^25.1.0",
-    "jest-html-reporter": "2.0.0",
-    "jest-react-native": "^18.0.0",
-    "jest-styled-components": "^5.0.1",
-    "jetifier": "^1.6.4",
-    "metro-react-native-babel-preset": "^0.58.0",
-    "react-test-renderer": "16.8.3",
-    "flow-bin": "0.92.0",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-styled-components": "^1.5.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-import-resolver-babel-module": "5.0.0-beta.0",
@@ -169,7 +164,18 @@
     "eslint-plugin-jest": "^21.15.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-react": "^7.7.0"
+    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-react-native": "^3.2.1",
+    "flow-bin": "0.92.0",
+    "jest": "^25.1.0",
+    "jest-html-reporter": "2.0.0",
+    "jest-react-native": "^18.0.0",
+    "jest-styled-components": "^5.0.1",
+    "jetifier": "^1.6.4",
+    "metro-react-native-babel-preset": "^0.58.0",
+    "mock-socket": "^8.0.5",
+    "react-test-renderer": "16.8.3",
+    "redux-mock-store": "^1.5.1"
   },
   "jest": {
     "preset": "react-native",
@@ -185,8 +191,7 @@
     "collectCoverageFrom": [
       "**/*.{js,jsx}",
       "!**/node_modules/**",
-      "!**/reports/**",
-      "!**/flow-typed/**"
+      "!**/reports/**"
     ],
     "coverageReporters": [
       "lcov"
