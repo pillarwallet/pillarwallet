@@ -34,6 +34,7 @@ import { navigate } from 'services/navigation';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 export const SheetContentWrapper = styled.View`
   flex: 1;
@@ -217,13 +218,13 @@ class ManageDetailsSessions extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   walletConnect: { connectors, requests },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   user,
   connectors,
   requests,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   killWalletConnectSessionByUrl: url => dispatch(killWalletConnectSessionByUrl(url)),
 });
 
