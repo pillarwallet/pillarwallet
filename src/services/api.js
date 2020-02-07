@@ -367,7 +367,13 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string): Obj
 SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.list({ walletId }))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (!Array.isArray(data)) {
+        Sentry.captureMessage('Wrong supported assets received', { extra: { data } });
+        return [];
+      }
+      return data;
+    })
     .catch(() => []);
 };
 
