@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
+import get from 'lodash.get';
 import styled from 'styled-components/native';
 import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
@@ -120,11 +121,12 @@ class ManageDetailsSessions extends React.Component<Props, State> {
   renderSessionItem = ({ item }) => {
     const { peerMeta = {} } = item;
     const { name, icons, url } = peerMeta;
+    const icon = get(icons, '[0]');
 
     return (
       <ListItemWithImage
         label={name}
-        avatarUrl={icons[0]}
+        avatarUrl={icon}
         buttonAction={() => this.props.killWalletConnectSessionByUrl(url)}
         buttonActionLabel="Disconnect"
       />
@@ -143,7 +145,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
         onPress={() => this.onRequestItemPress(item)}
       />
     );
-  }
+  };
 
   renderRequestsList() {
     const { requests } = this.props;
@@ -212,7 +214,10 @@ class ManageDetailsSessions extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, requests } }) => ({
+const mapStateToProps = ({
+  user: { data: user },
+  walletConnect: { connectors, requests },
+}) => ({
   user,
   connectors,
   requests,
@@ -222,7 +227,4 @@ const mapDispatchToProps = dispatch => ({
   killWalletConnectSessionByUrl: url => dispatch(killWalletConnectSessionByUrl(url)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ManageDetailsSessions);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageDetailsSessions);
