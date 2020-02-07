@@ -748,13 +748,13 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@ensdomains/ens@0.3.5":
-  version "0.3.5"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ensdomains/ens/-/ens-0.3.5.tgz#5898765c17d893e8c67a28ceca8fc43b4583d5a5"
-  integrity sha1-WJh2XBfYk+jGeijOyo/EO0WD1aU=
+"@ensdomains/ens@0.4.0":
+  version "0.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ensdomains/ens/-/ens-0.4.0.tgz#bca927b4ac81f5da0ab1580a2dfea5289a95357a"
+  integrity sha1-vKkntKyB9doKsVgKLf6lKJqVNXo=
   dependencies:
     bluebird "^3.5.2"
-    eth-ens-namehash "^1.0.2"
+    eth-ens-namehash "^2.0.8"
     ethereumjs-testrpc "^6.0.3"
     ganache-cli "^6.1.0"
     solc "^0.4.20"
@@ -1056,24 +1056,24 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
   integrity sha1-mgb08TfuhNffBGDB/bETX/psUP0=
 
-"@smartwallet/contracts@1.0.0-rc.4":
-  version "1.0.0-rc.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/contracts/-/contracts-1.0.0-rc.4.tgz#6fbed59845a87c206a68a0a9b5bb1ac1c7ff193d"
-  integrity sha1-b77VmEWofCBqaKCptbsawcf/GT0=
+"@smartwallet/contracts@1.1.0":
+  version "1.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/contracts/-/contracts-1.1.0.tgz#6e452b022adedec9946e8490f65472ac50a803ef"
+  integrity sha1-bkUrAire3smUboSQ9lRyrFCoA+8=
   dependencies:
-    "@ensdomains/ens" "0.3.5"
+    "@ensdomains/ens" "0.4.0"
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@smartwallet/sdk@1.2.1":
-  version "1.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-1.2.1.tgz#5a24f9761b9ec5a77161b7db2acfc450993c1d58"
-  integrity sha1-WiT5dhuexadxYbfbKs/EUJk8HVg=
+"@smartwallet/sdk@1.2.3":
+  version "1.2.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-1.2.3.tgz#43141d5a33973c55ed58e27cab839efac7739666"
+  integrity sha1-QxQdWjOXPFXtWOJ8q4Oe+sdzlmY=
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@netgum/types" "^0.1.8"
     "@netgum/utils" "^0.1.3"
-    "@smartwallet/contracts" "1.0.0-rc.4"
+    "@smartwallet/contracts" "1.1.0"
     "@types/bn.js" "^4.11.5"
     "@types/node" "^12.0.0"
     "@types/webpack-env" "^1.13.9"
@@ -1137,11 +1137,6 @@
   version "10.14.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.14.6.tgz#9cbfcb62c50947217f4d88d4d274cc40c22625a9"
   integrity sha1-nL/LYsUJRyF/TYjU0nTMQMImJak=
-
-"@types/node@^10.3.2":
-  version "10.14.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.14.4.tgz#1c586b991457cbb58fef51bc4e0cfcfa347714b5"
-  integrity sha1-HFhrmRRXy7WP71G8Tgz8+jR3FLU=
 
 "@types/node@^12.0.0":
   version "12.0.0"
@@ -4001,20 +3996,23 @@ ee-first@1.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
-elliptic@6.3.3:
-  version "6.3.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/elliptic/-/elliptic-6.3.3.tgz#5482d9646d54bcb89fd7d994fc9e2e9568876e3f"
-  integrity sha1-VILZZG1UvLif19mU/J4ulWiHbj8=
-  dependencies:
-    bn.js "^4.4.0"
-    brorand "^1.0.1"
-    hash.js "^1.0.0"
-    inherits "^2.0.1"
-
 elliptic@6.4.0:
   version "6.4.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/elliptic/-/elliptic-6.4.0.tgz#cac9af8762c85836187003c8dfe193e5e2eae5df"
   integrity sha1-ysmvh2LIWDYYcAPI3+GT5eLq5d8=
+  dependencies:
+    bn.js "^4.4.0"
+    brorand "^1.0.1"
+    hash.js "^1.0.0"
+    hmac-drbg "^1.0.0"
+    inherits "^2.0.1"
+    minimalistic-assert "^1.0.0"
+    minimalistic-crypto-utils "^1.0.0"
+
+elliptic@6.5.2:
+  version "6.5.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/elliptic/-/elliptic-6.5.2.tgz#05c5678d7173c049d8ca433552224a495d0e3762"
+  integrity sha1-BcVnjXFzwEnYykM1UiJKSV0ON2I=
   dependencies:
     bn.js "^4.4.0"
     brorand "^1.0.1"
@@ -4579,12 +4577,12 @@ etag@~1.8.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
-eth-ens-namehash@^1.0.2:
-  version "1.0.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eth-ens-namehash/-/eth-ens-namehash-1.0.2.tgz#05ecdd6bac2d7fd7bc5ca84a993c6bad9da4edb9"
-  integrity sha1-Bezda6wtf9e8XKhKmTxrrZ2k7bk=
+eth-ens-namehash@^2.0.8:
+  version "2.0.8"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eth-ens-namehash/-/eth-ens-namehash-2.0.8.tgz#229ac46eca86d52e0c991e7cb2aef83ff0f68bcf"
+  integrity sha1-IprEbsqG1S4MmR58sq74P/D2i88=
   dependencies:
-    idna-uts46 "^1.0.1"
+    idna-uts46-hx "^2.3.1"
     js-sha3 "^0.5.7"
 
 eth-lib@0.2.8:
@@ -4715,14 +4713,13 @@ ethereumjs-wallet@^0.6.0:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
-"ethers@https://github.com/pillarwallet/ethers.js#v4":
-  version "4.0.39"
-  resolved "https://github.com/pillarwallet/ethers.js#4c1b90a80a1861f38efa624267b12aac62eec00a"
+"ethers@https://github.com/pillarwallet/ethers.js#pillar-v4.0.44":
+  version "4.0.44"
+  resolved "https://github.com/pillarwallet/ethers.js#9953514656f82e3e30355329409f60df816b6dfb"
   dependencies:
-    "@types/node" "^10.3.2"
     aes-js "3.0.0"
     bn.js "^4.4.0"
-    elliptic "6.3.3"
+    elliptic "6.5.2"
     hash.js "1.1.3"
     js-sha3 "0.5.7"
     react-native-scrypt "^1.0.0"
@@ -6075,19 +6072,19 @@ iconv-lite@0.4.24, iconv-lite@^0.4.17, iconv-lite@^0.4.24, iconv-lite@^0.4.4, ic
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
+idna-uts46-hx@^2.3.1:
+  version "2.3.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/idna-uts46-hx/-/idna-uts46-hx-2.3.1.tgz#a1dc5c4df37eee522bf66d969cc980e00e8711f9"
+  integrity sha1-odxcTfN+7lIr9m2WnMmA4A6HEfk=
+  dependencies:
+    punycode "2.1.0"
+
 idna-uts46-hx@^3.0.0:
   version "3.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/idna-uts46-hx/-/idna-uts46-hx-3.0.0.tgz#5a3e7373c18cf64bdbabf12367d23767eafdc464"
   integrity sha1-Wj5zc8GM9kvbq/EjZ9I3Z+r9xGQ=
   dependencies:
     punycode "2.1.1"
-
-idna-uts46@^1.0.1:
-  version "1.1.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/idna-uts46/-/idna-uts46-1.1.0.tgz#be098b2b7c1cabfbef87a8b80f626fac37366aea"
-  integrity sha1-vgmLK3wcq/vvh6i4D2JvrDc2auo=
-  dependencies:
-    punycode "^2.1.0"
 
 ieee754@^1.1.11, ieee754@^1.1.4:
   version "1.1.13"
@@ -10509,6 +10506,11 @@ punycode@1.3.2:
   version "1.3.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
   integrity sha1-llOgNvt8HuQjQvIyXM7v6jkmxI0=
+
+punycode@2.1.0:
+  version "2.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/punycode/-/punycode-2.1.0.tgz#5f863edc89b96db09074bad7947bf09056ca4e7d"
+  integrity sha1-X4Y+3Im5bbCQdLrXlHvwkFbKTn0=
 
 punycode@2.1.1, punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
