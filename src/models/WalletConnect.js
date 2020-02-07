@@ -23,7 +23,7 @@
 export type ClientMeta = {|
   description: string,
   url: string,
-  icons: string[],
+  icons?: string[],
   name: string,
 |};
 

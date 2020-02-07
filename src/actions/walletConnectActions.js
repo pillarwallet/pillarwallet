@@ -140,7 +140,7 @@ const onWalletConnectCallRequest = (connector: Connector, payload: JsonRpcReques
     const request: CallRequest = {
       name,
       url,
-      icon: icons[0],
+      icon: get(icons, '[0]'),
       callId: payload.id,
       peerId: connector.peerId,
       method: payload.method,
