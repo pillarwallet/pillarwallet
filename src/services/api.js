@@ -762,7 +762,13 @@ SDKWrapper.prototype.connectionsCount = function (walletId: string) {
 SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (!Array.isArray(data)) {
+        Sentry.captureMessage('Wrong Identity Keys received', { extra: { data } });
+        return [];
+      }
+      return data;
+    })
     .catch(() => []);
 };
 
@@ -776,7 +782,13 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
 SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (data && !Array.isArray(data)) {
+        Sentry.captureMessage('Wrong response from patchIdentityKeys', { extra: { data } });
+        return false;
+      }
+      return data;
+    })
     .catch(() => false);
 };
 
