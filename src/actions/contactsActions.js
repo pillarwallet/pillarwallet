@@ -49,15 +49,13 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     const {
-      user: {
-        data: { walletId },
-      },
+      user: { data: { walletId } },
       contacts: { data: localContacts },
     } = getState();
     const upperCaseQuery = query.toUpperCase();
 
     const myContacts = localContacts.filter(({ username }) => {
-      return username.toUpperCase().indexOf(upperCaseQuery) > -1;
+      return username.toUpperCase().includes(upperCaseQuery);
     });
 
     dispatch({
