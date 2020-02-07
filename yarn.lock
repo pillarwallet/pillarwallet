@@ -3173,7 +3173,7 @@ collection-visit@^1.0.0:
     map-visit "^1.0.0"
     object-visit "^1.0.0"
 
-color-convert@^1.8.2, color-convert@^1.9.0:
+color-convert@^1.8.2, color-convert@^1.9.0, color-convert@^1.9.1:
   version "1.9.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
   integrity sha1-u3GFBpDh8TZWfeYp0tVHHe2kweg=
@@ -3190,7 +3190,7 @@ color-name@^1.0.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha1-wqCah6y95pVD3m9j+jmVyCbFNqI=
 
-color-string@^1.4.0:
+color-string@^1.4.0, color-string@^1.5.2:
   version "1.5.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/color-string/-/color-string-1.5.3.tgz#c9bbc5f01b58b5492f3d6857459cb6590ce204cc"
   integrity sha1-ybvF8BtYtUkvPWhXRZy2WQziBMw=
@@ -3202,6 +3202,14 @@ color-support@^1.1.3:
   version "1.1.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
   integrity sha1-k4NDeaHMmgxh+C9S8NBDIiUb1aI=
+
+color@^3.1.2:
+  version "3.1.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/color/-/color-3.1.2.tgz#68148e7f85d41ad7649c5fa8c8106f098d229e10"
+  integrity sha1-aBSOf4XUGtdknF+oyBBvCY0inhA=
+  dependencies:
+    color-convert "^1.9.1"
+    color-string "^1.5.2"
 
 color@~1.0.3:
   version "1.0.3"
@@ -11057,6 +11065,14 @@ react-native-splash-screen@^3.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-splash-screen/-/react-native-splash-screen-3.2.0.tgz#d47ec8557b1ba988ee3ea98d01463081b60fff45"
   integrity sha1-1H7IVXsbqYjuPqmNAUYwgbYP/0U=
 
+react-native-svg-animations@^0.1.9:
+  version "0.1.9"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-svg-animations/-/react-native-svg-animations-0.1.9.tgz#247d13130d73006e06801e8ab01f4a93c5f0fe2d"
+  integrity sha1-JH0TEw1zAG4GgB6KsB9Kk8Xw/i0=
+  dependencies:
+    color "^3.1.2"
+    svg-path-properties "^0.4.1"
+
 react-native-svg@^9.3.7:
   version "9.4.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-svg/-/react-native-svg-9.4.0.tgz#e428e0eae55aebd2355f1ff4f22675dad4611960"
@@ -13018,6 +13034,11 @@ supports-color@^6.1.0:
   integrity sha1-B2Srxpxj1ayELdSGfo0CXogN+PM=
   dependencies:
     has-flag "^3.0.0"
+
+svg-path-properties@^0.4.1:
+  version "0.4.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/svg-path-properties/-/svg-path-properties-0.4.11.tgz#1a04760a773b17ea71737e5c4fca12a74502a612"
+  integrity sha1-GgR2Cnc7F+pxc35cT8oSp0UCphI=
 
 symbol-observable@1.0.1:
   version "1.0.1"

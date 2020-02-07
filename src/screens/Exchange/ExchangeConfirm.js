@@ -24,13 +24,12 @@ import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
 
 // components
 import { Footer, ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { BaseText, Label, MediumText, Paragraph, TextLink } from 'components/Typography';
+import { Label, MediumText, Paragraph, TextLink } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import Icon from 'components/Icon';
@@ -48,7 +47,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { formatAmount, formatAmountDisplay, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
+import { getOfferProviderLogo } from 'utils/exchange';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 // models, types
@@ -58,6 +57,31 @@ import type { OfferOrder, ProvidersMeta } from 'models/Offer';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { SessionData } from 'models/Session';
+
+// partials
+import ExchangeScheme from './ExchangeScheme';
+
+type Props = {
+  navigation: NavigationScreenProp<*>,
+  session: SessionData,
+  fetchGasInfo: () => void,
+  gasInfo: GasInfo,
+  rates: Rates,
+  baseFiatCurrency: ?string,
+  exchangeSupportedAssets: Asset[],
+  balances: Balances,
+  executingExchangeTransaction: boolean,
+  setDismissTransaction: () => void,
+  providersMeta: ProvidersMeta,
+  theme: Theme,
+};
+
+type State = {
+  showFeeModal: boolean,
+  transactionSpeed: string,
+  gasLimit: number,
+}
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -71,20 +95,8 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const ValueWrapper = styled.View`
-  flex: 1;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-`;
-
 const Value = styled(MediumText)`
   font-size: ${fontSizes.big}px;
-`;
-
-const LabelSub = styled(BaseText)`
-  margin-top: 5px;
-  ${fontStyles.regular};
 `;
 
 const SpeedButton = styled(Button)`
@@ -104,26 +116,9 @@ const WarningMessage = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
 `;
 
-const ProviderWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-top: 6px;
-`;
-
-const ProviderIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
-  margin-right: 4px;
-`;
-
 const WalletSwitcher = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-`;
-
-const SeparatorValue = styled(Value)`
-  color: ${themedColors.secondaryText};
-  margin: 0px 8px;
 `;
 
 const ChevronWrapper = styled.View`
@@ -138,26 +133,14 @@ const SelectorChevron = styled(Icon)`
   color: ${themedColors.primary};
 `;
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  session: Object,
-  fetchGasInfo: Function,
-  gasInfo: GasInfo,
-  rates: Rates,
-  baseFiatCurrency: ?string,
-  exchangeSupportedAssets: Asset[],
-  balances: Balances,
-  executingExchangeTransaction: boolean,
-  setDismissTransaction: Function,
-  providersMeta: ProvidersMeta,
-  theme: Theme,
-};
 
-type State = {
-  showFeeModal: boolean,
-  transactionSpeed: string,
-  gasLimit: number,
-}
+const AllowanceWrapper = styled.View`
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
+`;
+
+const SettingsWrapper = styled.View`
+  padding: 32px ${spacing.layoutSides}px 64px;
+`;
 
 const SLOW = 'min';
 const NORMAL = 'avg';
@@ -312,7 +295,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { showFeeModal, transactionSpeed } = this.state;
+    const {
+      showFeeModal,
+      transactionSpeed,
+    } = this.state;
     const {
       navigation,
       session,
@@ -344,11 +330,11 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       : balanceInWei.gte(txFeeInWei);
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
 
-    const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
-    const { name } = providerInfo;
-    const providerName = name || getProviderDisplayName(provider);
-    const providerLogo = getOfferProviderLogo(providersMeta, provider);
+    // const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
+    // const { name } = providerInfo;
+    // const providerName = name || getProviderDisplayName(provider);
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
+    const providerLogo = getOfferProviderLogo(providersMeta, provider);
 
     return (
       <ContainerWithHeader
@@ -357,72 +343,58 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           customOnBack: this.handleBack,
         }}
       >
-        <ScrollWrapper regularPadding>
-          <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
-            {setTokenAllowance
-              ? 'Review the details and enable asset as well as confirm the cost of data transaction.'
-              : 'Review the details and confirm the exchange as well as the cost of transaction.'
-            }
-          </Paragraph>
-          {setTokenAllowance &&
-            <LabeledRow>
-              <Label>Asset to enable</Label>
-              <Value>{fromAssetCode}</Value>
-            </LabeledRow>
-          }
+        <ScrollWrapper>
           {!setTokenAllowance &&
-            <View>
-              <LabeledRow>
-                <Label>You will receive</Label>
-                <ValueWrapper>
-                  <Value>{`${formattedReceiveAmount} ${toAssetCode}`}</Value>
-                  <SeparatorValue>&rarr;</SeparatorValue>
-                  <WalletSwitcher onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}>
-                    <TextLink style={{ ...fontStyles.big }}>Legacy Wallet</TextLink>
-                    <ChevronWrapper>
-                      <SelectorChevron
-                        name="chevron-right"
-                        style={{ transform: [{ rotate: '-90deg' }] }}
-                      />
-                      <SelectorChevron
-                        name="chevron-right"
-                        style={{
-                          transform: [{ rotate: '90deg' }],
-                          marginTop: 2,
-                        }}
-                      />
-                    </ChevronWrapper>
-                  </WalletSwitcher>
-                </ValueWrapper>
-                <LabelSub>
-                  Final amount may be higher or lower than expected at the end of a transaction.
-                  Crypto is volatile, the rate fluctuates.
-                </LabelSub>
-              </LabeledRow>
-              <LabeledRow>
-                <Label>You will pay</Label>
-                <Value>{`${payQuantity} ${fromAssetCode}`}</Value>
-              </LabeledRow>
-              <LabeledRow>
-                <Label>Exchange</Label>
-                <ProviderWrapper>
-                  {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
-                  <Value>{providerName}</Value>
-                </ProviderWrapper>
-              </LabeledRow>
-            </View>
+            <ExchangeScheme
+              wrapperStyle={{ paddingTop: 56 }}
+              fromValue={payQuantity}
+              fromAssetCode={fromAssetCode}
+              toValue={formattedReceiveAmount}
+              toAssetCode={toAssetCode}
+              imageSource={providerLogo}
+            />
           }
-          <LabeledRow>
-            <Label>Transaction fee</Label>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-              <Value>{formatAmount(utils.formatEther(txFeeInWei))} ETH</Value>
-              <ButtonText
-                buttonText="Change"
-                onPress={() => this.setState({ showFeeModal: true })}
-                wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
-              />
-            </View>
-          </LabeledRow>
+          {!!setTokenAllowance &&
+            <AllowanceWrapper>
+              <Paragraph small style={{ padding: 20, marginBottom: spacing.medium, paddingTop: spacing.medium }}>
+                Review the details and enable asset as well as confirm the cost of data transaction.
+              </Paragraph>
+              <LabeledRow>
+                <Label>Asset to enable</Label>
+                <Value>{fromAssetCode}</Value>
+              </LabeledRow>
+
+            </AllowanceWrapper>
+          }
+          <SettingsWrapper>
+            <WalletSwitcher onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}>
+              <TextLink style={{ ...fontStyles.big }}>Legacy Wallet</TextLink>
+              <ChevronWrapper>
+                <SelectorChevron
+                  name="chevron-right"
+                  style={{ transform: [{ rotate: '-90deg' }] }}
+                />
+                <SelectorChevron
+                  name="chevron-right"
+                  style={{
+                    transform: [{ rotate: '90deg' }],
+                    marginTop: 2,
+                  }}
+                />
+              </ChevronWrapper>
+            </WalletSwitcher>
+            <LabeledRow>
+              <Label>Transaction fee</Label>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                <Value>{formatAmount(utils.formatEther(txFeeInWei))} ETH</Value>
+                <ButtonText
+                  buttonText="Change"
+                  onPress={() => this.setState({ showFeeModal: true })}
+                  wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
+                />
+              </View>
+            </LabeledRow>
+          </SettingsWrapper>
         </ScrollWrapper>
         <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
