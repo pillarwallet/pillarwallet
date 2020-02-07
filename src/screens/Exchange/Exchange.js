@@ -400,6 +400,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
   fromInputRef: RNTextInput;
   listeners: NavigationEventSubscription[];
+  _isMounted: boolean;
 
   constructor(props: Props) {
     super(props);
@@ -470,6 +471,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       getMetaData,
       getExchangeSupportedAssets,
     } = this.props;
+    this._isMounted = true;
     getMetaData();
     getExchangeSupportedAssets();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -488,6 +490,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   componentWillUnmount() {
     this.listeners.forEach(listener => listener.remove());
+    this._isMounted = false;
   }
 
   blurFromInput = () => {
@@ -497,7 +500,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   focusInputWithKeyboard = () => {
     setTimeout(() => {
-      if (!this.fromInputRef) return;
+      if (!this.fromInputRef || !this._isMounted) return;
       this.fromInputRef.focus();
     }, 200);
   };
