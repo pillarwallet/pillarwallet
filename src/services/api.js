@@ -782,7 +782,13 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
 SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (data && !Array.isArray(data)) {
+        Sentry.captureMessage('Wrong response from patchIdentityKeys', { extra: { data } });
+        return false;
+      }
+      return data;
+    })
     .catch(() => false);
 };
 
