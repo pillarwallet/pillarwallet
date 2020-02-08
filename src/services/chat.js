@@ -44,8 +44,9 @@ export default class Chat {
     }
 
     try {
+      const manufacturerName = await DeviceInfo.getManufacturer().catch(() => 'Unknown brand');
       credentials.buildNumber = `${DeviceInfo.getBuildNumber()}`;
-      credentials.device = `${DeviceInfo.getManufacturer()} ${DeviceInfo.getModel()}`;
+      credentials.device = `${manufacturerName} ${DeviceInfo.getModel()}`;
       credentials.os = `${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
     } catch (e) {
       //

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Pillar Wallet</string>
+    <string name="label_deep_link">Login with Pillar Wallet</string>
+    <string name="label_deep_link_proceed">Proceed to Pillar Wallet</string>
+</resources>

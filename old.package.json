@@ -40,7 +40,6 @@
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
     "crypto-js": "^3.1.9-1",
-    "lottie-ios": "2.5.0",
     "pouchdb-adapter-asyncstorage": "^6.4.1",
     "process": "^0.11.0",
     "punycode": "^1.2.4",

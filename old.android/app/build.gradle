@@ -1,0 +1,299 @@
+
+buildscript {
+  repositories {
+    maven { url 'https://maven.fabric.io/public' }
+  }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+import com.android.build.OutputFile
+
+project.ext.react = [
+  entryFile: "index.js",
+  bundleInDebug: false,
+  bundleInRelease: true,
+  bundleInStaging: true,
+  devDisabledInStaging: true
+]
+
+apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-sentry/sentry.gradle"
+
+repositories {
+  mavenLocal()
+  jcenter()
+  maven {
+    // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+    url "https://maven.google.com"
+  }
+  jcenter {
+    url 'https://google.bintray.com/flexbox-layout/'
+  }
+  maven {
+    url 'https://google.bintray.com/flexbox-layout/'
+  }
+  maven {
+    url 'https://jitpack.io'
+  }
+}
+
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+  compileSdkVersion 28
+  buildToolsVersion '28.0.3'
+  signingConfigs {
+    debug {
+      storeFile file('../debug.keystore')
+    }
+    staging {
+      keyAlias System.getenv('ANDROID_STAGING_KEY_ALIAS') ? System.getenv('ANDROID_STAGING_KEY_ALIAS').toString() : keystoreProperties['stagingKeyAlias']
+      keyPassword System.getenv('ANDROID_STAGING_KEY_PASSWORD') ? System.getenv('ANDROID_STAGING_KEY_PASSWORD').toString() : keystoreProperties['stagingKeyPassword']
+      storeFile file('../staging-key.keystore')
+      storePassword System.getenv('ANDROID_STAGING_STORE_PASSWORD') ? System.getenv('ANDROID_STAGING_STORE_PASSWORD').toString() : keystoreProperties['stagingStorePassword']
+    }
+    release {
+      keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS').toString() : keystoreProperties['keyAlias']
+      keyPassword System.getenv('ANDROID_KEY_PASSWORD') ? System.getenv('ANDROID_KEY_PASSWORD').toString() : keystoreProperties['keyPassword']
+      storeFile file('../release.keystore')
+      storePassword System.getenv('ANDROID_STORE_PASSWORD') ? System.getenv('ANDROID_STORE_PASSWORD').toString() : keystoreProperties['storePassword']
+    }
+  }
+  defaultConfig {
+    applicationId 'com.pillarproject.wallet'
+    targetSdkVersion 28
+    versionCode System.getenv('APP_BUILD_NUMBER') ? System.getenv('APP_BUILD_NUMBER').toInteger() : 9
+    versionName System.getenv('buildNumber') ? System.getenv('buildNumber') : '0.0.0'
+    ndk {
+      abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a', 'x86_64'
+    }
+    multiDexEnabled true
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    // Deprecated. Used by net.openid:appauth
+    vectorDrawables.useSupportLibrary = true
+    missingDimensionStrategy 'react-native-camera', 'general'
+  }
+  dexOptions {
+    javaMaxHeapSize "1G"
+  }
+
+  flavorDimensions "version"
+  productFlavors {
+    // Define separate dev and prod product flavors.
+    dev {
+      // dev utilizes minSDKVersion = 21 to allow the Android gradle plugin
+      // to pre-dex each module and produce an APK that can be tested on
+      // Android Lollipop without time consuming dex merging processes.
+      minSdkVersion 21
+    }
+    devRemoteKernel {
+      minSdkVersion 21
+    }
+    dev19 {
+      // For debugging / development on older SDK versions. Increases build
+      // time so use 'dev' if not running on older SDKs.
+      minSdkVersion 21
+    }
+    prod {
+      // The actual minSdkVersion for the application.
+      minSdkVersion 21
+    }
+  }
+  buildTypes {
+    debug {
+      debuggable true
+    }
+    staging {
+      buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+      applicationIdSuffix ".staging"
+      signingConfig signingConfigs.staging
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      zipAlignEnabled true
+      matchingFallbacks = ['release']
+    }
+    release {
+      buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      zipAlignEnabled true
+      signingConfig signingConfigs.release
+    }
+  }
+  lintOptions {
+    abortOnError false
+  }
+  packagingOptions {
+      pickFirst "**"
+  }
+    // applicationVariants are e.g. debug, release
+  applicationVariants.all { variant ->
+      variant.outputs.each { output ->
+          // For each separate APK per architecture, set a unique version code as described here:
+          // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
+          def versionCodes = ["armeabi-v7a":1, "x86":2]
+          def abi = output.getFilter(OutputFile.ABI)
+          if (abi != null) {  // null for the universal-debug, universal-release variants
+              output.versionCodeOverride =
+                      versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+          }
+      }
+  }
+}
+
+// Don't use modern jsc-android since it still has some critical bugs that
+// crash applications when the string for the JS bundle is loaded and when
+// locale-specific date functions are called.
+// configurations.all {
+//   resolutionStrategy {
+//     force 'org.webkit:android-jsc:r216113'
+//   }
+// }
+
+
+dependencies {
+    implementation project(':react-native-appearance')
+    implementation project(':@react-native-community_async-storage')
+    implementation project(':@matt-block_react-native-in-app-browser')
+    implementation project(':react-native-gesture-handler')
+  // For animated GIF support
+  compile 'com.facebook.fresco:animated-gif:1.10.0'
+  // For WebP support, including animated WebP
+  compile 'com.facebook.fresco:animated-webp:1.10.0'
+  compile 'com.facebook.fresco:webpsupport:1.10.0'
+
+  implementation project(':react-native-extra-dimensions-android')
+  implementation project(':react-native-color-matrix-image-filters')
+  implementation project(':react-native-image-crop-picker')
+  implementation project(':react-native-svg')
+  implementation project(':react-native-background-timer')
+  implementation project(':react-native-sentry')
+  implementation project(':react-native-webview')
+  implementation 'com.android.support:multidex:1.0.1'
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  implementation project(':react-native-fabric')
+
+  // Our dependencies
+  implementation "com.google.android.gms:play-services-base:15.0.1"
+  implementation "com.google.firebase:firebase-core:15.0.2"
+  implementation "com.google.firebase:firebase-crash:15.0.2"
+  implementation 'com.google.android.gms:play-services-vision:15.0.1'
+  implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+    transitive = true
+  }
+  implementation('com.crashlytics.sdk.android:answers:1.4.7@aar') {
+    transitive = true
+  }
+  implementation "com.google.firebase:firebase-messaging:17.1.0"
+  implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+  implementation project(':react-native-linear-gradient')
+  implementation project(':react-native-threads')
+
+  compileOnly 'org.glassfish:javax.annotation:3.1.1'
+
+  annotationProcessor 'com.jakewharton:butterknife:7.0.1'
+  implementation 'com.jakewharton:butterknife:7.0.1'
+  implementation 'de.greenrobot:eventbus:2.4.0'
+  implementation 'com.amplitude:android-sdk:2.9.2' // Be careful when upgrading! Upgrading might break experience scoping. Check with Jesse. See Analytics.resetAmplitudeDatabaseHelper
+  implementation 'com.squareup.picasso:picasso:2.5.2'
+  implementation 'com.google.android.gms:play-services-gcm:15.0.1'
+  implementation 'com.google.android.gms:play-services-analytics:15.0.0'
+  implementation 'com.google.android.gms:play-services-maps:15.0.0'
+  implementation 'com.google.android.gms:play-services-auth:15.0.0'
+  implementation 'com.google.android.gms:play-services-location:15.0.0'
+//  compile 'com.google.android.gms:play-services-ads:15.0.0'
+  annotationProcessor 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
+  implementation "com.raizlabs.android:DBFlow-Core:2.2.1"
+  implementation "com.raizlabs.android:DBFlow:2.2.1"
+  implementation "com.madgag.spongycastle:core:1.53.0.0"
+  implementation "com.madgag.spongycastle:prov:1.53.0.0"
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
+  // debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.4-beta1'
+  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
+  implementation 'com.facebook.device.yearclass:yearclass:1.0.1'
+  implementation 'commons-io:commons-io:1.3.2'
+  implementation 'me.leolin:ShortcutBadger:1.1.4@aar'
+  implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+  implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.7'
+  implementation 'com.yqritc:android-scalablevideoview:1.0.1'
+  implementation 'commons-codec:commons-codec:1.10'
+  implementation 'com.segment.analytics.android:analytics:4.3.0'
+  implementation 'com.google.zxing:core:3.2.1'
+  implementation 'net.openid:appauth:0.4.1'
+  implementation 'com.airbnb.android:lottie:2.6.1'
+  implementation('io.nlopez.smartlocation:library:3.2.11') {
+    transitive = false
+  }
+  implementation 'io.intercom.android:intercom-sdk-base:5.+'
+  implementation 'io.intercom.android:intercom-sdk-fcm:5.+'
+  implementation 'com.android.support:exifinterface:28.0.1'
+  implementation project(':react-native-scrypt')
+  implementation project(':lottie-react-native')
+  implementation project(':rn-signal-protocol-messaging')
+  implementation project(':react-native-intercom')
+  implementation project(':react-native-udp')
+  implementation project(':react-native-tcp')
+  implementation project(':react-native-randombytes')
+  implementation project(':react-native-os')
+  implementation project(':react-native-fetch-blob')
+  implementation project(':react-native-camera')
+  implementation project(':react-native-vector-icons')
+  implementation project(':react-native-share')
+  implementation(project(':react-native-firebase')) {
+      transitive = false
+  }
+  implementation project(':react-native-splash-screen')
+  implementation project(':react-native-device-info')
+  implementation "com.android.support:appcompat-v7:28.0.0"
+  implementation "com.facebook.react:react-native:+"  // From node_modules
+  implementation project(':react-native-cookies')
+  implementation project(':react-native-keychain')
+
+  // Testing
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+  // We use a modified build of com.android.support.test:runner:1.0.1. Explanation in maven-test/README
+  androidTestImplementation 'com.android.support.test:runner:1.0.1'
+  androidTestImplementation 'com.android.support:support-annotations:28.0.0'
+  androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.0'
+  androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
+  androidTestImplementation 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
+
+  // Shadows
+  implementation 'com.github.devlight.shadowlayout:library:1.0.2'
+}
+
+configurations.all {
+  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+    def requested = details.requested
+    if (requested.group == 'com.android.support') {
+      if (!requested.name.startsWith("multidex")) {
+        details.useVersion '28.0.0'
+      }
+    }
+  }
+}
+
+rootProject.subprojects { project ->
+  buildscript {
+    repositories {
+      jcenter {
+        url 'https://dl.bintray.com/android/android-tools/'
+      }
+      jcenter {
+        url 'https://firebase.bintray.com/gradle'
+      }
+      maven {
+        url 'https://maven.google.com'
+      }
+      maven {
+        url 'https://jitpack.io'
+      }
+    }
+  }
+}
+
+// This has to be down here for some reason
+apply plugin: 'com.google.gms.google-services'

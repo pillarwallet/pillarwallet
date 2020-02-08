@@ -283,7 +283,7 @@ jobs:
       - run:
           name: Get keystore file
           command: |
-            cd /home/circleci/pillarwallet/android/
+            cd /home/circleci/pillarwallet/android/keystores/
             aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
       - run:
           name: Accept Android SDK licenses
@@ -478,7 +478,7 @@ jobs:
       - run:
           name: Get keystore file
           command: |
-            cd /home/circleci/pillarwallet/android/
+            cd /home/circleci/pillarwallet/android/keystores/
             aws s3 cp s3://pillar-prod-app-keystore-eu-west-2-304069782345/release.keystore .
       - run:
           name: Append circleCI build number to version
