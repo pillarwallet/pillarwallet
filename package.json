@@ -8,6 +8,7 @@
     "@storybook/addon-actions": "^5.3.12",
     "@storybook/addon-links": "^5.3.12",
     "@storybook/addon-ondevice-actions": "^5.3.12",
+    "@storybook/addon-storyshots": "^5.3.12",
     "@storybook/addons": "^5.3.12",
     "@storybook/react-native": "^5.3.12",
     "@storybook/react-native-server": "^5.3.12",
@@ -316,7 +317,10 @@
   },
   "config": {
     "react-native-storybook-loader": {
-      "searchDir": ["./src", "./storybook/stories"],
+      "searchDir": [
+        "./src",
+        "./storybook/stories"
+      ],
       "pattern": "**/*.stories.js",
       "outputFile": "./storybook/storyLoader.js"
     }

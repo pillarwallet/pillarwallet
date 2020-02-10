@@ -1,28 +1,33 @@
 // @flow
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 type Props = {
   showApp?: () => void,
 }
 
 export default class Welcome extends React.Component<Props> {
-  styles = {
-    wrapper: {
-      flex: 1,
-      padding: 24,
-      justifyContent: 'center',
-    },
-    header: {
-      fontSize: 18,
-      marginBottom: 18,
-    },
-    content: {
-      fontSize: 12,
-      marginBottom: 10,
-      lineHeight: 18,
-    },
-  };
+  styles: StyleSheet.Styles;
+
+  constructor(props: Props) {
+    super(props);
+    this.styles = {
+      wrapper: {
+        flex: 1,
+        padding: 24,
+        justifyContent: 'center',
+      },
+      header: {
+        fontSize: 18,
+        marginBottom: 18,
+      },
+      content: {
+        fontSize: 12,
+        marginBottom: 10,
+        lineHeight: 18,
+      },
+    };
+  }
 
   showApp = () => {
     const { showApp } = this.props;
