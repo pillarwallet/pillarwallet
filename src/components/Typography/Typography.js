@@ -18,31 +18,92 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { fontStyles, appFont } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { fontStyles, appFont, fontSizes, lineHeights } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
+
+
+const getFontSize = (props) => {
+  const propsKeys = Object.keys(props);
+  let fontSize;
+
+  propsKeys.forEach((prop: string) => {
+    if (fontSizes[prop]) fontSize = fontSizes[prop];
+  });
+
+  return fontSize;
+};
+
+const getLineHeight = (props) => {
+  const propsKeys = Object.keys(props);
+  let lineHeight;
+
+  propsKeys.forEach((prop: string) => {
+    if (lineHeights[prop]) lineHeight = lineHeights[prop];
+  });
+
+  return lineHeight;
+};
+
+const getTextStyle = (props) => {
+  const { theme } = props;
+  const colors = getThemeColors(theme);
+  const textProps = {};
+
+  // color types
+  if (props.primary) textProps.color = colors.primary;
+  if (props.secondary) textProps.color = colors.secondaryText;
+  if (props.negative) textProps.color = colors.negative;
+  if (props.positive) textProps.color = colors.positive;
+  if (props.tertiary) textProps.color = colors.tertiary;
+  if (props.color) textProps.color = props.color; // for custom color
+
+  // positioning
+  if (props.center) textProps.textAlign = 'center';
+  if (props.right) textProps.textAlign = 'right';
+
+  // font size
+  if (props.fontSize) {
+    textProps.fontSize = props.fontSize;
+  } else {
+    textProps.fontSize = getFontSize(props);
+  }
+
+  // line height
+  if (props.lineHeight) {
+    textProps.lineHeight = props.lineHeight;
+  } else {
+    textProps.lineHeight = getLineHeight(props);
+  }
+
+  return { ...textProps };
+};
 
 export const BaseText = styled.Text`
   font-family: ${appFont.regular};
   text-align-vertical: center;
   color: ${themedColors.text};
+  ${(props) => getTextStyle(props)}
 `;
 
 export const BoldText = styled(BaseText)`
   font-family: ${appFont.bold};
   text-align-vertical: center;
   color: ${themedColors.text};
+  ${(props) => getTextStyle(props)}
 `;
 
 export const LightText = styled(BaseText)`
   font-family: ${appFont.light};
   text-align-vertical: center;
   color: ${themedColors.text};
+  ${(props) => getTextStyle(props)}
 `;
 
 export const MediumText = styled(BaseText)`
   font-family: ${appFont.medium};
   text-align-vertical: center;
   color: ${themedColors.text};
+  ${(props) => getTextStyle(props)}
 `;
 
 export const Title = styled(BaseText)`
