@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
@@ -24,18 +25,19 @@ import { CachedImage } from 'react-native-cached-image';
 import { AnimatedSVGPath } from 'react-native-svg-animations';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 
 // utils
 import { fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
 
 type ImageObject = {
   uri: string,
 }
 
 type Props = {
-  wrapperStyle: Object,
+  wrapperStyle?: Object,
   fromValue: number | string,
   fromAssetCode: string,
   toValue: number | string,
@@ -84,7 +86,7 @@ const ValueText = styled(MediumText)`
   text-align: center;
 `;
 
-const SymbolText = styled(BaseText)`
+const SymbolText = styled(MediumText)`
   font-size: ${fontSizes.big}px;
   color: ${themedColors.secondaryText};
 `;
@@ -94,15 +96,11 @@ const ArrowHolder = styled.View`
   height: 97px;
   width: ${SCREEN_WIDTH / 2}px;
   ${({ isLeft }) => isLeft
-    ? `
-      left: 0;
-      top: 50%;
-    `
-    : `
-      right: 0;
+    ? `left: 0;
+      top: 50%;`
+    : `right: 0;
       bottom: 50%;
-      margin-bottom: -9px;
-    `}
+      margin-bottom: -9px;`}
 `;
 
 const getRightArrowPath = (fromValueWith: number) => {
@@ -163,7 +161,6 @@ class ExchangeScheme extends React.Component<Props, State> {
       imageSource,
     } = this.props;
 
-
     return (
       <SchemeWrapper style={wrapperStyle}>
         <ValueWrapper
@@ -184,7 +181,7 @@ class ExchangeScheme extends React.Component<Props, State> {
               strokeWidth={2}
               height={97}
               width={SCREEN_WIDTH / 2}
-              delay={500}
+              delay={0}
               d={getLeftArrowPath(valueToWidth)}
               loop={false}
             />
@@ -197,7 +194,7 @@ class ExchangeScheme extends React.Component<Props, State> {
               strokeWidth={2}
               height={97}
               width={SCREEN_WIDTH / 2}
-              delay={1}
+              delay={0}
               d={getRightArrowPath(valueFromWidth)}
               loop={false}
             />
