@@ -137,6 +137,7 @@ import {
   UPDATE_BITCOIN_BALANCE,
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
+  SET_BITCOIN_BALANCES,
   BITCOIN_WALLET_CREATION_FAILED,
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
@@ -158,6 +159,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
   BitcoinReducerAction,
   SetBitcoinAddressesAction,
+  SetBitcoinBalancesAction,
   UpdateBitcoinBalanceAction,
   UpdateUnspentTransactionsAction,
   BitcoinWalletCreationFailedAction,
@@ -171,6 +173,7 @@ import type {
   BitcoinStore,
   BTCBalance,
   BTCTransaction,
+  BitcoinBalance,
 } from 'models/Bitcoin';
 
 import { initialAssets } from 'fixtures/assets';
@@ -191,6 +194,11 @@ const loadDb = (): Promise<BitcoinStore> => {
 const setBitcoinAddressesAction = (addresses: string[]): SetBitcoinAddressesAction => ({
   type: SET_BITCOIN_ADDRESSES,
   addresses,
+});
+
+const setBitcoinBalancesAction = (balances: BitcoinBalance): SetBitcoinBalancesAction => ({
+  type: SET_BITCOIN_BALANCES,
+  balances,
 });
 
 const updateBitcoinBalance = (
@@ -257,6 +265,16 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
     }));
 
     await dispatch(setBitcoinAddressesAction([address]));
+  };
+};
+
+export const loadBitcoinBalancesAction = () => {
+  return async (dispatch: Dispatch) => {
+    const { balances = {} } = await storage.get('bitcoinBalances');
+
+    if (Object.keys(balances).length > 0) {
+      dispatch(setBitcoinBalancesAction(balances));
+    }
   };
 };
 
@@ -411,6 +429,9 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
         .then(action => dispatch(action))
         .catch(fetchBalanceFailed);
     }));
+
+    const { bitcoin: { data: { balances } } } = getState();
+    dispatch(saveDbAction('bitcoinBalances', { balances }, true));
   };
 };
 
