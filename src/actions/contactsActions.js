@@ -41,7 +41,6 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 
 // utils
 import { excludeLocalContacts } from 'utils/contacts';
-import { isCaseInsensitiveMatch } from 'utils/common';
 
 // models, types
 import type { ConnectionIdentityKey } from 'models/Connections';
@@ -53,9 +52,10 @@ export const searchContactsAction = (query: string) => {
       user: { data: { walletId } },
       contacts: { data: localContacts },
     } = getState();
+    const upperCaseQuery = query.toUpperCase();
 
     const myContacts = localContacts.filter(({ username }) => {
-      return isCaseInsensitiveMatch(username, query);
+      return username.toUpperCase().includes(upperCaseQuery);
     });
 
     dispatch({
