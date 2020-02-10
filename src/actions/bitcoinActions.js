@@ -152,6 +152,7 @@ import {
   transactionFromPlan,
   sendRawTransaction,
   getBTCTransactions,
+  rootFromPrivateKey,
 } from 'services/bitcoin';
 import Storage from 'services/storage';
 
@@ -241,12 +242,15 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
       return;
     }
 
-    let seed = privateKey;
+    let root;
     if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      seed = mnemonic;
+      root = await rootFromMnemonic(mnemonic);
+    } else {
+      root = await rootFromPrivateKey(privateKey);
     }
-    const root = await rootFromMnemonic(seed);
-    const keyPair = root.derivePath(path);
+
+    const finalPath = path || 'm/44\'/60\'/0\'/0';
+    const keyPair = root.derivePath(finalPath);
 
     const address = keyPairAddress(keyPair);
     if (!address) {
@@ -365,13 +369,15 @@ export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTrans
   return async () => {
     const { mnemonic, privateKey, path } = wallet;
 
-    let seed = privateKey;
+    let root;
     if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      seed = mnemonic;
+      root = await rootFromMnemonic(mnemonic);
+    } else {
+      root = await rootFromPrivateKey(privateKey);
     }
 
-    const root = await rootFromMnemonic(seed);
-    const keyPair = root.derivePath(path);
+    const finalPath = path || 'm/44\'/60\'/0\'/0';
+    const keyPair = root.derivePath(finalPath);
 
     // TODO: Multiple Paths support should map an address to a custom path
     const rawTransaction = transactionFromPlan(
