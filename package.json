@@ -313,5 +313,12 @@
   },
   "metro": {
     "maxWorkers": 4
+  },
+  "config": {
+    "react-native-storybook-loader": {
+      "searchDir": ["./src", "./storybook/stories"],
+      "pattern": "**/*.stories.js",
+      "outputFile": "./storybook/storyLoader.js"
+    }
   }
 }
