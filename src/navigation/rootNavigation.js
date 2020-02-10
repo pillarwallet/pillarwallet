@@ -37,7 +37,7 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
 import BiometricsPromptScreen from 'screens/BiometricsPrompt';
-// import SandboxScreen from 'screens/Sandbox/Index';
+import StorybookScreen from 'screens/Storybook';
 
 import { modalTransition } from 'utils/common';
 
@@ -61,6 +61,7 @@ import {
   PERMISSIONS,
   IMPORT_WALLET_LEGALS,
   BIOMETRICS_PROMPT,
+  STORYBOOK,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -97,6 +98,7 @@ const onBoardingFlow = createStackNavigator({
   [BIOMETRICS_PROMPT]: BiometricsPromptScreen,
   [NEW_PROFILE]: NewProfileScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
+  [STORYBOOK]: StorybookScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({

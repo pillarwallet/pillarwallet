@@ -8,3 +8,4 @@ android/
 src/utils/shim.js
 reports
 patches
+storybook/storyLoader.js
