@@ -190,9 +190,6 @@
   "jest": {
     "preset": "react-native",
     "verbose": true,
-    "transform": {
-      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
-    },
     "modulePaths": [
       "<rootDir>/src/"
     ],

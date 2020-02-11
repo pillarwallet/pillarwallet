@@ -35,10 +35,10 @@ jest.mock('NativeAnimatedHelper');
 
 Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
-const AsyncStorage = new StorageMock(storageCache);
+const MockAsyncStorage = new StorageMock(storageCache);
 
-jest.mock('@react-native-community/async-storage', () => AsyncStorage);
-jest.setMock('AsyncStorage', AsyncStorage);
+jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
+jest.setMock('AsyncStorage', MockAsyncStorage);
 jest.setMock('react-native-firebase', FirebaseMock);
 jest.setMock('cryptocompare', {
   priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
