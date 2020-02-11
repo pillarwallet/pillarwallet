@@ -27,6 +27,8 @@ import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 import WalletConnectMock from './walletConnectMock';
 
+require('stacktrace-parser');
+
 process.env.IS_TEST = 'TEST';
 
 jest.mock('NativeAnimatedHelper');

@@ -184,7 +184,8 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "react-dom": "16.8.3",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "stacktrace-parser": "^0.1.8"
   },
   "jest": {
     "preset": "react-native",
