@@ -80,6 +80,9 @@
     "querystring-es3": "~0.2.0",
     "react": "16.8.3",
     "react-native": "0.59.10",
+    "react-native-gesture-handler": "^1.5.6",
+    "react-native-screens": "^2.0.0-beta.2",
+    "react-timer-mixin": "^0.13.4",
     "react-native-appearance": "^0.3.2",
     "react-native-background-timer": "2.1.1",
     "react-native-cached-image": "^1.4.3",
@@ -178,7 +181,8 @@
     "react-test-renderer": "16.8.3",
     "redux-mock-store": "^1.5.1",
     "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.2"
+    "enzyme-adapter-react-16": "^1.15.2",
+    "react-dom": "16.8.3"
   },
   "jest": {
     "preset": "react-native",
@@ -203,7 +207,9 @@
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native-safe-area-view|@react-native-community/async-storage/lib|react-native-image-view|react-native-fabric|react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-touch-id|react-native-color-matrix-image-filters|react-native-htmlview|react-native-video|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-navigation-stack|react-native-screens|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions|react-native-qrcode-svg|react-native-extra-dimensions-android|react-native-cached-image|react-native-emoji|react-native-collapsible|react-native-webview|react-native-swiper|@react-navigation/.*/))"
     ],
-    "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
+    "setupFilesAfterEnv": [
+      "./src/testUtils/jestSetup.js"
+    ],
     "setupFiles": [
       "./node_modules/react-native-gesture-handler/jestSetup.js"
     ],
