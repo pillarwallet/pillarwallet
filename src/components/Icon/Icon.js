@@ -69,6 +69,7 @@ const glyphMap = {
   plus: '\uE82D',
   selector: '\uE85A',
   options: '\uE82F',
+  lightning: '\uE830',
 };
 
 export type IconProps = {

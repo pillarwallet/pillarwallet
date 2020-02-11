@@ -33,10 +33,12 @@ import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import HyperLink from 'components/HyperLink';
 import SelectorList from 'components/SelectorList';
+import TitleWithIcon from 'components/Title/TitleWithIcon';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE } from 'constants/exchangeConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -102,11 +104,6 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const ButtonWrapper = styled.View`
-  margin-top: ${spacing.rhythm / 2}px;
-  margin-bottom: ${spacing.rhythm + 10}px;
-`;
-
 const AllowanceWrapper = styled.View`
   flex: 1;
   padding: ${spacing.large}px ${spacing.layoutSides}px;
@@ -115,6 +112,10 @@ const AllowanceWrapper = styled.View`
 const SettingsWrapper = styled.View`
   padding: 32px ${spacing.layoutSides}px 0;
   justify-content: center;
+`;
+
+const SliderContentWrapper = styled.View`
+  margin-bottom: 30px;
 `;
 
 const SLOW = 'min';
@@ -259,7 +260,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       };
     }
 
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true });
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true, transactionType: EXCHANGE });
   };
 
 
@@ -397,10 +398,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         </ScrollWrapper>
         <SlideModal
           isVisible={showFeeModal}
-          title="Transaction speed"
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
+          showHeader={false}
         >
-          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+          <SliderContentWrapper>
+            <TitleWithIcon iconName="lightning" title="Speed" />
+            {this.renderTxSpeedButtons()}
+          </SliderContentWrapper>
         </SlideModal>
       </ContainerWithHeader>
     );
