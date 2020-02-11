@@ -66,7 +66,7 @@ const SchemeWrapper = styled.View`
 
 const LogoWrapper = styled.View`
   width: 100%;
-  height: 124px;
+  height: 126px;
   justify-content: center;
   align-items: center;
   overflow: visible;
