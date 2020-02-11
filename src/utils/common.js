@@ -350,7 +350,13 @@ export const padWithZeroes = (value: string, length: number): string => {
   return myString;
 };
 
-export const concatSig = ({ v, r, s }): string => {
+type ConcatSigParams = {
+  v: Buffer | Uint8Array,
+  r: Buffer | Uint8Array,
+  s: Buffer | Uint8Array,
+};
+
+export const concatSig = ({ v, r, s }: ConcatSigParams): string => {
   const rSig = ethUtil.fromSigned(r);
   const sSig = ethUtil.fromSigned(s);
   const vSig = ethUtil.bufferToInt(v);

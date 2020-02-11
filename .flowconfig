@@ -36,6 +36,7 @@
 <PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/polished/.*
 <PROJECT_ROOT>/node_modules/react-native-device-info/.*
+<PROJECT_ROOT>/node_modules/react-native-keychain/.*
 
 [include]
 
