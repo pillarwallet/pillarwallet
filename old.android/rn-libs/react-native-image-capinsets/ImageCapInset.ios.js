@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react';
 import {
   ImageBackground,
@@ -9,7 +10,7 @@ class ImageCapInset extends Component {
     return (
       <ImageBackground
         {...this.props}
-        resizeMode={'stretch'}
+        resizeMode="stretch"
       />
     );
   }
