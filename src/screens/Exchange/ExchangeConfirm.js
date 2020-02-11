@@ -187,7 +187,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       return {
         id: speedTitle,
         label: speedTitle,
-        valueToShow: `${feeInEth} ETH | ${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`,
+        valueToShow: `${feeInEth} ETH (${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)})`,
         value: txSpeed,
       };
     });
@@ -286,6 +286,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       session,
       balances,
       providersMeta,
+      baseFiatCurrency,
+      rates,
     } = this.props;
 
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
@@ -303,6 +305,9 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
 
     const txFeeInWei = this.getTxFeeInWei(transactionSpeed);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const feeInEth = formatAmount(utils.formatEther(txFeeInWei));
+    const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
     const ethBalance = getBalance(balances, ETH);
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     const enoughBalance = fromAssetCode === ETH
@@ -356,6 +361,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <SettingsWrapper>
               <BaseText secondary regular center style={{ marginBottom: 4 }}>
                 Transaction fee {formatAmount(utils.formatEther(txFeeInWei))} ETH
+                ({getCurrencySymbol(fiatCurrency)}{feeInFiat.toFixed(2)})
               </BaseText>
               {!!errorMessage &&
               <BaseText negative regular center style={{ marginBottom: 4 }}>
