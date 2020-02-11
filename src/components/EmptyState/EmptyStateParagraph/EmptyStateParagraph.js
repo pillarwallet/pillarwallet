@@ -23,7 +23,7 @@ import { fontStyles } from 'utils/variables';
 import { BaseText, Paragraph } from 'components/Typography';
 
 type Props = {
-  title: string,
+  title?: string,
   bodyText?: string,
 }
 

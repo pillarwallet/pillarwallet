@@ -9,7 +9,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 const storage = Storage.getInstance('db');
 
-function addWalletIdToKeyBasedAccount(accounts: Accounts, walletId: string) {
+function addWalletIdToKeyBasedAccount(accounts: Accounts, walletId: string): Accounts {
   return accounts.map(account => {
     if (account.type !== ACCOUNT_TYPES.KEY_BASED) return account;
     return {
