@@ -3,8 +3,8 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
 type Props = {
-  onPress: () => void,
-  children: React.Node,
+  onPress?: () => void,
+  children?: React.Node,
 }
 
 export default function Button({ onPress, children }: Props) {
