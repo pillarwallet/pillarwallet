@@ -879,10 +879,10 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.38.1666":
-  version "1.38.1666"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.38.1666.tgz#8a997e7b4129dc3c92bab26696b68e2ba017e9bd"
-  integrity sha1-ipl+e0Ep3DySurJmlraOK6AX6b0=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.40.1725":
+  version "1.40.1725"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.40.1725.tgz#e3b69ec39e43e5fa5aa0ff65274ba280be95ee65"
+  integrity sha1-47aew55D5fpaoP9lJ0uigL6V7mU=
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
@@ -890,7 +890,7 @@
     "@types/uuid" "3.4.4"
     ajv "6.4.0"
     ajv-keywords "3.2.0"
-    axios "0.18.0"
+    axios "^0.19.0"
     crypto "1.0.1"
     ethereumjs-util "5.2.0"
     uuid "3.3.2"
@@ -1933,13 +1933,13 @@ aws4@^1.6.0, aws4@^1.8.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/aws4/-/aws4-1.8.0.tgz#f0e003d9ca9e7f59c7a508945d7b2ef9a04a542f"
   integrity sha1-8OAD2cqef1nHpQiUXXsu+aBKVC8=
 
-axios@0.18.0, axios@^0.18.0:
-  version "0.18.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/axios/-/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
-  integrity sha1-MtU+SFHv3AoRmTts0AB4nXDAUQI=
+axios@^0.19.0:
+  version "0.19.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
+  integrity sha1-jgm/89kSLhM/e4EByPvdAO09Krg=
   dependencies:
-    follow-redirects "^1.3.0"
-    is-buffer "^1.1.5"
+    follow-redirects "1.5.10"
+    is-buffer "^2.0.2"
 
 axobject-query@^2.0.2:
   version "2.0.2"
@@ -3667,14 +3667,14 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   dependencies:
     ms "2.0.0"
 
-debug@3.1.0, debug@~3.1.0:
+debug@3.1.0, debug@=3.1.0, debug@~3.1.0:
   version "3.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   integrity sha1-W7WgZyYotkFJVmuhaBnmFRjGcmE=
   dependencies:
     ms "2.0.0"
 
-debug@^3.1.0, debug@^3.2.6:
+debug@^3.1.0:
   version "3.2.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   integrity sha1-6D0X3hbYp++3cX7b5fsQE17uYps=
@@ -5096,6 +5096,13 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "^2.0.0"
 
+fbemitter@^2.1.1:
+  version "2.1.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fbemitter/-/fbemitter-2.1.1.tgz#523e14fdaf5248805bb02f62efc33be703f51865"
+  integrity sha1-Uj4U/a9SSIBbsC9i78M75wP1GGU=
+  dependencies:
+    fbjs "^0.8.4"
+
 fbjs-css-vars@^1.0.0:
   version "1.0.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fbjs-css-vars/-/fbjs-css-vars-1.0.2.tgz#216551136ae02fe255932c3ec8775f18e2c078b8"
@@ -5117,7 +5124,7 @@ fbjs-scripts@^1.0.0:
     semver "^5.1.0"
     through2 "^2.0.0"
 
-fbjs@^0.8.16, fbjs@^0.8.9:
+fbjs@^0.8.16, fbjs@^0.8.4, fbjs@^0.8.9:
   version "0.8.17"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fbjs/-/fbjs-0.8.17.tgz#c4d598ead6949112653d6588b01a5cdcd9f90fdd"
   integrity sha1-xNWY6taUkRJlPWWIsBpc3Nn5D90=
@@ -5333,12 +5340,12 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-follow-redirects@^1.3.0:
-  version "1.7.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/follow-redirects/-/follow-redirects-1.7.0.tgz#489ebc198dc0e7f64167bd23b03c4c19b5784c76"
-  integrity sha1-SJ68GY3A5/ZBZ70jsDxMGbV4THY=
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha1-e3qfmuov3/NnhqlP9kPtB/T/Xio=
   dependencies:
-    debug "^3.2.6"
+    debug "=3.1.0"
 
 for-each@^0.3.3, for-each@~0.3.3:
   version "0.3.3"
@@ -6353,6 +6360,11 @@ is-buffer@^1.1.5, is-buffer@~1.1.1:
   version "1.1.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/is-buffer/-/is-buffer-1.1.6.tgz#efaa2ea9daa0d7ab2ea13a97b2b8ad51fefbe8be"
   integrity sha1-76ouqdqg16suoTqXsritUf776L4=
+
+is-buffer@^2.0.2:
+  version "2.0.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/is-buffer/-/is-buffer-2.0.4.tgz#3e572f23c8411a5cfd9557c849e3665e0b290623"
+  integrity sha1-PlcvI8hBGlz9lVfISeNmXgspBiM=
 
 is-callable@^1.1.3, is-callable@^1.1.4:
   version "1.1.4"
@@ -10694,6 +10706,15 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-appearance@^0.3.2:
+  version "0.3.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-appearance/-/react-native-appearance-0.3.2.tgz#e458e76917778eb1fcb8d17c09a78096115704c9"
+  integrity sha1-5FjnaRd3jrH8uNF8CaeAlhFXBMk=
+  dependencies:
+    fbemitter "^2.1.1"
+    invariant "^2.2.4"
+    use-subscription "^1.0.0"
+
 react-native-background-timer@2.1.1:
   version "2.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-background-timer/-/react-native-background-timer-2.1.1.tgz#9a2489681ab2f8033c213c73272e9d4c47572cd5"
@@ -13758,6 +13779,13 @@ url@~0.10.1:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-subscription@^1.0.0:
+  version "1.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/use-subscription/-/use-subscription-1.3.0.tgz#3df13a798e826c8d462899423293289a3362e4e6"
+  integrity sha1-PfE6eY6CbI1GKJlCMpMomjNi5OY=
+  dependencies:
+    object-assign "^4.1.1"
 
 use@^3.1.0:
   version "3.1.1"

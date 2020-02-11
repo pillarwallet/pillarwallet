@@ -137,10 +137,12 @@ import {
   UPDATE_BITCOIN_BALANCE,
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
+  SET_BITCOIN_BALANCES,
   BITCOIN_WALLET_CREATION_FAILED,
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import {
   keyPairAddress,
@@ -150,6 +152,7 @@ import {
   transactionFromPlan,
   sendRawTransaction,
   getBTCTransactions,
+  rootFromPrivateKey,
 } from 'services/bitcoin';
 import Storage from 'services/storage';
 
@@ -157,6 +160,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
   BitcoinReducerAction,
   SetBitcoinAddressesAction,
+  SetBitcoinBalancesAction,
   UpdateBitcoinBalanceAction,
   UpdateUnspentTransactionsAction,
   BitcoinWalletCreationFailedAction,
@@ -170,10 +174,12 @@ import type {
   BitcoinStore,
   BTCBalance,
   BTCTransaction,
+  BitcoinBalance,
 } from 'models/Bitcoin';
 
 import { initialAssets } from 'fixtures/assets';
 
+import { addAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
@@ -189,6 +195,11 @@ const loadDb = (): Promise<BitcoinStore> => {
 const setBitcoinAddressesAction = (addresses: string[]): SetBitcoinAddressesAction => ({
   type: SET_BITCOIN_ADDRESSES,
   addresses,
+});
+
+const setBitcoinBalancesAction = (balances: BitcoinBalance): SetBitcoinBalancesAction => ({
+  type: SET_BITCOIN_BALANCES,
+  balances,
 });
 
 const updateBitcoinBalance = (
@@ -231,12 +242,15 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
       return;
     }
 
-    let seed = privateKey;
+    let root;
     if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      seed = mnemonic;
+      root = await rootFromMnemonic(mnemonic);
+    } else {
+      root = await rootFromPrivateKey(privateKey);
     }
-    const root = await rootFromMnemonic(seed);
-    const keyPair = root.derivePath(path);
+
+    const finalPath = path || 'm/44\'/60\'/0\'/0';
+    const keyPair = root.derivePath(finalPath);
 
     const address = keyPairAddress(keyPair);
     if (!address) {
@@ -258,6 +272,16 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   };
 };
 
+export const loadBitcoinBalancesAction = () => {
+  return async (dispatch: Dispatch) => {
+    const { balances = {} } = await storage.get('bitcoinBalances');
+
+    if (Object.keys(balances).length > 0) {
+      dispatch(setBitcoinBalancesAction(balances));
+    }
+  };
+};
+
 export const loadBitcoinAddressesAction = () => {
   return async (dispatch: Dispatch) => {
     const { addresses = [], keys = {} } = await loadDb();
@@ -270,6 +294,7 @@ export const loadBitcoinAddressesAction = () => {
 
     if (loaded.length) {
       dispatch(setBitcoinAddressesAction(loaded));
+      dispatch(addAccountAction(loaded[0], ACCOUNT_TYPES.BITCOIN_WALLET));
     }
   };
 };
@@ -344,13 +369,15 @@ export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTrans
   return async () => {
     const { mnemonic, privateKey, path } = wallet;
 
-    let seed = privateKey;
+    let root;
     if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      seed = mnemonic;
+      root = await rootFromMnemonic(mnemonic);
+    } else {
+      root = await rootFromPrivateKey(privateKey);
     }
 
-    const root = await rootFromMnemonic(seed);
-    const keyPair = root.derivePath(path);
+    const finalPath = path || 'm/44\'/60\'/0\'/0';
+    const keyPair = root.derivePath(finalPath);
 
     // TODO: Multiple Paths support should map an address to a custom path
     const rawTransaction = transactionFromPlan(
@@ -408,13 +435,42 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
         .then(action => dispatch(action))
         .catch(fetchBalanceFailed);
     }));
+
+    const { bitcoin: { data: { balances } } } = getState();
+    dispatch(saveDbAction('bitcoinBalances', { balances }, true));
+  };
+};
+
+
+export const addBTCAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      assets: { data: assets, supportedAssets },
+      bitcoin: { data: { addresses } },
+    } = getState();
+    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+      const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
+      if (btcAsset) {
+        const updatedSupportedAssets = supportedAssets.concat(btcAsset);
+        assets[addresses[0].address] = { BTC: btcAsset };
+        dispatch({
+          type: UPDATE_ASSETS,
+          payload: assets,
+        });
+        dispatch(saveDbAction('assets', { assets }, true));
+        dispatch({
+          type: UPDATE_SUPPORTED_ASSETS,
+          payload: updatedSupportedAssets,
+        });
+        dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
+      }
+    }
   };
 };
 
 export const refreshBTCTransactionsAction = (force: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      assets: { data: assets, supportedAssets },
       bitcoin: { data: { addresses } },
     } = getState();
 
@@ -422,25 +478,9 @@ export const refreshBTCTransactionsAction = (force: boolean) => {
     if (!addressesToUpdate.length) {
       return;
     }
+    await dispatch(addBTCAssetsAction());
 
     await Promise.all(addressesToUpdate.map(({ address }) => {
-      if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
-        const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
-        if (btcAsset) {
-          const updatedSupportedAssets = supportedAssets.concat(btcAsset);
-          assets[address] = { BTC: btcAsset };
-          dispatch({
-            type: UPDATE_ASSETS,
-            payload: assets,
-          });
-          dispatch(saveDbAction('assets', { assets }, true));
-          dispatch({
-            type: UPDATE_SUPPORTED_ASSETS,
-            payload: updatedSupportedAssets,
-          });
-          dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
-        }
-      }
       return fetchBTCTransactionsAction(address)
         .then(action => dispatch(action))
         .catch(fetchBTCTransactionsFailed);

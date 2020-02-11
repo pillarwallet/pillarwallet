@@ -33,7 +33,7 @@ import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -75,9 +75,10 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
+import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { baseColors, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -125,6 +126,7 @@ type Props = {
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
   baseFiatCurrency: ?string,
+  activeBlockchainNetwork: ?string,
 };
 
 type State = {
@@ -134,11 +136,10 @@ type State = {
   permissionsGranted: boolean,
   scrollY: Animated.Value,
   isScanning: boolean,
-  tabIsChanging: boolean,
 };
 
 const WalletConnectWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.large}px 0;
+  padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
   background-color: ${themedColors.surface};
   width: 100%;
 `;
@@ -146,11 +147,11 @@ const WalletConnectWrapper = styled.View`
 const ListHeader = styled(MediumText)`
   color: ${themedColors.accent};
   ${fontStyles.regular};
-  margin: ${spacing.medium}px ${spacing.large}px ${spacing.small}px;
+  margin: ${spacing.medium}px ${spacing.layoutSides}px ${spacing.small}px;
 `;
 
 const BadgesWrapper = styled.View`
-  padding: ${spacing.medium}px 0;
+  padding-top: ${spacing.medium}px;
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${themedColors.border};
@@ -179,11 +180,14 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: ALL,
     usernameWidth: 0,
     isScanning: false,
-    tabIsChanging: false,
   };
 
   componentDidMount() {
-    const { logScreenView, fetchBadges, fetchBadgeAwardHistory } = this.props;
+    const {
+      logScreenView,
+      fetchBadges,
+      fetchBadgeAwardHistory,
+    } = this.props;
 
     logScreenView('View home', 'Home');
 
@@ -295,10 +299,6 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  onTabChange = (isChanging?: boolean) => {
-    this.setState({ tabIsChanging: isChanging });
-  };
-
   render() {
     const {
       cancelInvitation,
@@ -319,19 +319,16 @@ class HomeScreen extends React.Component<Props, State> {
       badgesEvents,
       theme,
       baseFiatCurrency,
+      activeBlockchainNetwork,
     } = this.props;
     const colors = getThemeColors(theme);
 
-    const {
-      activeTab,
-      isScanning,
-      tabIsChanging,
-    } = this.state;
+    const { activeTab, isScanning } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = mapTransactionsHistory(
+    const transactionsOnMainnet = activeBlockchainNetwork === 'BITCOIN' ? history : mapTransactionsHistory(
       tokenTxHistory,
       contacts,
       contactsSmartAddresses,
@@ -423,7 +420,7 @@ class HomeScreen extends React.Component<Props, State> {
                   style={{
                     width: 8,
                     height: 8,
-                    backgroundColor: baseColors.sunYellow,
+                    backgroundColor: colors.indicator,
                     borderRadius: 4,
                     marginLeft: 4,
                     marginRight: -6,
@@ -464,8 +461,8 @@ class HomeScreen extends React.Component<Props, State> {
               horizontal
               keyExtractor={(item) => (item.id.toString())}
               renderItem={this.renderBadge}
-              style={{ width: '100%' }}
-              contentContainerStyle={{ paddingHorizontal: 10, ...badgesContainerStyle }}
+              style={{ width: '100%', paddingBottom: spacing.medium }}
+              contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
               initialNumToRender={5}
               ListEmptyComponent={(
                 <EmptyStateWrapper>
@@ -480,7 +477,7 @@ class HomeScreen extends React.Component<Props, State> {
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
-            onTabChange={this.onTabChange}
+            activeTab={activeTab}
           />
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
@@ -491,7 +488,7 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={activeTab}
             hideTabs
             initialNumToRender={8}
-            wrapperStyle={{ flexGrow: 1, opacity: tabIsChanging ? 0.5 : 1 }}
+            wrapperStyle={{ flexGrow: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
@@ -536,6 +533,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   openSeaTxHistory: accountCollectiblesHistorySelector,
+  activeBlockchainNetwork: activeBlockchainSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

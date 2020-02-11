@@ -19,14 +19,16 @@
 */
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
 import { MediumText, BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
-import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
+import type { Theme } from 'models/Theme';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 export type Props = {
   children?: React.Node,
@@ -59,6 +61,7 @@ export type Props = {
   style?: Object,
   isLoading?: boolean,
   regularText?: boolean,
+  theme: Theme,
 };
 
 type State = {
@@ -72,90 +75,127 @@ type ButtonNextProps = {
 
 const themes = {
   primary: {
-    background: baseColors.electricBlue,
-    color: baseColors.white,
-    borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
     shadow: true,
   },
   primaryInverted: {
-    background: baseColors.white,
-    color: baseColors.electricBlue,
-    borderColor: baseColors.veryLightBlue,
     borderWidth: '1px',
   },
   dangerInverted: {
-    background: baseColors.white,
-    color: baseColors.burningFire,
-    borderColor: baseColors.dawnPink,
     borderWidth: '1px',
   },
   secondary: {
-    background: baseColors.white,
-    color: baseColors.electricBlue,
-    borderColor: baseColors.electricBlue,
     borderWidth: '1px',
   },
   secondaryTransparent: {
-    background: 'transparent',
-    color: baseColors.white,
-    borderColor: baseColors.electricBlue,
     borderWidth: '1px',
   },
   secondaryTransparentDisabled: {
-    background: 'transparent',
-    color: baseColors.darkGray,
-    borderColor: baseColors.darkGray,
     borderWidth: '1px',
     opacity: 0.5,
   },
   secondaryDanger: {
-    background: baseColors.white,
-    color: baseColors.fireEngineRed,
-    borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
   },
   danger: {
-    background: baseColors.fireEngineRed,
-    color: baseColors.white,
-    borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
   },
   dark: {
-    background: baseColors.darkGray,
-    color: baseColors.white,
-    borderColor: baseColors.darkGray,
     borderWidth: 0,
   },
   disabled: {
-    background: baseColors.lightGray,
-    color: baseColors.darkGray,
-    borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
+    opacity: 0.5,
   },
   disabledTransparent: {
-    background: baseColors.electricBlue,
-    color: baseColors.white,
     opacity: 0.5,
   },
   squarePrimary: {
-    background: 'transparent',
-    color: baseColors.electricBlue,
-    borderColor: 'transparent',
     borderWidth: 0,
     flexDirection: 'column',
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
   squareDanger: {
-    background: 'transparent',
-    color: baseColors.burningFire,
-    borderColor: 'transparent',
     borderWidth: 0,
     flexDirection: 'column',
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
+  positive: {
+    borderWidth: 0,
+  },
+};
+
+const themeColors = (theme) => {
+  const colors = getThemeColors(theme);
+  return ({
+    primary: {
+      surface: colors.primary,
+      text: colors.control,
+      border: colors.primary,
+    },
+    primaryInverted: {
+      surface: 'transparent',
+      text: colors.primary,
+    },
+    dangerInverted: {
+      surface: 'transparent',
+      text: colors.negative,
+      border: colors.negative,
+    },
+    secondary: {
+      surface: 'transparent',
+      text: colors.primary,
+    },
+    secondaryTransparent: {
+      background: 'transparent',
+      text: colors.control,
+      border: colors.primary,
+    },
+    secondaryTransparentDisabled: {
+      background: 'transparent',
+      text: colors.secondaryText,
+    },
+    secondaryDanger: {
+      surface: 'transparent',
+      text: colors.negative,
+    },
+    danger: {
+      background: colors.negative,
+      surface: colors.danger,
+      text: colors.control,
+    },
+    dark: {
+      background: colors.tertiary,
+      color: colors.control,
+      borderColor: colors.tertiary,
+    },
+    disabled: {
+      surface: colors.primary,
+      text: colors.control,
+      border: colors.primary,
+    },
+    disabledTransparent: {
+      surface: colors.primary,
+      text: colors.control,
+      border: colors.primary,
+    },
+    squarePrimary: {
+      surface: 'transparent',
+      text: colors.primary,
+      border: 'transparent',
+    },
+    squareDanger: {
+      surface: 'transparent',
+      text: colors.negative,
+      border: 'transparent',
+    },
+    positive: {
+      surface: colors.positive,
+      text: colors.control,
+    },
+  });
 };
 
 const getButtonHeight = (props) => {
@@ -207,7 +247,7 @@ const ButtonIcon = styled(Icon)`
   margin-horizontal: ${props => props.customTheme.iconHorizontalMargin || props.customTheme.iconHorizontalMargin === 0
     ? props.customTheme.iconHorizontalMargin
     : props.marginRight || 8}px;
-  color: ${props => props.customTheme.color};
+  color: ${({ theme }) => theme.colors.text};
   line-height: ${props => getButtonFontSize(props)};
 `;
 
@@ -216,7 +256,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-self: flex-start;
   padding: 0 ${props => getButtonPadding(props)};
-  background-color: ${props => props.customTheme.background};
+  background-color: ${({ theme }) => theme.colors.surface};
   opacity: ${props => props.customTheme.opacity ? props.customTheme.opacity : 1};
   margin-top: ${props => props.marginTop || '0px'};
   margin-bottom: ${props => props.marginBottom || '0px'};
@@ -226,7 +266,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
-  border-color: ${props => props.customTheme.borderColor};
+  border-color: ${({ theme }) => theme.colors.border};
   border-width: ${props => props.customTheme.borderWidth};
   border-style: solid;
   flex-direction: ${props => props.customTheme.flexDirection ? props.customTheme.flexDirection : 'row'}
@@ -235,7 +275,7 @@ const ButtonWrapper = styled.TouchableOpacity`
 `;
 
 const buttonTextStyle = (props) => `
-  color: ${props.customTheme.color};
+  color: ${props.theme.colors.text};
   font-size: ${getButtonFontSize(props)};
   margin-bottom: ${props.extraSmall ? '2px' : 0};`;
 
@@ -249,9 +289,9 @@ const ButtonTextRegular = styled(BaseText)`
 
 const ButtonMiniWrapper = styled(NBButton)`
   padding: 10px 20px;
-  background-color: ${baseColors.electricBlue};
+  background-color: ${themedColors.primary};
   border-radius: 17;
-  box-shadow: 0px .5px .5px ${baseColors.electricBlue};
+  box-shadow: 0px .5px .5px ${themedColors.primary};
   height: 34px;
   width: auto;
 `;
@@ -266,36 +306,38 @@ const ButtonNextWrapper = styled.TouchableOpacity`
   width: ${responsiveSize(70)}px;
   height: ${responsiveSize(70)}px;
   border-radius: 4px;
-  background-color: ${props => props.disabled ? baseColors.lightGray : baseColors.electricBlue};
+  background-color: ${themedColors.primary};
   align-items: center;
   justify-content: center;
+  ${({ disabled }) => disabled && 'opacity: 0.5;'}
 `;
 
 const NextIcon = styled(Icon)`
   font-size: ${fontSizes.large}px;
-  color: ${baseColors.white};
+  color: ${themedColors.control};
   transform: rotate(180deg);
 `;
 
-const getTheme = (props: Props) => {
+const getThemeType = (props: Props, isForColors) => {
   if (props.secondary && props.danger) {
-    return themes.secondaryDanger;
+    return 'secondaryDanger';
   }
 
   if (props.secondaryTransparent && props.disabled) {
-    return themes.secondaryTransparentDisabled;
+    return 'secondaryTransparentDisabled';
   }
 
   const propsKeys = Object.keys(props);
   const themesKeys = Object.keys(themes);
-  let themeToUse = themes.primary;
+  const themeColorsKeys = Object.keys(themeColors(props.theme));
+  let themeToUse = 'primary';
 
   propsKeys.forEach((prop: string) => {
-    const indexOfTheme = themesKeys.indexOf(prop);
+    const indexOfTheme = isForColors ? themeColorsKeys.indexOf(prop) : themesKeys.indexOf(prop);
     const existTheme = indexOfTheme >= 0;
 
     if (existTheme && props[prop]) {
-      themeToUse = themes[prop];
+      themeToUse = prop;
     }
   });
 
@@ -326,7 +368,7 @@ class Button extends React.Component<Props, State> {
     }, 1000);
   };
 
-  renderButtonText = (customTheme: Object) => {
+  renderButtonText = (customTheme: Object, updatedTheme: Theme) => {
     const {
       small,
       extraSmall,
@@ -338,32 +380,37 @@ class Button extends React.Component<Props, State> {
 
     if (listItemButton || extraSmall || regularText) {
       return (
-        <ButtonTextRegular customTheme={customTheme} small={small} style={textStyle}>
+        <ButtonTextRegular theme={updatedTheme} customTheme={customTheme} small={small} style={textStyle}>
           {title}
         </ButtonTextRegular>
       );
     }
 
     return (
-      <ButtonText customTheme={customTheme} small={small} style={textStyle}>
+      <ButtonText theme={updatedTheme} customTheme={customTheme} small={small} style={textStyle}>
         {title}
       </ButtonText>
     );
   };
 
   render() {
-    const customTheme = getTheme(this.props);
+    const customTheme = themes[getThemeType(this.props)];
     const {
       disabled,
       disabledTransparent,
       children,
       isLoading,
       style = {},
+      theme,
     } = this.props;
+
+    const updatedColors = themeColors(theme)[getThemeType(this.props, true)];
+    const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
 
     return (
       <ButtonWrapper
         {...this.props}
+        theme={updatedTheme}
         customTheme={customTheme}
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
@@ -378,16 +425,17 @@ class Button extends React.Component<Props, State> {
             iconSize={this.props.iconSize}
             name={this.props.icon}
             customTheme={customTheme}
+            theme={updatedTheme}
           />
         }
-        {!!this.props.title && !isLoading && this.renderButtonText(customTheme)}
+        {!!this.props.title && !isLoading && this.renderButtonText(customTheme, updatedTheme)}
         {children}
       </ButtonWrapper>
     );
   }
 }
 
-export default Button;
+export default withTheme(Button);
 
 type ButtonMiniProps = {
   onPress: Function,
@@ -418,9 +466,9 @@ type TooltipButtonProps = {
 
 const TooltipButtonWrapper = styled(BaseText)`
   font-size: ${({ fontSize }) => fontSize || fontSizes.tiny};
-  ${({ color }) => `
-    color: ${color || baseColors.coolGrey};
-    border-color: ${color || baseColors.coolGrey};
+  ${({ color, theme }) => `
+    color: ${color || theme.colors.secondaryText};
+    border-color: ${color || theme.colors.secondaryText};
   `}
   ${({ buttonSize = 16 }) => `
     line-height: ${buttonSize - 2}px;

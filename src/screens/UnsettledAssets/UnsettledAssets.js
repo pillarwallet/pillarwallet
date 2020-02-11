@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -29,10 +30,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import { getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
-import {
-  baseColors,
-  spacing,
-} from 'utils/variables';
+import { spacing } from 'utils/variables';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
@@ -54,10 +52,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object,
 }
-
-const StyledFlatList = styled.FlatList`
-  background-color: ${baseColors.white};
-`;
 
 const FloatingButtonView = styled.View`
   position: absolute;
@@ -104,11 +98,10 @@ class UnsettledAssets extends React.Component<Props> {
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
         headerProps={{ centerItems: [{ title: 'Unsettled Assets' }] }}
         inset={{ bottom: 0 }}
       >
-        <StyledFlatList
+        <FlatList
           data={assetsOnNetworkArray}
           keyExtractor={({ symbol }) => symbol}
           renderItem={this.renderAsset}

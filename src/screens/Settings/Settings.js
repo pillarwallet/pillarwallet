@@ -20,11 +20,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard, View, ScrollView, FlatList, Alert } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import * as Keychain from 'react-native-keychain';
 import Intercom from 'react-native-intercom';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import { Appearance } from 'react-native-appearance';
 
 // actions
 import {
@@ -32,6 +33,7 @@ import {
   changeUseBiometricsAction,
   saveOptOutTrackingAction,
   setUserJoinedBetaAction,
+  changeAppThemeAction,
 } from 'actions/appSettingsActions';
 import { lockScreenAction, logoutAction, resetIncorrectPasswordAction } from 'actions/authActions';
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
@@ -63,17 +65,20 @@ import {
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import { DARK_THEME, LIGHT_THEME, DARK_PREFERENCE, NO_THEME_PREFERENCE } from 'constants/appSettingsConstants';
 
 // utils
 import { isProdEnv } from 'utils/environment';
-import { baseColors, fontTrackings, spacing, fontStyles } from 'utils/variables';
+import { fontTrackings, spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getBiometryType } from 'utils/settings';
+import { getThemeColors } from 'utils/themes';
 
 // models
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Accounts } from 'models/Account';
+import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // partials
@@ -110,10 +115,30 @@ type Props = {
   lockScreen: () => void,
   logoutUser: () => void,
   accounts: Accounts,
+  theme: Theme,
+  themeType: string,
+  isSetAsSystemPrefTheme: boolean,
+  changeAppTheme: (themeType: string, shouldSetAsPref: boolean) => void,
 }
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
+
+const SYSTEM_DEFAULT_THEME = 'system_default_theme';
+
+const getUserFriendlyThemeName = (currentTheme) => {
+  if (currentTheme === DARK_THEME) {
+    return 'Dark';
+  } else if (currentTheme === SYSTEM_DEFAULT_THEME) {
+    return 'System default';
+  }
+  return 'Light';
+};
+
+const getThemeTypeByPreference = (preference) => {
+  if (preference === DARK_PREFERENCE) return DARK_THEME;
+  return LIGHT_THEME;
+};
 
 export const KEY_SECTION = 'KEY_SECTION';
 
@@ -266,6 +291,19 @@ const formCurrencyItems = (that) => {
   ];
 };
 
+const formThemeItems = (that) => {
+  const { themeType: currentTheme, isSetAsSystemPrefTheme } = that.props;
+  const themeName = isSetAsSystemPrefTheme ? 'System default' : getUserFriendlyThemeName(currentTheme);
+  return [
+    {
+      key: 'theme',
+      title: 'Theme',
+      value: themeName,
+      onPress: () => that.setState({ visibleModal: 'theme' }),
+    },
+  ];
+};
+
 const formKeyItems = (that) => {
   const { backupStatus } = that.props;
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
@@ -295,7 +333,7 @@ const formSmartWalletItems = () => {
   ];
 };
 
-const formMiscItems = (that) => {
+const formMiscItems = (that, colors) => {
   return [
     {
       key: 'closeAndLock',
@@ -310,7 +348,7 @@ const formMiscItems = (that) => {
       body: 'Wipe all data on this device',
       onPress: that.deleteWallet,
       minHeight: 96,
-      titleStyle: { color: baseColors.redDamask },
+      titleStyle: { color: colors.negative },
     },
   ];
 };
@@ -326,7 +364,17 @@ const codeFormFields = [{
   },
 }];
 
-const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
+const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
+const themesToSelect = [
+  {
+    name: getUserFriendlyThemeName(LIGHT_THEME),
+    value: LIGHT_THEME,
+  },
+  {
+    name: getUserFriendlyThemeName(DARK_THEME),
+    value: DARK_THEME,
+  },
+];
 
 class Settings extends React.Component<Props, State> {
   scrollView: ScrollView;
@@ -356,6 +404,14 @@ class Settings extends React.Component<Props, State> {
       .catch(() => null);
     const scrollTo = navigation.getParam('scrollTo');
     if (scrollTo) this.setSectionToScrollTo(scrollTo);
+    const defaultPreference = Appearance.getColorScheme();
+    if (defaultPreference !== NO_THEME_PREFERENCE
+      && !themesToSelect.some(({ value }) => value === SYSTEM_DEFAULT_THEME)) {
+      themesToSelect.push({
+        name: getUserFriendlyThemeName(SYSTEM_DEFAULT_THEME),
+        value: SYSTEM_DEFAULT_THEME,
+      });
+    }
   }
 
   clearLocalStorage() {
@@ -402,6 +458,15 @@ class Settings extends React.Component<Props, State> {
   handleCurrencyUpdate = ({ currency }: Object) => {
     const { saveBaseFiatCurrency } = this.props;
     saveBaseFiatCurrency(currency);
+    this.toggleSlideModalOpen(null);
+  };
+
+  handleThemeUpdate = ({ theme }: Object) => {
+    const setAsPref = theme === SYSTEM_DEFAULT_THEME;
+    const themeToSet = theme === SYSTEM_DEFAULT_THEME ? getThemeTypeByPreference(Appearance.getColorScheme()) : theme;
+
+    const { changeAppTheme } = this.props;
+    changeAppTheme(themeToSet, setAsPref);
     this.toggleSlideModalOpen(null);
   };
 
@@ -462,12 +527,13 @@ class Settings extends React.Component<Props, State> {
     );
   };
 
-  renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
+  renderListItem = (field: string, onSelect: Function, currentValue: string) => ({ item: { name, value } }: Object) => {
     return (
       <SettingsListItem
-        key={name}
+        key={value}
         label={name}
-        onPress={() => onSelect({ [field]: name })}
+        isSelected={value === currentValue}
+        onPress={() => onSelect({ [field]: value })}
       />
     );
   };
@@ -485,6 +551,10 @@ class Settings extends React.Component<Props, State> {
       smartWalletFeatureEnabled,
       optOutTracking,
       accounts,
+      theme,
+      baseFiatCurrency,
+      themeType,
+      isSetAsSystemPrefTheme,
     } = this.props;
 
     const {
@@ -495,6 +565,9 @@ class Settings extends React.Component<Props, State> {
 
     const debugItems = formDebbugItems(this);
     const hasSmartWallet = userHasSmartWallet(accounts);
+    const colors = getThemeColors(theme);
+    const pickedThemeValue = isSetAsSystemPrefTheme ? SYSTEM_DEFAULT_THEME : themeType;
+
 
     return (
       <ContainerWithHeader
@@ -519,6 +592,11 @@ class Settings extends React.Component<Props, State> {
           <SettingsSection
             sectionTitle="Currency"
             sectionItems={formCurrencyItems(this)}
+          />
+
+          <SettingsSection
+            sectionTitle="Theme"
+            sectionItems={formThemeItems(this)}
           />
 
           {!isProdEnv &&
@@ -577,7 +655,7 @@ class Settings extends React.Component<Props, State> {
 
           <SettingsSection
             sectionTitle="More"
-            sectionItems={formMiscItems(this)}
+            sectionItems={formMiscItems(this, colors)}
             isCardsList
           />
 
@@ -643,7 +721,6 @@ class Settings extends React.Component<Props, State> {
           title="Claim tokens"
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -666,14 +743,31 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your base currency
           </SettingsModalTitle>
           <FlatList
             data={currencies}
-            renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
+            renderItem={this.renderListItem(
+              'currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)}
+            keyExtractor={({ name }) => name}
+          />
+        </SlideModal>
+
+        {/* THEME */}
+        <SlideModal
+          isVisible={visibleModal === 'theme'}
+          fullScreen
+          showHeader
+          onModalHide={this.toggleSlideModalOpen}
+        >
+          <SettingsModalTitle extraHorizontalSpacing>
+            Choose theme
+          </SettingsModalTitle>
+          <FlatList
+            data={themesToSelect}
+            renderItem={this.renderListItem('theme', this.handleThemeUpdate, pickedThemeValue)}
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
@@ -684,7 +778,6 @@ class Settings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
-          backgroundColor={baseColors.lightGray}
           avoidKeyboard
           title="Usage analytics"
         >
@@ -714,7 +807,6 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'joinBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleJoinBetaModalClose}
           avoidKeyboard
           title="Smart Wallet Early Access"
@@ -743,7 +835,6 @@ class Settings extends React.Component<Props, State> {
           isVisible={visibleModal === 'leaveBeta'}
           fullScreen
           showHeader
-          backgroundColor={baseColors.snowWhite}
           onModalHidden={this.handleLeaveBetaModalClose}
           avoidKeyboard
           title="Leaving Early Access program"
@@ -784,6 +875,8 @@ const mapStateToProps = ({
       baseFiatCurrency,
       optOutTracking = false,
       userJoinedBeta = false,
+      themeType,
+      isSetAsSystemPrefTheme,
     },
   },
   notifications: { intercomNotificationsCount },
@@ -799,6 +892,8 @@ const mapStateToProps = ({
   useBiometrics,
   smartWalletFeatureEnabled,
   userJoinedBeta,
+  themeType,
+  isSetAsSystemPrefTheme,
   accounts,
 });
 
@@ -813,6 +908,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
+  changeAppTheme: (themeType: string, shouldSetAsPref: boolean) => dispatch(
+    changeAppThemeAction(themeType, shouldSetAsPref),
+  ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Settings));

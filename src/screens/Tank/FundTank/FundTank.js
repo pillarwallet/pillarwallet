@@ -40,9 +40,10 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { baseColors, fontSizes, fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -78,7 +79,7 @@ const SendTokenDetailsValue = styled(BaseText)`
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
   margin-bottom: ${spacing.rhythm / 2}px;
-  color: ${UIColors.placeholderTextColor};
+  color: ${themedColors.secondaryText};
   margin-left: 4px;
 `;
 
@@ -217,8 +218,7 @@ class FundTank extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
-        backgroundColor={baseColors.white}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner>
             {!topUpFee.isFetched && <Spinner width={20} height={20} />}
             {topUpFee.isFetched && <Label>Estimated fee {feeInEth} ETH</Label>}
@@ -254,7 +254,7 @@ class FundTank extends React.Component<Props, State> {
               </TextRow>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>Send All</TextLink>
+              <TextLink>Send all</TextLink>
             </TouchableOpacity>
           </ActionsWrapper>
         </Wrapper>

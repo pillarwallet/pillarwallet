@@ -23,10 +23,9 @@ import { connect } from 'react-redux';
 import { FlatList, Keyboard, RefreshControl, View, ScrollView } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import debounce from 'lodash.debounce';
-import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Icon as NIcon } from 'native-base';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 
@@ -58,7 +57,6 @@ import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationM
 // constants
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
-import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import {
   DISCONNECT,
   MUTE,
@@ -70,16 +68,19 @@ import {
 // models/types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SearchResults } from 'models/Contacts';
+import type { Theme } from 'models/Theme';
 
 // utils
-import { baseColors, UIColors, fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
+import { sortLocalContacts } from 'utils/contacts';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
   padding-left: 30px;
   border-bottom-width: 1px;
   border-top-width: 1px;
-  border-color: ${UIColors.defaultBorderColor};
+  border-color: ${themedColors.border};
   align-items: center;
   flex-direction: row;
 `;
@@ -90,7 +91,7 @@ const ConnectionRequestBannerText = styled(BaseText)`
 
 const ConnectionRequestBannerIcon = styled(NIcon)`
   font-size: ${fontSizes.big}px;
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
 `;
@@ -103,23 +104,21 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${props => props.backgroundColor || baseColors.electricBlue}
-  padding: 3px 0;
-  margin-top: 2px;
+  background-color: ${themedColors.secondaryText}
+  padding: 3px;
   margin-right: 1px;
   align-items: center;
   justify-content: center;
 `;
 
 const BadgeIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || fontSizes.small}px;
-  line-height: ${props => props.fontSize || fontSizes.small}px;
-  color: ${baseColors.white};
+  font-size: 10px;
+  line-height: 10px;
+  color: ${themedColors.control};
 `;
 
 const InnerWrapper = styled.View`
   flex: 1;
-  background-color: ${baseColors.white};
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -128,7 +127,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   searchContacts: (query: string) => void,
   searchResults: SearchResults,
-  contactState: ?string,
+  isSearching: boolean,
   user: Object,
   fetchInviteNotifications: () => void,
   disconnectContact: (contactId: string) => void,
@@ -139,6 +138,7 @@ type Props = {
   localContacts: Object[],
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
+  theme: Theme,
 }
 
 type ConnectionStatusProps = {
@@ -166,7 +166,7 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
       break;
   }
   return (
-    <ItemBadge backgroundColor={baseColors.pinkishGrey}>
+    <ItemBadge>
       <BadgeIcon name={iconName} />
     </ItemBadge>
   );
@@ -176,19 +176,20 @@ class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
   scrollViewRef: ScrollView;
+  flatListRef: FlatList;
   forceRender = false;
+  state = {
+    query: '',
+    showConfirmationModal: false,
+    manageContactType: '',
+    manageContactId: '',
+    forceHideRemoval: false,
+  };
 
   constructor(props: Props) {
     super(props);
-    this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
+    this.handleSearchChange = debounce(this.handleSearchChange, 500);
     this.scrollViewRef = React.createRef();
-    this.state = {
-      query: '',
-      showConfirmationModal: false,
-      manageContactType: '',
-      manageContactId: '',
-      forceHideRemoval: false,
-    };
   }
 
   componentDidMount() {
@@ -197,12 +198,12 @@ class PeopleScreen extends React.Component<Props, State> {
 
     this.willFocus = navigation.addListener(
       'willFocus',
-      () => { this.setState({ forceHideRemoval: false }); },
+      () => this.setState({ forceHideRemoval: false }),
     );
 
     this.didBlur = navigation.addListener(
       'didBlur',
-      () => { this.setState({ forceHideRemoval: true }); },
+      () => this.setState({ forceHideRemoval: true }),
     );
   }
 
@@ -230,11 +231,8 @@ class PeopleScreen extends React.Component<Props, State> {
 
   handleSearchChange = (query: any) => {
     this.setState({ query });
-    this.handleContactsSearch(query);
-  };
 
-  handleContactsSearch = (query: string) => {
-    if (!query || query.trim() === '' || query.length < MIN_QUERY_LENGTH) {
+    if (!query || query.trim().length < MIN_QUERY_LENGTH) {
       this.props.resetSearchContactsState();
       return;
     }
@@ -257,6 +255,12 @@ class PeopleScreen extends React.Component<Props, State> {
       manageContactType,
       manageContactId: contactData.id,
     });
+  };
+
+  toggleScroll = (ref: Object, shouldAllowScroll: boolean) => {
+    if (ref && Object.keys(ref).length) {
+      ref.setNativeProps({ scrollEnabled: shouldAllowScroll });
+    }
   };
 
   renderSwipeoutBtns = (data) => {
@@ -290,7 +294,7 @@ class PeopleScreen extends React.Component<Props, State> {
             textStyle={{ marginTop: 6, fontSize: fontSizes.small }}
           />
         ),
-        backgroundColor: baseColors.white,
+        backgroundColor: 'transparent',
       };
     });
   };
@@ -310,9 +314,8 @@ class PeopleScreen extends React.Component<Props, State> {
         close={this.state.forceHideRemoval}
         buttonWidth={80}
         scroll={(shouldAllowScroll) => {
-          if (this.scrollViewRef && Object.keys(this.scrollViewRef).length) {
-            this.scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
-          }
+          this.toggleScroll(this.scrollViewRef, shouldAllowScroll);
+          this.toggleScroll(this.flatListRef, shouldAllowScroll);
         }}
       >
         <ListItemWithImage
@@ -324,9 +327,8 @@ class PeopleScreen extends React.Component<Props, State> {
           imageUpdateTimeStamp={item.lastUpdateTime}
           unreadCount={unreadCount}
           customAddon={([STATUS_MUTED, STATUS_BLOCKED].includes(status)) ? <ConnectionStatus status={status} /> : null}
-          rightColumnInnerStyle={{ flexDirection: 'row-reverse', paddingTop: spacing.small }}
+          rightColumnInnerStyle={{ flexDirection: 'row-reverse' }}
           noSeparator
-          hasShadow
         />
       </Swipeout>
     );
@@ -358,17 +360,19 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
-    const { query } = this.state;
     const {
       searchResults,
-      contactState,
+      searchResults: { apiUsers, localContacts },
+      isSearching,
       navigation,
       invitations,
       chats,
+      theme,
     } = this.props;
 
-    const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
+    const usersFound = (apiUsers.length + localContacts.length) > 0;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
+    const colors = getThemeColors(theme);
 
     return (
       <React.Fragment>
@@ -376,13 +380,13 @@ class PeopleScreen extends React.Component<Props, State> {
           headerProps={{ title: 'people' }}
           searchInputPlaceholder="Search or add people"
           onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={!!contactState}
-          wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
+          itemSearchState={isSearching}
+          wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.mediumLarge }}
         />
         {!inSearchMode && !!pendingConnectionRequests &&
         <ConnectionRequestBanner
           onPress={this.handleConnectionsRequestBannerPress}
-          underlayColor={baseColors.lightGray}
+          underlayColor={colors.secondaryAccent}
         >
           <React.Fragment>
             <ConnectionRequestBannerText>
@@ -396,7 +400,7 @@ class PeopleScreen extends React.Component<Props, State> {
         </ConnectionRequestBanner>
         }
         <InnerWrapper>
-          {inSearchMode && contactState === FETCHED && usersFound &&
+          {inSearchMode && usersFound &&
           <PeopleSearchResults
             searchResults={searchResults}
             navigation={navigation}
@@ -406,6 +410,7 @@ class PeopleScreen extends React.Component<Props, State> {
           }
           {!inSearchMode && !!sortedLocalContacts.length &&
           <FlatList
+            ref={(ref) => { this.flatListRef = ref; }}
             data={sortedLocalContacts}
             extraData={chats}
             keyExtractor={(item) => item.id}
@@ -418,15 +423,13 @@ class PeopleScreen extends React.Component<Props, State> {
             }}
           />
           }
-          {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
+          {(!inSearchMode || !apiUsers.length) &&
           <View
             style={{ flex: 1 }}
           >
-            {!!query && contactState === FETCHING &&
-            <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
-            }
+            {isSearching && <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>}
 
-            {inSearchMode && contactState === FETCHED && !usersFound &&
+            {inSearchMode && !isSearching && !usersFound &&
             <Wrapper center fullScreen>
               <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
             </Wrapper>
@@ -455,36 +458,18 @@ class PeopleScreen extends React.Component<Props, State> {
       manageContactId,
     } = this.state;
     const {
-      contactState,
       localContacts,
       chats,
       fetchInviteNotifications,
     } = this.props;
-    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+    const inSearchMode = query.length >= MIN_QUERY_LENGTH;
 
-    const localContactsWithUnreads = localContacts.map((contact) => {
-      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
-      return {
-        ...contact,
-        unread: chatWithUserInfo.unread || 0,
-        lastMessage: chatWithUserInfo.lastMessage || null,
-      };
-    });
-    const sortedLocalContacts = orderBy(
-      localContactsWithUnreads,
-      [(user) => {
-        if (user.lastMessage) {
-          return user.lastMessage.serverTimestamp;
-        }
-        return user.createdAt * 1000;
-      }],
-      'desc');
-    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
+    const sortedLocalContacts = sortLocalContacts(localContacts, chats);
+    const contact = sortedLocalContacts.find(({ id }) => id === manageContactId);
 
     return (
       <ContainerWithHeader
-        backgroundColor={baseColors.white}
-        headerProps={{ leftItems: [{ user: true }] }}
+        headerProps={{ noBack: true, leftItems: [{ title: 'People' }] }}
         inset={{ bottom: 0 }}
       >
         <ScrollView
@@ -504,7 +489,7 @@ class PeopleScreen extends React.Component<Props, State> {
           }
         >
           {this.renderContent(sortedLocalContacts, inSearchMode)}
-          <ConnectionConfirmationModal
+          {contact && <ConnectionConfirmationModal
             showConfirmationModal={showConfirmationModal}
             manageContactType={manageContactType}
             contact={contact}
@@ -515,7 +500,7 @@ class PeopleScreen extends React.Component<Props, State> {
                 forceHideRemoval: true,
               });
             }}
-          />
+          />}
         </ScrollView>
       </ContainerWithHeader>
     );
@@ -525,14 +510,14 @@ class PeopleScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: {
     searchResults,
-    contactState,
+    isSearching,
     data: localContacts,
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
 }: RootReducerState): $Shape<Props> => ({
   searchResults,
-  contactState,
+  isSearching,
   localContacts,
   invitations,
   chats,
@@ -548,4 +533,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PeopleScreen));

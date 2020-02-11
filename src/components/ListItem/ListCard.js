@@ -23,8 +23,10 @@ import { CachedImage } from 'react-native-cached-image';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
+import { themedColors } from 'utils/themes';
+import { LabelBadge } from 'components/LabelBadge';
 
 type Props = {
   iconSource?: string,
@@ -38,6 +40,10 @@ type Props = {
   contentWrapperStyle?: Object,
   disabled?: boolean,
   children?: React.Node,
+  labelBadge?: {
+    label: string,
+    color?: string,
+  },
 }
 
 const CardRow = styled.View`
@@ -50,7 +56,7 @@ const CardImage = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
-  background-color: ${baseColors.darkGray};
+  background-color: ${themedColors.secondaryAccent};
   margin-right: 20px;
 `;
 
@@ -65,12 +71,12 @@ const CardContent = styled.View`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   ${fontStyles.big};
 `;
 
 const CardSubtitle = styled(BaseText)`
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   ${fontStyles.medium};
   padding-right: 10%;
 `;
@@ -82,7 +88,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  color: ${baseColors.dodgerBlue};
+  color: ${themedColors.primary};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
@@ -101,6 +107,7 @@ export const ListCard = (props: Props) => {
     contentWrapperStyle,
     disabled,
     children,
+    labelBadge,
   } = props;
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
@@ -119,6 +126,13 @@ export const ListCard = (props: Props) => {
             <TitleWrapper>
               <CardTitle style={titleStyle}>{title}</CardTitle>
               {!!label && <Label>{label}</Label>}
+              {!!labelBadge && (
+                <LabelBadge
+                  label={labelBadge.label}
+                  labelStyle={{ fontSize: fontSizes.regular }}
+                  color={labelBadge.color}
+                />
+              )}
             </TitleWrapper>
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
           </CardContent>

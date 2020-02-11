@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { TextInput } from 'react-native';
 import styled from 'styled-components/native';
-import { fontSizes } from '../../utils/variables';
+import { fontSizes } from 'utils/variables';
 
 
 type Input = {

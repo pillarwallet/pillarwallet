@@ -48,7 +48,7 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 
 // utils
-import { spacing, baseColors, fontSizes, fontStyles } from 'utils/variables';
+import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import {
   formatFullAmount,
   noop,
@@ -60,6 +60,7 @@ import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 import { btcToSatoshis } from 'utils/bitcoin';
+import { themedColors } from 'utils/themes';
 
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
@@ -135,12 +136,12 @@ const ContentWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   overflow: hidden;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.card};
 `;
 
 const EventBody = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.card};
 `;
 
 const EventProfileImage = styled(ProfileImage)`
@@ -148,7 +149,7 @@ const EventProfileImage = styled(ProfileImage)`
 
 const ButtonsWrapper = styled.View`
   padding: 6px ${spacing.mediumLarge}px ${spacing.large}px;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.card};
 `;
 
 const EventButton = styled(Button)`
@@ -166,7 +167,7 @@ const EventRow = styled.View`
 
 const EventBodyTitle = styled(MediumText)`
   ${fontStyles.big};
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${({ color, theme }) => color || theme.colors.text};
   margin: 0 10px 2px;
   text-align: center;
 `;
@@ -175,6 +176,7 @@ const Icon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   margin-bottom: ${spacing.small}px;
+  tint-color: ${themedColors.primary};
 `;
 
 const viewTransactionOnBlockchain = (hash: string, asset?: ?string) => {

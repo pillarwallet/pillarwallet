@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
+import get from 'lodash.get';
 import styled from 'styled-components/native';
 import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
@@ -33,6 +34,7 @@ import { navigate } from 'services/navigation';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 export const SheetContentWrapper = styled.View`
   flex: 1;
@@ -120,11 +122,12 @@ class ManageDetailsSessions extends React.Component<Props, State> {
   renderSessionItem = ({ item }) => {
     const { peerMeta = {} } = item;
     const { name, icons, url } = peerMeta;
+    const icon = get(icons, '[0]');
 
     return (
       <ListItemWithImage
         label={name}
-        avatarUrl={icons[0]}
+        avatarUrl={icon}
         buttonAction={() => this.props.killWalletConnectSessionByUrl(url)}
         buttonActionLabel="Disconnect"
       />
@@ -143,7 +146,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
         onPress={() => this.onRequestItemPress(item)}
       />
     );
-  }
+  };
 
   renderRequestsList() {
     const { requests } = this.props;
@@ -205,24 +208,24 @@ class ManageDetailsSessions extends React.Component<Props, State> {
           sideFlex: 2,
         }}
       >
-        <Tabs initialActiveTab={activeTab} tabs={sessionTabs} />
+        <Tabs tabs={sessionTabs} activeTab={activeTab} />
         <SheetContentWrapper>{content}</SheetContentWrapper>
       </ContainerWithHeader>
     );
   }
 }
 
-const mapStateToProps = ({ user: { data: user }, walletConnect: { connectors, requests } }) => ({
+const mapStateToProps = ({
+  user: { data: user },
+  walletConnect: { connectors, requests },
+}: RootReducerState): $Shape<Props> => ({
   user,
   connectors,
   requests,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   killWalletConnectSessionByUrl: url => dispatch(killWalletConnectSessionByUrl(url)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ManageDetailsSessions);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageDetailsSessions);

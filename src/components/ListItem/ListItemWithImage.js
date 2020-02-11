@@ -19,19 +19,26 @@
 */
 import * as React from 'react';
 import { Platform, View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
+
 import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
-import { baseColors, fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
 import { Wrapper } from 'components/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';
+
 import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
+
+import { fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
+
+import type { Theme, ThemeColors } from 'models/Theme';
+
 
 type Props = {
   label: string,
@@ -79,6 +86,24 @@ type Props = {
   hasShadow?: boolean,
   iconSource?: string,
   imageWrapperStyle?: Object,
+  theme: Theme,
+}
+
+type AddonProps = {
+  unreadCount?: number | string,
+  itemValue?: ?string,
+  itemStatusIcon?: string,
+  valueColor?: ?string,
+  buttonActionLabel?: string,
+  labelAsButton?: boolean,
+  buttonAction?: () => void,
+  secondaryButton?: boolean,
+  actionLabel?: ?string,
+  actionLabelColor?: ?string,
+  rejectInvitation?: ?() => void,
+  acceptInvitation?: ?() => void,
+  balance?: Object,
+  colors: ThemeColors,
 }
 
 type ImageWrapperProps = {
@@ -98,7 +123,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
-  padding: ${spacing.small}px ${spacing.large}px;
+  padding: ${spacing.small}px ${spacing.layoutSides}px;
   width: 100%;
 `;
 
@@ -131,7 +156,7 @@ const Column = styled.View`
 `;
 
 const ItemTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
+  color: ${themedColors.text};
   font-size: ${fontSizes.medium}px;
   line-height: 22px;
   letter-spacing: ${fontTrackings.small}px;
@@ -139,14 +164,14 @@ const ItemTitle = styled(MediumText)`
 `;
 
 const ItemParagraph = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny}px;
   flex: 1;
 `;
 
 const ItemSubText = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   font-size: ${fontSizes.regular}px;
   line-height: 18px;
 `;
@@ -155,16 +180,16 @@ const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${baseColors.white};
+  background-color: ${themedColors.card};
   align-items: center;
   justify-content: center;
   text-align: center;
-  border: 1px solid ${baseColors.mediumLightGray};
+  border: 1px solid ${themedColors.border};
 `;
 
 const ItemIcon = styled(Icon)`
   font-size: ${props => props.fontSize || 48}px;
-  color: ${props => props.iconColor || baseColors.electricBlue};
+  color: ${({ iconColor, theme }) => iconColor || theme.colors.primary};
 `;
 
 const IconImage = styled(CachedImage)`
@@ -184,7 +209,7 @@ const TimeWrapper = styled.View`
 `;
 
 const TimeSent = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
   ${fontStyles.regular};
   text-align-vertical: bottom;
 `;
@@ -193,15 +218,14 @@ const ItemBadge = styled.View`
   height: 20px;
   width: 20px;
   border-radius: 10px;
-  background-color: ${baseColors.pinkishGrey}
+  background-color: ${themedColors.secondaryText}
   align-self: flex-end;
   padding: 3px 0;
-  margin-top: 2px;
   margin-right: 1px;
 `;
 
 const UnreadNumber = styled(BaseText)`
-  color: ${baseColors.white};
+  color: ${themedColors.control};
   font-size: ${fontSizes.tiny}px;
   align-self: center;
   width: 20px;
@@ -210,19 +234,19 @@ const UnreadNumber = styled(BaseText)`
 
 const ItemValue = styled(BaseText)`
   ${fontStyles.big};
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${({ color, theme }) => color || theme.colors.text};
   text-align: right;
 `;
 
 const ItemValueBold = styled(MediumText)`
   ${fontStyles.big};
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${({ color, theme }) => color || theme.colors.text};
   text-align: right;
 `;
 
 const ItemValueStatus = styled(Icon)`
   margin-left: 7px;
-  color: ${baseColors.mediumGray};
+  color: ${themedColors.secondaryText};
   ${fontStyles.big};
 `;
 
@@ -234,14 +258,14 @@ const IndicatorsRow = styled.View`
 const ActionLabel = styled.View`
   align-items: center;
   justify-content: center;
-  ${props => props.button ? `border: 1px solid ${baseColors.veryLightBlue}` : ''}
-  ${props => props.button ? 'border-radius: 40px;' : ''}
-  ${props => props.button ? 'height: 34px;' : ''}
+  ${({ button, theme }) => button && `border: 1px solid ${theme.colors.border}`}
+  ${({ button }) => button && 'border-radius: 3px;'}
+  ${({ button }) => button && 'height: 34px;'}
 `;
 
 const ActionLabelText = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${props => props.color ? props.color : baseColors.darkGray};
+  color: ${({ color, theme }) => color || theme.colors.secondaryText};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
   padding: ${props => props.button ? `0 ${spacing.large}px` : '6px 0'};
@@ -260,7 +284,7 @@ const ActionCircleButton = styled(IconButton)`
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
-  background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
+  background: ${({ accept, theme }) => accept ? theme.colors.primary : 'transparent'};
 `;
 
 const ImageAddonHolder = styled.View`
@@ -376,7 +400,7 @@ const ImageAddon = (props: Props) => {
             name={imageAddonIconName}
             color={iconColor}
             fontSize={30}
-            style={{ lineHeight: 30, width: 30 }}
+            style={{ lineHeight: 30, width: 30, height: 30 }}
           />
         </IconCircle>
       </ImageAddonHolder>
@@ -398,7 +422,7 @@ const ImageAddon = (props: Props) => {
   );
 };
 
-const Addon = (props: Props) => {
+const Addon = (props: AddonProps) => {
   const {
     unreadCount,
     itemValue,
@@ -413,6 +437,7 @@ const Addon = (props: Props) => {
     rejectInvitation,
     acceptInvitation,
     balance,
+    colors,
   } = props;
   if (itemValue || itemStatusIcon) {
     return (
@@ -430,7 +455,7 @@ const Addon = (props: Props) => {
   if (actionLabel) {
     return (
       <ActionLabel button={labelAsButton}>
-        <ActionLabelText button={labelAsButton} color={labelAsButton ? baseColors.electricBlue : actionLabelColor}>
+        <ActionLabelText button={labelAsButton} color={labelAsButton ? colors.primary : actionLabelColor}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>
@@ -465,14 +490,14 @@ const Addon = (props: Props) => {
     return (
       <ButtonIconWrapper>
         <ActionCircleButton
-          color={baseColors.darkGray}
+          color={colors.secondaryText}
           margin={0}
           icon="close"
           fontSize={fontSizes.regular}
           onPress={rejectInvitation}
         />
         <ActionCircleButton
-          color={baseColors.white}
+          color={colors.control}
           margin={0}
           accept
           icon="check"
@@ -552,9 +577,12 @@ class ListItemWithImage extends React.Component<Props, {}> {
       customAddonAlignLeft,
       hasShadow,
       imageWrapperStyle,
+      theme,
     } = this.props;
 
     const type = getType(this.props);
+    const colors = getThemeColors(theme);
+
     return (
       <ItemWrapper wrapperOpacity={wrapperOpacity}>
         <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
@@ -587,7 +615,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
               <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
                 <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
                   {!!customAddonAlignLeft && customAddon}
-                  <Addon {...this.props} type={type} />
+                  <Addon {...this.props} type={type} colors={colors} />
                   {!customAddonAlignLeft && customAddon}
                   {children}
                 </View>
@@ -601,4 +629,4 @@ class ListItemWithImage extends React.Component<Props, {}> {
   }
 }
 
-export default ListItemWithImage;
+export default withTheme(ListItemWithImage);

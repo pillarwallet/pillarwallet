@@ -17,113 +17,121 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
+import { FlatList } from 'react-native';
+import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { TouchableOpacity, FlatList, Image } from 'react-native';
-import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
-import Header from 'components/Header';
-import { baseColors, fontStyles, UIColors } from 'utils/variables';
+import Intercom from 'react-native-intercom';
+import { ListCard } from 'components/ListItem/ListCard';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { EXCHANGE } from 'constants/navigationConstants';
-import { BaseText, MediumText } from 'components/Typography';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+import type { Offer } from 'models/Offer';
+import { withTheme } from 'styled-components/native';
+import type { RootReducerState } from 'reducers/rootReducer';
+import { spacing } from 'utils/variables';
 
 type Props = {
+  theme: Theme,
+  offers: Offer[],
   navigation: NavigationScreenProp<*>,
+  baseFiatCurrency: ?string,
 };
 
-// TODO: Icons
-const genericIcon = require('assets/images/tokens/genericToken.png');
+class ServicesScreen extends React.Component<Props> {
+  getServices = () => {
+    const {
+      navigation, theme, offers, baseFiatCurrency,
+    } = this.props;
+    const colors = getThemeColors(theme);
 
-const Screen = styled(Container)`
-  background-color: ${UIColors.defaultBackgroundColor};
-`;
+    const offersBadge = (offers && offers.length) ? {
+      label: `${offers.length} exchanges`,
+      color: colors.primary,
+    } : null;
 
-const HeaderWrapper = styled(Wrapper)`
-  background-color: ${UIColors.defaultHeaderColor};
-`;
+    return [
+      {
+        key: 'offersEngine',
+        title: 'Offers engine',
+        body: 'Aggregated offers from many decentralized exchanges and token swap services',
+        action: () => navigation.navigate(EXCHANGE),
+        labelBadge: offersBadge,
+      },
+      {
+        key: 'peerToPeerTrading',
+        title: 'Peer-to-peer trading',
+        body: 'Swap tokens directly with others. safe, secure, anonymous',
+        disabled: true,
+        label: 'soon',
+      },
+      {
+        key: 'buyCryptoWithFiat',
+        title: 'Buy crypto with fiat',
+        body: 'USD, GBP, EUR supported',
+        action: () => navigation.navigate(
+          EXCHANGE,
+          {
+            fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
+            toAssetCode: ETH,
+          }),
+      },
+    ];
+  };
 
-const ServicesWrapper = styled(Wrapper)``;
+  renderServicesItem = ({ item }) => {
+    const {
+      title,
+      body,
+      action,
+      disabled,
+      label,
+      labelBadge,
+    } = item;
 
-const ListItem = styled(TouchableOpacity)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-`;
+    return (
+      <ListCard
+        title={title}
+        subtitle={body}
+        action={action}
+        disabled={disabled}
+        label={label}
+        labelBadge={labelBadge}
+      />
+    );
+  }
 
-const ItemDetails = styled.View`
-  flex-grow: 1;
-  margin-left: 20px;
-`;
-
-const ItemTitle = styled(MediumText)`
-  color: ${baseColors.slateBlack};
-  ${fontStyles.regular};
-`;
-
-const ItemDescription = styled(BaseText)`
-  color: ${baseColors.slateBlack};
-  ${fontStyles.regular};
-`;
-
-const goToExchange = (props: Props) => {
-  const { navigation } = props;
-  navigation.navigate(EXCHANGE);
-};
-
-const servicesItems = () => {
-  return [
-    {
-      key: 'exchange',
-      title: 'Exchange',
-      description: 'Swap between tokens and stablecoins',
-      onPress: goToExchange,
-    },
-  ];
-};
-
-const ServicesScreen = (props: Props) => {
-  return (
-    <Screen inset={{ bottom: 0 }}>
-      <HeaderWrapper>
-        <Header title="services" />
-      </HeaderWrapper>
-
-      <ServicesWrapper>
+  render() {
+    const services = this.getServices();
+    return (
+      <ContainerWithHeader
+        headerProps={{
+          noBack: true,
+          rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
+          leftItems: [{ title: 'Services' }],
+        }}
+        inset={{ bottom: 'never' }}
+      >
         <FlatList
-          data={servicesItems()}
-          contentContainerStyle={{ width: '100%' }}
-          renderItem={({
-            item: {
-              key,
-              title,
-              description,
-              onPress,
-            },
-          }) => (
-            <ListItem
-              key={key}
-              onPress={() => onPress(props)}
-            >
-              <Image
-                style={{
-                  width: 64,
-                  height: 64,
-                }}
-                resizeMode="contain"
-                source={genericIcon}
-              />
-              <ItemDetails>
-                <ItemTitle>{title}</ItemTitle>
-                <ItemDescription>{description}</ItemDescription>
-              </ItemDetails>
-            </ListItem>
-          )}
+          data={services}
+          keyExtractor={(item) => item.key}
+          renderItem={this.renderServicesItem}
+          contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
         />
-      </ServicesWrapper>
-    </Screen>
-  );
-};
+      </ContainerWithHeader>
+    );
+  }
+}
 
-export default ServicesScreen;
+const mapStateToProps = ({
+  exchange: { data: { offers } },
+  appSettings: { data: { baseFiatCurrency } },
+}: RootReducerState): $Shape<Props> => ({
+  offers,
+  baseFiatCurrency,
+});
+
+export default withTheme(connect(mapStateToProps)(ServicesScreen));

@@ -103,7 +103,6 @@ export const collectOutputs = (
 
 export const sendRawTransaction = async (rawTx: string): Promise<string> => {
   return sendRawTransactionToNode(rawTx)
-    .then(response => response.json())
     .then(({ txid }) => txid)
     .catch(() => null);
 };
@@ -147,6 +146,10 @@ export const rootFromMnemonic = async (mnemonic: string, networkName?: string): 
   return bip32.fromSeed(seed, selectNetwork(networkName));
 };
 
+export const rootFromPrivateKey = async (privateKey: string, networkName?: string): ECPair => {
+  return bip32.fromSeed(Buffer.from(privateKey.substr(2)), selectNetwork(networkName));
+};
+
 export const keyPairAddress = (keyPair: ECPair): ?string => {
   try {
     const { address } = payments.p2pkh({
@@ -160,21 +163,10 @@ export const keyPairAddress = (keyPair: ECPair): ?string => {
   }
 };
 
-export const importKeyPair = (s: string, networkName?: string): ECPair => {
-  return ECPair.fromWIF(s, selectNetwork(networkName));
-};
+export const importKeyPair = (s: string, networkName?: string): ECPair => ECPair.fromWIF(s, selectNetwork(networkName));
 
-export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => {
-  return getAddressUtxosFromNode(address)
-    .then(response => response.json());
-};
+export const getAddressUtxos = (address: string): Promise<BitcoinUtxo[]> => getAddressUtxosFromNode(address);
 
-export const getAddressBalance = (address: string): Promise<BTCBalance> => {
-  return getAddressBalanceFromNode(address)
-    .then(response => response.json());
-};
+export const getAddressBalance = (address: string): Promise<BTCBalance> => getAddressBalanceFromNode(address);
 
-export const getBTCTransactions = (address: string): Promise<BTCTransaction[]> => {
-  return getBTCTransactionsFromNode(address)
-    .then(response => response);
-};
+export const getBTCTransactions = (address: string): Promise<BTCTransaction[]> => getBTCTransactionsFromNode(address);

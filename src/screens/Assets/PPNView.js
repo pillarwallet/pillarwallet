@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, ScrollView, View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import get from 'lodash.get';
@@ -61,13 +61,15 @@ import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 // utils
 import { getRate } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
-import { baseColors, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // selectors
 import {
@@ -77,6 +79,7 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -92,6 +95,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   history: Object[],
   fetchTransactionsHistory: () => void,
+  theme: Theme,
 }
 
 type State = {
@@ -104,15 +108,14 @@ const AssetButtonsWrapper = styled.View`
 `;
 
 const TopPartWrapper = styled.View`
-  padding: ${spacing.large}px;
-  background-color: ${baseColors.snowWhite};
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
   border-bottom-width: 1;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const SectionTitle = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${baseColors.blueYonder};
+  color: ${themedColors.accent};
 `;
 
 const TankBalanceWrapper = styled.View`
@@ -122,11 +125,10 @@ const TankBalanceWrapper = styled.View`
 
 const TankBalance = styled(BaseText)`
   font-size: ${fontSizes.giant}px;
-  color: ${baseColors.slateBlack};
 `;
 
 const BlueText = styled(BaseText)`
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
   ${fontStyles.regular};
   margin-right: ${spacing.medium}px;
 `;
@@ -169,7 +171,9 @@ class PPNView extends React.Component<Props, State> {
       rates,
       history,
       fetchTransactionsHistory,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     let incomingBalanceInFiat = 0;
     const assetsOnNetworkArray = Object.values(assetsOnNetwork);
@@ -297,21 +301,21 @@ class PPNView extends React.Component<Props, State> {
             wrapperStyle={{
               borderTopWidth: 0,
               borderBottomWidth: 1,
-              borderColor: baseColors.mediumLightGray,
+              borderColor: colors.border,
             }}
-            chevronStyle={{ color: baseColors.darkGray }}
+            chevronStyle={{ color: colors.secondaryText }}
             label="Incoming balance"
             rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
-            color={baseColors.slateBlack}
+            color={colors.text}
             bordered
           />}
           <Tabs
             tabs={historyTabs}
             wrapperStyle={{ paddingTop: 16 }}
+            activeTab={activeTab}
           />
           <ActivityFeed
-            backgroundColor={baseColors.white}
             navigation={navigation}
             tabs={historyTabs}
             activeTab={activeTab}
@@ -368,4 +372,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView));
+export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));

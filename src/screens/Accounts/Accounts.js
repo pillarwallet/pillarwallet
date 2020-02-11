@@ -30,7 +30,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Loader from 'components/Loader';
-import { SettingsItemCarded } from 'components/ListItem/SettingsItemCarded';
+import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import { BaseText } from 'components/Typography';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import { ScrollWrapper } from 'components/Layout';
@@ -42,8 +42,10 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
-import { baseColors, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
+import { themedColors } from 'utils/themes';
+import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -51,7 +53,7 @@ import type { Assets, Balances, BalancesStore, Rates } from 'models/Asset';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
-import type { BitcoinAddress } from 'models/Bitcoin';
+import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { EthereumWallet } from 'models/Wallet';
 
 // constants
@@ -126,6 +128,7 @@ type Props = {|
   rates: Rates,
   user: Object,
   bitcoinAddresses: BitcoinAddress[],
+  bitcoinBalances: BitcoinBalance,
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
 |};
@@ -164,7 +167,12 @@ const FooterWrapper = styled.View`
 const FooterParagraph = styled(BaseText)`
   ${fontStyles.regular};
   text-align: center;
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
+`;
+
+const ToggleText = styled(BaseText)`
+  margin-right: -10px;
+  color: ${themedColors.secondaryText};
 `;
 
 const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
@@ -406,6 +414,8 @@ class AccountsScreen extends React.Component<Props, State> {
       accounts,
       bitcoinAddresses,
       baseFiatCurrency,
+      rates,
+      bitcoinBalances,
     } = this.props;
 
     const ppnNetwork = blockchainNetworks.find(
@@ -435,8 +445,10 @@ class AccountsScreen extends React.Component<Props, State> {
       const bitcoinNetwork = blockchainNetworks.find(
         ({ id }) => id === BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
       );
-      // TODO: calculate balance
-      const formattedBitcoinBalance = formatFiat(0, baseFiatCurrency);
+
+      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+      const bitcoinBalance = calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency);
+      const formattedBitcoinBalance = formatFiat(bitcoinBalance, fiatCurrency);
 
       if (bitcoinNetwork) {
         networks.push({
@@ -470,9 +482,9 @@ class AccountsScreen extends React.Component<Props, State> {
         open={isLegacyWalletVisible}
         onPress={() => this.setState({ isLegacyWalletVisible: !isLegacyWalletVisible })}
         customToggle={(
-          <BaseText style={{ marginRight: -10, color: baseColors.coolGrey }}>
+          <ToggleText>
             Legacy wallet (advanced)
-          </BaseText>
+          </ToggleText>
         )}
         toggleWrapperStyle={{
           justifyContent: 'flex-start',
@@ -585,7 +597,7 @@ const mapStateToProps = ({
   balances: { data: balances },
   rates: { data: rates },
   user: { data: user },
-  bitcoin: { data: { addresses: bitcoinAddresses } },
+  bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
   blockchainNetworks,
@@ -597,6 +609,7 @@ const mapStateToProps = ({
   rates,
   user,
   bitcoinAddresses,
+  bitcoinBalances,
 });
 
 const structuredSelector = createStructuredSelector({

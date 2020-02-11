@@ -401,7 +401,7 @@ class NewProfile extends React.Component<Props, State> {
         noBack={!!retry}
         headerProps={headerProps}
         putContentInScrollView={!apiUser.walletId}
-        keyboardAvoidFooter={!apiUser.walletId && (
+        footer={!apiUser.walletId && (
           <NextFooter
             onNextPress={this.handleSubmit}
             nextDisabled={!allowNext}
@@ -441,6 +441,7 @@ class NewProfile extends React.Component<Props, State> {
             </React.Fragment>}
           </NextFooter>
         )}
+        shouldFooterAvoidKeyboard={false}
       >
         <ContentWrapper>
           {!apiUser.walletId && this.renderChooseUsernameScreen()}

@@ -24,7 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
-import { BaseText } from 'components/Typography';
+import { withTheme } from 'styled-components';
 
 // services
 import { updateNavigationLastScreenState } from 'services/navigation';
@@ -57,9 +57,6 @@ import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibl
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
 import LoginScreen from 'screens/Home/Login';
-import ParticipateScreen from 'screens/Participate';
-import InstructionsScreen from 'screens/Participate/Instructions';
-import ConfirmScreen from 'screens/Participate/Confirm';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
@@ -70,7 +67,6 @@ import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
-import UpgradeIntroScreen from 'screens/UpgradeToSmartWallet/UpgradeIntroScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
 import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScreen';
 import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
@@ -100,11 +96,13 @@ import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfi
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
+import ServicesScreen from 'screens/Services';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
+import { BaseText } from 'components/Typography';
 
 // actions
 import {
@@ -128,12 +126,13 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
+import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 // constants
 import {
   ASSETS,
   ASSET,
-  EXCHANGE_TAB,
+  SERVICES_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
@@ -164,10 +163,6 @@ import {
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
   AUTH_FLOW,
-  PARTICIPATE_IN_ICO_FLOW,
-  ICO_PARTICIPATE,
-  ICO_INSTRUCTIONS,
-  ICO_CONFIRM,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -182,7 +177,6 @@ import {
   OTP,
   CONFIRM_CLAIM,
   UPGRADE_TO_SMART_WALLET_FLOW,
-  UPGRADE_INTRO,
   UPGRADE_INFO,
   RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
@@ -222,15 +216,19 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
+  SERVICES,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
 import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
 // utils
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { getThemeColors } from 'utils/themes';
+
+import type { Theme } from 'models/Theme';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -238,11 +236,11 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_new_light.png');
-const iconExchange = require('assets/icons/icon_services.png');
+const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
-const iconExchangeActive = require('assets/icons/icon_services_active.png');
+const iconServicesActive = require('assets/icons/icon_services_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
 const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
 
@@ -284,14 +282,16 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [SETTINGS]: SettingsScreen,
+    [EXCHANGE]: ExchangeScreen,
   },
   StackNavigatorConfig,
 );
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// EXCHANGE FLOW
-const exchangeFlow = createStackNavigator({
+// SERVICES FLOW
+const servicesFlow = createStackNavigator({
+  [SERVICES]: ServicesScreen,
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
@@ -300,7 +300,7 @@ const exchangeFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
-exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -341,8 +341,13 @@ const homeFlow = createStackNavigator({
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
-  const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
+const tabBarIcon = ({
+  iconActive,
+  icon,
+  hasIndicator,
+  theme,
+}) => ({ focused }) => {
+  const colors = getThemeColors(theme);
 
   return (
     <View style={{ padding: 4 }}>
@@ -350,16 +355,17 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
         style={{
           width: 24,
           height: 24,
+          tintColor: focused ? colors.primary : colors.navbarItems,
         }}
         resizeMode="contain"
         source={focused ? iconActive : icon}
       />
-      {!!hasAddon && (
+      {!!hasIndicator && (
         <View
           style={{
             width: 8,
             height: 8,
-            backgroundColor: notificationColor,
+            backgroundColor: colors.indicator,
             borderRadius: 4,
             position: 'absolute',
             top: 4,
@@ -371,18 +377,21 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
   );
 };
 
-const tabBarLabel = labelText => ({ focused, tintColor }) => (
-  <BaseText
-    style={{
-      fontSize: fontSizes.regular,
-      color: focused ? tintColor : baseColors.mediumGray,
-      textAlign: 'center',
-    }}
-    numberOfLines={1}
-  >
-    {labelText}
-  </BaseText>
-);
+const tabBarLabel = ({ text, theme }) => ({ focused }) => {
+  const colors = getThemeColors(theme);
+  return (
+    <BaseText
+      style={{
+        fontSize: fontSizes.regular,
+        color: focused ? colors.primary : colors.navbarItems,
+        textAlign: 'center',
+      }}
+      numberOfLines={1}
+    >
+      {text}
+    </BaseText>
+  );
+};
 
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
@@ -390,46 +399,55 @@ const tabNavigation = createBottomTabNavigator(
     [HOME_TAB]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(
-          iconHomeActive,
-          iconHome,
-          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount),
-        ),
-        tabBarLabel: tabBarLabel('Home'),
+        tabBarIcon: tabBarIcon({
+          iconActive: iconHomeActive,
+          icon: iconHome,
+          hasIndicator: !navigation.isFocused() && (screenProps.hasUnreadNotifications
+            || !!screenProps.intercomNotificationsCount),
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Home', theme: screenProps.theme }),
       }),
     },
     [ASSETS]: {
       screen: assetsFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
-        tabBarLabel: tabBarLabel('Assets'),
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconWalletActive,
+          icon: iconWallet,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Assets', theme: screenProps.theme }),
       }),
     },
     [PEOPLE]: {
       screen: peopleFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(
-          iconPeopleActive,
-          iconPeople,
-          !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
-        tabBarLabel: tabBarLabel('People'),
+        tabBarIcon: tabBarIcon({
+          iconActive: iconPeopleActive,
+          icon: iconPeople,
+          hasIndicator: !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'People', theme: screenProps.theme }),
       }),
     },
-    [EXCHANGE_TAB]: {
-      screen: exchangeFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconExchangeActive, iconExchange),
-        tabBarLabel: tabBarLabel('Exchange'),
+    [SERVICES_TAB]: {
+      screen: servicesFlow,
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconServicesActive,
+          icon: iconServices,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Services', theme: screenProps.theme }),
       }),
     },
   }, {
     tabBarOptions: {
-      activeTintColor: UIColors.primary,
-      inactiveTintColor: 'gray',
-      activeBackgroundColor: 'white',
-      inactiveBackgroundColor: 'white',
       style: {
-        backgroundColor: 'white',
         elevation: 14,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -2 },
@@ -457,6 +475,7 @@ const sendTokenFromAssetFlow = createStackNavigator(
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
     [CHAT]: ChatScreen,
+    [CONTACT]: ContactScreen,
   },
   StackNavigatorModalConfig,
 );
@@ -501,16 +520,6 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
-// PARTICIPATE IN ICO FLOW
-const participateInICOFlow = createStackNavigator(
-  {
-    [ICO_PARTICIPATE]: ParticipateScreen,
-    [ICO_INSTRUCTIONS]: InstructionsScreen,
-    [ICO_CONFIRM]: ConfirmScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
 // WALLET BACKUP IN SETTINGS FLOW
 const backupWalletFlow = createStackNavigator({
   [BACKUP_PHRASE]: BackupPhraseScreen,
@@ -520,7 +529,6 @@ const backupWalletFlow = createStackNavigator({
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
-  [UPGRADE_INTRO]: UpgradeIntroScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
@@ -564,7 +572,6 @@ const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
-  [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
 }, StackNavigatorConfig);
 
 manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -618,7 +625,6 @@ const AppFlowNavigation = createStackNavigator(
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
-    [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
@@ -671,6 +677,8 @@ type Props = {
   isOnline: boolean,
   initSignal: Function,
   endWalkthrough: () => void,
+  theme: Theme,
+  handleSystemDefaultThemeChange: () => void,
 }
 
 type State = {
@@ -781,6 +789,7 @@ class AppFlow extends React.Component<Props, State> {
       isBrowsingWebView,
       stopListeningForBalanceChange,
       endWalkthrough,
+      handleSystemDefaultThemeChange,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -805,6 +814,7 @@ class AppFlow extends React.Component<Props, State> {
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
       startListeningChatWebSocket();
+      handleSystemDefaultThemeChange();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -819,6 +829,7 @@ class AppFlow extends React.Component<Props, State> {
       navigation,
       backupStatus,
       smartWalletFeatureEnabled,
+      theme,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
@@ -837,6 +848,7 @@ class AppFlow extends React.Component<Props, State> {
           intercomNotificationsCount,
           isWalletBackedUp,
           smartWalletFeatureEnabled,
+          theme,
         }}
         navigation={navigation}
       />
@@ -898,6 +910,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
   initSignal: () => dispatch(signalInitAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
+  handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });
 
 const ConnectedAppFlow = connect(
@@ -907,4 +920,4 @@ const ConnectedAppFlow = connect(
 ConnectedAppFlow.router = AppFlowNavigation.router;
 ConnectedAppFlow.defaultNavigationOptions = AppFlowNavigation.defaultNavigationOptions;
 
-export default ConnectedAppFlow;
+export default withTheme(ConnectedAppFlow);

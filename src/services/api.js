@@ -20,6 +20,7 @@
 import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
+import { Platform } from 'react-native';
 import { Sentry } from 'react-native-sentry';
 import {
   SDK_PROVIDER,
@@ -34,6 +35,7 @@ import {
   MOONPAY_API_URL,
   MOONPAY_KEY,
 } from 'react-native-dotenv';
+import axios, { AxiosResponse } from 'axios';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -42,15 +44,7 @@ import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-
-// services
-import {
-  fetchAssetBalances,
-  fetchLastBlockNumber,
-  fetchTransactionInfo,
-  fetchTransactionReceipt,
-} from 'services/assets';
-import EthplorerSdk from 'services/EthplorerSdk';
+import { uniqBy } from 'utils/common';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -65,14 +59,23 @@ import type {
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 
-import { getLimitedData } from 'utils/opensea';
-import { uniqBy } from 'utils/common';
-
 // other
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos'; // temporary here
 
+// services
+import {
+  fetchAssetBalances,
+  fetchLastBlockNumber,
+  fetchTransactionInfo,
+  fetchTransactionReceipt,
+} from './assets';
+import EthplorerSdk from './EthplorerSdk';
+import { getLimitedData } from './opensea';
+
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
+export const API_REQUEST_TIMEOUT = 10000;
+export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
 
 type HistoryPayload = {
   address1: string,
@@ -133,6 +136,13 @@ SDKWrapper.prototype.init = function (
     oAuthTokens: oAuthTokensStored,
     tokensFailedCallbackFn: onOAuthTokensFailed,
   });
+  this.pillarWalletSdk.configuration.setRequestTimeout(API_REQUEST_TIMEOUT);
+};
+
+SDKWrapper.prototype.supportHmac = function (): string {
+  return this.pillarWalletSdk.user.supportHmac({ project: Platform.OS })
+    .then(({ data }) => data.hmac || '')
+    .catch(() => '');
 };
 
 SDKWrapper.prototype.listAccounts = function (walletId: string) {
@@ -338,7 +348,7 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   // TODO: handle 404 and other errors in different ways (e.response.status === 404)
 };
 
-SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
+SDKWrapper.prototype.validateAddress = function (blockchainAddress: string): Object {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
@@ -350,14 +360,20 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string) {
           error,
         },
       });
-      return {};
+      return { error: true };
     });
 };
 
 SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.list({ walletId }))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (!Array.isArray(data)) {
+        Sentry.captureMessage('Wrong supported assets received', { extra: { data } });
+        return [];
+      }
+      return data;
+    })
     .catch(() => []);
 };
 
@@ -382,15 +398,15 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
   const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
   return Promise.resolve()
-    .then(() => fetch(url, {
-      method: 'GET',
+    .then(() => axios.get(url, {
+      ...defaultAxiosRequestConfig,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'X-API-KEY': OPEN_SEA_API_KEY,
       },
     }))
-    .then(data => data.json())
+    .then(({ data }: AxiosResponse) => data)
     .catch(() => ({ error: true }));
 };
 
@@ -438,7 +454,7 @@ SDKWrapper.prototype.fetchNotifications = function (
     .catch(() => []);
 };
 
-SDKWrapper.prototype.fetchICOs = function (userId: string) { //eslint-disable-line
+SDKWrapper.prototype.fetchICOs = function (userId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
     .then(({ data }) => data.data)
@@ -752,7 +768,13 @@ SDKWrapper.prototype.connectionsCount = function (walletId: string) {
 SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (!Array.isArray(data)) {
+        Sentry.captureMessage('Wrong Identity Keys received', { extra: { data } });
+        return [];
+      }
+      return data;
+    })
     .catch(() => []);
 };
 
@@ -766,7 +788,13 @@ SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: Connect
 SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
+    .then(({ data }) => {
+      if (data && !Array.isArray(data)) {
+        Sentry.captureMessage('Wrong response from patchIdentityKeys', { extra: { data } });
+        return false;
+      }
+      return data;
+    })
     .catch(() => false);
 };
 
@@ -797,8 +825,8 @@ SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string
   if (NETWORK_PROVIDER !== 'homestead') {
     const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
     return Promise.resolve()
-      .then(() => fetch(url))
-      .then(resp => resp.json())
+      .then(() => axios.get(url, defaultAxiosRequestConfig))
+      .then(({ data }: AxiosResponse) => data)
       .catch(() => []);
   }
   return Promise.resolve()
@@ -813,8 +841,8 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
   + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
 
   return Promise.resolve()
-    .then(() => fetch(url))
-    .then(resp => resp.json())
+    .then(() => axios.get(url, defaultAxiosRequestConfig))
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       if (data.totalAmount) {
         const {
@@ -846,8 +874,8 @@ SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: 
 
 SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
   const url = `${MOONPAY_API_URL}/v3/currencies`;
-  return fetch(url)
-    .then(resp => resp.json())
+  return axios.get(url, defaultAxiosRequestConfig)
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
     })
@@ -856,8 +884,8 @@ SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
 
 SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset: string, amount: number) {
   return Promise.resolve()
-    .then(() => fetch(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`))
-    .then(resp => resp.json())
+    .then(() => axios.get(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`, defaultAxiosRequestConfig))
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       if (data[fromAsset + toAsset]) {
         return {
@@ -879,8 +907,8 @@ SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset:
 };
 
 SDKWrapper.prototype.fetchSendWyreSupportedAssetsTickers = function () {
-  return fetch(`${SENDWYRE_API_URL}/v3/rates`)
-    .then(resp => resp.json())
+  return axios.get(`${SENDWYRE_API_URL}/v3/rates`, defaultAxiosRequestConfig)
+    .then(({ data }: AxiosResponse) => data)
     .then(data => {
       const exchangePairs = Object.keys(data);
       const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>

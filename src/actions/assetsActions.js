@@ -45,6 +45,8 @@ import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetwork
 
 import Toast from 'components/Toast';
 
+import { initialAssets as assetFixtures } from 'fixtures/assets';
+
 import { transferSigned } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
@@ -556,18 +558,19 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
   };
 };
 
-export const fetchInitialAssetsAction = () => {
+export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: { walletId } },
-      accounts: { data: accounts },
-    } = getState();
-
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING_INITIAL,
     });
     await delay(1000);
+
+    const {
+      user: { data: { walletId } },
+      accounts: { data: accounts },
+    } = getState();
+
     const initialAssets = await api.fetchInitialAssets(walletId);
     if (!Object.keys(initialAssets).length) {
       dispatch({
@@ -584,7 +587,7 @@ export const fetchInitialAssetsAction = () => {
         assets: initialAssets,
       },
     });
-    dispatch(fetchAssetsBalancesAction(true));
+    dispatch(fetchAssetsBalancesAction(showToastIfIncreased));
   };
 };
 
@@ -628,13 +631,30 @@ export const startAssetsSearchAction = () => ({
 
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { assets: { supportedAssets } } = getState();
+    const search = query.toUpperCase();
+
+    const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
+      return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
+    });
+
+    if (filteredAssets.length > 0) {
+      dispatch({
+        type: UPDATE_ASSETS_SEARCH_RESULT,
+        payload: filteredAssets,
+      });
+
+      return;
+    }
+
     const { user: { data: { walletId } } } = getState();
 
-    const assets = await api.assetsSearch(query, walletId);
+    dispatch(startAssetsSearchAction());
 
+    const apiAssets = await api.assetsSearch(query, walletId);
     dispatch({
       type: UPDATE_ASSETS_SEARCH_RESULT,
-      payload: assets,
+      payload: apiAssets,
     });
   };
 };
@@ -651,12 +671,6 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
-
-  // TODO: remove when we find an issue with supported assets
-  if (!supportedAssets || !supportedAssets.length) {
-    Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
-    return { id: accountId };
-  }
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))
@@ -690,6 +704,13 @@ export const loadSupportedAssetsAction = () => {
     if (!isOnline) return;
 
     const supportedAssets = await api.fetchSupportedAssets(walletId);
+
+    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+      const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
+      if (btcAsset) {
+        supportedAssets.push(btcAsset);
+      }
+    }
 
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;

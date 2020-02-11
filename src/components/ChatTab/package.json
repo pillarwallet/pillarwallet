@@ -1,6 +1,0 @@
-{
-  "name": "ChatTab",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./ChatTab.js"
-}

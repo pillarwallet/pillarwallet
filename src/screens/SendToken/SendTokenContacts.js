@@ -19,11 +19,12 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Alert, FlatList } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
+import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
@@ -63,7 +64,8 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
 import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+import { themedColors, getThemeColors } from 'utils/themes';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -77,6 +79,7 @@ type Props = {
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
   activeAccount: ?Account,
+  theme: Theme,
 };
 
 type State = {
@@ -89,12 +92,19 @@ type State = {
 
 const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const FormWrapper = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 6px;
   background-color: ${themedColors.card};
   border-bottom-color: ${themedColors.border};
   border-bottom-width: 1px;
+`;
+
+const ImageIcon = styled(CachedImage)`
+  width: 6px;
+  height: 12px;
+  tint-color: ${themedColors.primary};
 `;
 
 const { Form } = t.form;
@@ -356,6 +366,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       localContacts = [],
       contactsSmartAddressesSynced,
       isOnline,
+      theme,
     } = this.props;
     const { tokenType, name, token } = this.assetData;
     const isCollectible = tokenType === COLLECTIBLES;
@@ -365,14 +376,23 @@ class SendTokenContacts extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     const showContacts = isCollectible || token !== BTC;
-    const defaultAssetName = this.isPPNTransaction ? 'synthetic asset' : 'asset';
-    const tokenName = isCollectible ? (name || token) : (token || defaultAssetName);
-    const headerTitle = `Send ${tokenName}`;
+    const tokenName = (isCollectible ? (name || token) : token) || 'asset';
+
+    const colors = getThemeColors(theme);
+
+    const headerTitleItems = this.isPPNTransaction
+      ? [
+        { title: 'Send' },
+        { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
+        { title: tokenName, color: colors.primary },
+      ]
+      : [{ title: `Send ${tokenName}` }];
+
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: headerTitle }] }}
+        headerProps={{ centerItems: headerTitleItems }}
         inset={{ bottom: 0 }}
       >
         <FormWrapper>
@@ -434,4 +454,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts));

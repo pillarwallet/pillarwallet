@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { Fragment, PureComponent } from 'react';
-import { baseColors } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import Header from 'components/Header';
 import { BaseText } from 'components/Typography';
 import styled from 'styled-components/native';
@@ -35,6 +35,10 @@ const Body = styled.View`
   padding: 10px;
 `;
 
+const PermissionsText = styled(BaseText)`
+  color: ${themedColors.control};
+`;
+
 type Props = {
   onClose: () => void,
 };
@@ -49,9 +53,9 @@ export default class NoPermissions extends PureComponent<Props> {
           <Header light flexStart onClose={onClose} />
         </HeaderWrapper>
         <Body>
-          <BaseText style={{ color: baseColors.white }}>
+          <PermissionsText>
             Camera permissions not granted - cannot open the QR scanner.
-          </BaseText>
+          </PermissionsText>
         </Body>
       </Fragment>
     );

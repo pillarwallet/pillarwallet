@@ -18,20 +18,29 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Clipboard, View } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
-import { TextLink, BaseText } from 'components/Typography';
-import { Footer } from 'components/Layout';
+import { Clipboard, View, Image } from 'react-native';
+import { BaseText } from 'components/Typography';
 import { spacing, fontStyles } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
+import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
+import { themedColors } from 'utils/themes';
+
+const BuyTokensWrapper = styled.View`
+  background-color: ${themedColors.surface};
+  width: 100%;
+  padding: 20px;
+  border-top-color: ${themedColors.tertiary};
+  border-top-width: 1px;
+  align-items: center;
+`;
 
 const ContentWrapper = styled.View`
-  height: 300;
-  justify-content: flex-start;
+  padding: 0 ${spacing.rhythm}px;
+  align-items: center;
 `;
 
 type Props = {
@@ -41,23 +50,32 @@ type Props = {
   token: string,
   tokenName: string,
   isVisible: boolean,
+  handleBuyTokens?: Function,
+  onModalHidden?: Function,
+  showBuyTokensSection?: boolean,
 }
 
-const CopyAddressLink = styled.TouchableOpacity`
-  margin-top: ${spacing.rhythm}px;
-  margin-bottom: ${spacing.rhythm}px;
-  align-items: center;
-`;
-
 const QRCodeWrapper = styled.View`
-  flex: 1;
   align-items: center;
   justify-content: center;
 `;
 
 const WalletAddress = styled(BaseText)`
-  ${fontStyles.big};
+  ${fontStyles.regular};
+  margin: ${spacing.mediumLarge}px 0;
 `;
+
+const IconsContainer = styled.View`
+  flex-direction: row;
+  margin: ${spacing.rhythm}px;
+`;
+
+const IconsSpacing = styled.View`
+  width: ${spacing.small}px;
+`;
+
+const visaIcon = require('assets/icons/visa.png');
+const mastercardIcon = require('assets/icons/mastercard.png');
 
 export default class ReceiveModal extends React.Component<Props, *> {
   handleAddressClipboardSet = () => {
@@ -82,39 +100,53 @@ export default class ReceiveModal extends React.Component<Props, *> {
       isVisible,
       address,
       onModalHide,
+      handleBuyTokens,
+      onModalHidden,
+      showBuyTokensSection = false,
     } = this.props;
     return (
       <SlideModal
         title="Receive"
         isVisible={isVisible}
         onModalHide={onModalHide}
+        onModalHidden={onModalHidden}
+        noPadding
       >
-        <WarningBanner rounded small />
         <ContentWrapper>
+          <WarningBanner rounded small />
           <QRCodeWrapper>
+            <WalletAddress>{address}</WalletAddress>
             <View
               style={{
                 overflow: 'hidden',
               }}
             >
-              <QRCode value={address} size={160} />
+              <QRCodeWithTheme value={address} size={160} />
             </View>
-            <CopyAddressLink onPress={this.handleAddressClipboardSet}>
-              <TextLink>Copy wallet address to clipboard</TextLink>
-            </CopyAddressLink>
-
-            <WalletAddress>{address}</WalletAddress>
           </QRCodeWrapper>
-        </ContentWrapper>
-        <Footer>
           <Button
             title="Share Address"
             onPress={this.handleAddressShare}
             style={{
               marginBottom: 20,
+              marginTop: spacing.mediumLarge,
             }}
           />
-        </Footer>
+        </ContentWrapper>
+        {showBuyTokensSection && (
+          <BuyTokensWrapper>
+            <Button
+              title="Buy tokens"
+              onPress={handleBuyTokens}
+              positive
+            />
+            <IconsContainer>
+              <Image source={visaIcon} />
+              <IconsSpacing />
+              <Image source={mastercardIcon} />
+            </IconsContainer>
+          </BuyTokensWrapper>
+        )}
       </SlideModal>
     );
   }

@@ -31,10 +31,11 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { SEND_BITCOIN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { satoshisToBtc } from 'utils/bitcoin';
 import { getFormattedRate } from 'utils/assets';
 import { formatUnits } from 'utils/common';
+import { themedColors } from 'utils/themes';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { AssetData, Rates } from 'models/Asset';
@@ -55,7 +56,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${baseColors.snowWhite};
+  background-color: ${themedColors.surface};
 `;
 
 const LabeledRow = styled.View`
@@ -113,7 +114,7 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>

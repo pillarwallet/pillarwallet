@@ -20,16 +20,17 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { MediumText } from 'components/Typography';
-import { baseColors } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   label: string,
   containerStyle?: Object,
   labelStyle?: Object,
+  color?: string,
 }
 
 const BadgeWrapper = styled.View`
-  background-color: ${baseColors.pastelGreen};
+  background-color: ${({ color }) => color || themedColors.positive};
   padding: 3px 8px;
   border-radius: 12px;
   align-self: flex-start;
@@ -37,13 +38,18 @@ const BadgeWrapper = styled.View`
 
 const Label = styled(MediumText)`
   font-size: 8px;
-  color: ${baseColors.white};
+  color: ${themedColors.control};
 `;
 
 export const LabelBadge = (props: Props) => {
-  const { label, containerStyle, labelStyle } = props;
+  const {
+    label,
+    containerStyle,
+    labelStyle,
+    color,
+  } = props;
   return (
-    <BadgeWrapper style={containerStyle}>
+    <BadgeWrapper style={containerStyle} color={color}>
       <Label style={labelStyle}>
         {label}
       </Label>

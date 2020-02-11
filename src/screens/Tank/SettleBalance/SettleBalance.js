@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
@@ -45,13 +45,12 @@ import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 // types
 import type { Assets, Balances, Rates } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
+import type { Theme } from 'models/Theme';
 
 // utils
 import {
-  baseColors,
   fontStyles,
   spacing,
-  UIColors,
   fontSizes,
 } from 'utils/variables';
 import {
@@ -60,10 +59,12 @@ import {
   groupAndSortByDate,
 } from 'utils/common';
 import { getRate } from 'utils/assets';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 import { createStructuredSelector } from 'reselect';
 import { accountAssetsSelector } from 'selectors/assets';
 import { findMatchingContact } from 'utils/contacts';
+
 import type {
   ApiUser,
   ContactSmartAddressData,
@@ -83,6 +84,7 @@ type Props = {
   fetchAvailableTxToSettle: Function,
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  theme: Theme,
 };
 
 type State = {
@@ -119,17 +121,17 @@ const BalanceWrapper = styled.View`
 
 const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.regular}px;
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
 `;
 
 const SubtitleView = styled.View`
-  background-color: ${UIColors.defaultBackgroundColor};
+  background-color: ${themedColors.card};
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
   padding: 30px ${spacing.rhythm}px 25px;
   border-bottom-width: 1px;
-  border-color: ${baseColors.mediumLightGray};
+  border-color: ${themedColors.border};
 `;
 
 const UnsettledTransactionsList = styled.SectionList`
@@ -144,7 +146,7 @@ const SectionHeaderWrapper = styled.View`
 
 const SectionHeader = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${baseColors.darkGray};
+  color: ${themedColors.secondaryText};
 `;
 
 class SettleBalance extends React.Component<Props, State> {
@@ -163,8 +165,10 @@ class SettleBalance extends React.Component<Props, State> {
       rates,
       contacts,
       contactsSmartAddresses,
+      theme,
     } = this.props;
     const { txToSettle } = this.state;
+    const colors = getThemeColors(theme);
 
     const tokenSymbol = get(item, 'token.symbol', ETH);
     const value = get(item, 'value', new BigNumber(0));
@@ -193,7 +197,7 @@ class SettleBalance extends React.Component<Props, State> {
         onPress={() => this.toggleItemToTransfer(assetInfo)}
         label={nameOrAddress}
         avatarUrl={itemImage}
-        valueColor={baseColors.jadeGreen}
+        valueColor={colors.positive}
         imageUpdateTimeStamp={contact.lastUpdateTime || 0}
         customAddon={
           <AddonWrapper>
@@ -257,8 +261,7 @@ class SettleBalance extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Settle transactions' }] }}
-        backgroundColor={baseColors.white}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>
             {!!txToSettle.length && (
@@ -346,4 +349,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAvailableTxToSettle: () => dispatch(fetchAvailableTxToSettleAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SettleBalance);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SettleBalance));

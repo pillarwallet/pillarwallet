@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { FlatList, TextInput as RNTextInput, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
@@ -69,11 +69,12 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // utils, services
 import { wyreWidgetUrl } from 'services/sendwyre';
 import { fiatCurrencies } from 'fixtures/assets';
-import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
+import { getThemeColors } from 'utils/themes';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -86,6 +87,7 @@ import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme, ThemeColors } from 'models/Theme';
 
 // partials
 import { ExchangeStatus } from './ExchangeStatus';
@@ -141,7 +143,7 @@ const CardButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${({ color, theme }) => color || theme.colors.text};
   font-size: ${fontSizes.regular}px;
 `;
 
@@ -165,7 +167,7 @@ const CardNote = styled(BaseText)`
   align-items: center;
   padding: 4px 0;
   margin-left: 10px;
-  color: ${props => props.color ? props.color : baseColors.slateBlack};
+  color: ${({ color, theme }) => color || theme.colors.text};
   ${fontStyles.regular};
 `;
 
@@ -177,7 +179,7 @@ type Props = {
   assets: Assets,
   searchOffers: (string, string, number) => void,
   offers: Offer[],
-  takeOffer: (string, string, number, string, Function) => void,
+  takeOffer: (string, string, number, string, string, Function) => void,
   authorizeWithShapeshift: Function,
   balances: Balances,
   resetOffers: Function,
@@ -198,7 +200,8 @@ type Props = {
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
   getExchangeSupportedAssets: () => void,
-  providersMeta: ProvidersMeta
+  providersMeta: ProvidersMeta,
+  theme: Theme,
 };
 
 type State = {
@@ -397,6 +400,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
   fromInputRef: RNTextInput;
   listeners: NavigationEventSubscription[];
+  _isMounted: boolean;
 
   constructor(props: Props) {
     super(props);
@@ -467,12 +471,15 @@ class ExchangeScreen extends React.Component<Props, State> {
       getMetaData,
       getExchangeSupportedAssets,
     } = this.props;
+    this._isMounted = true;
     getMetaData();
     getExchangeSupportedAssets();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
-    const { fromAssetCode = defaultFrom, toAssetCode, fromAmount } = exchangeSearchRequest;
+    const { fromAmount } = exchangeSearchRequest;
+    const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest.fromAssetCode || defaultFrom;
+    const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest.toAssetCode;
     this.setInitialSelection(fromAssetCode, toAssetCode, fromAmount);
     this.provideOptions();
     this.listeners = [
@@ -483,6 +490,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   componentWillUnmount() {
     this.listeners.forEach(listener => listener.remove());
+    this._isMounted = false;
   }
 
   blurFromInput = () => {
@@ -492,7 +500,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   focusInputWithKeyboard = () => {
     setTimeout(() => {
-      if (!this.fromInputRef) return;
+      if (!this.fromInputRef || !this._isMounted) return;
       this.fromInputRef.focus();
     }, 200);
   };
@@ -502,7 +510,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       assets,
       exchangeSupportedAssets,
       fiatExchangeSupportedAssets,
-      navigation,
       oAuthAccessToken,
       resetOffers,
     } = this.props;
@@ -519,14 +526,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       this.provideOptions();
     }
 
-    const fromAssetCode = navigation.getParam('fromAssetCode');
-    const toAssetCode = navigation.getParam('toAssetCode');
-    if (fromAssetCode || toAssetCode) {
-      const _fromAssetCode = fromAssetCode || fromAssetSymbol;
-      this.setInitialSelection(_fromAssetCode, toAssetCode);
-      // reset to prevent nav value change over newly selected
-      navigation.setParams({ fromAssetCode: null, toAssetCode: null });
-    }
     if (prevProps.oAuthAccessToken !== oAuthAccessToken) {
       // access token has changed, init search again
       resetOffers();
@@ -701,13 +700,14 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAsset,
       toAsset,
       askRate,
+      trackId = '',
     } = offer;
     const { code: fromAssetCode } = fromAsset;
     const { code: toAssetCode } = toAsset;
     const amountToSell = parseFloat(selectedSellAmount);
     const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, order => {
+      takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, trackId, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
         setExecutingTransaction();
@@ -772,7 +772,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
+  renderOffers = ({ item: offer }, disableNonFiatExchange: boolean, colors: ThemeColors) => {
     const {
       value: { fromInput },
       pressedOfferId,
@@ -868,20 +868,20 @@ class ExchangeScreen extends React.Component<Props, State> {
               {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
               {minOrMaxNeeded &&
               <CardButton onPress={() => this.setFromAmount(isBelowMin ? minQuantity : maxQuantity)}>
-                <ButtonLabel color={baseColors.electricBlue}>
+                <ButtonLabel color={colors.primary}>
                   {`${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`}
                 </ButtonLabel>
               </CardButton>
               }
               {!minOrMaxNeeded && isShapeShift && !shapeshiftAccessToken &&
               <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
-                <ButtonLabel color={baseColors.electricBlue}>Connect</ButtonLabel>
+                <ButtonLabel color={colors.primary}>Connect</ButtonLabel>
               </CardButton>
               }
               {!minOrMaxNeeded && !allowanceSet &&
               <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
                 {!isSetAllowancePressed &&
-                <ButtonLabel color={storedAllowance ? baseColors.darkGray : baseColors.electricBlue} >
+                <ButtonLabel color={storedAllowance ? colors.secondaryText : colors.primary} >
                   {storedAllowance
                     ? 'Pending'
                     : 'Enable'
@@ -891,7 +891,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               </CardButton>
               }
               {!!isFiat && !!offerRestricted &&
-                <CardNote color={baseColors.electricBlue}>{offerRestricted}</CardNote>
+                <CardNote color={colors.primary}>{offerRestricted}</CardNote>
               }
             </CardInnerRow>
           </CardRow>
@@ -1073,6 +1073,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       deploySmartWallet,
+      theme,
     } = this.props;
 
     const {
@@ -1107,12 +1108,13 @@ class ExchangeScreen extends React.Component<Props, State> {
       fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
 
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
+    const colors = getThemeColors(theme);
 
     return (
       <ContainerWithHeader
         headerProps={{
-          leftItems: [{ user: true }],
           rightItems,
+          centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
       >
@@ -1126,7 +1128,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         {!blockView &&
         <ScrollWrapper
           keyboardShouldPersistTaps="handled"
-          color={UIColors.defaultBackgroundColor}
         >
           <FormWrapper>
             <Form
@@ -1152,7 +1153,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             keyExtractor={(item) => item._id}
             style={{ width: '100%' }}
             contentContainerStyle={{ width: '100%', paddingHorizontal: 20, paddingVertical: 10 }}
-            renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
+            renderItem={(props) => this.renderOffers(props, disableNonFiatExchange, colors)}
             ListHeaderComponent={!isEmpty(reorderedOffers)
               ? (
                 <ListHeader>
@@ -1230,8 +1231,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   searchOffers: (fromAssetCode, toAssetCode, fromAmount) => dispatch(
     searchOffersAction(fromAssetCode, toAssetCode, fromAmount),
   ),
-  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, callback) => dispatch(
-    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, callback),
+  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback) => dispatch(
+    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback),
   ),
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetOffers: () => dispatch(resetOffersAction()),
@@ -1245,4 +1246,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));

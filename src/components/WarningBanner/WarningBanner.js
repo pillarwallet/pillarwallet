@@ -19,21 +19,21 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontStyles, baseColors } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { themedColors } from 'utils/themes';
 
 const WarningBannerBackground = styled.View`
-  background-color: ${baseColors.fireEngineRed};
+  background-color: ${themedColors.negative};
   width: 100%;
   padding: ${props => props.small ? '8px' : '16px'};
-  margin-bottom: 20px;
   justify-content: center;
   border-radius: ${props => props.rounded ? '8px' : 0};
 `;
 
 const WarningBannerText = styled(MediumText)`
-  color: ${baseColors.white};
+  color: ${themedColors.control};
   ${props => props.small ? fontStyles.regular : fontStyles.medium};
 `;
 

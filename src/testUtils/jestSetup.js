@@ -269,156 +269,118 @@ jest.setMock('react-native-keychain', {
 });
 
 jest.setMock('@walletconnect/react-native', WalletConnectMock);
+
 jest.setMock('services/insight', {
-  getAddressUtxosFromNode: async (address) => {
-    return new Promise(resolve => {
-      resolve({
-        json: () => {
-          return [
+  getAddressUtxosFromNode: (address) => Promise.resolve([
+    {
+      address,
+      txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+      vout: 0,
+      scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
+      amount: 1.3,
+      satoshis: 130000000,
+      height: 1180957,
+      confirmations: 14,
+    },
+  ]),
+  getBTCTransactionsFromNode: (address) => Promise.resolve([
+    {
+      _id: '5bd0b60d19b81e4567d3a10d',
+      chain: 'BTC',
+      network: 'mainnet',
+      coinbase: true,
+      mintIndex: 0,
+      spentTxid: '',
+      mintTxid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+      mintHeight: 1,
+      spentHeight: -2,
+      address,
+      script: 'xxx',
+      value: 5000000000,
+      confirmations: 6,
+      details: {
+        _id: '5ddcfa19b2cb5eecc49b5586',
+        txid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
+        network: 'testnet',
+        chain: 'BTC',
+        blockHeight: -1,
+        blockHash: '',
+        blockTime: '2019-11-26T10:10:33.958Z',
+        blockTimeNormalized: '2019-11-26T10:10:33.958Z',
+        coinbase: false,
+        locktime: 1609854,
+        inputCount: 1,
+        outputCount: 2,
+        size: 140,
+        fee: 168,
+        value: 4299832,
+        confirmations: 0,
+        coins: {
+          inputs: [
             {
-              address,
-              txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
-              vout: 0,
-              scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
-              amount: 1.3,
-              satoshis: 130000000,
-              height: 1180957,
-              confirmations: 14,
+              _id: '5ddcf7b3b2cb5eecc4985995',
+              chain: 'BTC',
+              network: 'testnet',
+              coinbase: false,
+              mintIndex: 23,
+              spentTxid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
+              mintTxid: '01fed78bbf178ec4e7bd4ba399f49bc8c1f6ef12188f6bf367117f194e74942f',
+              mintHeight: 1609853,
+              spentHeight: -1,
+              address: '2N9qAgGyvvSVJRGWvsseW13z9HuyvHnU3mo',
+              script: 'a914b5ed644cb29594a1715de4efb7acb566e1e140dc87',
+              value: 4300000,
+              confirmations: -1,
+              sequenceNumber: 4294967294,
             },
-          ];
-        },
-      });
-    });
-  },
-  getBTCTransactionsFromNode: async (address) => {
-    return new Promise(resolve => {
-      resolve([
-        {
-          _id: '5bd0b60d19b81e4567d3a10d',
-          chain: 'BTC',
-          network: 'mainnet',
-          coinbase: true,
-          mintIndex: 0,
-          spentTxid: '',
-          mintTxid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
-          mintHeight: 1,
-          spentHeight: -2,
-          address,
-          script: 'xxx',
-          value: 5000000000,
-          confirmations: 6,
-          details: {
-            _id: '5ddcfa19b2cb5eecc49b5586',
-            txid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
-            network: 'testnet',
-            chain: 'BTC',
-            blockHeight: -1,
-            blockHash: '',
-            blockTime: '2019-11-26T10:10:33.958Z',
-            blockTimeNormalized: '2019-11-26T10:10:33.958Z',
-            coinbase: false,
-            locktime: 1609854,
-            inputCount: 1,
-            outputCount: 2,
-            size: 140,
-            fee: 168,
-            value: 4299832,
-            confirmations: 0,
-            coins: {
-              inputs: [
-                {
-                  _id: '5ddcf7b3b2cb5eecc4985995',
-                  chain: 'BTC',
-                  network: 'testnet',
-                  coinbase: false,
-                  mintIndex: 23,
-                  spentTxid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
-                  mintTxid: '01fed78bbf178ec4e7bd4ba399f49bc8c1f6ef12188f6bf367117f194e74942f',
-                  mintHeight: 1609853,
-                  spentHeight: -1,
-                  address: '2N9qAgGyvvSVJRGWvsseW13z9HuyvHnU3mo',
-                  script: 'a914b5ed644cb29594a1715de4efb7acb566e1e140dc87',
-                  value: 4300000,
-                  confirmations: -1,
-                  sequenceNumber: 4294967294,
-                },
-              ],
-              outputs: [
-                {
-                  _id: '5ddcfa19b2cb5eecc49b5566',
-                  chain: 'BTC',
-                  network: 'testnet',
-                  coinbase: false,
-                  mintIndex: 0,
-                  spentTxid: '',
-                  mintTxid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
-                  mintHeight: -1,
-                  spentHeight: -2,
-                  address: 'mi8YXVUVAQrSx2KCST62KcCAuwjv9b8n5G',
-                  script: '76a9141cab62a9afad8154fcb813fba486a4e1f845af3d88ac',
-                  value: 1000000,
-                  confirmations: -1,
-                },
-                {
-                  _id: '5ddcfa19b2cb5eecc49b5567',
-                  chain: 'BTC',
-                  network: 'testnet',
-                  coinbase: false,
-                  mintIndex: 1,
-                  spentTxid: '',
-                  mintTxid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
-                  mintHeight: -1,
-                  spentHeight: -2,
-                  address: '2N7TyRzRx1BxZ11igaKTF46HtKo2hFt6sJF',
-                  script: 'a9149bfb046026e40f95e528960aead3208ffdcbb18f87',
-                  value: 3299832,
-                  confirmations: -1,
-                },
-              ],
+          ],
+          outputs: [
+            {
+              _id: '5ddcfa19b2cb5eecc49b5566',
+              chain: 'BTC',
+              network: 'testnet',
+              coinbase: false,
+              mintIndex: 0,
+              spentTxid: '',
+              mintTxid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
+              mintHeight: -1,
+              spentHeight: -2,
+              address: 'mi8YXVUVAQrSx2KCST62KcCAuwjv9b8n5G',
+              script: '76a9141cab62a9afad8154fcb813fba486a4e1f845af3d88ac',
+              value: 1000000,
+              confirmations: -1,
             },
-          },
+            {
+              _id: '5ddcfa19b2cb5eecc49b5567',
+              chain: 'BTC',
+              network: 'testnet',
+              coinbase: false,
+              mintIndex: 1,
+              spentTxid: '',
+              mintTxid: '2ecdd9a637b3b3d4584a09097566e0d028bc48da8b71e7d3f1f291a2897a462b',
+              mintHeight: -1,
+              spentHeight: -2,
+              address: '2N7TyRzRx1BxZ11igaKTF46HtKo2hFt6sJF',
+              script: 'a9149bfb046026e40f95e528960aead3208ffdcbb18f87',
+              value: 3299832,
+              confirmations: -1,
+            },
+          ],
         },
-      ]);
-    });
-  },
-  getAddressBalanceFromNode: async () => {
-    return new Promise(resolve => {
-      resolve({
-        json: () => {
-          return {
-            confirmed: 0,
-            unconfirmed: 0,
-            balance: 0,
-          };
-        },
-      });
-    });
-  },
-  sendRawTransactionToNode: async (raw) => {
-    const jsonPromise = new Promise(resolve => {
-      resolve({
-        txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
-      });
-    });
-
-    if (raw.length < 50) {
-      // Simulate failure
-      return new Promise(resolve => {
-        resolve({
-          ok: false,
-          status: 500,
-        });
-      });
-    }
-
-    return new Promise(resolve => {
-      resolve({
-        ok: true,
-        status: 200,
-        json: async (): Promise<Object> => {
-          return jsonPromise;
-        },
-      });
-    });
-  },
+      },
+    },
+  ]),
+  getAddressBalanceFromNode: () => Promise.resolve({
+    confirmed: 0,
+    unconfirmed: 0,
+    balance: 0,
+  }),
+  sendRawTransactionToNode: (raw) => raw.length < 50
+    ? Promise.reject()
+    : Promise.resolve({
+      txid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
+    }),
 });
+
+jest.setMock('react-native-appearance', {});
+

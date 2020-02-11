@@ -84,6 +84,10 @@ import { SOCKET } from 'services/sockets';
 // utils
 import { processNotification } from 'utils/notifications';
 
+// types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
+
 const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
@@ -109,13 +113,16 @@ function checkForSupportAlert(messageData) {
 }
 
 export const startListeningIntercomNotificationsAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { user } = await storage.get('user');
     if (!user) return;
     const { username } = user;
+    const supportHmac = await api.supportHmac();
+
     Intercom.handlePushMessage();
     Intercom.registerIdentifiedUser({ userId: username });
     Intercom.updateUser({ user_id: username, name: username });
+    Intercom.setUserHash(supportHmac);
     intercomNotificationsListener = ({ count }) => dispatch({
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
       payload: count,
@@ -137,19 +144,19 @@ export const stopListeningIntercomNotificationsAction = () => {
 };
 
 export const setUnreadNotificationsStatusAction = (status: boolean) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: status });
   };
 };
 
 export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: status });
   };
 };
 
 export const fetchAllNotificationsAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Dispatch) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
     dispatch(fetchSmartWalletTransactionsAction());
     dispatch(fetchInviteNotificationsAction());
@@ -158,7 +165,7 @@ export const fetchAllNotificationsAction = () => {
 };
 
 export const startListeningNotificationsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { data: wallet },
       invitations: { data: invitations },
@@ -234,7 +241,9 @@ export const startListeningNotificationsAction = () => {
           dispatch(fetchAllNotificationsAction());
         }, 30000);
         return;
-      } catch (err) { } // eslint-disable-line
+      } catch (err) {
+        //
+      }
     }
 
     if (notificationsListener) return;
@@ -263,6 +272,7 @@ export const startListeningNotificationsAction = () => {
         const contact = contacts.find(c => c.username === notification.navigationParams.username);
         if (contact) {
           if (!!navParams.username && navParams.username === contact.username) {
+            // $FlowFixMe - profileImage can be undefined
             dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
             return;
           }
@@ -293,7 +303,7 @@ export const startListeningNotificationsAction = () => {
 };
 
 export const stopListeningNotificationsAction = () => {
-  return async (dispatch: Function) => { // eslint-disable-line
+  return async () => {
     if (disabledPushNotificationsListener) clearInterval(disabledPushNotificationsListener);
     if (!notificationsListener) return;
     notificationsListener();
@@ -302,7 +312,7 @@ export const stopListeningNotificationsAction = () => {
 };
 
 export const startListeningOnOpenNotificationAction = () => {
-  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
+  return async (dispatch: Dispatch) => {
     await SOCKET.init();
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
@@ -368,7 +378,7 @@ export const startListeningOnOpenNotificationAction = () => {
 };
 
 export const stopListeningOnOpenNotificationAction = () => {
-  return (dispatch: Function) => { // eslint-disable-line
+  return () => {
     if (!notificationsOpenerListener) return;
     notificationsOpenerListener();
     notificationsOpenerListener = null;
@@ -376,7 +386,7 @@ export const stopListeningOnOpenNotificationAction = () => {
 };
 
 export const startListeningChatWebSocketAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
     const chatWebSocket = chat.getWebSocketInstance();
@@ -448,6 +458,7 @@ export const startListeningChatWebSocketAction = () => {
 
             if (contact) {
               if (!!navParams.username && navParams.username === contact.username) {
+                // $FlowFixMe - profileImage can be undefined
                 dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
                 return;
               }

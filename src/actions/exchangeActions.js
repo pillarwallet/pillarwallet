@@ -79,6 +79,7 @@ export const takeOfferAction = (
   toAssetCode: string,
   fromAmount: number,
   provider: string,
+  trackId: string,
   callback: Function,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -119,7 +120,7 @@ export const takeOfferAction = (
       fromAssetAddress,
       toAssetAddress,
     };
-    const order = await exchangeService.takeOffer(offerRequest);
+    const order = await exchangeService.takeOffer(offerRequest, trackId);
     const offerOrderData = get(order, 'data');
     if (isEmpty(offerOrderData) || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};
@@ -242,10 +243,12 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established
-      const { error } = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
+      const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
+      const responseError = get(response, 'error');
 
-      if (error) {
-        const message = error.message || 'Unable to connect';
+      if (responseError) {
+        const responseErrorMessage = get(responseError, 'response.data.error.message');
+        const message = responseErrorMessage || 'Unable to connect';
         if (message.toString().toLowerCase().startsWith('access token')) {
           /**
            * access token is expired or malformed,

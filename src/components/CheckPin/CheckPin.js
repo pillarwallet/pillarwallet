@@ -26,7 +26,7 @@ import get from 'lodash.get';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { checkAuthAction } from 'actions/authActions';
-import { Container, Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -49,7 +49,7 @@ type State = {
   lastAppState: string,
 }
 
-const CheckPinWrapper = styled(Wrapper)`
+const CheckPinWrapper = styled(Container)`
   margin-top: auto;
   height: 100%;
   flex: 1;

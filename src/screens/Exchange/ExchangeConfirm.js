@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { View, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
@@ -45,10 +45,11 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { baseColors, fontSizes, spacing, UIColors, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { formatAmount, formatAmountDisplay, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // models, types
 import type { GasInfo } from 'models/GasInfo';
@@ -56,6 +57,7 @@ import type { Asset, Balances, Rates } from 'models/Asset';
 import type { OfferOrder, ProvidersMeta } from 'models/Offer';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -82,7 +84,6 @@ const Value = styled(MediumText)`
 
 const LabelSub = styled(BaseText)`
   margin-top: 5px;
-  color: ${baseColors.black};
   ${fontStyles.regular};
 `;
 
@@ -99,7 +100,7 @@ const ButtonWrapper = styled.View`
 
 const WarningMessage = styled(Paragraph)`
   text-align: center;
-  color: ${baseColors.fireEngineRed};
+  color: ${themedColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
 
@@ -121,7 +122,7 @@ const WalletSwitcher = styled.TouchableOpacity`
 `;
 
 const SeparatorValue = styled(Value)`
-  color: ${baseColors.coolGrey};
+  color: ${themedColors.secondaryText};
   margin: 0px 8px;
 `;
 
@@ -134,7 +135,7 @@ const ChevronWrapper = styled.View`
 
 const SelectorChevron = styled(Icon)`
   font-size: 8px;
-  color: ${baseColors.electricBlue};
+  color: ${themedColors.primary};
 `;
 
 type Props = {
@@ -149,6 +150,7 @@ type Props = {
   executingExchangeTransaction: boolean,
   setDismissTransaction: Function,
   providersMeta: ProvidersMeta,
+  theme: Theme,
 };
 
 type State = {
@@ -316,7 +318,9 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       session,
       balances,
       providersMeta,
+      theme,
     } = this.props;
+    const colors = getThemeColors(theme);
 
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const {
@@ -353,7 +357,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           customOnBack: this.handleBack,
         }}
       >
-        <ScrollWrapper regularPadding color={UIColors.defaultBackgroundColor}>
+        <ScrollWrapper regularPadding>
           <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
             {setTokenAllowance
               ? 'Review the details and enable asset as well as confirm the cost of data transaction.'
@@ -420,7 +424,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             </View>
           </LabeledRow>
         </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40} backgroundColor={UIColors.defaultBackgroundColor}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <Button
@@ -474,4 +478,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

@@ -19,9 +19,15 @@
 */
 import { EXCHANGE_URL, MOONPAY_API_URL, MOONPAY_KEY } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
-import type { OfferRequest, TokenAllowanceRequest } from 'models/Offer';
+// utils, services
 import { extractJwtPayload, getRandomString } from 'utils/common';
+import { API_REQUEST_TIMEOUT } from 'services/api';
+
+// types
+import type { OfferRequest, TokenAllowanceRequest } from 'models/Offer';
+
 
 const executeCallback = (data?: any, callback?: Function) => {
   if (typeof callback === 'function') callback(data);
@@ -38,6 +44,7 @@ const buildAPIConfig = (accessToken: string) => ({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
+  timeout: API_REQUEST_TIMEOUT,
 });
 
 export default class ExchangeService {
@@ -126,30 +133,30 @@ export default class ExchangeService {
 
   requestOffers(fromAssetAddress: string, toAssetAddress: string, quantity: number) {
     const urlPath = `offers?fromAssetAddress=${fromAssetAddress}&toAssetAddress=${toAssetAddress}&quantity=${quantity}`;
-    return fetch(buildApiUrl(urlPath, '2.0'), this.apiConfig)
-      .then(response => response.text())
-      .then(response => response.toLowerCase() === 'ok' ? {} : JSON.parse(response))
-      .catch(error => ({ error }));
+    return axios.get(buildApiUrl(urlPath, '2.0'), this.apiConfig)
+      .then(({ data }: AxiosResponse) => data)
+      .then(response => typeof response === 'string' && response.toLowerCase() === 'ok' ? {} : response)
+      .catch((error: AxiosError) => ({ error }));
   }
 
-  takeOffer(order: OfferRequest) {
-    return fetch(buildApiUrl('orders', '2.0'), {
-      ...this.apiConfig,
-      method: 'POST',
-      body: JSON.stringify(order),
-    })
-      .then(response => response.json())
-      .catch(error => ({ error }));
+  takeOffer(order: OfferRequest, trackId: string) {
+    return axios.post(
+      buildApiUrl('orders', '2.0'),
+      JSON.stringify(order),
+      { ...this.apiConfig, headers: { ...this.apiConfig.headers, trackid: trackId } },
+    )
+      .then(({ data }: AxiosResponse) => data)
+      .catch((error: AxiosError) => ({ error }));
   }
 
   setTokenAllowance(request: TokenAllowanceRequest) {
-    return fetch(buildApiUrl('orders/allowance', '2.0'), {
-      ...this.apiConfig,
-      method: 'POST',
-      body: JSON.stringify(request),
-    })
-      .then(response => response.json())
-      .catch(error => ({ error }));
+    return axios.post(
+      buildApiUrl('orders/allowance', '2.0'),
+      JSON.stringify(request),
+      this.apiConfig,
+    )
+      .then(({ data }: AxiosResponse) => data)
+      .catch((error: AxiosError) => ({ error }));
   }
 
   getShapeshiftAuthUrl() {
@@ -161,15 +168,15 @@ export default class ExchangeService {
 
   getShapeshiftAccessToken(tokenHash: string) {
     const urlPath = `gettoken?hash=${tokenHash}`;
-    return fetch(buildApiUrl(urlPath), this.apiConfig)
-      .then(response => response.json())
-      .catch(error => ({ error }));
+    return axios.get(buildApiUrl(urlPath), this.apiConfig)
+      .then(({ data }: AxiosResponse) => data)
+      .catch((error: AxiosError) => ({ error }));
   }
 
   getIPInformation() {
     if (!this.ipInfo) {
-      return fetch(`${MOONPAY_API_URL}/v3/ip_address?apiKey=${MOONPAY_KEY}`)
-        .then(resp => resp.json())
+      return axios.get(`${MOONPAY_API_URL}/v3/ip_address?apiKey=${MOONPAY_KEY}`)
+        .then(({ data }: AxiosResponse) => data)
         .then(data => {
           this.setIPInfo(data);
           return data;
@@ -180,21 +187,21 @@ export default class ExchangeService {
   }
 
   getMetaData() {
-    return fetch(buildApiUrl('shims/meta', '2.0'))
-      .then(resp => resp.json())
+    return axios.get(buildApiUrl('shims/meta', '2.0'))
+      .then(({ data }: AxiosResponse) => data)
       .then(({ data }) => data.items || [])
       .catch(() => []);
   }
 
   getProdAssetsAddress() {
-    return fetch(buildApiUrl('prod-assets'))
-      .then(resp => resp.json())
+    return axios.get(buildApiUrl('prod-assets'))
+      .then(({ data }: AxiosResponse) => data)
       .catch(() => []);
   }
 
   getExchangeSupportedAssets() {
-    return fetch(buildApiUrl('shims/assets', '1.0'))
-      .then(resp => resp.json())
+    return axios.get(buildApiUrl('shims/assets', '1.0'))
+      .then(({ data }: AxiosResponse) => data)
       .catch(() => []);
   }
 }

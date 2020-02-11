@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
@@ -63,7 +63,7 @@ const StatusIcon = styled.View`
   height: 8px;
   width: 8px;
   border-radius: 4px;
-  background-color: ${props => props.isActive ? baseColors.fruitSalad : baseColors.fireEngineRed};
+  background-color: ${({ isActive, theme }) => isActive ? theme.colors.positive : theme.colors.negative};
   position: absolute;
   top: 5px;
   left: 5px;
@@ -100,7 +100,7 @@ const Status = ({ isActive }) => {
   );
 };
 
-export const HeaderActionButton = (props: Props) => {
+const HeaderActionButton = (props: Props) => {
   const {
     label,
     onPress,
@@ -118,3 +118,6 @@ export const HeaderActionButton = (props: Props) => {
     </HeaderButtonRounded>
   );
 };
+
+export default HeaderActionButton;
+

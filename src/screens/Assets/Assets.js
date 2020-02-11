@@ -34,7 +34,7 @@ import Button from 'components/Button';
 import { Container } from 'components/Layout';
 
 // types
-import type { Assets, Asset } from 'models/Asset';
+import type { Assets } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -78,14 +78,8 @@ type Props = {
   fetchInitialAssets: () => void,
   assets: Assets,
   collectibles: Collectible[],
-  wallet: Object,
-  rates: Object,
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: ?string,
-  assetsLayout: string,
-  assetsSearchResults: Asset[],
-  assetsSearchState: ?string,
   badges: Badges,
   accounts: Accounts,
   smartWalletState: Object,
@@ -321,7 +315,6 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          leftItems: [{ user: true }],
           rightItems: [{
             actionButton: {
               key: 'manageAccounts',
@@ -331,6 +324,10 @@ class AssetsScreen extends React.Component<Props, State> {
               ...customHeaderButtonProps,
             },
           }],
+          leftItems: [{
+            title: 'Assets',
+          }],
+          noBack: true,
         }}
         inset={{ bottom: 0 }}
       >
@@ -342,27 +339,16 @@ class AssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
-  wallet: { data: wallet, backupStatus },
-  assets: {
-    assetsState,
-    assetsSearchState,
-    assetsSearchResults,
-  },
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout }, useBiometrics = false } },
+  wallet: { backupStatus },
+  assets: { assetsState },
+  appSettings: { data: { useBiometrics = false } },
   badges: { data: badges },
   smartWallet: smartWalletState,
   blockchainNetwork: { data: blockchainNetworks },
 }: RootReducerState): $Shape<Props> => ({
-  wallet,
   backupStatus,
   accounts,
   assetsState,
-  assetsSearchState,
-  assetsSearchResults,
-  rates,
-  baseFiatCurrency,
-  assetsLayout,
   useBiometrics,
   badges,
   smartWalletState,
