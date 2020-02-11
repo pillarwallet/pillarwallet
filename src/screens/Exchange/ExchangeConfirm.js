@@ -28,10 +28,11 @@ import { createStructuredSelector } from 'reselect';
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { Label, MediumText, Paragraph, TextLink, BaseText } from 'components/Typography';
+import { MediumText, Paragraph, BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import HyperLink from 'components/HyperLink';
+import SelectorList from 'components/SelectorList';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -99,12 +100,6 @@ const FooterWrapper = styled.View`
 
 const LabeledRow = styled.View`
   margin: 10px 0;
-`;
-
-const SpeedButton = styled(Button)`
-  margin-top: 14px;
-  display: flex;
-  justify-content: space-between;
 `;
 
 const ButtonWrapper = styled.View`
@@ -182,23 +177,30 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   renderTxSpeedButtons = () => {
     const { rates, baseFiatCurrency } = this.props;
+    const { transactionSpeed } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(SPEED_TYPES).map(txSpeed => {
+
+    const speedOptions = Object.keys(SPEED_TYPES).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-      // $FlowFixMe
       const speedTitle = SPEED_TYPES[txSpeed];
-      return (
-        <SpeedButton
-          key={txSpeed}
-          primaryInverted
-          onPress={() => this.handleGasPriceChange(txSpeed)}
-        >
-          <TextLink>{speedTitle} - {feeInEth} ETH</TextLink>
-          <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
-        </SpeedButton>
-      );
+      return {
+        id: speedTitle,
+        label: speedTitle,
+        valueToShow: `${feeInEth} ETH | ${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`,
+        value: txSpeed,
+      };
     });
+
+    return (
+      <SelectorList
+        onSelect={(selectedValue) => this.handleGasPriceChange(selectedValue.toString())}
+        options={speedOptions}
+        selectedValue={transactionSpeed}
+        numColumns={3}
+        minItemWidth={90}
+      />
+    );
   };
 
   handleGasPriceChange = (txSpeed: string) => {
@@ -392,8 +394,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           title="Transaction speed"
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
         >
-          <Label>Choose your gas price.</Label>
-          <Label>Faster transaction requires more fee.</Label>
           <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
         </SlideModal>
       </ContainerWithHeader>
