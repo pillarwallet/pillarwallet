@@ -2,7 +2,11 @@ package com.pillarproject.wallet;
 
 import android.app.Application;
 
+import androidx.multidex.MultiDexApplication;
+
 import com.facebook.react.ReactApplication;
+
+import io.intercom.android.sdk.Intercom;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -39,7 +43,7 @@ import com.facebook.soloader.SoLoader;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainApplication extends Application implements ReactApplication {
+public class MainApplication extends MultiDexApplication implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -55,7 +59,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNCWebViewPackage(),
             new VectorIconsPackage(),
             new UdpSocketsModule(),
-            new RNThreadPackage(),
+            new RNThreadPackage(mReactNativeHost),
             new TcpSocketsModule(),
             new SvgPackage(),
             new SplashScreenReactPackage(),
@@ -96,6 +100,14 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    if (BuildConfig.DEBUG) {
+      Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
+    } else {
+      Intercom.initialize(this, "android_sdk-b989462efb366f8046f5ca1a12c75d67ecb7592c", "s70dqvb2");
+    }
     SoLoader.init(this, /* native exopackage */ false);
+    // TODO: remove this call?
+    long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
+    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
   }
 }
