@@ -9,7 +9,7 @@ class ImageCapInset extends Component {
     return (
       <ImageBackground
         {...this.props}
-        resizeMode="stretch"
+        resizeMode={'stretch'}
       />
     );
   }
