@@ -31,6 +31,7 @@ import Button from 'components/Button';
 import { Label, MediumText, Paragraph, TextLink, BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
+import HyperLink from 'components/HyperLink';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -377,10 +378,12 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               <BaseText small center style={{ maxWidth: 242, marginTop: 24 }}>
                 Final rate may be slightly higher or lower at the end of the transaction.
               </BaseText>
-              <ButtonText
-                buttonText="Read more"
-                fontSize={fontSizes.small}
-              />
+              <HyperLink
+                style={{ fontSize: fontSizes.small }}
+                url="https://help.pillarproject.io/en/articles/3487702-why-did-i-receive-less-tokens"
+              >
+                Read more
+              </HyperLink>
             </React.Fragment>}
           </FooterWrapper>
         </ScrollWrapper>
