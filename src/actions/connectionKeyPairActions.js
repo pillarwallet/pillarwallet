@@ -26,7 +26,7 @@ import type { ConnectionIdentityKey } from 'models/Connections';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { fetchOldInviteNotificationsAction } from 'actions/oldInvitationsActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import { saveDbAction } from 'actions/dbActions';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';

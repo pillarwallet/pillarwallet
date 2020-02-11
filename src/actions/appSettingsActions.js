@@ -38,7 +38,7 @@ import {
   resetKeychainDataObject,
 } from 'utils/keychain';
 
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 

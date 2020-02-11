@@ -32,7 +32,7 @@ import { STATUS_ACCEPTED, STATUS_BLOCKED, STATUS_MUTED } from 'constants/connect
 import { uniqBy } from 'utils/common';
 
 // services
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 
 // models, types
 import type { ConnectionIdentityKey } from 'models/Connections';
