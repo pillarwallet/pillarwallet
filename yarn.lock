@@ -768,13 +768,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@egjs/hammerjs@^2.0.17":
-  version "2.0.17"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
-  integrity sha1-XcAq91pqBuTC2wICyuOMkmOJUSQ=
-  dependencies:
-    "@types/hammerjs" "^2.0.36"
-
 "@ensdomains/ens@0.3.5":
   version "0.3.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ensdomains/ens/-/ens-0.3.5.tgz#5898765c17d893e8c67a28ceca8fc43b4583d5a5"
@@ -1332,11 +1325,6 @@
   integrity sha1-oHR4DrvAq7beQqrJnqWX/QsVfc8=
   dependencies:
     "@types/node" "*"
-
-"@types/hammerjs@^2.0.36":
-  version "2.0.36"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/hammerjs/-/hammerjs-2.0.36.tgz#17ce0a235e9ffbcdcdf5095646b374c2bf615a4c"
-  integrity sha1-F84KI16f+83N9QlWRrN0wr9hWkw=
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.1"
@@ -6059,11 +6047,10 @@ growly@^1.3.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
   integrity sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
 
-"hammerjs@https://github.com/naver/hammer.js.git":
-  version "2.0.17-snapshot"
-  resolved "https://github.com/naver/hammer.js.git#54bc698b25edd6e1b76ca975ebaced5ce0467d51"
-  dependencies:
-    "@types/hammerjs" "^2.0.36"
+hammerjs@^2.0.8:
+  version "2.0.8"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
+  integrity sha1-BO93hiz/K7edMPdpIJWTAiK/YPE=
 
 handlebars@^4.0.3:
   version "4.7.3"
@@ -11245,13 +11232,12 @@ react-native-firebase@^4.2.0:
     postinstall-build "^5.0.1"
     prop-types "^15.6.1"
 
-react-native-gesture-handler@^1.5.6:
-  version "1.5.6"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-gesture-handler/-/react-native-gesture-handler-1.5.6.tgz#5d90145f624e3707db2930f43ab41579683e2375"
-  integrity sha1-XZAUX2JONwfbKTD0OrQVeWg+I3U=
+react-native-gesture-handler@1.4.1:
+  version "1.4.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-gesture-handler/-/react-native-gesture-handler-1.4.1.tgz#c38d9e57637b95e221722a79f2bafac62e3aeb21"
+  integrity sha1-w42eV2N7leIhcip58rr6xi466yE=
   dependencies:
-    "@egjs/hammerjs" "^2.0.17"
-    hammerjs "https://github.com/naver/hammer.js.git"
+    hammerjs "^2.0.8"
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
@@ -11376,6 +11362,11 @@ react-native-randombytes@^3.0.0:
   dependencies:
     buffer "^4.9.1"
     sjcl "^1.0.3"
+
+react-native-safe-area-context@^0.4.1:
+  version "0.4.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-safe-area-context/-/react-native-safe-area-context-0.4.1.tgz#2a6d5cf046d94f1f9dbe4249cb44517135764aed"
+  integrity sha1-Km1c8EbZTx+dvkJJy0RRcTV2Su0=
 
 react-native-safe-area-view@^0.14.8:
   version "0.14.8"
