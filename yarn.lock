@@ -5888,6 +5888,11 @@ growly@^1.3.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
   integrity sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
 
+hammerjs@^2.0.8:
+  version "2.0.8"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
+  integrity sha1-BO93hiz/K7edMPdpIJWTAiK/YPE=
+
 handlebars@^4.0.3:
   version "4.7.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/handlebars/-/handlebars-4.7.3.tgz#8ece2797826886cf8082d1726ff21d2a022550ee"
@@ -8403,10 +8408,10 @@ lodash.unionby@^4.8.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.unionby/-/lodash.unionby-4.8.0.tgz#883f098ff78f564a727b7508e09cdd539734bb83"
   integrity sha1-iD8Jj/ePVkpye3UI4JzdU5c0u4M=
 
-lodash@4.17.0:
-  version "4.17.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash/-/lodash-4.17.0.tgz#93f4466e5ab73e5a1f1216c34eea11535f0a8df5"
-  integrity sha1-k/RGblq3PlofEhbDTuoRU18KjfU=
+lodash@4.17.10:
+  version "4.17.10"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+  integrity sha1-G3eTz3JZ6jj7NmHU04syYK+K5Oc=
 
 lodash@4.17.4:
   version "4.17.4"
@@ -9236,23 +9241,25 @@ native-base-shoutem-theme@0.2.2:
     lodash "^4.10.1"
     prop-types "^15.5.10"
 
-native-base@2.7.2:
-  version "2.7.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/native-base/-/native-base-2.7.2.tgz#682bc2bc9f9e4d3b27a8c58ad4b5994222ad0ebd"
-  integrity sha1-aCvCvJ+eTTsnqMWK1LWZQiKtDr0=
+native-base@2.11.0:
+  version "2.11.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/native-base/-/native-base-2.11.0.tgz#853ec5efed54a294e649662ec310c19785fdb2f2"
+  integrity sha1-hT7F7+1UopTmSWYuwxDBl4X9svI=
   dependencies:
     blueimp-md5 "^2.5.0"
     clamp "^1.0.1"
     color "~1.0.3"
     fs-extra "^2.0.0"
     jest-react-native "^18.0.0"
-    lodash "4.17.0"
+    lodash "4.17.10"
     native-base-shoutem-theme "0.2.2"
     print-message "^2.1.0"
     prop-types "^15.5.10"
+    react-native-drawer "2.5.1"
     react-native-easy-grid "0.2.0"
-    react-native-keyboard-aware-scroll-view "0.5.0"
-    react-native-vector-icons "4.6.0"
+    react-native-keyboard-aware-scroll-view "0.8.0"
+    react-native-vector-icons "6.1.0"
+    react-timer-mixin "^0.13.4"
     react-tween-state "^0.1.5"
     tween-functions "^1.0.1"
 
@@ -10893,6 +10900,14 @@ react-native-dotenv@^0.2.0:
   dependencies:
     babel-plugin-dotenv "0.1.1"
 
+react-native-drawer@2.5.1:
+  version "2.5.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-drawer/-/react-native-drawer-2.5.1.tgz#08b9314184f48c724f1b467f8859797369798654"
+  integrity sha1-CLkxQYT0jHJPG0Z/iFl5c2l5hlQ=
+  dependencies:
+    prop-types "^15.5.8"
+    tween-functions "^1.0.1"
+
 react-native-easy-grid@0.2.0:
   version "0.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-easy-grid/-/react-native-easy-grid-0.2.0.tgz#4718031aa1baaa2613b829fc807da288eb0d2797"
@@ -10934,6 +10949,16 @@ react-native-firebase@^4.2.0:
     postinstall-build "^5.0.1"
     prop-types "^15.6.1"
 
+react-native-gesture-handler@1.4.1:
+  version "1.4.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-gesture-handler/-/react-native-gesture-handler-1.4.1.tgz#c38d9e57637b95e221722a79f2bafac62e3aeb21"
+  integrity sha1-w42eV2N7leIhcip58rr6xi466yE=
+  dependencies:
+    hammerjs "^2.0.8"
+    hoist-non-react-statics "^2.3.1"
+    invariant "^2.2.4"
+    prop-types "^15.7.2"
+
 "react-native-gifted-chat@https://github.com/FaridSafi/react-native-gifted-chat#v0.7.3":
   version "0.7.2"
   resolved "https://github.com/FaridSafi/react-native-gifted-chat#c90f86ab452f5f128ec43721953aa5006d0d5469"
@@ -10954,10 +10979,10 @@ react-native-htmlview@^0.13.0:
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
 
-react-native-image-crop-picker@^0.23.1:
-  version "0.23.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.23.1.tgz#26c1b899dbe4358b9f2c98369109a42a8141682a"
-  integrity sha1-JsG4mdvkNYufLJg2kQmkKoFBaCo=
+react-native-image-crop-picker@~0.24.0:
+  version "0.24.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.24.1.tgz#4408e2bb20e3c082c0191e0acf0c8c7a1e9804ea"
+  integrity sha1-RAjiuyDjwILAGR4KzwyMeh6YBOo=
 
 react-native-image-view@^2.1.6:
   version "2.1.9"
@@ -10969,12 +10994,20 @@ react-native-intercom@12.3.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-12.3.0.tgz#8300a7d41046c55364ed25ea6b2e2fc8f73e4b33"
   integrity sha1-gwCn1BBGxVNk7SXqay4vyPc+SzM=
 
-react-native-iphone-x-helper@^1.0.1:
+react-native-iphone-x-helper@^1.0.1, react-native-iphone-x-helper@^1.0.3:
   version "1.2.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha1-ZF4v+7tJ6AhEu0y740oSb9oeZ3I=
 
-react-native-keyboard-aware-scroll-view@0.5.0, react-native-keyboard-aware-scroll-view@^0.5.0:
+react-native-keyboard-aware-scroll-view@0.8.0:
+  version "0.8.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-keyboard-aware-scroll-view/-/react-native-keyboard-aware-scroll-view-0.8.0.tgz#00bcaa38c91323913bb7a733059ad2bc4875f88c"
+  integrity sha1-ALyqOMkTI5E7t6czBZrSvEh1+Iw=
+  dependencies:
+    prop-types "^15.6.2"
+    react-native-iphone-x-helper "^1.0.3"
+
+react-native-keyboard-aware-scroll-view@^0.5.0:
   version "0.5.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-keyboard-aware-scroll-view/-/react-native-keyboard-aware-scroll-view-0.5.0.tgz#57ab933089375bf62f4324797e8be949ad97849d"
   integrity sha1-V6uTMIk3W/YvQyR5fovpSa2XhJ0=
@@ -11054,6 +11087,11 @@ react-native-randombytes@^3.0.0:
   dependencies:
     buffer "^4.9.1"
     sjcl "^1.0.3"
+
+react-native-safe-area-context@^0.4.1:
+  version "0.4.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-safe-area-context/-/react-native-safe-area-context-0.4.1.tgz#2a6d5cf046d94f1f9dbe4249cb44517135764aed"
+  integrity sha1-Km1c8EbZTx+dvkJJy0RRcTV2Su0=
 
 react-native-safe-area-view@^0.14.8:
   version "0.14.8"
@@ -11147,10 +11185,10 @@ react-native-tcp@^3.2.1:
     process "^0.11.9"
     util "^0.10.3"
 
-react-native-threads@^0.0.15:
-  version "0.0.15"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-threads/-/react-native-threads-0.0.15.tgz#7dee96658065aa74ca65a27995e29d97da3aae34"
-  integrity sha1-fe6WZYBlqnTKZaJ5leKdl9o6rjQ=
+react-native-threads@^0.0.16:
+  version "0.0.16"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-threads/-/react-native-threads-0.0.16.tgz#eb4a68ae6c32b6b9a80579ec5f9359d33ce9125b"
+  integrity sha1-60pormwytrmoBXnsX5NZ0zzpEls=
 
 react-native-udp@^2.1.0:
   version "2.7.0"
@@ -11163,13 +11201,13 @@ react-native-udp@^2.1.0:
     ip-regex "^1.0.3"
     util "^0.10.3"
 
-react-native-vector-icons@4.6.0:
-  version "4.6.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-vector-icons/-/react-native-vector-icons-4.6.0.tgz#e4014311ffa6de397d914ffc31b7097a874cc8d5"
-  integrity sha1-5AFDEf+m3jl9kU/8MbcJeodMyNU=
+react-native-vector-icons@6.1.0:
+  version "6.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-vector-icons/-/react-native-vector-icons-6.1.0.tgz#770a3f8ced692d75deb3afbb9829195ceed1eedd"
+  integrity sha1-dwo/jO1pLXXes6+7mCkZXO7R7t0=
   dependencies:
     lodash "^4.0.0"
-    prop-types "^15.5.10"
+    prop-types "^15.6.2"
     yargs "^8.0.2"
 
 react-native-vector-icons@^6.4.2:
@@ -11347,6 +11385,11 @@ react-test-renderer@16.8.3:
     prop-types "^15.6.2"
     react-is "^16.8.3"
     scheduler "^0.13.3"
+
+react-timer-mixin@^0.13.4:
+  version "0.13.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz#75a00c3c94c13abe29b43d63b4c65a88fc8264d3"
+  integrity sha1-daAMPJTBOr4ptD1jtMZaiPyCZNM=
 
 react-transform-hmr@^1.0.4:
   version "1.0.4"

@@ -70,7 +70,7 @@
     "lodash.unionby": "^4.8.0",
     "lottie-react-native": "3.0.2",
     "lottie-ios": "3.0.3",
-    "native-base": "2.7.2",
+    "native-base": "2.11.0",
     "patch-package": "^6.2.0",
     "path-browserify": "0.0.0",
     "polished": "^1.9.2",
@@ -96,7 +96,7 @@
     "react-native-firebase": "^4.2.0",
     "react-native-gifted-chat": "https://github.com/FaridSafi/react-native-gifted-chat#v0.7.3",
     "react-native-htmlview": "^0.13.0",
-    "react-native-image-crop-picker": "^0.23.1",
+    "react-native-image-crop-picker": "~0.24.0",
     "react-native-image-view": "^2.1.6",
     "react-native-intercom": "12.3.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
@@ -117,7 +117,7 @@
     "react-native-swipeout": "^2.3.6",
     "react-native-swiper": "^1.5.14",
     "react-native-tcp": "^3.2.1",
-    "react-native-threads": "^0.0.15",
+    "react-native-threads": "^0.0.16",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^6.4.2",
     "react-native-webview": "^5.12.0",
@@ -176,7 +176,9 @@
     "metro-react-native-babel-preset": "^0.58.0",
     "mock-socket": "^8.0.5",
     "react-test-renderer": "16.8.3",
-    "redux-mock-store": "^1.5.1"
+    "redux-mock-store": "^1.5.1",
+    "react-native-safe-area-context": "^0.4.1",
+    "react-native-gesture-handler": "1.4.1"
   },
   "jest": {
     "preset": "react-native",

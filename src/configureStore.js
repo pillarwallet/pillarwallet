@@ -20,7 +20,7 @@
 /**
  * Create the Redux store
  */
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import { persistStore, persistReducer } from 'redux-persist';
 // import { createMigrate } from 'redux-persist';
@@ -31,11 +31,7 @@ import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-hel
 import ReduxAsyncQueue from 'redux-async-queue';
 import offlineMiddleware from 'utils/offlineMiddleware';
 import PillarSdk from 'services/api';
-import { isTest } from 'utils/environment';
 import rootReducer from './reducers/rootReducer';
-import { ReactotronConfig } from '../reactotron.config';
-
-ReactotronConfig();
 
 // migration example
 /*
@@ -80,19 +76,11 @@ const enhancer = composeWithDevTools({
 })(applyMiddleware(...middlewares));
 
 const configureStore = (initialState: ?Object): Object => {
-  const useReactotron = __DEV__ && !isTest;
-
-  const store = useReactotron ?
-    createStore(
-      pReducer,
-      initialState,
-      compose(enhancer, Reactotron.createEnhancer()), // eslint-disable-line no-undef
-    ) :
-    createStore(
-      pReducer,
-      initialState,
-      enhancer,
-    );
+  const store = createStore(
+    pReducer,
+    initialState,
+    enhancer,
+  );
 
   const persistor = persistStore(store);
 
