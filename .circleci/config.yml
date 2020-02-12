@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.2.0"
+      xcode: "11.3.1"
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
@@ -30,11 +30,6 @@ executors:
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
-
-  node8-executor:
-    working_directory: ~/pillarwallet
-    docker:
-      - image: circleci/openjdk:8-node-browsers
 
   node10-executor:
     working_directory: ~/pillarwallet
@@ -348,16 +343,6 @@ jobs:
           root: /tmp/workspace
           paths:
             - android-release             
-
-  slack-prod-approval:
-    executor: node8-executor
-    steps:
-      - slack/approval:
-          mentions: "here"
-          color: '#f28c10'
-          message: Staging builds finished successfully, prod approval step is pending.
-          webhook: $APPROVAL_SLACK_WEBHOOK
-          url: 'https://circleci.com/workflow-run/$CIRCLE_WORKFLOW_WORKSPACE_ID'
 
   get-latest-tag:
     executor: node10-executor
