@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { ethers, utils, providers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
@@ -76,7 +76,8 @@ export function catchTransactionError(e: Object, type: string, tx: Object) {
 
 // handle eth_signTransaction
 export function signTransaction(trx: Object, wallet: Object): Promise<string> {
-  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  wallet.connect(provider);
   if (trx && trx.from) {
     delete trx.from;
   }
@@ -85,14 +86,16 @@ export function signTransaction(trx: Object, wallet: Object): Promise<string> {
 
 // handle eth_sign
 export function signMessage(message: any, wallet: Object): string {
-  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  wallet.connect(provider);
   // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
   return ethSign(message, wallet.privateKey);
 }
 
 // handle personal_sign
 export function signPersonalMessage(message: string, wallet: Object): Promise<string> {
-  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  wallet.connect(provider);
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
 

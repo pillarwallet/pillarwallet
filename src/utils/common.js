@@ -253,8 +253,8 @@ const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitio
 
 const getTransitionDuration = (isFaster: boolean) => {
   let duration = 400;
-  if (isFaster) {
-    duration = Platform.OS === 'ios' ? 500 : 250;
+  if (isFaster && Platform.OS === 'android') {
+    duration = 250;
   }
   return duration;
 };

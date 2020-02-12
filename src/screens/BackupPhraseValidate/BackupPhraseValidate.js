@@ -238,7 +238,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Verify backup phrase' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <ShuffledWordWrapper>
               {this.renderShuffledWordList()}

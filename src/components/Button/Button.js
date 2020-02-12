@@ -122,6 +122,9 @@ const themes = {
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
+  positive: {
+    borderWidth: 0,
+  },
 };
 
 const themeColors = (theme) => {
@@ -160,6 +163,7 @@ const themeColors = (theme) => {
     },
     danger: {
       background: colors.negative,
+      surface: colors.danger,
       text: colors.control,
     },
     dark: {
@@ -186,6 +190,10 @@ const themeColors = (theme) => {
       surface: 'transparent',
       text: colors.negative,
       border: 'transparent',
+    },
+    positive: {
+      surface: colors.positive,
+      text: colors.control,
     },
   });
 };

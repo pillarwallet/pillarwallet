@@ -19,10 +19,10 @@
 */
 import merge from 'lodash.merge';
 import {
+  START_SEARCH,
+  FINISH_SEARCH,
   UPDATE_CONTACTS,
-  UPDATE_SEARCH_RESULTS,
-  UPDATE_CONTACTS_STATE,
-  FETCHED,
+  RESET_SEARCH_RESULTS,
   DISCONNECT_CONTACT,
   START_SYNC_CONTACTS_SMART_ADDRESSES,
   UPDATE_CONTACTS_SMART_ADDRESSES,
@@ -30,15 +30,15 @@ import {
 } from 'constants/contactsConstants';
 import type { ApiUser, SearchResults, ContactSmartAddressData } from 'models/Contacts';
 
-export type ContactsReducerState = {
+export type ContactsReducerState = {|
   data: ApiUser[],
-  contactState: ?string,
+  isSearching: boolean,
   searchResults: SearchResults,
   contactsSmartAddresses: {
     addresses: ContactSmartAddressData[],
     isFetched: boolean,
   },
-};
+|};
 
 export type ContactsReducerAction = {
   type: string,
@@ -47,7 +47,7 @@ export type ContactsReducerAction = {
 
 export const initialState = {
   data: [],
-  contactState: null,
+  isSearching: false,
   searchResults: {
     apiUsers: [],
     localContacts: [],
@@ -63,23 +63,33 @@ export default function contactsReducer(
   action: ContactsReducerAction,
 ): ContactsReducerState {
   switch (action.type) {
-    case UPDATE_CONTACTS_STATE:
-      return { ...state, contactState: action.payload };
+    case START_SEARCH:
+      return { ...state, isSearching: true, searchResults: action.payload };
+
+    case FINISH_SEARCH:
+      return { ...state, isSearching: false, searchResults: action.payload };
+
+    case RESET_SEARCH_RESULTS:
+      return { ...state, searchResults: { apiUsers: [], localContacts: [] } };
+
     case UPDATE_CONTACTS:
       return { ...state, data: action.payload };
+
     case DISCONNECT_CONTACT:
       return {
         ...state,
         data: state.data.filter((item) => item.username !== action.payload),
       };
-    case UPDATE_SEARCH_RESULTS:
-      return { ...state, searchResults: action.payload, contactState: FETCHED };
+
     case START_SYNC_CONTACTS_SMART_ADDRESSES:
       return merge({}, state, { contactsSmartAddresses: { isFetched: false } });
+
     case UPDATE_CONTACTS_SMART_ADDRESSES:
       return { ...state, contactsSmartAddresses: { addresses: action.payload, isFetched: true } };
+
     case SET_CONTACTS_SMART_ADDRESSES: // NOTE: we call this on app load
       return merge({}, state, { contactsSmartAddresses: { addresses: action.payload } });
+
     default:
       return state;
   }

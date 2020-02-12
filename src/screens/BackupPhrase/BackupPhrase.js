@@ -121,7 +121,7 @@ class BackupPhrase extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Backup phrase' }] }}
-        keyboardAvoidFooter={(
+        footer={(
           <FooterWrapper>
             <Button
               onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE,

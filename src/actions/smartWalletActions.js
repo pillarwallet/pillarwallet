@@ -302,7 +302,7 @@ export const deploySmartWalletAction = () => {
     const gasInfo = get(getState(), 'history.gasInfo', {});
     const deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo);
     const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const etherBalanceBN = smartWalletService.getAccountRealBalance();
+    const etherBalanceBN = new BigNumber(smartWalletService.getAccountRealBalance().toString());
     if (etherBalanceBN.lt(deployEstimateFeeBN)) {
       Toast.show({
         message: 'Not enough ETH to make deployment',

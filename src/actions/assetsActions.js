@@ -640,13 +640,30 @@ export const startAssetsSearchAction = () => ({
 
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { assets: { supportedAssets } } = getState();
+    const search = query.toUpperCase();
+
+    const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
+      return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
+    });
+
+    if (filteredAssets.length > 0) {
+      dispatch({
+        type: UPDATE_ASSETS_SEARCH_RESULT,
+        payload: filteredAssets,
+      });
+
+      return;
+    }
+
     const { user: { data: { walletId } } } = getState();
 
-    const assets = await api.assetsSearch(query, walletId);
+    dispatch(startAssetsSearchAction());
 
+    const apiAssets = await api.assetsSearch(query, walletId);
     dispatch({
       type: UPDATE_ASSETS_SEARCH_RESULT,
-      payload: assets,
+      payload: apiAssets,
     });
   };
 };
@@ -663,12 +680,6 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
-
-  // TODO: remove when we find an issue with supported assets
-  if (!supportedAssets || !supportedAssets.length) {
-    Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
-    return { id: accountId };
-  }
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))
