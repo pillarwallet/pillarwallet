@@ -175,7 +175,7 @@ const PromoWrapper = styled.View`
 const PromoText = styled(BaseText)`
   ${fontStyles.medium};
   color: ${themedColors.secondaryText};
- text-align: center;
+  text-align: center;
 `;
 
 const CardNote = styled(BaseText)`

@@ -455,7 +455,7 @@ class TextInput extends React.Component<Props, State> {
           diameter={64}
           textStyle={{ fontSize: fontSizes.medium }}
           noShadow
-          borderWidth="0"
+          borderWidth={0}
         />
         <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
       </HorizontalOptionItem>
