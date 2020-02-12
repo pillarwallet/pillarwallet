@@ -475,8 +475,8 @@ jobs:
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             mkdir -p ./toArchive
             mkdir -p /tmp/workspace/ios-release
-            cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
-            cp ./ios/output/gym/pillarwallet-staging.ipa /tmp/workspace/ios-release/pillarwallet-prod-ios-$TAG_VERSION.ipa
+            cp ./ios/output/gym/pillarwallet.ipa ./toArchive
+            cp ./ios/output/gym/pillarwallet.ipa /tmp/workspace/ios-release/pillarwallet-prod-ios-$TAG_VERSION.ipa
       - store_artifacts:
           path: ./toArchive
           destination: app_build
