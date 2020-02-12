@@ -20,14 +20,14 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontStyles } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
+import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 
 type Props = {
-  title?: string,
+  title: string,
   iconName: string,
   wrapperStyle?: Object,
   iconSize?: number,

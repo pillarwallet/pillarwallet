@@ -100,16 +100,13 @@ class SelectorList extends React.Component<Props, State> {
 
   setOptions = () => {
     const { selectorWidth } = this.state;
-    const { options, minItemWidth, numColumns: _numColumns } = this.props;
-    let numColumns = _numColumns;
-    if (numColumns && minItemWidth) {
-      if ((selectorWidth / numColumns) < minItemWidth) {
-        numColumns = Math.floor(selectorWidth / minItemWidth);
-      }
-    }
+    const { options, minItemWidth, numColumns } = this.props;
+    const recalculatedColumns = numColumns && minItemWidth && (selectorWidth / numColumns) < minItemWidth
+      ? Math.floor(selectorWidth / minItemWidth)
+      : numColumns;
 
-    const itemWidth = numColumns ? selectorWidth / numColumns : selectorWidth;
-    this.setState({ options, recalculatedColumns: numColumns, itemWidth });
+    const itemWidth = recalculatedColumns ? selectorWidth / recalculatedColumns : selectorWidth;
+    this.setState({ options, recalculatedColumns, itemWidth });
   };
 
   renderOption = ({ item }: { item: Option }) => {

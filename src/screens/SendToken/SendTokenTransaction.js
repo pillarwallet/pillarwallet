@@ -69,7 +69,6 @@ const getTransactionSuccessMessage = (transactionType: ?string) => {
   if (transactionType === EXCHANGE) {
     return 'It may take some time for this transaction to complete';
   }
-
   return 'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
 };
 
@@ -80,7 +79,7 @@ const getTransactionSuccessTitle = (props) => {
   } else if (transactionTokenType === COLLECTIBLES) {
     return 'Collectible is on its way';
   } else if (isAllowanceTransaction) {
-    return 'Transaction is on it\'s way';
+    return 'Transaction is on its way';
   }
   return 'Tokens are on their way';
 };

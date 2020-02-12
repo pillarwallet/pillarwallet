@@ -278,10 +278,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      showFeeModal,
-      transactionSpeed,
-    } = this.state;
+    const { showFeeModal, transactionSpeed } = this.state;
     const {
       navigation,
       session,
@@ -325,9 +322,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           customOnBack: this.handleBack,
         }}
       >
-        <ScrollWrapper
-          contentContainerStyle={{ minHeight: '100%' }}
-        >
+        <ScrollWrapper contentContainerStyle={{ minHeight: '100%' }}>
           <MainWrapper>
             {!setTokenAllowance &&
               <ExchangeScheme
@@ -340,10 +335,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             }
             {!!setTokenAllowance &&
               <AllowanceWrapper>
-                <Paragraph
-                  small
-                  style={{ marginVertical: spacing.medium }}
-                >
+                <Paragraph small style={{ marginVertical: spacing.medium }}>
                   Review the details and enable asset as well as confirm the cost of data transaction.
                 </Paragraph>
                 <LabeledRow>
@@ -399,7 +391,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         <SlideModal
           isVisible={showFeeModal}
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
-          showHeader={false}
         >
           <SliderContentWrapper>
             <TitleWithIcon iconName="lightning" title="Speed" />
