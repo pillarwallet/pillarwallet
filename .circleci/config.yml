@@ -206,7 +206,7 @@ jobs:
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
 #      - *ios_latest_yarn
-      - *ios_latest_npm
+#      - *ios_latest_npm
       - *yarn_install
       - *node_save_cache
 
@@ -374,9 +374,6 @@ jobs:
            aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
            aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
            aws-region: AWS_DEFAULT_REGION
-      - run:
-          name: Install npm latest
-          command: npm install -g npm@latest
       - run:
           name: Append circleCI build number to version
           command: |
