@@ -526,14 +526,14 @@ jobs:
           paths:
             - ~/pillarwallet/nodes_modules
       - restore_cache:
-          key: /home/circleci/pillarwallet/android-gems-{{ checksum "Gemfile" }}
+          key: /home/circleci/pillarwallet/android/android-gems-{{ checksum "Gemfile" }}
       - run:
           name: Bundle install
           command: |
             cd android
             bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: /home/circleci/pillarwallet/android-gems-{{ checksum "Gemfile" }}
+          key: /home/circleci/pillarwallet/android/android-gems-{{ checksum "Gemfile" }}
           paths:
             - vendor/bundle
       - restore_cache:
