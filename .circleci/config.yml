@@ -638,13 +638,6 @@ workflows:
   build_and_deploy:
     jobs:
       - build-and-test
-      - get-latest-tag:
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only:
-                  - master
       - hockeyapp_ios:
           requires:
             - build-and-test
@@ -659,6 +652,13 @@ workflows:
             branches:
               only:
                   - develop
+      - get-latest-tag:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                  - master
       - prod_ios:
           requires:
             - build-and-test
