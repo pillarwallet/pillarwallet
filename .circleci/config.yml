@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.2.0"
+      xcode: "11.3.1"
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
@@ -30,11 +30,6 @@ executors:
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
-
-  node8-executor:
-    working_directory: ~/pillarwallet
-    docker:
-      - image: circleci/openjdk:8-node-browsers
 
   node10-executor:
     working_directory: ~/pillarwallet
@@ -211,7 +206,7 @@ jobs:
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
 #      - *ios_latest_yarn
-      - *ios_latest_npm
+#      - *ios_latest_npm
       - *yarn_install
       - *node_save_cache
 
@@ -349,16 +344,6 @@ jobs:
           paths:
             - android-release             
 
-  slack-prod-approval:
-    executor: node8-executor
-    steps:
-      - slack/approval:
-          mentions: "here"
-          color: '#f28c10'
-          message: Staging builds finished successfully, prod approval step is pending.
-          webhook: $APPROVAL_SLACK_WEBHOOK
-          url: 'https://circleci.com/workflow-run/$CIRCLE_WORKFLOW_WORKSPACE_ID'
-
   get-latest-tag:
     executor: node10-executor
     steps:
@@ -389,9 +374,6 @@ jobs:
            aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
            aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
            aws-region: AWS_DEFAULT_REGION
-      - run:
-          name: Install npm latest
-          command: npm install -g npm@latest
       - run:
           name: Append circleCI build number to version
           command: |
@@ -466,6 +448,7 @@ jobs:
           name: Copy production iOS artifact to S3
           command: |
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ./ios/output/gym/
             touch ios-s3-URL-prod.txt
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --region eu-west-2
@@ -611,6 +594,7 @@ jobs:
           name: Copy prod android artifact to S3
           command: |
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ./android/app/build/outputs/apk/prod/release/
             touch android-s3-URL-prod.txt
             aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --region eu-west-2
@@ -692,29 +676,22 @@ workflows:
             branches:
               only:
                   - develop
-      - slack-prod-approval:
-          requires:
-            - build-and-test
-            - get-latest-tag
-          filters:
-            branches:
-              only:
-                  - master
-      - release_to_prod:
-          type: approval
-          requires:
-            - build-and-test
-            - get-latest-tag
-          filters:
-            branches:
-              only:
-                  - master
       - prod_ios:
           requires:
-            - release_to_prod
+            - build-and-test
+            - get-latest-tag
+          filters:
+            branches:
+              only:
+                  - master
       - prod_android:
           requires:
-            - release_to_prod
+            - build-and-test
+            - get-latest-tag
+          filters:
+            branches:
+              only:
+                  - master
       - publish_releases_to_github:
           requires:
             - prod_ios
