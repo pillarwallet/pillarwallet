@@ -62,7 +62,7 @@ class ExchangeStatus extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      indicatorFadeValue: new Animated.Value(1),
+      indicatorFadeValue: new Animated.Value(0),
       statusFadeValue: new Animated.Value(props.isVisible ? 1 : 0),
     };
   }
@@ -74,29 +74,34 @@ class ExchangeStatus extends React.Component<Props, State> {
 
   startBlinking = () => {
     const { indicatorFadeValue } = this.state;
-    this.blinkInterval = setInterval(() => {
-      const toValue = indicatorFadeValue._value ? 0 : 1;
-      requestAnimationFrame(() => {
-        Animated.timing(indicatorFadeValue,
-          {
-            toValue,
-            duration: 300,
-          },
-        ).start();
-      });
-    }, 700);
+    requestAnimationFrame(() => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(indicatorFadeValue,
+            {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            },
+          ),
+          Animated.delay(400),
+          Animated.timing(indicatorFadeValue,
+            {
+              toValue: 0,
+              duration: 400,
+              useNativeDriver: true,
+            },
+          ),
+        ]),
+      ).start();
+    });
   };
 
   componentDidUpdate(prevProps: Props) {
     const { isVisible } = this.props;
     const { statusFadeValue } = this.state;
     const toValue = isVisible && !prevProps.isVisible ? 1 : 0;
-    if ((isVisible !== prevProps.isVisible)) {
-      if (toValue) {
-        this.startBlinking();
-      } else {
-        clearInterval(this.blinkInterval);
-      }
+    if (isVisible !== prevProps.isVisible) {
       requestAnimationFrame(() => {
         Animated.timing(
           statusFadeValue,
@@ -106,6 +111,7 @@ class ExchangeStatus extends React.Component<Props, State> {
           },
         ).start();
       });
+      this.startBlinking();
     }
   }
 
@@ -115,6 +121,9 @@ class ExchangeStatus extends React.Component<Props, State> {
 
   render() {
     const { indicatorFadeValue, statusFadeValue } = this.state;
+    const { isVisible } = this.props;
+
+    if (!isVisible) return null;
 
     return (
       <AnimatedStatus style={{ opacity: statusFadeValue }}>
