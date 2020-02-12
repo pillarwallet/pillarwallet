@@ -466,6 +466,7 @@ jobs:
           name: Copy production iOS artifact to S3
           command: |
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ./ios/output/gym/
             touch ios-s3-URL-prod.txt
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --region eu-west-2
@@ -611,6 +612,7 @@ jobs:
           name: Copy prod android artifact to S3
           command: |
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ./android/app/build/outputs/apk/prod/release/
             touch android-s3-URL-prod.txt
             aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --region eu-west-2
@@ -692,29 +694,22 @@ workflows:
             branches:
               only:
                   - develop
-      - slack-prod-approval:
-          requires:
-            - build-and-test
-            - get-latest-tag
-          filters:
-            branches:
-              only:
-                  - master
-      - release_to_prod:
-          type: approval
-          requires:
-            - build-and-test
-            - get-latest-tag
-          filters:
-            branches:
-              only:
-                  - master
       - prod_ios:
           requires:
-            - release_to_prod
+            - build-and-test
+            - get-latest-tag
+          filters:
+            branches:
+              only:
+                  - master
       - prod_android:
           requires:
-            - release_to_prod
+            - build-and-test
+            - get-latest-tag
+          filters:
+            branches:
+              only:
+                  - master
       - publish_releases_to_github:
           requires:
             - prod_ios
