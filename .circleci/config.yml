@@ -226,7 +226,8 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export buildNumber="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
@@ -246,18 +247,11 @@ jobs:
       - run:
           name: prepare to archive ipa file
           command: |
-            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             mkdir -p ./toArchive
-            mkdir -p /tmp/workspace/ios-release
             cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
-            cp ./ios/output/gym/pillarwallet-staging.ipa /tmp/workspace/ios-release/pillarwallet-hockey-ios-$TAG_VERSION.ipa
       - store_artifacts:
           path: ./toArchive
           destination: app_build
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - ios-release
 
   hockeyapp_android:
     executor: android-executor
@@ -308,7 +302,8 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export buildNumber="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
@@ -331,18 +326,9 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_hockeyapp
-      - run:
-          name: prepare to archive apk file
-          command: |
-            mkdir -p /tmp/workspace/android-release
-            cp ./android/app/build/outputs/apk/prod/staging/app-prod-staging.apk /tmp/workspace/android-release/pillarwallet-hockey-android-$TAG_VERSION.apk
       - store_artifacts:
           path: android/app/build/outputs/apk
-          destination: apks
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - android-release             
+          destination: apks          
 
   get-latest-tag:
     executor: node10-executor
@@ -540,14 +526,14 @@ jobs:
           paths:
             - ~/pillarwallet/nodes_modules
       - restore_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
+          key: /home/circleci/pillarwallet/android-gems-{{ checksum "Gemfile" }}
       - run:
           name: Bundle install
           command: |
             cd android
             bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
+          key: /home/circleci/pillarwallet/android-gems-{{ checksum "Gemfile" }}
           paths:
             - vendor/bundle
       - restore_cache:
@@ -658,12 +644,10 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
                   - master
       - hockeyapp_ios:
           requires:
             - build-and-test
-            - get-latest-tag
           filters:
             branches:
               only:
@@ -671,7 +655,6 @@ workflows:
       - hockeyapp_android:
           requires:
             - build-and-test
-            - get-latest-tag
           filters:
             branches:
               only:
