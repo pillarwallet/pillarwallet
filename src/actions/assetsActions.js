@@ -672,12 +672,6 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
 
-  // TODO: remove when we find an issue with supported assets
-  if (!supportedAssets || !supportedAssets.length) {
-    Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
-    return { id: accountId };
-  }
-
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});

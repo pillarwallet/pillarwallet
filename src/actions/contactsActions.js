@@ -28,9 +28,9 @@ import { deleteChatAction, deleteContactAction } from 'actions/chatActions';
 
 // constants
 import {
-  UPDATE_SEARCH_RESULTS,
-  FETCHING,
-  UPDATE_CONTACTS_STATE,
+  RESET_SEARCH_RESULTS,
+  START_SEARCH,
+  FINISH_SEARCH,
   UPDATE_CONTACTS,
   START_SYNC_CONTACTS_SMART_ADDRESSES,
   UPDATE_CONTACTS_SMART_ADDRESSES,
@@ -48,22 +48,26 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
-    const { user: { data: { walletId } }, contacts: { data: localContacts } } = getState();
+    const {
+      user: { data: { walletId } },
+      contacts: { data: localContacts },
+    } = getState();
+    const upperCaseQuery = query.toUpperCase();
+
+    const myContacts = localContacts.filter(({ username }) => {
+      return username.toUpperCase().includes(upperCaseQuery);
+    });
 
     dispatch({
-      type: UPDATE_CONTACTS_STATE,
-      payload: FETCHING,
+      type: START_SEARCH,
+      payload: { localContacts: myContacts, apiUsers: [] },
     });
 
     let apiUsers = await api.userSearch(query, walletId);
     apiUsers = excludeLocalContacts(apiUsers, localContacts);
 
-    const myContacts = localContacts.filter(contact => {
-      return contact.username.toUpperCase().indexOf(query.toUpperCase()) > -1;
-    });
-
     dispatch({
-      type: UPDATE_SEARCH_RESULTS,
+      type: FINISH_SEARCH,
       payload: {
         apiUsers,
         localContacts: myContacts,
@@ -74,10 +78,7 @@ export const searchContactsAction = (query: string) => {
 
 export const resetSearchContactsStateAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch({
-      type: UPDATE_CONTACTS_STATE,
-      payload: null,
-    });
+    dispatch({ type: RESET_SEARCH_RESULTS });
   };
 };
 

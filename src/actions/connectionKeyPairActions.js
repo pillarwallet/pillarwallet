@@ -59,10 +59,10 @@ export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
   };
 };
 
-export const updateConnectionIdentityKeys = (successfullConnIdentityKeys: Object[]) => {
+export const updateConnectionIdentityKeys = (successfulConnIdentityKeys: Object[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { connectionIdentityKeys: { data: connectionIdentityKeys } } = getState();
-    const resultConnectionIdentityKeys = connectionIdentityKeys.concat(successfullConnIdentityKeys);
+    const resultConnectionIdentityKeys = connectionIdentityKeys.concat(successfulConnIdentityKeys);
     await dispatch({
       type: UPDATE_CONNECTION_IDENTITY_KEYS,
       payload: resultConnectionIdentityKeys,
@@ -94,26 +94,26 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId
       identityKeys: currentConnectionKeyPairList,
     };
 
-    const successfullConnectionMaps = [];
+    const successfulConnectionMaps = [];
     const errorConnectionKeyMaps = [];
     const resultCurrentConnections = await api.mapIdentityKeys(connectionIdentityKeyMap);
     if (resultCurrentConnections) {
       resultCurrentConnections.forEach((conn) => {
         if (conn.userId) {
-          successfullConnectionMaps.push(conn);
+          successfulConnectionMaps.push(conn);
         } else {
           const { sourceIdentityKey, targetIdentityKey } = conn;
           const errorConnKey = currentConnectionKeyPairs.find((connKeyPair) => {
             return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
           });
-          errorConnectionKeyMaps.push(errorConnKey);
+          if (errorConnKey) errorConnectionKeyMaps.push(errorConnKey);
         }
       });
     } else if (resultCurrentConnections && resultCurrentConnections.length === 0) {
       errorConnectionKeyMaps.push(...currentConnectionKeyPairs);
     }
-    if (successfullConnectionMaps.length > 0) {
-      await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
+    if (successfulConnectionMaps.length > 0) {
+      await dispatch(updateConnectionIdentityKeys(successfulConnectionMaps));
     }
     if (errorConnectionKeyMaps.length > 0) {
       await dispatch(prependConnectionKeyPairs(errorConnectionKeyMaps));
@@ -162,7 +162,7 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
         connections: oldConnectionsUpdateList,
       };
 
-      const successfullConnectionUpdates = [];
+      const successfulConnectionUpdates = [];
       const errorConnectionUpdates = [];
       const resultOldConnections = await api.updateIdentityKeys(oldConnectionsUpdateData);
       if (resultOldConnections) {
@@ -172,12 +172,12 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
             const successConKeyPair = identityKeysOldConnections.find((connKeyPair) => {
               return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
             });
-            successfullConnectionUpdates.push(successConKeyPair);
+            if (successConKeyPair) successfulConnectionUpdates.push(successConKeyPair);
           } else {
             const errorConnKeyPair = identityKeysOldConnections.find((connKeyPair) => {
               return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
             });
-            errorConnectionUpdates.push(errorConnKeyPair);
+            if (errorConnKeyPair) errorConnectionUpdates.push(errorConnKeyPair);
           }
         });
       } else {
@@ -186,8 +186,8 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
       if (errorConnectionUpdates.length > 0) {
         await dispatch(prependConnectionKeyPairs(errorConnectionUpdates));
       }
-      if (successfullConnectionUpdates.length > 0) {
-        const currentConnectionKeyPairList = successfullConnectionUpdates.map((keyPair) => {
+      if (successfulConnectionUpdates.length > 0) {
+        const currentConnectionKeyPairList = successfulConnectionUpdates.map((keyPair) => {
           return {
             sourceIdentityKey: keyPair.A,
             targetIdentityKey: keyPair.Ad,
@@ -198,17 +198,17 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
           identityKeys: currentConnectionKeyPairList,
         };
 
-        const successfullConnectionMaps = [];
+        const successfulConnectionMaps = [];
         const resultCurrentConnections = await api.mapIdentityKeys(connectionIdentityKeyMap);
         if (resultCurrentConnections) {
           resultCurrentConnections.forEach((conn) => {
             if (conn.userId) {
-              successfullConnectionMaps.push(conn);
+              successfulConnectionMaps.push(conn);
             }
           });
         }
-        if (successfullConnectionMaps.length > 0) {
-          await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
+        if (successfulConnectionMaps.length > 0) {
+          await dispatch(updateConnectionIdentityKeys(successfulConnectionMaps));
         }
       }
     }
@@ -290,7 +290,7 @@ const patchConnections = (theWalletId?: ?string = null) => {
       connections: patchConnectionsUpdateList,
     };
 
-    const successfullConnectionUpdates = [];
+    const successfulConnectionUpdates = [];
     const errorConnectionUpdates = [];
     const resultPatchConnections = await api.patchIdentityKeys(patchConnectionsUpdateData);
     if (resultPatchConnections) {
@@ -300,12 +300,12 @@ const patchConnections = (theWalletId?: ?string = null) => {
           const successConKeyPair = identityKeysPatchConnections.find((connKeyPair) => {
             return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
           });
-          successfullConnectionUpdates.push(successConKeyPair);
+          if (successConKeyPair) successfulConnectionUpdates.push(successConKeyPair);
         } else {
           const errorConnKeyPair = identityKeysPatchConnections.find((connKeyPair) => {
             return connKeyPair.A === sourceIdentityKey && connKeyPair.Ad === targetIdentityKey;
           });
-          errorConnectionUpdates.push(errorConnKeyPair);
+          if (errorConnKeyPair) errorConnectionUpdates.push(errorConnKeyPair);
         }
       });
     } else {
@@ -314,8 +314,8 @@ const patchConnections = (theWalletId?: ?string = null) => {
     if (errorConnectionUpdates.length > 0) {
       await dispatch(prependConnectionKeyPairs(errorConnectionUpdates));
     }
-    if (successfullConnectionUpdates.length > 0) {
-      const currentConnectionKeyPairList = successfullConnectionUpdates.map(keyPair => ({
+    if (successfulConnectionUpdates.length > 0) {
+      const currentConnectionKeyPairList = successfulConnectionUpdates.map(keyPair => ({
         sourceIdentityKey: keyPair.A,
         targetIdentityKey: keyPair.Ad,
       }));
@@ -324,13 +324,13 @@ const patchConnections = (theWalletId?: ?string = null) => {
         identityKeys: currentConnectionKeyPairList,
       };
 
-      const successfullConnectionMaps = [];
+      const successfulConnectionMaps = [];
       const resultCurrentConnections = await api.mapIdentityKeys(connectionIdentityKeyMap);
       if (resultCurrentConnections) {
-        resultCurrentConnections.forEach(conn => conn.userId && successfullConnectionMaps.push(conn));
+        resultCurrentConnections.forEach(conn => conn.userId && successfulConnectionMaps.push(conn));
       }
-      if (successfullConnectionMaps.length > 0) {
-        await dispatch(updateConnectionIdentityKeys(successfullConnectionMaps));
+      if (successfulConnectionMaps.length > 0) {
+        await dispatch(updateConnectionIdentityKeys(successfulConnectionMaps));
       }
     }
   };
