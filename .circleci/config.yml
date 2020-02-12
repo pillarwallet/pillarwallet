@@ -658,7 +658,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/remove-prod-approval-step
+                  - develop
                   - master
       - hockeyapp_ios:
           requires:
@@ -667,7 +667,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/remove-prod-approval-step
+                  - develop
       - hockeyapp_android:
           requires:
             - build-and-test
