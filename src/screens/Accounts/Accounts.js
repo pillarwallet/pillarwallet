@@ -42,7 +42,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
-import { fontStyles, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { themedColors } from 'utils/themes';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
@@ -155,19 +155,6 @@ const Wrapper = styled.View`
 const IconImage = styled(CachedImage)`
   height: 52px;
   width: 52px;
-`;
-
-const FooterWrapper = styled.View`
-  flex-grow: 1;
-  padding: 40px; ${spacing.large}px;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const FooterParagraph = styled(BaseText)`
-  ${fontStyles.regular};
-  text-align: center;
-  color: ${themedColors.secondaryText};
 `;
 
 const ToggleText = styled(BaseText)`
@@ -551,11 +538,6 @@ class AccountsScreen extends React.Component<Props, State> {
             renderItem={this.renderListItem}
           />
           {!isLegacyUser && legacyAccountCard && this.renderKeyWallet(legacyAccountCard, isLegacyWalletVisible)}
-          <FooterWrapper>
-            <FooterParagraph>
-              {'Bitcoin, Binance Coin, Ripple \n and more coming soon'}
-            </FooterParagraph>
-          </FooterWrapper>
         </ScrollWrapper>}
 
         {changingAccount &&
