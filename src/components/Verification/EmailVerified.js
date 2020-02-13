@@ -17,12 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import * as React from 'react';
 
-export const UPDATE_USER = 'UPDATE_USER';
-export const USER_PHONE_VERIFIED = 'USER_PHONE_VERIFIED';
-export const USER_EMAIL_VERIFIED = 'USER_EMAIL_VERIFIED';
-export const REGISTERED = 'REGISTERED';
-export const PENDING = 'PENDING';
-export const SENDING_OTP = 'SENDING_OTP';
-export const OTP_SENT = 'OTP_SENT';
-export const RESET_OTP_STATUS = 'RESET_OTP_STATUS';
+// components
+import Button from 'components/Button';
+import { MediumText } from 'components/Typography';
+
+type Props = {
+  onPressBack: () => void,
+};
+
+const EmailVerified = (props: Props) => {
+  const { onPressBack } = props;
+
+  return (
+    <React.Fragment>
+      <MediumText>
+        You have confirmed your email!
+      </MediumText>
+
+      <Button onPress={onPressBack} title="Return" />
+    </React.Fragment>
+  );
+};
+
+export default EmailVerified;

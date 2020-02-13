@@ -28,7 +28,7 @@ import { themedColors } from 'utils/themes';
 
 type Props = {
   bannerText: string,
-  onClose: () => void,
+  onClose?: () => void,
   onPress?: () => void,
   wrapperStyle?: Object,
   isVisible?: boolean,
@@ -88,13 +88,13 @@ export const Banner = (props: Props) => {
           </BannerParagraph>
         </BannerTextWrapper>
         {!!imageProps && <BannerImage {...imageProps} resizeMode="contain" />}
-        <Close
+        {onClose && <Close
           icon="close"
           color={baseColors.coolGrey}
           onPress={onClose}
           fontSize={fontSizes.small}
           horizontalAlign="flex-end"
-        />
+        />}
       </BannerContentWrapper>
     </Wrapper>
   );

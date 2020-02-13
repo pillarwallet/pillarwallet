@@ -26,6 +26,13 @@ import get from 'lodash.get';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
+// types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
+
+// constants
+import { VERIFY_EMAIL } from 'constants/navigationConstants';
+
 // actions
 import { inviteByEmailAction } from 'actions/referralsActions';
 
@@ -35,14 +42,11 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Insight from 'components/Insight';
 import TextInput from 'components/TextInput';
 import { EmailStruct } from 'components/ProfileForm/profileFormDefs';
+import { Banner } from 'components/Banner';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { themedColors } from 'utils/themes';
-
-// types
-import type { Dispatch } from 'reducers/rootReducer';
-
+import { themedColors, getThemeColors } from 'utils/themes';
 
 const INSIGHT_ITEMS = [
   {
@@ -62,11 +66,13 @@ const INSIGHT_ITEMS = [
 type Props = {
   navigation: NavigationScreenProp<*>,
   inviteByEmail: (email: string) => void,
+  theme: Theme,
+  isEmailVerified: boolean,
 };
 
 type Value = {
   email: string,
-}
+};
 
 type State = {
   value: Value,
@@ -183,6 +189,11 @@ class ReferFriends extends React.Component<Props, State> {
     });
   };
 
+  verifyEmail = () => {
+    const { navigation } = this.props;
+    navigation.navigate(VERIFY_EMAIL);
+  };
+
   render() {
     const {
       value,
@@ -190,6 +201,14 @@ class ReferFriends extends React.Component<Props, State> {
       isFormButtonDisabled,
       hideErrorMessage,
     } = this.state;
+
+    const {
+      isEmailVerified,
+      theme,
+    } = this.props;
+
+    const colors = getThemeColors(theme);
+
 
     return (
       <ContainerWithHeader
@@ -209,37 +228,53 @@ class ReferFriends extends React.Component<Props, State> {
             isVisible
             insightNumberedList={INSIGHT_ITEMS}
           />
-          <FormWrapper>
-            <Form
-              ref={node => { this.referForm = node; }}
-              type={t.struct({
-                email: EmailStruct,
-              })}
-              options={getReferralFormFields({
-                onIconPress: this.openShareDialog,
-                label: 'Friend\'s email',
-                showButton: showFormButton,
-                isButtonDisabled: isFormButtonDisabled,
-                hideErrorMessage,
-                onFormSubmit: this.handleSubmit,
-              })}
-              value={value}
-              onChange={this.handleChange}
-            />
-            <ExplanationText>
-              Upon invited, your friend will receive email link for download. Referral rewards are available with this
-              link only.
-            </ExplanationText>
-          </FormWrapper>
+          <Banner
+            isVisible={!isEmailVerified}
+            onPress={this.verifyEmail}
+            bannerText="You need to verify your email before you can refer people."
+            wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+          />
+          {isEmailVerified &&
+            <FormWrapper>
+              <Form
+                ref={node => { this.referForm = node; }}
+                type={t.struct({
+                  email: EmailStruct,
+                })}
+                options={getReferralFormFields({
+                  onIconPress: this.openShareDialog,
+                  label: 'Friend\'s email',
+                  showButton: showFormButton,
+                  isButtonDisabled: isFormButtonDisabled,
+                  hideErrorMessage,
+                  onFormSubmit: this.handleSubmit,
+                })}
+                value={value}
+                onChange={this.handleChange}
+              />
+              <ExplanationText>
+                Upon invited, your friend will receive email link for download. Referral rewards are available with this
+                link only.
+              </ExplanationText>
+            </FormWrapper>}
         </ScrollView>
       </ContainerWithHeader>
     );
   }
 }
 
+const mapStateToProps = ({
+  user: {
+    data: {
+      isEmailVerified,
+    },
+  },
+}: RootReducerState): $Shape<Props> => ({
+  isEmailVerified,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   inviteByEmail: (email: string) => dispatch(inviteByEmailAction(email)),
 });
 
-export default withTheme(connect(null, mapDispatchToProps)(ReferFriends));
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferFriends));

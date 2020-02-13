@@ -119,7 +119,11 @@ const emailFormFields = [{
   label: 'Email',
   name: 'email',
   type: 'email',
-  config: { placeholder: 'user@example.com', autoCapitalize: 'none', error: 'Please specify valid email' },
+  config: {
+    placeholder: 'user@example.com',
+    autoCapitalize: 'none',
+    error: 'Please specify valid email',
+  },
 }];
 
 const phoneFormFields = [{
@@ -181,7 +185,7 @@ type Props = {
   optOutTracking: boolean,
   setUserJoinedBeta: (status: boolean) => void,
   userJoinedBeta: boolean,
-}
+};
 
 type State = {
   visibleModal: string | null,
@@ -193,7 +197,7 @@ type State = {
   showTrackingModal: boolean,
   showJoinBetaModal: boolean,
   joinBetaPressed: boolean,
-}
+};
 
 class Profile extends React.Component<Props, State> {
   static defaultProps = {

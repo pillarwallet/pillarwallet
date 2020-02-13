@@ -22,18 +22,21 @@ import { FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
+import type { Dispatch } from 'reducers/rootReducer';
+
+// constants
+import { ADD_EDIT_USER } from 'constants/navigationConstants';
+
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ADD_EDIT_USER } from 'constants/navigationConstants';
 import { ListCard } from 'components/ListItem/ListCard';
 import { lockScreenAction, logoutAction } from 'actions/authActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  lockScreen: Function,
-  logoutUser: Function,
-  user: Object,
-}
+  lockScreen: () => void,
+  logoutUser: () => void,
+};
 
 const getUserSettings = (that) => {
   return [
@@ -111,15 +114,9 @@ class UserSettings extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = ({
-  wallet: { backupStatus },
-}) => ({
-  backupStatus,
-});
-
-const mapDispatchToProps = (dispatch: Function) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserSettings);
+export default connect(null, mapDispatchToProps)(UserSettings);

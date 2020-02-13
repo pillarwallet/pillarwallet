@@ -84,6 +84,7 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import UserSettingsScreen from 'screens/Users/UserSettings';
+import VerifyEmailScreen from 'screens/Users/VerifyEmail';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import SettingsScreen from 'screens/Settings';
 import ChatScreen from 'screens/Chat';
@@ -198,6 +199,7 @@ import {
   PILLAR_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
   USER_SETTINGS,
+  VERIFY_EMAIL,
   ADD_EDIT_USER,
   SETTINGS,
   CHAT,
@@ -341,6 +343,7 @@ const homeFlow = createStackNavigator({
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
   [REFER_FRIENDS]: ReferFriendsScreen,
+  [VERIFY_EMAIL]: VerifyEmailScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -583,6 +586,7 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
   [USER_SETTINGS]: UserSettingsScreen,
+  [VERIFY_EMAIL]: VerifyEmailScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 

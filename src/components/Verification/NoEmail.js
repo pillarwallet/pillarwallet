@@ -17,12 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import * as React from 'react';
 
-export const UPDATE_USER = 'UPDATE_USER';
-export const USER_PHONE_VERIFIED = 'USER_PHONE_VERIFIED';
-export const USER_EMAIL_VERIFIED = 'USER_EMAIL_VERIFIED';
-export const REGISTERED = 'REGISTERED';
-export const PENDING = 'PENDING';
-export const SENDING_OTP = 'SENDING_OTP';
-export const OTP_SENT = 'OTP_SENT';
-export const RESET_OTP_STATUS = 'RESET_OTP_STATUS';
+// components
+import Button from 'components/Button';
+import { MediumText } from 'components/Typography';
+
+type Props = {
+  onPressSetEmail: () => void,
+};
+
+const NoEmail = (props: Props) => {
+  const { onPressSetEmail } = props;
+
+  return (
+    <React.Fragment>
+      <MediumText>
+        You don&apos;t have an email, please set your email first.
+      </MediumText>
+      <Button onPress={onPressSetEmail} title="Go to profile" />
+    </React.Fragment>
+  );
+};
+
+export default NoEmail;
