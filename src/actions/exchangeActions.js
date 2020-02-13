@@ -79,6 +79,7 @@ export const takeOfferAction = (
   toAssetCode: string,
   fromAmount: number,
   provider: string,
+  trackId: string,
   callback: Function,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -119,7 +120,7 @@ export const takeOfferAction = (
       fromAssetAddress,
       toAssetAddress,
     };
-    const order = await exchangeService.takeOffer(offerRequest);
+    const order = await exchangeService.takeOffer(offerRequest, trackId);
     const offerOrderData = get(order, 'data');
     if (isEmpty(offerOrderData) || order.error) {
       let { message = 'Unable to request offer' } = order.error || {};

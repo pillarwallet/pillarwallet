@@ -31,6 +31,7 @@ import {
   BITCOIN_WALLET_CREATION_FAILED,
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
+  SET_BITCOIN_BALANCES,
 } from 'constants/bitcoinConstants';
 
 export type BitcoinReducerState = {
@@ -60,6 +61,11 @@ export type SetBitcoinAddressesAction = {
   addresses: string[],
 };
 
+export type SetBitcoinBalancesAction = {
+  type: 'SET_BITCOIN_BALANCES',
+  balances: Object,
+};
+
 export type CreatedBitcoinAddressAction = {
   type: 'CREATED_BITCOIN_ADDRESS',
   address: string,
@@ -80,6 +86,7 @@ export type BitcoinReducerAction =
   | UpdateBitcoinBalanceAction
   | UpdateUnspentTransactionsAction
   | SetBitcoinAddressesAction
+  | SetBitcoinBalancesAction
   | CreatedBitcoinAddressAction
   | BitcoinWalletCreationFailedAction
   | UpdateBTCTransactionsAction;
@@ -207,6 +214,22 @@ const setAddresses = (
   };
 };
 
+const setBalances = (
+  state: BitcoinReducerState,
+  action: SetBitcoinBalancesAction,
+): BitcoinReducerState => {
+  const { balances } = action;
+  const { data } = state;
+
+  return {
+    ...state,
+    data: {
+      ...data,
+      balances,
+    },
+  };
+};
+
 const createdAddress = (
   state: BitcoinReducerState,
   action: CreatedBitcoinAddressAction,
@@ -243,6 +266,8 @@ const bitcoinReducer = (
   switch (action.type) {
     case SET_BITCOIN_ADDRESSES:
       return setAddresses(state, action);
+    case SET_BITCOIN_BALANCES:
+      return setBalances(state, action);
     case CREATED_BITCOIN_ADDRESS:
       return createdAddress(state, action);
     case UPDATE_BITCOIN_BALANCE:

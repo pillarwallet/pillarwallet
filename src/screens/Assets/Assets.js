@@ -324,6 +324,9 @@ class AssetsScreen extends React.Component<Props, State> {
               ...customHeaderButtonProps,
             },
           }],
+          leftItems: [{
+            title: 'Assets',
+          }],
           noBack: true,
         }}
         inset={{ bottom: 0 }}
