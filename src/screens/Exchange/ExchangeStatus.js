@@ -58,7 +58,6 @@ type Props = {
 }
 
 class ExchangeStatus extends React.Component<Props, State> {
-  blinkInterval: IntervalID;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -74,27 +73,25 @@ class ExchangeStatus extends React.Component<Props, State> {
 
   startBlinking = () => {
     const { indicatorFadeValue } = this.state;
-    requestAnimationFrame(() => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(indicatorFadeValue,
-            {
-              toValue: 1,
-              duration: 400,
-              useNativeDriver: true,
-            },
-          ),
-          Animated.delay(400),
-          Animated.timing(indicatorFadeValue,
-            {
-              toValue: 0,
-              duration: 400,
-              useNativeDriver: true,
-            },
-          ),
-        ]),
-      ).start();
-    });
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(indicatorFadeValue,
+          {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          },
+        ),
+        Animated.delay(400),
+        Animated.timing(indicatorFadeValue,
+          {
+            toValue: 0,
+            duration: 400,
+            useNativeDriver: true,
+          },
+        ),
+      ]),
+    ).start();
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -102,22 +99,17 @@ class ExchangeStatus extends React.Component<Props, State> {
     const { statusFadeValue } = this.state;
     const toValue = isVisible && !prevProps.isVisible ? 1 : 0;
     if (isVisible !== prevProps.isVisible) {
-      requestAnimationFrame(() => {
-        Animated.timing(
-          statusFadeValue,
-          {
-            toValue,
-            duration: 500,
-          },
-        ).start();
-      });
+      Animated.timing(
+        statusFadeValue,
+        {
+          toValue,
+          duration: 500,
+          useNativeDriver: true,
+        },
+      ).start();
       this.startBlinking();
     }
   }
-
-  componentWillUnmount = () => {
-    clearInterval(this.blinkInterval);
-  };
 
   render() {
     const { indicatorFadeValue, statusFadeValue } = this.state;
