@@ -282,9 +282,6 @@ const HorizontalOptions = styled.View`
   padding-bottom: ${spacing.small}px;
 `;
 
-const HorizontalOptionsScrollView = styled.ScrollView`
-`;
-
 const HorizontalOptionItem = styled.TouchableOpacity`
   align-items: center;
   width: ${itemSizes.avatarCircleMedium + 4}px;
@@ -432,27 +429,25 @@ class TextInput extends React.Component<Props, State> {
     );
   };
 
-  renderHorizontalOptions = (options: any) => {
-    return options
-      .map(option => {
-        const { name, icon } = option;
-        const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
-        return (
-          <HorizontalOptionItem
-            key={name}
-            onPress={() => this.selectValue(option)}
-          >
-            <ProfileImage
-              uri={iconUri}
-              userName={name}
-              diameter={itemSizes.avatarCircleMedium}
-              textStyle={{ fontSize: fontSizes.medium }}
-              noShadow
-            />
-            <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
-          </HorizontalOptionItem>
-        );
-      });
+  renderHorizontalOption = ({ item }) => {
+    const { symbol, iconUrl } = item;
+    const iconUri = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    return (
+      <HorizontalOptionItem
+        key={symbol}
+        onPress={() => this.selectValue(item)}
+      >
+        <ProfileImage
+          uri={iconUri}
+          userName={symbol}
+          diameter={64}
+          textStyle={{ fontSize: fontSizes.medium }}
+          noShadow
+          borderWidth={0}
+        />
+        <HorizontalOptionItemName numberOfLines={1}>{symbol}</HorizontalOptionItemName>
+      </HorizontalOptionItem>
+    );
   };
 
   selectValue = (selectedValue: Object) => {
@@ -701,13 +696,15 @@ class TextInput extends React.Component<Props, State> {
                 {(showOptionsTitles && !!horizontalOptionsTitle) &&
                 <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
                 }
-                <HorizontalOptionsScrollView
+                <FlatList
+                  data={filteredHorizontalListData}
+                  keyExtractor={({ name }) => name}
                   keyboardShouldPersistTaps="always"
+                  renderItem={this.renderHorizontalOption}
                   horizontal
-                  contentContainerStyle={{ paddingHorizontal: spacing.large / 2, paddingVertical: spacing.medium }}
-                >
-                  {this.renderHorizontalOptions(filteredHorizontalListData)}
-                </HorizontalOptionsScrollView>
+                  contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+                  ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
+                />
               </HorizontalOptions>
               }
               {!!filteredListData.length &&
