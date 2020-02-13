@@ -120,9 +120,8 @@ class UserSettings extends React.PureComponent<Props, State> {
       email,
       oneTimePasswordSent,
       sendingOneTimePassword,
-      // isEmailVerified,
+      isEmailVerified,
     } = this.props;
-    const isEmailVerified = false;
 
     const hasEmail = !!email && email.trim().length > 0;
     const isConfirming = sendingOneTimePassword || oneTimePasswordSent;
