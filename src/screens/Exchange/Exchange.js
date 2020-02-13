@@ -61,7 +61,7 @@ import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // constants
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -351,6 +351,8 @@ function SelectorInputTemplate(locals) {
       inputAddonText,
       inputRef,
       onSelectorOpen,
+      horizontalOptionsTitle,
+      optionsTitle,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -386,8 +388,8 @@ function SelectorInputTemplate(locals) {
         options,
         horizontalOptions,
         showOptionsTitles: !isEmpty(horizontalOptions),
-        optionsTitle: 'CRYPTO',
-        horizontalOptionsTitle: 'FIAT',
+        optionsTitle,
+        horizontalOptionsTitle,
         fullWidth: !hasInput,
         selectorModalTitle: label,
       }}
@@ -430,6 +432,8 @@ class ExchangeScreen extends React.Component<Props, State> {
               hasInput: true,
               options: [],
               horizontalOptions: [],
+              horizontalOptionsTitle: 'Fiat',
+              optionsTitle: 'Crypto',
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
@@ -452,6 +456,9 @@ class ExchangeScreen extends React.Component<Props, State> {
             config: {
               label: 'Buying',
               options: [],
+              horizontalOptions: [],
+              horizontalOptionsTitle: 'Popular',
+              optionsTitle: 'All tokens',
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'select asset',
               onSelectorOpen: this.blurFromInput,
@@ -568,10 +575,17 @@ class ExchangeScreen extends React.Component<Props, State> {
       ? this.generateFiatOptions()
       : [];
 
+    const popularOptions = POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
+      const popularAsset = initialAssetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
+      if (popularAsset) return [...popularAssetsList, popularAsset];
+      return popularAssetsList;
+    }, []);
+
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = initialAssetsOptionsSelling;
     thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
     thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
+    thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions = popularOptions;
 
     this.setState({
       formOptions: thisStateFormOptionsCopy,
