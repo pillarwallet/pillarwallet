@@ -75,7 +75,7 @@ import {
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
-import { loadBitcoinAddressesAction } from 'actions/bitcoinActions';
+import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
@@ -201,6 +201,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       await loadAndMigrate('history', dispatch, getState);
 
       dispatch(loadBitcoinAddressesAction());
+
+      dispatch(loadBitcoinBalancesAction());
 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });

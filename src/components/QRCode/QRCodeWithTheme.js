@@ -18,41 +18,35 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
-import { themedColors } from 'utils/themes';
+import QRCode from 'react-native-qrcode-svg';
+import { withTheme } from 'styled-components/native/index';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
-  label: string,
-  containerStyle?: Object,
-  labelStyle?: Object,
-  color?: string,
-}
+  value: string,
+  size: number,
+  theme: Theme,
+  getRef?: (ref: QRCode) => void,
+};
 
-const BadgeWrapper = styled.View`
-  background-color: ${({ color }) => color || themedColors.positive};
-  padding: 3px 8px;
-  border-radius: 12px;
-  align-self: flex-start;
-`;
-
-const Label = styled(MediumText)`
-  font-size: 8px;
-  color: ${themedColors.control};
-`;
-
-export const LabelBadge = (props: Props) => {
+const QRCodeWithTheme = (props: Props) => {
   const {
-    label,
-    containerStyle,
-    labelStyle,
-    color,
+    value,
+    size,
+    theme,
+    getRef,
   } = props;
+  const colors = getThemeColors(theme);
   return (
-    <BadgeWrapper style={containerStyle} color={color}>
-      <Label style={labelStyle}>
-        {label}
-      </Label>
-    </BadgeWrapper>
+    <QRCode
+      getRef={getRef}
+      value={value}
+      size={size}
+      color={colors.text}
+      backgroundColor={colors.card}
+    />
   );
 };
+
+export default withTheme(QRCodeWithTheme);

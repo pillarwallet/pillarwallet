@@ -66,6 +66,7 @@ type Props = {
   handleScrollTo?: (ScrollToProps) => void,
   onSwipeComplete?: () => void,
   theme: Theme,
+  noPadding?: boolean,
 };
 
 const themes = {
@@ -82,6 +83,10 @@ const themes = {
     borderRadius: '30px',
     isTransparent: true,
   },
+  noPadding: {
+    padding: 0,
+    borderRadius: '30px',
+  },
 };
 
 const getTheme = (props: Props) => {
@@ -90,6 +95,9 @@ const getTheme = (props: Props) => {
   }
   if (props.eventDetail) {
     return themes.eventDetail;
+  }
+  if (props.noPadding) {
+    return themes.noPadding;
   }
   return themes.default;
 };
@@ -209,6 +217,7 @@ class SlideModal extends React.Component<Props, *> {
       noSwipeToDismiss,
       scrollOffsetMax,
       theme,
+      noPadding,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -225,7 +234,7 @@ class SlideModal extends React.Component<Props, *> {
               noMargin={!fullScreen}
               centerTitle={centerTitle}
               noWrapTitle={noWrapTitle}
-              noPadding={!fullScreen}
+              noPadding={!fullScreen && !noPadding}
               title={title}
               titleStyles={titleStyles}
               fullWidthTitle={fullWidthTitle}

@@ -45,6 +45,7 @@ import { userHasSmartWallet } from 'utils/smartWallet';
 import { fontStyles, spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { themedColors } from 'utils/themes';
+import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -52,7 +53,7 @@ import type { Assets, Balances, BalancesStore, Rates } from 'models/Asset';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
-import type { BitcoinAddress } from 'models/Bitcoin';
+import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { EthereumWallet } from 'models/Wallet';
 
 // constants
@@ -127,6 +128,7 @@ type Props = {|
   rates: Rates,
   user: Object,
   bitcoinAddresses: BitcoinAddress[],
+  bitcoinBalances: BitcoinBalance,
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
 |};
@@ -412,6 +414,8 @@ class AccountsScreen extends React.Component<Props, State> {
       accounts,
       bitcoinAddresses,
       baseFiatCurrency,
+      rates,
+      bitcoinBalances,
     } = this.props;
 
     const ppnNetwork = blockchainNetworks.find(
@@ -441,8 +445,10 @@ class AccountsScreen extends React.Component<Props, State> {
       const bitcoinNetwork = blockchainNetworks.find(
         ({ id }) => id === BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
       );
-      // TODO: calculate balance
-      const formattedBitcoinBalance = formatFiat(0, baseFiatCurrency);
+
+      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+      const bitcoinBalance = calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency);
+      const formattedBitcoinBalance = formatFiat(bitcoinBalance, fiatCurrency);
 
       if (bitcoinNetwork) {
         networks.push({
@@ -591,7 +597,7 @@ const mapStateToProps = ({
   balances: { data: balances },
   rates: { data: rates },
   user: { data: user },
-  bitcoin: { data: { addresses: bitcoinAddresses } },
+  bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
   blockchainNetworks,
@@ -603,6 +609,7 @@ const mapStateToProps = ({
   rates,
   user,
   bitcoinAddresses,
+  bitcoinBalances,
 });
 
 const structuredSelector = createStructuredSelector({

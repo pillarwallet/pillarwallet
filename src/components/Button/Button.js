@@ -122,79 +122,79 @@ const themes = {
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
+  positive: {
+    borderWidth: 0,
+  },
 };
 
 const themeColors = (theme: Theme) => {
-  const {
-    primary,
-    tertiary,
-    secondaryText,
-    control,
-    negative,
-  } = getThemeColors(theme);
-
-  return {
+  const colors = getThemeColors(theme);
+  return ({
     primary: {
-      surface: primary,
-      text: control,
-      border: primary,
+      surface: colors.primary,
+      text: colors.control,
+      border: colors.primary,
     },
     primaryInverted: {
       surface: 'transparent',
-      text: primary,
+      text: colors.primary,
     },
     dangerInverted: {
       surface: 'transparent',
-      text: negative,
-      border: negative,
+      text: colors.negative,
+      border: colors.negative,
     },
     secondary: {
       surface: 'transparent',
-      text: primary,
+      text: colors.primary,
     },
     secondaryTransparent: {
       background: 'transparent',
-      text: control,
-      border: primary,
+      text: colors.control,
+      border: colors.primary,
     },
     secondaryTransparentDisabled: {
       background: 'transparent',
-      text: secondaryText,
+      text: colors.secondaryText,
     },
     secondaryDanger: {
       surface: 'transparent',
-      text: negative,
+      text: colors.negative,
     },
     danger: {
-      background: negative,
-      text: control,
+      background: colors.negative,
+      text: colors.control,
     },
     dark: {
-      background: tertiary,
-      color: control,
-      borderColor: tertiary,
+      background: colors.tertiary,
+      color: colors.control,
+      borderColor: colors.tertiary,
     },
     disabled: {
-      surface: primary,
-      text: control,
-      border: primary,
+      surface: colors.primary,
+      text: colors.control,
+      border: colors.primary,
     },
     disabledTransparent: {
-      surface: primary,
-      text: control,
-      border: primary,
+      surface: colors.primary,
+      text: colors.control,
+      border: colors.primary,
     },
     squarePrimary: {
       surface: 'transparent',
-      text: primary,
+      text: colors.primary,
       border: 'transparent',
     },
     squareDanger: {
       surface: 'transparent',
-      text: negative,
+      text: colors.negative,
       border: 'transparent',
     },
-  };
+    positive: {
+      surface: colors.positive,
+      text: colors.control,
+    },
+  });
 };
 
 const getButtonHeight = (props) => {

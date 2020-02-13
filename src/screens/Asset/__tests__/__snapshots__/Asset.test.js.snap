@@ -1300,7 +1300,7 @@ exports[`Asset renders the Asset correctly 1`] = `
               customTheme={
                 Object {
                   "borderRadius": "30px",
-                  "padding": "0 20px",
+                  "padding": 0,
                 }
               }
               style={
@@ -1312,8 +1312,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "elevation": 1,
                     "marginTop": "auto",
                     "paddingBottom": 0,
-                    "paddingLeft": 20,
-                    "paddingRight": 20,
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
                     "paddingTop": 0,
                     "shadowColor": "rgba(0,0,0,.1)",
                     "shadowOffset": Object {
@@ -1338,14 +1338,14 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <View
-                  noPadding={true}
+                  noPadding={false}
                   style={
                     Array [
                       Object {
                         "borderBottomWidth": 0,
                         "paddingBottom": 0,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
                         "paddingTop": 0,
                         "zIndex": 10,
                       },
@@ -1529,8 +1529,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                   style={
                     Array [
                       Object {
-                        "height": 300,
-                        "justifyContent": "flex-start",
+                        "alignItems": "center",
+                        "paddingBottom": 0,
+                        "paddingLeft": 20,
+                        "paddingRight": 20,
+                        "paddingTop": 0,
                       },
                       undefined,
                     ]
@@ -1541,15 +1544,34 @@ exports[`Asset renders the Asset correctly 1`] = `
                       Array [
                         Object {
                           "alignItems": "center",
-                          "flexBasis": 0,
-                          "flexGrow": 1,
-                          "flexShrink": 1,
                           "justifyContent": "center",
                         },
                         undefined,
                       ]
                     }
                   >
+                    <Text
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "fontSize": 14,
+                              "lineHeight": 22,
+                              "marginBottom": 16,
+                              "marginLeft": 0,
+                              "marginRight": 0,
+                              "marginTop": 16,
+                            },
+                            undefined,
+                          ],
+                        ]
+                      }
+                    />
                     <View
                       style={
                         Object {
@@ -1802,7 +1824,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                             stroke={
                               Array [
                                 0,
-                                4278190080,
+                                4278850599,
                               ]
                             }
                             strokeDasharray={null}
@@ -1819,47 +1841,56 @@ exports[`Asset renders the Asset correctly 1`] = `
                         </RNSVGGroup>
                       </RNSVGSvgView>
                     </View>
-                    <View
-                      accessible={true}
-                      isTVSelectable={true}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
+                  </View>
+                  <View
+                    accessible={true}
+                    isTVSelectable={true}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      Object {
+                        "alignItems": "center",
+                        "alignSelf": "auto",
+                        "backgroundColor": "#007AFF",
+                        "borderColor": "#007AFF",
+                        "borderRadius": 6,
+                        "borderStyle": "solid",
+                        "borderWidth": 0,
+                        "elevation": 1,
+                        "flexDirection": "row",
+                        "height": 56,
+                        "justifyContent": "center",
+                        "marginBottom": 20,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 16,
+                        "opacity": 1,
+                        "paddingBottom": 0,
+                        "paddingLeft": 30,
+                        "paddingRight": 30,
+                        "paddingTop": 0,
+                        "shadowColor": "rgba(0,0,0,.12)",
+                        "shadowOffset": Object {
+                          "height": 2,
+                          "width": 0,
+                        },
+                        "shadowOpacity": 1,
+                        "shadowRadius": 7,
+                        "width": "auto",
+                      }
+                    }
+                  >
+                    <Text
+                      customTheme={
                         Object {
-                          "alignItems": "center",
-                          "marginBottom": 20,
-                          "marginTop": 20,
-                          "opacity": 1,
+                          "borderWidth": 0,
+                          "shadow": true,
                         }
                       }
-                    >
-                      <Text
-                        style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "textAlignVertical": "center",
-                            },
-                            Array [
-                              Object {
-                                "color": "#007AFF",
-                                "fontSize": 16,
-                                "lineHeight": 24,
-                              },
-                              undefined,
-                            ],
-                          ]
-                        }
-                      >
-                        Copy wallet address to clipboard
-                      </Text>
-                    </View>
-                    <Text
                       style={
                         Array [
                           Object {
@@ -1869,28 +1900,70 @@ exports[`Asset renders the Asset correctly 1`] = `
                           },
                           Array [
                             Object {
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#FCFDFF",
+                                "fontSize": 18,
+                                "marginBottom": 0,
+                              },
+                              undefined,
+                            ],
                           ],
                         ]
                       }
-                    />
+                      theme={
+                        Object {
+                          "colors": Object {
+                            "PPNSurface": "#0a0c78",
+                            "PPNText": "#f33726",
+                            "accent": "#818EB3",
+                            "bitcoinWallet": "#F79319",
+                            "border": "#007AFF",
+                            "card": "#FFFFFF",
+                            "control": "#FCFDFF",
+                            "danger": "#ff0005",
+                            "indicator": "#F8E71C",
+                            "legacyWallet": "#FA574F",
+                            "navbarItems": "#D4D9DB",
+                            "negative": "#BD573A",
+                            "orange": "#f57c00",
+                            "positive": "#2AA057",
+                            "primary": "#007AFF",
+                            "secondaryAccent": "#EBF0F5",
+                            "secondaryText": "#8B939E",
+                            "smartWallet": "#3C71FE",
+                            "smartWalletSurface": "#f3f7ff",
+                            "smartWalletText": "#1D24D8",
+                            "surface": "#007AFF",
+                            "tertiary": "#EBF0F6",
+                            "text": "#FCFDFF",
+                            "userAvatar": "#d1d9e4",
+                            "warning": "#ECA93A",
+                          },
+                          "current": "lightTheme",
+                        }
+                      }
+                    >
+                      Share Address
+                    </Text>
                   </View>
                 </View>
                 <View
-                  onLayout={[Function]}
                   style={
                     Array [
                       Object {
-                        "backgroundColor": "transparent",
-                        "flexDirection": "column",
-                        "marginTop": "auto",
-                        "paddingBottom": 0,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
-                        "paddingTop": 0,
+                        "alignItems": "center",
+                        "backgroundColor": "#FAFAFA",
+                        "borderTopColor": "#EBF0F6",
+                        "borderTopWidth": 1,
+                        "paddingBottom": 20,
+                        "paddingLeft": 20,
+                        "paddingRight": 20,
+                        "paddingTop": 20,
                         "width": "100%",
                       },
                       undefined,
@@ -1898,129 +1971,135 @@ exports[`Asset renders the Asset correctly 1`] = `
                   }
                 >
                   <View
+                    accessible={true}
+                    isTVSelectable={true}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
                     style={
-                      Array [
-                        Object {
-                          "alignItems": "center",
-                          "flexDirection": "column",
-                          "justifyContent": "flex-end",
-                          "padding": 16,
-                          "position": "relative",
-                        },
-                        Object {
-                          "bottom": 0,
-                        },
-                      ]
+                      Object {
+                        "alignItems": "center",
+                        "alignSelf": "auto",
+                        "backgroundColor": "#2AA057",
+                        "borderColor": "#EDEDED",
+                        "borderRadius": 6,
+                        "borderStyle": "solid",
+                        "borderWidth": 0,
+                        "flexDirection": "row",
+                        "height": 56,
+                        "justifyContent": "center",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 0,
+                        "opacity": 1,
+                        "paddingBottom": 0,
+                        "paddingLeft": 30,
+                        "paddingRight": 30,
+                        "paddingTop": 0,
+                        "width": "auto",
+                      }
                     }
                   >
-                    <View
-                      accessible={true}
-                      isTVSelectable={true}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
+                    <Text
+                      customTheme={
                         Object {
-                          "alignItems": "center",
-                          "alignSelf": "auto",
-                          "backgroundColor": "#007AFF",
-                          "borderColor": "#007AFF",
-                          "borderRadius": 6,
-                          "borderStyle": "solid",
                           "borderWidth": 0,
-                          "elevation": 1,
-                          "flexDirection": "row",
-                          "height": 56,
-                          "justifyContent": "center",
-                          "marginBottom": 20,
-                          "marginLeft": 0,
-                          "marginRight": 0,
-                          "marginTop": 0,
-                          "opacity": 1,
-                          "paddingBottom": 0,
-                          "paddingLeft": 30,
-                          "paddingRight": 30,
-                          "paddingTop": 0,
-                          "shadowColor": "rgba(0,0,0,.12)",
-                          "shadowOffset": Object {
-                            "height": 2,
-                            "width": 0,
-                          },
-                          "shadowOpacity": 1,
-                          "shadowRadius": 7,
-                          "width": "auto",
                         }
                       }
-                    >
-                      <Text
-                        customTheme={
+                      style={
+                        Array [
                           Object {
-                            "borderWidth": 0,
-                            "shadow": true,
-                          }
-                        }
-                        style={
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "textAlignVertical": "center",
+                          },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontFamily": "EuclidCircularB-Medium",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "textAlignVertical": "center",
+                                "color": "#FCFDFF",
+                                "fontSize": 18,
+                                "marginBottom": 0,
                               },
-                              Array [
-                                Object {
-                                  "color": "#FCFDFF",
-                                  "fontSize": 18,
-                                  "marginBottom": 0,
-                                },
-                                undefined,
-                              ],
+                              undefined,
                             ],
-                          ]
+                          ],
+                        ]
+                      }
+                      theme={
+                        Object {
+                          "colors": Object {
+                            "PPNSurface": "#0a0c78",
+                            "PPNText": "#f33726",
+                            "accent": "#818EB3",
+                            "bitcoinWallet": "#F79319",
+                            "border": "#EDEDED",
+                            "card": "#FFFFFF",
+                            "control": "#FCFDFF",
+                            "danger": "#ff0005",
+                            "indicator": "#F8E71C",
+                            "legacyWallet": "#FA574F",
+                            "navbarItems": "#D4D9DB",
+                            "negative": "#BD573A",
+                            "orange": "#f57c00",
+                            "positive": "#2AA057",
+                            "primary": "#007AFF",
+                            "secondaryAccent": "#EBF0F5",
+                            "secondaryText": "#8B939E",
+                            "smartWallet": "#3C71FE",
+                            "smartWalletSurface": "#f3f7ff",
+                            "smartWalletText": "#1D24D8",
+                            "surface": "#2AA057",
+                            "tertiary": "#EBF0F6",
+                            "text": "#FCFDFF",
+                            "userAvatar": "#d1d9e4",
+                            "warning": "#ECA93A",
+                          },
+                          "current": "lightTheme",
                         }
-                        theme={
+                      }
+                    >
+                      Buy tokens
+                    </Text>
+                  </View>
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "flexDirection": "row",
+                          "marginBottom": 20,
+                          "marginLeft": 20,
+                          "marginRight": 20,
+                          "marginTop": 20,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Image
+                      source={1}
+                    />
+                    <View
+                      style={
+                        Array [
                           Object {
-                            "colors": Object {
-                              "PPNSurface": "#0a0c78",
-                              "PPNText": "#f33726",
-                              "accent": "#818EB3",
-                              "bitcoinWallet": "#F79319",
-                              "border": "#007AFF",
-                              "card": "#FFFFFF",
-                              "control": "#FCFDFF",
-                              "danger": "#ff0005",
-                              "indicator": "#F8E71C",
-                              "legacyWallet": "#FA574F",
-                              "negative": "#BD573A",
-                              "orange": "#f57c00",
-                              "positive": "#2AA057",
-                              "primary": "#007AFF",
-                              "secondaryAccent": "#EBF0F5",
-                              "secondaryText": "#8B939E",
-                              "smartWallet": "#3C71FE",
-                              "smartWalletSurface": "#f3f7ff",
-                              "smartWalletText": "#1D24D8",
-                              "surface": "#007AFF",
-                              "tertiary": "#EBF0F6",
-                              "text": "#FCFDFF",
-                              "userAvatar": "#d1d9e4",
-                              "warning": "#ECA93A",
-                            },
-                            "current": "lightTheme",
-                          }
-                        }
-                      >
-                        Share Address
-                      </Text>
-                    </View>
+                            "width": 8,
+                          },
+                          undefined,
+                        ]
+                      }
+                    />
+                    <Image
+                      source={1}
+                    />
                   </View>
                 </View>
               </View>
