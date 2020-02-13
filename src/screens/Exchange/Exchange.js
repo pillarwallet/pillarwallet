@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, TextInput as RNTextInput, View, ScrollView } from 'react-native';
+import { FlatList, TextInput as RNTextInput, View, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -165,11 +165,9 @@ const ESWrapper = styled.View`
 
 const PromoWrapper = styled.View`
   width: 100%;
-  flex: 1;
   align-items: center;
-  justify-content: flex-end;
-  background-color: ${themedColors.card};
-  padding: ${spacing.layoutSides}px;
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
+  margin-bottom: 30px;
 `;
 
 const PromoText = styled(BaseText)`
@@ -1151,14 +1149,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const scrollContentStyle = {
       backgroundColor: isSubmitted ? colors.surface : colors.card,
-      height: !reorderedOffers.length ? '100%' : 'auto',
     };
 
     const flatListContentStyle = {
       width: '100%',
       paddingHorizontal: spacing.layoutSides,
       paddingVertical: 10,
-      flex: !isSubmitted ? 1 : 0,
     };
 
     return (
@@ -1169,6 +1165,13 @@ class ExchangeScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
+        footer={!isSubmitted && !reorderedOffers.length && (
+          <PromoWrapper>
+            <PromoText>
+              Aggregated from many decentralized exchanges and token swap services
+            </PromoText>
+          </PromoWrapper>
+        )}
       >
         {!!blockView &&
         <DeploymentView
@@ -1179,8 +1182,10 @@ class ExchangeScreen extends React.Component<Props, State> {
         />}
         {!blockView &&
         <ScrollView
-          keyboardShouldPersistTaps="handled"
           contentContainerStyle={scrollContentStyle}
+          onScroll={() => Keyboard.dismiss()}
+          keyboardShouldPersistTaps="handled"
+          disableOnAndroid
         >
           <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
             <Form
@@ -1201,10 +1206,12 @@ class ExchangeScreen extends React.Component<Props, State> {
             buttonLabel="Deploy Smart Wallet"
           />
           }
+          {!!isSubmitted &&
           <FlatList
             data={reorderedOffers}
             keyExtractor={(item) => item._id}
             style={{ width: '100%' }}
+            keyboardShouldPersistTaps="handled"
             contentContainerStyle={flatListContentStyle}
             renderItem={(props) => this.renderOffers(props, disableNonFiatExchange, colors)}
             ListHeaderComponent={(
@@ -1213,7 +1220,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               </ListHeader>
             )}
             ListEmptyComponent={isSubmitted
-              ? (
+              && (
                 <ESWrapper style={{ marginTop: '15%' }}>
                   <EmptyStateParagraph
                     title="No live offers"
@@ -1223,16 +1230,8 @@ class ExchangeScreen extends React.Component<Props, State> {
                     wide
                   />
                 </ESWrapper>
-              )
-              : (
-                <PromoWrapper>
-                  <PromoText>
-                    Aggregated from many decentralized exchanges and token swap services
-                  </PromoText>
-                </PromoWrapper>
-              )
-            }
-          />
+              )}
+          />}
         </ScrollView>}
       </ContainerWithHeader>
     );
