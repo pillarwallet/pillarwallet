@@ -78,7 +78,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -160,8 +160,6 @@ const BadgesWrapper = styled.View`
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
-
-const iconConnect = require('assets/icons/icon_receive.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -441,8 +439,9 @@ class HomeScreen extends React.Component<Props, State> {
               onSettingsPress={this.openQRScanner}
               onSettingsLoadingPress={this.cancelWaiting}
               isLoading={!!pendingConnector}
-              settingsIconSource={iconConnect}
+              settingsIcon="qrDetailed"
               settingsLabel="Connect"
+              iconStyle={{ fontSize: fontSizes.large }}
             />
           </WalletConnectWrapper>
           <BadgesWrapper>

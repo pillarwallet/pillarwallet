@@ -745,6 +745,20 @@
       "search": [
         "social_active"
       ]
+    },
+    {
+      "uid": "f22eb25f2b9db2f6d6cc0ace3bb0e1eb",
+      "css": "receive",
+      "code": 59418,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M890 550V890H550V550H890ZM465 805V890H380V805H465ZM295 720V890H125V720H295ZM252.5 762.5H167.5V847.5H252.5V762.5ZM805 635H635V805H805V635ZM465 550V720H295V550H465ZM422.5 592.5H337.5V677.5H422.5V592.5ZM210 550V635H125V550H210ZM465 125V465H125V125H465ZM890 125V465H550V125H890ZM380 210H210V380H380V210ZM805 210H635V380H805V210ZM762.5 252.5V337.5H677.5V252.5H762.5Z",
+        "width": 1000
+      },
+      "search": [
+        "receive"
+      ]
     }
   ]
 }

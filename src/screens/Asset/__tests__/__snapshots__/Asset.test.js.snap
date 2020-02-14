@@ -958,6 +958,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
+                  opacity={1}
                   source={1}
                   style={
                     Array [
@@ -999,22 +1000,15 @@ exports[`Asset renders the Asset correctly 1`] = `
                     ]
                   }
                 >
-                  <Image
-                    disabled={false}
-                    resizeMethod="resize"
-                    resizeMode="contain"
-                    source={1}
+                  <View
+                    name="qrDetailed"
                     style={
-                      Array [
-                        Object {
-                          "display": "flex",
-                          "height": 24,
-                          "justifyContent": "center",
-                          "opacity": 1,
-                          "width": 24,
-                        },
-                        undefined,
-                      ]
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 1,
+                      }
                     }
                   />
                 </View>
@@ -1076,6 +1070,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
+                  opacity={1}
                   source={1}
                   style={
                     Array [
@@ -1117,22 +1112,15 @@ exports[`Asset renders the Asset correctly 1`] = `
                     ]
                   }
                 >
-                  <Image
-                    disabled={true}
-                    resizeMethod="resize"
-                    resizeMode="contain"
-                    source={1}
+                  <View
+                    name="paperPlane"
                     style={
-                      Array [
-                        Object {
-                          "display": "flex",
-                          "height": 24,
-                          "justifyContent": "center",
-                          "opacity": 0.3,
-                          "width": 24,
-                        },
-                        undefined,
-                      ]
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 0.3,
+                      }
                     }
                   />
                 </View>
@@ -1148,11 +1136,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#8B939E",
+                        "color": "#007AFF",
                         "fontSize": 16,
                         "letterSpacing": 0.1,
                         "marginTop": -6,
-                        "opacity": 0.7,
+                        "opacity": 0.5,
                         "textAlign": "center",
                       },
                       undefined,

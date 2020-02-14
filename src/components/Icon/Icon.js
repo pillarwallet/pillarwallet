@@ -70,6 +70,7 @@ const glyphMap = {
   cube: '\uE831',
   paperPlane: '\uE803',
   cup: '\uE807',
+  qrDetailed: '\uE81A',
 };
 
 type Props = {

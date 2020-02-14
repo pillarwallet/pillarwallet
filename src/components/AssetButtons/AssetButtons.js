@@ -38,8 +38,6 @@ const AssetButtonsWrapper = styled.View`
   margin: 0;
 `;
 
-const iconReceive = require('assets/icons/icon_receive.png');
-const iconSend = require('assets/icons/icon_send.png');
 const iconExchange = require('assets/icons/icon_exchange.png');
 
 const AssetButtons = (props: Props) => {
@@ -53,7 +51,7 @@ const AssetButtons = (props: Props) => {
       <CircleButton
         disabled={props.isReceiveDisabled}
         label="Receive"
-        icon={iconReceive}
+        fontIcon="qrDetailed"
         onPress={props.onPressReceive}
       />
       }
@@ -61,7 +59,7 @@ const AssetButtons = (props: Props) => {
       <CircleButton
         disabled={props.noBalance || props.isSendDisabled}
         label="Send"
-        icon={iconSend}
+        fontIcon="paperPlane"
         onPress={props.onPressSend}
       />
       }
