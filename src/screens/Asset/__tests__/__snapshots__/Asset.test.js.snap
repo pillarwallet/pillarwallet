@@ -1119,7 +1119,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         "alignSelf": "center",
                         "color": "#007AFF",
                         "fontSize": 22,
-                        "opacity": 0.3,
+                        "opacity": 0.5,
                       }
                     }
                   />

@@ -25,7 +25,7 @@ import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   disabled?: boolean,
@@ -41,7 +41,7 @@ type Props = {
 type ButtonIconWrapperProps = {
   disabled?: boolean,
   showIndicator?: boolean,
-  themeType: string,
+  theme: Theme,
   children: React.Node,
 }
 
@@ -111,10 +111,11 @@ const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
   const {
     disabled,
     showIndicator,
-    themeType,
+    theme,
     children,
   } = props;
 
+  const themeType = getThemeType(theme);
   const buttonBackground = getButtonBackgroundSource(themeType, disabled);
   return (
     <ImageBackground
@@ -145,15 +146,14 @@ const CircleButton = (props: Props) => {
   } = props;
 
   const colors = getThemeColors(theme);
-  const themeType = getThemeType(theme);
-  const iconOpacity = themeType === LIGHT_THEME && disabled ? 0.3 : 1;
+  const iconOpacity = disabled ? 0.5 : 1;
 
   return (
     <CircleButtonWrapper
       disabled={disabled}
       onPress={() => onPress()}
     >
-      <ButtonIconWrapper {...props} themeType={themeType}>
+      <ButtonIconWrapper {...props} theme={theme}>
         {!!icon &&
         <CircleButtonIcon
           disabled={disabled}
