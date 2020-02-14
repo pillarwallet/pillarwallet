@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# react-native-keychain:
+-keep class com.facebook.crypto.** {
+    *;
+}

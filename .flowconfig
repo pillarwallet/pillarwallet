@@ -22,7 +22,6 @@
 ; ;;; custom ignores start ;;;
 
 ; TEMPORARY! ignore various modules
-<PROJECT_ROOT>/node_modules/react-native-firebase/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*
 <PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/react-native-share/.*

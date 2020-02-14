@@ -190,18 +190,6 @@ jest.setMock('react-native-threads', {
   }),
 });
 
-jest.mock('react-native-fabric', () => {
-  return {
-    Crashlytics: {
-      crash: () => {},
-    },
-    Answers: {
-      logCustom: () => {},
-      logContentView: () => {},
-    },
-  };
-});
-
 const mockSmartWalletAccount = {
   id: 123,
   address: 'publicAddress',

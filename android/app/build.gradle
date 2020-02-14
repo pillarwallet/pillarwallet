@@ -159,6 +159,15 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-firebase_messaging')
+    implementation project(':@react-native-firebase_iid')
+    implementation project(':@react-native-firebase_crashlytics')
+    implementation project(':@react-native-firebase_app')
+    implementation project(':@react-native-firebase_analytics')
+    implementation project(':react-native-scrypt')
+    implementation project(':react-native-fetch-blob')
+    implementation project(':react-native-gesture-handler')
+    implementation project(':react-native-screens')
     implementation project(':rn-signal-protocol-messaging')
     implementation project(':react-native-webview')
     implementation project(':react-native-vector-icons')
@@ -175,8 +184,6 @@ dependencies {
     implementation project(':react-native-keychain')
     implementation project(':react-native-intercom')
     implementation project(':react-native-image-crop-picker')
-    implementation project(':react-native-firebase')
-    implementation project(':react-native-fabric')
     implementation project(':react-native-extra-dimensions-android')
     implementation project(':react-native-device-info')
     implementation project(':react-native-cookies')
@@ -187,6 +194,7 @@ dependencies {
     implementation project(':lottie-react-native')
     implementation project(':@react-native-community_async-storage')
     implementation project(':@matt-block_react-native-in-app-browser')
+    implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
     implementation "androidx.multidex:multidex:${rootProject.ext.multidex_version}" // custom: support multidex builds
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
@@ -199,3 +207,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+apply plugin: 'com.google.gms.google-services' // @react-native-firebase/app init

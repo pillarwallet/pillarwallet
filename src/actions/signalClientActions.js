@@ -19,7 +19,7 @@
 */
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import firebase from 'react-native-firebase';
+import firebaseMessaging from '@react-native-firebase/messaging';
 
 import ChatService from 'services/chat';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
@@ -38,7 +38,7 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
     let { session: { data: { fcmToken } } } = getState();
 
     // if fcmToken is not yet on state then get it from Firebase
-    if (!fcmToken) fcmToken = await firebase.messaging().getToken().catch(() => null);
+    if (!fcmToken) fcmToken = await firebaseMessaging().getToken().catch(() => null);
 
     // build credentials from state
     if (!credentials) {

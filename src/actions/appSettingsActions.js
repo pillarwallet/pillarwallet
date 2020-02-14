@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Appearance } from 'react-native-appearance';
+import firebaseAnalytics from '@react-native-firebase/analytics';
 
 import {
   DARK_PREFERENCE,
@@ -56,6 +57,7 @@ export const saveOptOutTrackingAction = (status: boolean) => {
     } else {
       dispatch(logEventAction('tracking_opted_in'));
     }
+    await firebaseAnalytics().setAnalyticsCollectionEnabled(status);
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
   };

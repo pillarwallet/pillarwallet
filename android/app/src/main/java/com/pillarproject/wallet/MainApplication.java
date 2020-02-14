@@ -6,6 +6,16 @@ import androidx.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
 
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+import io.invertase.firebase.iid.ReactNativeFirebaseIidPackage;
+import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
+import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
+import com.crypho.scrypt.RNScryptPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.swmansion.rnscreens.RNScreensPackage;
+
 import io.intercom.android.sdk.Intercom;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
@@ -23,8 +33,6 @@ import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.robinpowered.react.Intercom.IntercomPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
-import io.invertase.firebase.RNFirebasePackage;
-import com.smixx.fabric.FabricPackage;
 import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.psykar.cookiemanager.CookieManagerPackage;
@@ -32,6 +40,8 @@ import iyegoroff.RNColorMatrixImageFilters.ColorMatrixImageFiltersPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.ocetnik.timer.BackgroundTimerPackage;
 import io.expo.appearance.RNCAppearancePackage;
+import nativeShadow.NativeShadowPackage;
+
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.mattblock.reactnative.inappbrowser.RNInAppBrowserPackage;
@@ -55,11 +65,20 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeFirebaseAppPackage(),
+            new ReactNativeFirebaseMessagingPackage(),
+            new ReactNativeFirebaseIidPackage(),
+            new ReactNativeFirebaseCrashlyticsPackage(),
+            new ReactNativeFirebaseAnalyticsPackage(),
+            new RNScryptPackage(),
+            new RNFetchBlobPackage(),
+            new RNGestureHandlerPackage(),
+            new RNScreensPackage(),
             new RNSignalClientPackage(),
             new RNCWebViewPackage(),
             new VectorIconsPackage(),
             new UdpSocketsModule(),
-            new RNThreadPackage(mReactNativeHost),
+            new RNThreadPackage(mReactNativeHost, new RandomBytesPackage()), // randombytes needed for connections skeypair generation in thread
             new TcpSocketsModule(),
             new SvgPackage(),
             new SplashScreenReactPackage(),
@@ -71,8 +90,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new KeychainPackage(),
             new IntercomPackage(),
             new PickerPackage(),
-            new RNFirebasePackage(),
-            new FabricPackage(),
             new ExtraDimensionsPackage(),
             new RNDeviceInfo(),
             new CookieManagerPackage(),
@@ -82,7 +99,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new RNCAppearancePackage(),
             new LottiePackage(),
             new AsyncStoragePackage(),
-            new RNInAppBrowserPackage()
+            new RNInAppBrowserPackage(),
+            new NativeShadowPackage()
       );
     }
 
@@ -107,7 +125,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     }
     SoLoader.init(this, /* native exopackage */ false);
     // TODO: remove this call?
-    long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
-    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
+//    long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
+//    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
   }
 }

@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Answers } from 'react-native-fabric';
 import { logEventAction, logScreenViewAction } from 'actions/analyticsActions';
 
 describe('Analytics Actions', () => {
@@ -31,8 +30,9 @@ describe('Analytics Actions', () => {
   };
 
   beforeEach(() => {
-    Answers.logCustom = jest.fn().mockImplementation(() => {});
-    Answers.logContentView = jest.fn().mockImplementation(() => {});
+    // TODO: switch to firebase
+    // Answers.logCustom = jest.fn().mockImplementation(() => {});
+    // Answers.logContentView = jest.fn().mockImplementation(() => {});
   });
 
   afterEach(() => {

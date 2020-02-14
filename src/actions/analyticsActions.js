@@ -17,7 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Answers } from 'react-native-fabric';
+import firebaseAnalytics from '@react-native-firebase/analytics';
+
 
 const isTrackingEnabled = (getState: Function): boolean => {
   const { appSettings: { data: { optOutTracking } } } = getState();
@@ -28,23 +29,20 @@ const isTrackingEnabled = (getState: Function): boolean => {
 export const logScreenViewAction = (contentName: string, contentType: string, contentId?: string) => {
   return async (dispatch: Function, getState: Function) => {
     if (!isTrackingEnabled(getState)) return;
-
-    Answers.logContentView(contentName, contentType, contentId);
+    firebaseAnalytics().logEvent('screen_view', { contentName, contentType, contentId });
   };
 };
 
 export const logEventAction = (name: string, properties?: Object) => {
   return async (dispatch: Function, getState: Function) => {
     if (!isTrackingEnabled(getState)) return;
-
-    Answers.logCustom(name, properties);
+    firebaseAnalytics().logEvent(name, properties);
   };
 };
 
 export const logUserPropertyAction = (name: string, value?: string) => {
   return async (dispatch: Function, getState: Function) => {
     if (!isTrackingEnabled(getState) || !value) return;
-
-    Answers.logCustom('property_changed', { [name]: value });
+    firebaseAnalytics().logEvent('property_changed', { [name]: value });
   };
 };
