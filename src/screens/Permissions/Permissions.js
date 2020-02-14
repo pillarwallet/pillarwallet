@@ -184,12 +184,12 @@ const sections = [
         ],
       },
       {
-        key: 'FABRIC',
-        title: 'Fabric',
+        key: 'FIREBASE',
+        title: 'Firebase',
         paragraphs: (
           <Paragraph light small>
             used to track application issues and errors. More on their privacy policy –
-            <TextLink onPress={() => handleUrlPress('https://docs.fabric.io/android/fabric/data-privacy.html')}> https://docs.fabric.io/android/fabric/data-privacy.html</TextLink>
+            <TextLink onPress={() => handleUrlPress('https://firebase.google.com/policies/analytics')}> https://firebase.google.com/policies/analytics</TextLink>
           </Paragraph>
         ),
       },

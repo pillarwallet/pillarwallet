@@ -20,12 +20,12 @@
 
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
-import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
 import { Sentry } from 'react-native-sentry';
+import firebaseMessaging from '@react-native-firebase/messaging';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -231,11 +231,11 @@ export const startListeningNotificationsAction = () => {
       });
       return;
     }
-    const firebaseNotificationsEnabled = await firebase.messaging().hasPermission();
+    const firebaseNotificationsEnabled = await firebaseMessaging().hasPermission();
     if (!firebaseNotificationsEnabled) {
       try {
-        await firebase.messaging().requestPermission();
-        await firebase.messaging().getToken();
+        await firebaseMessaging().requestPermission();
+        await firebaseMessaging().getToken();
         dispatch(fetchAllNotificationsAction());
         disabledPushNotificationsListener = setInterval(() => {
           dispatch(fetchAllNotificationsAction());
@@ -247,58 +247,59 @@ export const startListeningNotificationsAction = () => {
     }
 
     if (notificationsListener) return;
-    notificationsListener = firebase.notifications().onNotification(debounce(message => {
-      if (!message._data || !Object.keys(message._data).length) return;
-      if (checkForSupportAlert(message._data)) return;
-      const notification = processNotification(message._data, wallet.address.toUpperCase());
-      if (!notification) return;
-      if (notification.type === BCX) {
-        dispatch(fetchTransactionsHistoryNotificationsAction());
-        dispatch(fetchSmartWalletTransactionsAction());
-        dispatch(fetchAssetTransactionsAction(notification.asset));
-        dispatch(fetchAssetsBalancesAction());
-      }
-      if (notification.type === COLLECTIBLE) {
-        dispatch(fetchAllCollectiblesDataAction());
-      }
-      if (notification.type === BADGE) {
-        dispatch(fetchBadgesAction());
-      }
-      if (notification.type === SIGNAL) {
-        dispatch(getExistingChatsAction());
-        const { params: navParams = null } = getNavigationPathAndParamsState() || {};
-        if (!navParams) return;
-        dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        const contact = contacts.find(c => c.username === notification.navigationParams.username);
-        if (contact) {
-          if (!!navParams.username && navParams.username === contact.username) {
-            // $FlowFixMe - profileImage can be undefined
-            dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
-            return;
-          }
-          if (contact.status !== STATUS_MUTED) {
-            dispatch({
-              type: ADD_NOTIFICATION,
-              payload: {
-                ...notification,
-                message: `${notification.message} from ${contact.username}`,
-              },
-            });
-          }
-        }
-      }
-      if (notification.type === CONNECTION) {
-        if (notification.message === MESSAGE_DISCONNECTED) {
-          dispatch(deleteChatAction(notification.title));
-        }
-
-        dispatch(fetchInviteNotificationsAction());
-      }
-      if (notification.type !== SIGNAL) {
-        dispatch({ type: ADD_NOTIFICATION, payload: notification });
-        dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
-      }
-    }, 500));
+    // TODO: change to other notifications lib as firebase v6 excluded notifications
+    // notificationsListener = firebase.notifications().onNotification(debounce(message => {
+    //   if (!message._data || !Object.keys(message._data).length) return;
+    //   if (checkForSupportAlert(message._data)) return;
+    //   const notification = processNotification(message._data, wallet.address.toUpperCase());
+    //   if (!notification) return;
+    //   if (notification.type === BCX) {
+    //     dispatch(fetchTransactionsHistoryNotificationsAction());
+    //     dispatch(fetchSmartWalletTransactionsAction());
+    //     dispatch(fetchAssetTransactionsAction(notification.asset));
+    //     dispatch(fetchAssetsBalancesAction());
+    //   }
+    //   if (notification.type === COLLECTIBLE) {
+    //     dispatch(fetchAllCollectiblesDataAction());
+    //   }
+    //   if (notification.type === BADGE) {
+    //     dispatch(fetchBadgesAction());
+    //   }
+    //   if (notification.type === SIGNAL) {
+    //     dispatch(getExistingChatsAction());
+    //     const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+    //     if (!navParams) return;
+    //     dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+    //     const contact = contacts.find(c => c.username === notification.navigationParams.username);
+    //     if (contact) {
+    //       if (!!navParams.username && navParams.username === contact.username) {
+    //         // $FlowFixMe - profileImage can be undefined
+    //         dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
+    //         return;
+    //       }
+    //       if (contact.status !== STATUS_MUTED) {
+    //         dispatch({
+    //           type: ADD_NOTIFICATION,
+    //           payload: {
+    //             ...notification,
+    //             message: `${notification.message} from ${contact.username}`,
+    //           },
+    //         });
+    //       }
+    //     }
+    //   }
+    //   if (notification.type === CONNECTION) {
+    //     if (notification.message === MESSAGE_DISCONNECTED) {
+    //       dispatch(deleteChatAction(notification.title));
+    //     }
+    //
+    //     dispatch(fetchInviteNotificationsAction());
+    //   }
+    //   if (notification.type !== SIGNAL) {
+    //     dispatch({ type: ADD_NOTIFICATION, payload: notification });
+    //     dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
+    //   }
+    // }, 500));
   };
 };
 
@@ -314,66 +315,67 @@ export const stopListeningNotificationsAction = () => {
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Dispatch) => {
     await SOCKET.init();
-    const notificationOpen = await firebase.notifications().getInitialNotification();
-    if (notificationOpen) {
-      checkForSupportAlert(notificationOpen.notification._data);
-      const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
-      if (type === SIGNAL) {
-        dispatch(getExistingChatsAction());
-      }
-      const notificationRoute = NOTIFICATION_ROUTES[type] || null;
-      updateNavigationLastScreenState({
-        lastActiveScreen: notificationRoute,
-        lastActiveScreenParams: navigationParams,
-      });
-      firebase.notifications().setBadge(0);
-    }
-    if (notificationsOpenerListener) return;
-    notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
-      checkForSupportAlert(message.notification._data);
-      firebase.notifications().setBadge(0);
-      const pathAndParams = getNavigationPathAndParamsState();
-      if (!pathAndParams) return;
-      const currentFlow = pathAndParams.path.split('/')[0];
-      const { type, asset, navigationParams = {} } = processNotification(message.notification._data) || {};
-      const notificationRoute = NOTIFICATION_ROUTES[type] || null;
-      updateNavigationLastScreenState({
-        lastActiveScreen: notificationRoute,
-        lastActiveScreenParams: navigationParams,
-      });
-      if (notificationRoute && currentFlow !== AUTH_FLOW) {
-        if (type === BCX) {
-          dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchSmartWalletTransactionsAction());
-          dispatch(fetchAssetTransactionsAction(asset));
-          dispatch(fetchAssetsBalancesAction());
-        }
-        if (type === COLLECTIBLE) {
-          dispatch(fetchAllCollectiblesDataAction());
-        }
-        if (type === CONNECTION) {
-          dispatch(fetchInviteNotificationsAction());
-        }
-        if (type === SIGNAL) {
-          dispatch(getExistingChatsAction());
-        }
-
-        if (type === BADGE) {
-          dispatch(fetchBadgesAction(false));
-        }
-
-        const routeName = notificationRoute || HOME;
-        const navigateToAppAction = NavigationActions.navigate({
-          routeName: APP_FLOW,
-          params: {},
-          action: NavigationActions.navigate({
-            routeName,
-            params: navigationParams,
-          }),
-        });
-        navigate(navigateToAppAction);
-      }
-    });
+    // TODO: change to other notifications lib as firebase v6 excluded notifications
+    // const notificationOpen = await firebase.notifications().getInitialNotification();
+    // if (notificationOpen) {
+    //   checkForSupportAlert(notificationOpen.notification._data);
+    //   const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
+    //   if (type === SIGNAL) {
+    //     dispatch(getExistingChatsAction());
+    //   }
+    //   const notificationRoute = NOTIFICATION_ROUTES[type] || null;
+    //   updateNavigationLastScreenState({
+    //     lastActiveScreen: notificationRoute,
+    //     lastActiveScreenParams: navigationParams,
+    //   });
+    //   firebase.notifications().setBadge(0);
+    // }
+    // if (notificationsOpenerListener) return;
+    // notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
+    //   checkForSupportAlert(message.notification._data);
+    //   firebase.notifications().setBadge(0);
+    //   const pathAndParams = getNavigationPathAndParamsState();
+    //   if (!pathAndParams) return;
+    //   const currentFlow = pathAndParams.path.split('/')[0];
+    //   const { type, asset, navigationParams = {} } = processNotification(message.notification._data) || {};
+    //   const notificationRoute = NOTIFICATION_ROUTES[type] || null;
+    //   updateNavigationLastScreenState({
+    //     lastActiveScreen: notificationRoute,
+    //     lastActiveScreenParams: navigationParams,
+    //   });
+    //   if (notificationRoute && currentFlow !== AUTH_FLOW) {
+    //     if (type === BCX) {
+    //       dispatch(fetchTransactionsHistoryNotificationsAction());
+    //       dispatch(fetchSmartWalletTransactionsAction());
+    //       dispatch(fetchAssetTransactionsAction(asset));
+    //       dispatch(fetchAssetsBalancesAction());
+    //     }
+    //     if (type === COLLECTIBLE) {
+    //       dispatch(fetchAllCollectiblesDataAction());
+    //     }
+    //     if (type === CONNECTION) {
+    //       dispatch(fetchInviteNotificationsAction());
+    //     }
+    //     if (type === SIGNAL) {
+    //       dispatch(getExistingChatsAction());
+    //     }
+    //
+    //     if (type === BADGE) {
+    //       dispatch(fetchBadgesAction(false));
+    //     }
+    //
+    //     const routeName = notificationRoute || HOME;
+    //     const navigateToAppAction = NavigationActions.navigate({
+    //       routeName: APP_FLOW,
+    //       params: {},
+    //       action: NavigationActions.navigate({
+    //         routeName,
+    //         params: navigationParams,
+    //       }),
+    //     });
+    //     navigate(navigateToAppAction);
+    //   }
+    // });
   };
 };
 

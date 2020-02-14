@@ -24,12 +24,12 @@
 ; TEMPORARY! ignore various modules
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
 <PROJECT_ROOT>/node_modules/react-native/Libraries/.*
-
 ; ;;; custom ignores end ;;;
 
 [untyped]
-<PROJECT_ROOT>/node_modules/react-native-firebase/.*
 <PROJECT_ROOT>/node_modules/react-native-camera/.*
+<PROJECT_ROOT>/node_modules/react-native-image-view/.*
+<PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/react-native-share/.*
 <PROJECT_ROOT>/node_modules/react-native-swiper/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*

@@ -20,7 +20,7 @@
 import { ethers } from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
-import firebase from 'react-native-firebase';
+import firebaseMessaging from '@react-native-firebase/messaging';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
@@ -111,11 +111,10 @@ const getTokenWalletAndRegister = async (
   user: Object,
   dispatch: Dispatch,
 ) => {
-  await firebase.messaging().requestPermission().catch(() => { });
-  const fcmToken = await firebase.messaging().getToken().catch(() => { });
-
-  await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
+  await firebaseMessaging().requestPermission().catch(() => { });
+  const fcmToken = await firebaseMessaging().getToken().catch(() => null);
+  if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken || '', user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
   const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;

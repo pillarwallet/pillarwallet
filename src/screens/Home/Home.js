@@ -22,7 +22,6 @@ import { Animated, RefreshControl, Platform, View, ScrollView, FlatList } from '
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
-import firebase from 'react-native-firebase';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 
@@ -192,7 +191,8 @@ class HomeScreen extends React.Component<Props, State> {
     logScreenView('View home', 'Home');
 
     if (Platform.OS === 'ios') {
-      firebase.notifications().setBadge(0);
+      // TODO: change to other notifications lib as firebase v6 excluded notifications
+      // firebase.notifications().setBadge(0);
     }
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {

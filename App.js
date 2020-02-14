@@ -29,8 +29,9 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
 import { Appearance, AppearanceProvider } from 'react-native-appearance';
-import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
+
+import { setTopLevelNavigator } from 'services/navigation';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';

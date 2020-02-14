@@ -7,9 +7,8 @@ buildscript {
         compileSdkVersion = 28
         targetSdkVersion = 28
         supportLibVersion = "28.0.0"
-//        custom:
-        multidex_version = "2.0.1"
-//        googlePlayServicesVersion = "15.0.0"
+        multidex_version = "2.0.1" // custom multidex
+        firebaseIidVersion = "19.0.0" // required by react-native-device-info for getting device ID
     }
     repositories {
         google()
@@ -20,6 +19,8 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
+        classpath 'com.google.gms:google-services:4.2.0' // @react-native-firebase/app init
     }
 }
 

@@ -40,11 +40,12 @@ class FirebaseMock {
   })
 
   crashlytics = () => ({
-    setUserIdentifier: () => {},
+    setUserId: () => {},
   })
 
   analytics = () => ({
     setAnalyticsCollectionEnabled: () => {},
+    logEvent: () => Promise.resolve(),
   })
 }
 
