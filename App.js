@@ -20,7 +20,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity, Alert } from 'react-native';
+import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
@@ -39,7 +39,7 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { changeAppThemeAction, markThemeAlertAsShownAction } from 'actions/appSettingsActions';
+import { changeAppThemeAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -74,8 +74,6 @@ type Props = {
   activeWalkthroughSteps: Steps,
   themeType: string,
   changeAppTheme: (themeType: string) => void,
-  markThemeAlertAsShown: () => void,
-  seenThemeAlert: boolean,
 }
 
 class App extends React.Component<Props, *> {
@@ -129,7 +127,7 @@ class App extends React.Component<Props, *> {
     const { isFetched: prevIsFetched } = prevProps;
     if (isFetched && !prevIsFetched) {
       SplashScreen.hide();
-      this.showDarkModeAlert();
+      this.switchToDarkModeIfNeeded();
     }
   }
 
@@ -163,23 +161,12 @@ class App extends React.Component<Props, *> {
     executeDeepLink(deepLink);
   };
 
-  showDarkModeAlert = () => {
-    const { markThemeAlertAsShown, changeAppTheme, seenThemeAlert } = this.props;
-    if (seenThemeAlert) return;
+  switchToDarkModeIfNeeded = () => {
+    const { changeAppTheme, themeType } = this.props;
     const defaultPreference = Appearance.getColorScheme();
-    if (defaultPreference === DARK_PREFERENCE) {
-      markThemeAlertAsShown();
-      Alert.alert(
-        'Dark mode available',
-        'Would you like to turn on Dark mode now? You can always switch between modes in settings.',
-        [
-          { text: 'Cancel', onPress: () => markThemeAlertAsShown() },
-          {
-            text: 'Turn on',
-            onPress: () => changeAppTheme(DARK_THEME),
-          },
-        ],
-      );
+    // set dark theme for users that use dark mode on their device (unless they have other theme option selected)
+    if (defaultPreference === DARK_PREFERENCE && !themeType) {
+      changeAppTheme(DARK_THEME);
     }
   };
 
@@ -232,13 +219,12 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType, seenThemeAlert } },
+  appSettings: { isFetched, data: { themeType } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   activeWalkthroughSteps,
-  seenThemeAlert,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -250,7 +236,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
-  markThemeAlertAsShown: () => dispatch(markThemeAlertAsShownAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

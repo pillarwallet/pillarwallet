@@ -208,24 +208,12 @@ export const changeAppThemeAction = (themeType: string, setAsPreferred?: boolean
   };
 };
 
-export const setAppThemeAction = (theme?: string) => {
+export const setAppThemeAction = (themeType: string) => {
   return (dispatch: Dispatch) => {
-    const themeType = theme || LIGHT_THEME;
-
     dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: { themeType },
-    });
-  };
-};
-
-export const markThemeAlertAsShownAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { seenThemeAlert: true } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { seenThemeAlert: true },
     });
   };
 };

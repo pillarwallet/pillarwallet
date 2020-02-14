@@ -76,7 +76,7 @@ import {
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
-import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
 
@@ -225,13 +225,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
-      // check if current user has theme set and set it to default if
-      const hasTheme = get(appSettings, 'themeType');
-
-      if (!hasTheme) {
-        dispatch(setAppThemeAction());
-      }
-
       // check if theme is set to system's default
       const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
 
@@ -245,8 +238,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    dispatch(setAppThemeAction());
-
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };
