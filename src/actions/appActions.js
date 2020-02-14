@@ -19,7 +19,6 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
-import get from 'lodash.get';
 
 // services
 import Storage from 'services/storage';
@@ -76,7 +75,6 @@ import {
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
-import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
 
@@ -224,13 +222,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-
-      // check if theme is set to system's default
-      const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
-
-      if (isThemeSetAsSystemDefault) {
-        dispatch(handleSystemDefaultThemeChangeAction());
-      }
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 

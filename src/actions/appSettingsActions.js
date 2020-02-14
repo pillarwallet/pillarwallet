@@ -17,12 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Appearance } from 'react-native-appearance';
-
 import {
-  DARK_PREFERENCE,
-  DARK_THEME,
-  LIGHT_THEME,
   UPDATE_APP_SETTINGS,
   USER_JOINED_BETA_SETTING,
 } from 'constants/appSettingsConstants';
@@ -176,34 +171,6 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
       type: 'success',
       title: 'Success',
       autoClose: false,
-    });
-  };
-};
-
-export const handleSystemDefaultThemeChangeAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: { data: { themeType, isSetAsSystemPrefTheme } },
-    } = getState();
-
-    if (!isSetAsSystemPrefTheme) return;
-    const defaultThemePreference = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
-    if (defaultThemePreference === themeType) return;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType: defaultThemePreference } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType: defaultThemePreference },
-    });
-  };
-};
-
-export const changeAppThemeAction = (themeType: string, setAsPreferred?: boolean) => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred },
     });
   };
 };

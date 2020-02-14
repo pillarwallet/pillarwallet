@@ -39,7 +39,7 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { changeAppThemeAction } from 'actions/appSettingsActions';
+import { setAppThemeAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -73,7 +73,7 @@ type Props = {
   executeDeepLink: Function,
   activeWalkthroughSteps: Steps,
   themeType: string,
-  changeAppTheme: (themeType: string) => void,
+  setAppTheme: (themeType: string) => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -162,11 +162,11 @@ class App extends React.Component<Props, *> {
   };
 
   switchToDarkModeIfNeeded = () => {
-    const { changeAppTheme, themeType } = this.props;
+    const { setAppTheme, themeType } = this.props;
     const defaultPreference = Appearance.getColorScheme();
     // set dark theme for users that use dark mode on their device (unless they have other theme option selected)
     if (defaultPreference === DARK_PREFERENCE && !themeType) {
-      changeAppTheme(DARK_THEME);
+      setAppTheme(DARK_THEME);
     }
   };
 
@@ -174,7 +174,7 @@ class App extends React.Component<Props, *> {
     const {
       isFetched,
       themeType,
-      changeAppTheme,
+      setAppTheme,
       activeWalkthroughSteps,
     } = this.props;
     const theme = getThemeByType(themeType);
@@ -204,7 +204,7 @@ class App extends React.Component<Props, *> {
                 }}
                 onPress={() => {
                   const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
-                  changeAppTheme(themeToChangeTo);
+                  setAppTheme(themeToChangeTo);
                 }}
               >
                 <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
@@ -235,7 +235,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
-  changeAppTheme: (themeType: string) => dispatch(changeAppThemeAction(themeType)),
+  setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
