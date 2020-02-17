@@ -30,7 +30,7 @@ import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
 import { Appearance, AppearanceProvider } from 'react-native-appearance';
 import { setTopLevelNavigator } from 'services/navigation';
-import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
+import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
@@ -49,6 +49,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import Storybook from 'screens/Storybook';
 
 import configureStore from './src/configureStore';
 
@@ -254,7 +255,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
-const AppRoot = () => (
+const AppRoot = () => SHOW_ONLY_STORYBOOK ? <Storybook /> : (
   <Provider store={store}>
     <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
       <AppWithNavigationState />
