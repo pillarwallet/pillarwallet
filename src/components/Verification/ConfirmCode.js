@@ -37,6 +37,10 @@ const SpacedButton = styled(Button)`
   margin-bottom: ${spacing.layoutSides}px;
 `;
 
+const Label = styled(MediumText)`
+  padding-bottom: ${spacing.layoutSides}px;
+`;
+
 type Props = {
   updateCode: (code: string) => void,
   onPressConfirm: () => void,
@@ -63,7 +67,7 @@ const ConfirmCode = (props: Props) => {
   return (
     <React.Fragment>
       <FormWrapper>
-        <MediumText>Enter your code:</MediumText>
+        <Label>Enter your code:</Label>
         <TextInput inputProps={inputProps} />
         <SpacedButton onPress={onPressConfirm} title="Confirm" />
         <SpacedButton onPress={onPressCancel} title="Need a new code" secondary />

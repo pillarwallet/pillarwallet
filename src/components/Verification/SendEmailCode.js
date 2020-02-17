@@ -18,10 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import styled from 'styled-components/native';
 
 // components
 import Button from 'components/Button';
 import { MediumText } from 'components/Typography';
+
+// utils
+import { spacing } from 'utils/variables';
+
+const Label = styled(MediumText)`
+  padding-bottom: ${spacing.layoutSides}px;
+`;
 
 type Props = {
   onPressSendCode: () => void,
@@ -33,8 +41,8 @@ const SendEmailCode = (props: Props) => {
 
   return (
     <React.Fragment>
-      <MediumText>Verify your email:</MediumText>
-      <MediumText>{email}</MediumText>
+      <Label>Verify your email:</Label>
+      <Label>{email}</Label>
       <Button onPress={onPressSendCode} title="Send code" />
     </React.Fragment>
   );
