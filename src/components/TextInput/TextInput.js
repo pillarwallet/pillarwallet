@@ -447,22 +447,22 @@ class TextInput extends React.Component<Props, State> {
   };
 
   renderHorizontalOption = ({ item }) => {
-    const { name, icon } = item;
-    const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
+    const { symbol, iconUrl } = item;
+    const iconUri = `${SDK_PROVIDER}/${iconUrl}?size=3`;
     return (
       <HorizontalOptionItem
-        key={name}
+        key={symbol}
         onPress={() => this.selectValue(item)}
       >
         <ProfileImage
           uri={iconUri}
-          userName={name}
+          userName={symbol}
           diameter={64}
           textStyle={{ fontSize: fontSizes.medium }}
           noShadow
           borderWidth={0}
         />
-        <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
+        <HorizontalOptionItemName numberOfLines={1}>{symbol}</HorizontalOptionItemName>
       </HorizontalOptionItem>
     );
   };
