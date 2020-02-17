@@ -123,7 +123,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
-  padding: ${spacing.small}px ${spacing.layoutSides}px;
+  padding: ${spacing.medium}px ${spacing.layoutSides}px;
   width: 100%;
 `;
 
@@ -157,9 +157,7 @@ const Column = styled.View`
 
 const ItemTitle = styled(MediumText)`
   color: ${themedColors.text};
-  font-size: ${fontSizes.medium}px;
-  line-height: 22px;
-  letter-spacing: ${fontTrackings.small}px;
+  ${fontStyles.big};
   width: 100%;
 `;
 
@@ -238,9 +236,15 @@ const ItemValue = styled(BaseText)`
   text-align: right;
 `;
 
-const ItemValueBold = styled(MediumText)`
+const BalanceValue = styled(BaseText)`
   ${fontStyles.big};
   color: ${({ color, theme }) => color || theme.colors.text};
+  text-align: right;
+`;
+
+const BalanceFiatValue = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${themedColors.secondaryText};
   text-align: right;
 `;
 
@@ -520,7 +524,7 @@ const Addon = (props: AddonProps) => {
       <Wrapper style={{ alignItems: 'flex-end' }}>
         {!!tokenBalance.toString() &&
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <ItemValueBold>{`${tokenBalance} ${token}`}</ItemValueBold>
+          <BalanceValue>{`${tokenBalance} ${token}`}</BalanceValue>
           {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
         </View>
         }
@@ -530,7 +534,7 @@ const Addon = (props: AddonProps) => {
           amount={syntheticBalance}
           token={token}
         />}
-        <ItemSubText style={{ marginTop: -2 }}>{value}</ItemSubText>
+        <BalanceFiatValue>{value}</BalanceFiatValue>
       </Wrapper>
     );
   }

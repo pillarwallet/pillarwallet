@@ -63,6 +63,7 @@ import {
   CHANGE_PIN_FLOW,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   REVEAL_BACKUP_PHRASE,
+  STORYBOOK,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME, DARK_PREFERENCE, NO_THEME_PREFERENCE } from 'constants/appSettingsConstants';
@@ -210,6 +211,11 @@ const formDebbugItems = (that) => {
       key: 'clearStorage',
       title: 'Clear Local Storage',
       onPress: that.clearLocalStorage,
+    });
+    debugItems.push({
+      key: 'storybook',
+      title: 'Storybook',
+      onPress: that.goToStorybook,
     });
   }
   return debugItems;
@@ -418,6 +424,11 @@ class Settings extends React.Component<Props, State> {
     storage.removeAll();
     chat.client.resetAccount().catch(() => null);
     Toast.show({ title: 'Success', type: 'success', message: 'Local storage was cleared' });
+  }
+
+  goToStorybook = () => {
+    const { navigation } = this.props;
+    navigation.navigate(STORYBOOK);
   }
 
   setSectionToScrollTo = (sectionKey: string) => {
