@@ -74,6 +74,7 @@ type Props = {
   activeWalkthroughSteps: Steps,
   themeType: string,
   setAppTheme: (themeType: string) => void,
+  isManualThemeSelection: boolean,
 }
 
 class App extends React.Component<Props, *> {
@@ -162,11 +163,13 @@ class App extends React.Component<Props, *> {
   };
 
   switchToDarkModeIfNeeded = () => {
-    const { setAppTheme, themeType } = this.props;
-    const defaultPreference = Appearance.getColorScheme();
-    // set dark theme for users that use dark mode on their device (unless they have other theme option selected)
-    if (defaultPreference === DARK_PREFERENCE && !themeType) {
-      setAppTheme(DARK_THEME);
+    const { setAppTheme, isManualThemeSelection } = this.props;
+    // set theme based on selected mode on users device
+    // (unless they have other theme option selected manually)
+    if (!isManualThemeSelection) {
+      const defaultPreference = Appearance.getColorScheme();
+      const themeToSet = defaultPreference === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+      setAppTheme(themeToSet);
     }
   };
 
@@ -219,11 +222,12 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType } },
+  appSettings: { isFetched, data: { themeType, isManualThemeSelection } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
+  isManualThemeSelection,
   activeWalkthroughSteps,
 });
 

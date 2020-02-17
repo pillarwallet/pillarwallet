@@ -117,7 +117,7 @@ type Props = {
   accounts: Accounts,
   theme: Theme,
   themeType: string,
-  setAppTheme: (themeType: string) => void,
+  setAppTheme: (themeType: string, isManualThemeSelection: boolean) => void,
 }
 
 const storage = Storage.getInstance('db');
@@ -286,7 +286,7 @@ const formThemeItems = (that) => {
     {
       key: 'theme',
       title: 'Dark mode',
-      onPress: () => setAppTheme(modeToChangeTo),
+      onPress: () => setAppTheme(modeToChangeTo, true),
       toggle: true,
       value: currentTheme === DARK_THEME,
     },
@@ -852,7 +852,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
+  setAppTheme: (themeType: string, isManualThemeSelection: boolean) => dispatch(
+    setAppThemeAction(themeType, isManualThemeSelection),
+  ),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Settings));

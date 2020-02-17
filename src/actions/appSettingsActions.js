@@ -17,7 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Appearance } from 'react-native-appearance';
+
 import {
+  DARK_PREFERENCE,
+  DARK_THEME,
+  LIGHT_THEME,
   UPDATE_APP_SETTINGS,
   USER_JOINED_BETA_SETTING,
 } from 'constants/appSettingsConstants';
@@ -175,12 +180,26 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   };
 };
 
-export const setAppThemeAction = (themeType: string) => {
+export const setAppThemeAction = (themeType: string, isManualThemeSelection?: boolean) => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isManualThemeSelection } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { themeType },
+      payload: { themeType, isManualThemeSelection },
     });
+  };
+};
+
+export const handleSystemDefaultThemeChangeAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { themeType, isManualThemeSelection } },
+    } = getState();
+
+    if (isManualThemeSelection) return;
+    const defaultThemePreference = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+    if (defaultThemePreference === themeType) return;
+
+    dispatch(setAppThemeAction(defaultThemePreference));
   };
 };
