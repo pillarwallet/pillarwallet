@@ -39,7 +39,10 @@ const MockAsyncStorage = new StorageMock(storageCache);
 
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
 jest.setMock('AsyncStorage', MockAsyncStorage);
-jest.setMock('react-native-firebase', FirebaseMock);
+jest.setMock('@react-native-firebase/analytics', FirebaseMock.analytics);
+jest.setMock('@react-native-firebase/crashlytics', FirebaseMock.crashlytics);
+jest.setMock('@react-native-firebase/messaging', FirebaseMock.messaging);
+jest.setMock('@react-native-firebase/iid', FirebaseMock.iid);
 jest.setMock('cryptocompare', {
   priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
     return Promise.resolve({});
@@ -102,7 +105,7 @@ jest.setMock('react-native-background-timer', {
 });
 
 jest.setMock('react-native-device-info', {
-  getUniqueID: () => '1x1x1x1x1x1x1',
+  getUniqueId: () => '1x1x1x1x1x1x1',
 });
 
 jest.setMock('react-native-intercom', {

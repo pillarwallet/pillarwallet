@@ -17,7 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+/* eslint-disable */
+// TODO: eslint disabled because of commented out code below.
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';

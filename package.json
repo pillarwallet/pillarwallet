@@ -115,7 +115,6 @@
     "react-native-permissions": "^1.2.1",
     "react-native-qrcode-svg": "^5.1.2",
     "react-native-randombytes": "^3.0.0",
-    "react-native-screens": "^1.0.0-alpha.22",
     "react-native-scrypt": "^1.1.2",
     "react-native-sentry": "0.39.1",
     "react-native-shadow": "^1.2.2",
@@ -211,7 +210,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native-safe-area-view|@react-native-community/async-storage/lib|react-native-image-view|react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-touch-id|react-native-color-matrix-image-filters|react-native-htmlview|react-native-video|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-navigation-stack|react-native-screens|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-native-qrcode-svg|react-native-extra-dimensions-android|react-native-cached-image|react-native-emoji|react-native-collapsible|react-native-webview|react-native-swiper|@react-navigation/.*/))"
+      "node_modules/(?!((jest-)?react-native-safe-area-view|@react-native-community/async-storage/lib|react-native-image-view|react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-touch-id|react-native-color-matrix-image-filters|react-native-htmlview|react-native-video|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-navigation-stack|react-native-screens|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-native-qrcode-svg|react-native-extra-dimensions-android|react-native-cached-image|react-native-emoji|react-native-collapsible|react-native-webview|react-native-swiper|@react-navigation/.*/|pouchdb-adapter-asyncstorage))"
     ],
     "setupFilesAfterEnv": [
       "./src/testUtils/jestSetup.js"

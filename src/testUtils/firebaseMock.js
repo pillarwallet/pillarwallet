@@ -31,21 +31,25 @@ class FirebaseMock {
         return null;
       };
     },
-  })
+  });
 
   messaging = () => ({
     requestPermission: () => Promise.resolve(),
     hasPermission: () => Promise.resolve(1),
     getToken: () => Promise.resolve('12x2342x212'),
-  })
+  });
 
   crashlytics = () => ({
     setUserId: () => {},
-  })
+  });
 
   analytics = () => ({
     setAnalyticsCollectionEnabled: () => {},
     logEvent: () => Promise.resolve(),
+  });
+
+  iid = () => ({
+    delete: () => Promise.resolve(),
   })
 }
 
