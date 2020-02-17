@@ -450,7 +450,7 @@ export const logoutAction = () => {
     await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
     await storage.removeAll();
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-    const themeType = get(getState(), 'appSettings.data.themeType', '');
+    const themeType = get(getState(), 'appSettings.data.selectedThemeType', '');
 
     if (smartWalletFeatureEnabled) await smartWalletService.reset();
     clearWebViewCookies();

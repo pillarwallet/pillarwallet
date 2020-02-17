@@ -219,7 +219,7 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType } },
+  appSettings: { isFetched, data: { selectedThemeType: themeType } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,

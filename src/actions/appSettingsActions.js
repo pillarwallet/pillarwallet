@@ -175,12 +175,12 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   };
 };
 
-export const setAppThemeAction = (themeType: string) => {
+export const setAppThemeAction = (selectedThemeType: string) => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
+    dispatch(saveDbAction('app_settings', { appSettings: { selectedThemeType } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { themeType },
+      payload: { selectedThemeType },
     });
   };
 };
