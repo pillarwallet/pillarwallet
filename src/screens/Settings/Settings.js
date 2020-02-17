@@ -821,7 +821,7 @@ const mapStateToProps = ({
       baseFiatCurrency,
       optOutTracking = false,
       userJoinedBeta = false,
-      selectedThemeType: themeType,
+      themeType,
     },
   },
   notifications: { intercomNotificationsCount },

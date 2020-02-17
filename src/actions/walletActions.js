@@ -168,14 +168,14 @@ export const setPinForNewWalletAction = (pin: string) => {
 
 export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { appSettings: { data: { selectedThemeType } } } = getState();
+    const { appSettings: { data: { themeType } } } = getState();
 
     dispatch({
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
 
-    if (shouldRegisterWallet) dispatch(registerWalletAction(false, selectedThemeType));
+    if (shouldRegisterWallet) dispatch(registerWalletAction(false, themeType));
   };
 };
 

@@ -112,7 +112,7 @@ class BiometricsPrompt extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { selectedThemeType: themeType } },
+  appSettings: { data: { themeType } },
 }: RootReducerState): $Shape<Props> => ({
   themeType,
 });
