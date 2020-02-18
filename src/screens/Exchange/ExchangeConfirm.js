@@ -18,26 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
 
 // components
-import { Footer, ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { BaseText, Label, MediumText, Paragraph, TextLink } from 'components/Typography';
+import { MediumText, Paragraph, BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
-import Icon from 'components/Icon';
+import HyperLink from 'components/HyperLink';
+import SelectorList from 'components/SelectorList';
+import TitleWithIcon from 'components/Title/TitleWithIcon';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE } from 'constants/exchangeConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -45,11 +46,11 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount, formatAmountDisplay, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getOfferProviderLogo } from 'utils/exchange';
+import { themedColors } from 'utils/themes';
 
 // models, types
 import type { GasInfo } from 'models/GasInfo';
@@ -57,100 +58,23 @@ import type { Asset, Balances, Rates } from 'models/Asset';
 import type { OfferOrder, ProvidersMeta } from 'models/Offer';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
+import type { SessionData } from 'models/Session';
 
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const ValueWrapper = styled.View`
-  flex: 1;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
-
-const LabelSub = styled(BaseText)`
-  margin-top: 5px;
-  ${fontStyles.regular};
-`;
-
-const SpeedButton = styled(Button)`
-  margin-top: 14px;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ButtonWrapper = styled.View`
-  margin-top: ${spacing.rhythm / 2}px;
-  margin-bottom: ${spacing.rhythm + 10}px;
-`;
-
-const WarningMessage = styled(Paragraph)`
-  text-align: center;
-  color: ${themedColors.negative};
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
-const ProviderWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-top: 6px;
-`;
-
-const ProviderIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
-  margin-right: 4px;
-`;
-
-const WalletSwitcher = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const SeparatorValue = styled(Value)`
-  color: ${themedColors.secondaryText};
-  margin: 0px 8px;
-`;
-
-const ChevronWrapper = styled.View`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-left: 8px;
-`;
-
-const SelectorChevron = styled(Icon)`
-  font-size: 8px;
-  color: ${themedColors.primary};
-`;
+// partials
+import ExchangeScheme from './ExchangeScheme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  session: Object,
-  fetchGasInfo: Function,
+  session: SessionData,
+  fetchGasInfo: () => void,
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: ?string,
   exchangeSupportedAssets: Asset[],
   balances: Balances,
   executingExchangeTransaction: boolean,
-  setDismissTransaction: Function,
+  setDismissTransaction: () => void,
   providersMeta: ProvidersMeta,
-  theme: Theme,
 };
 
 type State = {
@@ -158,6 +82,41 @@ type State = {
   transactionSpeed: string,
   gasLimit: number,
 }
+
+const MainWrapper = styled.View`
+  background-color: ${themedColors.card};
+  padding: 55px 0 64px;
+  flex: 1;
+  justify-content: center;
+`;
+
+const FooterWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: 54px ${spacing.layoutSides}px 36px;
+  width: 100%;
+  background-color: ${themedColors.surface};
+  border-top-color: ${themedColors.border};
+  border-top-width: 1px;
+`;
+
+const LabeledRow = styled.View`
+  margin: 10px 0;
+`;
+
+const AllowanceWrapper = styled.View`
+  flex: 1;
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
+`;
+
+const SettingsWrapper = styled.View`
+  padding: 32px ${spacing.layoutSides}px 0;
+  justify-content: center;
+`;
+
+const SliderContentWrapper = styled.View`
+  margin-bottom: 30px;
+`;
 
 const SLOW = 'min';
 const NORMAL = 'avg';
@@ -219,23 +178,30 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   renderTxSpeedButtons = () => {
     const { rates, baseFiatCurrency } = this.props;
+    const { transactionSpeed } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(SPEED_TYPES).map(txSpeed => {
+
+    const speedOptions = Object.keys(SPEED_TYPES).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-      // $FlowFixMe
       const speedTitle = SPEED_TYPES[txSpeed];
-      return (
-        <SpeedButton
-          key={txSpeed}
-          primaryInverted
-          onPress={() => this.handleGasPriceChange(txSpeed)}
-        >
-          <TextLink>{speedTitle} - {feeInEth} ETH</TextLink>
-          <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
-        </SpeedButton>
-      );
+      return {
+        id: speedTitle,
+        label: speedTitle,
+        valueToShow: `${feeInEth} ETH (${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)})`,
+        value: txSpeed,
+      };
     });
+
+    return (
+      <SelectorList
+        onSelect={(selectedValue) => this.handleGasPriceChange(selectedValue.toString())}
+        options={speedOptions}
+        selectedValue={transactionSpeed}
+        numColumns={3}
+        minItemWidth={90}
+      />
+    );
   };
 
   handleGasPriceChange = (txSpeed: string) => {
@@ -294,7 +260,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       };
     }
 
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true });
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true, transactionType: EXCHANGE });
   };
 
 
@@ -318,9 +284,9 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       session,
       balances,
       providersMeta,
-      theme,
+      baseFiatCurrency,
+      rates,
     } = this.props;
-    const colors = getThemeColors(theme);
 
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const {
@@ -337,111 +303,99 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
 
     const txFeeInWei = this.getTxFeeInWei(transactionSpeed);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const feeInEth = formatAmount(utils.formatEther(txFeeInWei));
+    const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
     const ethBalance = getBalance(balances, ETH);
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     const enoughBalance = fromAssetCode === ETH
       ? balanceInWei.sub(utils.parseUnits(payQuantity.toString(), 'ether')).gte(txFeeInWei)
       : balanceInWei.gte(txFeeInWei);
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
-
-    const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
-    const { name } = providerInfo;
-    const providerName = name || getProviderDisplayName(provider);
-    const providerLogo = getOfferProviderLogo(providersMeta, provider);
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
+    const providerLogo = getOfferProviderLogo(providersMeta, provider);
 
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Confirm exchange' }],
+          centerItems: [{ title: 'Details' }],
           customOnBack: this.handleBack,
         }}
       >
-        <ScrollWrapper regularPadding>
-          <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
-            {setTokenAllowance
-              ? 'Review the details and enable asset as well as confirm the cost of data transaction.'
-              : 'Review the details and confirm the exchange as well as the cost of transaction.'
-            }
-          </Paragraph>
-          {setTokenAllowance &&
-            <LabeledRow>
-              <Label>Asset to enable</Label>
-              <Value>{fromAssetCode}</Value>
-            </LabeledRow>
-          }
-          {!setTokenAllowance &&
-            <View>
-              <LabeledRow>
-                <Label>You will receive</Label>
-                <ValueWrapper>
-                  <Value>{`${formattedReceiveAmount} ${toAssetCode}`}</Value>
-                  <SeparatorValue>&rarr;</SeparatorValue>
-                  <WalletSwitcher onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}>
-                    <TextLink style={{ ...fontStyles.big }}>Legacy Wallet</TextLink>
-                    <ChevronWrapper>
-                      <SelectorChevron
-                        name="chevron-right"
-                        style={{ transform: [{ rotate: '-90deg' }] }}
-                      />
-                      <SelectorChevron
-                        name="chevron-right"
-                        style={{
-                          transform: [{ rotate: '90deg' }],
-                          marginTop: 2,
-                        }}
-                      />
-                    </ChevronWrapper>
-                  </WalletSwitcher>
-                </ValueWrapper>
-                <LabelSub>
-                  Final amount may be higher or lower than expected at the end of a transaction.
-                  Crypto is volatile, the rate fluctuates.
-                </LabelSub>
-              </LabeledRow>
-              <LabeledRow>
-                <Label>You will pay</Label>
-                <Value>{`${payQuantity} ${fromAssetCode}`}</Value>
-              </LabeledRow>
-              <LabeledRow>
-                <Label>Exchange</Label>
-                <ProviderWrapper>
-                  {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
-                  <Value>{providerName}</Value>
-                </ProviderWrapper>
-              </LabeledRow>
-            </View>
-          }
-          <LabeledRow>
-            <Label>Transaction fee</Label>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-              <Value>{formatAmount(utils.formatEther(txFeeInWei))} ETH</Value>
-              <ButtonText
-                buttonText="Change"
-                onPress={() => this.setState({ showFeeModal: true })}
-                wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
+        <ScrollWrapper contentContainerStyle={{ minHeight: '100%' }}>
+          <MainWrapper>
+            {!setTokenAllowance &&
+              <ExchangeScheme
+                fromValue={payQuantity}
+                fromAssetCode={fromAssetCode}
+                toValue={formattedReceiveAmount}
+                toAssetCode={toAssetCode}
+                imageSource={providerLogo}
               />
-            </View>
-          </LabeledRow>
-        </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
-          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
+            }
+            {!!setTokenAllowance &&
+              <AllowanceWrapper>
+                <Paragraph small style={{ marginVertical: spacing.medium }}>
+                  Review the details and enable asset as well as confirm the cost of data transaction.
+                </Paragraph>
+                <LabeledRow>
+                  <BaseText medium secondary>Asset to enable</BaseText>
+                  <MediumText big>{fromAssetCode}</MediumText>
+                </LabeledRow>
+
+              </AllowanceWrapper>
+            }
+            <ButtonText
+              buttonText="Legacy Wallet"
+              rightIconProps={{ name: 'selector', style: { fontSize: 16 } }}
+              onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}
+              wrapperStyle={{ marginTop: 0 }}
+            />
+            <SettingsWrapper>
+              <BaseText secondary regular center style={{ marginBottom: 4 }}>
+                Transaction fee {formatAmount(utils.formatEther(txFeeInWei))} ETH
+                ({getCurrencySymbol(fiatCurrency)}{feeInFiat.toFixed(2)})
+              </BaseText>
+              {!!errorMessage &&
+              <BaseText negative regular center style={{ marginBottom: 4 }}>
+                {errorMessage}
+              </BaseText>}
+              <ButtonText
+                buttonText="Advanced options"
+                leftIconProps={{ name: 'options', style: { fontSize: 16 } }}
+                onPress={() => this.setState({ showFeeModal: true })}
+              />
+            </SettingsWrapper>
+          </MainWrapper>
           <FooterWrapper>
             <Button
+              block
               disabled={!session.isOnline || !!errorMessage}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={setTokenAllowance ? 'Enable Asset' : 'Confirm Exchange'}
+              title={setTokenAllowance ? 'Enable Asset' : 'Confirm'}
             />
+            {!setTokenAllowance &&
+            <React.Fragment>
+              <BaseText small center style={{ maxWidth: 242, marginTop: 24 }}>
+                Final rate may be slightly higher or lower at the end of the transaction.
+              </BaseText>
+              <HyperLink
+                style={{ fontSize: fontSizes.small }}
+                url="https://help.pillarproject.io/en/articles/3487702-why-did-i-receive-less-tokens"
+              >
+                Read more
+              </HyperLink>
+            </React.Fragment>}
           </FooterWrapper>
-        </Footer>
+        </ScrollWrapper>
         <SlideModal
           isVisible={showFeeModal}
-          title="Transaction speed"
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
         >
-          <Label>Choose your gas price.</Label>
-          <Label>Faster transaction requires more fee.</Label>
-          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+          <SliderContentWrapper>
+            <TitleWithIcon iconName="lightning" title="Speed" />
+            {this.renderTxSpeedButtons()}
+          </SliderContentWrapper>
         </SlideModal>
       </ContainerWithHeader>
     );
@@ -478,4 +432,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen);
