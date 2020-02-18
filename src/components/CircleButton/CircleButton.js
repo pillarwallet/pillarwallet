@@ -24,8 +24,8 @@ import { fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
-import type { Theme } from 'models/Theme';
-import { DARK_THEME } from 'constants/appSettingsConstants';
+import type { Theme, ThemeColors } from 'models/Theme';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   disabled?: boolean,
@@ -41,8 +41,41 @@ type Props = {
 type ButtonIconWrapperProps = {
   disabled?: boolean,
   showIndicator?: boolean,
-  theme: Theme,
+  themeType: string,
   children: React.Node,
+}
+
+const actionButtonBackground = require('assets/images/bg_action_button.png');
+const actionButtonBackgroundDisabled = require('assets/images/bg_action_button_disabled.png');
+const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
+const actionButtonBackgroundDarkDisabled = require('assets/images/bg_action_button_dark_disabled.png');
+
+function getButtonBackgroundSource(themeType: string, isDisabled?: boolean) {
+  if (themeType === DARK_THEME) {
+    if (isDisabled) return actionButtonBackgroundDarkDisabled;
+    return actionButtonBackgroundDark;
+  } else if (isDisabled) {
+    return actionButtonBackgroundDisabled;
+  }
+  return actionButtonBackground;
+}
+
+function getIconColor(colors: ThemeColors, isDisabled?: boolean, themeType: string) {
+  if (themeType === DARK_THEME) {
+    if (isDisabled) return colors.secondaryText;
+    return colors.control;
+  }
+  return colors.primary;
+}
+
+function getLabelColor(theme: Theme, isDisabled: boolean) {
+  const themeType = getThemeType(theme);
+  const colors = getThemeColors(theme);
+  if (themeType === LIGHT_THEME) {
+    if (isDisabled) return colors.secondaryText;
+    return colors.primary;
+  }
+  return colors.control;
 }
 
 const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
@@ -76,8 +109,8 @@ const CircleButtonIcon = styled(Image)`
 `;
 
 const CircleButtonText = styled(BaseText)`
-  color: ${themedColors.primary};
-  opacity: ${props => props.disabled ? 0.5 : 1};
+  color: ${({ theme, disabled }) => getLabelColor(theme, disabled)};
+  opacity: ${({ disabled, theme }) => getThemeType(theme) === DARK_THEME && disabled ? 0.5 : 1};
   text-align: center;
   font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
@@ -94,34 +127,19 @@ const Indicator = styled.View`
   right: ${({ rightPos }) => rightPos}px;
 `;
 
-const actionButtonBackground = require('assets/images/bg_action_button.png');
-const actionButtonBackgroundDisabled = require('assets/images/bg_action_button_disabled.png');
-const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
-
-function getButtonBackgroundSource(themeType, isDisabled) {
-  if (themeType === DARK_THEME) {
-    return actionButtonBackgroundDark;
-  } else if (isDisabled) {
-    return actionButtonBackgroundDisabled;
-  }
-  return actionButtonBackground;
-}
-
 const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
   const {
     disabled,
     showIndicator,
-    theme,
+    themeType,
     children,
   } = props;
 
-  const themeType = getThemeType(theme);
   const buttonBackground = getButtonBackgroundSource(themeType, disabled);
   return (
     <ImageBackground
       source={buttonBackground}
       style={{ width: 92, height: 92 }}
-      opacity={themeType === DARK_THEME && disabled ? 0.5 : 1}
     >
       <CircleButtonIconWrapper
         disabled={disabled}
@@ -146,6 +164,7 @@ const CircleButton = (props: Props) => {
   } = props;
 
   const colors = getThemeColors(theme);
+  const themeType = getThemeType(theme);
   const iconOpacity = disabled ? 0.5 : 1;
 
   return (
@@ -153,7 +172,7 @@ const CircleButton = (props: Props) => {
       disabled={disabled}
       onPress={() => onPress()}
     >
-      <ButtonIconWrapper {...props} theme={theme}>
+      <ButtonIconWrapper {...props} themeType={themeType}>
         {!!icon &&
         <CircleButtonIcon
           disabled={disabled}
@@ -166,7 +185,7 @@ const CircleButton = (props: Props) => {
           name={fontIcon}
           style={{
             fontSize: 22,
-            color: colors.primary,
+            color: getIconColor(colors, disabled, themeType),
             alignSelf: 'center',
             ...fontIconStyle,
             opacity: iconOpacity,

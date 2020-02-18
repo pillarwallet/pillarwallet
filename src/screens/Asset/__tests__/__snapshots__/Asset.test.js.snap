@@ -958,7 +958,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  opacity={1}
                   source={1}
                   style={
                     Array [
@@ -1070,7 +1069,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  opacity={1}
                   source={1}
                   style={
                     Array [
@@ -1136,11 +1134,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#007AFF",
+                        "color": "#8B939E",
                         "fontSize": 16,
                         "letterSpacing": 0.1,
                         "marginTop": -6,
-                        "opacity": 0.5,
+                        "opacity": 1,
                         "textAlign": "center",
                       },
                       undefined,
