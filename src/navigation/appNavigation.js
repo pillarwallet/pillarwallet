@@ -97,6 +97,7 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ServicesScreen from 'screens/Services';
+import StorybookScreen from 'screens/Storybook';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -217,6 +218,7 @@ import {
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   SERVICES,
+  STORYBOOK,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -337,6 +339,7 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
+  [STORYBOOK]: StorybookScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

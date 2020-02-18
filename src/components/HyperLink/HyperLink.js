@@ -21,20 +21,23 @@ import * as React from 'react';
 import { Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
+import { themedColors } from 'utils/themes';
 
 type Props = {
   children: React.Node,
   url: string,
+  style?: Object,
 }
 
 const HyperLinkText = styled(BaseText)`
-  color: rgb(32,119,253);
+  color: ${themedColors.primary};
 `;
 
 const HyperLink = (props: Props) => {
+  const { url, children, style } = props;
   return (
-    <HyperLinkText onPress={() => Linking.openURL(props.url)}>
-      {props.children}
+    <HyperLinkText onPress={() => Linking.openURL(url)} style={style}>
+      {children}
     </HyperLinkText>
   );
 };

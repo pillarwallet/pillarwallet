@@ -1,0 +1,13 @@
+diff --git a/node_modules/util-deprecate/index.js b/node_modules/util-deprecate/index.js
+new file mode 100644
+index 0000000..0368e26
+--- /dev/null
++++ b/node_modules/util-deprecate/index.js
+@@ -0,0 +1,6 @@
++
++/**
++ * For Node.js, simply re-export the core `util.deprecate` function.
++ */
++
++module.exports = require('util').deprecate;
+\ No newline at end of file

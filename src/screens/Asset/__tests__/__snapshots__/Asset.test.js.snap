@@ -1884,12 +1884,16 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 12,
+                            "lineHeight": 18,
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 12,
+                              "lineHeight": 18,
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -2003,12 +2007,16 @@ exports[`Asset renders the Asset correctly 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 12,
+                            "lineHeight": 18,
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 12,
+                              "lineHeight": 18,
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -2735,6 +2743,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 12,
+                        "lineHeight": 18,
                         "textAlignVertical": "center",
                       },
                       Array [
