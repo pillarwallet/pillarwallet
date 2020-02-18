@@ -163,10 +163,10 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                 "flexDirection": "row",
                 "justifyContent": "center",
                 "opacity": 1,
-                "paddingBottom": 8,
+                "paddingBottom": 12,
                 "paddingLeft": 16,
                 "paddingRight": 16,
-                "paddingTop": 8,
+                "paddingTop": 12,
                 "width": "100%",
               }
             }
@@ -289,9 +289,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontSize": 16,
-                                "letterSpacing": 0.2,
-                                "lineHeight": 22,
+                                "fontSize": 18,
+                                "lineHeight": 28,
                                 "width": "100%",
                               },
                               undefined,
@@ -564,10 +563,10 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                 "flexDirection": "row",
                 "justifyContent": "center",
                 "opacity": 1,
-                "paddingBottom": 8,
+                "paddingBottom": 12,
                 "paddingLeft": 16,
                 "paddingRight": 16,
-                "paddingTop": 8,
+                "paddingTop": 12,
                 "width": "100%",
               }
             }
@@ -690,9 +689,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontSize": 16,
-                                "letterSpacing": 0.2,
-                                "lineHeight": 22,
+                                "fontSize": 18,
+                                "lineHeight": 28,
                                 "width": "100%",
                               },
                               undefined,

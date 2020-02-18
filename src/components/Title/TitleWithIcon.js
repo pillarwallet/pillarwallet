@@ -17,29 +17,52 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
-import { Linking } from 'react-native';
 import styled from 'styled-components/native';
-import { BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
+import Icon from 'components/Icon';
+import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
-type Props = {
-  children: React.Node,
-  url: string,
-  style?: Object,
-}
 
-const HyperLinkText = styled(BaseText)`
-  color: ${themedColors.primary};
+type Props = {
+  title: string,
+  iconName: string,
+  wrapperStyle?: Object,
+  iconSize?: number,
+};
+
+const TitleWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin: 10px 0;
 `;
 
-const HyperLink = (props: Props) => {
-  const { url, children, style } = props;
+const TitleText = styled(MediumText)`
+  ${fontStyles.regular};
+`;
+
+const StyledIcon = styled(Icon)`
+  margin-right: 4px;
+  color: ${themedColors.accent};
+  ${({ size }) => `font-size: ${size || '24'}px`}
+`;
+
+const TitleWithIcon = (props: Props) => {
+  const {
+    title,
+    iconName,
+    wrapperStyle,
+    iconSize,
+  } = props;
+
   return (
-    <HyperLinkText onPress={() => Linking.openURL(url)} style={style}>
-      {children}
-    </HyperLinkText>
+    <TitleWrapper style={wrapperStyle}>
+      <StyledIcon name={iconName} size={iconSize} />
+      <TitleText>{title}</TitleText>
+    </TitleWrapper>
   );
 };
 
-export default HyperLink;
+export default TitleWithIcon;

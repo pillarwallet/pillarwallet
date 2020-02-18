@@ -67,9 +67,12 @@ const glyphMap = {
   delete: '\uE82A',
   'sound-off': '\uE82C',
   plus: '\uE82D',
+  selector: '\uE85A',
+  options: '\uE82F',
+  lightning: '\uE830',
 };
 
-type Props = {
+export type IconProps = {
   name: string,
   style?: Object,
 }
@@ -78,7 +81,7 @@ const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';
 
 const IconSet = createIconSet(glyphMap, fontName);
 
-const Icon = (props: Props) => {
+const Icon = (props: IconProps) => {
   const { name, style } = props;
   return <IconSet name={name} style={style} />;
 };
