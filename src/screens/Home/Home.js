@@ -38,6 +38,7 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
+import IconButton from 'components/IconButton';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -78,7 +79,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -407,8 +408,9 @@ class HomeScreen extends React.Component<Props, State> {
         headerProps={{
           leftItems: [
             {
-              icon: 'hamburger',
-              onPress: () => navigation.navigate(MENU),
+              custom: (
+                <IconButton icon="hamburger" onPress={() => navigation.navigate(MENU)} fontSize={fontSizes.large} />
+              ),
             },
           ],
           centerItems: [{ userIcon: true }],

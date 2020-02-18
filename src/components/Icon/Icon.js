@@ -74,6 +74,7 @@ const glyphMap = {
   help: '\uE836',
   like: '\uE837',
   signout: '\uE839',
+  hamburger: '\uE875',
 };
 
 export type IconProps = {
