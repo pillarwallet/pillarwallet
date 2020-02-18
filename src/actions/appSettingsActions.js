@@ -190,6 +190,8 @@ export const setAppThemeAction = (themeType: string, isManualThemeSelection?: bo
   };
 };
 
+// set theme based on selected mode on users devices
+// (unless they have other theme option selected manually)
 export const handleSystemDefaultThemeChangeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -197,9 +199,9 @@ export const handleSystemDefaultThemeChangeAction = () => {
     } = getState();
 
     if (isManualThemeSelection) return;
-    const defaultThemePreference = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
-    if (defaultThemePreference === themeType) return;
+    const themeToSet = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+    if (themeToSet === themeType) return;
 
-    dispatch(setAppThemeAction(defaultThemePreference));
+    dispatch(setAppThemeAction(themeToSet));
   };
 };

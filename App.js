@@ -28,7 +28,7 @@ import { Sentry } from 'react-native-sentry';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
-import { Appearance, AppearanceProvider } from 'react-native-appearance';
+import { AppearanceProvider } from 'react-native-appearance';
 import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -39,7 +39,7 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { setAppThemeAction } from 'actions/appSettingsActions';
+import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -48,7 +48,7 @@ import Walkthrough from 'components/Walkthrough';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
 import { getThemeByType, defaultTheme } from 'utils/themes';
-import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import Storybook from 'screens/Storybook';
 
 import configureStore from './src/configureStore';
@@ -75,6 +75,7 @@ type Props = {
   themeType: string,
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
+  handleSystemDefaultThemeChange: () => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -124,11 +125,11 @@ class App extends React.Component<Props, *> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetched } = this.props;
+    const { isFetched, handleSystemDefaultThemeChange } = this.props;
     const { isFetched: prevIsFetched } = prevProps;
     if (isFetched && !prevIsFetched) {
       SplashScreen.hide();
-      this.switchToDarkModeIfNeeded();
+      handleSystemDefaultThemeChange();
     }
   }
 
@@ -160,17 +161,6 @@ class App extends React.Component<Props, *> {
     const { url: deepLink } = event;
     if (deepLink === undefined) return;
     executeDeepLink(deepLink);
-  };
-
-  switchToDarkModeIfNeeded = () => {
-    const { setAppTheme, isManualThemeSelection } = this.props;
-    // set theme based on selected mode on users device
-    // (unless they have other theme option selected manually)
-    if (!isManualThemeSelection) {
-      const defaultPreference = Appearance.getColorScheme();
-      const themeToSet = defaultPreference === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
-      setAppTheme(themeToSet);
-    }
   };
 
   render() {
@@ -240,6 +230,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
+  handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
