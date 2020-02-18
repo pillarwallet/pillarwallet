@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 
 // components
@@ -28,7 +28,6 @@ import ShadowedCard from 'components/ShadowedCard';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
-import { ListCard } from 'components/ListItem/ListCard';
 import { themedColors } from 'utils/themes';
 
 const SectionHeader = styled(MediumText)`
@@ -39,87 +38,49 @@ const SectionHeader = styled(MediumText)`
   margin-horizontal: ${spacing.layoutSides}px;
 `;
 
-const Separator = styled.View`
-  width: 100%;
-  height: 1px;
-  background-color: ${themedColors.border};
-`;
-
 type Props = {
-  sectionTitle: string,
+  sectionTitle?: string,
   sectionItems: Object[],
-  isCardsList?: boolean,
 }
 
 const Section = (props: Props) => {
-  const { sectionItems, isCardsList } = props;
-  if (isCardsList) {
-    return (
-      <FlatList
-        keyExtractor={item => item.key}
-        data={sectionItems}
-        style={{ marginTop: -spacing.medium }}
-        contentContainerStyle={{ width: '100%', paddingHorizontal: spacing.layoutSides, paddingTop: spacing.medium }}
-        renderItem={({ item }) => {
-          const {
-            title,
-            onPress,
-            hidden,
-            body,
-            label,
-            titleStyle,
-            disabled,
-            minHeight,
-          } = item;
-          if (hidden) return null;
-          return (
-            <ListCard
-              title={title}
-              titleStyle={titleStyle}
-              subtitle={body}
-              action={onPress}
-              label={label}
-              contentWrapperStyle={{ minHeight, padding: 16 }}
-              disabled={disabled}
-            />
-          );
-        }
-        }
-      />
-    );
-  }
+  const { sectionItems } = props;
 
   return (
-    <View style={{ paddingHorizontal: spacing.layoutSides }}>
-      <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }}>
-        <FlatList
-          keyExtractor={item => item.key}
-          data={sectionItems}
-          contentContainerStyle={{ borderRadius: 6, overflow: 'hidden' }}
-          renderItem={({ item }) => {
+    <FlatList
+      keyExtractor={item => item.key}
+      data={sectionItems}
+      contentContainerStyle={{ borderRadius: 6, overflow: 'hidden' }}
+      renderItem={({ item }) => {
             const {
               title,
+              subtitle,
               value,
               toggle,
               onPress,
               notificationsCount,
               hidden,
+              label,
+              labelBadge,
+              disabled,
             } = item;
             if (hidden) return null;
             return (
-              <SettingsListItem
-                label={title}
-                value={value}
-                toggle={toggle}
-                onPress={onPress}
-                notificationsCount={notificationsCount}
-              />
+              <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }} disabled={disabled}>
+                <SettingsListItem
+                  label={title}
+                  description={subtitle}
+                  value={value}
+                  toggle={toggle}
+                  onPress={onPress}
+                  notificationsCount={notificationsCount}
+                  rightLabel={label}
+                  labelBadge={labelBadge}
+                />
+              </ShadowedCard>
             );
           }}
-          ItemSeparatorComponent={() => (<Separator />)}
-        />
-      </ShadowedCard>
-    </View>
+    />
   );
 };
 
@@ -127,7 +88,7 @@ export const SettingsSection = (props: Props) => {
   const { sectionTitle } = props;
   return (
     <React.Fragment>
-      <SectionHeader>{sectionTitle}</SectionHeader>
+      {sectionTitle && <SectionHeader>{sectionTitle}</SectionHeader>}
       <Section {...props} />
     </React.Fragment>
   );

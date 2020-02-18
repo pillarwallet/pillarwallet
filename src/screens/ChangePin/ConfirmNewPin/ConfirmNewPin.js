@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
-import { SETTINGS } from 'constants/navigationConstants';
+import { MENU } from 'constants/navigationConstants';
 import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
@@ -94,7 +94,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
-          <Button title="Continue" onPress={() => this.props.navigation.navigate(SETTINGS)} />
+          <Button title="Continue" onPress={() => this.props.navigation.navigate(MENU)} />
         </Container>
       );
     }

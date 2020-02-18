@@ -44,7 +44,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
-  SETTINGS,
+  MENU,
 } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -405,16 +405,17 @@ class HomeScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={colors.card}
         headerProps={{
-          leftItems: [{ user: true }],
-          rightItems: [
+          leftItems: [
             {
-              link: 'Settings',
-              onPress: () => { navigation.navigate(SETTINGS); },
+              icon: 'hamburger',
+              onPress: () => navigation.navigate(MENU),
             },
+          ],
+          centerItems: [{ userIcon: true }],
+          rightItems: [
             {
               link: 'Support',
               onPress: () => Intercom.displayMessenger(),
-              withBackground: true,
               addon: hasIntercomNotifications && (
                 <View
                   style={{
@@ -429,6 +430,7 @@ class HomeScreen extends React.Component<Props, State> {
               ),
             },
           ],
+          sideFlex: 4,
         }}
         inset={{ bottom: 0 }}
       >

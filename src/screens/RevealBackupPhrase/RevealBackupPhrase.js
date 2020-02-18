@@ -67,6 +67,8 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
   render() {
     const { pinIsValid, wallet } = this.state;
+    const { params } = this.props.navigation.state;
+    const showPrivateKey = params && params.showPrivateKey;
 
     if (!pinIsValid) {
       return (
@@ -77,7 +79,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       );
     }
 
-    if (wallet.mnemonic) {
+    if (wallet.mnemonic && !showPrivateKey) {
       return (
         <Container>
           <Header title="Backup phrase" onClose={this.handleScreenDismissal} />

@@ -194,7 +194,7 @@ const RIGHT = 'RIGHT';
 const getCloseAction = (props, navigation) => {
   if (props.onClose) return () => props.onClose();
   if (props.dismiss) return () => navigation.dismiss();
-  return () => navigation.goBack();
+  return () => navigation.goBack(null);
 };
 
 class HeaderBlock extends React.Component<Props> {

@@ -47,6 +47,8 @@ export const lightThemeColors = {
   smartWalletText: '#1D24D8',
   smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
+  labelTertiary: '#818eb3',
+  helpIcon: '#f7931a',
 };
 
 export const darkThemeColors = {
@@ -75,6 +77,8 @@ export const darkThemeColors = {
   smartWalletText: '#1D24D8',
   smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
+  labelTertiary: '#818eb3',
+  helpIcon: '#f7931a',
 };
 
 export const themedColors = {
@@ -177,6 +181,14 @@ export const themedColors = {
   danger: theme('current', {
     lightTheme: lightThemeColors.danger,
     darkTheme: darkThemeColors.danger,
+  }),
+  labelTertiary: theme('current', {
+    lightTheme: lightThemeColors.labelTertiary,
+    darkTheme: darkThemeColors.labelTertiary,
+  }),
+  helpIcon: theme('current', {
+    lightTheme: lightThemeColors.helpIcon,
+    darkTheme: darkThemeColors.helpIcon,
   }),
 };
 

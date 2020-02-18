@@ -17,28 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
-import Toast from 'components/Toast';
-import { RECOVERY_SETTINGS } from 'constants/navigationConstants';
-import { navigate } from 'services/navigation';
-
-const BACKUP_MESSAGE =
-  'Go to wallet settings on the assets screen and complete the wallet backup. ' +
-  'Pillar cannot help you retrieve your wallet if it is lost.';
-
-export const toastWalletBackup = (isWalletBackedUp: boolean) => {
-  if (isWalletBackedUp) {
-    return;
-  }
-
-  Toast.show({
-    message: BACKUP_MESSAGE,
-    type: 'warning',
-    title: 'Please ensure you backup your wallet now',
-    autoClose: false,
-    onPress: () => {
-      const action = NavigationActions.navigate(RECOVERY_SETTINGS);
-      navigate(action);
-    },
-  });
-};
+export const TWITTER_SOCIAL_ADDRESS = 'https://twitter.com/PillarWallet';
+export const TELEGRAM_SOCIAL_ADDRESS = 'https://t.me/pillarofficial';
+export const YOUTUBE_SOCIAL_ADDRESS = 'https://www.youtube.com/c/PillarProject';
+export const MEDIUM_SOCIAL_ADDRESS = 'https://medium.com/pillarproject';
+export const FACEBOOK_SOCIAL_ADDRESS = 'https://facebook.com/pillarproject/';
+export const FORUM_SOCIAL_ADDRESS = 'https://facebook.com/pillarproject/';

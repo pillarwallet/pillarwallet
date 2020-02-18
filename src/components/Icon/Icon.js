@@ -25,7 +25,6 @@ const glyphMap = {
   chat: '\uE801',
   back: '\uE819',
   close: '\uE802',
-  help: '\uE874',
   'down-arrow': '\uE805',
   remove: '\uE806',
   mute: '\uE804',
@@ -70,6 +69,11 @@ const glyphMap = {
   selector: '\uE85A',
   options: '\uE82F',
   lightning: '\uE830',
+  present: '\uE838',
+  dictionary: '\uE835',
+  help: '\uE836',
+  like: '\uE837',
+  signout: '\uE839',
 };
 
 export type IconProps = {
