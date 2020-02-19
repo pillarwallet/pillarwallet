@@ -26,10 +26,11 @@ type Props = {
   label: string,
   containerStyle?: Object,
   labelStyle?: Object,
+  color?: string,
 }
 
 const BadgeWrapper = styled.View`
-  background-color: ${themedColors.positive};
+  background-color: ${({ color }) => color || themedColors.positive};
   padding: 3px 8px;
   border-radius: 12px;
   align-self: flex-start;
@@ -41,9 +42,14 @@ const Label = styled(MediumText)`
 `;
 
 export const LabelBadge = (props: Props) => {
-  const { label, containerStyle, labelStyle } = props;
+  const {
+    label,
+    containerStyle,
+    labelStyle,
+    color,
+  } = props;
   return (
-    <BadgeWrapper style={containerStyle}>
+    <BadgeWrapper style={containerStyle} color={color}>
       <Label style={labelStyle}>
         {label}
       </Label>

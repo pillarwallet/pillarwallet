@@ -116,6 +116,16 @@ Simply create a separate **.env.production** file and the default release proces
 * [Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
 * [Configuration](https://github.com/zetachang/react-native-dotenv)
 
+## Storybook
+
+### To start the storybook run:
+```
+yarn storybook
+```
+
+This should start a storybook server and open a new tab in your browser.
+To enter storybook on your device go to Settings -> Storybook.
+You can also set the env variable `SHOW_ONLY_STORYBOOK` - so you don't need to enter the settings every time you reload the app. In the browser or on your device you can now switch between components.
 
 ## Old CRNA Readme
 

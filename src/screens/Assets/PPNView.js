@@ -141,8 +141,6 @@ const FloatingButtonView = styled.View`
   width: 100%;
 `;
 
-const iconSend = require('assets/icons/icon_send.png');
-
 const UNSETTLED = 'UNSETTLED';
 const SETTLED = 'SETTLED';
 
@@ -280,17 +278,19 @@ class PPNView extends React.Component<Props, State> {
                 label="Top up"
                 onPress={() => navigation.navigate(FUND_TANK)}
                 fontIcon="plus"
+                fontIconStyle={{ fontSize: fontSizes.big }}
                 disabled={!!disableTopUpAndSettle}
               />
               <CircleButton
                 label="Withdraw"
                 fontIcon="up-arrow"
+                fontIconStyle={{ fontSize: fontSizes.big }}
                 onPress={() => navigation.navigate(TANK_WITHDRAWAL)}
                 disabled={availableStake <= 0}
               />
               <CircleButton
                 label="Send"
-                icon={iconSend}
+                fontIcon="paperPlane"
                 onPress={() => navigation.navigate(SEND_SYNTHETIC_ASSET)}
                 disabled={availableStake <= 0}
               />

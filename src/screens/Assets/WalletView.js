@@ -67,11 +67,11 @@ import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Theme } from 'models/Theme';
 
 // actions
 import {
-  startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
   addAssetAction,
@@ -99,26 +99,25 @@ type Props = {
   tabs: Object[],
   activeTab: string,
   showInsight: boolean,
-  hideInsight: Function,
+  hideInsight: () => void,
   insightList: Object[],
   insightsTitle: string,
   assetsSearchResults: Asset[],
   activeAccount: Object,
-  startAssetsSearch: Function,
-  searchAssets: Function,
-  resetSearchAssetsResult: Function,
-  addAsset: Function,
-  hideAsset: Function,
+  searchAssets: (query: string) => void,
+  resetSearchAssetsResult: () => void,
+  addAsset: (asset: Asset) => void,
+  hideAsset: (asset: Asset) => void,
   assetsSearchState: ?string,
-  logScreenView: Function,
+  logScreenView: (view: string, screen: string) => void,
   balances: Balances,
   rates: Rates,
   accounts: Accounts,
-  smartWalletState: Object,
+  smartWalletState: SmartWalletReducerState,
   smartWalletFeatureEnabled: boolean,
-  fetchAssetsBalances: Function,
-  fetchAllCollectiblesData: Function,
-  deploySmartWallet: Function,
+  fetchAssetsBalances: () => void,
+  fetchAllCollectiblesData: () => void,
+  deploySmartWallet: () => void,
   showDeploySmartWallet?: boolean,
   theme: Theme,
 }
@@ -282,7 +281,6 @@ class WalletView extends React.Component<Props, State> {
 
   handleSearchChange = (query: string) => {
     const { activeTab } = this.state;
-    const { startAssetsSearch } = this.props;
     const formattedQuery = !query ? '' : query.trim();
 
     this.setState({
@@ -290,7 +288,6 @@ class WalletView extends React.Component<Props, State> {
     });
 
     if (activeTab === TOKENS) {
-      startAssetsSearch();
       this.doAssetsSearch(formattedQuery);
     }
   };
@@ -550,7 +547,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),

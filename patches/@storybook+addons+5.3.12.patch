@@ -1,0 +1,13 @@
+diff --git a/node_modules/@storybook/addons/dist/hooks.js b/node_modules/@storybook/addons/dist/hooks.js
+index 6c88e84..9936163 100644
+--- a/node_modules/@storybook/addons/dist/hooks.js
++++ b/node_modules/@storybook/addons/dist/hooks.js
+@@ -264,7 +264,7 @@ var applyHooks = function applyHooks(applyDecorators) {
+       var hooks = context.hooks;
+       hooks.prevMountedDecorators = hooks.mountedDecorators;
+       hooks.mountedDecorators = new Set([getStory].concat(_toConsumableArray(decorators)));
+-      hooks.currentContext = context;
++      hooks.currentContext = Object.assign({}, context, { hooks: null });
+       hooks.hasUpdates = false;
+       var result = decorated(context);
+       numberOfRenders = 1;

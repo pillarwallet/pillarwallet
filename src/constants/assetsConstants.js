@@ -39,11 +39,25 @@ export const GBP = 'GBP';
 export const USD = 'USD';
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
-export const LINK = 'LINK';
-export const BAT = 'BAT';
-export const AE = 'AE';
-export const MKR = 'MKR';
-export const USDT = 'USDT';
+
+const LINK = 'LINK';
+const BAT = 'BAT';
+const AE = 'AE';
+const MKR = 'MKR';
+const USDT = 'USDT';
+const PPT = 'PPT';
+const DAI = 'DAI';
+const KNC = 'KNC';
+const VERI = 'VERI';
+const BNT = 'BNT';
+const OMG = 'OMG';
+const WAX = 'WAX';
+const ZIL = 'ZIL';
+const ZRX = 'ZRX';
+
+export const POPULAR_EXCHANGE_TOKENS = [
+  ETH, PLR, LINK, BAT, PPT, AE, DAI, KNC, MKR, USDT, VERI, BNT, OMG, WAX, ZIL, ZRX,
+];
 
 export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
 export const BITCOIN_ADDRESS_PREFIX = 'bitcoin';

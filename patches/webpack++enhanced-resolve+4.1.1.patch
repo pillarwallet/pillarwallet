@@ -1,0 +1,14 @@
+diff --git a/node_modules/webpack/node_modules/enhanced-resolve/lib/AliasFieldPlugin.js b/node_modules/webpack/node_modules/enhanced-resolve/lib/AliasFieldPlugin.js
+index 28a7515..406c42b 100644
+--- a/node_modules/webpack/node_modules/enhanced-resolve/lib/AliasFieldPlugin.js
++++ b/node_modules/webpack/node_modules/enhanced-resolve/lib/AliasFieldPlugin.js
+@@ -46,6 +46,9 @@ module.exports = class AliasFieldPlugin {
+ 					});
+ 					return callback(null, ignoreObj);
+ 				}
++				if (typeof data === 'function') {
++					return callback();
++				}
+ 				const obj = Object.assign({}, request, {
+ 					path: request.descriptionFileRoot,
+ 					request: data
