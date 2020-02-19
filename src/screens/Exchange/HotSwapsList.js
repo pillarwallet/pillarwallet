@@ -23,7 +23,6 @@ import { FlatList, Image, Dimensions, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
-import { POPULAR_SWAPS } from 'constants/assetsConstants';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 
@@ -32,6 +31,7 @@ const threeColumnsMinScreenWidth = 350;
 
 type Props = {
   onPress: (from: string, to: string) => void,
+  swaps: Object[],
 };
 
 type SwapPillProps = {
@@ -97,12 +97,12 @@ const SwapPill = (props: SwapPillProps) => {
 };
 
 export const HotSwapsHorizontalList = (props: Props) => {
-  const { onPress } = props;
+  const { onPress, swaps } = props;
   return (
     <WrappingContainer>
       <FlatList
         horizontal
-        data={POPULAR_SWAPS}
+        data={swaps}
         renderItem={
           ({ item }) => (
             <SwapPill
@@ -152,10 +152,12 @@ export class HotSwapsGridList extends React.Component<Props> {
   }
 
   render() {
+    const { swaps } = this.props;
+
     // on small devices 3 columns will cause text lines to be broken
     // on larger devices 2 columns will cause pills to be too wide
     const columns = screenWidth >= threeColumnsMinScreenWidth ? 3 : 2;
-    const data = [...POPULAR_SWAPS];
+    const data = [...swaps];
     while (data.length % columns !== 0) {
       data.push({});
     }
@@ -164,8 +166,8 @@ export class HotSwapsGridList extends React.Component<Props> {
       <FlatList
         data={data}
         columnWrapperStyle={{
-          paddingHorizontal: spacing.layoutSides,
-          justifyContent: 'space-around',
+          marginHorizontal: -spacing.mediumLarge / 2,
+          justifyContent: 'space-between',
         }}
         renderItem={this.renderItem}
         keyExtractor={item => `${item.from}-${item.to}`}
