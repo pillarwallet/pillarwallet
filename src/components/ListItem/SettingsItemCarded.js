@@ -54,6 +54,7 @@ type Props = {
   settingsIconSource?: string,
   sidePaddingsForWidth?: number,
   theme: Theme,
+  iconStyle?: Object,
 }
 
 const ItemWrapper = styled.View`
@@ -134,10 +135,10 @@ const { width: screenWidth } = Dimensions.get('window');
 const defaultSettingsIcon = require('assets/icons/icon_settings.png');
 
 const SettingsIconComponent = (props) => {
-  const { settingsIconSource, settingsIcon } = props;
+  const { settingsIconSource, settingsIcon, style } = props;
   if (settingsIcon) {
     return (
-      <SettingsIcon name={settingsIcon} />
+      <SettingsIcon name={settingsIcon} style={style} />
     );
   }
 
@@ -146,6 +147,7 @@ const SettingsIconComponent = (props) => {
       source={settingsIconSource || defaultSettingsIcon}
       resizeMode="contain"
       resizeMethod="resize"
+      style={style}
     />
   );
 };
@@ -167,6 +169,7 @@ const SettingsItemCarded = (props: Props) => {
     isLoading,
     sidePaddingsForWidth,
     theme,
+    iconStyle,
   } = props;
 
   const colors = getThemeColors(theme);
@@ -241,6 +244,7 @@ const SettingsItemCarded = (props: Props) => {
           <SettingsIconComponent
             settingsIconSource={settingsIconSource}
             settingsIcon={settingsIcon}
+            style={iconStyle}
           />
           {!!settingsLabel &&
           <SettingsLabel
