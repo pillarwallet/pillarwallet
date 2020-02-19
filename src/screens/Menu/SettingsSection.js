@@ -41,7 +41,7 @@ const SectionHeader = styled(MediumText)`
 type Props = {
   sectionTitle?: string,
   sectionItems: Object[],
-}
+};
 
 const Section = (props: Props) => {
   const { sectionItems } = props;

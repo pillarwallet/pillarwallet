@@ -37,7 +37,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   backupStatus: BackupStatus,
   theme: Theme,
-}
+};
 
 class RecoverySettings extends React.Component<Props> {
   getGlobalSection = () => {

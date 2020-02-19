@@ -55,11 +55,11 @@ type Props = {
   user: Object,
   backupStatus: BackupStatus,
   logoutUser: () => void,
-}
+};
 
 type State = {
   visibleModal: ?string,
-}
+};
 
 const headerLogo = require('assets/images/landing-pillar-logo.png');
 const headerLogoDarkMode = require('assets/images/landing-pillar-logo-dark-theme.png');

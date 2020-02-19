@@ -39,11 +39,11 @@ import { SettingsSection } from './SettingsSection';
 
 type Props = {
 
-}
+};
 
 type State = {
   email: string,
-}
+};
 
 class CommunitySettings extends React.Component<Props, State> {
   state = {

@@ -41,11 +41,11 @@ type Props = {
   isSetAsSystemPrefTheme: boolean,
   saveBaseFiatCurrency: (currency: string) => void,
   changeAppTheme: (themeType: string, shouldSetAsPref?: boolean) => void,
-}
+};
 
 type State = {
   visibleModal: ?string,
-}
+};
 
 const SettingsModalTitle = styled(MediumText)`
   ${fontStyles.big};

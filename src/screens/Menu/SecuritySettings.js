@@ -42,7 +42,7 @@ type State = {
     enabled: boolean,
     privateKey?: string,
   },
-}
+};
 
 type Props = {
   navigation: NavigationScreenProp<*>,
