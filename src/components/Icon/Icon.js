@@ -66,6 +66,10 @@ const glyphMap = {
   delete: '\uE82A',
   'sound-off': '\uE82C',
   plus: '\uE82D',
+  cube: '\uE831',
+  paperPlane: '\uE803',
+  cup: '\uE807',
+  qrDetailed: '\uE81A',
   selector: '\uE85A',
   options: '\uE82F',
   lightning: '\uE830',
@@ -75,6 +79,7 @@ const glyphMap = {
   like: '\uE837',
   signout: '\uE839',
   hamburger: '\uE875',
+  exchange: '\uE86F',
 };
 
 export type IconProps = {

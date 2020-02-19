@@ -28,7 +28,7 @@ import { spacing, fontStyles } from 'utils/variables';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { MediumText } from 'components/Typography';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import { saveBaseFiatCurrencyAction, changeAppThemeAction } from 'actions/appSettingsActions';
+import { saveBaseFiatCurrencyAction, setAppThemeAction } from 'actions/appSettingsActions';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -38,9 +38,8 @@ import { SettingsSection } from './SettingsSection';
 type Props = {
   baseFiatCurrency: ?string,
   themeType: string,
-  isSetAsSystemPrefTheme: boolean,
   saveBaseFiatCurrency: (currency: string) => void,
-  changeAppTheme: (themeType: string, shouldSetAsPref?: boolean) => void,
+  setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
 };
 
 type State = {
@@ -77,7 +76,7 @@ class AppSettings extends React.Component<Props, State> {
   };
 
   getItems = () => {
-    const { baseFiatCurrency, themeType, changeAppTheme } = this.props;
+    const { baseFiatCurrency, themeType, setAppTheme } = this.props;
 
     return [
       {
@@ -95,7 +94,7 @@ class AppSettings extends React.Component<Props, State> {
         title: 'Dark mode',
         toggle: true,
         value: themeType === DARK_THEME,
-        onPress: () => changeAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME),
+        onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
       },
     ];
   }
@@ -146,19 +145,17 @@ const mapStateToProps = ({
     data: {
       baseFiatCurrency,
       themeType,
-      isSetAsSystemPrefTheme,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
-  isSetAsSystemPrefTheme,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
-  changeAppTheme: (themeType: string, shouldSetAsPref?: boolean) => dispatch(
-    changeAppThemeAction(themeType, shouldSetAsPref),
+  setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => dispatch(
+    setAppThemeAction(themeType, isManualThemeSelection),
   ),
 });
 

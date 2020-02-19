@@ -180,52 +180,28 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   };
 };
 
+export const setAppThemeAction = (themeType: string, isManualThemeSelection?: boolean) => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isManualThemeSelection } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { themeType, isManualThemeSelection },
+    });
+  };
+};
+
+// set theme based on selected mode on users devices
+// (unless they have other theme option selected manually)
 export const handleSystemDefaultThemeChangeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { themeType, isSetAsSystemPrefTheme } },
+      appSettings: { data: { themeType, isManualThemeSelection } },
     } = getState();
 
-    if (!isSetAsSystemPrefTheme) return;
-    const defaultThemePreference = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
-    if (defaultThemePreference === themeType) return;
+    if (isManualThemeSelection) return;
+    const themeToSet = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+    if (themeToSet === themeType) return;
 
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType: defaultThemePreference } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType: defaultThemePreference },
-    });
-  };
-};
-
-export const changeAppThemeAction = (themeType: string, setAsPreferred?: boolean) => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred },
-    });
-  };
-};
-
-export const setAppThemeAction = (theme?: string) => {
-  return (dispatch: Dispatch) => {
-    const themeType = theme || LIGHT_THEME;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType },
-    });
-  };
-};
-
-export const markThemeAlertAsShownAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { seenThemeAlert: true } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { seenThemeAlert: true },
-    });
+    dispatch(setAppThemeAction(themeToSet));
   };
 };
