@@ -17,23 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import firebaseAnalytics from '@react-native-firebase/analytics';
 import { logEventAction, logScreenViewAction } from 'actions/analyticsActions';
 
 describe('Analytics Actions', () => {
+  const dispatch = jest.fn();
   const getState = jest.fn();
-  const dispatch = jest.fn().mockImplementation((fn) => fn(dispatch, getState));
 
   const optOutTracking = (value) => {
     getState.mockImplementation(() => ({
       appSettings: { data: { optOutTracking: value } },
     }));
   };
-
-  beforeEach(() => {
-    // TODO: switch to firebase
-    // Answers.logCustom = jest.fn().mockImplementation(() => {});
-    // Answers.logContentView = jest.fn().mockImplementation(() => {});
-  });
 
   afterEach(() => {
     dispatch.mockClear();
@@ -44,20 +39,18 @@ describe('Analytics Actions', () => {
     describe('when not opted out tracking', () => {
       beforeEach(() => optOutTracking(false));
 
-      it('calls Answers.logCustom', () => {
-        dispatch(logEventAction('test', { property: 'value' }));
-
-        expect(Answers.logCustom).toBeCalledWith('test', { property: 'value' });
+      it('calls firebaseAnalytics().logEvent', () => {
+        logEventAction('test', { property: 'value' })(dispatch, getState);
+        expect(firebaseAnalytics().logEvent).toBeCalledWith('test', { property: 'value' });
       });
     });
 
     describe('when opted out tracking', () => {
       beforeEach(() => optOutTracking(true));
 
-      it('does not call Answers.logCustom', () => {
-        dispatch(logEventAction('test', { property: 'value' }));
-
-        expect(Answers.logCustom).not.toBeCalled();
+      it('does not call firebaseAnalytics().logEvent', () => {
+        logEventAction('test', { property: 'value' })(dispatch, getState);
+        expect(firebaseAnalytics().logEvent).not.toBeCalled();
       });
     });
   });
@@ -66,20 +59,21 @@ describe('Analytics Actions', () => {
     describe('when not opted out tracking', () => {
       beforeEach(() => optOutTracking(false));
 
-      it('calls Answers.logContentView', () => {
-        dispatch(logScreenViewAction('name', 'type', 'id'));
-
-        expect(Answers.logContentView).toBeCalledWith('name', 'type', 'id');
+      it('calls firebaseAnalytics().logEvent', () => {
+        logScreenViewAction('name', 'type', 'id')(dispatch, getState);
+        expect(firebaseAnalytics().logEvent).toBeCalledWith(
+          'screen_view',
+          { contentName: 'name', contentType: 'type', contentId: 'id' },
+        );
       });
     });
 
     describe('when opted out tracking', () => {
       beforeEach(() => optOutTracking(true));
 
-      it('does not call Answers.logContentView', () => {
-        dispatch(logScreenViewAction('name', 'type', 'id'));
-
-        expect(Answers.logContentView).not.toBeCalled();
+      it('does not call firebaseAnalytics().logEvent', () => {
+        logScreenViewAction('name', 'type', 'id')(dispatch, getState);
+        expect(firebaseAnalytics().logEvent).not.toBeCalled();
       });
     });
   });

@@ -24,10 +24,7 @@ import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova 
 import { View as mockView } from 'react-native';
 import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
-import FirebaseMock from './firebaseMock';
 import WalletConnectMock from './walletConnectMock';
-
-require('stacktrace-parser');
 
 process.env.IS_TEST = 'TEST';
 
@@ -38,8 +35,28 @@ const storageCache = {};
 const MockAsyncStorage = new StorageMock(storageCache);
 
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
+
 jest.setMock('AsyncStorage', MockAsyncStorage);
-jest.setMock('react-native-firebase', FirebaseMock);
+
+jest.mock('NativeEventEmitter');
+
+jest.setMock('@react-native-firebase/crashlytics', () => ({
+  setUserId: () => {},
+}));
+
+jest.setMock('@react-native-firebase/messaging', () => ({
+  requestPermission: () => Promise.resolve(),
+  hasPermission: () => Promise.resolve(1),
+  getToken: () => Promise.resolve('12x2342x212'),
+}));
+
+jest.mock('@react-native-firebase/analytics', () => ({
+  __esModule: true,
+  default: () => ({
+    logEvent: jest.fn().mockImplementation(() => {})
+  }),
+}));
+
 jest.setMock('cryptocompare', {
   priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
     return Promise.resolve({});
@@ -102,7 +119,7 @@ jest.setMock('react-native-background-timer', {
 });
 
 jest.setMock('react-native-device-info', {
-  getUniqueID: () => '1x1x1x1x1x1x1',
+  getUniqueId: () => '1x1x1x1x1x1x1',
 });
 
 jest.setMock('react-native-intercom', {
@@ -373,4 +390,3 @@ jest.setMock('services/insight', {
 });
 
 jest.setMock('react-native-appearance', {});
-

@@ -60,7 +60,7 @@ import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { getAssetsAsList, transformAssetsToObject } from 'utils/assets';
-import { delay, noop, parseTokenAmount, uniqBy } from 'utils/common';
+import { delay, noop, parseTokenAmount, printLog, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
@@ -179,7 +179,7 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
     } catch (e) {
-      console.log({ e });
+      printLog({ e });
     }
 
     return transactionHash;

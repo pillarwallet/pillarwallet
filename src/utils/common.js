@@ -46,6 +46,8 @@ import {
   BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import { isProdEnv, isTest } from './environment';
+
 
 const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(
@@ -490,4 +492,10 @@ export const formatAmountDisplay = (value: number | string) => {
     return formatMoney(amount, 2);
   }
   return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
+};
+
+// TODO: improve with Sentry reports and other log levels
+export const printLog = (...params: any) => {
+  if ((isProdEnv && !__DEV__) || isTest) return;
+  console.log(...params);
 };

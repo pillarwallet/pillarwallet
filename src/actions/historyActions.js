@@ -56,7 +56,7 @@ import {
   getActiveAccountId,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
-import { getEthereumProvider, uniqBy } from 'utils/common';
+import { getEthereumProvider, printLog, uniqBy } from 'utils/common';
 import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
 
@@ -354,7 +354,7 @@ export const updateTransactionStatusAction = (hash: string) => {
       // TODO: add support for failed transactions
       const sdkStatus = sdkRawStatus === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
       if (sdkStatus !== status) {
-        console.log('Wrong transaction status');
+        printLog('Wrong transaction status');
         Sentry.captureMessage('Wrong transaction status', {
           level: 'info',
           extra: {

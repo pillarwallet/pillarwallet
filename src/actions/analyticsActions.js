@@ -27,22 +27,22 @@ const isTrackingEnabled = (getState: Function): boolean => {
 };
 
 export const logScreenViewAction = (contentName: string, contentType: string, contentId?: string) => {
-  return async (dispatch: Function, getState: Function) => {
-    if (!isTrackingEnabled(getState)) return;
+  return (dispatch: Function, getState: Function) => {
+    // if (!isTrackingEnabled(getState)) return;
     firebaseAnalytics().logEvent('screen_view', { contentName, contentType, contentId });
   };
 };
 
 export const logEventAction = (name: string, properties?: Object) => {
-  return async (dispatch: Function, getState: Function) => {
-    if (!isTrackingEnabled(getState)) return;
+  return (dispatch: Function, getState: Function) => {
+    // if (!isTrackingEnabled(getState)) return;
     firebaseAnalytics().logEvent(name, properties);
   };
 };
 
 export const logUserPropertyAction = (name: string, value?: string) => {
-  return async (dispatch: Function, getState: Function) => {
-    if (!isTrackingEnabled(getState) || !value) return;
+  return (dispatch: Function, getState: Function) => {
+    // if (!isTrackingEnabled(getState) || !value) return;
     firebaseAnalytics().logEvent('property_changed', { [name]: value });
   };
 };
