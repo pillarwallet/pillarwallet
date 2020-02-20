@@ -152,8 +152,9 @@ class OfferCard extends React.PureComponent<Props> {
 
     return (
       <ShadowedCard
-        wrapperStyle={{ marginBottom: 10 }}
         contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
+        isAnimated
+        spacingAfterAnimation={10}
       >
         <CardWrapper
           disabled={isDisabled}
