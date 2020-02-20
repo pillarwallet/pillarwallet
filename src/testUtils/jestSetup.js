@@ -53,7 +53,7 @@ jest.setMock('@react-native-firebase/messaging', () => ({
 jest.mock('@react-native-firebase/analytics', () => ({
   __esModule: true,
   default: () => ({
-    logEvent: jest.fn().mockImplementation(() => {})
+    logEvent: jest.fn().mockImplementation(() => {}),
   }),
 }));
 
