@@ -85,10 +85,12 @@ class AppSettings extends React.Component<Props, State> {
         onPress: () => this.setState({ visibleModal: 'baseCurrency' }),
         value: baseFiatCurrency || defaultFiatCurrency,
       },
+      /*
       {
         key: 'notificationSettings',
         title: 'Notification settings',
       },
+      */
       {
         key: 'darkMode',
         title: 'Dark mode',
