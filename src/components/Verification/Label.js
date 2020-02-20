@@ -17,27 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+// import * as React from 'react';
+import styled from 'styled-components/native';
 
-// components
-import Button from 'components/Button';
-import Label from 'components/Verification/Label';
+import { MediumText } from 'components/Typography';
 
-type Props = {
-  onPressSetEmail: () => void,
-};
+import { spacing, fontSizes } from 'utils/variables';
 
-const NoEmail = (props: Props) => {
-  const { onPressSetEmail } = props;
+const Label = styled(MediumText)`
+  padding-bottom: ${spacing.mediumLarge}px;
+  font-size: ${fontSizes.big}px;
+`;
 
-  return (
-    <React.Fragment>
-      <Label>
-        You don&apos;t have an email, please set your email first.
-      </Label>
-      <Button onPress={onPressSetEmail} title="Go to profile" />
-    </React.Fragment>
-  );
-};
-
-export default NoEmail;
+export default Label;

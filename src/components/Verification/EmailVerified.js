@@ -21,7 +21,7 @@ import * as React from 'react';
 
 // components
 import Button from 'components/Button';
-import { MediumText } from 'components/Typography';
+import Label from 'components/Verification/Label';
 
 type Props = {
   onPressBack: () => void,
@@ -32,9 +32,7 @@ const EmailVerified = (props: Props) => {
 
   return (
     <React.Fragment>
-      <MediumText>
-        You have confirmed your email!
-      </MediumText>
+      <Label>You have confirmed your email!</Label>
 
       <Button onPress={onPressBack} title="Return" />
     </React.Fragment>

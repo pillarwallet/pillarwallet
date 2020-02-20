@@ -37,7 +37,7 @@ const sendingOneTimePasswordAction = () => ({
   type: SENDING_OTP,
 });
 
-const otpPasswordSent = () => ({
+const otpPasswordSentAction = () => ({
   type: OTP_SENT,
 });
 
@@ -87,7 +87,7 @@ export const createOneTimePasswordAction = (walletId: string, field: Object, cal
       if (callback) {
         callback();
       } else {
-        dispatch(otpPasswordSent());
+        dispatch(otpPasswordSentAction());
       }
     } else {
       dispatch(resetOneTimePasswordAction());
@@ -133,7 +133,7 @@ export const verifyEmailAction = (walletId: string, code: string) => {
         },
       });
     } else {
-      dispatch(otpPasswordSent());
+      dispatch(otpPasswordSentAction());
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {

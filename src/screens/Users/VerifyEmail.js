@@ -27,10 +27,7 @@ import styled from 'styled-components/native';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // constants
-import {
-  ADD_EDIT_USER,
-  HOME,
-} from 'constants/navigationConstants';
+import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
 // actions
 import {
@@ -110,7 +107,7 @@ class UserSettings extends React.PureComponent<Props, State> {
   goBack = () => {
     const { navigation } = this.props;
 
-    navigation.navigate(HOME);
+    navigation.goBack(null);
   };
 
   render() {

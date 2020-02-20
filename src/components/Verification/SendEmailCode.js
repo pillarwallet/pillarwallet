@@ -18,18 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
 
 // components
 import Button from 'components/Button';
-import { MediumText } from 'components/Typography';
-
-// utils
-import { spacing } from 'utils/variables';
-
-const Label = styled(MediumText)`
-  padding-bottom: ${spacing.layoutSides}px;
-`;
+import Label from 'components/Verification/Label';
 
 type Props = {
   onPressSendCode: () => void,

@@ -344,6 +344,7 @@ const homeFlow = createStackNavigator({
   [CHAT]: ChatScreen,
   [REFER_FRIENDS]: ReferFriendsScreen,
   [VERIFY_EMAIL]: VerifyEmailScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

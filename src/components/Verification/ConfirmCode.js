@@ -22,23 +22,14 @@ import styled from 'styled-components/native';
 
 // components
 import Button from 'components/Button';
-import { MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
+import Label from 'components/Verification/Label';
 
 // utils
 import { spacing } from 'utils/variables';
 
-const FormWrapper = styled.View`
-  padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
-  display: flex;
-`;
-
 const SpacedButton = styled(Button)`
-  margin-bottom: ${spacing.layoutSides}px;
-`;
-
-const Label = styled(MediumText)`
-  padding-bottom: ${spacing.layoutSides}px;
+  margin-bottom: ${spacing.mediumLarge}px;
 `;
 
 type Props = {
@@ -66,12 +57,10 @@ const ConfirmCode = (props: Props) => {
 
   return (
     <React.Fragment>
-      <FormWrapper>
-        <Label>Enter your code:</Label>
-        <TextInput inputProps={inputProps} />
-        <SpacedButton onPress={onPressConfirm} title="Confirm" />
-        <SpacedButton onPress={onPressCancel} title="Need a new code" secondary />
-      </FormWrapper>
+      <Label>Enter your code:</Label>
+      <TextInput inputProps={inputProps} />
+      <SpacedButton onPress={onPressConfirm} title="Confirm" />
+      <SpacedButton onPress={onPressCancel} title="Need a new code" secondary />
     </React.Fragment>
   );
 };
