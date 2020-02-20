@@ -18,23 +18,40 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+import { baseColors } from 'utils/variables';
 
 type Props = {
   children: React.Node,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
-};
+const Wrapper = styled.View`
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  padding: 0 10px
+  align-items: center;
+  background-color: ${baseColors.slateBlack};
+`;
 
-export default CenterView;
+const Box = styled.View`
+  flex-direction: column;
+  height: 320px;
+  width: 100%;
+  margin: auto 0;
+  align-self: center;
+  border-radius: 15px;
+  ${({ theme }) => `
+      background-color: ${theme.colors.card};`}
+`;
+
+const ModalBox = (props: Props) => (
+  <Wrapper>
+    <Box>
+      {props.children}
+    </Box>
+  </Wrapper>
+);
+
+export default ModalBox;

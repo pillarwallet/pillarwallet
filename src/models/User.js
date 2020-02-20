@@ -17,24 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { View } from 'react-native';
-
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
+export type User = {
+  id?: string,
+  username?: string,
+  firstName?: string,
+  lastName?: string,
+  country?: string,
+  city?: string,
+  icoService: Object,
+  isLegacyUser?: boolean,
+  walletId: string,
+  phone?: string,
+  email?: string,
+  isPhoneVerified: boolean,
+  isEmailVerified: boolean,
+  profileImage?: string,
+  lastUpdateTime?: number,
 };
-
-type Props = {
-  children: React.Node,
-};
-
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
-};
-
-export default CenterView;

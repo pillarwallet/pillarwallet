@@ -17,13 +17,33 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
+import {
+  SENDING_OTP,
+  OTP_SENT,
+  RESET_OTP_STATUS,
+  UPDATE_USER,
+  REGISTERED,
+  USER_PHONE_VERIFIED,
+  USER_EMAIL_VERIFIED,
+} from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { logEventAction } from 'actions/analyticsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
+
+const sendingOneTimePasswordAction = () => ({
+  type: SENDING_OTP,
+});
+
+const oneTimePasswordSentAction = () => ({
+  type: OTP_SENT,
+});
+
+export const resetOneTimePasswordAction = () => ({
+  type: RESET_OTP_STATUS,
+});
 
 export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -54,16 +74,24 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
   };
 };
 
-export const createOneTimePasswordAction = (walletId: string, field: Object, callback?: Function) => {
+export const createOneTimePasswordAction = (
+  walletId: string,
+  field: Object,
+  callback?: () => void, // TODO: remove this callback
+) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch(sendingOneTimePasswordAction());
+
     const response = await api.createOneTimePassword({ walletId, ...field });
     const { responseStatus } = response;
 
     if (responseStatus === 200) {
       dispatch(logEventAction('one_time_password_created'));
 
+      dispatch(oneTimePasswordSentAction());
       if (callback) callback();
     } else {
+      dispatch(resetOneTimePasswordAction());
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
@@ -76,15 +104,53 @@ export const createOneTimePasswordAction = (walletId: string, field: Object, cal
   };
 };
 
-export type VerificationPhoneAction = {
-  wallet: string,
-  phone: string,
-  oneTimePassword: string,
-}
-
-export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Function) => {
+export const verifyEmailAction = (walletId: string, code: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const response = await api.verifyPhone(props);
+    dispatch(sendingOneTimePasswordAction());
+
+    const response = await api.verifyEmail({
+      walletId,
+      oneTimePassword: code,
+    });
+
+    const { responseStatus } = response;
+
+    if (responseStatus === 200) {
+      dispatch(logEventAction('email_verified'));
+
+      dispatch({ type: USER_EMAIL_VERIFIED });
+      dispatch({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: 'Email verification was successful',
+          title: 'Validation successful',
+          messageType: 'success',
+        },
+      });
+    } else {
+      dispatch(oneTimePasswordSentAction());
+      dispatch({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: 'Please try again',
+          title: 'We can\'t verify your email',
+          messageType: 'warning',
+        },
+      });
+    }
+  };
+};
+
+export const verifyPhoneAction = (
+  walletId: string,
+  code: string,
+  callback?: () => void, // TODO: remove callback
+) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const response = await api.verifyPhone({
+      walletId,
+      oneTimePassword: code,
+    });
     const { responseStatus } = response;
 
     if (responseStatus === 200) {
@@ -102,6 +168,7 @@ export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Fun
 
       if (callback) callback();
     } else {
+      dispatch(oneTimePasswordSentAction());
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {

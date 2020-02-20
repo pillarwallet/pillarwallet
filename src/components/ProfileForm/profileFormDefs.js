@@ -1,7 +1,7 @@
 // @flow
 
 import t from 'tcomb-form-native';
-import { isValidEmail, isValidName, isValidCityName, isValidUKPhone } from 'utils/validators';
+import { isValidEmail, isValidName, isValidCityName, isValidPhone } from 'utils/validators';
 
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
@@ -52,7 +52,7 @@ const CityStructDef = t.refinement(t.String, (city: string = ''): boolean => {
 });
 
 const PhoneStructDef = t.refinement(t.String, (phone: string = ''): boolean => {
-  return isValidUKPhone(phone);
+  return isValidPhone(phone);
 });
 
 const CodeStructDef = t.refinement(t.String, (code: string = ''): boolean => {
@@ -96,8 +96,8 @@ CityStructDef.getValidationErrorMessage = (city): string => {
 };
 
 PhoneStructDef.getValidationErrorMessage = (phone): string => {
-  if (phone && !isValidUKPhone(phone)) {
-    return 'Please enter a valid UK phone number with +44';
+  if (phone && !isValidPhone(phone)) {
+    return 'Please enter a valid phone number';
   }
   return '';
 };

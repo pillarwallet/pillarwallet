@@ -17,24 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+const BoxBody = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
 
-type Props = {
-  children: React.Node,
-};
-
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
-};
-
-export default CenterView;
+export default BoxBody;

@@ -18,13 +18,17 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { Input } from 'native-base';
+import isEmpty from 'lodash.isempty';
 
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
 import { BaseText, MediumText } from 'components/Typography';
-import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import Switcher from 'components/Switcher';
+import LabeledWrapper from 'components/Input/LabeledWrapper';
+import VerifyView from 'components/Input/VerifyView';
+
 import SelectList from './SelectList';
 
 const StyledItemView = styled.View`
@@ -43,19 +47,6 @@ const StyledItemView = styled.View`
 
 const Wrapper = styled.View`
   width: 100%;
-`;
-
-const ItemLabelHolder = styled.View`
-  height: 100%;
-  flex: 1;
-`;
-
-const ItemLabel = styled(MediumText)`
-  ${fontStyles.small};
-  color: ${themedColors.secondaryText};
-  flex-wrap: wrap;
-  width: 100%;
-  margin-bottom: 6px;
 `;
 
 const ErrorMessage = styled(BaseText)`
@@ -83,21 +74,6 @@ const SelectedOption = styled(BaseText)`
   width:100%;
 `;
 
-const VerifyView = styled.View`
-  align-items: center;
-  flex-direction: row;
-`;
-
-const VerifyLabel = styled(BaseText)`
-  color: ${({ isVerified, theme }) => isVerified ? theme.colors.positive : theme.colors.primary};
-  ${fontStyles.regular};
-  margin: 0 4px 0;
-`;
-
-const ItemSelectHolder = styled.TouchableOpacity`
-  flex: 1;
-`;
-
 const ItemAddon = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -108,12 +84,6 @@ const ItemAddon = styled.View`
 const ModalTitle = styled(MediumText)`
   ${fontStyles.big};
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
-`;
-
-const CheckIcon = styled(Icon)`
-  color: ${themedColors.positive};
-  font-size: 8px;
-  margin-left: 4px;
 `;
 
 type InputProps = {
@@ -129,8 +99,8 @@ type Option = {
 };
 
 type Props = {
-  hasVerification?: ?boolean,
-  isVerified?: ?boolean,
+  hasVerification?: boolean,
+  isVerified?: boolean,
   disabledInput?: ?boolean,
   inputType?: string,
   errorMessage?: ?string,
@@ -140,6 +110,7 @@ type Props = {
   wrapperStyle?: Object,
   options?: Option[],
   optionsTitle?: string,
+  onPressVerify?: () => void,
 };
 
 type State = {
@@ -202,32 +173,30 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     const {
       disabledInput,
       errorMessage,
-      hasVerification = false,
+      hasVerification,
       hasSwitch = false,
       isVerified,
       inputProps,
       label,
       wrapperStyle,
-      options = [],
+      options,
       optionsTitle,
+      onPressVerify,
     } = this.props;
     const { value = '' } = inputProps;
     const hasErrors = !!errorMessage;
 
-    const inputSection = options.length ? (
-      <ItemSelectHolder
+    const showVerification = !!hasVerification && !hasErrors && !isEmpty(value);
+
+    const inputSection = options ? (
+      <LabeledWrapper
+        label={label}
         onPress={this.toggleModal}
       >
-        <ItemLabel>
-          {label}
-        </ItemLabel>
         <SelectedOption>{value}</SelectedOption>
-      </ItemSelectHolder>
+      </LabeledWrapper>
     ) : (
-      <ItemLabelHolder>
-        <ItemLabel>
-          {label}
-        </ItemLabel>
+      <LabeledWrapper label={label}>
         <ItemValue
           disabled={disabledInput}
           onChange={this.handleChange}
@@ -235,7 +204,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
           numberOfLines={1}
           value={value}
         />
-      </ItemLabelHolder>
+      </LabeledWrapper>
     );
 
     return (
@@ -244,15 +213,8 @@ export default class InputWithSwitch extends React.Component<Props, State> {
           hasErrors={hasErrors}
         >
           {inputSection}
-          {hasVerification &&
-          <VerifyView>
-            <VerifyLabel isVerified={isVerified}>
-              {isVerified ? 'Verified' : 'Verify'}
-            </VerifyLabel>
-            {isVerified && <CheckIcon name="check" />}
-          </VerifyView>
-          }
-
+          {showVerification &&
+            <VerifyView isVerified={!!isVerified} onPress={onPressVerify} />}
           {!!hasSwitch &&
           <ItemAddon>
             <Switcher
@@ -278,7 +240,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
             <ModalTitle extraHorizontalSpacing>
               {optionsTitle}
             </ModalTitle>}
-            <SelectList options={options} onSelect={this.selectOption} />
+            <SelectList options={options || []} onSelect={this.selectOption} />
           </Wrapper>
         </SlideModal>
 

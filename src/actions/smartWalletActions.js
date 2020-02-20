@@ -1599,7 +1599,8 @@ export const getAssetTransferGasLimitsAction = () => {
        */
       let tempAccount;
       if (smartWalletSdkInitialized) {
-        tempAccount = await smartWalletService.createAccount(user.username);
+        // FIXME: reducer has username as optional, we should handle that here
+        tempAccount = await smartWalletService.createAccount(user.username || '');
       } else {
         tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
       }

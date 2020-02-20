@@ -29,7 +29,6 @@ import {
   CodeStruct,
 } from 'components/ProfileForm/profileFormDefs';
 import InputWithSwitch from 'components/Input/InputWithSwitch';
-import { noop } from 'utils/common';
 
 type Field = {
   name: string,
@@ -39,7 +38,10 @@ type Field = {
   onSelect?: Function,
   options?: Object[],
   optionsTitle?: string,
-}
+  hasVerification?: boolean,
+  isVerified?: boolean,
+  onPressVerify?: () => void,
+};
 
 type Props = {
   fields: Field[],
@@ -47,11 +49,11 @@ type Props = {
   buttonTitle?: string,
   getFormRef: Function,
   onChange?: Function,
-}
+};
 
 type State = {
   value: Object,
-}
+};
 
 const defaultTypes = {
   string: t.String,
@@ -66,7 +68,7 @@ const defaultTypes = {
 
 const { Form } = t.form;
 
-const InputSwitchTemplate = (locals: Object) => {
+export const InputSwitchTemplate = (locals: Object) => {
   const { config = {} } = locals;
   const {
     inputType,
@@ -75,6 +77,9 @@ const InputSwitchTemplate = (locals: Object) => {
     onBlur,
     onSelect,
     options,
+    hasVerification,
+    isVerified,
+    onPressVerify,
   } = config;
   const errorMessage = locals.error;
   const inputProps = {
@@ -97,6 +102,9 @@ const InputSwitchTemplate = (locals: Object) => {
       label={label}
       wrapperStyle={{ marginBottom: 20 }}
       options={options}
+      hasVerification={hasVerification}
+      isVerified={isVerified}
+      onPressVerify={onPressVerify}
     />
   );
 };
@@ -117,10 +125,13 @@ const generateFormOptions = (fields: Field[]): Object => {
         inputType: defaultTypes[field.type],
         label: field.label,
         fieldName: field.name,
-        onBlur: field.onBlur || noop,
-        onSelect: field.onSelect || noop,
-        options: field.options || [],
+        onBlur: field.onBlur,
+        onSelect: field.onSelect,
+        onPressVerify: field.onPressVerify,
+        options: field.options,
         optionsTitle: field.optionsTitle || '',
+        hasVerification: field.hasVerification,
+        isVerified: field.isVerified,
       },
     };
 

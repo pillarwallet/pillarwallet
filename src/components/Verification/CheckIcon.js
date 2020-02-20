@@ -17,24 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+// components
+import Icon from 'components/Icon';
 
-type Props = {
-  children: React.Node,
-};
+// utils
+import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
-};
+const CheckIcon = styled(Icon).attrs({
+  name: 'check',
+})`
+  color: ${themedColors.positive};
+  font-size: ${fontSizes.giant}
+`;
 
-export default CenterView;
+export default CheckIcon;

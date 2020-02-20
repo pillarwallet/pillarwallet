@@ -80,7 +80,7 @@ const glyphMap = {
 export type IconProps = {
   name: string,
   style?: Object,
-}
+};
 
 const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';
 

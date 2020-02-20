@@ -119,7 +119,11 @@ const emailFormFields = [{
   label: 'Email',
   name: 'email',
   type: 'email',
-  config: { placeholder: 'user@example.com', autoCapitalize: 'none', error: 'Please specify valid email' },
+  config: {
+    placeholder: 'user@example.com',
+    autoCapitalize: 'none',
+    error: 'Please specify valid email',
+  },
 }];
 
 const phoneFormFields = [{
@@ -165,8 +169,8 @@ type Props = {
   appSettings: Object,
   intercomNotificationsCount: number,
   updateAssetsLayout: (value: string) => void,
-  updateUser: (walletId: string, field: Object, callback?: Function) => void,
-  createOneTimePassword: (walletId: string, field: Object, callback?: Function) => void,
+  updateUser: (walletId: string, field: Object, callback?: () => void) => void,
+  createOneTimePassword: (walletId: string, field: Object, callback?: () => void) => void,
   resetIncorrectPassword: () => void,
   lockScreen: () => void,
   logoutUser: () => void,
@@ -181,7 +185,7 @@ type Props = {
   optOutTracking: boolean,
   setUserJoinedBeta: (status: boolean) => void,
   userJoinedBeta: boolean,
-}
+};
 
 type State = {
   visibleModal: string | null,
@@ -193,7 +197,7 @@ type State = {
   showTrackingModal: boolean,
   showJoinBetaModal: boolean,
   joinBetaPressed: boolean,
-}
+};
 
 class Profile extends React.Component<Props, State> {
   static defaultProps = {
@@ -891,9 +895,9 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  updateUser: (walletId: string, field: Object, callback?: Function) =>
+  updateUser: (walletId: string, field: Object, callback?: () => void) =>
     dispatch(updateUserAction(walletId, field, callback)),
-  createOneTimePassword: (walletId: string, field: Object, callback?: Function) =>
+  createOneTimePassword: (walletId: string, field: Object, callback?: () => void) =>
     dispatch(createOneTimePasswordAction(walletId, field, callback)),
   updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),

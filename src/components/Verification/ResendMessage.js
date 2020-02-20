@@ -18,23 +18,35 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+// components
+import { MediumText, TextLink } from 'components/Typography';
+
+// utils
+import { spacing } from 'utils/variables';
+
+const Wrapper = styled.View`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  margin: 0 ${spacing.large}px ${spacing.large}px;
+`;
 
 type Props = {
-  children: React.Node,
+  onPressResend: () => void,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
+const ResendMessage = (props: Props) => {
+  const { onPressResend } = props;
+
+  return (
+    <Wrapper>
+      <MediumText>Didn&apos;t receive the code?</MediumText>
+      <TextLink onPress={onPressResend}> Resend it. </TextLink>
+    </Wrapper>
+  );
 };
 
-export default CenterView;
+export default ResendMessage;
