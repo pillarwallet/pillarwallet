@@ -19,10 +19,11 @@
 */
 import { firebaseAnalytics } from 'services/firebase';
 import { logEventAction, logScreenViewAction } from 'actions/analyticsActions';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 describe('Analytics Actions', () => {
-  const dispatch = jest.fn();
-  const getState = jest.fn();
+  const dispatch: Dispatch = jest.fn();
+  const getState: GetState = jest.fn();
 
   const optOutTracking = (value) => {
     getState.mockImplementation(() => ({
