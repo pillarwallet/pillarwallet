@@ -22,15 +22,21 @@
 ; ;;; custom ignores start ;;;
 
 ; TEMPORARY! ignore various modules
+<PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
+<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
+; ;;; custom ignores end ;;;
+
+[untyped]
+<PROJECT_ROOT>/node_modules/react-native-camera/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*
 <PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/react-native-share/.*
 <PROJECT_ROOT>/node_modules/react-native-swiper/.*
-<PROJECT_ROOT>/node_modules/react-native-camera/.*
+<PROJECT_ROOT>/node_modules/react-native-image-view/.*
+<PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/polished/.*
-<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
-
-; ;;; custom ignores end ;;;
+<PROJECT_ROOT>/node_modules/react-native-device-info/.*
+<PROJECT_ROOT>/node_modules/react-native-keychain/.*
 
 [include]
 
@@ -61,8 +67,7 @@ module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/Lib
 
 munge_underscores=true
 
-module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
-
+module.name_mapper.extension='\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)' -> 'RelativeImageStub'
 ; ;;; custom paths start ;;;
 
 module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'

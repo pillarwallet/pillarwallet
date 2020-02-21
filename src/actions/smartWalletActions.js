@@ -139,12 +139,7 @@ import {
   getAssetsAsList,
   getPPNTokenAddress,
 } from 'utils/assets';
-import {
-  formatMoney,
-  formatUnits,
-  isCaseInsensitiveMatch,
-  parseTokenAmount,
-} from 'utils/common';
+import { formatMoney, formatUnits, isCaseInsensitiveMatch, parseTokenAmount, printLog } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 
@@ -288,7 +283,7 @@ export const deploySmartWalletAction = () => {
       dispatch(setSmartWalletUpgradeStatusAction(
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
       ));
-      console.log('deploySmartWalletAction account is already deployed!');
+      printLog('deploySmartWalletAction account is already deployed!');
       return;
     }
 
@@ -472,7 +467,7 @@ export const checkAssetTransferTransactionsAction = () => {
         });
         return;
       }
-      console.log('sent new asset transfer transaction: ', transactionHash);
+      printLog('sent new asset transfer transaction: ', transactionHash);
       // $FlowFixMe
       const { signedTransaction: { signedHash } } = unsentTransaction;
       const assetTransferTransaction = {
@@ -935,7 +930,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         dispatch(syncVirtualAccountTransactionsAction());
       }
     }
-    console.log(event);
+    printLog(event);
   };
 };
 

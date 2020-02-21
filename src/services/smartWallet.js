@@ -37,6 +37,7 @@ import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
 import { SPEED_TYPES } from 'constants/assetsConstants';
+import { printLog } from 'utils/common';
 
 const {
   GasPriceStrategies: {
@@ -140,7 +141,7 @@ class SmartWallet {
       .initialize({ device: { privateKey } })
       .then(() => { this.sdkInitialized = true; })
       .catch(() => {
-        console.log('Error initiating sdk.');
+        printLog('Error initiating sdk.');
       });
 
     if (this.sdkInitialized) {
@@ -224,7 +225,7 @@ class SmartWallet {
       return this.sdk.deployAccount(deployEstimate);
     }
 
-    console.log('insufficient balance: ', deployEstimate, accountBalance);
+    printLog('insufficient balance: ', deployEstimate, accountBalance);
     return null;
   }
 
@@ -428,7 +429,7 @@ class SmartWallet {
   reportError(errorMessge: string, errorData: Object) {
     Sentry.captureMessage(errorMessge, { extra: errorData });
     if (__DEV__) {
-      console.log(errorMessge, errorData); // eslint-disable-line
+      printLog(errorMessge, errorData);
     }
   }
 

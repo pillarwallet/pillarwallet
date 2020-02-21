@@ -44,7 +44,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { calculateGasEstimate } from 'services/assets';
 import { getActiveAccountAddress } from 'utils/accounts';
 import { isFiatCurrency } from 'utils/exchange';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 
 import type { Offer, OfferOrder } from 'models/Offer';
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';

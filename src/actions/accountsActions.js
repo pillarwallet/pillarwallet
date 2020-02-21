@@ -45,6 +45,7 @@ import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/coll
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
+import { printLog } from 'utils/common';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
 import type { AccountExtra, AccountTypes } from 'models/Account';
@@ -192,7 +193,7 @@ export const setActiveAccountAction = (accountId: string) => {
     const account = accounts.find(acc => acc.id === accountId);
     if (!account) {
       // TODO: account not found in storage
-      console.log('setActiveAccountAction account not found by id: ', accountId);
+      printLog('setActiveAccountAction account not found by id: ', accountId);
       return;
     }
     const updatedAccounts = accounts.map(acc => ({ ...acc, isActive: acc.id === accountId }));

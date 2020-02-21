@@ -132,6 +132,7 @@
     "react-navigation-stack": "^1.10.3",
     "react-navigation-tabs": "^0.5.1",
     "react-redux": "^5.0.7",
+    "react-timer-mixin": "^0.13.4",
     "readable-stream": "1.0.33",
     "redux": "^3.7.2",
     "redux-async-queue": "^1.0.0",
@@ -162,6 +163,8 @@
     "babel-jest": "^25.1.0",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "^1.5.1",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-import-resolver-babel-module": "5.0.0-beta.0",
@@ -181,6 +184,8 @@
     "jetifier": "^1.6.4",
     "metro-react-native-babel-preset": "^0.58.0",
     "mock-socket": "^8.0.5",
+    "npm-run-all": "^4.1.5",
+    "react-dom": "16.8.3",
     "react-native-gesture-handler": "1.4.1",
     "react-native-safe-area-context": "^0.4.1",
     "react-test-renderer": "16.8.3",
@@ -189,9 +194,6 @@
   "jest": {
     "preset": "react-native",
     "verbose": true,
-    "transform": {
-      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
-    },
     "modulePaths": [
       "<rootDir>/src/"
     ],
@@ -206,12 +208,14 @@
       "lcov"
     ],
     "coverageDirectory": "./reports",
-    "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native-safe-area-view|@react-native-community/async-storage/lib|react-native-image-view|react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-touch-id|react-native-color-matrix-image-filters|react-native-htmlview|react-native-video|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-navigation-stack|react-native-screens|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-native-qrcode-svg|react-native-extra-dimensions-android|react-native-cached-image|react-native-emoji|react-native-collapsible|react-native-webview|react-native-swiper|@react-navigation/.*/))"
+    "setupFilesAfterEnv": [
+      "./src/testUtils/jestSetup.js"
     ],
-    "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "setupFiles": [
       "./node_modules/react-native-gesture-handler/jestSetup.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-[a-z, -]*|react-native-[a-z, -]*|native-base-[a-z, -]*|react-native|native-base|pouchdb-react-native|@react-navigation|pouchdb-adapter-asyncstorage|tcomb-form-native|concat-color-matrices|rn-color-matrices|@react-native-firebase|@expo/react-native-action-sheet)/)"
     ],
     "moduleNameMapper": {
       "^image![a-zA-Z0-9$_-]+$": "GlobalImageStub",

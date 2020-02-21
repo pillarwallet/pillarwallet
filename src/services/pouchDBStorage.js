@@ -23,6 +23,7 @@
 import PouchDB from 'pouchdb-react-native';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
+import { printLog } from 'utils/common';
 
 function PouchDBStorage(name: string, opts: ?Object = {}) {
   this.name = name;
@@ -33,7 +34,7 @@ function PouchDBStorage(name: string, opts: ?Object = {}) {
 PouchDBStorage.prototype.connect = function () {
   this.needToReconnect = false;
   this.connection = new PouchDB(this.name, this.opts);
-  console.log(`Connected to the database ${this.name}`);
+  printLog(`Connected to the database ${this.name}`);
 };
 
 PouchDBStorage.prototype.db = function () {
@@ -146,7 +147,7 @@ PouchDBStorage.getInstance = function (name: string, opts: ?Object) {
 };
 
 PouchDBStorage.prototype.close = function () {
-  console.log('Closing db connection');
+  printLog('Closing db connection');
   this.db().close();
   this.needToReconnect = true;
 };

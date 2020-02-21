@@ -20,6 +20,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
+import { printLog } from 'utils/common';
 import PouchDBStorage from './pouchDBStorage';
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
@@ -59,7 +60,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
     };
     Sentry.captureMessage(errorMessge, { extra: errorData });
     if (__DEV__) {
-      console.log(errorMessge, errorData); // eslint-disable-line
+      printLog(errorMessge, errorData);
     }
   }
 
@@ -77,7 +78,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
         err,
       });
       if (__DEV__) {
-        console.log(id, err); // eslint-disable-line
+        printLog(id, err);
       }
       this.activeDocs[key] = false;
     });
@@ -108,7 +109,7 @@ Storage.prototype.migrateFromPouchDB = async function () {
   if (storageSettings.pouchDBMigrated) return Promise.resolve();
 
   try {
-    console.log('Migrating data'); // eslint-disable-line
+    printLog('Migrating data');
     const pouchDBStorage = PouchDBStorage.getInstance('db');
     const pouchDocs = await pouchDBStorage.getAllDocs()
       .then(({ rows }) => rows.map(({ doc }) => doc));
@@ -135,7 +136,7 @@ Storage.prototype.migrateFromPouchDB = async function () {
       e,
     });
     if (__DEV__) {
-      console.log(e); // eslint-disable-line
+      printLog(e);
     }
   }
   return Promise.resolve();

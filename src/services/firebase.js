@@ -17,36 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { firebase } from '@react-native-firebase/app';
+import '@react-native-firebase/crashlytics';
+import '@react-native-firebase/iid';
+import '@react-native-firebase/analytics';
+import '@react-native-firebase/messaging';
 
-class FirebaseMock {
-  notifications = () => ({
-    onNotification: (cb: Function) => {
-      cb({}); // message
-      return () => {
-        return null;
-      };
-    },
-    onNotificationOpened: () => {
-      return () => {
-        return null;
-      };
-    },
-  })
 
-  messaging = () => ({
-    requestPermission: () => Promise.resolve(),
-    hasPermission: () => Promise.resolve(1),
-    getToken: () => Promise.resolve('12x2342x212'),
-  })
-
-  crashlytics = () => ({
-    setUserId: () => {},
-  })
-
-  analytics = () => ({
-    setAnalyticsCollectionEnabled: () => {},
-    logEvent: () => Promise.resolve(),
-  })
-}
-
-export default new FirebaseMock();
+export const firebaseAnalytics = firebase.analytics();
+export const firebaseIid = firebase.iid();
+export const firebaseCrashlytics = firebase.crashlytics();
+export const firebaseMessaging = firebase.messaging();
