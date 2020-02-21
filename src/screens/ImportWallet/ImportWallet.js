@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
@@ -132,11 +131,10 @@ const ButtonText = styled(BaseText)`
   font-size: ${fontSizes.medium}px;
 `;
 
-const ButtonIcon = styled(CachedImage)`
-  height: 24px;
-  width: 24px;
-  justify-content: center;
+const ButtonIcon = styled(Icon)`
+  font-size: ${fontSizes.big}px;
   margin-right: 8px;
+  color: ${themedColors.primary};
 `;
 
 const ButtonInner = styled.View`
@@ -165,8 +163,6 @@ const getButtonLabel = (currentWordIndex, error) => {
   }
   return { text: 'Finish', showArrow: false };
 };
-
-const iconReceive = require('assets/icons/icon_receive.png');
 
 class ImportWallet extends React.Component<Props, State> {
   backupPhraseInput: Object;
@@ -382,7 +378,7 @@ class ImportWallet extends React.Component<Props, State> {
             onPress={this.handleImportSubmit}
           />
           <ScannerButton onPress={this.handleQRScannerOpen}>
-            <ButtonIcon source={iconReceive} />
+            <ButtonIcon name="qrDetailed" />
             <ButtonText>QR code scan</ButtonText>
           </ScannerButton>
         </ButtonsWrapper>
