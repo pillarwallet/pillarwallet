@@ -47,7 +47,6 @@ const ContentWrapper = styled.View`
 
 const AnimatedCardOutter = Animated.createAnimatedComponent(CardOutter);
 
-
 type Props = {
   children: React.Node,
   wrapperStyle?: Object,

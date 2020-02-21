@@ -882,7 +882,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           onPress={() => this.onFiatOfferPress(offer)}
           labelTop="Amount total"
           valueTop={`${askRate} ${fromAssetCode}`}
-          cardImagSource={providerLogo}
+          cardImageSource={providerLogo}
           cardTopButton={getCardTopButtonData(topButtonProps)}
           labelBottom="Fees total"
           valueBottom={feeAmount ?
@@ -906,7 +906,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         onPress={() => this.onOfferPress(offer)}
         labelTop="Exchange rate"
         valueTop={formatAmountDisplay(askRate)}
-        cardImagSource={providerLogo}
+        cardImageSource={providerLogo}
         cardTopButton={getCardTopButtonData(topButtonProps)}
         labelBottom="Available"
         valueBottom={available}

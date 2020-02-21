@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
@@ -49,7 +50,7 @@ type Props = {
   onPress: () => void,
   labelTop: string,
   valueTop: string | number,
-  cardImagSource?: string | ImageObject,
+  cardImageSource?: string | ImageObject,
   cardTopButton?: ButtonProps,
   labelBottom: string,
   valueBottom: string | number,
@@ -69,7 +70,7 @@ const CardRow = styled.View`
   padding: 10px 0;
   ${({ withBorder, theme }) => withBorder
     ? `border-bottom-width: 1px;
-        border-bottom-color: ${theme.colors.border};`
+       border-bottom-color: ${theme.colors.border};`
     : ''}
 `;
 
@@ -121,85 +122,85 @@ const CardNote = styled(BaseText)`
   ${fontStyles.regular};
 `;
 
-class OfferCard extends React.PureComponent<Props> {
-  render() {
-    const {
-      isDisabled,
-      onPress,
-      labelTop,
-      valueTop,
-      cardImagSource,
-      cardTopButton = {},
-      labelBottom,
-      valueBottom,
-      cardMainButton = {},
-      cardNote,
-    } = this.props;
+const OfferCard = (props: Props) => {
+  const {
+    isDisabled,
+    onPress,
+    labelTop,
+    valueTop,
+    cardImageSource,
+    cardTopButton = {},
+    labelBottom,
+    valueBottom,
+    cardMainButton = {},
+    cardNote,
+  } = props;
 
-    const {
-      label: topButtonLabel,
-      onPress: topButtonOnPress,
-      isDisabled: isTopButtonDisabled,
-      isLoading: isTopButtonLoading,
-      isSecondary: isTopButtonSecondary,
-    } = cardTopButton;
-    const {
-      label: mainButtonLabel,
-      onPress: mainButtonOnPress,
-      isDisabled: isMainButtonDisabled,
-      isLoading: isMainButtonLoading,
-    } = cardMainButton;
+  const {
+    label: topButtonLabel,
+    onPress: topButtonOnPress,
+    isDisabled: isTopButtonDisabled,
+    isLoading: isTopButtonLoading,
+    isSecondary: isTopButtonSecondary,
+  } = cardTopButton;
 
-    return (
-      <ShadowedCard
-        contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
-        isAnimated
-        spacingAfterAnimation={10}
+  const {
+    label: mainButtonLabel,
+    onPress: mainButtonOnPress,
+    isDisabled: isMainButtonDisabled,
+    isLoading: isMainButtonLoading,
+  } = cardMainButton;
+
+  return (
+    <ShadowedCard
+      contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
+      isAnimated
+      spacingAfterAnimation={10}
+      disabled={isDisabled}
+    >
+      <CardWrapper
+        disabled={isDisabled}
+        onPress={onPress}
       >
-        <CardWrapper
-          disabled={isDisabled}
-          onPress={onPress}
-        >
-          <CardRow withBorder alignTop>
-            <CardColumn>
-              <CardText label>{labelTop}</CardText>
-              <CardText>{valueTop}</CardText>
-            </CardColumn>
-            <CardInnerRow style={{ flexShrink: 1 }}>
-              {!!cardImagSource && <ProviderIcon source={cardImagSource} resizeMode="contain" />}
-              {!!Object.keys(cardTopButton).length &&
-              <CardButton disabled={isTopButtonDisabled} onPress={topButtonOnPress}>
-                {!isTopButtonLoading
-                  ? <ButtonLabel secondary={isTopButtonSecondary}>{topButtonLabel}</ButtonLabel>
-                  : <Spinner width={20} height={20} />}
-              </CardButton>
-              }
-              {!!cardNote && <CardNote>{cardNote}</CardNote>}
-            </CardInnerRow>
-          </CardRow>
+        <CardRow withBorder alignTop>
+          <CardColumn>
+            <CardText label>{labelTop}</CardText>
+            <CardText>{valueTop}</CardText>
+          </CardColumn>
+          <CardInnerRow style={{ flexShrink: 1 }}>
+            {!!cardImageSource && <ProviderIcon source={cardImageSource} resizeMode="contain" />}
+            {!!Object.keys(cardTopButton).length &&
+            <CardButton disabled={isTopButtonDisabled} onPress={topButtonOnPress}>
+              {!isTopButtonLoading
+                ? <ButtonLabel secondary={isTopButtonSecondary}>{topButtonLabel}</ButtonLabel>
+                : <Spinner width={20} height={20} />}
+            </CardButton>
+            }
+            {!!cardNote && <CardNote>{cardNote}</CardNote>}
+          </CardInnerRow>
+        </CardRow>
 
-          <CardRow>
-            <CardColumn style={{ flex: 1 }}>
-              <CardText label>{labelBottom}</CardText>
-              <View style={{ flexDirection: 'row' }}>
-                <CardText>{valueBottom}</CardText>
-              </View>
-            </CardColumn>
-            <CardColumn>
-              <Button
-                disabled={isMainButtonDisabled}
-                title={isMainButtonLoading ? '' : mainButtonLabel}
-                small
-                onPress={mainButtonOnPress}
-              >
-                {isMainButtonLoading && <Spinner width={20} height={20} />}
-              </Button>
-            </CardColumn>
-          </CardRow>
-        </CardWrapper>
-      </ShadowedCard>
-    );
-  }
-}
+        <CardRow>
+          <CardColumn style={{ flex: 1 }}>
+            <CardText label>{labelBottom}</CardText>
+            <View style={{ flexDirection: 'row' }}>
+              <CardText>{valueBottom}</CardText>
+            </View>
+          </CardColumn>
+          <CardColumn>
+            <Button
+              disabled={isMainButtonDisabled}
+              title={isMainButtonLoading ? '' : mainButtonLabel}
+              small
+              onPress={mainButtonOnPress}
+            >
+              {isMainButtonLoading && <Spinner width={20} height={20} />}
+            </Button>
+          </CardColumn>
+        </CardRow>
+      </CardWrapper>
+    </ShadowedCard>
+  );
+};
 
 export default OfferCard;
