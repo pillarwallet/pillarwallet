@@ -24,13 +24,20 @@ import styled from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontTrackings } from 'utils/variables';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
-import { MediumText, Paragraph } from 'components/Typography';
+import { MediumText, Paragraph, BaseText } from 'components/Typography';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import { saveBaseFiatCurrencyAction, setAppThemeAction, setUserJoinedBetaAction } from 'actions/appSettingsActions';
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import Button from 'components/Button';
+import Checkbox from 'components/Checkbox';
+import {
+  saveBaseFiatCurrencyAction,
+  setAppThemeAction,
+  setUserJoinedBetaAction,
+  saveOptOutTrackingAction,
+} from 'actions/appSettingsActions';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -40,9 +47,11 @@ type Props = {
   baseFiatCurrency: ?string,
   themeType: string,
   userJoinedBeta: boolean,
+  optOutTracking: boolean,
   saveBaseFiatCurrency: (currency: string) => void,
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   setUserJoinedBeta: (status: boolean) => void,
+  saveOptOutTracking: (status: boolean) => void,
 };
 
 type State = {
@@ -60,6 +69,19 @@ const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
   padding-bottom: ${spacing.rhythm}px;
   margin-top: ${spacing.medium}px;
+`;
+
+const SmallText = styled(BaseText)`
+  ${fontStyles.regular};
+  margin-top: 2px;
+  letter-spacing: ${fontTrackings.small}px;
+`;
+
+const CheckboxText = styled(BaseText)`
+  ${fontStyles.medium};
+  margin-top: 2px;
+  letter-spacing: ${fontTrackings.small}px;
+  margin-bottom: ${spacing.medium}px;
 `;
 
 
@@ -106,6 +128,11 @@ class AppSettings extends React.Component<Props, State> {
     }
   };
 
+  handleToggleOptOutTracking = () => {
+    const { saveOptOutTracking, optOutTracking } = this.props;
+    saveOptOutTracking(!optOutTracking);
+  };
+
   getItems = () => {
     const {
       baseFiatCurrency, themeType, setAppTheme, userJoinedBeta,
@@ -138,12 +165,17 @@ class AppSettings extends React.Component<Props, State> {
           ? this.setState({ visibleModal: 'leaveBeta' })
           : this.setState({ visibleModal: 'joinBeta' }),
       },
+      {
+        key: 'analytics',
+        title: 'Usage analytics',
+        onPress: () => this.setState({ visibleModal: 'analytics' }),
+      },
 
     ];
   }
 
   render() {
-    const { baseFiatCurrency } = this.props;
+    const { baseFiatCurrency, optOutTracking } = this.props;
     const { visibleModal } = this.state;
 
     return (
@@ -237,6 +269,36 @@ class AppSettings extends React.Component<Props, State> {
             />
           </StyledWrapper>
         </SlideModal>
+
+        {/* ANALYTICS */}
+        <SlideModal
+          isVisible={visibleModal === 'analytics'}
+          fullScreen
+          showHeader
+          onModalHide={() => this.setState({ visibleModal: null })}
+          avoidKeyboard
+          title="Usage analytics"
+        >
+          <Wrapper regularPadding flex={1}>
+            <StyledWrapper>
+              <Checkbox
+                checked={!optOutTracking}
+                onPress={() => this.handleToggleOptOutTracking()}
+                wrapperStyle={{ marginBottom: spacing.large }}
+              >
+                <CheckboxText>
+                  I&apos;m happy to share anonymous application usage statistics
+                </CheckboxText>
+              </Checkbox>
+              <SmallText>
+                By sharing application usage statistics you are helping Pillar build a better wallet.
+              </SmallText>
+              <SmallText>
+                Usage statistics do not include any personal information from you or your contacts.
+              </SmallText>
+            </StyledWrapper>
+          </Wrapper>
+        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -248,12 +310,14 @@ const mapStateToProps = ({
       baseFiatCurrency,
       themeType,
       userJoinedBeta = false,
+      optOutTracking = false,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
   userJoinedBeta,
+  optOutTracking,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -262,6 +326,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     setAppThemeAction(themeType, isManualThemeSelection),
   ),
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
+  saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppSettings);
