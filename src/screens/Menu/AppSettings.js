@@ -22,14 +22,15 @@ import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import { spacing, fontStyles } from 'utils/variables';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
-import { MediumText } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/Typography';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import { saveBaseFiatCurrencyAction, setAppThemeAction } from 'actions/appSettingsActions';
+import { saveBaseFiatCurrencyAction, setAppThemeAction, setUserJoinedBetaAction } from 'actions/appSettingsActions';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import Button from 'components/Button';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -38,12 +39,16 @@ import { SettingsSection } from './SettingsSection';
 type Props = {
   baseFiatCurrency: ?string,
   themeType: string,
+  userJoinedBeta: boolean,
   saveBaseFiatCurrency: (currency: string) => void,
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
+  setUserJoinedBeta: (status: boolean) => void,
 };
 
 type State = {
   visibleModal: ?string,
+  leaveBetaPressed: boolean,
+  joinBetaPressed: boolean,
 };
 
 const SettingsModalTitle = styled(MediumText)`
@@ -51,11 +56,20 @@ const SettingsModalTitle = styled(MediumText)`
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
+const StyledWrapper = styled(Wrapper)`
+  justify-content: space-between;
+  padding-bottom: ${spacing.rhythm}px;
+  margin-top: ${spacing.medium}px;
+`;
+
+
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
 
 class AppSettings extends React.Component<Props, State> {
   state = {
     visibleModal: null,
+    leaveBetaPressed: false,
+    joinBetaPressed: false,
   }
 
   renderListItem = (field: string, onSelect: Function, currentValue: string) => ({ item: { name, value } }: Object) => {
@@ -75,8 +89,27 @@ class AppSettings extends React.Component<Props, State> {
     this.setState({ visibleModal: null });
   };
 
+  handleJoinBetaModalClose = () => {
+    // this is needed so that toast message can be shown in settings instead of slide modal that closes
+    if (this.state.joinBetaPressed) {
+      this.setState({ joinBetaPressed: false });
+      this.props.setUserJoinedBeta(true);
+    }
+  };
+
+
+  handleLeaveBetaModalClose = () => {
+    // this is needed so that toast message can be shown in settings instead of slide modal that closes
+    if (this.state.leaveBetaPressed) {
+      this.setState({ leaveBetaPressed: false });
+      this.props.setUserJoinedBeta(false);
+    }
+  };
+
   getItems = () => {
-    const { baseFiatCurrency, themeType, setAppTheme } = this.props;
+    const {
+      baseFiatCurrency, themeType, setAppTheme, userJoinedBeta,
+    } = this.props;
 
     return [
       {
@@ -98,6 +131,14 @@ class AppSettings extends React.Component<Props, State> {
         value: themeType === DARK_THEME,
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
       },
+      {
+        key: 'joinBeta',
+        title: userJoinedBeta ? 'Leave the Smart Wallet Early Access program' : 'Opt in to Smart Wallet Early Access',
+        onPress: () => userJoinedBeta
+          ? this.setState({ visibleModal: 'leaveBeta' })
+          : this.setState({ visibleModal: 'joinBeta' }),
+      },
+
     ];
   }
 
@@ -137,6 +178,65 @@ class AppSettings extends React.Component<Props, State> {
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
+
+        {/* JOIN BETA */}
+        <SlideModal
+          isVisible={visibleModal === 'joinBeta'}
+          fullScreen
+          showHeader
+          onModalHidden={this.handleJoinBetaModalClose}
+          avoidKeyboard
+          title="Smart Wallet Early Access"
+          onModalHide={() => this.setState({ visibleModal: null })}
+        >
+          <StyledWrapper regularPadding flex={1}>
+            <Paragraph small>
+              By choosing this you will be added to our Analytics data collection.
+              Through this, Pillar will collect your username in order to enable new features and monitor your new
+              wallet experience for any bugs and/or crashes.
+              You can choose to leave the Early Access program at any time
+              via the &quot;System&quot; under Settings.
+            </Paragraph>
+            <Button
+              title="Opt in"
+              onPress={() => this.setState({ visibleModal: null, joinBetaPressed: true })}
+              style={{
+                marginBottom: 13,
+              }}
+            />
+          </StyledWrapper>
+        </SlideModal>
+
+        {/* LEAVE BETA */}
+        <SlideModal
+          isVisible={visibleModal === 'leaveBeta'}
+          fullScreen
+          showHeader
+          onModalHidden={this.handleLeaveBetaModalClose}
+          avoidKeyboard
+          title="Leaving Early Access program"
+          onModalHide={() => this.setState({ visibleModal: null })}
+        >
+          <StyledWrapper regularPadding flex={1}>
+            <Paragraph small>
+                By confirming, you will leave the Early Access program. As a result, your access to the
+                Smart Wallet, Pillar Payment Network, Bitcoin Wallet and any funds stored on them will be lost.
+            </Paragraph>
+            <Paragraph small>
+                We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
+                Based Wallet before leaving this Program.
+            </Paragraph>
+            <Paragraph small>
+                If you wish to re-gain early access to Smart Wallet or Bitcoin Wallet (and re-gain access to the funds
+                on your Smart Wallet or Bitcoin Wallet), you will need to apply again.
+            </Paragraph>
+            <Button
+              title="Leave Program"
+              onPress={() => { this.setState({ visibleModal: null, leaveBetaPressed: true }); }}
+              style={{ marginBottom: 13 }}
+            />
+          </StyledWrapper>
+        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -147,11 +247,13 @@ const mapStateToProps = ({
     data: {
       baseFiatCurrency,
       themeType,
+      userJoinedBeta = false,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
+  userJoinedBeta,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -159,6 +261,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => dispatch(
     setAppThemeAction(themeType, isManualThemeSelection),
   ),
+  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppSettings);
