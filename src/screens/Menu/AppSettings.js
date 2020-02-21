@@ -30,6 +30,7 @@ import { MediumText, Paragraph, BaseText } from 'components/Typography';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
+import SystemInfoModal from 'components/SystemInfoModal';
 import {
   saveBaseFiatCurrencyAction,
   setAppThemeAction,
@@ -170,7 +171,11 @@ class AppSettings extends React.Component<Props, State> {
         title: 'Usage analytics',
         onPress: () => this.setState({ visibleModal: 'analytics' }),
       },
-
+      {
+        key: 'systemInfo',
+        title: 'System Info',
+        onPress: () => this.setState({ visibleModal: 'systemInfo' }),
+      },
     ];
   }
 
@@ -299,6 +304,18 @@ class AppSettings extends React.Component<Props, State> {
             </StyledWrapper>
           </Wrapper>
         </SlideModal>
+
+        {/* SYSTEM INFO MODAL */}
+        <SlideModal
+          isVisible={visibleModal === 'systemInfo'}
+          fullScreen
+          showHeader
+          title="System info"
+          onModalHide={() => this.setState({ visibleModal: null })}
+        >
+          <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
+        </SlideModal>
+
       </ContainerWithHeader>
     );
   }
