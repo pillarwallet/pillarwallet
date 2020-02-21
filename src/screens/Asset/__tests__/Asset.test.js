@@ -80,6 +80,10 @@ describe('Asset', () => {
     },
   };
 
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
   it('renders the Asset Screen correctly', () => {
     const component = renderer.create(Component(initialStore, navigation)).toJSON();
     expect(component).toMatchSnapshot();

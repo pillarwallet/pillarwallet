@@ -195,7 +195,6 @@
     "preset": "react-native",
     "verbose": true,
     "modulePaths": [
-      "node_modules",
       "<rootDir>/src/"
     ],
     "testRegex": "\\.test\\.js$",

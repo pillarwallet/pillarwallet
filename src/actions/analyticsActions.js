@@ -18,12 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { firebaseAnalytics } from 'services/firebase';
+import get from 'lodash.get';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-const isTrackingEnabled = (getState: GetState): boolean => {
-  const { appSettings: { data: { optOutTracking } } } = getState();
-  return !optOutTracking;
-};
+const isTrackingEnabled = (
+  getState: GetState,
+): boolean => !get(getState(), 'appSettings.data.optOutTracking', false);
 
 export const logScreenViewAction = (contentName: string, contentType: string, contentId?: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
