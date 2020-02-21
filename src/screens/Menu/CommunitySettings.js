@@ -43,11 +43,13 @@ type Props = {
 
 type State = {
   email: string,
+  isSubmitted: boolean,
 };
 
 class CommunitySettings extends React.Component<Props, State> {
   state = {
     email: '',
+    isSubmitted: false,
   }
 
   goTo = (link: { web: string, app?: string}) => () => {
@@ -96,6 +98,10 @@ class CommunitySettings extends React.Component<Props, State> {
   }
 
   subscribe = () => {
+    this.setState({ isSubmitted: true });
+    if (!isValidEmail(this.state.email)) {
+      return;
+    }
     subscribeToNewsletter(this.state.email)
       .then(({ data }) => {
         if (data.result === 'success') {
@@ -122,7 +128,7 @@ class CommunitySettings extends React.Component<Props, State> {
   }
 
   render() {
-    const { email } = this.state;
+    const { email, isSubmitted } = this.state;
 
     return (
       <ContainerWithHeader
@@ -149,9 +155,8 @@ class CommunitySettings extends React.Component<Props, State> {
               marginRight: 12,
               height: 32,
               onPress: this.subscribe,
-              disabled: !isValidEmail(email),
             }}
-            errorMessage={email && !isValidEmail(email) && 'Please enter a valid email'}
+            errorMessage={isSubmitted && email && !isValidEmail(email) && 'Please enter a valid email'}
           />
           <SettingsSection
             sectionTitle="Follow us"
