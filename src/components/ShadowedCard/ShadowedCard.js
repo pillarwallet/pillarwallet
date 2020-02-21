@@ -29,6 +29,7 @@ import type { Theme } from 'models/Theme';
 
 const CardOutter = styled.View`
   position: relative;
+  opacity: ${({ disabled }) => disabled ? 0.6 : 1};
 `;
 
 const ContentWrapper = styled.View`
@@ -37,7 +38,7 @@ const ContentWrapper = styled.View`
   border-radius: 6px;
   background: ${themedColors.card};
   width: 100%;
-  opacity: ${({ disabled, opacity }) => disabled ? 0.6 : opacity};
+  opacity: ${({ opacity }) => opacity};
   ${({ isAnimated }) => isAnimated && `
     position: absolute;
     top: 0;
@@ -135,6 +136,7 @@ class ShadowedCard extends React.Component<Props, State> {
       <AnimatedCardOutter
         style={{ ...wrapperStyle, transform: [{ scaleY: isAnimated ? scaleValue : 1 }] }}
         ref={ref => { this.cardOutterRef = ref; }}
+        disabled={disabled}
       >
         {!!(cardHeight && cardWidth) && readyToRenderShadow && currentTheme !== DARK_THEME &&
         <Shadow
@@ -153,7 +155,6 @@ class ShadowedCard extends React.Component<Props, State> {
         />}
         <TouchableWithoutFeedback onPress={onPress}>
           <ContentWrapper
-            disabled={disabled}
             style={upperContentWrapperStyle}
             isAnimated={isAnimated}
             opacity={contentOpacity}
