@@ -20,7 +20,6 @@
 import { ethers } from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
-import firebaseMessaging from '@react-native-firebase/messaging';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
@@ -71,6 +70,7 @@ import { mapInviteNotifications } from 'utils/notifications';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import { firebaseMessaging } from 'services/firebase';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
@@ -111,8 +111,8 @@ const getTokenWalletAndRegister = async (
   user: Object,
   dispatch: Dispatch,
 ) => {
-  await firebaseMessaging().requestPermission().catch(() => { });
-  const fcmToken = await firebaseMessaging().getToken().catch(() => null);
+  await firebaseMessaging.requestPermission().catch(() => { });
+  const fcmToken = await firebaseMessaging.getToken().catch(() => null);
   if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
   const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken || '', user.username);
   const registrationSucceed = !sdkWallet.error;

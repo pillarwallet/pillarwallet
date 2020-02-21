@@ -22,9 +22,6 @@ import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import firebaseIid from '@react-native-firebase/iid';
-import firebaseCrashlytics from '@react-native-firebase/crashlytics';
-import firebaseMessaging from '@react-native-firebase/messaging';
 import Intercom from 'react-native-intercom';
 
 // constants
@@ -70,6 +67,7 @@ import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
+import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 
 // configs
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
@@ -99,7 +97,7 @@ const chat = new ChatService();
 
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const fcmToken = await firebaseMessaging().getToken().catch(() => null);
+    const fcmToken = await firebaseMessaging.getToken().catch(() => null);
     if (!fcmToken) return;
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
@@ -256,7 +254,7 @@ export const loginAction = (
       // re-fetch accounts as they might change at this point
       accounts = getState().accounts.data;
 
-      firebaseCrashlytics().setUserId(user.username);
+      firebaseCrashlytics.setUserId(user.username);
       dispatch({
         type: UPDATE_USER,
         payload: { user, state: userState },
@@ -446,7 +444,7 @@ export const logoutAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
     Intercom.logout();
-    await firebaseIid().delete().catch(() => {});
+    await firebaseIid.delete().catch(() => {});
     await chat.client.resetAccount().catch(() => null);
     await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
     await storage.removeAll();

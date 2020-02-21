@@ -40,21 +40,24 @@ jest.setMock('AsyncStorage', MockAsyncStorage);
 
 jest.mock('NativeEventEmitter');
 
-jest.setMock('@react-native-firebase/crashlytics', () => ({
-  setUserId: () => {},
-}));
+jest.setMock('@react-native-firebase/crashlytics');
 
-jest.setMock('@react-native-firebase/messaging', () => ({
-  requestPermission: () => Promise.resolve(),
-  hasPermission: () => Promise.resolve(1),
-  getToken: () => Promise.resolve('12x2342x212'),
-}));
-
-jest.mock('@react-native-firebase/analytics', () => ({
-  __esModule: true,
-  default: () => ({
-    logEvent: jest.fn().mockImplementation(() => {}),
-  }),
+jest.mock('@react-native-firebase/app', () => ({
+  firebase: {
+    iid: () => {},
+    analytics: () => ({
+      logEvent: () => {},
+    }),
+    crashlytics: () => ({
+      setUserId: () => {
+      },
+    }),
+    messaging: () => ({
+      requestPermission: () => Promise.resolve(),
+      hasPermission: () => Promise.resolve(1),
+      getToken: () => Promise.resolve('12x2342x212'),
+    }),
+  },
 }));
 
 jest.setMock('cryptocompare', {

@@ -26,7 +26,6 @@ import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
 import { Sentry } from 'react-native-sentry';
-import firebaseMessaging from '@react-native-firebase/messaging';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -81,6 +80,7 @@ import Storage from 'services/storage';
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
+import { firebaseMessaging } from 'services/firebase';
 
 // utils
 import { processNotification } from 'utils/notifications';
@@ -232,11 +232,11 @@ export const startListeningNotificationsAction = () => {
       });
       return;
     }
-    const firebaseNotificationsEnabled = await firebaseMessaging().hasPermission();
+    const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
     if (!firebaseNotificationsEnabled) {
       try {
-        await firebaseMessaging().requestPermission();
-        await firebaseMessaging().getToken();
+        await firebaseMessaging.requestPermission();
+        await firebaseMessaging.getToken();
         dispatch(fetchAllNotificationsAction());
         disabledPushNotificationsListener = setInterval(() => {
           dispatch(fetchAllNotificationsAction());

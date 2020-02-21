@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import firebaseAnalytics from '@react-native-firebase/analytics';
+import { firebaseAnalytics } from 'services/firebase';
 import { logEventAction, logScreenViewAction } from 'actions/analyticsActions';
 
 describe('Analytics Actions', () => {
@@ -30,6 +30,10 @@ describe('Analytics Actions', () => {
     }));
   };
 
+  beforeEach(() => {
+    firebaseAnalytics.logEvent = jest.fn();
+  });
+
   afterEach(() => {
     dispatch.mockClear();
     getState.mockClear();
@@ -41,7 +45,7 @@ describe('Analytics Actions', () => {
 
       it('calls firebaseAnalytics().logEvent', () => {
         logEventAction('test', { property: 'value' })(dispatch, getState);
-        expect(firebaseAnalytics().logEvent).toBeCalledWith('test', { property: 'value' });
+        expect(firebaseAnalytics.logEvent).toBeCalledWith('test', { property: 'value' });
       });
     });
 
@@ -50,7 +54,7 @@ describe('Analytics Actions', () => {
 
       it('does not call firebaseAnalytics().logEvent', () => {
         logEventAction('test', { property: 'value' })(dispatch, getState);
-        expect(firebaseAnalytics().logEvent).not.toBeCalled();
+        expect(firebaseAnalytics.logEvent).not.toBeCalled();
       });
     });
   });
@@ -61,7 +65,7 @@ describe('Analytics Actions', () => {
 
       it('calls firebaseAnalytics().logEvent', () => {
         logScreenViewAction('name', 'type', 'id')(dispatch, getState);
-        expect(firebaseAnalytics().logEvent).toBeCalledWith(
+        expect(firebaseAnalytics.logEvent).toBeCalledWith(
           'screen_view',
           { contentName: 'name', contentType: 'type', contentId: 'id' },
         );
@@ -73,7 +77,7 @@ describe('Analytics Actions', () => {
 
       it('does not call firebaseAnalytics().logEvent', () => {
         logScreenViewAction('name', 'type', 'id')(dispatch, getState);
-        expect(firebaseAnalytics().logEvent).not.toBeCalled();
+        expect(firebaseAnalytics.logEvent).not.toBeCalled();
       });
     });
   });
