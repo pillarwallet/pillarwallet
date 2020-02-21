@@ -17,9 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const TWITTER_SOCIAL_ADDRESS = 'https://twitter.com/PillarWallet';
-export const TELEGRAM_SOCIAL_ADDRESS = 'https://t.me/pillarofficial';
-export const YOUTUBE_SOCIAL_ADDRESS = 'https://www.youtube.com/c/PillarProject';
-export const MEDIUM_SOCIAL_ADDRESS = 'https://medium.com/pillarproject';
-export const FACEBOOK_SOCIAL_ADDRESS = 'https://facebook.com/pillarproject/';
-export const FORUM_SOCIAL_ADDRESS = 'https://facebook.com/pillarproject/';
+export const TWITTER_SOCIAL_ADDRESS = {
+  web: 'https://twitter.com/PillarWallet',
+  app: 'twitter://user?screen_name=PillarWallet',
+};
+
+export const TELEGRAM_SOCIAL_ADDRESS = {
+  web: 'https://t.me/pillarofficial',
+};
+
+export const YOUTUBE_SOCIAL_ADDRESS = {
+  web: 'https://www.youtube.com/c/PillarProject',
+};
+
+export const MEDIUM_SOCIAL_ADDRESS = {
+  web: 'https://medium.com/pillarproject',
+};
+
+export const FACEBOOK_SOCIAL_ADDRESS = {
+  web: 'https://facebook.com/pillarproject/',
+  app: 'fb://page/277505029373839/',
+};
+
+export const FORUM_SOCIAL_ADDRESS = {
+  web: 'https://facebook.com/pillarproject/',
+};

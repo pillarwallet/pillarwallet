@@ -291,6 +291,8 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [EXCHANGE]: ExchangeScreen,
+    [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+    [SECURITY_SETTINGS]: SecuritySettingsScreen,
   },
   StackNavigatorConfig,
 );
@@ -345,6 +347,7 @@ const homeFlow = createStackNavigator({
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
   [STORYBOOK]: StorybookScreen,
+  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -40,6 +40,7 @@ import {
   APP_SETTINGS,
   COMMUNITY_SETTINGS,
   ADD_EDIT_USER,
+  STORYBOOK,
 } from 'constants/navigationConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import { logoutAction } from 'actions/authActions';
@@ -153,18 +154,20 @@ class Menu extends React.Component<Props, State> {
         card: true,
         action: () => navigation.navigate(APP_SETTINGS),
       },
+      /*
       {
         key: 'referFriends',
         title: 'Refer friends',
         icon: 'present',
-        iconColor: colors.labelTertiary,
+        iconColor: colors.accent,
         action: () => this.toggleSlideModalOpen('referralCode'),
       },
+      */
       {
         key: 'community',
         title: 'Community',
         icon: 'like',
-        iconColor: colors.labelTertiary,
+        iconColor: colors.accent,
         action: () => navigation.navigate(COMMUNITY_SETTINGS),
       },
       {
@@ -181,6 +184,14 @@ class Menu extends React.Component<Props, State> {
         iconColor: colors.positive,
         action: () => Intercom.displayHelpCenter(),
       },
+      {
+        key: 'storybook',
+        title: 'Storybook',
+        icon: 'dictionary',
+        iconColor: colors.primary,
+        action: () => navigation.navigate(STORYBOOK),
+        hidden: !__DEV__,
+      },
     ];
   }
 
@@ -193,7 +204,12 @@ class Menu extends React.Component<Props, State> {
       emoji,
       icon,
       iconColor,
+      hidden,
     } = item;
+
+    if (hidden) {
+      return null;
+    }
 
     if (card) {
       return (
@@ -213,6 +229,7 @@ class Menu extends React.Component<Props, State> {
         labelBadge={labelBadge}
         icon={icon}
         iconColor={iconColor}
+        hidden={hidden}
       />
     );
   }
@@ -221,10 +238,23 @@ class Menu extends React.Component<Props, State> {
     this.setState({ visibleModal: modal });
   }
 
+  deleteWallet = () => {
+    const { logoutUser } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      'This action will delete the wallet from this device. ' +
+      'If you wish to recover, you can re-import that wallet using your backup phrase.',
+      [
+        { text: 'Cancel' },
+        { text: 'Delete', onPress: logoutUser },
+      ],
+    );
+  }
+
   render() {
     const items = this.getMenuItems();
     const { visibleModal } = this.state;
-    const { logoutUser, user, theme } = this.props;
+    const { user, theme } = this.props;
     const currentTheme = getThemeType(theme);
     const logo = currentTheme === LIGHT_THEME ? headerLogo : headerLogoDarkMode;
 
@@ -250,7 +280,7 @@ class Menu extends React.Component<Props, State> {
               </LinksSection>
               <LogoutSection>
                 <LogoutIcon name="signout" />
-                <LogoutTextLink onPress={logoutUser}>
+                <LogoutTextLink onPress={this.deleteWallet}>
                   Logout
                 </LogoutTextLink>
               </LogoutSection>

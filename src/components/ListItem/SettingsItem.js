@@ -118,7 +118,7 @@ const ListAddon = styled.View`
 `;
 
 const LeftIcon = styled(Icon)`
-  color: ${({ color }) => color};
+  color: ${({ color }) => color || themedColors.accent};
   font-size: ${fontSizes.big}px;
   margin-right: 10px;
 `;

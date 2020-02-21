@@ -50,7 +50,15 @@ class CommunitySettings extends React.Component<Props, State> {
     email: '',
   }
 
-  goTo = (link: string) => () => Linking.openURL(link);
+  goTo = (link: { web: string, app?: string}) => () => {
+    if (!link.app) {
+      Linking.openURL(link.web);
+    } else {
+      Linking.canOpenURL(link.app)
+        .then(supported => supported ? Linking.openURL(link.app) : Linking.openURL(link.web))
+        .catch();
+    }
+  }
 
   getSocialMediaItems = () => {
     return [

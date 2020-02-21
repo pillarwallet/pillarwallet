@@ -37,7 +37,9 @@ export const toastWalletBackup = (isWalletBackedUp: boolean) => {
     title: 'Please ensure you backup your wallet now',
     autoClose: false,
     onPress: () => {
-      const action = NavigationActions.navigate(RECOVERY_SETTINGS);
+      const action = NavigationActions.navigate({
+        routeName: RECOVERY_SETTINGS,
+      });
       navigate(action);
     },
   });

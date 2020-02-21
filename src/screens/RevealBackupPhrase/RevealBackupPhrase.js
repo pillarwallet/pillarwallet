@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import get from 'lodash.get';
 import type { Dispatch } from 'reducers/rootReducer';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
@@ -67,8 +68,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
   render() {
     const { pinIsValid, wallet } = this.state;
-    const { params } = this.props.navigation.state;
-    const showPrivateKey = params && params.showPrivateKey;
+    const showPrivateKey = get(this.props, 'navigation.state.params.showPrivateKey', false);
 
     if (!pinIsValid) {
       return (
@@ -97,7 +97,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="backup phrase" onClose={this.handleScreenDismissal} />
+        <Header title="Private key" onClose={this.handleScreenDismissal} />
         <Wrapper regularPadding>
           <Paragraph>Please use this private key in order to restore the wallet.</Paragraph>
           <Paragraph light>

@@ -50,7 +50,12 @@ const Section = (props: Props) => {
     <FlatList
       keyExtractor={item => item.key}
       data={sectionItems}
-      contentContainerStyle={{ borderRadius: 6, overflow: 'hidden' }}
+      contentContainerStyle={{
+        borderRadius: 6,
+        overflow: 'hidden',
+        paddingHorizontal: spacing.layoutSides,
+        paddingTop: spacing.medium,
+      }}
       renderItem={({ item }) => {
             const {
               title,
