@@ -787,7 +787,6 @@ class AppFlow extends React.Component<Props, State> {
       startListeningChatWebSocket,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
-      navigation,
       isPickingImage,
       isBrowsingWebView,
       stopListeningForBalanceChange,
@@ -804,6 +803,7 @@ class AppFlow extends React.Component<Props, State> {
       // close walkthrough shade or tooltips
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
+        const { navigation } = this.props;
         const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
         const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
         const lastActiveScreenParams = pathAndParams.params;
