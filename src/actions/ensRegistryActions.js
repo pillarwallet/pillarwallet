@@ -67,10 +67,13 @@ export const extractEnsInfoFromTransactionsAction = (transactions: Object[]) => 
     let dataUpdated = false;
 
     transactions.forEach(transaction => {
-      const fromEnsName = get(transaction, 'from.account.ensName') || get(transaction, 'sender.account.ensName');
-      const fromAddress = get(transaction, 'from.account.address') || get(transaction, 'sender.account.address');
-      const toEnsName = get(transaction, 'to.account.ensName') || get(transaction, 'recipient.account.ensName');
-      const toAddress = get(transaction, 'to.account.address') || get(transaction, 'recipient.account.address');
+      const sender = transaction.from || transaction.sender;
+      const recipient = transaction.to || transaction.recipient;
+
+      const fromEnsName = get(sender, 'account.ensName');
+      const fromAddress = get(sender, 'account.address');
+      const toEnsName = get(recipient, 'account.ensName');
+      const toAddress = get(recipient, 'account.address');
 
       if (fromEnsName && !ensRegistry[fromAddress]) {
         ensRegistry[fromAddress] = fromEnsName;
