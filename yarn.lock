@@ -8720,23 +8720,18 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1, loose-envify@^1.4
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-lottie-ios@3.0.3:
-  version "3.0.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-ios/-/lottie-ios-3.0.3.tgz#8b1d6463a04fe59509a55ec8cc5feea7f40f4cf3"
-  integrity sha1-ix1kY6BP5ZUJpV7IzF/up/QPTPM=
+lottie-ios@2.5.0:
+  version "2.5.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-ios/-/lottie-ios-2.5.0.tgz#55c808e785d4a6933b0c10b395530b17098b05de"
+  integrity sha1-VcgI54XUppM7DBCzlVMLFwmLBd4=
 
-lottie-ios@^3.0.3:
-  version "3.1.6"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-ios/-/lottie-ios-3.1.6.tgz#e70481f161666caf9f7ed9dba5ac715bc7ad8908"
-  integrity sha1-5wSB8WFmbK+fftnbpaxxW8etiQg=
-
-lottie-react-native@3.0.2:
-  version "3.0.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-react-native/-/lottie-react-native-3.0.2.tgz#2c68ebb9e9eb60801e28b4f9ad20aa7359f905d9"
-  integrity sha1-LGjruenrYIAeKLT5rSCqc1n5Bdk=
+lottie-react-native@2.6.1:
+  version "2.6.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-react-native/-/lottie-react-native-2.6.1.tgz#330d24fa6aac5928ea63f8e181b9b7d930a1a119"
+  integrity sha1-Mw0k+mqsWSjqY/jhgbm32TChoRk=
   dependencies:
     invariant "^2.2.2"
-    lottie-ios "^3.0.3"
+    lottie-ios "2.5.0"
     prop-types "^15.5.10"
     react-native-safe-module "^1.1.0"
 

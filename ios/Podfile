@@ -11,7 +11,8 @@ target 'pillarwallet' do
     'RCTText',
     'RCTNetwork',
     'RCTWebSocket',
-    'RCTAnimation'
+    'RCTAnimation',
+    'RCTImage'
   ]
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
@@ -29,10 +30,6 @@ target 'pillarwallet' do
   pod 'RNFBIid', :path => '../node_modules/@react-native-firebase/iid'
 
   pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
-
-  pod 'lottie-ios', :path => '../node_modules/lottie-ios'
-
-  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
 
   pod 'react-native-appearance', :path => '../node_modules/react-native-appearance'
 
@@ -77,5 +74,9 @@ target 'pillarwallet' do
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
+  pod 'lottie-ios', :path => '../node_modules/lottie-ios'
+
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
 
 end
