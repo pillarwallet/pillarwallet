@@ -52,10 +52,14 @@ const PrivateKeyWrapper = styled(Paragraph)`
 `;
 
 class RevealBackupPhrase extends React.Component<Props, State> {
-  state = {
-    pinIsValid: false,
-    wallet: {},
-  };
+  constructor(props) {
+    super(props);
+    const wallet = get(props, 'navigation.state.params.wallet', null);
+    this.state = {
+      pinIsValid: !!wallet,
+      wallet: wallet || {},
+    };
+  }
 
   handleScreenDismissal = () => {
     this.props.resetIncorrectPassword();

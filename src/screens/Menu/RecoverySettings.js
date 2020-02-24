@@ -22,12 +22,15 @@ import { connect } from 'react-redux';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper, Container } from 'components/Layout';
+import CheckPin from 'components/CheckPin';
+import Header from 'components/Header';
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { BACKUP_WALLET_IN_SETTINGS_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Theme } from 'models/Theme';
 
@@ -37,9 +40,20 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   backupStatus: BackupStatus,
   theme: Theme,
+  resetIncorrectPassword: () => void,
 };
 
-class RecoverySettings extends React.Component<Props> {
+type State = {
+  pinIsValid: boolean,
+  wallet: Object,
+};
+
+class RecoverySettings extends React.Component<Props, State> {
+  state = {
+    pinIsValid: false,
+    wallet: {},
+  };
+
   getGlobalSection = () => {
     return [
       {
@@ -54,19 +68,20 @@ class RecoverySettings extends React.Component<Props> {
 
   getKeyWalletSection = () => {
     const { backupStatus, theme, navigation } = this.props;
+    const { wallet } = this.state;
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
     const colors = getThemeColors(theme);
     return [
       {
         key: 'view12Words',
         title: 'View 12 words',
-        onPress: () => navigation.navigate(REVEAL_BACKUP_PHRASE),
-        hidden: !isBackedUp,
+        onPress: () => navigation.navigate(REVEAL_BACKUP_PHRASE, { wallet }),
+        hidden: !isBackedUp || !wallet.mnemonic,
       },
       {
         key: 'viewPrivateKey',
         title: 'View private key',
-        onPress: () => navigation.navigate(REVEAL_BACKUP_PHRASE, { showPrivateKey: true }),
+        onPress: () => navigation.navigate(REVEAL_BACKUP_PHRASE, { showPrivateKey: true, wallet }),
         hidden: !isBackedUp,
       },
       {
@@ -82,7 +97,27 @@ class RecoverySettings extends React.Component<Props> {
     ];
   }
 
+  onPinValid = (wallet: Object) => {
+    this.setState({ pinIsValid: true, wallet });
+  };
+
+  handleScreenDismissal = () => {
+    this.props.resetIncorrectPassword();
+    this.props.navigation.goBack(null);
+  };
+
   render() {
+    const { pinIsValid } = this.state;
+
+    if (!pinIsValid) {
+      return (
+        <Container>
+          <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
+          <CheckPin revealMnemonic onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
+        </Container>
+      );
+    }
+
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Recovery' }] }}
@@ -110,5 +145,9 @@ const mapStateToProps = ({
   backupStatus,
 });
 
-export default withTheme(connect(mapStateToProps)(RecoverySettings));
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+});
+
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(RecoverySettings));
 
