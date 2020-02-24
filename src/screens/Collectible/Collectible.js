@@ -127,7 +127,6 @@ const ImageCloseIcon = (props: { onPress: () => void, colors: ThemeColors }) => 
   );
 };
 
-const iconSend = require('assets/icons/icon_send.png');
 const genericCollectible = require('assets/images/no_logo.png');
 
 class CollectibleScreen extends React.Component<Props, State> {
@@ -245,7 +244,7 @@ class CollectibleScreen extends React.Component<Props, State> {
             <CircleButtonsWrapper center horizontal>
               <CircleButton
                 label="Send"
-                icon={iconSend}
+                fontIcon="paperPlane"
                 onPress={() => this.goToSendTokenFlow(assetData)}
                 disabled={!isOwned}
               />

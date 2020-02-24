@@ -97,6 +97,7 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ServicesScreen from 'screens/Services';
+import StorybookScreen from 'screens/Storybook';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -217,6 +218,7 @@ import {
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   SERVICES,
+  STORYBOOK,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -235,7 +237,7 @@ const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
-const iconWallet = require('assets/icons/icon_wallet_new_light.png');
+const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
@@ -337,6 +339,7 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
+  [STORYBOOK]: StorybookScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

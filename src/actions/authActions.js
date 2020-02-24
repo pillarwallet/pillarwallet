@@ -49,7 +49,7 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_USERNAME, UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
-import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
@@ -455,11 +455,14 @@ export const logoutAction = () => {
     await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
     await storage.removeAll();
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+    const themeType = get(getState(), 'appSettings.data.themeType', '');
+
     if (smartWalletFeatureEnabled) await smartWalletService.reset();
     clearWebViewCookies();
     dispatch({ type: LOG_OUT });
     dispatch({ type: RESET_APP_SETTINGS, payload: {} });
-    dispatch(setAppThemeAction());
+    if (themeType === DARK_THEME) dispatch(setAppThemeAction(DARK_THEME)); // to persist dark theme after storage
+    // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

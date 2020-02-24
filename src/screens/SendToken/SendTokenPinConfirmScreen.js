@@ -90,7 +90,9 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   navigateToTransactionState = (params: ?Object) => {
     const { navigation } = this.props;
     const { transactionPayload } = this.state;
-    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload });
+    const transactionType = navigation.getParam('transactionType', '');
+
+    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload, transactionType });
   };
 
   handleBack = () => {
@@ -105,6 +107,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 
   render() {
     const { isChecking, errorMessage } = this.state;
+
     return (
       <Container>
         <Header

@@ -20,6 +20,7 @@
 // This script runs at the beginning of all unit tests
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
 import { utils } from 'ethers';
@@ -31,7 +32,35 @@ process.env.IS_TEST = 'TEST';
 
 jest.mock('NativeAnimatedHelper');
 
+/**
+ * Set up DOM in node.js environment for Enzyme to mount to
+ */
+
+const jsdom = new JSDOM('<!doctype html><html><body></body></html>', { url: 'http://localhost' });
+const { window } = jsdom;
+
+function copyProps(src, target) {
+  Object.defineProperties(target, {
+    ...Object.getOwnPropertyDescriptors(src),
+    ...Object.getOwnPropertyDescriptors(target),
+  });
+}
+
+global.window = window;
+global.document = window.document;
+global.navigator = {
+  userAgent: 'node.js',
+};
+
+copyProps(window, global);
+
 Enzyme.configure({ adapter: new Adapter() });
+
+// Ignore React Web errors when using React Native
+(console: any).error = message => {
+  return message;
+};
+
 const storageCache = {};
 const AsyncStorage = new StorageMock(storageCache);
 

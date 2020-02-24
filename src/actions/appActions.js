@@ -19,7 +19,6 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
-import get from 'lodash.get';
 
 // services
 import Storage from 'services/storage';
@@ -77,7 +76,6 @@ import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 
 import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
-import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
 
@@ -230,28 +228,12 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
-      // check if current user has theme set and set it to default if
-      const hasTheme = get(appSettings, 'themeType');
-
-      if (!hasTheme) {
-        dispatch(setAppThemeAction());
-      }
-
-      // check if theme is set to system's default
-      const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
-
-      if (isThemeSetAsSystemDefault) {
-        dispatch(handleSystemDefaultThemeChangeAction());
-      }
-
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    dispatch(setAppThemeAction());
-
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };
