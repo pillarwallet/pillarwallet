@@ -17,6 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { Platform } from 'react-native';
+
 export const TWITTER_SOCIAL_ADDRESS = {
   web: 'https://twitter.com/PillarWallet',
   app: 'twitter://user?screen_name=PillarWallet',
@@ -36,7 +39,10 @@ export const MEDIUM_SOCIAL_ADDRESS = {
 
 export const FACEBOOK_SOCIAL_ADDRESS = {
   web: 'https://facebook.com/pillarproject/',
-  app: 'fb://page/277505029373839/',
+  app: Platform.select({
+    andorid: 'fb://page/277505029373839',
+    ios: 'fb://profile/277505029373839',
+  }),
 };
 
 export const FORUM_SOCIAL_ADDRESS = {
