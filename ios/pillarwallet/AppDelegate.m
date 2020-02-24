@@ -15,13 +15,20 @@
 #else
 #import "RNSentry.h" // This is used for versions of react < 0.40
 #endif
+#import <Firebase.h>
+#import "RNSplashScreen.h"
+#import <React/RCTLinkingManager.h>
+#import "Intercom/intercom.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"pillarwallet"
                                             initialProperties:nil];
   [RNSentry installWithRootView:rootView];
@@ -33,6 +40,7 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [RNSplashScreen show];
   return YES;
 }
 
@@ -43,6 +51,24 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+  [Intercom setDeviceToken:deviceToken];
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+  return [RCTLinkingManager application:application openURL:url
+                      sourceApplication:sourceApplication annotation:annotation];
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+  [application registerUserNotificationSettings:
+   [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)
+                                     categories:nil]];
+  [application registerForRemoteNotifications];
 }
 
 @end

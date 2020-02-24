@@ -43,6 +43,7 @@ target 'pillarwallet' do
 
   pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
 
+  pod 'Intercom', '~> 5.2.1'
   pod 'react-native-intercom', :path => '../node_modules/react-native-intercom'
 
   pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
@@ -78,5 +79,9 @@ target 'pillarwallet' do
   pod 'lottie-ios', :path => '../node_modules/lottie-ios'
 
   pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
 end
