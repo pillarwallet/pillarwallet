@@ -58,7 +58,7 @@ class CommunitySettings extends React.Component<Props, State> {
     } else {
       Linking.canOpenURL(link.app)
         .then(supported => supported ? Linking.openURL(link.app) : Linking.openURL(link.web))
-        .catch();
+        .catch(() => {});
     }
   }
 
