@@ -325,7 +325,7 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
-            cd android && bundle exec fastlane deploy_android_hockeyapp
+            cd android && bundle exec fastlane add_plugin appcenter && bundle exec fastlane deploy_android_hockeyapp
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks          
