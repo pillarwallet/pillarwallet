@@ -645,7 +645,9 @@ workflows:
             branches:
               only:
                   - develop
-      - hockeyapp_android:       
+      - hockeyapp_android:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
