@@ -111,10 +111,12 @@ const getTokenWalletAndRegister = async (
   user: Object,
   dispatch: Dispatch,
 ) => {
-  await firebaseMessaging.requestPermission().catch(() => { });
+  await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
+  await firebaseMessaging.requestPermission().catch(() => {});
   const fcmToken = await firebaseMessaging.getToken().catch(() => null);
   if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken || '', user.username);
+  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken || 'NotAvailable', user.username);
+  // TODO: remove 'NotAvailable' once back-end makes fcmToken optional
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
   const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;
