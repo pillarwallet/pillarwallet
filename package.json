@@ -199,6 +199,8 @@
     "@storybook/addons": "^5.3.12",
     "@storybook/react-native": "^5.3.12",
     "@storybook/react-native-server": "^5.3.12",
+    "@storybook/addon-storyshots": "^5.3.12",
+    "jsdom": "^16.1.0",
     "babel-loader": "^8.0.6",
     "invariant": "^2.2.4",
     "react-native-storybook-loader": "^1.8.1",
@@ -291,9 +293,6 @@
     "tty": "tty-browserify",
     "vm": "vm-browserify",
     "tls": false
-  },
-  "metro": {
-    "maxWorkers": 4
   },
   "config": {
     "react-native-storybook-loader": {
