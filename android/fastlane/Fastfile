@@ -102,7 +102,7 @@ platform :android do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "300"
+      commits_count: "200"
     )
 
     custom_changelog = ""
@@ -162,14 +162,6 @@ platform :android do
 
     lastCommit = last_git_commit
 
-    #hockey(
-      #api_token: options[:hockeyAppToken],
-      #notes: changelog,
-      #commit_sha: lastCommit[:commit_hash],
-      #notify: "1",
-      #apk: "app/build/outputs/apk/prod/staging/#{options[:apkName]}"
-    #)
-
     appcenter_upload(
       api_token: options[:hockeyAppToken],
       owner_name: "antonioned",
@@ -177,7 +169,7 @@ platform :android do
       app_name: "Pillar-Wallet-Staging",
       file: "app/build/outputs/apk/prod/staging/#{options[:apkName]}",
       notify_testers: true,
-      release_notes: changelog,
+      release_notes: changelog
     )
 
   end

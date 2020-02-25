@@ -132,7 +132,7 @@ platform :ios do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "300"
+      commits_count: "200"
     )
     custom_changelog = ""
     pr_merges = changelog_notes.split(/Merge/)
@@ -247,13 +247,13 @@ platform :ios do
     #)
 
     appcenter_upload(
-      api_token: ENV["HOCKEY_APP_TOKEN"],
+      api_token: ENV["APPCENTER_IOS_TOKEN"],
       owner_name: "brent-2",
       owner_type: "user",
       app_name: "Pillar-Wallet-Staging",
       file: "./output/gym/pillarwallet-staging.ipa",
       notify_testers: true,
-      release_notes: changelog,
+      release_notes: changelog
     )
 
   end
