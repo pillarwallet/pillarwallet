@@ -1,147 +1,98 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - BoringSSL-GRPC (0.0.5):
-    - BoringSSL-GRPC/Implementation (= 0.0.5)
-    - BoringSSL-GRPC/Interface (= 0.0.5)
-  - BoringSSL-GRPC/Implementation (0.0.5):
-    - BoringSSL-GRPC/Interface (= 0.0.5)
-  - BoringSSL-GRPC/Interface (0.0.5)
   - BVLinearGradient (2.5.4):
     - React
-  - Crashlytics (3.10.9):
-    - Fabric (~> 1.7.13)
+  - Crashlytics (3.14.0):
+    - Fabric (~> 1.10.2)
   - DoubleConversion (1.1.6)
-  - Fabric (1.7.13)
-  - Firebase/Auth (5.0.1):
+  - Fabric (1.10.2)
+  - Firebase/Core (6.13.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (= 5.0.0)
-  - Firebase/Core (5.0.1):
+    - FirebaseAnalytics (= 6.1.6)
+  - Firebase/CoreOnly (6.13.0):
+    - FirebaseCore (= 6.4.0)
+  - Firebase/Messaging (6.13.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 5.0.0)
-  - Firebase/CoreOnly (5.0.1):
-    - FirebaseCore (= 5.0.1)
-  - Firebase/Database (5.0.1):
-    - Firebase/CoreOnly
-    - FirebaseDatabase (= 5.0.0)
-  - Firebase/DynamicLinks (5.0.1):
-    - Firebase/Core
-    - FirebaseDynamicLinks (= 3.0.0)
-  - Firebase/Firestore (5.0.1):
-    - Firebase/CoreOnly
-    - FirebaseFirestore (= 0.12.1)
-  - Firebase/Messaging (5.0.1):
-    - Firebase/CoreOnly
-    - FirebaseMessaging (= 3.0.0)
-  - Firebase/Performance (5.0.1):
-    - Firebase/Core
-    - FirebasePerformance (= 2.0.0)
-  - Firebase/Storage (5.0.1):
-    - Firebase/CoreOnly
-    - FirebaseStorage (= 3.0.0)
-  - FirebaseAnalytics (5.0.0):
-    - FirebaseCore (~> 5.0)
-    - FirebaseInstanceID (~> 3.0)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-    - nanopb (~> 0.3)
-  - FirebaseAuth (5.0.0):
-    - FirebaseCore (~> 5.0)
-    - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (5.0.1):
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-  - FirebaseDatabase (5.0.0):
-    - FirebaseCore (~> 5.0)
-    - leveldb-library (~> 1.18)
-  - FirebaseDynamicLinks (3.0.0):
-    - FirebaseAnalytics (~> 5.0)
-  - FirebaseFirestore (0.12.1):
-    - FirebaseCore (~> 5.0)
-    - FirebaseFirestore/abseil-cpp (= 0.12.1)
-    - gRPC-ProtoRPC (~> 1.0)
-    - leveldb-library (~> 1.18)
-    - Protobuf (~> 3.1)
-  - FirebaseFirestore/abseil-cpp (0.12.1):
-    - FirebaseCore (~> 5.0)
-    - gRPC-ProtoRPC (~> 1.0)
-    - leveldb-library (~> 1.18)
-    - Protobuf (~> 3.1)
-  - FirebaseInstanceID (3.1.1):
-    - FirebaseCore (~> 5.0)
-  - FirebaseMessaging (3.0.0):
-    - FirebaseCore (~> 5.0)
-    - FirebaseInstanceID (~> 3.0)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - Protobuf (~> 3.1)
-  - FirebasePerformance (2.0.0):
-    - FirebaseAnalytics (~> 5.0)
-    - FirebaseInstanceID (~> 3.0)
-    - FirebaseSwizzlingUtilities/ISASwizzling (~> 2.0)
-    - FirebaseSwizzlingUtilities/MethodSwizzling (~> 2.0)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-    - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.5)
-  - FirebaseStorage (3.0.0):
-    - FirebaseCore (~> 5.0)
-    - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseSwizzlingUtilities/ISASwizzling (2.0.0)
-  - FirebaseSwizzlingUtilities/MethodSwizzling (2.0.0):
-    - FirebaseCore (~> 5.0)
+    - FirebaseMessaging (~> 4.1.9)
+  - FirebaseAnalytics (6.1.6):
+    - FirebaseCore (~> 6.4)
+    - FirebaseInstanceID (~> 4.2)
+    - GoogleAppMeasurement (= 6.1.6)
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
+    - GoogleUtilities/MethodSwizzler (~> 6.0)
+    - GoogleUtilities/Network (~> 6.0)
+    - "GoogleUtilities/NSData+zlib (~> 6.0)"
+    - nanopb (= 0.3.9011)
+  - FirebaseAnalyticsInterop (1.5.0)
+  - FirebaseCore (6.4.0):
+    - FirebaseCoreDiagnostics (~> 1.0)
+    - FirebaseCoreDiagnosticsInterop (~> 1.0)
+    - GoogleUtilities/Environment (~> 6.2)
+    - GoogleUtilities/Logger (~> 6.2)
+  - FirebaseCoreDiagnostics (1.2.0):
+    - FirebaseCoreDiagnosticsInterop (~> 1.2)
+    - GoogleDataTransportCCTSupport (~> 1.3)
+    - GoogleUtilities/Environment (~> 6.5)
+    - GoogleUtilities/Logger (~> 6.5)
+    - nanopb (~> 0.3.901)
+  - FirebaseCoreDiagnosticsInterop (1.2.0)
+  - FirebaseInstanceID (4.2.7):
+    - FirebaseCore (~> 6.0)
+    - GoogleUtilities/Environment (~> 6.0)
+    - GoogleUtilities/UserDefaults (~> 6.0)
+  - FirebaseMessaging (4.1.10):
+    - FirebaseAnalyticsInterop (~> 1.3)
+    - FirebaseCore (~> 6.2)
+    - FirebaseInstanceID (~> 4.1)
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.2)
+    - GoogleUtilities/Environment (~> 6.2)
+    - GoogleUtilities/Reachability (~> 6.2)
+    - GoogleUtilities/UserDefaults (~> 6.2)
+    - Protobuf (>= 3.9.2, ~> 3.9)
   - Folly (2018.10.22.00):
     - boost-for-react-native
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - GoogleToolboxForMac/Defines (2.2.2)
-  - GoogleToolboxForMac/Logger (2.2.2):
-    - GoogleToolboxForMac/Defines (= 2.2.2)
-  - "GoogleToolboxForMac/NSData+zlib (2.2.2)":
-    - GoogleToolboxForMac/Defines (= 2.2.2)
-  - gRPC-Core (1.25.0):
-    - gRPC-Core/Implementation (= 1.25.0)
-    - gRPC-Core/Interface (= 1.25.0)
-  - gRPC-Core/Implementation (1.25.0):
-    - BoringSSL-GRPC (= 0.0.5)
-    - gRPC-Core/Interface (= 1.25.0)
-  - gRPC-Core/Interface (1.25.0)
-  - gRPC-ProtoRPC (1.25.0):
-    - gRPC-ProtoRPC/Legacy (= 1.25.0)
-    - gRPC-ProtoRPC/Legacy-Header (= 1.25.0)
-    - gRPC-ProtoRPC/Main (= 1.25.0)
-  - gRPC-ProtoRPC/Legacy (1.25.0):
-    - gRPC-ProtoRPC/Legacy-Header (= 1.25.0)
-    - gRPC-ProtoRPC/Main (= 1.25.0)
-    - gRPC-RxLibrary (= 1.25.0)
-    - gRPC/GRPCCore (= 1.25.0)
-    - Protobuf (~> 3.0)
-  - gRPC-ProtoRPC/Legacy-Header (1.25.0)
-  - gRPC-ProtoRPC/Main (1.25.0):
-    - gRPC-ProtoRPC/Legacy-Header (= 1.25.0)
-    - gRPC/Interface (= 1.25.0)
-    - Protobuf (~> 3.0)
-  - gRPC-RxLibrary (1.25.0):
-    - gRPC-RxLibrary/Implementation (= 1.25.0)
-    - gRPC-RxLibrary/Interface (= 1.25.0)
-  - gRPC-RxLibrary/Implementation (1.25.0):
-    - gRPC-RxLibrary/Interface
-  - gRPC-RxLibrary/Interface (1.25.0)
-  - gRPC/GRPCCore (1.25.0):
-    - gRPC-Core (= 1.25.0)
-    - gRPC-RxLibrary (= 1.25.0)
-    - gRPC/Interface (= 1.25.0)
-    - gRPC/Interface-Legacy (= 1.25.0)
-  - gRPC/Interface (1.25.0):
-    - gRPC/Interface-Legacy (= 1.25.0)
-  - gRPC/Interface-Legacy (1.25.0):
-    - gRPC-RxLibrary/Interface (= 1.25.0)
-  - GTMSessionFetcher/Core (1.3.0)
+  - GoogleAppMeasurement (6.1.6):
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
+    - GoogleUtilities/MethodSwizzler (~> 6.0)
+    - GoogleUtilities/Network (~> 6.0)
+    - "GoogleUtilities/NSData+zlib (~> 6.0)"
+    - nanopb (= 0.3.9011)
+  - GoogleDataTransport (4.0.0)
+  - GoogleDataTransportCCTSupport (1.4.0):
+    - GoogleDataTransport (~> 4.0)
+    - nanopb (~> 0.3.901)
+  - GoogleUtilities/AppDelegateSwizzler (6.5.1):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (6.5.1)
+  - GoogleUtilities/Logger (6.5.1):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (6.5.1):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (6.5.1):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (6.5.1)"
+  - GoogleUtilities/Reachability (6.5.1):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/UserDefaults (6.5.1):
+    - GoogleUtilities/Logger
   - Intercom (5.2.1)
-  - leveldb-library (1.22)
+  - lottie-ios (2.5.0)
+  - lottie-react-native (2.6.1):
+    - lottie-ios (~> 2.5.0)
+    - React
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
-  - Protobuf (3.11.1)
+  - Protobuf (3.11.4)
   - QBImagePickerController (3.4.0)
   - React (0.59.10):
     - React/Core (= 0.59.10)
@@ -149,13 +100,13 @@ PODS:
     - React
   - react-native-background-timer (2.1.1):
     - React
-  - react-native-camera (2.6.0):
+  - react-native-camera (3.17.0):
     - React
-    - react-native-camera/RCT (= 2.6.0)
-    - react-native-camera/RN (= 2.6.0)
-  - react-native-camera/RCT (2.6.0):
+    - react-native-camera/RCT (= 3.17.0)
+    - react-native-camera/RN (= 3.17.0)
+  - react-native-camera/RCT (3.17.0):
     - React
-  - react-native-camera/RN (2.6.0):
+  - react-native-camera/RN (3.17.0):
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
@@ -164,12 +115,12 @@ PODS:
     - React/Core
   - react-native-randombytes (3.5.3):
     - React
-  - react-native-udp (2.6.0):
+  - react-native-splash-screen (3.2.0):
     - React
-  - react-native-webview (5.12.0):
+  - react-native-udp (2.7.0):
     - React
-  - React/ART (0.59.10):
-    - React/Core
+  - react-native-webview (5.12.1):
+    - React
   - React/Core (0.59.10):
     - yoga (= 0.59.10.React)
   - React/CxxBridge (0.59.10):
@@ -198,16 +149,9 @@ PODS:
     - React/cxxreact
     - React/jsi
   - React/jsinspector (0.59.10)
-  - React/RCTActionSheet (0.59.10):
-    - React/Core
   - React/RCTAnimation (0.59.10):
     - React/Core
   - React/RCTBlob (0.59.10):
-    - React/Core
-  - React/RCTCameraRoll (0.59.10):
-    - React/Core
-    - React/RCTImage
-  - React/RCTGeolocation (0.59.10):
     - React/Core
   - React/RCTImage (0.59.10):
     - React/Core
@@ -216,33 +160,58 @@ PODS:
     - React/Core
   - React/RCTText (0.59.10):
     - React/Core
-  - React/RCTVibration (0.59.10):
-    - React/Core
   - React/RCTWebSocket (0.59.10):
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - ReactNativeFabric (0.5.2):
-    - Crashlytics
-    - Fabric
-    - React
   - ReactNativePermissions (1.2.1):
     - React
   - RNCAsyncStorage (1.7.1):
     - React
-  - RNColorMatrixImageFilters (5.1.4):
+  - RNColorMatrixImageFilters (5.2.2):
     - React
-  - RNDeviceInfo (1.6.0):
+  - RNDeviceInfo (5.5.1):
     - React
+  - RNFBAnalytics (6.3.3):
+    - Firebase/Core (~> 6.13.0)
+    - React
+    - RNFBApp
+  - RNFBApp (6.3.3):
+    - Firebase/Core (~> 6.13.0)
+    - React
+  - RNFBCrashlytics (6.3.3):
+    - Crashlytics (~> 3.14.0)
+    - Fabric (~> 1.10.2)
+    - Firebase/Core (~> 6.13.0)
+    - React
+    - RNFBApp
+  - RNFBIid (6.3.3):
+    - Firebase/Core (~> 6.13.0)
+    - React
+    - RNFBApp
+  - RNFBMessaging (6.3.3):
+    - Firebase/Messaging (~> 6.13.0)
+    - React
+    - RNFBApp
   - RNGestureHandler (1.4.1):
     - React
-  - RNImageCropPicker (0.23.1):
+  - RNImageCropPicker (0.24.1):
     - QBImagePickerController
     - React/Core
     - RSKImageCropper
-  - RNKeychain (3.1.3):
+  - RNKeychain (4.0.5):
     - React
-  - RNVectorIcons (6.4.2):
+  - RNOS (1.2.6):
+    - React
+  - RNScreens (1.0.0-alpha.23):
+    - React
+  - RNScrypt (1.1.2):
+    - React
+  - RNShare (1.2.1):
+    - React
+  - RNSVG (9.13.6):
+    - React
+  - RNVectorIcons (6.6.0):
     - React
   - RSKImageCropper (2.2.3)
   - Sentry (4.0.1):
@@ -251,83 +220,75 @@ PODS:
   - SentryReactNative (0.39.1):
     - React
     - Sentry (~> 4.0.1)
+  - TcpSockets (3.3.2):
+    - React
   - yoga (0.59.10.React)
 
 DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
-  - Crashlytics (~> 3.10.4)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
-  - Fabric (~> 1.7.5)
-  - Firebase/Auth
-  - Firebase/Core (~> 5.0.0)
-  - Firebase/Database
-  - Firebase/DynamicLinks
-  - Firebase/Firestore
-  - Firebase/Messaging
-  - Firebase/Performance
-  - Firebase/Storage
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - Intercom (~> 5.2.1)
+  - lottie-ios (from `../node_modules/lottie-ios`)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - react-native-appearance (from `../node_modules/react-native-appearance`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-intercom (from `../node_modules/react-native-intercom`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-udp (from `../node_modules/react-native-udp`)
   - react-native-webview (from `../node_modules/react-native-webview`)
-  - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
-  - React/RCTActionSheet (from `../node_modules/react-native`)
   - React/RCTAnimation (from `../node_modules/react-native`)
-  - React/RCTCameraRoll (from `../node_modules/react-native`)
-  - React/RCTGeolocation (from `../node_modules/react-native`)
   - React/RCTImage (from `../node_modules/react-native`)
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
-  - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
-  - ReactNativeFabric (from `../node_modules/react-native-fabric`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
+  - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBCrashlytics (from `../node_modules/@react-native-firebase/crashlytics`)"
+  - "RNFBIid (from `../node_modules/@react-native-firebase/iid`)"
+  - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNOS (from `../node_modules/react-native-os`)
+  - RNScreens (from `../node_modules/react-native-screens`)
+  - RNScrypt (from `../node_modules/react-native-scrypt`)
+  - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
+  - TcpSockets (from `../node_modules/react-native-tcp`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - boost-for-react-native
-    - BoringSSL-GRPC
     - Crashlytics
     - Fabric
     - Firebase
     - FirebaseAnalytics
-    - FirebaseAuth
+    - FirebaseAnalyticsInterop
     - FirebaseCore
-    - FirebaseDatabase
-    - FirebaseDynamicLinks
-    - FirebaseFirestore
+    - FirebaseCoreDiagnostics
+    - FirebaseCoreDiagnosticsInterop
     - FirebaseInstanceID
     - FirebaseMessaging
-    - FirebasePerformance
-    - FirebaseStorage
-    - FirebaseSwizzlingUtilities
-    - GoogleToolboxForMac
-    - gRPC
-    - gRPC-Core
-    - gRPC-ProtoRPC
-    - gRPC-RxLibrary
-    - GTMSessionFetcher
+    - GoogleAppMeasurement
+    - GoogleDataTransport
+    - GoogleDataTransportCCTSupport
+    - GoogleUtilities
     - Intercom
-    - leveldb-library
     - nanopb
     - Protobuf
     - QBImagePickerController
@@ -343,6 +304,10 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  lottie-ios:
+    :path: "../node_modules/lottie-ios"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
   React:
     :path: "../node_modules/react-native"
   react-native-appearance:
@@ -357,12 +322,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-intercom"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   react-native-udp:
     :path: "../node_modules/react-native-udp"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
-  ReactNativeFabric:
-    :path: "../node_modules/react-native-fabric"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
   RNCAsyncStorage:
@@ -371,50 +336,66 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-color-matrix-image-filters"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNFBAnalytics:
+    :path: "../node_modules/@react-native-firebase/analytics"
+  RNFBApp:
+    :path: "../node_modules/@react-native-firebase/app"
+  RNFBCrashlytics:
+    :path: "../node_modules/@react-native-firebase/crashlytics"
+  RNFBIid:
+    :path: "../node_modules/@react-native-firebase/iid"
+  RNFBMessaging:
+    :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNOS:
+    :path: "../node_modules/react-native-os"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
+  RNScrypt:
+    :path: "../node_modules/react-native-scrypt"
+  RNShare:
+    :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   SentryReactNative:
     :path: "../node_modules/react-native-sentry"
+  TcpSockets:
+    :path: "../node_modules/react-native-tcp"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  BoringSSL-GRPC: 8f2c6b5fbae71d1f3aabb787a52fd4929d1eef33
   BVLinearGradient: b0b70acf63ee888829b7c2ebbf6b50e227396e55
-  Crashlytics: 55e24fc23989680285a21cb1146578d9d18e432c
+  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
-  Fabric: 25d0963b691fc97be566392243ff0ecef5a68338
-  Firebase: d6861c2059d8c32d1e6dd8932e22ada346d90a3a
-  FirebaseAnalytics: 19812b49fa5f283dd6b23edf8a14b5d477029ab8
-  FirebaseAuth: acbeef02fe7c3a26624e309849f3fe30c84115af
-  FirebaseCore: cafc814b2d84fc8733f09e653041cc2165332ad7
-  FirebaseDatabase: 697eb53e5b4fe7cd4fa8756c1f82a9fca011345f
-  FirebaseDynamicLinks: c70e8ef2f267f13459db89b8816b13a06b2278d2
-  FirebaseFirestore: f686b8e83f3cf8bbc37db6e98e01029a14f01f55
-  FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
-  FirebaseMessaging: f2360a966ecfb0d14facf0fbdf306efc2df0ddbe
-  FirebasePerformance: 1ec6c40e5dad2543ca4c4f25d15168bde6322c2c
-  FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
-  FirebaseSwizzlingUtilities: 6c22677c50d0b6f5f0dc637c1233f13694a3003f
+  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
+  Firebase: 458d109512200d1aca2e1b9b6cf7d68a869a4a46
+  FirebaseAnalytics: 45f36d9c429fc91d206283900ab75390cd05ee8a
+  FirebaseAnalyticsInterop: 3f86269c38ae41f47afeb43ebf32a001f58fcdae
+  FirebaseCore: 307ea2508df730c5865334e41965bd9ea344b0e5
+  FirebaseCoreDiagnostics: 5e78803ab276bc5b50340e3c539c06c3de35c649
+  FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
+  FirebaseInstanceID: ebd2ea79ee38db0cb5f5167b17a0d387e1cc7b6e
+  FirebaseMessaging: 089b7a4991425783384acc8bcefcd78c0af913bd
   Folly: de497beb10f102453a1afa9edbf8cf8a251890de
   glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
-  GoogleToolboxForMac: 800648f8b3127618c1b59c7f97684427630c5ea3
-  gRPC: 7fb3e0d14ce1f87f1c27a9e46167da5168ab9092
-  gRPC-Core: 76552aeeae7c42172d52224cc6f3cf70bff577f5
-  gRPC-ProtoRPC: b00a140f2f21872305cd8e3ef91b2dfe28914b5c
-  gRPC-RxLibrary: cd49d9cd343fd00e2326a65522e82c2285ebe84b
-  GTMSessionFetcher: 43b8b64263023d4f32caa0b40f4c8bfa3c5f36d8
+  GoogleAppMeasurement: dfe55efa543e899d906309eaaac6ca26d249862f
+  GoogleDataTransport: 47fe3b8e1673e5187dfd615656a3c5034f150d69
+  GoogleDataTransportCCTSupport: 36f69887fd212db6d7ef4dd45ba44523717a434e
+  GoogleUtilities: 06eb53bb579efe7099152735900dd04bf09e7275
   Intercom: 53f07c24f0ca18c1e910750e79b75f9c9867338f
-  leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
+  lottie-ios: 9f24be3ecb13412223b6ac70d97437742b0e3de1
+  lottie-react-native: fc1fe3ee36ef1e19e56e9a4f90a3c50af6f3553e
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  Protobuf: 20d79da7f20b5928b80043b05080b816e802659e
+  Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: 1d605e098d69bdf08960787f3446f0a9dc2e2ccf
   react-native-appearance: 6f7d829e25310d7c45d4e8e75db3206315e39951
@@ -423,22 +404,33 @@ SPEC CHECKSUMS:
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
   react-native-randombytes: d3184d351604f78e019535178766590188bbc133
+  react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
   react-native-udp: 1dc04d3429ff13a251126092feeb35e175a1b0d8
-  react-native-webview: a42108b827082f8f0333529b0772102031d5960d
-  ReactNativeFabric: 01c1333f76fd4708a5833d71f0a4832a9266bf0f
+  react-native-webview: ad9581723f4d401c22cb3a371811d4dc9310df56
   ReactNativePermissions: c5be85159a946eed987b35333f848ba17c2ff2af
   RNCAsyncStorage: e99188b8a89ea0edddc82d8831cd5142f4550fdc
-  RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
-  RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664
+  RNColorMatrixImageFilters: 95f6832a5de3d84300b54c8d8c5a217ed5872196
+  RNDeviceInfo: 5b5b42b12587207b6bd686441ac42d19d8e07933
+  RNFBAnalytics: 22a2abc68799792978613f1e2118f400f8cb50a0
+  RNFBApp: 30e1dc2e1619831cf42f2419ad6a4f3f275b2c75
+  RNFBCrashlytics: 34ca28f34d62afddac7ed4c6e733c595521082dd
+  RNFBIid: f0d1a41eefd61cdc2b0f33dc592cca372dd814a9
+  RNFBMessaging: 9479c85e1c6df2b2ad43fc5daa2cb28550fdf872
   RNGestureHandler: 311e3b1cef021a7c9ef31e97e7dc31970cc6288d
   RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
   RNKeychain: 5381e340056c23de103d73ae59cbddc6ffc21d97
-  RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
+  RNOS: fc0222cac9054af07d92737ca94671fbfd0c264b
+  RNScreens: 354046589421edc3d83d5c6212475bf1fb9a731d
+  RNScrypt: d138bf0c92c4ae30b7965fc76a91ee1f75bdf9cd
+  RNShare: d875e8e37f3e5e8eb7a103ae01e06490af1796f6
+  RNSVG: 2e097b92aaa6d4e0f354fd7c49cbf3b17f8b3920
+  RNVectorIcons: 66af4d5c8ff4f584c7b7cd9c4b0780920f27fce2
   RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
   Sentry: a38f7879924c02239e121b19d993d23bdd1684db
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
+  TcpSockets: 79fa266772261bb627e8634c5987a7ad88ef7dfd
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 6902eae1bc76c86917ae6ee098e1e2ff7e4fde55
+PODFILE CHECKSUM: 1272c07a42b19aaafd09db1e32f367c333bd5187
 
 COCOAPODS: 1.5.3

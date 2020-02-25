@@ -53,6 +53,7 @@ jest.mock('@react-native-firebase/app', () => ({
       },
     }),
     messaging: () => ({
+      registerForRemoteNotifications: () => Promise.resolve(),
       requestPermission: () => Promise.resolve(),
       hasPermission: () => Promise.resolve(1),
       getToken: () => Promise.resolve('12x2342x212'),

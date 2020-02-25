@@ -181,13 +181,13 @@ SDKWrapper.prototype.registerSmartWallet = function (payload: RegisterSmartWalle
     }));
 };
 
-SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, fcm: string, username: string) {
+SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, fcmToken: string, username: string) {
   const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
   return Promise.resolve()
     .then(() => {
       return this.pillarWalletSdk.wallet.registerAuthServer({
         privateKey,
-        fcmToken: fcm,
+        fcmToken,
         username,
       });
     })
