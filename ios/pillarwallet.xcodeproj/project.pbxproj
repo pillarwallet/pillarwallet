@@ -419,6 +419,11 @@
 		696ACE182404859F009B0BEC /* RNSentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSentry.xcodeproj; path = "../node_modules/react-native-sentry/ios/RNSentry.xcodeproj"; sourceTree = "<group>"; };
 		696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		696ACF1124049931009B0BEC /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Light.otf"; path = "../src/assets/fonts/EuclidCircularB-Light.otf"; sourceTree = "<group>"; };
+		696ACF5124049C74009B0BEC /* PillarIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = PillarIcons.ttf; path = ../src/assets/fonts/PillarIcons.ttf; sourceTree = "<group>"; };
+		696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Regular.otf"; path = "../src/assets/fonts/EuclidCircularB-Regular.otf"; sourceTree = "<group>"; };
+		696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Bold.otf"; path = "../src/assets/fonts/EuclidCircularB-Bold.otf"; sourceTree = "<group>"; };
+		696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Medium.otf"; path = "../src/assets/fonts/EuclidCircularB-Medium.otf"; sourceTree = "<group>"; };
 		69D38DFE24047162003F1E10 /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		69D38DFF24047163003F1E10 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		69D38E4C24047B11003F1E10 /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -713,6 +718,11 @@
 		6D470BCE655F453BAB6C6EC2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */,
+				696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */,
+				696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */,
+				696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */,
+				696ACF5124049C74009B0BEC /* PillarIcons.ttf */,
 				C797D1FFA1B74A00A9DBBB92 /* AntDesign.ttf */,
 				B6F081CB99EF40AFA9DFD684 /* Entypo.ttf */,
 				549CB0BDA51243E3835DE85A /* EvilIcons.ttf */,

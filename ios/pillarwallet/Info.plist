@@ -60,6 +60,11 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
+		<string>EuclidCircularB-Bold.otf</string>
+		<string>EuclidCircularB-Light.otf</string>
+		<string>EuclidCircularB-Medium.otf</string>
+		<string>EuclidCircularB-Regular.otf</string>
+		<string>PillarIcons.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
