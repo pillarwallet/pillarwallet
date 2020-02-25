@@ -612,7 +612,6 @@ workflows:
             branches:
               only:
                   - develop
-                  - fix/pure-react-native-ios
       - hockeyapp_android:
           requires:
             - build-and-test
