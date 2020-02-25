@@ -173,7 +173,7 @@ platform :android do
     appcenter_upload(
       api_token: options[:hockeyAppToken],
       file: "app/build/outputs/apk/prod/staging/#{options[:apkName]}",
-      notify_testers: true
+      notify_testers: true,
       release_notes: changelog,
     )
 
