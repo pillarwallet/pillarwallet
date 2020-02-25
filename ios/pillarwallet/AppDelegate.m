@@ -27,6 +27,12 @@
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
   }
+  #ifdef DEBUG
+    [Intercom setApiKey:@"ios_sdk-8c4a15ada22af46599f62d1bef70c7c121957dd7"
+               forAppId:@"xbjzrshe"];
+  #else
+    [Intercom setApiKey:@"ios_sdk-f210e1d785d4c0e64ab3ba0f529d64c47da59186" forAppId:@"s70dqvb2"];
+  #endif
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"pillarwallet"
