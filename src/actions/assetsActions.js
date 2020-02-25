@@ -21,6 +21,8 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import { Sentry } from 'react-native-sentry';
+import { toChecksumAddress } from '@netgum/utils';
+
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -84,6 +86,7 @@ import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction } from './ratesActions';
+import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -277,6 +280,7 @@ export const sendAssetAction = (
     const symbol = get(transaction, 'symbol', '');
     const allowancePayload = get(transaction, 'extra.allowance', {});
     const usePPN = get(transaction, 'usePPN', false);
+    const receiverEnsName = get(transaction, 'receiverEnsName');
 
     if (tokenType === COLLECTIBLES) {
       await dispatch(fetchCollectiblesAction());
@@ -301,7 +305,8 @@ export const sendAssetAction = (
     let historyTx;
     const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-    const { to, note } = transaction;
+    const to = toChecksumAddress(transaction.to);
+    const { note } = transaction;
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
@@ -449,6 +454,10 @@ export const sendAssetAction = (
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      }
+
+      if (receiverEnsName) {
+        dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
       }
     }
 
@@ -671,12 +680,6 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
-
-  // TODO: remove when we find an issue with supported assets
-  if (!supportedAssets || !supportedAssets.length) {
-    Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
-    return { id: accountId };
-  }
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))

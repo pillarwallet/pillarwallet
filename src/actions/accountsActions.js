@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import get from 'lodash.get';
 import { sdkConstants } from '@smartwallet/sdk';
 import {
   ADD_ACCOUNT,
@@ -32,6 +33,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
   connectSmartWalletAccountAction,
   initSmartWalletSdkAction,
+  setSmartWalletEnsNameAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
@@ -256,6 +258,9 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
           status: upgradeStatus,
         },
       },
+      user: {
+        data: user,
+      },
     } = getState();
 
     const activeAccountId = getActiveAccountId(accounts);
@@ -280,6 +285,13 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
         type: SET_ACTIVE_NETWORK,
         payload: blockchainNetwork,
       });
+    }
+
+    // check if user needs to set the ens name
+    const accountState = get(getState(), 'smartWallet.connectedAccount.state');
+    const ensName = get(getState(), 'smartWallet.connectedAccount.ensName');
+    if (!ensName && user.username && accountState === sdkConstants.AccountStates.Deployed) {
+      dispatch(setSmartWalletEnsNameAction(user.username));
     }
   };
 };

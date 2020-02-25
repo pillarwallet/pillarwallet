@@ -999,22 +999,15 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     ]
                   }
                 >
-                  <Image
-                    disabled={false}
-                    resizeMethod="resize"
-                    resizeMode="contain"
-                    source={1}
+                  <View
+                    name="qrDetailed"
                     style={
-                      Array [
-                        Object {
-                          "display": "flex",
-                          "height": 24,
-                          "justifyContent": "center",
-                          "opacity": 1,
-                          "width": 24,
-                        },
-                        undefined,
-                      ]
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 1,
+                      }
                     }
                   />
                 </View>
@@ -1117,22 +1110,15 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     ]
                   }
                 >
-                  <Image
-                    disabled={true}
-                    resizeMethod="resize"
-                    resizeMode="contain"
-                    source={1}
+                  <View
+                    name="paperPlane"
                     style={
-                      Array [
-                        Object {
-                          "display": "flex",
-                          "height": 24,
-                          "justifyContent": "center",
-                          "opacity": 0.3,
-                          "width": 24,
-                        },
-                        undefined,
-                      ]
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 0.5,
+                      }
                     }
                   />
                 </View>
@@ -1152,7 +1138,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         "fontSize": 16,
                         "letterSpacing": 0.1,
                         "marginTop": -6,
-                        "opacity": 0.7,
+                        "opacity": 1,
                         "textAlign": "center",
                       },
                       undefined,
@@ -2123,12 +2109,16 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 12,
+                            "lineHeight": 18,
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 12,
+                              "lineHeight": 18,
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -2242,12 +2232,16 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 12,
+                            "lineHeight": 18,
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 12,
+                              "lineHeight": 18,
                               "textAlignVertical": "center",
                             },
                             Array [
@@ -2974,6 +2968,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 12,
+                        "lineHeight": 18,
                         "textAlignVertical": "center",
                       },
                       Array [

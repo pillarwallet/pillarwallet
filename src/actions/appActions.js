@@ -19,7 +19,6 @@
 */
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
-import get from 'lodash.get';
 
 // services
 import Storage from 'services/storage';
@@ -74,11 +73,12 @@ import {
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 
-import { loadBitcoinAddressesAction } from 'actions/bitcoinActions';
-import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
+
 
 const storage = Storage.getInstance('db');
 
@@ -202,6 +202,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       dispatch(loadBitcoinAddressesAction());
 
+      dispatch(loadBitcoinBalancesAction());
+
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
       }
@@ -221,21 +223,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
+      const { ensRegistry = {} } = await storage.get('ensRegistry');
+      dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
+
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-
-      // check if current user has theme set and set it to default if
-      const hasTheme = get(appSettings, 'themeType');
-
-      if (!hasTheme) {
-        dispatch(setAppThemeAction());
-      }
-
-      // check if theme is set to system's default
-      const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
-
-      if (isThemeSetAsSystemDefault) {
-        dispatch(handleSystemDefaultThemeChangeAction());
-      }
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 
@@ -243,8 +234,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    dispatch(setAppThemeAction());
-
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

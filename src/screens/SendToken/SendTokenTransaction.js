@@ -42,6 +42,7 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 // constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
+import { EXCHANGE } from 'constants/exchangeConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -52,8 +53,6 @@ type Props = {
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
-const transactionSuccessText =
-  'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
 
 const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
@@ -64,6 +63,25 @@ const getTransactionErrorMessage = (error: string): string => {
   };
   const transactionFailureText = 'Something went wrong';
   return TRANSACTION_ERRORS[error] || transactionFailureText;
+};
+
+const getTransactionSuccessMessage = (transactionType: ?string) => {
+  if (transactionType === EXCHANGE) {
+    return 'It may take some time for this transaction to complete';
+  }
+  return 'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
+};
+
+const getTransactionSuccessTitle = (props) => {
+  const { transactionTokenType, transactionType, isAllowanceTransaction } = props;
+  if (transactionType === EXCHANGE) {
+    return 'Swapping tokens...';
+  } else if (transactionTokenType === COLLECTIBLES) {
+    return 'Collectible is on its way';
+  } else if (isAllowanceTransaction) {
+    return 'Transaction is on its way';
+  }
+  return 'Tokens are on their way';
 };
 
 const CancelText = styled(MediumText)`
@@ -117,21 +135,18 @@ class SendTokenTransaction extends React.Component<Props> {
         } = {},
       },
       noRetry,
+      transactionType,
     } = navigation.state.params;
 
     const animationSource = isSuccess ? animationSuccess : animationFailure;
-    const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
-
-    let successText;
+    const transactionStatusText = isSuccess
+      ? getTransactionSuccessMessage(transactionType)
+      : getTransactionErrorMessage(error);
     const isAllowanceTransaction = Object.keys(allowance).length;
-    if (transactionTokenType === COLLECTIBLES) {
-      successText = 'Collectible is on its way';
-    } else {
-      successText = isAllowanceTransaction
-        ? 'Transaction is on it\'s way'
-        : 'Tokens are on their way';
-    }
-    const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
+    const transactionStatusTitle = isSuccess
+      ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
+      : 'Transaction failed';
+    const successButtonText = transactionType === EXCHANGE ? 'Finish' : 'Magic!';
 
     return (
       <Container>
@@ -140,7 +155,7 @@ class SendTokenTransaction extends React.Component<Props> {
           <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot />
           <Paragraph small light center style={{ marginBottom: 40 }}>{transactionStatusText}</Paragraph>
           {isSuccess ?
-            <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" /> :
+            <Button marginBottom="20px" onPress={this.handleDismissal} title={successButtonText} /> :
             <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
               {!noRetry && <Button marginBottom="20px" onPress={this.handleNavigationBack} title="Retry" />}
               <TouchableOpacity onPress={this.handleDismissal}>

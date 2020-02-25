@@ -80,14 +80,14 @@ const TabItem = styled.TouchableOpacity`
 `;
 
 const TabItemIcon = styled(Icon)`
-  font-size: ${fontSizes.regular}px;
-  margin-right: 4px;
-  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.primary};
+  font-size: ${fontSizes.medium}px;
+  margin-right: 8px;
+  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.accent};
 `;
 
 const TabItemText = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.primary};
+  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.accent};
 `;
 
 const ActivityFeedHeader = styled.View`

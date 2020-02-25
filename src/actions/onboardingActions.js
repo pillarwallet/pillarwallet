@@ -85,12 +85,7 @@ import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import {
-  setAppThemeAction,
-  changeUseBiometricsAction,
-  updateAppSettingsAction,
-  markThemeAlertAsShownAction,
-} from 'actions/appSettingsActions';
+import { setAppThemeAction, changeUseBiometricsAction, updateAppSettingsAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -273,8 +268,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch({ type: RESET_APP_SETTINGS, payload: {} });
 
     // manage theme as appSettings gets overwritten
-    dispatch(setAppThemeAction(themeToStore));
-    dispatch(markThemeAlertAsShownAction());
+    if (themeToStore) dispatch(setAppThemeAction(themeToStore));
 
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });

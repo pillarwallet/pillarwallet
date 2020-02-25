@@ -18,22 +18,70 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, TouchableOpacity, TouchableNativeFeedback, View } from 'react-native';
+import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
+import type { IconProps } from 'components/Icon';
 import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
-type Props = {
-  buttonText: string,
-  onPress?: Function,
-  fontSize?: number,
+type CommonProps = {
+  onPress?: () => void,
   wrapperStyle?: Object,
 }
 
+type TouchableProps = CommonProps & {
+  children: React.Node,
+}
+
+type Props = CommonProps & {
+  buttonText: string,
+  fontSize?: number,
+  leftIconProps?: IconProps,
+  rightIconProps?: IconProps,
+}
+
+const Wrapper = styled.View`
+  align-self: center;
+  margin: 0;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const ButtonLabel = styled(BaseText)`
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.regular}px;
-  color: rgb(32,119,253);
+  color: ${themedColors.primary};
 `;
+
+const StyledIcon = styled(Icon)`
+  ${({ isLeft }) => isLeft ? 'margin-right: 4px;' : 'margin-left: 4px;'}
+  color: ${themedColors.primary};
+`;
+
+const Touchable = (props: TouchableProps) => {
+  const { onPress, wrapperStyle, children } = props;
+  if (Platform.OS === 'ios') {
+    return (
+      <TouchableOpacity onPress={onPress}>
+        <Wrapper style={wrapperStyle}>
+          {children}
+        </Wrapper>
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <TouchableNativeFeedback
+      onPress={onPress}
+      background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
+    >
+      <Wrapper style={wrapperStyle}>
+        {children}
+      </Wrapper>
+    </TouchableNativeFeedback>
+  );
+};
 
 const ButtonText = (props: Props) => {
   const {
@@ -41,27 +89,16 @@ const ButtonText = (props: Props) => {
     onPress,
     fontSize,
     wrapperStyle,
+    leftIconProps,
+    rightIconProps,
   } = props;
-  if (Platform.OS === 'ios') {
-    return (
-      <TouchableOpacity onPress={onPress} style={wrapperStyle}>
-        <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
-      </TouchableOpacity>
-    );
-  }
+
   return (
-    <TouchableNativeFeedback
-      onPress={onPress}
-      background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
-    >
-      <View style={[{
-        alignSelf: 'center',
-        margin: 0,
-      }, wrapperStyle]}
-      >
-        <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
-      </View>
-    </TouchableNativeFeedback>
+    <Touchable onPress={onPress} wrapperStyle={wrapperStyle}>
+      {!!leftIconProps && <StyledIcon {...leftIconProps} isLeft />}
+      <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
+      {!!rightIconProps && <StyledIcon {...rightIconProps} />}
+    </Touchable>
   );
 };
 

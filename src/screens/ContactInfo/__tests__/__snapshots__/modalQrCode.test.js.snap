@@ -11,6 +11,9 @@ exports[`Modal contact info should render modal correctly 1`] = `
         Object {
           "color": "#0A1427",
           "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 12,
+          "lineHeight": 18,
+          "textAlign": "center",
           "textAlignVertical": "center",
         },
         Array [
@@ -517,6 +520,9 @@ exports[`Modal contact info should render modal correctly 1`] = `
               Object {
                 "color": "#0A1427",
                 "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 12,
+                "lineHeight": 18,
+                "textAlign": "center",
                 "textAlignVertical": "center",
               },
               Array [

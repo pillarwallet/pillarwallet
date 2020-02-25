@@ -77,7 +77,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -159,14 +159,6 @@ const BadgesWrapper = styled.View`
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
-
-const allIconNormal = require('assets/icons/all_normal.png');
-const allIconActive = require('assets/icons/all_active.png');
-const socialIconNormal = require('assets/icons/social_normal.png');
-const socialIconActive = require('assets/icons/social_active.png');
-const transactionsIconNormal = require('assets/icons/transactions_normal.png');
-const transactionsIconActive = require('assets/icons/transactions_active.png');
-const iconConnect = require('assets/icons/icon_receive.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -350,8 +342,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: ALL,
         name: 'All',
-        tabImageNormal: allIconNormal,
-        tabImageActive: allIconActive,
+        icon: 'cube',
         onPress: () => this.setActiveTab(ALL),
         data: [
           ...transactionsOnMainnet,
@@ -369,8 +360,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: TRANSACTIONS,
         name: 'Transactions',
-        tabImageNormal: transactionsIconNormal,
-        tabImageActive: transactionsIconActive,
+        icon: 'paperPlane',
         onPress: () => this.setActiveTab(TRANSACTIONS),
         data: [...transactionsOnMainnet, ...mappedCTransactions],
         emptyState: {
@@ -381,8 +371,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: SOCIAL,
         name: 'Social',
-        tabImageNormal: socialIconNormal,
-        tabImageActive: socialIconActive,
+        icon: 'cup',
         onPress: () => this.setActiveTab(SOCIAL),
         data: [...mappedContacts, ...invitations],
         emptyState: {
@@ -450,8 +439,9 @@ class HomeScreen extends React.Component<Props, State> {
               onSettingsPress={this.openQRScanner}
               onSettingsLoadingPress={this.cancelWaiting}
               isLoading={!!pendingConnector}
-              settingsIconSource={iconConnect}
+              settingsIcon="qrDetailed"
               settingsLabel="Connect"
+              iconStyle={{ fontSize: fontSizes.large }}
             />
           </WalletConnectWrapper>
           <BadgesWrapper>

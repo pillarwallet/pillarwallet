@@ -38,6 +38,8 @@
 <PROJECT_ROOT>/node_modules/react-native-device-info/.*
 <PROJECT_ROOT>/node_modules/react-native-keychain/.*
 
+<PROJECT_ROOT>/node_modules/@storybook/.*/polished
+
 [include]
 
 [libs]

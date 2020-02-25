@@ -18,9 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  UPDATE_SEARCH_RESULTS,
-  FETCHING,
-  UPDATE_CONTACTS_STATE,
+  START_SEARCH,
+  FINISH_SEARCH,
+  RESET_SEARCH_RESULTS,
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
 import Toast from 'components/Toast';
@@ -144,12 +144,12 @@ describe('Contacts Actions', () => {
       await actions.searchContactsAction('')(dispatchMock, getStateMock, apiMock);
 
       expect(dispatchMock).toBeCalledWith({
-        type: UPDATE_CONTACTS_STATE,
-        payload: FETCHING,
+        type: START_SEARCH,
+        payload: { localContacts: mockLocalContacts, apiUsers: [] },
       });
 
       expect(dispatchMock).toBeCalledWith({
-        type: UPDATE_SEARCH_RESULTS,
+        type: FINISH_SEARCH,
         payload: {
           apiUsers: [],
           localContacts: mockLocalContacts,
@@ -161,8 +161,7 @@ describe('Contacts Actions', () => {
       await actions.resetSearchContactsStateAction()(dispatchMock);
 
       expect(dispatchMock).toBeCalledWith({
-        type: UPDATE_CONTACTS_STATE,
-        payload: null,
+        type: RESET_SEARCH_RESULTS,
       });
     });
   });

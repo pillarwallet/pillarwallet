@@ -32,6 +32,7 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { Sentry } from 'react-native-sentry';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
+import { normalizeForEns } from 'utils/accounts';
 import type { GasInfo } from 'models/GasInfo';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
@@ -170,8 +171,14 @@ class SmartWallet {
     return accounts;
   }
 
-  createAccount() {
-    return this.sdk.createAccount().catch(() => null);
+  createAccount(username: string) {
+    const ensName = normalizeForEns(username);
+    return this.sdk
+      .createAccount(ensName)
+      .catch((e) => {
+        this.reportError('Unable to create Smart Account', { username, e });
+        return null;
+      });
   }
 
   async connectAccount(address: string) {
@@ -420,6 +427,20 @@ class SmartWallet {
     return this.sdk.getConnectedAccountTransaction(hash)
       .then(({ state }) => state)
       .catch(() => null);
+  }
+
+  async setAccountEnsName(username: string) {
+    if (!this.sdkInitialized) return null;
+
+    const ensName = normalizeForEns(username);
+    const estimated = await this.sdk
+      .estimateSetAccountEnsName(ensName)
+      .catch(e => this.reportError('Unable to estimate ENS update transaction', { e, username, ensName }));
+
+    if (!estimated) return null;
+    return this.sdk
+      .setAccountEnsName(estimated)
+      .catch(e => this.reportError('Unable to set ENS name for user', { e, username, ensName }));
   }
 
   handleError(error: any) {
