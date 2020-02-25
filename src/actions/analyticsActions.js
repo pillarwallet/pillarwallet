@@ -28,8 +28,8 @@ const isTrackingEnabled = (
 export const logScreenViewAction = (contentName: string, contentType: string, contentId?: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (!isTrackingEnabled(getState)) return;
-    const params = { contentName, contentType };
-    if (contentId) params.contentId = contentId;
+    let params = { contentName, contentType };
+    if (contentId) params = { ...params, contentId };
     firebaseAnalytics.logEvent('screen_view', params);
   };
 };
