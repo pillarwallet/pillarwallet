@@ -172,6 +172,9 @@ platform :android do
 
     appcenter_upload(
       api_token: options[:hockeyAppToken],
+      owner_name: "antonioned",
+      owner_type: "user",
+      app_name: "Pillar-Wallet-Staging",
       file: "app/build/outputs/apk/prod/staging/#{options[:apkName]}",
       notify_testers: true,
       release_notes: changelog,
