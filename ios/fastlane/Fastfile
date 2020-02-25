@@ -132,7 +132,7 @@ platform :ios do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "200"
+      commits_count: "50"
     )
     custom_changelog = ""
     pr_merges = changelog_notes.split(/Merge/)
@@ -158,7 +158,7 @@ platform :ios do
   end
 
   desc "Release to adhoc TestFlight"
-  lane :deploy_ios_hockeyapp do |options|
+  lane :deploy_ios_appcenter do |options|
 
     MY_APP_ID = "com.pillarproject.wallet.staging"
     MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging"
@@ -175,15 +175,6 @@ platform :ios do
     register_devices(
       devices_file: "./devices.txt"
     )
-
-    #appcenter_fetch_devices(
-      #api_token: "<appcenter token>",
-      #owner_name: "<appcenter account name of the owner of the app (username or organization URL name)>",
-      #owner_type: "user", # Default is user - set to organization for appcenter organizations
-      #app_name: "<appcenter app name>",
-      #destinations: "*", # Default is 'Collaborators', use '*' for all distribution groups
-      #devices_file: "devices.txt" # Default. If you customize, the extension must be .txt
-    #)
 
     # get our adhoc provisioning profile
     match(type: "adhoc",
@@ -237,14 +228,6 @@ platform :ios do
     #sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '" + ENV["sigh_com.pillarproject.wallet.staging_adhoc_profile-path"] + "'"
     changelog = build_custom_changelog
     commit = last_git_commit
-
-    #hockey(
-      #api_token: ENV["HOCKEY_APP_TOKEN"],
-      #notes: changelog,
-      #commit_sha: commit[:commit_hash],
-      #notify: "1",
-      #ipa: "./output/gym/pillarwallet-staging.ipa"
-    #)
 
     appcenter_upload(
       api_token: ENV["APPCENTER_IOS_TOKEN"],

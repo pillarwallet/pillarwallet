@@ -147,24 +147,6 @@ aliases:
       paths:
         - ~/android/.gradle
         - ~/android/.m2
-  # - &set_staging_env
-  #     run:
-  #       name: Set staging environment
-  #       command: |
-  #         cd ~/pillarwallet
-  #         git config user.email "devops@pillar.io"
-  #         git config user.name "Issabot"
-  #         npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
-  #         export buildNumber=$(node -e "console.log(require('./package.json').version);")
-  #         rm .env
-  #         cp environments/.env.staging ./.env
-  #         sed -i.bak "s/_build_number_/$buildNumber/g" .env
-  #         sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-  #         sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
-  #         sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
-  #         sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
-  #         sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
-  #         echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 jobs:
   build-and-test:
@@ -195,7 +177,7 @@ jobs:
           name: Run validation
           command: yarn validate
 
-  hockeyapp_ios:
+  appcenter_ios:
     executor: ios-executor
     steps:
       - checkout
@@ -226,7 +208,7 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -239,11 +221,11 @@ jobs:
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           no_output_timeout: 20m
-          name: Upload to Hockeyapp
+          name: Upload to App Center
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd ios && bundle exec fastlane deploy_ios_hockeyapp APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
+            cd ios && bundle exec fastlane deploy_ios_appcenter APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -253,7 +235,7 @@ jobs:
           path: ./toArchive
           destination: app_build
 
-  hockeyapp_android:
+  appcenter_android:
     executor: android-executor
     steps:
       - checkout
@@ -320,12 +302,12 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
-          name: Upload to Hockeyapp
+          name: Upload to App Center
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
-            cd android && bundle exec fastlane deploy_android_hockeyapp
+            cd android && bundle exec fastlane deploy_android_appcenter
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks          
@@ -638,20 +620,20 @@ workflows:
   build_and_deploy:
     jobs:
       - build-and-test
-      - hockeyapp_ios:
+      - appcenter_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - fix/transition-hockey-app-center
-      - hockeyapp_android:
+                  - develop
+      - appcenter_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - fix/transition-hockey-app-center
+                  - develop
       - get-latest-tag:
           requires:
             - build-and-test
