@@ -645,13 +645,11 @@ workflows:
             branches:
               only:
                   - develop
-      - hockeyapp_android:
-          requires:
-            - build-and-test
+      - hockeyapp_android:       
           filters:
             branches:
               only:
-                  - develop
+                  - fix/transition-hockey-app-center
       - get-latest-tag:
           requires:
             - build-and-test

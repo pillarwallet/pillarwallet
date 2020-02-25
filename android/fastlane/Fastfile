@@ -162,12 +162,19 @@ platform :android do
 
     lastCommit = last_git_commit
 
-    hockey(
+    #hockey(
+      #api_token: options[:hockeyAppToken],
+      #notes: changelog,
+      #commit_sha: lastCommit[:commit_hash],
+      #notify: "1",
+      #apk: "app/build/outputs/apk/prod/staging/#{options[:apkName]}"
+    #)
+
+    appcenter_upload(
       api_token: options[:hockeyAppToken],
-      notes: changelog,
-      commit_sha: lastCommit[:commit_hash],
-      notify: "1",
-      apk: "app/build/outputs/apk/prod/staging/#{options[:apkName]}"
+      file: "app/build/outputs/apk/prod/staging/#{options[:apkName]}",
+      notify_testers: true
+      release_notes: changelog,
     )
 
   end
