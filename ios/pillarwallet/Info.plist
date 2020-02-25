@@ -31,6 +31,13 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>mailto</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -46,8 +53,18 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow Pillar Wallet to use your camera to take your profile picture or scan qr codes</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Allow Pillar Wallet to access your contacts</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Enabling Face ID allows you quick and secure access to your account.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string>Allow Pillar Wallet to use your location</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Give Pillar Wallet permission to access your photos to allow you set your profile picture</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -75,42 +92,25 @@
 		<string>EuclidCircularB-Regular.otf</string>
 		<string>PillarIcons.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleDefault</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>whatsapp</string>
-		<string>mailto</string>
-	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow Pillar Wallet to use your camera to take your profile picture or scan qr codes</string>
-    <key>NSContactsUsageDescription</key>
-    <string>Allow Pillar Wallet to access your contacts</string>
-    <key>NSFaceIDUsageDescription</key>
-    <string>Enabling Face ID allows you quick and secure access to your account.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-    <string>Give Pillar Wallet permission to access your photos to allow you set your profile picture</string>
 </dict>
 </plist>
