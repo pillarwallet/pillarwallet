@@ -132,7 +132,7 @@ platform :ios do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "500"
+      commits_count: "300"
     )
     custom_changelog = ""
     pr_merges = changelog_notes.split(/Merge/)
@@ -175,6 +175,15 @@ platform :ios do
     register_devices(
       devices_file: "./devices.txt"
     )
+
+    #appcenter_fetch_devices(
+      #api_token: "<appcenter token>",
+      #owner_name: "<appcenter account name of the owner of the app (username or organization URL name)>",
+      #owner_type: "user", # Default is user - set to organization for appcenter organizations
+      #app_name: "<appcenter app name>",
+      #destinations: "*", # Default is 'Collaborators', use '*' for all distribution groups
+      #devices_file: "devices.txt" # Default. If you customize, the extension must be .txt
+    #)
 
     # get our adhoc provisioning profile
     match(type: "adhoc",
@@ -229,12 +238,22 @@ platform :ios do
     changelog = build_custom_changelog
     commit = last_git_commit
 
-    hockey(
+    #hockey(
+      #api_token: ENV["HOCKEY_APP_TOKEN"],
+      #notes: changelog,
+      #commit_sha: commit[:commit_hash],
+      #notify: "1",
+      #ipa: "./output/gym/pillarwallet-staging.ipa"
+    #)
+
+    appcenter_upload(
       api_token: ENV["HOCKEY_APP_TOKEN"],
-      notes: changelog,
-      commit_sha: commit[:commit_hash],
-      notify: "1",
-      ipa: "./output/gym/pillarwallet-staging.ipa"
+      owner_name: "brent-2",
+      owner_type: "user",
+      app_name: "Pillar-Wallet-Staging",
+      file: "./output/gym/pillarwallet-staging.ipa",
+      notify_testers: true,
+      release_notes: changelog,
     )
 
   end

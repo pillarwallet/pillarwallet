@@ -644,7 +644,7 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - fix/transition-hockey-app-center
       - hockeyapp_android:
           requires:
             - build-and-test
