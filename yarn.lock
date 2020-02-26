@@ -1799,7 +1799,20 @@
     regenerator-runtime "^0.13.3"
     ts-dedent "^1.1.0"
 
-"@storybook/addons@5.3.14", "@storybook/addons@^5.3.12":
+"@storybook/addons@5.3.12":
+  version "5.3.12"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addons/-/addons-5.3.12.tgz#77fb0e0d3ac9eb70414bff4b03c12bbccfe31716"
+  integrity sha1-d/sODTrJ63BBS/9LA8ErvM/jFxY=
+  dependencies:
+    "@storybook/api" "5.3.12"
+    "@storybook/channels" "5.3.12"
+    "@storybook/client-logger" "5.3.12"
+    "@storybook/core-events" "5.3.12"
+    core-js "^3.0.1"
+    global "^4.3.2"
+    util-deprecate "^1.0.2"
+
+"@storybook/addons@5.3.14":
   version "5.3.14"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addons/-/addons-5.3.14.tgz#ff96c2c46a617f777c3660395017d2aef5319f19"
   integrity sha1-/5bCxGphf3d8NmA5UBfSrvUxnxk=
@@ -1810,6 +1823,32 @@
     "@storybook/core-events" "5.3.14"
     core-js "^3.0.1"
     global "^4.3.2"
+    util-deprecate "^1.0.2"
+
+"@storybook/api@5.3.12":
+  version "5.3.12"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/api/-/api-5.3.12.tgz#7d1ca7a487fb9b6604d26cae756e291015908d35"
+  integrity sha1-fRynpIf7m2YE0myudW4pEBWQjTU=
+  dependencies:
+    "@reach/router" "^1.2.1"
+    "@storybook/channels" "5.3.12"
+    "@storybook/client-logger" "5.3.12"
+    "@storybook/core-events" "5.3.12"
+    "@storybook/csf" "0.0.1"
+    "@storybook/router" "5.3.12"
+    "@storybook/theming" "5.3.12"
+    "@types/reach__router" "^1.2.3"
+    core-js "^3.0.1"
+    fast-deep-equal "^2.0.1"
+    global "^4.3.2"
+    lodash "^4.17.15"
+    memoizerific "^1.11.3"
+    prop-types "^15.6.2"
+    react "^16.8.3"
+    semver "^6.0.0"
+    shallow-equal "^1.1.0"
+    store2 "^2.7.1"
+    telejson "^3.2.0"
     util-deprecate "^1.0.2"
 
 "@storybook/api@5.3.14":
@@ -1859,6 +1898,13 @@
     global "^4.3.2"
     telejson "^3.2.0"
 
+"@storybook/channels@5.3.12":
+  version "5.3.12"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channels/-/channels-5.3.12.tgz#dd2e111377f0eaafa0e66746cb6628322615ade9"
+  integrity sha1-3S4RE3fw6q+g5mdGy2YoMiYVrek=
+  dependencies:
+    core-js "^3.0.1"
+
 "@storybook/channels@5.3.14":
   version "5.3.14"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channels/-/channels-5.3.14.tgz#9969e27761a80afb495bc1475f0173f9b6ef5a76"
@@ -1888,6 +1934,13 @@
     stable "^0.1.8"
     ts-dedent "^1.1.0"
     util-deprecate "^1.0.2"
+
+"@storybook/client-logger@5.3.12":
+  version "5.3.12"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/client-logger/-/client-logger-5.3.12.tgz#64033dd647b6ce6971977e4f5ce2908de21526eb"
+  integrity sha1-ZAM91ke2zmlxl35PXOKQjeIVJus=
+  dependencies:
+    core-js "^3.0.1"
 
 "@storybook/client-logger@5.3.14":
   version "5.3.14"
@@ -1922,6 +1975,13 @@
     react-textarea-autosize "^7.1.0"
     simplebar-react "^1.0.0-alpha.6"
     ts-dedent "^1.1.0"
+
+"@storybook/core-events@5.3.12":
+  version "5.3.12"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/core-events/-/core-events-5.3.12.tgz#188526c9003884104cce4fcd20448ca34d14d9f7"
+  integrity sha1-GIUmyQA4hBBMzk/NIESMo00U2fc=
+  dependencies:
+    core-js "^3.0.1"
 
 "@storybook/core-events@5.3.14":
   version "5.3.14"
@@ -2064,6 +2124,21 @@
     emotion-theming "^10.0.19"
     react-native-swipe-gestures "^1.0.4"
 
+"@storybook/router@5.3.12":
+  version "5.3.12"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/router/-/router-5.3.12.tgz#f08d75793790aacc5543c55e62d08d3bb00188fd"
+  integrity sha1-8I11eTeQqsxVQ8VeYtCNO7ABiP0=
+  dependencies:
+    "@reach/router" "^1.2.1"
+    "@storybook/csf" "0.0.1"
+    "@types/reach__router" "^1.2.3"
+    core-js "^3.0.1"
+    global "^4.3.2"
+    lodash "^4.17.15"
+    memoizerific "^1.11.3"
+    qs "^6.6.0"
+    util-deprecate "^1.0.2"
+
 "@storybook/router@5.3.14":
   version "5.3.14"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/router/-/router-5.3.14.tgz#6535267624da5f54971c37e497df1c161f65be8f"
@@ -2078,6 +2153,24 @@
     memoizerific "^1.11.3"
     qs "^6.6.0"
     util-deprecate "^1.0.2"
+
+"@storybook/theming@5.3.12":
+  version "5.3.12"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/theming/-/theming-5.3.12.tgz#70908dc23c0635765256fc4dbb7cd6d318886dfe"
+  integrity sha1-cJCNwjwGNXZSVvxNu3zW0xiIbf4=
+  dependencies:
+    "@emotion/core" "^10.0.20"
+    "@emotion/styled" "^10.0.17"
+    "@storybook/client-logger" "5.3.12"
+    core-js "^3.0.1"
+    deep-object-diff "^1.1.0"
+    emotion-theming "^10.0.19"
+    global "^4.3.2"
+    memoizerific "^1.11.3"
+    polished "^3.3.1"
+    prop-types "^15.7.2"
+    resolve-from "^5.0.0"
+    ts-dedent "^1.1.0"
 
 "@storybook/theming@5.3.14":
   version "5.3.14"
