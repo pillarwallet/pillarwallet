@@ -17,7 +17,7 @@
 #endif
 #import <Firebase.h>
 #import "RNSplashScreen.h"
-#import <React/RCTLinkingManager.h>
+#import "RCTLinkingManager.h"
 #import "Intercom/intercom.h"
 
 @implementation AppDelegate
