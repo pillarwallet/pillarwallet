@@ -1957,7 +1957,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet.staging;
 				PRODUCT_NAME = pillarwallet;
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet 1526587087";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
