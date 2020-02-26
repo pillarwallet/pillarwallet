@@ -29,7 +29,7 @@ PODS:
     - FirebaseCoreDiagnosticsInterop (~> 1.0)
     - GoogleUtilities/Environment (~> 6.2)
     - GoogleUtilities/Logger (~> 6.2)
-  - FirebaseCoreDiagnostics (1.2.0):
+  - FirebaseCoreDiagnostics (1.2.1):
     - FirebaseCoreDiagnosticsInterop (~> 1.2)
     - GoogleDataTransportCCTSupport (~> 1.3)
     - GoogleUtilities/Environment (~> 6.5)
@@ -60,8 +60,8 @@ PODS:
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
     - nanopb (= 0.3.9011)
-  - GoogleDataTransport (4.0.0)
-  - GoogleDataTransportCCTSupport (1.4.0):
+  - GoogleDataTransport (4.0.1)
+  - GoogleDataTransportCCTSupport (1.4.1):
     - GoogleDataTransport (~> 4.0)
     - nanopb (~> 0.3.901)
   - GoogleUtilities/AppDelegateSwizzler (6.5.1):
@@ -100,13 +100,13 @@ PODS:
     - React
   - react-native-background-timer (2.1.1):
     - React
-  - react-native-camera (3.17.0):
+  - react-native-camera (3.18.0):
     - React
-    - react-native-camera/RCT (= 3.17.0)
-    - react-native-camera/RN (= 3.17.0)
-  - react-native-camera/RCT (3.17.0):
+    - react-native-camera/RCT (= 3.18.0)
+    - react-native-camera/RN (= 3.18.0)
+  - react-native-camera/RCT (3.18.0):
     - React
-  - react-native-camera/RN (3.17.0):
+  - react-native-camera/RN (3.18.0):
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
@@ -166,30 +166,30 @@ PODS:
     - React/RCTBlob
   - ReactNativePermissions (1.2.1):
     - React
-  - RNCAsyncStorage (1.7.1):
+  - RNCAsyncStorage (1.8.0):
     - React
-  - RNColorMatrixImageFilters (5.2.2):
+  - RNColorMatrixImageFilters (5.2.4):
     - React
-  - RNDeviceInfo (5.5.1):
+  - RNDeviceInfo (5.5.3):
     - React
-  - RNFBAnalytics (6.3.3):
+  - RNFBAnalytics (6.3.4):
     - Firebase/Core (~> 6.13.0)
     - React
     - RNFBApp
-  - RNFBApp (6.3.3):
+  - RNFBApp (6.3.4):
     - Firebase/Core (~> 6.13.0)
     - React
-  - RNFBCrashlytics (6.3.3):
+  - RNFBCrashlytics (6.3.4):
     - Crashlytics (~> 3.14.0)
     - Fabric (~> 1.10.2)
     - Firebase/Core (~> 6.13.0)
     - React
     - RNFBApp
-  - RNFBIid (6.3.3):
+  - RNFBIid (6.3.4):
     - Firebase/Core (~> 6.13.0)
     - React
     - RNFBApp
-  - RNFBMessaging (6.3.3):
+  - RNFBMessaging (6.3.4):
     - Firebase/Messaging (~> 6.13.0)
     - React
     - RNFBApp
@@ -381,15 +381,15 @@ SPEC CHECKSUMS:
   FirebaseAnalytics: 45f36d9c429fc91d206283900ab75390cd05ee8a
   FirebaseAnalyticsInterop: 3f86269c38ae41f47afeb43ebf32a001f58fcdae
   FirebaseCore: 307ea2508df730c5865334e41965bd9ea344b0e5
-  FirebaseCoreDiagnostics: 5e78803ab276bc5b50340e3c539c06c3de35c649
+  FirebaseCoreDiagnostics: 2109d10c35e8289b1ee6cabf44d9ffb055620194
   FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
   FirebaseInstanceID: ebd2ea79ee38db0cb5f5167b17a0d387e1cc7b6e
   FirebaseMessaging: 089b7a4991425783384acc8bcefcd78c0af913bd
   Folly: de497beb10f102453a1afa9edbf8cf8a251890de
   glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
   GoogleAppMeasurement: dfe55efa543e899d906309eaaac6ca26d249862f
-  GoogleDataTransport: 47fe3b8e1673e5187dfd615656a3c5034f150d69
-  GoogleDataTransportCCTSupport: 36f69887fd212db6d7ef4dd45ba44523717a434e
+  GoogleDataTransport: 653963cf5be60fb59cf051e070f0836fdc305f81
+  GoogleDataTransportCCTSupport: 84e4d4bbab642f2e9d83ee65d78aca2b5527d314
   GoogleUtilities: 06eb53bb579efe7099152735900dd04bf09e7275
   Intercom: 53f07c24f0ca18c1e910750e79b75f9c9867338f
   lottie-ios: 9f24be3ecb13412223b6ac70d97437742b0e3de1
