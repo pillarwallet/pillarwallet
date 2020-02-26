@@ -33,6 +33,7 @@ import { initialState as contactsState } from 'reducers/contactsReducer';
 import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as txNotesState } from 'reducers/txNoteReducer';
+import { initialState as ensRegistryState } from 'reducers/ensRegistryReducer';
 
 const mockStore = configureMockStore([thunk]);
 
@@ -42,6 +43,7 @@ const initialStore = mockStore({
   accounts: accountsState,
   history: historyState,
   txNotes: txNotesState,
+  ensRegistry: ensRegistryState,
 });
 
 const Component = (store, children) => (

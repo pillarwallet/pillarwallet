@@ -73,10 +73,12 @@ import {
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 
 import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
 
 import { getWalletFromStorage } from 'utils/wallet';
+
 
 const storage = Storage.getInstance('db');
 
@@ -220,6 +222,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
+
+      const { ensRegistry = {} } = await storage.get('ensRegistry');
+      dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 

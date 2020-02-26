@@ -39,6 +39,19 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
   return '';
 };
 
+export const isEnsName = (input: string): boolean => {
+  if (!input.toString().includes('.')) return false;
+
+  const domain = input.split('.').pop().toLowerCase();
+  const supportedDomains = ['eth'];
+
+  if (supportedDomains.includes(domain)) {
+    return true;
+  }
+
+  return false;
+};
+
 export const isValidBTCAddress = (address: string, network?: string): boolean => {
   const useNetwork = network || DEFAULT_BTC_NETWORK;
 
@@ -58,6 +71,9 @@ export const isValidETHAddress = (address: string): boolean => {
     utils.getAddress(address);
   } catch (e) {
     result = false;
+  }
+  if (!result && isEnsName(address)) {
+    result = true;
   }
   return result;
 };

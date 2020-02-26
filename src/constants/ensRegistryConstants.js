@@ -17,9 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-export const SET_USERNAME = 'SET_USERNAME';
-export const UPDATE_USER = 'UPDATE_USER';
-export const USER_PHONE_VERIFIED = 'USER_PHONE_VERIFIED';
-export const REGISTERED = 'REGISTERED';
-export const PENDING = 'PENDING';
+export const SET_ENS_REGISTRY_RECORDS = 'SET_ENS_REGISTRY_RECORDS';
+export const ADD_ENS_REGISTRY_RECORD = 'ADD_ENS_REGISTRY_RECORD';
+export const RESET_ENS_REGISTRY_DATA = 'RESET_ENS_REGISTRY_DATA';

@@ -17,52 +17,43 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_USERNAME, UPDATE_USER, USER_PHONE_VERIFIED } from 'constants/userConstants';
-import merge from 'lodash.merge';
+import {
+  SET_ENS_REGISTRY_RECORDS,
+  ADD_ENS_REGISTRY_RECORD,
+  RESET_ENS_REGISTRY_DATA,
+} from 'constants/ensRegistryConstants';
 
-export type UserReducerState = {
-  data: Object,
-  userState: ?string,
-}
-
-export type UserReducerAction = {
-  type: string,
-  payload: any
-}
-
-export const initialState = {
-  data: {
-    icoService: {},
-    isLegacyUser: true,
-  },
-  userState: null,
+export type EnsRegistry = {
+  [ethAddress: string]: string, // { [ethAddress]: ensName }
 };
 
-const userReducer = (
-  state: UserReducerState = initialState,
-  action: UserReducerAction,
-): UserReducerState => {
+export type EnsRegistryReducerState = {
+  data: EnsRegistry,
+};
+
+export type EnsRegistryReducerAction = {
+  type: string,
+  payload: any,
+};
+
+export const initialState = {
+  data: {},
+};
+
+const ensRegistryReducer = (
+  state: EnsRegistryReducerState = initialState,
+  action: EnsRegistryReducerAction,
+): EnsRegistryReducerState => {
   switch (action.type) {
-    case UPDATE_USER:
-      const { state: userState, user } = action.payload;
-      return {
-        ...state,
-        data: merge({}, { ...state.data }, user),
-        userState,
-      };
-    case SET_USERNAME:
-      return {
-        ...state,
-        data: { ...state.data, username: action.payload },
-      };
-    case USER_PHONE_VERIFIED:
-      return {
-        ...state,
-        data: merge({}, { ...state.data }, { isPhoneVerified: true }),
-      };
+    case SET_ENS_REGISTRY_RECORDS:
+      return { ...state, data: action.payload };
+    case ADD_ENS_REGISTRY_RECORD:
+      return { ...state, data: { ...state.data, [action.payload.address]: action.payload.ensName } };
+    case RESET_ENS_REGISTRY_DATA:
+      return { ...initialState };
     default:
       return state;
   }
 };
 
-export default userReducer;
+export default ensRegistryReducer;
