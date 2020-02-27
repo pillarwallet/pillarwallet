@@ -612,20 +612,41 @@ jobs:
 
   publish_releases_to_github:
     docker:
-      - image: cibuilds/github:0.10
+      - image: circleci/golang:1.8
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - run:
+          name: Install github-release
+          command: |
+            go get github.com/aktau/github-release
+      - run:
           name: Set tag and publish releases to GitHub
           command: |
             chmod +x setReleaseInfo.sh
             . ./setReleaseInfo.sh
-            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
             echo $TAG_VERSION
-            ghr -n $RELEASE_TITLE -b $RELEASE_DESCRIPTION $TAG_VERSION /tmp/workspace/android-release/
-  #          ghr $TAG_VERSION /tmp/workspace/ios-release/ 
+            github-release release --repo pillarwallet --tag $TAG_VERSION --name $RELEASE_TITLE --description $RELEASE_DESCRIPTION
+            github-release upload --repo pillarwallet --tag $TAG_VERSION --name "pillarwallet-appcenter-android-$TAG_VERSION" --file /tmp/workspace/android-release/pillarwallet-appcenter-android-$TAG_VERSION.apk
+
+  # publish_releases_to_github:
+  #   docker:
+  #     - image: cibuilds/github:0.10
+  #   steps:
+  #     - checkout
+  #     - attach_workspace: &attach_workspace
+  #         at: /tmp/workspace
+  #     - run:
+  #         name: Set tag and publish releases to GitHub
+  #         command: |
+  #           chmod +x setReleaseInfo.sh
+  #           . ./setReleaseInfo.sh
+  #           TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+  #           echo $TAG_VERSION
+  #           ghr -n $RELEASE_TITLE -b $RELEASE_DESCRIPTION $TAG_VERSION /tmp/workspace/android-release/
+  #           ghr $TAG_VERSION /tmp/workspace/ios-release/
 
 workflows:
   version: 2.1
