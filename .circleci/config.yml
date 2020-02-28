@@ -308,19 +308,9 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_appcenter
-      - run:
-          name: prepare to archive apk file
-          command: |
-            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
-            mkdir -p /tmp/workspace/android-release
-            cp ./android/app/build/outputs/apk/prod/staging/app-prod-staging.apk /tmp/workspace/android-release/pillarwallet-appcenter-android-$TAG_VERSION.apk
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks   
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - android-release
 
   get-latest-tag:
     executor: node10-executor
@@ -628,7 +618,8 @@ jobs:
             . ./setReleaseInfo.sh
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n "$RELEASE_TITLE" --description "$RELEASE_DESCRIPTION"
-            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-appcenter-android-$TAG_VERSION" -f /tmp/workspace/android-release/*.apk
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$TAG_VERSION.apk" -f /tmp/workspace/android-release/*.apk
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$TAG_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
 
 workflows:
   version: 2.1
@@ -645,18 +636,17 @@ workflows:
       - appcenter_android:
           requires:
             - build-and-test
-            - get-latest-tag
           filters:
             branches:
               only:
-                  - feature/DEVOP-49-github-release-tool
+                  - develop
       - get-latest-tag:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/DEVOP-49-github-release-tool
+                  - master
       - prod_ios:
           requires:
             - build-and-test
@@ -675,4 +665,5 @@ workflows:
                   - master
       - publish_releases_to_github:
           requires:
-            - appcenter_android
+            - prod_android
+            - prod_ios
