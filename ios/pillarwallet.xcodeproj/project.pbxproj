@@ -44,6 +44,8 @@
 		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
 		4B1EC93FB7FD422F97D77470 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B715EDB52D4B4FCCBDA421A2 /* FontAwesome.ttf */; };
 		4EF1DBA1FF75464B8FCE7704 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 354F435097214AF08F5F9D6F /* Fontisto.ttf */; };
+		6953B3FD240982F5007C6E78 /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6953B3FC240982F5007C6E78 /* SignalProtocol.framework */; };
+		6953B3FE240982F5007C6E78 /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6953B3FC240982F5007C6E78 /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */; };
 		696ACF1224049931009B0BEC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF1124049931009B0BEC /* LaunchScreen.xib */; };
 		696ACF5524049EBC009B0BEC /* EuclidCircularB-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */; };
@@ -385,6 +387,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		6953B429240982F6007C6E78 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6953B3FE240982F5007C6E78 /* SignalProtocol.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
@@ -423,6 +439,7 @@
 		60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.staging.release.xcconfig"; sourceTree = "<group>"; };
 		6800E6FCDEB54926AAC026A9 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		693DE4BC2405A31E00587060 /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
+		6953B3FC240982F5007C6E78 /* SignalProtocol.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SignalProtocol.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		696ACE182404859F009B0BEC /* RNSentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSentry.xcodeproj; path = "../node_modules/react-native-sentry/ios/RNSentry.xcodeproj"; sourceTree = "<group>"; };
 		696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		696ACF1124049931009B0BEC /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
@@ -476,6 +493,7 @@
 				69D2EC0E24087EF10039EA75 /* libSignalMessagingSwift.a in Frameworks */,
 				69D2EC0D24087D600039EA75 /* libRNThread.a in Frameworks */,
 				69D2EC0C24087B290039EA75 /* libRNCookieManagerIOS.a in Frameworks */,
+				6953B3FD240982F5007C6E78 /* SignalProtocol.framework in Frameworks */,
 				69D2EC0B240877730039EA75 /* libRNInAppBrowser.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
@@ -800,6 +818,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				6953B3FC240982F5007C6E78 /* SignalProtocol.framework */,
 				13B07FAE1A68108700A75B9A /* pillarwallet */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* pillarwalletTests */,
@@ -867,6 +886,7 @@
 				F4CA4502E4754E9FA022C8CE /* Upload Debug Symbols to Sentry */,
 				223A0D16CD160A4457201E76 /* [CP] Copy Pods Resources */,
 				693DE4BD2405A5D000587060 /* ShellScript */,
+				6953B429240982F6007C6E78 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
