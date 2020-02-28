@@ -308,9 +308,19 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_appcenter
+      - run:
+          name: prepare to archive apk file
+          command: |
+            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            mkdir -p /tmp/workspace/android-release
+            cp ./android/app/build/outputs/apk/prod/staging/app-prod-staging.apk /tmp/workspace/android-release/pillarwallet-appcenter-android-$TAG_VERSION.apk
       - store_artifacts:
           path: android/app/build/outputs/apk
-          destination: apks          
+          destination: apks   
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - android-release
 
   get-latest-tag:
     executor: node10-executor
@@ -602,18 +612,41 @@ jobs:
 
   publish_releases_to_github:
     docker:
-      - image: cibuilds/github:0.10
+      - image: circleci/golang:1.8
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - run:
+          name: Install github-release
+          command: |
+            go get github.com/aktau/github-release
+      - run:
           name: Set tag and publish releases to GitHub
           command: |
+            chmod +x setReleaseInfo.sh
+            . ./setReleaseInfo.sh
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             echo $TAG_VERSION
-            ghr $TAG_VERSION /tmp/workspace/android-release/
-            ghr $TAG_VERSION /tmp/workspace/ios-release/ 
+            github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n $RELEASE_TITLE --description $RELEASE_DESCRIPTION
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-appcenter-android-$TAG-VERSION" -f /tmp/workspace/android-release/pillarwallet-appcenter-android-$TAG_VERSION.apk
+
+  # publish_releases_to_github:
+  #   docker:
+  #     - image: cibuilds/github:0.10
+  #   steps:
+  #     - checkout
+  #     - attach_workspace: &attach_workspace
+  #         at: /tmp/workspace
+  #     - run:
+  #         name: Set tag and publish releases to GitHub
+  #         command: |
+  #           chmod +x setReleaseInfo.sh
+  #           . ./setReleaseInfo.sh
+  #           TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+  #           echo $TAG_VERSION
+  #           ghr -n $RELEASE_TITLE -b $RELEASE_DESCRIPTION $TAG_VERSION /tmp/workspace/android-release/
+  #           ghr $TAG_VERSION /tmp/workspace/ios-release/
 
 workflows:
   version: 2.1
@@ -630,17 +663,18 @@ workflows:
       - appcenter_android:
           requires:
             - build-and-test
+            - get-latest-tag
           filters:
             branches:
               only:
-                  - develop
+                  - feature/DEVOP-49-github-release-tool
       - get-latest-tag:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - master
+                  - feature/DEVOP-49-github-release-tool
       - prod_ios:
           requires:
             - build-and-test
@@ -659,5 +693,4 @@ workflows:
                   - master
       - publish_releases_to_github:
           requires:
-            - prod_ios
-            - prod_android
+            - appcenter_android
