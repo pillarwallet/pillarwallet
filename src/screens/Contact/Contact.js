@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -39,7 +39,7 @@ import { fetchContactBadgesAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // constants
-import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import {
   DISCONNECT,
   MUTE,
@@ -58,15 +58,15 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import DeploymentView from 'components/DeploymentView';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
+import SWActivationCard from 'components/SWActivationCard';
 
 // utils
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import { isCaseInsensitiveMatch } from 'utils/common';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 
 // models
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
@@ -356,6 +356,10 @@ class Contact extends React.Component<Props, State> {
     );
   };
 
+  getSWActivationMessage = (sendingBlockedMessage: Object) => {
+    return `${sendingBlockedMessage.title}. ${sendingBlockedMessage.message}.`;
+  }
+
   render() {
     const {
       navigation,
@@ -364,8 +368,6 @@ class Contact extends React.Component<Props, State> {
       chats,
       smartWalletState,
       accounts,
-      // contactsBadges,
-      theme,
     } = this.props;
     const {
       showManageContactModal,
@@ -375,7 +377,6 @@ class Contact extends React.Component<Props, State> {
       relatedTransactions = [],
     } = this.state;
 
-    const colors = getThemeColors(theme);
     const contactName = navigation.getParam('username', '');
     const contact = navigation.getParam('contact', { username: contactName });
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
@@ -452,13 +453,10 @@ class Contact extends React.Component<Props, State> {
                   />
                 </CircleButtonsWrapper>
                 {disableSend &&
-                <DeploymentView
-                  message={sendingBlockedMessage}
-                  buttonLabel="Deploy Smart Wallet"
-                  buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-                  wrapperStyle={{ borderColor: colors.border, borderBottomWidth: 1, paddingBottom: 40 }}
-                  noPadding
-                />}
+                  <SWActivationCard
+                    message={this.getSWActivationMessage(sendingBlockedMessage)}
+                    buttonTitle="Deploy Smart Wallet"
+                  />}
                 <ActivityFeed
                   feedTitle="Activity"
                   noBorder
@@ -576,4 +574,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(Contact));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(Contact);

@@ -17,29 +17,32 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
-import { Text } from 'react-native';
-
+import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { action } from '@storybook/addon-actions';
-import { linkTo } from '@storybook/addon-links';
+import CenterView from 'storybook/CenterView';
+import InsightWithButton from './InsightWithButton';
 
-import Button from './Button';
-import CenterView from './CenterView';
-import Welcome from './Welcome';
+const itemsList = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
+  'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+];
 
-storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
-
-storiesOf('Button', module)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
-  .add('with text', () => (
-    <Button onPress={action('clicked-text')}>
-      <Text>Hello Button</Text>
-    </Button>
-  ))
-  .add('with some emoji', () => (
-    <Button onPress={action('clicked-emoji')}>
-      {/* eslint-disable-next-line */}
-      <Text>😀 😎 👍 💯</Text>
-    </Button>
-  ));
+storiesOf('InsightWithButton', module).add('with list', () => (
+  <CenterView>
+    <InsightWithButton
+      title="Some short title"
+      itemsList={itemsList}
+      buttonTitle="Wow, press me!"
+      onButtonPress={() => {}}
+    />
+  </CenterView>
+)).add('without list', () => (
+  <CenterView>
+    <InsightWithButton
+      buttonTitle="Wow, press me!"
+      description={itemsList[0]}
+      buttonProps={{ positive: true }}
+      onButtonPress={() => {}}
+    />
+  </CenterView>
+));

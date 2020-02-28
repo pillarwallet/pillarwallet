@@ -26,16 +26,17 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
-import get from 'lodash.get';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
 import Insight from 'components/Insight';
+import InsightWithButton from 'components/InsightWithButton';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Toast from 'components/Toast';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
+import SWActivationCard from 'components/SWActivationCard';
 
 import { spacing } from 'utils/variables';
 
@@ -48,7 +49,7 @@ import {
   ETH,
   PLR,
 } from 'constants/assetsConstants';
-import { EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { EXCHANGE } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountSelector } from 'selectors';
@@ -59,7 +60,6 @@ import { accountAssetsSelector } from 'selectors/assets';
 import Spinner from 'components/Spinner';
 import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import DeploymentView from 'components/DeploymentView';
 import Switcher from 'components/Switcher';
 
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
@@ -80,11 +80,11 @@ import {
 import { hideAssetAction } from 'actions/userSettingsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { deploySmartWalletAction, dismissSmartWalletUpgradeAction } from 'actions/smartWalletActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
-import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 // partials
@@ -120,6 +120,7 @@ type Props = {
   deploySmartWallet: () => void,
   showDeploySmartWallet?: boolean,
   theme: Theme,
+  dismissSmartWalletUpgrade: () => void,
 }
 
 type State = {
@@ -152,6 +153,12 @@ const ActionsWrapper = styled(Wrapper)`
 `;
 
 const genericToken = require('assets/images/tokens/genericToken.png');
+
+const initialSWInsights = [
+  'It can be recovered from another linked device',
+  'You will be able to set spending limits for better security. Coming soon',
+  'It works great with Pillar Network — instant and free transactions',
+];
 
 /**
  * due to KeyboardAwareScrollView issues with stickyHeaderIndices on Android
@@ -367,12 +374,11 @@ class WalletView extends React.Component<Props, State> {
       baseFiatCurrency,
       accounts,
       smartWalletState,
-      smartWalletFeatureEnabled,
       showDeploySmartWallet,
-      deploySmartWallet,
       fetchAssetsBalances,
       fetchAllCollectiblesData,
       theme,
+      dismissSmartWalletUpgrade,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -406,7 +412,6 @@ class WalletView extends React.Component<Props, State> {
 
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
 
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
@@ -416,12 +421,6 @@ class WalletView extends React.Component<Props, State> {
     const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
     const isInsightVisible = showInsight && !isAllInsightListDone && !isInSearchAndFocus;
     const searchMarginBottom = isInSearchAndFocus ? 0 : -16;
-    let smartWalletDeployLabel = '';
-    if (!hasSmartWallet) {
-      smartWalletDeployLabel = 'Create Smart Wallet';
-    } else {
-      smartWalletDeployLabel = (showDeploySmartWallet) ? 'Deploy Smart Wallet' : 'Finish Smart Wallet activation';
-    }
     return (
       <CustomKAWrapper
         hasStickyTabs={!isInSearchAndFocus && !blockAssetsView}
@@ -436,6 +435,23 @@ class WalletView extends React.Component<Props, State> {
         }
         getRef={(ref) => { this.scrollViewRef = ref; }}
       >
+        { showDeploySmartWallet && (
+            smartWalletState.upgradeDismissed ? (
+              <SWActivationCard
+                message="To start sending and exchanging assets you need to activate Smart Wallet"
+                buttonTitle="Activate Smart Wallet"
+              />
+            ) : (
+              <InsightWithButton
+                title="Why Smart Wallet knocks out your old private key wallet?"
+                itemsList={initialSWInsights}
+                buttonTitle="Wow, that's cool"
+                onButtonPress={() => {
+                dismissSmartWalletUpgrade();
+              }}
+              />
+            ))
+        }
         <Insight
           isVisible={isInsightVisible}
           title={insightsTitle}
@@ -443,13 +459,6 @@ class WalletView extends React.Component<Props, State> {
           onClose={() => { hideInsight(); }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         />
-        {blockAssetsView &&
-        <DeploymentView
-          message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
-          buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
-          buttonLabel="Retry"
-          forceRetry={!!deploymentData.error}
-        />}
         {!blockAssetsView &&
         <SearchBlock
           hideSearch={blockAssetsView}
@@ -494,12 +503,6 @@ class WalletView extends React.Component<Props, State> {
             />)}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
           <ActionsWrapper>
-            {!!showFinishSmartWalletActivation && smartWalletFeatureEnabled &&
-            <ListItemChevron
-              label={smartWalletDeployLabel}
-              onPress={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: showDeploySmartWallet })}
-              bordered
-            />}
             {!balance &&
             <ListItemChevron
               label="Buy tokens with credit card"
@@ -555,6 +558,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction(true)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  dismissSmartWalletUpgrade: () => dispatch(dismissSmartWalletUpgradeAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView)));

@@ -27,16 +27,17 @@ import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
+import { fetchVirtualAccountBalanceAction, dismissPPNInsightAction } from 'actions/smartWalletActions';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
-import DeploymentView from 'components/DeploymentView';
 import CircleButton from 'components/CircleButton';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
+import InsightWithButton from 'components/InsightWithButton';
+import SWActivationCard from 'components/SWActivationCard';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -44,7 +45,6 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
   SETTLE_BALANCE,
-  SMART_WALLET_INTRO,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
   SEND_SYNTHETIC_ASSET,
@@ -96,6 +96,7 @@ type Props = {
   history: Object[],
   fetchTransactionsHistory: () => void,
   theme: Theme,
+  dismissPPNInsight: () => void,
 }
 
 type State = {
@@ -143,6 +144,11 @@ const FloatingButtonView = styled.View`
 
 const UNSETTLED = 'UNSETTLED';
 const SETTLED = 'SETTLED';
+const insightItemsList = [
+  'Free transactions',
+  'Instant transactions',
+  'Send tokens you don’t actually own. Wait, what?',
+];
 
 class PPNView extends React.Component<Props, State> {
   state = {
@@ -152,6 +158,41 @@ class PPNView extends React.Component<Props, State> {
   setActiveTab = (activeTab) => {
     this.setState({ activeTab });
   };
+
+  renderInsight = (disableTopUpAndSettle) => {
+    const {
+      smartWalletState, dismissPPNInsight, availableStake, navigation,
+    } = this.props;
+    if (disableTopUpAndSettle) {
+      if (smartWalletState.PPNInsightDismissed) {
+        return (
+          <SWActivationCard
+            message="To use Pillar Network you need to activate Smart Wallet"
+            buttonTitle="Activate Smart Wallet"
+          />
+        );
+      }
+      return (
+        <InsightWithButton
+          title="It’s hard to believe what you can do with Pillar Network"
+          itemsList={insightItemsList}
+          buttonTitle="Enable Pillar Network"
+          onButtonPress={dismissPPNInsight}
+        />
+      );
+    }
+    if (availableStake <= 0) {
+      return (
+        <InsightWithButton
+          description="To send any token you need to top up Pillar Tank with PLR first"
+          buttonTitle="Top up Pillar Tank"
+          buttonProps={{ positive: true }}
+          onButtonPress={() => navigation.navigate(FUND_TANK)}
+        />
+      );
+    }
+    return null;
+  }
 
   render() {
     const { activeTab } = this.state;
@@ -260,12 +301,7 @@ class PPNView extends React.Component<Props, State> {
             />
           }
         >
-          {!!disableTopUpAndSettle &&
-          <DeploymentView
-            message={sendingBlockedMessage}
-            buttonLabel="Deploy Smart Wallet"
-            buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-          />}
+          {this.renderInsight(disableTopUpAndSettle)}
           <TopPartWrapper>
             <SectionTitle>PLR Tank</SectionTitle>
             <TankBalanceWrapper>
@@ -370,6 +406,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  dismissPPNInsight: () => dispatch(dismissPPNInsightAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));

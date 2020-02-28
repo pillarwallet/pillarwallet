@@ -55,6 +55,7 @@ import {
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DISMISS_SMART_WALLET_UPGRADE,
+  DISMISS_PPN_INSIGHT,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -206,6 +207,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       if (appSettings.smartWalletUpgradeDismissed) {
         dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
+      }
+
+      if (appSettings.PPNInsightDismissed) {
+        dispatch({ type: DISMISS_PPN_INSIGHT });
       }
 
       const {

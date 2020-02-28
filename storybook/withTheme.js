@@ -18,29 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import OryginalStorybook from 'storybook';
-import { connect } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
-import { AppearanceProvider } from 'react-native-appearance';
 import { getThemeByType } from 'utils/themes';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 
+import configureStore from '../src/configureStore';
+
+const { store } = configureStore();
+
 type Props = {
   themeType: string,
+  children: React.Node,
 };
 
-const Storybook = (props) => {
-  const {
-    themeType,
-  } = props;
+const StoryWrapper = ({ themeType, children }: Props) => {
   const theme = getThemeByType(themeType);
+
   return (
-    <AppearanceProvider>
-      <ThemeProvider theme={theme}>
-        <OryginalStorybook />
-      </ThemeProvider>
-    </AppearanceProvider>
+    <ThemeProvider theme={theme}>
+      {children}
+    </ThemeProvider>
   );
 };
 
@@ -50,4 +49,12 @@ const mapStateToProps = ({
   themeType,
 });
 
-export default connect(mapStateToProps)(Storybook);
+const StoryWrapperWithState = connect(mapStateToProps)(StoryWrapper);
+
+export default (story: Function) => (
+  <Provider store={store}>
+    <StoryWrapperWithState>
+      {story()}
+    </StoryWrapperWithState>
+  </Provider>
+);

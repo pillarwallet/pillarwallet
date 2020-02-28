@@ -38,6 +38,7 @@ import {
   ADD_SMART_WALLET_UPGRADE_ASSETS,
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   DISMISS_SMART_WALLET_UPGRADE,
+  DISMISS_PPN_INSIGHT,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
@@ -361,6 +362,13 @@ export const dismissSmartWalletUpgradeAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { smartWalletUpgradeDismissed: true } }));
     dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
+  };
+};
+
+export const dismissPPNInsightAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { PPNInsightDismissed: true } }));
+    dispatch({ type: DISMISS_PPN_INSIGHT });
   };
 };
 

@@ -44,6 +44,7 @@ import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import SWActivationCard from 'components/SWActivationCard';
 
 // actions
 import {
@@ -60,7 +61,7 @@ import {
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // constants
-import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -1152,6 +1153,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockView = !isEmpty(sendingBlockedMessage)
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+
     const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
     const isSelectedFiat = !isEmpty(selectedFromOption) &&
       fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
@@ -1207,14 +1209,10 @@ class ExchangeScreen extends React.Component<Props, State> {
             />
           </FormWrapper>
           {!!disableNonFiatExchange &&
-          <DeploymentView
-            message={{
-              title: 'To exchange assets, deploy Smart Wallet first',
-              message: 'You will have to pay a small fee',
-            }}
-            buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-            buttonLabel="Deploy Smart Wallet"
-          />
+            <SWActivationCard
+              message="To exchange assets, deploy Smart Wallet first. You will have to pay a small fee."
+              buttonTitle="Deploy Smart Wallet"
+            />
           }
           {!!isSubmitted &&
           <FlatList
