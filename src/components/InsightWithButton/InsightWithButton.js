@@ -36,7 +36,6 @@ type Props = {
 };
 
 const MainContainer = styled.View`
-  width: 100%;
   padding: ${spacing.large}px 30px;
 `;
 
@@ -46,6 +45,7 @@ const ItemContainer = styled.View`
 `;
 
 const ItemText = styled(BaseText)`
+  flex: 1;
   color: ${themedColors.secondaryText};
 `;
 
@@ -64,6 +64,7 @@ const DescriptionText = styled(BaseText)`
 `;
 
 const InsightWrapper = styled.View`
+  width: 100%;
   margin: 30px ${spacing.layoutSides}px 0px;
 `;
 
