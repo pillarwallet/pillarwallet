@@ -626,10 +626,10 @@ jobs:
           command: |
             chmod +x setReleaseInfo.sh
             . ./setReleaseInfo.sh
-            TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             echo $TAG_VERSION
-            github-release release -s $GITHUB_TOKEN -u $CIRCLE_PROJECT_REPONAME -r $CIRCLE_PROJECT_REPONAME -t $TAG_VERSION  -n $RELEASE_TITLE --description $RELEASE_DESCRIPTION
-            github-release upload -s $GITHUB_TOKEN -u $CIRCLE_PROJECT_REPONAME -r $CIRCLE_PROJECT_REPONAME -t $TAG_VERSION -n "pillarwallet-appcenter-android-$TAG-VERSION" -f /tmp/workspace/android-release/pillarwallet-appcenter-android-$TAG_VERSION.apk
+            github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n $RELEASE_TITLE --description $RELEASE_DESCRIPTION
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-appcenter-android-$TAG-VERSION" -f /tmp/workspace/android-release/pillarwallet-appcenter-android-$TAG_VERSION.apk
 
   # publish_releases_to_github:
   #   docker:
@@ -667,14 +667,14 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/DEVOP-49-title-description-ghr
+                  - feature/DEVOP-49-github-release-tool
       - get-latest-tag:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/DEVOP-49-title-description-ghr
+                  - feature/DEVOP-49-github-release-tool
       - prod_ios:
           requires:
             - build-and-test
