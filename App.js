@@ -24,7 +24,7 @@ import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
@@ -84,10 +84,8 @@ class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
-      Sentry.config(SENTRY_DSN).install();
-      Sentry.setTagsContext({
-        environment: BUILD_TYPE,
-      });
+      Sentry.init({ dsn: SENTRY_DSN });
+      Sentry.setTags({ environment: BUILD_TYPE });
     }
   }
 

@@ -20,10 +20,9 @@
 import { Contract, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
-import { Sentry } from 'react-native-sentry';
 
 import { BTC, ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
-import { getEthereumProvider, parseTokenBigNumberAmount } from 'utils/common';
+import { getEthereumProvider, parseTokenBigNumberAmount, reportLog } from 'utils/common';
 
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
@@ -183,15 +182,11 @@ export async function transferERC721(options: ERC721TransferOptions) {
     // unable to transfer
   }
 
-  Sentry.captureMessage('Could not transfer collectible',
-    {
-      level: 'info',
-      extra: {
-        networkProvider: COLLECTIBLES_NETWORK,
-        contractAddress,
-        tokenId,
-      },
-    });
+  reportLog('Could not transfer collectible', {
+    networkProvider: COLLECTIBLES_NETWORK,
+    contractAddress,
+    tokenId,
+  });
   return { error: 'can not be transferred', noRetry: true };
 }
 

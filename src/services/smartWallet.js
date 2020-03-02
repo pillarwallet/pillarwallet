@@ -29,7 +29,7 @@ import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
@@ -38,7 +38,7 @@ import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
 import { SPEED_TYPES } from 'constants/assetsConstants';
-import { printLog } from 'utils/common';
+import { printLog, reportLog } from 'utils/common';
 
 const {
   GasPriceStrategies: {
@@ -447,11 +447,8 @@ class SmartWallet {
     console.error('SmartWallet handleError: ', error);
   }
 
-  reportError(errorMessge: string, errorData: Object) {
-    Sentry.captureMessage(errorMessge, { extra: errorData });
-    if (__DEV__) {
-      printLog(errorMessge, errorData);
-    }
+  reportError(errorMessage: string, errorData: Object) {
+    reportLog(errorMessage, errorData, Sentry.Severity.Error);
   }
 
   async reset() {

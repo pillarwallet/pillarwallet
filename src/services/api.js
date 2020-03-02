@@ -21,7 +21,7 @@ import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
 import { Platform } from 'react-native';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import {
   SDK_PROVIDER,
   BCX_URL,
@@ -44,7 +44,7 @@ import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { uniqBy } from 'utils/common';
+import { reportLog, uniqBy } from 'utils/common';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -193,7 +193,7 @@ SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, 
     })
     .then(({ data }) => data)
     .catch((error) => {
-      Sentry.captureException({ type: 'Registration error', error });
+      reportLog('Registration error', { error }, Sentry.Severity.Error);
       const responseStatus = get(error, 'response.status');
       const reason = responseStatus === USERNAME_EXISTS_ERROR_CODE
         ? USERNAME_EXISTS
@@ -225,13 +225,12 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
       const status = get(error, 'response.status');
       const message = get(error, 'response.data.message');
 
-      Sentry.captureException({
-        error: 'Failed to update user',
+      reportLog('updateUser: Failed to update user', {
         walletId: user.walletId,
         user,
         status,
         message,
-      });
+      }, Sentry.Severity.Error);
       return { responseStatus: status, message };
     });
 };
@@ -244,13 +243,12 @@ SDKWrapper.prototype.createOneTimePassword = function (user: Object) {
       const status = get(error, 'response.status');
       const message = get(error, 'response.data.message');
 
-      Sentry.captureException({
-        error: 'Failed to send text',
+      reportLog('createOneTimePassword: Failed to send text', {
         walletId: user.walletId,
         user,
         status,
         message,
-      });
+      }, Sentry.Severity.Error);
       return { responseStatus: status, message };
     });
 };
@@ -263,13 +261,12 @@ SDKWrapper.prototype.verifyPhone = function (user: Object) {
       const status = get(error, 'response.status');
       const message = get(error, 'response.data.message');
 
-      Sentry.captureException({
-        error: 'Can\'t verify code',
+      reportLog('verifyPhone: Can\'t verify code', {
         walletId: user.walletId,
         user,
         status,
         message,
-      });
+      }, Sentry.Severity.Error);
       return { responseStatus: status, message };
     });
 };
@@ -284,13 +281,12 @@ SDKWrapper.prototype.claimTokens = function ({ walletId, code }: ClaimTokenActio
       const status = get(error, 'response.status');
       const message = get(error, 'response.data.message');
 
-      Sentry.captureException({
-        error: 'Can\'t claim referral code',
+      reportLog('claimTokens: Can\'t claim referral code', {
         walletId,
         code,
         status,
         message,
-      });
+      }, Sentry.Severity.Error);
       return { responseStatus: status, message };
     });
 };
@@ -353,13 +349,7 @@ SDKWrapper.prototype.validateAddress = function (blockchainAddress: string): Obj
     .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
     .then(({ data }) => data)
     .catch(error => {
-      Sentry.captureMessage('Unable to restore user wallet', {
-        level: 'info',
-        extra: {
-          blockchainAddress,
-          error,
-        },
-      });
+      reportLog('Unable to restore user wallet', { blockchainAddress, error });
       return { error: true };
     });
 };
@@ -369,7 +359,7 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
     .then(() => this.pillarWalletSdk.asset.list({ walletId }))
     .then(({ data }) => {
       if (!Array.isArray(data)) {
-        Sentry.captureMessage('Wrong supported assets received', { extra: { data } });
+        reportLog('Wrong supported assets received', { data });
         return [];
       }
       return data;
@@ -750,10 +740,7 @@ SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: stri
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.register.approveExternalLogin({ loginToken }))
     .catch(error => {
-      Sentry.captureException({
-        type: 'External login approve error',
-        error,
-      });
+      reportLog('approveLoginToExternalResource: External login approve error', { error }, Sentry.Severity.Error);
       return { error };
     });
 };
@@ -770,7 +757,7 @@ SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: Conne
     .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
     .then(({ data }) => {
       if (!Array.isArray(data)) {
-        Sentry.captureMessage('Wrong Identity Keys received', { extra: { data } });
+        reportLog('Wrong Identity Keys received', { data });
         return [];
       }
       return data;
@@ -790,7 +777,7 @@ SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: Connecti
     .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
     .then(({ data }) => {
       if (data && !Array.isArray(data)) {
-        Sentry.captureMessage('Wrong response from patchIdentityKeys', { extra: { data } });
+        reportLog('Wrong response from patchIdentityKeys', { data });
         return false;
       }
       return data;

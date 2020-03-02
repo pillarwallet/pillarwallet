@@ -423,3 +423,8 @@ jest.setMock('services/insight', {
 });
 
 jest.setMock('react-native-appearance', {});
+
+jest.setMock('@sentry/react-native', {
+  withScope: () => {},
+  Severity: {},
+});

@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
@@ -53,6 +53,28 @@ const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(
   `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
 );
+
+export const printLog = (...params: any) => {
+  if ((isProdEnv && !__DEV__) || isTest) return;
+  console.log(...params);
+};
+
+export const reportLog = (
+  message: string,
+  extra?: Object,
+  level: Sentry.Severity = Sentry.Severity.Info,
+) => {
+  Sentry.withScope((scope) => {
+    if (level === Sentry.Severity.Info) {
+      if (!isEmpty(extra)) scope.setExtras(extra);
+      Sentry.captureMessage(message, Sentry.Severity.Info);
+    } else {
+      Sentry.captureException({ message, level, extra });
+    }
+  });
+  printLog(`${level}: ${message}`, extra);
+};
+
 
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
@@ -434,15 +456,12 @@ export const formatUnits = (val: string = '0', decimals: number) => {
     }
     formattedUnits = utils.formatUnits(valueWithoutDecimals, decimals);
   } catch (e) {
-    Sentry.captureMessage(e.message, {
-      level: 'info',
-      extra: {
-        sourceFunction: 'formatUnits(value,decimals)',
-        inputValue: val,
-        preparedValue,
-        valueWithoutDecimals,
-        decimals,
-      },
+    reportLog(e.message, {
+      sourceFunction: 'formatUnits(value,decimals)',
+      inputValue: val,
+      preparedValue,
+      valueWithoutDecimals,
+      decimals,
     });
   }
   return formattedUnits;
@@ -508,10 +527,4 @@ export const formatAmountDisplay = (value: number | string) => {
     return formatMoney(amount, 2);
   }
   return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
-};
-
-// TODO: improve with Sentry reports and other log levels
-export const printLog = (...params: any) => {
-  if ((isProdEnv && !__DEV__) || isTest) return;
-  console.log(...params);
 };

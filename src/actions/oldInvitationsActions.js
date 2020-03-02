@@ -17,8 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
-
 // actions
 import { getExistingChatsAction } from 'actions/chatActions';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
@@ -46,7 +44,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 
 // utils
 import { generateAccessKey } from 'utils/invitations';
-import { uniqBy } from 'utils/common';
+import { reportLog, uniqBy } from 'utils/common';
 import { getIdentityKeyPairs } from 'utils/connections';
 import { mapInviteNotifications } from 'utils/notifications';
 
@@ -254,13 +252,10 @@ export const acceptOldInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
-      Sentry.captureMessage('Ghost invitation on acceptOld', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          connectionKey: invitation.connectionKey,
-          walletId,
-        },
+      reportLog('Ghost invitation on acceptOld', {
+        invitationId: invitation.id,
+        connectionKey: invitation.connectionKey,
+        walletId,
       });
       return;
     }
@@ -369,13 +364,10 @@ export const rejectOldInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(fetchOldInviteNotificationsAction());
-      Sentry.captureMessage('Ghost invitation on rejectOld', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          connectionKey: invitation.connectionKey,
-          walletId,
-        },
+      reportLog('Ghost invitation on rejectOld', {
+        invitationId: invitation.id,
+        connectionKey: invitation.connectionKey,
+        walletId,
       });
       return;
     }

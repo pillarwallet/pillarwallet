@@ -19,8 +19,8 @@
 */
 import AsyncStorage from '@react-native-community/async-storage';
 import merge from 'lodash.merge';
-import { Sentry } from 'react-native-sentry';
-import { printLog } from 'utils/common';
+import * as Sentry from '@sentry/react-native';
+import { printLog, reportLog } from 'utils/common';
 import PouchDBStorage from './pouchDBStorage';
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
@@ -52,16 +52,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
   const key = this.getKey(id);
 
   if (this.activeDocs[key]) {
-    const errorMessge = 'Race condition spotted';
-    const errorData = {
-      id,
-      data,
-      forceRewrite,
-    };
-    Sentry.captureMessage(errorMessge, { extra: errorData });
-    if (__DEV__) {
-      printLog(errorMessge, errorData);
-    }
+    reportLog('Race condition spotted', { id, data, forceRewrite }, Sentry.Severity.Error);
   }
 
   this.activeDocs[key] = true;
@@ -72,14 +63,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
       this.activeDocs[key] = false;
     })
     .catch(err => {
-      Sentry.captureException({
-        id,
-        data,
-        err,
-      });
-      if (__DEV__) {
-        printLog(id, err);
-      }
+      reportLog('AsyncStorage Exception', { id, data, err }, Sentry.Severity.Error);
       this.activeDocs[key] = false;
     });
 };
@@ -131,13 +115,7 @@ Storage.prototype.migrateFromPouchDB = async function () {
       },
     }, true);
   } catch (e) {
-    Sentry.captureException({
-      text: 'DB migration to AsyncStorage failed',
-      e,
-    });
-    if (__DEV__) {
-      printLog(e);
-    }
+    reportLog('DB migration to AsyncStorage failed', { error: e }, Sentry.Severity.Error);
   }
   return Promise.resolve();
 };

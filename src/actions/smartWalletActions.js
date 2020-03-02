@@ -23,7 +23,6 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
-import { Sentry } from 'react-native-sentry';
 import { BigNumber } from 'bignumber.js';
 
 // components
@@ -144,7 +143,14 @@ import {
   getAssetsAsList,
   getPPNTokenAddress,
 } from 'utils/assets';
-import { formatMoney, formatUnits, isCaseInsensitiveMatch, parseTokenAmount, printLog } from 'utils/common';
+import {
+  formatMoney,
+  formatUnits,
+  isCaseInsensitiveMatch,
+  parseTokenAmount,
+  printLog,
+  reportLog,
+} from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
@@ -697,10 +703,7 @@ export const syncVirtualAccountTransactionsAction = () => {
             additionalTransactionData = { extra: syntheticTransactionExtra };
           } else {
             // there shouldn't be any case where synthetic asset address is not supported by wallet
-            Sentry.captureMessage('Unable to get wallet supported asset from synthetic asset address', {
-              level: 'info',
-              extra: { syntheticAssetAddress },
-            });
+            reportLog('Unable to get wallet supported asset from synthetic asset address', { syntheticAssetAddress });
           }
 
           recipientAddress = syntheticRecipient;
@@ -764,7 +767,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
       if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
       if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
-      Sentry.captureMessage('Missing Smart Wallet SDK constant', { extra: { path } });
+      reportLog('Missing Smart Wallet SDK constant', { path });
     }
 
     // on wallet deployed

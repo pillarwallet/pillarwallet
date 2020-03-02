@@ -17,24 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+
+// utils
+import { reportLog } from 'utils/common';
+
+// models
 import type { ApiUser } from 'models/Contacts';
+
+// actions
 import {
   fetchOldInviteNotificationsAction,
   acceptOldInvitationAction,
   rejectOldInvitationAction,
   cancelOldInvitationAction,
 } from 'actions/oldInvitationsActions';
-import {
-  mapIdentityKeysAction,
-  prependConnectionKeyPairs,
-} from 'actions/connectionKeyPairActions';
+import { mapIdentityKeysAction, prependConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { getIdentityKeyPairs } from 'utils/connections';
 import { saveDbAction } from './dbActions';
+
 
 export const fetchInviteNotificationsAction = () => {
   return async (dispatch: Function) => {
@@ -142,14 +146,11 @@ export const acceptInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(updateConnectionsAction());
-      Sentry.captureMessage('Ghost invitation on acceptV2', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          sourceUserIdentityKeys,
-          targetUserIdentityKeys,
-          walletId,
-        },
+      reportLog('Ghost invitation on acceptV2', {
+        invitationId: invitation.id,
+        sourceUserIdentityKeys,
+        targetUserIdentityKeys,
+        walletId,
       });
       return;
     }
@@ -249,14 +250,11 @@ export const rejectInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(updateConnectionsAction());
-      Sentry.captureMessage('Ghost invitation on rejectV2', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          sourceIdentityKey: invitation.sourceIdentityKey,
-          targetIdentityKey: invitation.targetIdentityKey,
-          walletId,
-        },
+      reportLog('Ghost invitation on rejectV2', {
+        invitationId: invitation.id,
+        sourceIdentityKey: invitation.sourceIdentityKey,
+        targetIdentityKey: invitation.targetIdentityKey,
+        walletId,
       });
       return;
     }
