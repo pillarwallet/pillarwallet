@@ -41,6 +41,7 @@ import {
   COMMUNITY_SETTINGS,
   ADD_EDIT_USER,
   STORYBOOK,
+  BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import { logoutAction } from 'actions/authActions';
@@ -239,16 +240,27 @@ class Menu extends React.Component<Props, State> {
   }
 
   deleteWallet = () => {
-    const { logoutUser } = this.props;
-    Alert.alert(
-      'Are you sure?',
-      'This action will delete the wallet from this device. ' +
-      'If you wish to recover, you can re-import that wallet using your backup phrase.',
-      [
-        { text: 'Cancel' },
-        { text: 'Delete', onPress: logoutUser },
-      ],
-    );
+    const { logoutUser, backupStatus, navigation } = this.props;
+    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
+    if (isBackedUp) {
+      Alert.alert(
+        'Logout',
+        'After logging out you will not be able to log in back to this wallet without 12 words backup.',
+        [
+          { text: 'Cancel' },
+          { text: 'Confirm', onPress: logoutUser },
+        ],
+      );
+    } else {
+      Alert.alert(
+        'Logout',
+        'You can logout only after securing your 12 words backup phrase.',
+        [
+          { text: 'Cancel' },
+          { text: 'Backup 12 words', onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW) },
+        ],
+      );
+    }
   }
 
   render() {
