@@ -27,7 +27,6 @@ exports[`Storyshots InsightWithButton with list 1`] = `
           "marginLeft": 16,
           "marginRight": 16,
           "marginTop": 30,
-          "width": "100%",
         },
         undefined,
       ]
@@ -381,7 +380,6 @@ exports[`Storyshots InsightWithButton without list 1`] = `
           "marginLeft": 16,
           "marginRight": 16,
           "marginTop": 30,
-          "width": "100%",
         },
         undefined,
       ]
@@ -435,33 +433,6 @@ exports[`Storyshots InsightWithButton without list 1`] = `
               ]
             }
           >
-            <Text
-              center={true}
-              large={true}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 24,
-                    "lineHeight": 38,
-                    "textAlign": "center",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "fontSize": 24,
-                      "lineHeight": 38,
-                      "textAlign": "center",
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            />
             <Text
               center={true}
               medium={true}

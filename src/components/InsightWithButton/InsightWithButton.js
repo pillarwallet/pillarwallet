@@ -64,7 +64,6 @@ const DescriptionText = styled(BaseText)`
 `;
 
 const InsightWrapper = styled.View`
-  width: 100%;
   margin: 30px ${spacing.layoutSides}px 0px;
 `;
 
@@ -84,15 +83,17 @@ const InsightWithButton = ({
     <InsightWrapper>
       <ShadowedCard>
         <MainContainer>
-          <MediumText large center>
-            {title}
-          </MediumText>
+          {title && (
+            <MediumText large center>
+              {title}
+            </MediumText>
+          )}
           {description && <DescriptionText medium center>{description}</DescriptionText>}
           {itemsList && (
-          <ItemsContainer>
-            {itemsList.map(item => <Item text={item} key={item} />)}
-          </ItemsContainer>
-        )}
+            <ItemsContainer>
+              {itemsList.map(item => <Item text={item} key={item} />)}
+            </ItemsContainer>
+          )}
           <Button small title={buttonTitle} onPress={onButtonPress} {...buttonProps} />
         </MainContainer>
       </ShadowedCard>
