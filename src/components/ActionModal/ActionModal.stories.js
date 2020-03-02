@@ -19,9 +19,21 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import SWActivationModal from './SWActivationModal';
+import ActionModal from './ActionModal';
 
+const items = [
+  {
+    label: 'First item',
+    chevron: true,
+    key: 'first',
+  },
+  {
+    label: 'Second item',
+    money: '123$',
+    key: 'second',
+  },
+];
 
-storiesOf('SWActivationModal', module).add('default', () => (
-  <SWActivationModal navigation={{}} />
+storiesOf('ActionModal', module).add('default', () => (
+  <ActionModal items={items} isVisible onModalClose={() => {}} />
 ));

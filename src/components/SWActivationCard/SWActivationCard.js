@@ -19,8 +19,19 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { withNavigation } from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
+import { createStructuredSelector } from 'reselect';
 import InsightWithButton from 'components/InsightWithButton';
-import SWActivationModal from 'components/SWActivationModal';
+import ActionModal from 'components/ActionModal';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { EXCHANGE } from 'constants/navigationConstants';
+import { getBalance, getRate } from 'utils/assets';
+import { formatFiat } from 'utils/common';
+import { accountBalancesSelector } from 'selectors/balances';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import type { Balances, Rates } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -29,6 +40,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
 type Props = {
+  navigation: NavigationScreenProp<*>,
   message: string,
   buttonTitle: string,
   accounts: Accounts,
@@ -36,6 +48,10 @@ type Props = {
   onButtonPress?: () => void,
   forceRetry?: boolean,
   title?: string,
+  balances: Balances,
+  rates: Rates,
+  baseFiatCurrency: ?string,
+  deploySmartWallet: () => void,
 };
 
 type State = {
@@ -46,6 +62,36 @@ class SWActivationCard extends React.Component<Props, State> {
   state = {
     isModalVisible: false,
   };
+
+  getModalItems = () => {
+    const {
+      navigation, baseFiatCurrency, balances, rates, deploySmartWallet,
+    } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const ethBalance = getBalance(balances, ETH);
+    const balanceInFiat = ethBalance * getRate(rates, ETH, fiatCurrency);
+    const fiatAmount = formatFiat(balanceInFiat, baseFiatCurrency || defaultFiatCurrency);
+
+    return [
+      {
+        label: 'I have ETH',
+        money: fiatAmount,
+        onPress: deploySmartWallet,
+        key: 'has ETH',
+      },
+      {
+        label: "I'd like to have some",
+        chevron: true,
+        onPress: () => {
+          navigation.navigate(EXCHANGE, {
+            fromAssetCode: fiatCurrency,
+            toAssetCode: 'ETH',
+          });
+        },
+        key: 'no ETH',
+      },
+    ];
+  }
 
   render() {
     const {
@@ -73,11 +119,12 @@ class SWActivationCard extends React.Component<Props, State> {
           onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
           spinner={isDeploying && !forceRetry}
         />
-        <SWActivationModal
+        <ActionModal
           isVisible={isModalVisible}
           onModalClose={(action) => {
             this.setState({ isModalVisible: false }, action);
           }}
+          items={this.getModalItems()}
         />
       </React.Fragment>
     );
@@ -85,11 +132,28 @@ class SWActivationCard extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  appSettings: { data: { baseFiatCurrency } },
+  rates: { data: rates },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
 }) => ({
-  smartWalletState,
+  baseFiatCurrency,
+  rates,
   accounts,
+  smartWalletState,
 });
 
-export default connect(mapStateToProps)(SWActivationCard);
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+});
+
+export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(SWActivationCard));
