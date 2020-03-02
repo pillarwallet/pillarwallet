@@ -18,7 +18,6 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { Input } from 'native-base';
-import isEmpty from 'lodash.isempty';
 
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { themedColors } from 'utils/themes';
@@ -89,17 +88,18 @@ const ModalTitle = styled(MediumText)`
 type InputProps = {
   fieldName: string,
   value?: string,
-  onChange?: Function,
-  onSelect?: Function,
-  onBlur?: Function,
+  onChange?: (value: any) => void,
+  onSelect?: (value: any) => void,
+  onBlur?: (field: string, value: ?string) => void,
 };
 
 type Option = {
-  name: string
+  name: string,
 };
 
 type Props = {
   hasVerification?: boolean,
+  isModified: boolean,
   isVerified?: boolean,
   disabledInput?: ?boolean,
   inputType?: string,
@@ -122,33 +122,41 @@ type EventLike = {
 };
 
 export default class InputWithSwitch extends React.Component<Props, State> {
-  fieldValue: string = '';
-
   state = {
     showModal: false,
   };
 
   handleBlur = () => {
-    const { inputProps: { onBlur, fieldName } } = this.props;
-    const value = {};
-    value[fieldName] = this.fieldValue;
+    const {
+      inputProps: {
+        value,
+        onBlur,
+        fieldName,
+      },
+    } = this.props;
 
     if (onBlur) {
-      onBlur(value);
+      onBlur(fieldName, value);
     }
   };
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
-    this.fieldValue = e.nativeEvent.text;
+    const { nativeEvent: { text } } = e;
 
     if (onChange) {
-      onChange(this.fieldValue);
+      onChange(text);
     }
   };
 
   selectOption = (value: string) => {
-    const { inputProps: { onChange, onSelect, fieldName } } = this.props;
+    const {
+      inputProps: {
+        onChange,
+        onSelect,
+        fieldName,
+      },
+    } = this.props;
 
     if (onChange) {
       onChange(value);
@@ -174,7 +182,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
       disabledInput,
       errorMessage,
       hasVerification,
-      hasSwitch = false,
+      hasSwitch,
       isVerified,
       inputProps,
       label,
@@ -182,11 +190,13 @@ export default class InputWithSwitch extends React.Component<Props, State> {
       options,
       optionsTitle,
       onPressVerify,
+      isModified,
     } = this.props;
     const { value = '' } = inputProps;
     const hasErrors = !!errorMessage;
 
-    const showVerification = !!hasVerification && !hasErrors && !isEmpty(value);
+    const isValueEmpty = !value || value.trim() === '';
+    const showVerification = !!hasVerification && !hasErrors && !isValueEmpty && !isModified;
 
     const inputSection = options ? (
       <LabeledWrapper
@@ -243,7 +253,6 @@ export default class InputWithSwitch extends React.Component<Props, State> {
             <SelectList options={options || []} onSelect={this.selectOption} />
           </Wrapper>
         </SlideModal>
-
       </Wrapper>
     );
   }

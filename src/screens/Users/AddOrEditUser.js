@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import Permissions from 'react-native-permissions';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import t from 'tcomb-form-native';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -97,13 +96,6 @@ const BlankAvatar = styled(CachedImage)`
 const blankAvatar = require('assets/icons/icon_blank_avatar.png');
 
 class AddOrEditUser extends React.PureComponent<Props, State> {
-  _nameForm: t.form;
-  _surnameForm: t.form;
-  _emailForm: t.form;
-  _countryForm: t.form;
-  _cityForm: t.form;
-  _phoneForm: t.form;
-
   constructor(props: Props) {
     super(props);
 
@@ -128,34 +120,13 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     updateUser(user.walletId, value);
   };
 
-  handleUserFieldChange = (value, formRef) => {
-    formRef.getComponent(Object.keys(value)[0]).validate();
-  };
-
-  handleUserFieldUpdate = (value: Object, formRef) => {
+  handleUserFieldUpdate = (update: Object) => {
     const {
       updateUser,
       user,
     } = this.props;
-    const valueKey = Object.keys(value)[0];
-    const validation = formRef.getComponent(valueKey).validate() || {};
-    const { errors = [] } = validation;
 
-    if (!value[valueKey] || !errors.length) {
-      updateUser(user.walletId, value);
-    }
-  };
-
-  handleUserPhoneFieldUpdate = (value: Object) => {
-    const {
-      updateUser,
-      user,
-    } = this.props;
-    const validation = this._phoneForm.getComponent(Object.keys(value)[0]).validate() || {};
-    const { errors } = validation;
-    if (!errors || errors.length) return;
-
-    updateUser(user.walletId, value);
+    updateUser(user.walletId, update);
   };
 
   openCamera = async () => {
@@ -221,16 +192,15 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <CameraButtonLabel>{cameraButtonLabel}</CameraButtonLabel>
             </ImageWrapper>
           </CameraButton>
+
           <ProfileForm
             fields={[{
               label: 'Name',
               name: 'firstName',
               type: 'firstName',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._nameForm),
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._nameForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ firstName }}
-            getFormRef={node => { this._nameForm = node; }}
           />
 
           <ProfileForm
@@ -238,11 +208,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               label: 'Surname',
               name: 'lastName',
               type: 'lastName',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._surnameForm),
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._surnameForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ lastName }}
-            getFormRef={node => { this._surnameForm = node; }}
           />
 
           <ProfileForm
@@ -250,14 +218,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               label: 'Email',
               name: 'email',
               type: 'email',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._emailForm),
               hasVerification: true,
               isVerified: isEmailVerified,
               onPressVerify: this.verifyEmail,
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._emailForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ email }}
-            getFormRef={node => { this._emailForm = node; }}
           />
 
           <ProfileForm
@@ -270,7 +236,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               optionsTitle: 'Choose your country',
             }]}
             value={{ country }}
-            getFormRef={node => { this._countryForm = node; }}
           />
 
           <ProfileForm
@@ -278,11 +243,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               label: 'City',
               name: 'city',
               type: 'city',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._cityForm),
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._cityForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ city }}
-            getFormRef={node => { this._cityForm = node; }}
           />
 
           <ProfileForm
@@ -290,14 +253,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               label: 'Phone',
               name: 'phone',
               type: 'phone',
-              onBlur: this.handleUserPhoneFieldUpdate,
               hasVerification: true,
               isVerified: isPhoneVerified,
               onPressVerify: this.verifyPhone,
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._phoneForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ phone }}
-            getFormRef={node => { this._phoneForm = node; }}
           />
         </ScrollWrapper>
 
