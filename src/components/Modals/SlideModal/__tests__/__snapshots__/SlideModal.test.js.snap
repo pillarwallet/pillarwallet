@@ -145,6 +145,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "borderTopRightRadius": 30,
                 "elevation": 1,
                 "marginTop": "auto",
+                "overflow": "hidden",
                 "paddingBottom": 0,
                 "paddingLeft": 20,
                 "paddingRight": 20,
@@ -162,187 +163,182 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           }
         >
           <View
+            noBottomBorder={true}
             style={
               Array [
                 Object {
+                  "backgroundColor": "#FFFFFF",
                   "width": "100%",
                 },
-                undefined,
+                Object {
+                  "backgroundColor": "transparent",
+                },
               ]
             }
           >
             <View
-              noPadding={true}
+              androidStatusbarHeight={42}
+              onLayout={[Function]}
+              pointerEvents="box-none"
               style={
-                Array [
-                  Object {
-                    "borderBottomWidth": 0,
-                    "paddingBottom": 0,
-                    "paddingLeft": 0,
-                    "paddingRight": 0,
-                    "paddingTop": 0,
-                    "zIndex": 10,
-                  },
-                  undefined,
-                ]
+                Object {
+                  "marginTop": 42,
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 20,
+                }
               }
             >
               <View
+                noHorizonatalPadding={true}
                 style={
                   Array [
                     Object {
-                      "alignItems": "flex-end",
-                      "flexDirection": "row",
-                      "height": 50,
-                      "justifyContent": "flex-end",
-                      "marginBottom": 4,
-                      "marginTop": 20,
+                      "minHeight": 58,
+                      "paddingVertical": 15,
+                      "width": "100%",
                     },
                     undefined,
                   ]
                 }
               >
                 <View
-                  flex={[Function]}
-                  showTitleLeft={true}
                   style={
                     Array [
                       Object {
-                        "alignItems": "flex-start",
-                        "alignSelf": "center",
-                        "flex": 1,
-                      },
-                      Object {
-                        "alignItems": "flex-end",
-                        "flexBasis": 0,
-                        "flexGrow": 2,
-                        "flexShrink": 1,
-                        "justifyContent": "flex-start",
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                        "width": "100%",
                       },
                       undefined,
                     ]
                   }
                 >
                   <View
-                    noMargin={true}
+                    sideFlex={4}
                     style={
                       Array [
                         Object {
-                          "alignSelf": "flex-start",
-                          "marginBottom": 0,
-                          "marginLeft": 0,
-                          "marginRight": 0,
-                          "marginTop": 0,
-                          "position": "relative",
-                          "top": 0,
+                          "alignItems": "center",
+                          "flexBasis": 0,
+                          "flexDirection": "row",
+                          "flexGrow": 4,
+                          "flexShrink": 1,
+                          "flexWrap": "wrap",
+                          "justifyContent": "flex-start",
+                          "minHeight": 28,
                         },
-                        undefined,
+                        Object {},
                       ]
                     }
                   >
-                    <Text
-                      ellipsizeMode="middle"
-                      numberOfLines={1}
+                    <View
                       style={
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Regular",
-                            "textAlignVertical": "center",
-                          },
+                        Object {
+                          "flexDirection": "row",
+                          "flexWrap": "wrap",
+                        }
+                      }
+                    >
+                      <Text
+                        centerText={false}
+                        style={
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontFamily": "EuclidCircularB-Regular",
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "fontSize": 18,
-                                "lineHeight": 28,
+                                "color": "#0A1427",
+                                "fontFamily": "EuclidCircularB-Medium",
+                                "textAlignVertical": "center",
                               },
-                              Object {},
+                              Array [
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontSize": 16,
+                                  "lineHeight": 26,
+                                  "textAlign": "left",
+                                },
+                                Object {},
+                              ],
                             ],
-                          ],
-                        ]
-                      }
-                    >
-                      title
-                    </Text>
+                          ]
+                        }
+                      >
+                        title
+                      </Text>
+                    </View>
                   </View>
-                </View>
-                <View
-                  flex={[Function]}
-                  onClose={[Function]}
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-end",
-                        "alignSelf": "center",
-                        "flex": 1,
-                      },
-                      Object {
-                        "alignItems": "flex-end",
-                        "flexBasis": 44,
-                        "flexDirection": "row",
-                        "flexGrow": 0,
-                        "flexShrink": 0,
-                        "justifyContent": "flex-end",
-                      },
-                      undefined,
-                    ]
-                  }
-                >
                   <View
                     style={
                       Array [
                         Object {
                           "alignItems": "center",
+                          "flexBasis": 0,
                           "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
+                          "flexWrap": "wrap",
                           "justifyContent": "flex-end",
+                          "minHeight": 28,
                         },
                         undefined,
                       ]
                     }
                   >
                     <View
-                      accessible={true}
-                      isTVSelectable={true}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
                       style={
                         Object {
-                          "alignItems": "center",
-                          "height": 44,
-                          "justifyContent": "center",
+                          "marginBottom": -20,
+                          "marginLeft": -12,
                           "marginRight": -20,
-                          "opacity": 1,
-                          "paddingBottom": 0,
-                          "paddingLeft": 0,
-                          "paddingRight": 0,
-                          "paddingTop": 0,
-                          "width": 58,
+                          "marginTop": -20,
                         }
                       }
                     >
                       <View
-                        name="close"
+                        accessible={true}
+                        isTVSelectable={true}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
                         style={
                           Object {
-                            "color": "#0A1427",
-                            "fontSize": 16,
-                            "marginBottom": undefined,
-                            "marginLeft": undefined,
-                            "marginRight": undefined,
-                            "marginTop": undefined,
-                            "paddingTop": 0,
+                            "alignItems": "flex-end",
+                            "alignSelf": "center",
+                            "justifyContent": "center",
+                            "opacity": 1,
+                            "paddingBottom": 20,
+                            "paddingLeft": 20,
+                            "paddingRight": 20,
+                            "paddingTop": 20,
+                            "position": "relative",
                           }
                         }
-                      />
+                      >
+                        <View
+                          name="close"
+                          style={
+                            Object {
+                              "color": "#0A1427",
+                              "fontSize": 14,
+                              "marginBottom": undefined,
+                              "marginLeft": undefined,
+                              "marginRight": undefined,
+                              "marginTop": undefined,
+                              "paddingTop": 0,
+                            }
+                          }
+                        />
+                      </View>
                     </View>
                   </View>
                 </View>

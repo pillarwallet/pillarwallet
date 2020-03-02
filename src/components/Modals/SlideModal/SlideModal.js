@@ -20,12 +20,11 @@
 import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled, { withTheme } from 'styled-components/native';
-import Header from 'components/Header';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
+import HeaderBlock from 'components/HeaderBlock';
 import { spacing } from 'utils/variables';
-import { SubTitle } from 'components/Typography';
 import { Keyboard } from 'react-native';
 import { getThemeColors, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
@@ -102,10 +101,6 @@ const getTheme = (props: Props) => {
   return themes.default;
 };
 
-const HeaderWrapper = styled.View`
-  width: 100%;
-`;
-
 const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
@@ -124,16 +119,12 @@ const Backdrop = styled.TouchableWithoutFeedback`
 const ModalBackground = styled.View`
   border-top-left-radius: ${props => props.customTheme.borderRadius};
   border-top-right-radius: ${props => props.customTheme.borderRadius};
+  overflow: hidden;
   padding: ${props => props.customTheme.padding};
   box-shadow: 0px 2px 7px rgba(0,0,0,.1);
   elevation: 1;
   margin-top: auto;
   background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.card};
-`;
-
-const ModalSubtitle = styled(SubTitle)`
-  padding: 10px 0;
-  color: ${themedColors.primary};
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -195,25 +186,18 @@ class SlideModal extends React.Component<Props, *> {
     const {
       children,
       title,
-      fullWidthTitle,
-      noBlueDotOnTitle,
-      dotColor,
       fullScreenComponent,
       onModalHidden,
       onModalShow,
       noClose,
       fullScreen,
-      subtitle,
       isVisible,
       showHeader,
       centerTitle,
-      noWrapTitle,
       backgroundColor: bgColor,
       avoidKeyboard,
       eventDetail,
       scrollOffset,
-      subtitleStyles,
-      titleStyles,
       noSwipeToDismiss,
       scrollOffsetMax,
       theme,
@@ -225,32 +209,30 @@ class SlideModal extends React.Component<Props, *> {
     const backgroundColor = bgColor || colors.surface;
 
     const showModalHeader = !fullScreen || showHeader;
+    const leftItems = [];
+    const centerItems = centerTitle ? [{ title }] : [];
+    const rightItems = [{
+      close: !noClose,
+    }];
+    if (!centerTitle) {
+      leftItems.push({ title });
+    }
 
     const modalInner = (
       <React.Fragment>
         {showModalHeader &&
-          <HeaderWrapper>
-            <Header
-              noMargin={!fullScreen}
-              centerTitle={centerTitle}
-              noWrapTitle={noWrapTitle}
-              noPadding={!fullScreen && !noPadding}
-              title={title}
-              titleStyles={titleStyles}
-              fullWidthTitle={fullWidthTitle}
-              noBlueDotOnTitle={noBlueDotOnTitle || !title}
-              dotColor={dotColor}
-              onClose={!noClose ? this.hideModal : () => {}}
-              noClose={noClose}
-            />
-          </HeaderWrapper>
-        }
-        {subtitle &&
-          <ModalSubtitle
-            style={subtitleStyles}
-          >
-            {subtitle}
-          </ModalSubtitle>
+          <HeaderBlock
+            leftItems={leftItems}
+            centerItems={centerItems}
+            rightItems={rightItems}
+            noBottomBorder
+            noPaddingTop={fullScreen}
+            onClose={this.hideModal}
+            wrapperStyle={{ backgroundColor: 'transparent' }}
+            noHorizonatalPadding={!fullScreen && !noPadding}
+            leftSideFlex={!title ? null : 4}
+            noBack
+          />
         }
         <ModalContent
           fullScreen={fullScreen}
