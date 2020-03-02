@@ -1424,6 +1424,70 @@ exports[`Asset renders the Asset correctly 1`] = `
                             Receive
                           </Text>
                         </View>
+                        <View
+                          style={Object {}}
+                        >
+                          <View
+                            containerStyle={
+                              Object {
+                                "marginLeft": 8,
+                              }
+                            }
+                            label="ERC-20 tokens only"
+                            labelStyle={
+                              Object {
+                                "fontSize": 10,
+                              }
+                            }
+                            primary={true}
+                            style={
+                              Array [
+                                Object {
+                                  "alignSelf": "flex-start",
+                                  "backgroundColor": "#007AFF",
+                                  "borderRadius": 12,
+                                  "paddingBottom": 3,
+                                  "paddingLeft": 8,
+                                  "paddingRight": 8,
+                                  "paddingTop": 3,
+                                },
+                                Object {
+                                  "marginLeft": 8,
+                                },
+                              ]
+                            }
+                          >
+                            <Text
+                              style={
+                                Array [
+                                  Object {
+                                    "color": "#0A1427",
+                                    "fontFamily": "EuclidCircularB-Regular",
+                                    "textAlignVertical": "center",
+                                  },
+                                  Array [
+                                    Object {
+                                      "color": "#0A1427",
+                                      "fontFamily": "EuclidCircularB-Medium",
+                                      "textAlignVertical": "center",
+                                    },
+                                    Array [
+                                      Object {
+                                        "color": "#FCFDFF",
+                                        "fontSize": 8,
+                                      },
+                                      Object {
+                                        "fontSize": 10,
+                                      },
+                                    ],
+                                  ],
+                                ]
+                              }
+                            >
+                              ERC-20 tokens only
+                            </Text>
+                          </View>
+                        </View>
                       </View>
                       <View
                         style={

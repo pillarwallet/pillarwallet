@@ -20,13 +20,14 @@
 import * as React from 'react';
 import { Clipboard, View, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
+import { LabelBadge } from 'components/LabelBadge';
 import { themedColors } from 'utils/themes';
 
 const BuyTokensWrapper = styled.View`
@@ -111,6 +112,16 @@ export default class ReceiveModal extends React.Component<Props, *> {
         onModalHide={onModalHide}
         onModalHidden={onModalHidden}
         noPadding
+        headerLeftItems={[{
+          custom: (
+            <LabelBadge
+              label="ERC-20 tokens only"
+              labelStyle={{ fontSize: fontSizes.tiny }}
+              primary
+              containerStyle={{ marginLeft: 8 }}
+            />
+          ),
+        }]}
       >
         <ContentWrapper>
           <WarningBanner rounded small />

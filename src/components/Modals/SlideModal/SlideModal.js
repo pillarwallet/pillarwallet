@@ -66,6 +66,7 @@ type Props = {
   onSwipeComplete?: () => void,
   theme: Theme,
   noPadding?: boolean,
+  headerLeftItems?: Object[],
 };
 
 const themes = {
@@ -202,6 +203,7 @@ class SlideModal extends React.Component<Props, *> {
       scrollOffsetMax,
       theme,
       noPadding,
+      headerLeftItems,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -209,13 +211,16 @@ class SlideModal extends React.Component<Props, *> {
     const backgroundColor = bgColor || colors.surface;
 
     const showModalHeader = !fullScreen || showHeader;
-    const leftItems = [];
+    let leftItems = [];
     const centerItems = centerTitle ? [{ title }] : [];
     const rightItems = [{
       close: !noClose,
     }];
     if (!centerTitle) {
       leftItems.push({ title });
+    }
+    if (headerLeftItems) {
+      leftItems = [...leftItems, ...headerLeftItems];
     }
 
     const modalInner = (
