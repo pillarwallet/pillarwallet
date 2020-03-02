@@ -66,6 +66,7 @@ const Value = styled(MediumText)`
 class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
   receiver: string;
+  receiverEnsName: string;
   source: string;
 
   constructor(props) {
@@ -73,6 +74,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');
+    this.receiverEnsName = this.props.navigation.getParam('receiverEnsName');
 
     this.state = {
       note: null,
@@ -127,6 +129,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     const transactionPayload: CollectibleTransactionPayload = {
       to: this.receiver,
+      receiverEnsName: this.receiverEnsName,
       name,
       contractAddress,
       tokenType,
@@ -194,6 +197,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           <LabeledRow>
             <Label>Recipient Username</Label>
             <Value>{recipientUsername}</Value>
+          </LabeledRow>
+          }
+          {!!this.receiverEnsName &&
+          <LabeledRow>
+            <Label>Recipient ENS name</Label>
+            <Value>{this.receiverEnsName}</Value>
           </LabeledRow>
           }
           {!!userAccount &&
