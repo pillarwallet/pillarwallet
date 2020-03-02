@@ -65,7 +65,27 @@ describe('Validators', () => {
       expect(isValid).toBeTruthy();
     });
 
-    it('should return false for the invvalid ETH address', () => {
+    it('should return true for the valid ENS name', () => {
+      const isValid = isValidETHAddress('test.eth');
+      expect(isValid).toBeTruthy();
+    });
+
+    it('should return true for the valid ENS name with subdomain', () => {
+      const isValid = isValidETHAddress('pillar.test.eth');
+      expect(isValid).toBeTruthy();
+    });
+
+    it('should return false for the unsupported ENS name', () => {
+      const isValid = isValidETHAddress('test.com');
+      expect(isValid).toBeFalsy();
+    });
+
+    it('should return false for the wrong ENS name', () => {
+      const isValid = isValidETHAddress('testeth');
+      expect(isValid).toBeFalsy();
+    });
+
+    it('should return false for the invalid ETH address', () => {
       const isValid = isValidETHAddress('Jon Snow');
       expect(isValid).toBeFalsy();
     });
