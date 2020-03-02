@@ -158,6 +158,12 @@ android {
         }
     }
 
+    flavorDimensions "version"
+    productFlavors {
+        dev { }
+        prod { }
+    }
+
     buildTypes {
         debug {
             debuggable true
