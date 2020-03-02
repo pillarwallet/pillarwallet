@@ -75,7 +75,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "index.js",
-    // custom staging build params:
+    // custom build params:
     bundleInDebug: false,
     bundleInRelease: true,
     bundleInStaging: true,
@@ -83,7 +83,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-sentry/sentry.gradle"
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -202,6 +202,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@sentry_react-native')
     implementation project(':@react-native-firebase_messaging')
     implementation project(':@react-native-firebase_iid')
     implementation project(':@react-native-firebase_crashlytics')
@@ -220,7 +221,6 @@ dependencies {
     implementation project(':react-native-svg')
     implementation project(':react-native-splash-screen')
     implementation project(':react-native-share')
-    implementation project(':react-native-sentry')
     implementation project(':react-native-randombytes')
     implementation project(':react-native-os')
     implementation project(':react-native-linear-gradient')

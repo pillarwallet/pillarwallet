@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
+import io.sentry.RNSentryPackage;
 
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
@@ -26,7 +27,6 @@ import com.peel.react.TcpSocketsModule;
 import com.horcrux.svg.SvgPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import cl.json.RNSharePackage;
-import io.sentry.RNSentryPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
 import com.BV.LinearGradient.LinearGradientPackage;
@@ -65,6 +65,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSentryPackage(),
             new ReactNativeFirebaseAppPackage(),
             new ReactNativeFirebaseMessagingPackage(),
             new ReactNativeFirebaseIidPackage(),
@@ -83,7 +84,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new SvgPackage(),
             new SplashScreenReactPackage(),
             new RNSharePackage(),
-            new RNSentryPackage(),
             new RandomBytesPackage(),
             new RNOSModule(),
             new LinearGradientPackage(),
