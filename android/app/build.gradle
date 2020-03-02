@@ -77,9 +77,13 @@ project.ext.react = [
     entryFile: "index.js",
     // custom build params:
     bundleInDebug: false,
+    bundleInDevDebug: false,
     bundleInRelease: true,
+    bundleInProdRelease: true,
     bundleInStaging: true,
-    devDisabledInStaging: true
+    bundleInProdStaging: true,
+    devDisabledInStaging: true,
+    devDisabledInProdStaging: true
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
