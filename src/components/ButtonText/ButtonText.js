@@ -30,27 +30,27 @@ import { themedColors } from 'utils/themes';
 type CommonProps = {
   disabled?: boolean,
   isLoading?: boolean,
-}
+};
 
 type WrapperProps = CommonProps & {
   onPress?: () => void,
   wrapperStyle?: Object,
-}
+};
 
 type TouchableProps = CommonProps & WrapperProps & {
   children: React.Node,
-}
+};
 
 type ContentProps = CommonProps & {
   buttonText?: string,
   fontSize?: number,
   secondary?: boolean,
-}
+};
 
 type Props = WrapperProps & ContentProps & {
   leftIconProps?: IconProps,
   rightIconProps?: IconProps,
-}
+};
 
 const Wrapper = styled.View`
   align-self: center;
