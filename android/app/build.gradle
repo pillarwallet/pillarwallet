@@ -77,13 +77,9 @@ project.ext.react = [
     entryFile: "index.js",
     // custom build params:
     bundleInDebug: false,
-    bundleInDevDebug: false,
     bundleInRelease: true,
-    bundleInProdRelease: true,
     bundleInStaging: true,
-    bundleInProdStaging: true,
-    devDisabledInStaging: true,
-    devDisabledInProdStaging: true
+    devDisabledInStaging: true
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -160,12 +156,6 @@ android {
             universalApk false  // If true, also generate a universal APK
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
-    }
-
-    flavorDimensions "version"
-    productFlavors {
-        dev { }
-        prod { }
     }
 
     buildTypes {

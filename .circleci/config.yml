@@ -300,7 +300,7 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+            cd android && ./gradlew clean assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Upload to App Center
           command: |
@@ -547,7 +547,7 @@ jobs:
             cd android
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+            ./gradlew clean assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Fastlane deploy to Google Play
           command: |
@@ -563,10 +563,10 @@ jobs:
           command: |
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            cd ./android/app/build/outputs/apk/prod/release/
+            cd ./android/app/build/outputs/apk/release/
             touch android-s3-URL-prod.txt
-            aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --region eu-west-2
-            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
+            aws s3 cp app-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --region eu-west-2
+            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
       - run:
           name: Announce Prod Builds
           command: |
@@ -583,15 +583,15 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
       - run:
           name: prepare to archive apk file
           command: |
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             mkdir -p ./toArchive
             mkdir -p /tmp/workspace/android-release
-            cp ./android/app/build/outputs/apk/prod/release/app-prod-release.apk ./toArchive
-            cp ./android/app/build/outputs/apk/prod/release/app-prod-release.apk /tmp/workspace/android-release/pillarwallet-prod-android-$TAG_VERSION.apk
+            cp ./android/app/build/outputs/apk/release/app-release.apk ./toArchive
+            cp ./android/app/build/outputs/apk/release/app-release.apk /tmp/workspace/android-release/pillarwallet-android-$TAG_VERSION.apk
       - store_artifacts:
           path: ./toArchive
           destination: apks
