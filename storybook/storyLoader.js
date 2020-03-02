@@ -5,10 +5,12 @@
 
 function loadStories() {
 	require('../src/components/InsightWithButton/InsightWithButton.stories');
+	require('../src/components/SWActivationModal/SWActivationModal.stories');
 }
 
 const stories = [
-	'../src/components/InsightWithButton/InsightWithButton.stories'
+	'../src/components/InsightWithButton/InsightWithButton.stories',
+	'../src/components/SWActivationModal/SWActivationModal.stories'
 ];
 
 module.exports = {

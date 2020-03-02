@@ -50,6 +50,7 @@ type Props = {
   fullScreen?: boolean,
   isVisible: boolean,
   showHeader?: boolean,
+  hideHeader?: boolean,
   centerTitle?: boolean,
   noWrapTitle?: boolean,
   backgroundColor?: string,
@@ -194,6 +195,7 @@ class SlideModal extends React.Component<Props, *> {
       fullScreen,
       isVisible,
       showHeader,
+      hideHeader,
       centerTitle,
       backgroundColor: bgColor,
       avoidKeyboard,
@@ -210,7 +212,7 @@ class SlideModal extends React.Component<Props, *> {
     const colors = getThemeColors(theme);
     const backgroundColor = bgColor || colors.surface;
 
-    const showModalHeader = !fullScreen || showHeader;
+    const showModalHeader = (!fullScreen || showHeader) && !hideHeader;
     let leftItems = [];
     const centerItems = centerTitle ? [{ title }] : [];
     const rightItems = [{

@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import InsightWithButton from 'components/InsightWithButton';
 import SWActivationModal from 'components/SWActivationModal';
-import SlideModal from 'components/Modals/SlideModal';
 
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus } from 'utils/smartWallet';
@@ -74,18 +73,12 @@ class SWActivationCard extends React.Component<Props, State> {
           onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
           spinner={isDeploying && !forceRetry}
         />
-        <SlideModal
+        <SWActivationModal
           isVisible={isModalVisible}
-          onModalHide={() => {
-            this.setState({ isModalVisible: false });
+          onModalClose={(action) => {
+            this.setState({ isModalVisible: false }, action);
           }}
-        >
-          <SWActivationModal
-            onModalClose={(action) => {
-              this.setState({ isModalVisible: false }, action);
-            }}
-          />
-        </SlideModal>
+        />
       </React.Fragment>
     );
   }

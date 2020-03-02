@@ -18,20 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { ListItemChevron } from 'components/ListItem/ListItemChevron';
-import { LabelBadge } from 'components/LabelBadge';
-import { Wrapper } from 'components/Layout';
+import SlideModal from 'components/Modals/SlideModal';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/navigationConstants';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { MediumText, BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
+import { spacing, fontStyles } from 'utils/variables';
+import { getBalance, getRate } from 'utils/assets';
+import { formatFiat } from 'utils/common';
+import { accountBalancesSelector } from 'selectors/balances';
 import type { Theme } from 'models/Theme';
-
+import type { Balances, Rates } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -39,26 +43,55 @@ type Props = {
   baseFiatCurrency: ?string,
   onModalClose: (() => void) => void,
   deploySmartWallet: () => void,
+  isVisible: boolean,
+  balances: Balances,
+  rates: Rates,
 };
 
-const ActionsWrapper = styled(Wrapper)`
-  margin: 10px -20px 50px;
-  border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${themedColors.border};
+const MainContainer = styled.View`
+  padding: 15px ${spacing.layoutSides}px 40px;
+`;
+
+const ItemContainer = styled.TouchableOpacity`
+  flex-direction: row;
+  padding: 15px 0;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ChevronIcon = styled(Icon)`
+  color: ${themedColors.secondaryText};
+  ${fontStyles.small}
 `;
 
 const SWActivationModal = ({
-  navigation, theme, baseFiatCurrency, onModalClose, deploySmartWallet,
+  navigation, theme, baseFiatCurrency, onModalClose, deploySmartWallet, isVisible, balances, rates,
 }: Props) => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const colors = getThemeColors(theme);
+  const ethBalance = getBalance(balances, ETH);
+  const balanceInFiat = ethBalance * getRate(rates, ETH, fiatCurrency);
+  const fiatAmount = formatFiat(balanceInFiat, baseFiatCurrency || defaultFiatCurrency);
 
   return (
-    <ActionsWrapper>
-      <ListItemChevron
-        label="I don't have tokens"
-        subtext="Buy ETH with credit card"
-        onPress={() => {
+    <SlideModal
+      isVisible={isVisible}
+      noClose
+      background={colors.card}
+      hideHeader
+      onModalHide={() => onModalClose(() => {})}
+    >
+      <MainContainer>
+        <ItemContainer onPress={() => {
+            onModalClose(() => {
+              onModalClose(deploySmartWallet);
+            });
+          }}
+        >
+          <MediumText big>I have ETH</MediumText>
+          <BaseText medium secondary>{fiatAmount}</BaseText>
+        </ItemContainer>
+        <ItemContainer onPress={() => {
             onModalClose(() => {
               navigation.navigate(EXCHANGE, {
                 fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
@@ -66,31 +99,30 @@ const SWActivationModal = ({
               });
             });
           }}
-        color={colors.smartWalletText}
-        bordered
-        subtextAddon={<LabelBadge label="NEW" />}
-      />
-      <ListItemChevron
-        label="I have tokens"
-        subtext="Use ETH to deploy contract"
-        onPress={() => {
-            onModalClose(deploySmartWallet);
-          }}
-        color={colors.smartWalletText}
-        bordered
-      />
-    </ActionsWrapper>
+        >
+          <MediumText big>I{"'"}d like to have some</MediumText>
+          <ChevronIcon name="chevron-right" />
+        </ItemContainer>
+      </MainContainer>
+    </SlideModal>
   );
 };
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
+  rates: { data: rates },
 }) => ({
   baseFiatCurrency,
+  rates,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
 });
 
-export default withNavigation(withTheme(connect(mapStateToProps, mapDispatchToProps)(SWActivationModal)));
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default withNavigation(withTheme(connect(combinedMapStateToProps)(SWActivationModal)));
