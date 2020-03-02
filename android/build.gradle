@@ -13,6 +13,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'https://maven.fabric.io/public' } // @react-native-firebase/crashlytics
     }
     dependencies {
         classpath("com.android.tools.build:gradle:3.4.0")
@@ -21,6 +22,7 @@ buildscript {
         // in the individual module build.gradle files
 
         classpath 'com.google.gms:google-services:4.2.0' // @react-native-firebase/app init
+        classpath 'io.fabric.tools:gradle:1.28.1' // @react-native-firebase/crashlytics
     }
 }
 

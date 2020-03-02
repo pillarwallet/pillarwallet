@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "io.fabric" // react-native-firebase/crashlytics
 
 import com.android.build.OutputFile
 
@@ -117,18 +118,37 @@ android {
         abortOnError false
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('../debug.keystore')
+        }
+        staging {
+            keyAlias System.getenv('ANDROID_STAGING_KEY_ALIAS') ? System.getenv('ANDROID_STAGING_KEY_ALIAS').toString() : keystoreProperties['stagingKeyAlias']
+            keyPassword System.getenv('ANDROID_STAGING_KEY_PASSWORD') ? System.getenv('ANDROID_STAGING_KEY_PASSWORD').toString() : keystoreProperties['stagingKeyPassword']
+            storeFile file('../staging-key.keystore')
+            storePassword System.getenv('ANDROID_STAGING_STORE_PASSWORD') ? System.getenv('ANDROID_STAGING_STORE_PASSWORD').toString() : keystoreProperties['stagingStorePassword']
+        }
+        release {
+            keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS').toString() : keystoreProperties['keyAlias']
+            keyPassword System.getenv('ANDROID_KEY_PASSWORD') ? System.getenv('ANDROID_KEY_PASSWORD').toString() : keystoreProperties['keyPassword']
+            storeFile file('../release.keystore')
+            storePassword System.getenv('ANDROID_STORE_PASSWORD') ? System.getenv('ANDROID_STORE_PASSWORD').toString() : keystoreProperties['storePassword']
+        }
+    }
+
     defaultConfig {
         applicationId "com.pillarproject.wallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode System.getenv('APP_BUILD_NUMBER') ? System.getenv('APP_BUILD_NUMBER').toInteger() : 1
+        versionName System.getenv('buildNumber') ? System.getenv('buildNumber') : '1.0'
         multiDexEnabled true
         // react-native-camera:
         missingDimensionStrategy 'react-native-camera', 'general'
         // react-native-image-crop-picker:
         vectorDrawables.useSupportLibrary = true
     }
+
     splits {
         abi {
             reset()
@@ -137,12 +157,29 @@ android {
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
+
     buildTypes {
+        debug {
+            debuggable true
+        }
+        staging {
+            buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.staging
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+            matchingFallbacks = ['release']
+        }
         release {
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
         }
     }
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->

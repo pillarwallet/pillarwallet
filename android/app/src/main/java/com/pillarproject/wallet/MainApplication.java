@@ -78,7 +78,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new RNCWebViewPackage(),
             new VectorIconsPackage(),
             new UdpSocketsModule(),
-            new RNThreadPackage(mReactNativeHost, new RandomBytesPackage()), // randombytes needed for connections skeypair generation in thread
+            new RNThreadPackage(mReactNativeHost, new RandomBytesPackage()), // randombytes needed for connections keypair generation in thread
             new TcpSocketsModule(),
             new SvgPackage(),
             new SplashScreenReactPackage(),
