@@ -257,7 +257,10 @@ class Menu extends React.Component<Props, State> {
         'You can logout only after securing your 12 words backup phrase.',
         [
           { text: 'Cancel' },
-          { text: 'Backup 12 words', onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW) },
+          {
+            text: 'Backup 12 words',
+            onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
+          },
         ],
       );
     }
