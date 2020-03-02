@@ -90,10 +90,10 @@ platform :android do
   end
 
   desc "Deploy staging development build to hockeyapp"
-  lane :deploy_android_hockeyapp do
+  lane :deploy_android_appcenter do
     buildApp(
       flavorName: 'prod',
-      hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN"],
+      hockeyAppToken: ENV["APPCENTER_ANDROID_TOKEN"],
       apkName: 'app-prod-staging.apk'
     )
   end
@@ -102,7 +102,7 @@ platform :android do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "500"
+      commits_count: "50"
     )
 
     custom_changelog = ""
@@ -162,12 +162,14 @@ platform :android do
 
     lastCommit = last_git_commit
 
-    hockey(
+    appcenter_upload(
       api_token: options[:hockeyAppToken],
-      notes: changelog,
-      commit_sha: lastCommit[:commit_hash],
-      notify: "1",
-      apk: "app/build/outputs/apk/prod/staging/#{options[:apkName]}"
+      owner_name: "antonioned",
+      owner_type: "user",
+      app_name: "Pillar-Wallet-Staging",
+      file: "app/build/outputs/apk/prod/staging/#{options[:apkName]}",
+      notify_testers: true,
+      release_notes: changelog
     )
 
   end

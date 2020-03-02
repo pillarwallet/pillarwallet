@@ -61,6 +61,7 @@ class SendTokenAmount extends React.Component<Props> {
   assetData: AssetData;
   receiver: string;
   source: string;
+  receiverEnsName: string;
 
   constructor(props: Props) {
     super(props);
@@ -70,6 +71,7 @@ class SendTokenAmount extends React.Component<Props> {
     this.assetData = navigation.getParam('assetData', {});
     this.receiver = navigation.getParam('receiver', '');
     this.source = navigation.getParam('source', '');
+    this.receiverEnsName = navigation.getParam('receiverEnsName');
   }
 
   updateTransactionSpeed = (speed: string) => {
@@ -104,6 +106,7 @@ class SendTokenAmount extends React.Component<Props> {
         navigation={navigation}
         assetData={this.assetData}
         receiver={this.receiver}
+        receiverEnsName={this.receiverEnsName}
         source={this.source}
         balances={balances}
         activeAccount={activeAccount}

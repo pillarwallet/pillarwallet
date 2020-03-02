@@ -132,7 +132,7 @@ platform :ios do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "500"
+      commits_count: "50"
     )
     custom_changelog = ""
     pr_merges = changelog_notes.split(/Merge/)
@@ -158,7 +158,7 @@ platform :ios do
   end
 
   desc "Release to adhoc TestFlight"
-  lane :deploy_ios_hockeyapp do |options|
+  lane :deploy_ios_appcenter do |options|
 
     MY_APP_ID = "com.pillarproject.wallet.staging"
     MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging"
@@ -229,12 +229,14 @@ platform :ios do
     changelog = build_custom_changelog
     commit = last_git_commit
 
-    hockey(
-      api_token: ENV["HOCKEY_APP_TOKEN"],
-      notes: changelog,
-      commit_sha: commit[:commit_hash],
-      notify: "1",
-      ipa: "./output/gym/pillarwallet-staging.ipa"
+    appcenter_upload(
+      api_token: ENV["APPCENTER_IOS_TOKEN"],
+      owner_name: "brent-2",
+      owner_type: "user",
+      app_name: "Pillar-Wallet-Staging",
+      file: "./output/gym/pillarwallet-staging.ipa",
+      notify_testers: true,
+      release_notes: changelog
     )
 
   end
