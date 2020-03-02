@@ -27,10 +27,10 @@ import { CachedImage } from 'react-native-cached-image';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import Spinner from 'components/Spinner';
+import ButtonText from 'components/ButtonText';
 
 // utils
-import { fontSizes, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 type ImageObject = {
@@ -97,18 +97,6 @@ const CardText = styled(BaseText)`
   width: 100%;
 `;
 
-const CardButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-  padding: 4px 0;
-  margin-left: 10px;
-`;
-
-const ButtonLabel = styled(BaseText)`
-  color: ${({ secondary, theme }) => secondary ? theme.colors.secondaryText : theme.colors.primary};
-  font-size: ${fontSizes.regular}px;
-`;
-
 const ProviderIcon = styled(CachedImage)`
   width: 24px;
   height: 24px;
@@ -171,11 +159,14 @@ const OfferCard = (props: Props) => {
           <CardInnerRow style={{ flexShrink: 1 }}>
             {!!cardImageSource && <ProviderIcon source={cardImageSource} resizeMode="contain" />}
             {!!Object.keys(cardTopButton).length &&
-            <CardButton disabled={isTopButtonDisabled} onPress={topButtonOnPress}>
-              {!isTopButtonLoading
-                ? <ButtonLabel secondary={isTopButtonSecondary}>{topButtonLabel}</ButtonLabel>
-                : <Spinner width={20} height={20} />}
-            </CardButton>
+            <ButtonText
+              onPress={topButtonOnPress}
+              buttonText={topButtonLabel}
+              secondary={isTopButtonSecondary}
+              disabled={isTopButtonDisabled}
+              isLoading={isTopButtonLoading}
+              wrapperStyle={{ paddingVertical: 4, marginLeft: 10 }}
+            />
             }
             {!!cardNote && <CardNote>{cardNote}</CardNote>}
           </CardInnerRow>
@@ -194,9 +185,8 @@ const OfferCard = (props: Props) => {
               title={isMainButtonLoading ? '' : mainButtonLabel}
               small
               onPress={mainButtonOnPress}
-            >
-              {isMainButtonLoading && <Spinner width={20} height={20} />}
-            </Button>
+              isLoading={isMainButtonLoading}
+            />
           </CardColumn>
         </CardRow>
       </CardWrapper>
