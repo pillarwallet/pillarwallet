@@ -58,7 +58,7 @@ type Props = {
   theme: Theme,
   isAnimated?: boolean,
   spacingAfterAnimation?: number,
-}
+};
 
 type State = {
   cardHeight: ?number,
@@ -67,7 +67,7 @@ type State = {
   scaleValue: Animated.Value,
   finishedAnimating: boolean,
   isAnimating: boolean,
-}
+};
 
 const SHADOW_LENGTH = 3;
 

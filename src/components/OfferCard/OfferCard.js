@@ -35,7 +35,7 @@ import { themedColors } from 'utils/themes';
 
 type ImageObject = {
   uri: string,
-}
+};
 
 type ButtonProps = {
   label?: string,
@@ -43,7 +43,7 @@ type ButtonProps = {
   isDisabled?: boolean,
   isLoading?: boolean,
   isSecondary?: boolean,
-}
+};
 
 type Props = {
   isDisabled?: boolean,
@@ -56,7 +56,7 @@ type Props = {
   valueBottom: string | number,
   cardMainButton?: ButtonProps,
   cardNote?: string,
-}
+};
 
 const CardWrapper = styled.TouchableOpacity`
   width: 100%;
@@ -71,7 +71,8 @@ const CardRow = styled.View`
   ${({ withBorder, theme }) => withBorder
     ? `border-bottom-width: 1px;
        border-bottom-color: ${theme.colors.border};`
-    : ''}
+    : ''
+}
 `;
 
 const CardInnerRow = styled.View`
