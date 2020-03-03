@@ -62,14 +62,12 @@ export default class KeyBasedWalletProvider {
           to,
         };
       })
-      .catch((e) => {
-        catchTransactionError(e, 'ERC721', {
-          contractAddress,
-          from,
-          to,
-          tokenId,
-        });
-      });
+      .catch((e) => catchTransactionError(e, 'ERC721', {
+        contractAddress,
+        from,
+        to,
+        tokenId,
+      }));
   }
 
   async transferETH(account: Account, transaction: TokenTransactionPayload, state: Object) {
