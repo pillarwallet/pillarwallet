@@ -627,6 +627,7 @@ workflows:
             branches:
               only:
                   - develop
+                  - fix/pure-react-native
       - appcenter_android:
           requires:
             - build-and-test
