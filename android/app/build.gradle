@@ -125,13 +125,13 @@ android {
         staging {
             keyAlias System.getenv('ANDROID_STAGING_KEY_ALIAS') ? System.getenv('ANDROID_STAGING_KEY_ALIAS').toString() : keystoreProperties['stagingKeyAlias']
             keyPassword System.getenv('ANDROID_STAGING_KEY_PASSWORD') ? System.getenv('ANDROID_STAGING_KEY_PASSWORD').toString() : keystoreProperties['stagingKeyPassword']
-            storeFile file('../staging-key.keystore')
+            storeFile file('../keystores/staging-key.keystore')
             storePassword System.getenv('ANDROID_STAGING_STORE_PASSWORD') ? System.getenv('ANDROID_STAGING_STORE_PASSWORD').toString() : keystoreProperties['stagingStorePassword']
         }
         release {
             keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS').toString() : keystoreProperties['keyAlias']
             keyPassword System.getenv('ANDROID_KEY_PASSWORD') ? System.getenv('ANDROID_KEY_PASSWORD').toString() : keystoreProperties['keyPassword']
-            storeFile file('../release.keystore')
+            storeFile file('../keystores/release.keystore')
             storePassword System.getenv('ANDROID_STORE_PASSWORD') ? System.getenv('ANDROID_STORE_PASSWORD').toString() : keystoreProperties['storePassword']
         }
     }
