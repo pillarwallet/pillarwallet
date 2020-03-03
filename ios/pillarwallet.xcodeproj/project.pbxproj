@@ -55,6 +55,7 @@
 		696ACF5824049EBC009B0BEC /* EuclidCircularB-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */; };
 		696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5124049C74009B0BEC /* PillarIcons.ttf */; };
 		69BA0CCD2409A6B100DD424D /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */; };
+		69BD7D26240EE67C00B2C4F8 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
 		69D2EC0B240877730039EA75 /* libRNInAppBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D39B240465A800CF4B51 /* libRNInAppBrowser.a */; };
 		69D2EC0C24087B290039EA75 /* libRNCookieManagerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D3A0240465A800CF4B51 /* libRNCookieManagerIOS.a */; };
@@ -1401,6 +1402,7 @@
 				8EA38CEE9A51417BAA60B270 /* MaterialCommunityIcons.ttf in Resources */,
 				32722B282996490DA73DDAF6 /* MaterialIcons.ttf in Resources */,
 				137081FB8B99477D9554F66B /* Octicons.ttf in Resources */,
+				69BD7D26240EE67C00B2C4F8 /* main.jsbundle in Resources */,
 				2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */,
 				41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */,
 				C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */,
