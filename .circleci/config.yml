@@ -633,7 +633,6 @@ workflows:
             branches:
               only:
                   - develop
-                  - fix/pure-react-native
       - appcenter_android:
           requires:
             - build-and-test
@@ -641,7 +640,6 @@ workflows:
             branches:
               only:
                   - develop
-                  - fix/pure-react-native
       - get-latest-tag:
           requires:
             - build-and-test
