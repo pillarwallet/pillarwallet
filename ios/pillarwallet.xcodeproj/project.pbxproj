@@ -55,6 +55,7 @@
 		696ACF5824049EBC009B0BEC /* EuclidCircularB-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */; };
 		696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5124049C74009B0BEC /* PillarIcons.ttf */; };
 		69BA0CCD2409A6B100DD424D /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */; };
+		69BD7EAC240F133C00B2C4F8 /* index.thread.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 69BD7EAB240F133C00B2C4F8 /* index.thread.jsbundle */; };
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
 		69D2EC0B240877730039EA75 /* libRNInAppBrowser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D39B240465A800CF4B51 /* libRNInAppBrowser.a */; };
 		69D2EC0C24087B290039EA75 /* libRNCookieManagerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D3A0240465A800CF4B51 /* libRNCookieManagerIOS.a */; };
@@ -456,6 +457,7 @@
 		696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Bold.otf"; path = "../src/assets/fonts/EuclidCircularB-Bold.otf"; sourceTree = "<group>"; };
 		696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Medium.otf"; path = "../src/assets/fonts/EuclidCircularB-Medium.otf"; sourceTree = "<group>"; };
 		69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		69BD7EAB240F133C00B2C4F8 /* index.thread.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.thread.jsbundle; sourceTree = "<group>"; };
 		69D2EB02240865F50039EA75 /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		69D2EB03240865F60039EA75 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		69D38E4C24047B11003F1E10 /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -628,6 +630,7 @@
 		13B07FAE1A68108700A75B9A /* pillarwallet */ = {
 			isa = PBXGroup;
 			children = (
+				69BD7EAB240F133C00B2C4F8 /* index.thread.jsbundle */,
 				693DE4BC2405A31E00587060 /* pillarwallet.entitlements */,
 				696ACF1124049931009B0BEC /* LaunchScreen.xib */,
 				696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */,
@@ -1390,6 +1393,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				CC35DBC715564511830FF270 /* AntDesign.ttf in Resources */,
 				06469B4110054AFDA09DA809 /* Entypo.ttf in Resources */,
+				69BD7EAC240F133C00B2C4F8 /* index.thread.jsbundle in Resources */,
 				877241F8BC2B4345961FAAB4 /* EvilIcons.ttf in Resources */,
 				6B5A147F02B44E84A8AB8E69 /* Feather.ttf in Resources */,
 				4B1EC93FB7FD422F97D77470 /* FontAwesome.ttf in Resources */,
@@ -1442,7 +1446,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		223A0D16CD160A4457201E76 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

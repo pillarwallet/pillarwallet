@@ -319,7 +319,7 @@ export const startListeningOnOpenNotificationAction = () => {
     await SOCKET.init();
     // TODO: change to other notifications lib as firebase v6 excluded notifications
     const notificationOpen = {}; // await firebase.notifications().getInitialNotification();
-    if (notificationOpen) {
+    if (!isEmpty(notificationOpen)) {
       checkForSupportAlert(notificationOpen.notification._data);
       const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
       if (type === SIGNAL) {
