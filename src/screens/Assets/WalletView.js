@@ -435,22 +435,23 @@ class WalletView extends React.Component<Props, State> {
         }
         getRef={(ref) => { this.scrollViewRef = ref; }}
       >
-        { showDeploySmartWallet && (
-            smartWalletState.upgradeDismissed ? (
+        {showDeploySmartWallet && (
+          smartWalletState.upgradeDismissed ?
+            (
               <SWActivationCard
                 message="To start sending and exchanging assets you need to activate Smart Wallet"
                 buttonTitle="Activate Smart Wallet"
               />
-            ) : (
+            ) :
+            (
               <InsightWithButton
                 title="Why Smart Wallet knocks out your old private key wallet?"
                 itemsList={initialSWInsights}
                 buttonTitle="Wow, that's cool"
-                onButtonPress={() => {
-                dismissSmartWalletUpgrade();
-              }}
+                onButtonPress={dismissSmartWalletUpgrade}
               />
-            ))
+            )
+          )
         }
         <Insight
           isVisible={isInsightVisible}

@@ -27,7 +27,7 @@ import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 import { Wrapper } from 'components/Layout';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE, CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import type { Theme } from 'models/Theme';
@@ -61,13 +61,13 @@ const SWActivationModal = ({
             onModalClose(() => {
               navigation.navigate(EXCHANGE, {
                 fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
-                toAssetCode: 'ETH',
+                toAssetCode: ETH,
               });
             });
           }}
         color={colors.smartWalletText}
         bordered
-        subtextAddon={(<LabelBadge label="NEW" />)}
+        subtextAddon={<LabelBadge label="NEW" />}
       />
       <ListItemChevron
         label="I have tokens"

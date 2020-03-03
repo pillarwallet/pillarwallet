@@ -204,7 +204,6 @@ const mapStateToProps = ({
   accounts,
 });
 
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
   importSmartWalletAccounts: (privateKey: string, createNewAccount: boolean, initAssets: Assets) =>

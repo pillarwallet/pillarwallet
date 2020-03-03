@@ -356,9 +356,7 @@ class Contact extends React.Component<Props, State> {
     );
   };
 
-  getSWActivationMessage = (sendingBlockedMessage: Object) => {
-    return `${sendingBlockedMessage.title}. ${sendingBlockedMessage.message}.`;
-  }
+  getSWActivationMessage = ({ title, message }: Object) => `${title}. ${message}.`;
 
   render() {
     const {

@@ -34,7 +34,7 @@ type State = {
 class SWActivationCard extends React.Component<Props, State> {
   state = {
     isModalVisible: false,
-  }
+  };
 
   render() {
     const { message, buttonTitle } = this.props;
