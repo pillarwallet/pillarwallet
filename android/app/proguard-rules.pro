@@ -20,3 +20,8 @@
 -keep class com.facebook.crypto.** {
     *;
 }
+
+# signal:
+-keep class * {
+    public private *;
+}
