@@ -224,7 +224,7 @@ class HeaderBlock extends React.Component<Props> {
                 <BackIcon
                   icon="back"
                   color={transparent ? colors.control : colors.text}
-                  onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
+                  onPress={customOnBack ? customOnBack : () => navigation.goBack(null)}
                   fontSize={fontSizes.large}
                   horizontalAlign="flex-start"
                 />
