@@ -400,7 +400,7 @@ class Button extends React.Component<Props, State> {
       disabledTransparent,
       children,
       isLoading,
-      style = {},
+      style,
       theme,
     } = this.props;
 
@@ -415,8 +415,7 @@ class Button extends React.Component<Props, State> {
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
         borderRadius={this.props.small ? 3 : 6}
-        style={isLoading ? { ...style, backgroundColor: 'transparent' } : style}
-
+        style={style}
       >
         {!!isLoading && <Spinner width={20} height={20} />}
         {!!this.props.icon && !isLoading &&
