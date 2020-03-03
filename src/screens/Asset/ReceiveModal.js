@@ -157,12 +157,12 @@ export default class ReceiveModal extends React.Component<Props, *> {
             />
           </ButtonsRow>
           {showBuyTokensButton && (
-          <IconsContainer>
-            <Image source={visaIcon} />
-            <IconsSpacing />
-            <Image source={mastercardIcon} />
-          </IconsContainer>
-          }
+            <IconsContainer>
+              <Image source={visaIcon} />
+              <IconsSpacing />
+              <Image source={mastercardIcon} />
+            </IconsContainer>
+          )}
         </ContentWrapper>
       </SlideModal>
     );
