@@ -22,25 +22,35 @@ import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-nativ
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Spinner from 'components/Spinner';
 import type { IconProps } from 'components/Icon';
 import { fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 type CommonProps = {
+  disabled?: boolean,
+  isLoading?: boolean,
+};
+
+type WrapperProps = CommonProps & {
   onPress?: () => void,
   wrapperStyle?: Object,
-}
+};
 
-type TouchableProps = CommonProps & {
+type TouchableProps = CommonProps & WrapperProps & {
   children: React.Node,
-}
+};
 
-type Props = CommonProps & {
-  buttonText: string,
+type ContentProps = CommonProps & {
+  buttonText?: string,
   fontSize?: number,
+  secondary?: boolean,
+};
+
+type Props = WrapperProps & ContentProps & {
   leftIconProps?: IconProps,
   rightIconProps?: IconProps,
-}
+};
 
 const Wrapper = styled.View`
   align-self: center;
@@ -51,7 +61,7 @@ const Wrapper = styled.View`
 
 const ButtonLabel = styled(BaseText)`
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.regular}px;
-  color: ${themedColors.primary};
+  color: ${({ secondary, theme }) => secondary ? theme.colors.secondaryText : theme.colors.primary};
 `;
 
 const StyledIcon = styled(Icon)`
@@ -60,10 +70,15 @@ const StyledIcon = styled(Icon)`
 `;
 
 const Touchable = (props: TouchableProps) => {
-  const { onPress, wrapperStyle, children } = props;
+  const {
+    onPress,
+    wrapperStyle,
+    children,
+    disabled,
+  } = props;
   if (Platform.OS === 'ios') {
     return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} disabled={disabled}>
         <Wrapper style={wrapperStyle}>
           {children}
         </Wrapper>
@@ -74,6 +89,7 @@ const Touchable = (props: TouchableProps) => {
   return (
     <TouchableNativeFeedback
       onPress={onPress}
+      disabled={disabled}
       background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
     >
       <Wrapper style={wrapperStyle}>
@@ -81,6 +97,21 @@ const Touchable = (props: TouchableProps) => {
       </Wrapper>
     </TouchableNativeFeedback>
   );
+};
+
+const ButtonContent = (props: ContentProps) => {
+  const {
+    isLoading,
+    buttonText,
+    fontSize,
+    secondary,
+  } = props;
+  if (isLoading) {
+    return <Spinner width={20} height={20} />;
+  } else if (buttonText) {
+    return <ButtonLabel fontSize={fontSize} secondary={secondary}>{buttonText}</ButtonLabel>;
+  }
+  return null;
 };
 
 const ButtonText = (props: Props) => {
@@ -91,12 +122,15 @@ const ButtonText = (props: Props) => {
     wrapperStyle,
     leftIconProps,
     rightIconProps,
+    secondary,
+    disabled,
+    isLoading,
   } = props;
 
   return (
-    <Touchable onPress={onPress} wrapperStyle={wrapperStyle}>
+    <Touchable onPress={onPress} wrapperStyle={wrapperStyle} disabled={disabled || isLoading}>
       {!!leftIconProps && <StyledIcon {...leftIconProps} isLeft />}
-      <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
+      <ButtonContent buttonText={buttonText} fontSize={fontSize} secondary={secondary} />
       {!!rightIconProps && <StyledIcon {...rightIconProps} />}
     </Touchable>
   );

@@ -602,18 +602,24 @@ jobs:
 
   publish_releases_to_github:
     docker:
-      - image: cibuilds/github:0.10
+      - image: circleci/golang:1.8
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - run:
+          name: Install github-release
+          command: |
+            go get github.com/aktau/github-release
+      - run:
           name: Set tag and publish releases to GitHub
           command: |
+            chmod +x setReleaseInfo.sh
+            . ./setReleaseInfo.sh
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
-            echo $TAG_VERSION
-            ghr $TAG_VERSION /tmp/workspace/android-release/
-            ghr $TAG_VERSION /tmp/workspace/ios-release/
+            github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n "$RELEASE_TITLE" --description "$RELEASE_DESCRIPTION"
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$TAG_VERSION.apk" -f /tmp/workspace/android-release/*.apk
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$TAG_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
 
 workflows:
   version: 2.1
@@ -661,5 +667,5 @@ workflows:
                   - master
       - publish_releases_to_github:
           requires:
-            - prod_ios
             - prod_android
+            - prod_ios
