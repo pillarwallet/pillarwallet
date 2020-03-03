@@ -134,7 +134,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           customTheme={
             Object {
               "borderRadius": "30px",
-              "padding": "0 20px",
+              "padding": "0 16px",
             }
           }
           style={
@@ -147,8 +147,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "marginTop": "auto",
                 "overflow": "hidden",
                 "paddingBottom": 0,
-                "paddingLeft": 20,
-                "paddingRight": 20,
+                "paddingLeft": 16,
+                "paddingRight": 16,
                 "paddingTop": 0,
                 "shadowColor": "rgba(0,0,0,.1)",
                 "shadowOffset": Object {
@@ -178,15 +178,15 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           >
             <View
               androidStatusbarHeight={42}
+              noPaddingTop={true}
               onLayout={[Function]}
               pointerEvents="box-none"
               style={
                 Object {
-                  "marginTop": 42,
                   "paddingBottom": 0,
                   "paddingLeft": 0,
                   "paddingRight": 0,
-                  "paddingTop": 20,
+                  "paddingTop": 0,
                 }
               }
             >

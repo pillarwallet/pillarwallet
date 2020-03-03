@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Clipboard, View, Image } from 'react-native';
+import { View, Image, Dimensions } from 'react-native';
 import { BaseText } from 'components/Typography';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
@@ -26,7 +26,6 @@ import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
-import Toast from 'components/Toast';
 import { LabelBadge } from 'components/LabelBadge';
 import { themedColors } from 'utils/themes';
 
@@ -40,7 +39,7 @@ const BuyTokensWrapper = styled.View`
 `;
 
 const ContentWrapper = styled.View`
-  padding: 0 ${spacing.rhythm}px;
+  padding: 0 ${spacing.layoutSides}px ${spacing.large}px;
   align-items: center;
 `;
 
@@ -53,7 +52,8 @@ type Props = {
   isVisible: boolean,
   handleBuyTokens?: Function,
   onModalHidden?: Function,
-  showBuyTokensSection?: boolean,
+  showBuyTokensButton?: boolean,
+  showErc20Note?: boolean,
 }
 
 const QRCodeWrapper = styled.View`
@@ -68,25 +68,34 @@ const WalletAddress = styled(BaseText)`
 
 const IconsContainer = styled.View`
   flex-direction: row;
-  margin: ${spacing.rhythm}px;
+  margin: 0 ${spacing.layoutSides}px;
+  justify-content: center;
 `;
 
 const IconsSpacing = styled.View`
   width: ${spacing.small}px;
 `;
 
+const ButtonsRow = styled.View`
+  flex-direction: row;
+  margin-top: 40px;
+  margin-bottom: ${spacing.large}px;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const {
+  width: SCREEN_WIDTH,
+} = Dimensions.get('window');
+
+const getButtonWidth = () => {
+  return (SCREEN_WIDTH / 2) - (spacing.layoutSides * 1.5);
+};
+
 const visaIcon = require('assets/icons/visa.png');
 const mastercardIcon = require('assets/icons/mastercard.png');
 
 export default class ReceiveModal extends React.Component<Props, *> {
-  handleAddressClipboardSet = () => {
-    const {
-      address,
-    } = this.props;
-    Clipboard.setString(address);
-    Toast.show({ message: 'Address copied to clipboard', type: 'success', title: 'Success' });
-  };
-
   handleAddressShare = () => {
     const {
       handleOpenShareDialog,
@@ -103,8 +112,13 @@ export default class ReceiveModal extends React.Component<Props, *> {
       onModalHide,
       handleBuyTokens,
       onModalHidden,
-      showBuyTokensSection = false,
+      showBuyTokensButton = false,
+      showErc20Note,
     } = this.props;
+
+    const buttonWidth = showBuyTokensButton ? getButtonWidth() : 0;
+    const needsSmallButtons = showBuyTokensButton && buttonWidth <= 150;
+
     return (
       <SlideModal
         title="Receive"
@@ -112,7 +126,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
         onModalHide={onModalHide}
         onModalHidden={onModalHidden}
         noPadding
-        headerLeftItems={[{
+        headerLeftItems={!!showErc20Note && [{
           custom: (
             <LabelBadge
               label="ERC-20 tokens only"
@@ -130,21 +144,39 @@ export default class ReceiveModal extends React.Component<Props, *> {
             <View
               style={{
                 overflow: 'hidden',
+                padding: 10,
               }}
             >
               <QRCodeWithTheme value={address} size={160} />
             </View>
           </QRCodeWrapper>
-          <Button
-            title="Share Address"
-            onPress={this.handleAddressShare}
-            style={{
-              marginBottom: 20,
-              marginTop: spacing.mediumLarge,
-            }}
-          />
+          <ButtonsRow>
+            {showBuyTokensButton && (
+              <Button
+                title="Buy tokens"
+                onPress={handleBuyTokens}
+                positive
+                width={buttonWidth}
+                small={needsSmallButtons}
+              />
+            )}
+            <Button
+              title="Share Address"
+              onPress={this.handleAddressShare}
+              width={buttonWidth}
+              small={needsSmallButtons}
+              block={!buttonWidth}
+            />
+          </ButtonsRow>
+          {showBuyTokensButton &&
+          <IconsContainer>
+            <Image source={visaIcon} />
+            <IconsSpacing />
+            <Image source={mastercardIcon} />
+          </IconsContainer>
+          }
         </ContentWrapper>
-        {showBuyTokensSection && (
+        {showBuyTokensButton && false && (
           <BuyTokensWrapper>
             <Button
               title="Buy tokens"

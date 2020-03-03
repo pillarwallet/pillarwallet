@@ -59,6 +59,7 @@ type Props = {
   leftSideFlex?: number,
   wrapperStyle?: Object,
   noHorizonatalPadding?: boolean,
+  forceInsetTop?: string,
 }
 
 const Wrapper = styled.View`
@@ -351,6 +352,7 @@ class HeaderBlock extends React.Component<Props> {
       noBottomBorder,
       wrapperStyle,
       noHorizonatalPadding,
+      forceInsetTop = 'always',
     } = this.props;
     const updatedColors = {};
     if (floating) {
@@ -371,7 +373,7 @@ class HeaderBlock extends React.Component<Props> {
           style={wrapperStyle}
         >
           <SafeArea
-            forceInset={{ bottom: 'never', top: 'always' }}
+            forceInset={{ bottom: 'never', top: forceInsetTop }}
             noPaddingTop={noPaddingTop}
             androidStatusbarHeight={StatusBar.currentHeight}
           >

@@ -71,7 +71,7 @@ type Props = {
 
 const themes = {
   default: {
-    padding: `0 ${spacing.rhythm}px`,
+    padding: `0 ${spacing.layoutSides}px`,
     borderRadius: '30px',
   },
   fullScreen: {
@@ -231,12 +231,13 @@ class SlideModal extends React.Component<Props, *> {
             centerItems={centerItems}
             rightItems={rightItems}
             noBottomBorder
-            noPaddingTop={fullScreen}
+            noPaddingTop
             onClose={this.hideModal}
             wrapperStyle={{ backgroundColor: 'transparent' }}
             noHorizonatalPadding={!fullScreen && !noPadding}
-            leftSideFlex={!title ? null : 4}
+            leftSideFlex={centerTitle ? null : 4}
             noBack
+            forceInsetTop="never"
           />
         }
         <ModalContent
