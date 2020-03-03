@@ -60,7 +60,7 @@ type Props = {
   wrapperStyle?: Object,
   noHorizonatalPadding?: boolean,
   forceInsetTop?: string,
-}
+};
 
 const Wrapper = styled.View`
   width: 100%;
@@ -126,7 +126,7 @@ const RightItems = styled.View`
 
 const BackIcon = styled(IconButton)`
   position: relative;
-  height: 24px;
+  height: 44px;
   width: 44px;
   padding-left: 10px;
   margin-left: -12px;
@@ -214,13 +214,22 @@ class HeaderBlock extends React.Component<Props> {
           {(leftItems.length || !!noBack)
             ? leftItems.map((item) => this.renderSideItems(item, LEFT))
             : (
-              <BackIcon
-                icon="back"
-                color={transparent ? colors.control : colors.text}
-                onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
-                fontSize={fontSizes.large}
-                horizontalAlign="flex-start"
-              />)
+              <View
+                style={{
+                  marginTop: -20,
+                  marginBottom: -20,
+                }}
+                key="back"
+              >
+                <BackIcon
+                  icon="back"
+                  color={transparent ? colors.control : colors.text}
+                  onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
+                  fontSize={fontSizes.large}
+                  horizontalAlign="flex-start"
+                />
+              </View>
+            )
           }
         </LeftItems>
         {!!centerItems.length &&

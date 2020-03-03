@@ -27,16 +27,6 @@ import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
 import { LabelBadge } from 'components/LabelBadge';
-import { themedColors } from 'utils/themes';
-
-const BuyTokensWrapper = styled.View`
-  background-color: ${themedColors.surface};
-  width: 100%;
-  padding: 20px;
-  border-top-color: ${themedColors.tertiary};
-  border-top-width: 1px;
-  align-items: center;
-`;
 
 const ContentWrapper = styled.View`
   padding: 0 ${spacing.layoutSides}px ${spacing.large}px;
@@ -54,7 +44,7 @@ type Props = {
   onModalHidden?: Function,
   showBuyTokensButton?: boolean,
   showErc20Note?: boolean,
-}
+};
 
 const QRCodeWrapper = styled.View`
   align-items: center;
@@ -84,9 +74,7 @@ const ButtonsRow = styled.View`
   width: 100%;
 `;
 
-const {
-  width: SCREEN_WIDTH,
-} = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const getButtonWidth = () => {
   return (SCREEN_WIDTH / 2) - (spacing.layoutSides * 1.5);
@@ -176,20 +164,6 @@ export default class ReceiveModal extends React.Component<Props, *> {
           </IconsContainer>
           }
         </ContentWrapper>
-        {showBuyTokensButton && false && (
-          <BuyTokensWrapper>
-            <Button
-              title="Buy tokens"
-              onPress={handleBuyTokens}
-              positive
-            />
-            <IconsContainer>
-              <Image source={visaIcon} />
-              <IconsSpacing />
-              <Image source={mastercardIcon} />
-            </IconsContainer>
-          </BuyTokensWrapper>
-        )}
       </SlideModal>
     );
   }

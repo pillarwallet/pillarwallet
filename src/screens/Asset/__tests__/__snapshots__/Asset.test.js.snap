@@ -79,44 +79,53 @@ exports[`Asset renders the Asset correctly 1`] = `
             }
           >
             <View
-              accessible={true}
-              isTVSelectable={true}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
               style={
                 Object {
-                  "alignItems": "flex-start",
-                  "height": 24,
-                  "justifyContent": "center",
-                  "marginLeft": -12,
-                  "opacity": 1,
-                  "paddingBottom": 0,
-                  "paddingLeft": 10,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "position": "relative",
-                  "width": 44,
+                  "marginBottom": -20,
+                  "marginTop": -20,
                 }
               }
             >
               <View
-                name="back"
+                accessible={true}
+                isTVSelectable={true}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
                   Object {
-                    "color": "#0A1427",
-                    "fontSize": 24,
-                    "marginBottom": undefined,
-                    "marginLeft": undefined,
-                    "marginRight": undefined,
-                    "marginTop": undefined,
+                    "alignItems": "flex-start",
+                    "height": 44,
+                    "justifyContent": "center",
+                    "marginLeft": -12,
+                    "opacity": 1,
+                    "paddingBottom": 0,
+                    "paddingLeft": 10,
+                    "paddingRight": 0,
                     "paddingTop": 0,
+                    "position": "relative",
+                    "width": 44,
                   }
                 }
-              />
+              >
+                <View
+                  name="back"
+                  style={
+                    Object {
+                      "color": "#0A1427",
+                      "fontSize": 24,
+                      "marginBottom": undefined,
+                      "marginLeft": undefined,
+                      "marginRight": undefined,
+                      "marginTop": undefined,
+                      "paddingTop": 0,
+                    }
+                  }
+                />
+              </View>
             </View>
           </View>
           <View
