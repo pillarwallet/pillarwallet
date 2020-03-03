@@ -131,8 +131,9 @@ export default class ExchangeService {
     this.io.off('offers');
   }
 
-  requestOffers(fromAssetAddress: string, toAssetAddress: string, quantity: number) {
-    const urlPath = `offers?fromAssetAddress=${fromAssetAddress}&toAssetAddress=${toAssetAddress}&quantity=${quantity}`;
+  requestOffers(fromAssetAddress: string, toAssetAddress: string, quantity: number, walletId: string) {
+    const urlPath = `offers?fromAssetAddress=${fromAssetAddress}&toAssetAddress=`
+      + `${toAssetAddress}&quantity=${quantity}&walletId=${walletId}`;
     return axios.get(buildApiUrl(urlPath, '2.0'), this.apiConfig)
       .then(({ data }: AxiosResponse) => data)
       .then(response => typeof response === 'string' && response.toLowerCase() === 'ok' ? {} : response)
