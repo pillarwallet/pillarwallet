@@ -156,7 +156,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
               block={!buttonWidth}
             />
           </ButtonsRow>
-          {showBuyTokensButton &&
+          {showBuyTokensButton && (
           <IconsContainer>
             <Image source={visaIcon} />
             <IconsSpacing />
