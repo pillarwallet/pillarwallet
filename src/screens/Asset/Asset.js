@@ -434,9 +434,10 @@ class AssetScreen extends React.Component<Props, State> {
           token={assetData.token}
           tokenName={assetData.name}
           handleOpenShareDialog={this.handleOpenShareDialog}
-          showBuyTokensSection
+          showBuyTokensButton
           handleBuyTokens={this.handleBuyTokens}
           onModalHidden={this.handleModalHidden}
+          showErc20Note
         />
         <SlideModal
           title={assetData.name}

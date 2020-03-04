@@ -448,6 +448,7 @@ class Contact extends React.Component<Props, State> {
                     fontIcon="chat"
                     onPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
                     showIndicator={!!unreadChats.length}
+                    fontIconStyle={{ fontSize: 20 }}
                   />
                 </CircleButtonsWrapper>
                 {disableSend &&

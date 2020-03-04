@@ -18,14 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, TextInput as RNTextInput, View, ScrollView, Keyboard } from 'react-native';
+import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
 import t from 'tcomb-form-native';
-import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { createStructuredSelector } from 'reselect';
@@ -37,14 +36,12 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
-import Button from 'components/Button';
-import Spinner from 'components/Spinner';
 import DeploymentView from 'components/DeploymentView';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SWActivationCard from 'components/SWActivationCard';
+import OfferCard from 'components/OfferCard/OfferCard';
 
 // actions
 import {
@@ -70,7 +67,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // utils, services
 import { wyreWidgetUrl } from 'services/sendwyre';
 import { fiatCurrencies } from 'fixtures/assets';
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
@@ -88,48 +85,10 @@ import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme, ThemeColors } from 'models/Theme';
+import type { Theme } from 'models/Theme';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
-
-const CardWrapper = styled.TouchableOpacity`
-  width: 100%;
-`;
-
-const CardRow = styled.View`
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: ${props => props.alignTop ? 'flex-start' : 'flex-end'};
-  padding: 10px 0;
-  ${({ withBorder, theme }) => withBorder
-    ? `border-bottom-width: 1px;
-      border-bottom-color: ${theme.colors.border};`
-    : ''}
-`;
-
-const CardInnerRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  padding-left: 10px;
-  flex-wrap: wrap;
-`;
-
-const CardColumn = styled.View`
-  flex-direction: column;
-  align-items: ${props => props.alignRight ? 'flex-end' : 'flex-start'};
-  justify-content: flex-start;
-`;
-
-const CardText = styled(BaseText)`
-  ${fontStyles.regular};
-  letter-spacing: 0.18px;
-  color: ${({ label, theme }) => label ? theme.colors.text : theme.colors.secondaryText};
-  flex-wrap: wrap;
-  width: 100%;
-`;
 
 const ListHeader = styled.View`
   width: 100%;
@@ -137,26 +96,9 @@ const ListHeader = styled.View`
   margin-bottom: 8px;
 `;
 
-const CardButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-  padding: 4px 0;
-  margin-left: 10px;
-`;
-
-const ButtonLabel = styled(BaseText)`
-  color: ${({ color, theme }) => color || theme.colors.text};
-  font-size: ${fontSizes.regular}px;
-`;
-
 const FormWrapper = styled.View`
   padding: ${({ bottomPadding }) => `${spacing.large}px ${spacing.layoutSides}px ${bottomPadding}px`};
   background-color: ${themedColors.surface};
-`;
-
-const ProviderIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
 `;
 
 const ESWrapper = styled.View`
@@ -175,15 +117,6 @@ const PromoText = styled(BaseText)`
   ${fontStyles.medium};
   color: ${themedColors.secondaryText};
   text-align: center;
-`;
-
-const CardNote = styled(BaseText)`
-  flex-direction: row;
-  align-items: center;
-  padding: 4px 0;
-  margin-left: 10px;
-  color: ${({ color, theme }) => color || theme.colors.text};
-  ${fontStyles.regular};
 `;
 
 type Props = {
@@ -417,6 +350,54 @@ function SelectorInputTemplate(locals) {
       inputWrapperStyle={inputWrapperStyle}
     />
   );
+}
+
+function getCardTopButtonData(topButtonProps) {
+  const {
+    offer,
+    minOrMaxNeeded,
+    isBelowMin,
+    thisComponent,
+    isShapeShift,
+    shapeshiftAccessToken,
+    storedAllowance,
+    allowanceSet,
+    shapeshiftAuthPressed,
+    pressedTokenAllowanceId,
+  } = topButtonProps;
+
+  const {
+    _id: offerId,
+    minQuantity,
+    maxQuantity,
+    fromAsset,
+  } = offer;
+
+  const { code: fromAssetCode } = fromAsset;
+  const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
+  const minOrMaxAmount = formatAmountDisplay(isBelowMin ? minQuantity : maxQuantity);
+
+  if (minOrMaxNeeded) {
+    return {
+      label: `${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`,
+      onPress: () => thisComponent.setFromAmount(isBelowMin ? minQuantity : maxQuantity),
+    };
+  } else if (isShapeShift && !shapeshiftAccessToken) {
+    return {
+      label: 'Connect',
+      onPress: thisComponent.onShapeshiftAuthPress,
+      isDisabled: shapeshiftAuthPressed,
+    };
+  } else if (!allowanceSet) {
+    return {
+      label: storedAllowance ? 'Pending' : 'Enable',
+      onPress: () => thisComponent.onSetTokenAllowancePress(offer),
+      isDisabled: isSetAllowancePressed,
+      isSecondary: !!storedAllowance,
+      isLoading: isSetAllowancePressed,
+    };
+  }
+  return {};
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
@@ -815,7 +796,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  renderOffers = ({ item: offer }, disableNonFiatExchange: boolean, colors: ThemeColors) => {
+  renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
     const {
       value: { fromInput },
       pressedOfferId,
@@ -854,7 +835,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const available = getAvailable(minQuantity, maxQuantity, askRate);
     const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
-    const isSetAllowancePressed = pressedTokenAllowanceId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getOfferProviderLogo(providersMeta, offerProvider);
 
@@ -873,8 +853,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isAboveMax = maxQuantityNumeric !== 0 && amountToSell > maxQuantityNumeric;
 
     const minOrMaxNeeded = isBelowMin || isAboveMax;
-    const minOrMaxAmount = formatAmountDisplay(isBelowMin ? minQuantity : maxQuantity);
-
     const isTakeButtonDisabled = !!minOrMaxNeeded
       || isTakeOfferPressed
       || !allowanceSet
@@ -885,109 +863,61 @@ class ExchangeScreen extends React.Component<Props, State> {
     const disableFiatExchange = isFiat && (minOrMaxNeeded || !!offerRestricted);
     const disableOffer = disableNonFiatExchange || disableFiatExchange;
 
+    const topButtonProps = {
+      offer,
+      minOrMaxNeeded,
+      isBelowMin,
+      isShapeShift,
+      shapeshiftAccessToken,
+      allowanceSet,
+      storedAllowance,
+      shapeshiftAuthPressed,
+      pressedTokenAllowanceId,
+      thisComponent: this,
+    };
+
+    if (isFiat) {
+      return (
+        <OfferCard
+          isDisabled={isTakeButtonDisabled || disableOffer}
+          onPress={() => this.onFiatOfferPress(offer)}
+          labelTop="Amount total"
+          valueTop={`${askRate} ${fromAssetCode}`}
+          cardImageSource={providerLogo}
+          cardTopButton={getCardTopButtonData(topButtonProps)}
+          labelBottom="Fees total"
+          valueBottom={feeAmount ?
+            `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
+            : 'Will be calculated'
+          }
+          cardMainButton={{
+            label: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
+            onPress: () => this.onFiatOfferPress(offer),
+            isDisabled: disableFiatExchange,
+            isLoading: isTakeOfferPressed,
+          }}
+          cardNote={offerRestricted}
+        />
+      );
+    }
+
     return (
-      <ShadowedCard
-        wrapperStyle={{ marginBottom: 10 }}
-        contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
-      >
-        <CardWrapper
-          disabled={isTakeButtonDisabled || disableOffer}
-          onPress={() => isFiat ? this.onFiatOfferPress(offer) : this.onOfferPress(offer)}
-        >
-          <CardRow withBorder alignTop>
-            {!!isFiat &&
-            <CardColumn>
-              <CardText label>Amount total</CardText>
-              <CardText>{`${askRate} ${fromAssetCode}`}</CardText>
-            </CardColumn>
-            }
-            {!isFiat &&
-            <CardColumn>
-              <CardText label>Exchange rate</CardText>
-              <CardText>{formatAmountDisplay(askRate)}</CardText>
-            </CardColumn>
-            }
-            <CardInnerRow style={{ flexShrink: 1 }}>
-              {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
-              {minOrMaxNeeded &&
-              <CardButton onPress={() => this.setFromAmount(isBelowMin ? minQuantity : maxQuantity)}>
-                <ButtonLabel color={colors.primary}>
-                  {`${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`}
-                </ButtonLabel>
-              </CardButton>
-              }
-              {!minOrMaxNeeded && isShapeShift && !shapeshiftAccessToken &&
-              <CardButton disabled={shapeshiftAuthPressed} onPress={this.onShapeshiftAuthPress}>
-                <ButtonLabel color={colors.primary}>Connect</ButtonLabel>
-              </CardButton>
-              }
-              {!minOrMaxNeeded && !allowanceSet &&
-              <CardButton disabled={isSetAllowancePressed} onPress={() => this.onSetTokenAllowancePress(offer)}>
-                {!isSetAllowancePressed &&
-                <ButtonLabel color={storedAllowance ? colors.secondaryText : colors.primary} >
-                  {storedAllowance
-                    ? 'Pending'
-                    : 'Enable'
-                  }
-                </ButtonLabel>}
-                {!!isSetAllowancePressed && <Spinner width={20} height={20} />}
-              </CardButton>
-              }
-              {!!isFiat && !!offerRestricted &&
-                <CardNote color={colors.primary}>{offerRestricted}</CardNote>
-              }
-            </CardInnerRow>
-          </CardRow>
-          <CardRow>
-            {!!isFiat &&
-            <CardColumn style={{ flex: 1 }}>
-              <CardText label>Fees total</CardText>
-              <View style={{ flexDirection: 'row' }}>
-                <CardText>
-                  {
-                    feeAmount !== ''
-                      ? `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
-                      : 'Will be calculated'
-                  }
-                </CardText>
-              </View>
-            </CardColumn>
-            }
-            {!isFiat &&
-            <CardColumn style={{ flex: 1 }}>
-              <CardText label>Available</CardText>
-              <View style={{ flexDirection: 'row' }}>
-                <CardText>{available}</CardText>
-              </View>
-            </CardColumn>
-            }
-            {!!isFiat &&
-            <CardColumn>
-              <Button
-                title={isTakeOfferPressed ? '' : `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`}
-                small
-                onPress={() => this.onFiatOfferPress(offer)}
-                disabled={disableFiatExchange}
-              >
-                {isTakeOfferPressed && <Spinner width={20} height={20} />}
-              </Button>
-            </CardColumn>
-            }
-            {!isFiat &&
-            <CardColumn>
-              <Button
-                disabled={isTakeButtonDisabled || disableNonFiatExchange}
-                title={isTakeOfferPressed ? '' : `${amountToBuyString} ${toAssetCode}`}
-                small
-                onPress={() => this.onOfferPress(offer)}
-              >
-                {isTakeOfferPressed && <Spinner width={20} height={20} />}
-              </Button>
-            </CardColumn>
-            }
-          </CardRow>
-        </CardWrapper>
-      </ShadowedCard>
+      <OfferCard
+        isDisabled={isTakeButtonDisabled || disableOffer}
+        onPress={() => this.onOfferPress(offer)}
+        labelTop="Exchange rate"
+        valueTop={formatAmountDisplay(askRate)}
+        cardImageSource={providerLogo}
+        cardTopButton={getCardTopButtonData(topButtonProps)}
+        labelBottom="Available"
+        valueBottom={available}
+        cardMainButton={{
+          label: `${amountToBuyString} ${toAssetCode}`,
+          onPress: () => this.onOfferPress(offer),
+          isDisabled: isTakeButtonDisabled || disableNonFiatExchange,
+          isLoading: isTakeOfferPressed,
+        }}
+      />
     );
   };
 
@@ -1221,7 +1151,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             style={{ width: '100%' }}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={flatListContentStyle}
-            renderItem={(props) => this.renderOffers(props, disableNonFiatExchange, colors)}
+            renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
             ListHeaderComponent={(
               <ListHeader>
                 <ExchangeStatus isVisible={isSubmitted} />
