@@ -370,10 +370,9 @@ export const setTokenAllowanceAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
     const {
-      accounts: { data: accounts },
-      assets: { supportedAssets },
       user: { data: { walletId } },
     } = getState();
+
     const allowanceRequest = {
       provider,
       fromAssetAddress,
@@ -381,6 +380,10 @@ export const setTokenAllowanceAction = (
       walletId,
     };
     const response = await exchangeService.setTokenAllowance(allowanceRequest);
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
 
     if (!response || !response.data || response.error) {
       Toast.show({
