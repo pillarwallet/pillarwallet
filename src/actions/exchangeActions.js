@@ -365,6 +365,7 @@ export const setTokenAllowanceAction = (
   fromAssetAddress: string,
   toAssetAddress: string,
   provider: string,
+  trackId: string,
   callback: Function,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -379,7 +380,7 @@ export const setTokenAllowanceAction = (
       toAssetAddress,
       walletId,
     };
-    const response = await exchangeService.setTokenAllowance(allowanceRequest);
+    const response = await exchangeService.setTokenAllowance(allowanceRequest, trackId);
     const {
       accounts: { data: accounts },
       assets: { supportedAssets },
