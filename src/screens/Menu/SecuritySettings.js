@@ -25,7 +25,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import SlideModal from 'components/Modals/SlideModal';
-import { spacing } from 'utils/variables';
 import { getBiometryType } from 'utils/settings';
 import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { changeUseBiometricsAction } from 'actions/appSettingsActions';
@@ -128,9 +127,7 @@ class SecuritySettings extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Security settings' }] }}
       >
-        <ScrollWrapper
-          contentContainerStyle={{ paddingHorizontal: spacing.layoutSides }}
-        >
+        <ScrollWrapper>
           <SettingsSection
             sectionTitle="Global"
             sectionItems={this.getGlobalSettings()}

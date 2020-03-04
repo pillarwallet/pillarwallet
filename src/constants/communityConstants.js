@@ -40,11 +40,11 @@ export const MEDIUM_SOCIAL_ADDRESS = {
 export const FACEBOOK_SOCIAL_ADDRESS = {
   web: 'https://facebook.com/pillarproject/',
   app: Platform.select({
-    andorid: 'fb://page/277505029373839',
+    android: 'fb://page/277505029373839',
     ios: 'fb://profile/277505029373839',
   }),
 };
 
 export const FORUM_SOCIAL_ADDRESS = {
-  web: 'https://facebook.com/pillarproject/',
+  web: 'https://forum.pillarproject.io/',
 };

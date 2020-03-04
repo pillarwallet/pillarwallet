@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { Linking } from 'react-native';
+import styled from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography/Typography';
 import { ScrollWrapper } from 'components/Layout';
@@ -45,6 +46,10 @@ type State = {
   email: string,
   isSubmitted: boolean,
 };
+
+const NewsletterWrapper = styled.View`
+  margin: 0 ${spacing.layoutSides}px;
+`;
 
 class CommunitySettings extends React.Component<Props, State> {
   state = {
@@ -135,29 +140,31 @@ class CommunitySettings extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: 'Community' }] }}
       >
         <ScrollWrapper
-          contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.mediumLarge }}
+          contentContainerStyle={{ paddingVertical: spacing.mediumLarge }}
         >
-          <BaseText medium>
-            Join Pillar community, subscribe to our newsletter to receive latest news, updates and more
-          </BaseText>
-          <TextInput
-            inputProps={{
-              value: email,
-              onChange: value => this.setState({ email: value }),
-              placeholder: 'Your e-mail',
-              autoCapitalize: 'none',
-            }}
-            inputWrapperStyle={{ marginTop: spacing.mediumLarge }}
-            buttonProps={{
-              title: 'Subscribe',
-              small: true,
-              regularText: true,
-              marginRight: 12,
-              height: 32,
-              onPress: this.subscribe,
-            }}
-            errorMessage={isSubmitted && email && !isValidEmail(email) && 'Please enter a valid email'}
-          />
+          <NewsletterWrapper>
+            <BaseText medium>
+              Join Pillar community, subscribe to our newsletter to receive latest news, updates and more
+            </BaseText>
+            <TextInput
+              inputProps={{
+                value: email,
+                onChange: value => this.setState({ email: value }),
+                placeholder: 'Your e-mail',
+                autoCapitalize: 'none',
+              }}
+              inputWrapperStyle={{ marginTop: spacing.mediumLarge }}
+              buttonProps={{
+                title: 'Subscribe',
+                small: true,
+                regularText: true,
+                marginRight: 12,
+                height: 32,
+                onPress: this.subscribe,
+              }}
+              errorMessage={isSubmitted && email && !isValidEmail(email) && 'Please enter a valid email'}
+            />
+          </NewsletterWrapper>
           <SettingsSection
             sectionTitle="Follow us"
             sectionItems={this.getSocialMediaItems()}

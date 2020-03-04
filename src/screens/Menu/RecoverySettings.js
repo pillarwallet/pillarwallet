@@ -25,7 +25,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { BACKUP_WALLET_IN_SETTINGS_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -122,9 +121,7 @@ class RecoverySettings extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Recovery' }] }}
       >
-        <ScrollWrapper
-          contentContainerStyle={{ paddingHorizontal: spacing.layoutSides }}
-        >
+        <ScrollWrapper>
           <SettingsSection
             sectionTitle="Global"
             sectionItems={this.getGlobalSection()}

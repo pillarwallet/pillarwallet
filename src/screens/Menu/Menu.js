@@ -230,7 +230,6 @@ class Menu extends React.Component<Props, State> {
         labelBadge={labelBadge}
         icon={icon}
         iconColor={iconColor}
-        hidden={hidden}
       />
     );
   }

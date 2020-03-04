@@ -189,7 +189,6 @@ class AppSettings extends React.Component<Props, State> {
       >
         <ScrollWrapper
           contentContainerStyle={{
-            paddingHorizontal: spacing.layoutSides,
             paddingTop: spacing.mediumLarge,
           }}
         >

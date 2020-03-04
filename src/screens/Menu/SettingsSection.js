@@ -54,7 +54,7 @@ const Section = (props: Props) => {
         borderRadius: 6,
         overflow: 'hidden',
         paddingHorizontal: spacing.layoutSides,
-        paddingTop: spacing.medium,
+        paddingVertical: spacing.medium,
       }}
       renderItem={({ item }) => {
             const {
