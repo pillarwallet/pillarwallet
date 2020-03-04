@@ -23,10 +23,10 @@ exports[`Storyshots InsightWithButton with list 1`] = `
     style={
       Array [
         Object {
-          "marginBottom": 0,
-          "marginLeft": 16,
-          "marginRight": 16,
-          "marginTop": 30,
+          "paddingBottom": 15,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "paddingTop": 30,
         },
         undefined,
       ]
@@ -111,7 +111,12 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "textAlign": "center",
                       "textAlignVertical": "center",
                     },
-                    undefined,
+                    Array [
+                      Object {
+                        "marginBottom": 20,
+                      },
+                      undefined,
+                    ],
                   ],
                 ]
               }
@@ -123,9 +128,6 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                 Array [
                   Object {
                     "marginBottom": 20,
-                    "marginLeft": 0,
-                    "marginRight": 0,
-                    "marginTop": 20,
                   },
                   undefined,
                 ]
@@ -385,10 +387,10 @@ exports[`Storyshots InsightWithButton without list 1`] = `
     style={
       Array [
         Object {
-          "marginBottom": 0,
-          "marginLeft": 16,
-          "marginRight": 16,
-          "marginTop": 30,
+          "paddingBottom": 15,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "paddingTop": 30,
         },
         undefined,
       ]
