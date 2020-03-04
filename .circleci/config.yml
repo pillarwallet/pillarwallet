@@ -351,7 +351,7 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt.txt)"
+            export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env

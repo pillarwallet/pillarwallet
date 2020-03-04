@@ -2,7 +2,7 @@ name: Bump version Prod
 on:
   push:
     branches:
-      - fix/bump-tag
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,4 +15,3 @@ jobs:
         WITH_V: true
         RELEASE_BRANCHES: master
         DEFAULT_BUMP: minor
-        DRY_RUN: true
