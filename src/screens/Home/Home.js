@@ -93,6 +93,7 @@ import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],

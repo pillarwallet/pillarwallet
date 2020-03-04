@@ -48,6 +48,7 @@ export const lightThemeColors = {
   smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
   helpIcon: '#f7931a',
+  popularSwaps: '#d08cb1',
 };
 
 export const darkThemeColors = {
@@ -77,6 +78,7 @@ export const darkThemeColors = {
   smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
   helpIcon: '#f7931a',
+  popularSwaps: '#d08cb1',
 };
 
 export const themedColors = {
@@ -183,6 +185,10 @@ export const themedColors = {
   helpIcon: theme('current', {
     lightTheme: lightThemeColors.helpIcon,
     darkTheme: darkThemeColors.helpIcon,
+  }),
+  popularSwaps: theme('current', {
+    lightTheme: lightThemeColors.popularSwaps,
+    darkTheme: darkThemeColors.popularSwaps,
   }),
 };
 
