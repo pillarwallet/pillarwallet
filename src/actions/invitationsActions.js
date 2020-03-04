@@ -200,7 +200,7 @@ export const cancelInvitationAction = (invitation: Object) => {
     if (!cancelledInvitation) {
       dispatch(({
         type: ADD_NOTIFICATION,
-        payload: { title: invitation.username, message: 'Already accepted your request' },
+        payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(updateConnectionsAction());
       return;

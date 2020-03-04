@@ -338,6 +338,7 @@ export const sendAssetAction = (
           getState(),
         );
 
+        // $FlowFixMe
         if (tokenTx.hash) {
           historyTx = {
             ...buildHistoryTransaction({

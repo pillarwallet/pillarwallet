@@ -37,6 +37,8 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
+import HeaderTitleText from 'components/HeaderBlock/HeaderTitleText';
+import ProfileImage from 'components/ProfileImage';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -44,6 +46,7 @@ import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
   SETTINGS,
+  MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -90,6 +93,7 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -159,6 +163,23 @@ const BadgesWrapper = styled.View`
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
+
+const User = ({ user, navigation }) => {
+  const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <ProfileImage
+        uri={userImageUri}
+        userName={user.username}
+        diameter={24}
+        noShadow
+        borderWidth={0}
+        onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}
+      />
+      <HeaderTitleText style={{ marginLeft: 8 }}>{user.username}</HeaderTitleText>
+    </View>
+  );
+};
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -312,6 +333,7 @@ class HomeScreen extends React.Component<Props, State> {
       theme,
       baseFiatCurrency,
       activeBlockchainNetwork,
+      user,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -394,7 +416,7 @@ class HomeScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={colors.card}
         headerProps={{
-          leftItems: [{ user: true }],
+          leftItems: [{ custom: <User user={user} navigation={navigation} /> }],
           rightItems: [
             {
               link: 'Settings',
