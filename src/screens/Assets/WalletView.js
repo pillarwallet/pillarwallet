@@ -38,7 +38,6 @@ import Toast from 'components/Toast';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 import SWActivationCard from 'components/SWActivationCard';
-import DeploymentView from 'components/DeploymentView';
 
 import { spacing } from 'utils/variables';
 
@@ -449,10 +448,10 @@ class WalletView extends React.Component<Props, State> {
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         />
         {blockAssetsView &&
-          <DeploymentView
+          <SWActivationCard
             message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
-            buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
-            buttonLabel="Retry"
+            onButtonPress={deploymentData.error ? () => deploySmartWallet() : null}
+            buttonTitle="Retry"
             forceRetry={!!deploymentData.error}
           />}
         {!blockAssetsView &&

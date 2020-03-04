@@ -23,6 +23,7 @@ import ShadowedCard from 'components/ShadowedCard';
 import { MediumText, BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
+import Spinner from 'components/Spinner';
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import type { Props as ButtonProps } from 'components/Button';
@@ -34,6 +35,7 @@ type Props = {
   description?: string,
   buttonProps?: $Shape<ButtonProps>,
   onButtonPress: () => void,
+  spinner?: boolean,
 };
 
 const MainContainer = styled.View`
@@ -68,6 +70,12 @@ const InsightWrapper = styled.View`
   margin: 30px ${spacing.layoutSides}px 0px;
 `;
 
+const SpinnerWrapper = styled.View`
+  margin-top: ${spacing.mediumLarge}px;
+  align-items: center;
+`;
+
+
 const Item = ({ text }) => {
   return (
     <ItemContainer>
@@ -78,7 +86,7 @@ const Item = ({ text }) => {
 };
 
 const InsightWithButton = ({
-  title, itemsList, buttonTitle, description, buttonProps, onButtonPress,
+  title, itemsList, buttonTitle, description, buttonProps, onButtonPress, spinner,
 }: Props) => {
   return (
     <InsightWrapper>
@@ -95,7 +103,13 @@ const InsightWithButton = ({
               {itemsList.map(item => <Item text={item} key={item} />)}
             </ItemsContainer>
           )}
-          <Button small title={buttonTitle} onPress={onButtonPress} {...buttonProps} />
+          { spinner ?
+            <SpinnerWrapper>
+              <Spinner />
+            </SpinnerWrapper>
+          :
+            <Button small title={buttonTitle} onPress={onButtonPress} {...buttonProps} />
+          }
         </MainContainer>
       </ShadowedCard>
     </InsightWrapper>

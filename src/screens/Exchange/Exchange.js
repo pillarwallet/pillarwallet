@@ -38,7 +38,6 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
-import DeploymentView from 'components/DeploymentView';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SWActivationCard from 'components/SWActivationCard';
 import OfferCard from 'components/OfferCard/OfferCard';
@@ -1116,10 +1115,10 @@ class ExchangeScreen extends React.Component<Props, State> {
         )}
       >
         {!!blockView &&
-        <DeploymentView
+        <SWActivationCard
           message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
-          buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
-          buttonLabel="Retry"
+          onButtonPress={deploymentData.error ? () => deploySmartWallet() : null}
+          buttonTitle="Retry"
           forceRetry={!!deploymentData.error}
         />}
         {!blockView &&

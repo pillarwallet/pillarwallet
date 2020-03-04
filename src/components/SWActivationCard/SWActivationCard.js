@@ -18,13 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import InsightWithButton from 'components/InsightWithButton';
 import SWActivationModal from 'components/SWActivationModal';
 import SlideModal from 'components/Modals/SlideModal';
 
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { getSmartWalletStatus } from 'utils/smartWallet';
+
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+
 type Props = {
   message: string,
   buttonTitle: string,
+  accounts: Accounts,
+  smartWalletState: Object,
+  onButtonPress?: () => void,
+  forceRetry?: boolean,
 };
 
 type State = {
@@ -37,14 +48,31 @@ class SWActivationCard extends React.Component<Props, State> {
   };
 
   render() {
-    const { message, buttonTitle } = this.props;
+    const {
+      message, buttonTitle, accounts, smartWalletState, onButtonPress, forceRetry,
+    } = this.props;
     const { isModalVisible } = this.state;
+
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
+
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+
+    const isDeploying = deploymentStarted
+      || [
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+      ].includes(smartWalletStatus.status);
+
+    const description = isDeploying ? 'Smart Wallet is deploying' : message;
+
     return (
       <React.Fragment>
         <InsightWithButton
-          description={message}
+          description={description}
           buttonTitle={buttonTitle}
-          onButtonPress={() => this.setState({ isModalVisible: true })}
+          onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
+          spinner={isDeploying && !forceRetry}
         />
         <SlideModal
           isVisible={isModalVisible}
@@ -63,4 +91,12 @@ class SWActivationCard extends React.Component<Props, State> {
   }
 }
 
-export default SWActivationCard;
+const mapStateToProps = ({
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
+}) => ({
+  smartWalletState,
+  accounts,
+});
+
+export default connect(mapStateToProps)(SWActivationCard);
