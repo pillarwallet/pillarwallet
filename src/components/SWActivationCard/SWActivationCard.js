@@ -85,7 +85,7 @@ class SWActivationCard extends React.Component<Props, State> {
         onPress: () => {
           navigation.navigate(EXCHANGE, {
             fromAssetCode: fiatCurrency,
-            toAssetCode: 'ETH',
+            toAssetCode: ETH,
           });
         },
         key: 'no ETH',

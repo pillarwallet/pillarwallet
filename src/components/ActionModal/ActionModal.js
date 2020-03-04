@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { FlatList } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -27,36 +28,43 @@ import Icon from 'components/Icon';
 import { spacing, fontStyles } from 'utils/variables';
 import type { Theme } from 'models/Theme';
 
+type ItemType = {
+  label: string,
+  key: string,
+  onPress: () => void,
+  value?: string,
+  chevron?: boolean,
+}
 
 type Props = {
   theme: Theme,
-  onModalClose: (() => void) => void,
+  onModalClose: (?() => void) => void,
   isVisible: boolean,
-  items: Object[],
+  items: ItemType[],
 };
 
 const MainContainer = styled.View`
-  padding: 15px ${spacing.layoutSides}px 40px;
+  padding: 20px ${spacing.layoutSides}px 30px;
 `;
 
 const ItemContainer = styled.TouchableOpacity`
   flex-direction: row;
-  padding: 15px 0;
+  padding: 20px 0;
   align-items: center;
   justify-content: space-between;
 `;
 
 const ChevronIcon = styled(Icon)`
   color: ${themedColors.secondaryText};
-  ${fontStyles.small}
+  ${fontStyles.tiny};
 `;
 
 const Item = ({
-  label, onPress, money, chevron,
+  label, onPress, value, chevron,
 }) => (
   <ItemContainer onPress={onPress}>
     <MediumText big>{label}</MediumText>
-    {money && <BaseText medium secondary>{money}</BaseText>}
+    {!!value && <BaseText medium secondary>{value}</BaseText>}
     {chevron && <ChevronIcon name="chevron-right" />}
   </ItemContainer>
 );
@@ -84,15 +92,18 @@ class ActionModal extends React.Component<Props> {
         noClose
         background={colors.card}
         hideHeader
-        onModalHide={() => onModalClose(() => {})}
+        onModalHide={() => onModalClose()}
+        sideMargins={spacing.large}
       >
-        <MainContainer>
-          <FlatList
-            data={items}
-            renderItem={this.renderItem}
-            keyExtractor={item => item.key}
-          />
-        </MainContainer>
+        <SafeAreaView>
+          <MainContainer>
+            <FlatList
+              data={items}
+              renderItem={this.renderItem}
+              keyExtractor={item => item.key}
+            />
+          </MainContainer>
+        </SafeAreaView>
       </SlideModal>
     );
   }

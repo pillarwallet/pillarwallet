@@ -137,6 +137,7 @@ exports[`Storyshots ActionModal default 1`] = `
               "padding": "0 16px",
             }
           }
+          sideMargins={20}
           style={
             Array [
               Object {
@@ -144,6 +145,7 @@ exports[`Storyshots ActionModal default 1`] = `
                 "borderTopLeftRadius": 30,
                 "borderTopRightRadius": 30,
                 "elevation": 1,
+                "marginHorizontal": 20,
                 "marginTop": "auto",
                 "overflow": "hidden",
                 "paddingBottom": 0,
@@ -173,198 +175,193 @@ exports[`Storyshots ActionModal default 1`] = `
             }
           >
             <View
+              onLayout={[Function]}
+              pointerEvents="box-none"
               style={
-                Array [
-                  Object {
-                    "paddingBottom": 40,
-                    "paddingLeft": 16,
-                    "paddingRight": 16,
-                    "paddingTop": 15,
-                  },
-                  undefined,
-                ]
+                Object {
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 20,
+                }
               }
             >
-              <RCTScrollView
-                data={
+              <View
+                style={
                   Array [
                     Object {
-                      "chevron": true,
-                      "key": "first",
-                      "label": "First item",
+                      "paddingBottom": 30,
+                      "paddingLeft": 16,
+                      "paddingRight": 16,
+                      "paddingTop": 20,
                     },
-                    Object {
-                      "key": "second",
-                      "label": "Second item",
-                      "money": "123$",
-                    },
+                    undefined,
                   ]
                 }
-                disableVirtualization={false}
-                getItem={[Function]}
-                getItemCount={[Function]}
-                horizontal={false}
-                initialNumToRender={10}
-                keyExtractor={[Function]}
-                maxToRenderPerBatch={10}
-                numColumns={1}
-                onContentSizeChange={[Function]}
-                onEndReachedThreshold={2}
-                onLayout={[Function]}
-                onMomentumScrollEnd={[Function]}
-                onScroll={[Function]}
-                onScrollBeginDrag={[Function]}
-                onScrollEndDrag={[Function]}
-                removeClippedSubviews={false}
-                renderItem={[Function]}
-                scrollEventThrottle={50}
-                stickyHeaderIndices={Array []}
-                updateCellsBatchingPeriod={50}
-                viewabilityConfigCallbackPairs={Array []}
-                windowSize={21}
               >
-                <View>
-                  <View
-                    onLayout={[Function]}
-                    style={null}
-                  >
+                <RCTScrollView
+                  data={
+                    Array [
+                      Object {
+                        "chevron": true,
+                        "key": "first",
+                        "label": "First item",
+                      },
+                      Object {
+                        "key": "second",
+                        "label": "Second item",
+                        "money": "123$",
+                      },
+                    ]
+                  }
+                  disableVirtualization={false}
+                  getItem={[Function]}
+                  getItemCount={[Function]}
+                  horizontal={false}
+                  initialNumToRender={10}
+                  keyExtractor={[Function]}
+                  maxToRenderPerBatch={10}
+                  numColumns={1}
+                  onContentSizeChange={[Function]}
+                  onEndReachedThreshold={2}
+                  onLayout={[Function]}
+                  onMomentumScrollEnd={[Function]}
+                  onScroll={[Function]}
+                  onScrollBeginDrag={[Function]}
+                  onScrollEndDrag={[Function]}
+                  removeClippedSubviews={false}
+                  renderItem={[Function]}
+                  scrollEventThrottle={50}
+                  stickyHeaderIndices={Array []}
+                  updateCellsBatchingPeriod={50}
+                  viewabilityConfigCallbackPairs={Array []}
+                  windowSize={21}
+                >
+                  <View>
                     <View
-                      accessible={true}
-                      isTVSelectable={true}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        Object {
-                          "alignItems": "center",
-                          "flexDirection": "row",
-                          "justifyContent": "space-between",
-                          "opacity": 1,
-                          "paddingBottom": 15,
-                          "paddingLeft": 0,
-                          "paddingRight": 0,
-                          "paddingTop": 15,
-                        }
-                      }
+                      onLayout={[Function]}
+                      style={null}
                     >
-                      <Text
-                        big={true}
-                        style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "fontSize": 18,
-                              "lineHeight": 28,
-                              "textAlignVertical": "center",
-                            },
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "fontSize": 18,
-                                "lineHeight": 28,
-                                "textAlignVertical": "center",
-                              },
-                              undefined,
-                            ],
-                          ]
-                        }
-                      >
-                        First item
-                      </Text>
                       <View
-                        name="chevron-right"
+                        accessible={true}
+                        isTVSelectable={true}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
                         style={
-                          Array [
-                            Object {
-                              "color": "#8B939E",
-                              "fontSize": 12,
-                              "lineHeight": 18,
-                            },
-                            undefined,
-                          ]
+                          Object {
+                            "alignItems": "center",
+                            "flexDirection": "row",
+                            "justifyContent": "space-between",
+                            "opacity": 1,
+                            "paddingBottom": 20,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 20,
+                          }
                         }
-                      />
-                    </View>
-                  </View>
-                  <View
-                    onLayout={[Function]}
-                    style={null}
-                  >
-                    <View
-                      accessible={true}
-                      isTVSelectable={true}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        Object {
-                          "alignItems": "center",
-                          "flexDirection": "row",
-                          "justifyContent": "space-between",
-                          "opacity": 1,
-                          "paddingBottom": 15,
-                          "paddingLeft": 0,
-                          "paddingRight": 0,
-                          "paddingTop": 15,
-                        }
-                      }
-                    >
-                      <Text
-                        big={true}
-                        style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "fontSize": 18,
-                              "lineHeight": 28,
-                              "textAlignVertical": "center",
-                            },
+                      >
+                        <Text
+                          big={true}
+                          style={
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
+                                "fontFamily": "EuclidCircularB-Regular",
                                 "fontSize": 18,
                                 "lineHeight": 28,
                                 "textAlignVertical": "center",
                               },
+                              Array [
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "fontSize": 18,
+                                  "lineHeight": 28,
+                                  "textAlignVertical": "center",
+                                },
+                                undefined,
+                              ],
+                            ]
+                          }
+                        >
+                          First item
+                        </Text>
+                        <View
+                          name="chevron-right"
+                          style={
+                            Array [
+                              Object {
+                                "color": "#8B939E",
+                                "fontSize": 10,
+                                "lineHeight": 14,
+                              },
                               undefined,
-                            ],
-                          ]
-                        }
-                      >
-                        Second item
-                      </Text>
-                      <Text
-                        medium={true}
-                        secondary={true}
+                            ]
+                          }
+                        />
+                      </View>
+                    </View>
+                    <View
+                      onLayout={[Function]}
+                      style={null}
+                    >
+                      <View
+                        accessible={true}
+                        isTVSelectable={true}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
                         style={
-                          Array [
-                            Object {
-                              "color": "#8B939E",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "fontSize": 16,
-                              "lineHeight": 24,
-                              "textAlignVertical": "center",
-                            },
-                            undefined,
-                          ]
+                          Object {
+                            "alignItems": "center",
+                            "flexDirection": "row",
+                            "justifyContent": "space-between",
+                            "opacity": 1,
+                            "paddingBottom": 20,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 20,
+                          }
                         }
                       >
-                        123$
-                      </Text>
+                        <Text
+                          big={true}
+                          style={
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontFamily": "EuclidCircularB-Regular",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                                "textAlignVertical": "center",
+                              },
+                              Array [
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "fontSize": 18,
+                                  "lineHeight": 28,
+                                  "textAlignVertical": "center",
+                                },
+                                undefined,
+                              ],
+                            ]
+                          }
+                        >
+                          Second item
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              </RCTScrollView>
+                </RCTScrollView>
+              </View>
             </View>
           </View>
           <View

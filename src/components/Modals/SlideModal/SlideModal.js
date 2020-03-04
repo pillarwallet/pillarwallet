@@ -68,6 +68,7 @@ type Props = {
   theme: Theme,
   noPadding?: boolean,
   headerLeftItems?: Object[],
+  sideMargins?: number,
 };
 
 const themes = {
@@ -127,6 +128,7 @@ const ModalBackground = styled.View`
   elevation: 1;
   margin-top: auto;
   background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.card};
+  margin-horizontal: ${({ sideMargins }) => sideMargins || 0}px;
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -206,6 +208,7 @@ class SlideModal extends React.Component<Props, *> {
       theme,
       noPadding,
       headerLeftItems,
+      sideMargins,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -264,14 +267,14 @@ class SlideModal extends React.Component<Props, *> {
 
       if (eventDetail) {
         return (
-          <ModalBackground customTheme={customTheme}>
+          <ModalBackground customTheme={customTheme} sideMargins={sideMargins}>
             { children }
           </ModalBackground>
         );
       }
 
       return (
-        <ModalBackground customTheme={customTheme}>
+        <ModalBackground customTheme={customTheme} sideMargins={sideMargins}>
           { modalInner }
         </ModalBackground>
       );
