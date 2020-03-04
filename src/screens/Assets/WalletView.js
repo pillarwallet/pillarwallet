@@ -26,6 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
+import get from 'lodash.get';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
@@ -37,6 +38,7 @@ import Toast from 'components/Toast';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 import SWActivationCard from 'components/SWActivationCard';
+import DeploymentView from 'components/DeploymentView';
 
 import { spacing } from 'utils/variables';
 
@@ -84,7 +86,7 @@ import { deploySmartWalletAction, dismissSmartWalletUpgradeAction } from 'action
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 // partials
@@ -376,6 +378,7 @@ class WalletView extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       showDeploySmartWallet,
+      deploySmartWallet,
       fetchAssetsBalances,
       fetchAllCollectiblesData,
       theme,
@@ -413,6 +416,7 @@ class WalletView extends React.Component<Props, State> {
 
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
 
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
@@ -444,6 +448,13 @@ class WalletView extends React.Component<Props, State> {
           onClose={() => { hideInsight(); }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         />
+        {blockAssetsView &&
+          <DeploymentView
+            message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
+            buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
+            buttonLabel="Retry"
+            forceRetry={!!deploymentData.error}
+          />}
         {!blockAssetsView &&
         <SearchBlock
           hideSearch={blockAssetsView}
@@ -461,7 +472,7 @@ class WalletView extends React.Component<Props, State> {
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}
-        {!isInSearchAndFocus && showDeploySmartWallet && (
+        {!blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
           smartWalletState.upgradeDismissed ?
             (
               <SWActivationCard
