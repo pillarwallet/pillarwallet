@@ -92,11 +92,12 @@ export const createOneTimePasswordAction = (
       if (callback) callback();
     } else {
       dispatch(resetOneTimePasswordAction());
+      const fieldName = field.smsNotification ? 'phone' : 'email';
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
           message: 'Please try again later',
-          title: 'We can\'t verify your phone at this time',
+          title: `We can't verify your ${fieldName} at this time`,
           messageType: 'warning',
         },
       });

@@ -38,10 +38,12 @@ const Wrapper = styled.View`
 
 const CustomText = styled(MediumText)`
   font-size: ${FontSize}px;
+  line-height: ${FontSize}px;
 `;
 
 const CustomLink = styled(TextLink)`
   font-size: ${FontSize}px;
+  line-height: ${FontSize}px;
 `;
 
 type Props = {
