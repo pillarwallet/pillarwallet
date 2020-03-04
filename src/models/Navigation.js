@@ -22,5 +22,6 @@ import type { AssetData } from 'models/Asset';
 export type SendNavigateOptions = {
   assetData: AssetData,
   receiver: string,
+  receiverEnsName?: string,
   source: string,
 };

@@ -83,9 +83,6 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
-const iconSend = require('assets/icons/icon_send.png');
-const iconChat = require('assets/icons/icon_chat_contact.png');
-
 const CircleButtonsWrapper = styled.View`
   margin-top: ${Platform.select({
     ios: '5px',
@@ -443,15 +440,16 @@ class Contact extends React.Component<Props, State> {
                   <CircleButton
                     disabled={disableSend}
                     label="Send"
-                    icon={iconSend}
+                    fontIcon="paperPlane"
                     onPress={() => this.onSendPress(displayContact)}
                   />
                   <CircleButton
                     disabled={!displayContact.status}
                     label="Chat"
-                    icon={iconChat}
+                    fontIcon="chat"
                     onPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
                     showIndicator={!!unreadChats.length}
+                    fontIconStyle={{ fontSize: 20 }}
                   />
                 </CircleButtonsWrapper>
                 {disableSend &&
