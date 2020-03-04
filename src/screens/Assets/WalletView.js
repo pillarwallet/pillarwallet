@@ -171,9 +171,10 @@ const CustomKAWrapper = (props) => {
     refreshControl,
     hasStickyTabs,
     getRef,
+    stickyHeaderIndices,
   } = props;
   const scrollWrapperProps = {
-    stickyHeaderIndices: hasStickyTabs ? [2] : [0],
+    stickyHeaderIndices: hasStickyTabs ? stickyHeaderIndices : [0],
     refreshControl,
     onScroll: () => Keyboard.dismiss(),
   };
@@ -424,6 +425,7 @@ class WalletView extends React.Component<Props, State> {
     return (
       <CustomKAWrapper
         hasStickyTabs={!isInSearchAndFocus && !blockAssetsView}
+        stickyHeaderIndices={showDeploySmartWallet ? [3] : [2]}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -435,24 +437,6 @@ class WalletView extends React.Component<Props, State> {
         }
         getRef={(ref) => { this.scrollViewRef = ref; }}
       >
-        {showDeploySmartWallet && (
-          smartWalletState.upgradeDismissed ?
-            (
-              <SWActivationCard
-                message="To start sending and exchanging assets you need to activate Smart Wallet"
-                buttonTitle="Activate Smart Wallet"
-              />
-            ) :
-            (
-              <InsightWithButton
-                title="Why Smart Wallet knocks out your old private key wallet?"
-                itemsList={initialSWInsights}
-                buttonTitle="Wow, that's cool"
-                onButtonPress={dismissSmartWalletUpgrade}
-              />
-            )
-          )
-        }
         <Insight
           isVisible={isInsightVisible}
           title={insightsTitle}
@@ -477,6 +461,24 @@ class WalletView extends React.Component<Props, State> {
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}
+        {!isInSearchAndFocus && showDeploySmartWallet && (
+          smartWalletState.upgradeDismissed ?
+            (
+              <SWActivationCard
+                message="To start sending and exchanging assets you need to activate Smart Wallet"
+                buttonTitle="Activate Smart Wallet"
+              />
+            ) :
+            (
+              <InsightWithButton
+                title="Why Smart Wallet knocks out your old private key wallet?"
+                itemsList={initialSWInsights}
+                buttonTitle="Wow, that's cool"
+                onButtonPress={dismissSmartWalletUpgrade}
+              />
+            )
+          )
+        }
         {!isInSearchAndFocus && !blockAssetsView &&
         <Tabs
           tabs={assetsTabs}

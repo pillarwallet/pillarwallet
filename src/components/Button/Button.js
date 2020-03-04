@@ -41,6 +41,7 @@ export type Props = {
   danger?: boolean,
   primaryInverted?: boolean,
   dangerInverted?: boolean,
+  positive?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,

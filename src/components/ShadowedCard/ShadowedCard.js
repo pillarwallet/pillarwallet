@@ -35,7 +35,7 @@ const CardOutter = styled.View`
 const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
-  border-radius: 6px;
+  border-radius: ${({ borderRadius }) => borderRadius || 6}px;
   background: ${themedColors.card};
   width: 100%;
   opacity: ${({ opacity }) => opacity};
@@ -58,6 +58,7 @@ type Props = {
   theme: Theme,
   isAnimated?: boolean,
   spacingAfterAnimation?: number,
+  borderRadius?: number,
 };
 
 type State = {
@@ -120,6 +121,7 @@ class ShadowedCard extends React.Component<Props, State> {
       upperContentWrapperStyle = {},
       theme,
       isAnimated,
+      borderRadius,
     } = this.props;
     const currentTheme = getThemeType(theme);
     const {
@@ -158,6 +160,7 @@ class ShadowedCard extends React.Component<Props, State> {
             style={upperContentWrapperStyle}
             isAnimated={isAnimated}
             opacity={contentOpacity}
+            borderRadius={borderRadius}
           >
             <View
               style={contentWrapperStyle}

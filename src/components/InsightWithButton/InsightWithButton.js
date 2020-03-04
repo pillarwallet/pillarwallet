@@ -25,18 +25,19 @@ import Icon from 'components/Icon';
 import Button from 'components/Button';
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import type { Props as ButtonProps } from 'components/Button';
 
 type Props = {
   title?: string,
   itemsList?: string[],
   buttonTitle: string,
   description?: string,
-  buttonProps?: Object,
+  buttonProps?: $Shape<ButtonProps>,
   onButtonPress: () => void,
 };
 
 const MainContainer = styled.View`
-  padding: ${spacing.large}px 30px;
+  padding: 22px ${spacing.large}px 30px;
 `;
 
 const ItemContainer = styled.View`
@@ -81,7 +82,7 @@ const InsightWithButton = ({
 }: Props) => {
   return (
     <InsightWrapper>
-      <ShadowedCard>
+      <ShadowedCard borderRadius={30}>
         <MainContainer>
           {title && (
             <MediumText large center>

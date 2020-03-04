@@ -51,6 +51,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
     >
       <View
         accessible={true}
+        borderRadius={30}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -62,7 +63,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
           Array [
             Object {
               "backgroundColor": "#FFFFFF",
-              "borderRadius": 6,
+              "borderRadius": 30,
               "flexDirection": "column",
               "justifyContent": "flex-start",
               "opacity": 1,
@@ -79,10 +80,10 @@ exports[`Storyshots InsightWithButton with list 1`] = `
             style={
               Array [
                 Object {
-                  "paddingBottom": 20,
-                  "paddingLeft": 30,
-                  "paddingRight": 30,
-                  "paddingTop": 20,
+                  "paddingBottom": 30,
+                  "paddingLeft": 20,
+                  "paddingRight": 20,
+                  "paddingTop": 22,
                 },
                 undefined,
               ]
@@ -412,6 +413,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
     >
       <View
         accessible={true}
+        borderRadius={30}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -423,7 +425,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
           Array [
             Object {
               "backgroundColor": "#FFFFFF",
-              "borderRadius": 6,
+              "borderRadius": 30,
               "flexDirection": "column",
               "justifyContent": "flex-start",
               "opacity": 1,
@@ -440,10 +442,10 @@ exports[`Storyshots InsightWithButton without list 1`] = `
             style={
               Array [
                 Object {
-                  "paddingBottom": 20,
-                  "paddingLeft": 30,
-                  "paddingRight": 30,
-                  "paddingTop": 20,
+                  "paddingBottom": 30,
+                  "paddingLeft": 20,
+                  "paddingRight": 20,
+                  "paddingTop": 22,
                 },
                 undefined,
               ]
