@@ -150,11 +150,11 @@ export default class ExchangeService {
       .catch((error: AxiosError) => ({ error }));
   }
 
-  setTokenAllowance(request: TokenAllowanceRequest) {
+  setTokenAllowance(request: TokenAllowanceRequest, trackId: string) {
     return axios.post(
       buildApiUrl('orders/allowance', '2.0'),
       JSON.stringify(request),
-      this.apiConfig,
+      { ...this.apiConfig, headers: { ...this.apiConfig.headers, trackid: trackId } },
     )
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));
