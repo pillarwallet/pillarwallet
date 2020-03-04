@@ -233,6 +233,7 @@ export const startListeningNotificationsAction = () => {
       return;
     }
     const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
+    console.log('firebaseNotificationsEnabled: ', firebaseNotificationsEnabled);
     if (!firebaseNotificationsEnabled) {
       try {
         await firebaseMessaging.requestPermission();
@@ -248,12 +249,10 @@ export const startListeningNotificationsAction = () => {
     }
 
     if (notificationsListener) return;
-    // TODO: change to other notifications lib as firebase v6 excluded notifications
-    // notificationsListener = firebase.notifications().onNotification(debounce(message => {
-    notificationsListener = () => debounce(message => {
-      if (!message._data || !Object.keys(message._data).length) return;
-      if (checkForSupportAlert(message._data)) return;
-      const notification = processNotification(message._data, wallet.address.toUpperCase());
+    notificationsListener = firebaseMessaging.onMessage(debounce(message => {
+      const messageData = get(message, 'data');
+      if (isEmpty(messageData) || checkForSupportAlert(messageData)) return;
+      const notification = processNotification(messageData, wallet.address.toUpperCase());
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
@@ -301,7 +300,7 @@ export const startListeningNotificationsAction = () => {
         dispatch({ type: ADD_NOTIFICATION, payload: notification });
         dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       }
-    }, 500);
+    }, 500));
   };
 };
 
