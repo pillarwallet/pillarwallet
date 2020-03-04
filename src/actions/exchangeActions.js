@@ -87,6 +87,7 @@ export const takeOfferAction = (
     const {
       accounts: { data: accounts },
       exchange: { exchangeSupportedAssets },
+      user: { data: { walletId } },
     } = getState();
 
     const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
@@ -119,6 +120,7 @@ export const takeOfferAction = (
       provider,
       fromAssetAddress,
       toAssetAddress,
+      walletId,
     };
     const order = await exchangeService.takeOffer(offerRequest, trackId);
     const offerOrderData = get(order, 'data');
@@ -243,7 +245,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established
-      const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount);
+      const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount, userWalletId);
       const responseError = get(response, 'error');
 
       if (responseError) {
@@ -367,12 +369,21 @@ export const setTokenAllowanceAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
+    const {
+      user: { data: { walletId } },
+    } = getState();
+
     const allowanceRequest = {
       provider,
       fromAssetAddress,
       toAssetAddress,
+      walletId,
     };
     const response = await exchangeService.setTokenAllowance(allowanceRequest);
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
 
     if (!response || !response.data || response.error) {
       Toast.show({
@@ -384,10 +395,6 @@ export const setTokenAllowanceAction = (
       return;
     }
     const { data: { to: payToAddress, data } } = response;
-    const {
-      accounts: { data: accounts },
-      assets: { supportedAssets },
-    } = getState();
     const asset = supportedAssets.find(a => a.symbol === formAssetCode);
     const from = getActiveAccountAddress(accounts);
     const gasLimit = await calculateGasEstimate({
