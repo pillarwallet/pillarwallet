@@ -54,7 +54,7 @@ describe('Slide Modal', () => {
         <SlideModal title="title" isVisible onModalHide={onModalHide} />
       </ThemeProvider>);
     const instance = component.root;
-    const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.medium });
+    const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.regular });
     button.props.onPress();
     await delay(400);
     expect(onModalHide).toHaveBeenCalled();
