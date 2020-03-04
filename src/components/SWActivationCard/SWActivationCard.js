@@ -36,6 +36,7 @@ type Props = {
   smartWalletState: Object,
   onButtonPress?: () => void,
   forceRetry?: boolean,
+  title?: string,
 };
 
 type State = {
@@ -49,7 +50,7 @@ class SWActivationCard extends React.Component<Props, State> {
 
   render() {
     const {
-      message, buttonTitle, accounts, smartWalletState, onButtonPress, forceRetry,
+      title, message, buttonTitle, accounts, smartWalletState, onButtonPress, forceRetry,
     } = this.props;
     const { isModalVisible } = this.state;
 
@@ -64,12 +65,11 @@ class SWActivationCard extends React.Component<Props, State> {
         SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
       ].includes(smartWalletStatus.status);
 
-    const description = isDeploying ? 'Smart Wallet is deploying' : message;
-
     return (
       <React.Fragment>
         <InsightWithButton
-          description={description}
+          title={title}
+          description={message}
           buttonTitle={buttonTitle}
           onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
           spinner={isDeploying && !forceRetry}

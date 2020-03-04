@@ -28,7 +28,7 @@ import { LabelBadge } from 'components/LabelBadge';
 import { Wrapper } from 'components/Layout';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { EXCHANGE, CHOOSE_ASSETS_TO_TRANSFER } from 'constants/navigationConstants';
+import { EXCHANGE } from 'constants/navigationConstants';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import type { Theme } from 'models/Theme';
 
@@ -38,6 +38,7 @@ type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   onModalClose: (() => void) => void,
+  deploySmartWallet: () => void,
 };
 
 const ActionsWrapper = styled(Wrapper)`
@@ -48,7 +49,7 @@ const ActionsWrapper = styled(Wrapper)`
 `;
 
 const SWActivationModal = ({
-  navigation, theme, baseFiatCurrency, onModalClose,
+  navigation, theme, baseFiatCurrency, onModalClose, deploySmartWallet,
 }: Props) => {
   const colors = getThemeColors(theme);
 
@@ -73,9 +74,7 @@ const SWActivationModal = ({
         label="I have tokens"
         subtext="Use ETH to deploy contract"
         onPress={() => {
-            onModalClose(() => {
-              navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
-            });
+            onModalClose(deploySmartWallet);
           }}
         color={colors.smartWalletText}
         bordered

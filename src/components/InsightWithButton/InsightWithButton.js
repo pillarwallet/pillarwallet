@@ -59,7 +59,11 @@ const CheckIcon = styled(Icon)`
 `;
 
 const ItemsContainer = styled.View`
-  margin: ${spacing.large}px 0;
+  margin-bottom: ${spacing.large}px;
+`;
+
+const TitleText = styled(MediumText)`
+margin-bottom: ${spacing.large}px;
 `;
 
 const DescriptionText = styled(BaseText)`
@@ -93,9 +97,9 @@ const InsightWithButton = ({
       <ShadowedCard borderRadius={30}>
         <MainContainer>
           {title && (
-            <MediumText large center>
+            <TitleText large center>
               {title}
-            </MediumText>
+            </TitleText>
           )}
           {description && <DescriptionText medium center>{description}</DescriptionText>}
           {itemsList && (

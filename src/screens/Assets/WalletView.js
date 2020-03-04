@@ -420,6 +420,8 @@ class WalletView extends React.Component<Props, State> {
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+    const deploymentErrorMessage = deploymentData.error ?
+      getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
     const isAllInsightListDone = !insightList.some(({ status, key }) => !status && key !== 'biometric');
 
     const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
@@ -449,7 +451,8 @@ class WalletView extends React.Component<Props, State> {
         />
         {blockAssetsView &&
           <SWActivationCard
-            message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
+            title={deploymentErrorMessage.title}
+            message={deploymentErrorMessage.message}
             onButtonPress={deploymentData.error ? () => deploySmartWallet() : null}
             buttonTitle="Retry"
             forceRetry={!!deploymentData.error}

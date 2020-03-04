@@ -1080,13 +1080,15 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+    const deploymentErrorMessage = deploymentData.error ?
+      getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
     const blockView = !isEmpty(sendingBlockedMessage)
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+
     const isSelectedFiat = !isEmpty(selectedFromOption) &&
       fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
-
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
     const colors = getThemeColors(theme);
     const scrollContentStyle = {
@@ -1116,7 +1118,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       >
         {!!blockView &&
         <SWActivationCard
-          message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
+          title={deploymentErrorMessage.title}
+          message={deploymentErrorMessage.message}
           onButtonPress={deploymentData.error ? () => deploySmartWallet() : null}
           buttonTitle="Retry"
           forceRetry={!!deploymentData.error}
