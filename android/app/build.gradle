@@ -120,7 +120,7 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('../debug.keystore')
+            storeFile file('../keystores/debug.keystore')
         }
         staging {
             keyAlias System.getenv('ANDROID_STAGING_KEY_ALIAS') ? System.getenv('ANDROID_STAGING_KEY_ALIAS').toString() : keystoreProperties['stagingKeyAlias']
