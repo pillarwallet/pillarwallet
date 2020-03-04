@@ -21,16 +21,32 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { MediumText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   label: string,
   containerStyle?: Object,
   labelStyle?: Object,
   color?: string,
-}
+  primary?: boolean,
+};
+
+type BadgeProps = Props & {
+  theme: Theme,
+};
+
+const getBackgroundColor = (props: BadgeProps) => {
+  const { theme, color, primary } = props;
+  if (color) {
+    return color;
+  } else if (primary) {
+    return theme.colors.primary;
+  }
+  return theme.colors.positive;
+};
 
 const BadgeWrapper = styled.View`
-  background-color: ${({ color }) => color || themedColors.positive};
+  background-color: ${props => getBackgroundColor(props)};
   padding: 3px 8px;
   border-radius: 12px;
   align-self: flex-start;
@@ -49,7 +65,7 @@ export const LabelBadge = (props: Props) => {
     color,
   } = props;
   return (
-    <BadgeWrapper style={containerStyle} color={color}>
+    <BadgeWrapper style={containerStyle} color={color} {...props}>
       <Label style={labelStyle}>
         {label}
       </Label>

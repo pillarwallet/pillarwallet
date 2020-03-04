@@ -28,9 +28,6 @@ import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
-import { connect } from 'react-redux';
-import ProfileImage from 'components/ProfileImage';
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { responsiveSize } from 'utils/ui';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
@@ -48,7 +45,6 @@ type Props = {
   leftItems?: NavItem[],
   centerItems?: NavItem[],
   sideFlex?: number,
-  user: Object,
   navigation: NavigationScreenProp<*>,
   background?: string,
   floating?: boolean,
@@ -60,7 +56,11 @@ type Props = {
   noPaddingTop?: boolean,
   noBottomBorder?: boolean,
   onClose?: () => void,
-}
+  leftSideFlex?: number,
+  wrapperStyle?: Object,
+  noHorizonatalPadding?: boolean,
+  forceInsetTop?: string,
+};
 
 const Wrapper = styled.View`
   width: 100%;
@@ -78,7 +78,8 @@ const Wrapper = styled.View`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: 15px ${spacing.layoutSides}px;
+  padding-vertical: 15px;
+  ${({ noHorizonatalPadding }) => !noHorizonatalPadding && `padding-horizontal: ${spacing.layoutSides}px;`}
   width: 100%;
   min-height: 58px;
 `;
@@ -94,13 +95,6 @@ const HeaderRow = styled.View`
   width: 100%;
   align-items: center;
   justify-content: space-between;
-`;
-
-const HeaderProfileImage = styled(ProfileImage)``;
-
-const UserButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
 `;
 
 const CenterItems = styled.View`
@@ -132,7 +126,7 @@ const RightItems = styled.View`
 
 const BackIcon = styled(IconButton)`
   position: relative;
-  height: 24px;
+  height: 44px;
   width: 44px;
   padding-left: 10px;
   margin-left: -12px;
@@ -185,8 +179,6 @@ const IconImage = styled(CachedImage)`
   height: 24px;
 `;
 
-const profileImageWidth = 24;
-
 const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
@@ -209,22 +201,35 @@ class HeaderBlock extends React.Component<Props> {
       customOnBack,
       theme,
       transparent,
+      leftSideFlex,
     } = this.props;
     const colors = getThemeColors(theme);
 
     return (
       <HeaderRow>
-        <LeftItems sideFlex={sideFlex} style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}>
+        <LeftItems
+          sideFlex={sideFlex || leftSideFlex}
+          style={!centerItems.length && !rightItems.length && !leftSideFlex ? { flexGrow: 2 } : {}}
+        >
           {(leftItems.length || !!noBack)
             ? leftItems.map((item) => this.renderSideItems(item, LEFT))
             : (
-              <BackIcon
-                icon="back"
-                color={transparent ? colors.control : colors.text}
-                onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
-                fontSize={fontSizes.large}
-                horizontalAlign="flex-start"
-              />)
+              <View
+                style={{
+                  marginTop: -20,
+                  marginBottom: -20,
+                }}
+                key="back"
+              >
+                <BackIcon
+                  icon="back"
+                  color={transparent ? colors.control : colors.text}
+                  onPress={customOnBack || (() => navigation.goBack(null))}
+                  fontSize={fontSizes.large}
+                  horizontalAlign="flex-start"
+                />
+              </View>
+            )
           }
         </LeftItems>
         {!!centerItems.length &&
@@ -247,9 +252,6 @@ class HeaderBlock extends React.Component<Props> {
     const { style: itemStyle = {} } = item;
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
-    if (item.user || item.userIcon) {
-      return this.renderUser(!item.userIcon);
-    }
     if (item.title) {
       return (
         <View
@@ -350,33 +352,6 @@ class HeaderBlock extends React.Component<Props> {
     return null;
   };
 
-  renderUser = (showName: boolean) => {
-    const { user, navigation } = this.props;
-    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
-    return (
-      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
-        <HeaderProfileImage
-          uri={userImageUri}
-          userName={user.username}
-          diameter={profileImageWidth}
-          noShadow
-          borderWidth={0}
-        />
-        {showName &&
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            marginRight: spacing.medium,
-          }}
-        >
-          <HeaderTitleText style={{ marginLeft: 8 }}>{user.username}</HeaderTitleText>
-        </View>}
-      </UserButton>
-    );
-  };
-
   render() {
     const {
       floating,
@@ -384,6 +359,9 @@ class HeaderBlock extends React.Component<Props> {
       light,
       noPaddingTop,
       noBottomBorder,
+      wrapperStyle,
+      noHorizonatalPadding,
+      forceInsetTop = 'always',
     } = this.props;
     const updatedColors = {};
     if (floating) {
@@ -401,13 +379,14 @@ class HeaderBlock extends React.Component<Props> {
         <Wrapper
           floating={floating}
           noBottomBorder={noBottomBorder}
+          style={wrapperStyle}
         >
           <SafeArea
-            forceInset={{ bottom: 'never', top: 'always' }}
+            forceInset={{ bottom: 'never', top: forceInsetTop }}
             noPaddingTop={noPaddingTop}
             androidStatusbarHeight={StatusBar.currentHeight}
           >
-            <HeaderContentWrapper>
+            <HeaderContentWrapper noHorizonatalPadding={noHorizonatalPadding}>
               {this.renderHeaderContent()}
             </HeaderContentWrapper>
           </SafeArea>
@@ -417,10 +396,4 @@ class HeaderBlock extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  user: { data: user },
-}) => ({
-  user,
-});
-
-export default withTheme(connect(mapStateToProps)(HeaderBlock));
+export default withTheme(HeaderBlock);

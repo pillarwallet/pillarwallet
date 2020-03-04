@@ -766,11 +766,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       provider,
       fromAsset,
       toAsset,
+      trackId = '',
     } = offer;
     const { address: fromAssetAddress, code: fromAssetCode } = fromAsset;
     const { address: toAssetAddress } = toAsset;
     this.setState({ pressedTokenAllowanceId: _id }, () => {
-      setTokenAllowance(fromAssetCode, fromAssetAddress, toAssetAddress, provider, (response) => {
+      setTokenAllowance(fromAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, (response) => {
         this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
         if (isEmpty(response)) return;
         setExecutingTransaction();
@@ -1277,8 +1278,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   resetOffers: () => dispatch(resetOffersAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
-  setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, callback) => dispatch(
-    setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, callback),
+  setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback) => dispatch(
+    setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback),
   ),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
