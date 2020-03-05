@@ -36,7 +36,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SWActivationCard from 'components/SWActivationCard';
@@ -58,7 +58,7 @@ import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // constants
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -88,6 +88,8 @@ import type { Theme } from 'models/Theme';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
+import { HotSwapsHorizontalList, HotSwapsGridList } from './HotSwapsList';
+
 
 const ListHeader = styled.View`
   width: 100%;
@@ -116,6 +118,13 @@ const PromoText = styled(BaseText)`
   ${fontStyles.medium};
   color: ${themedColors.secondaryText};
   text-align: center;
+`;
+
+const FooterWrapper = styled.View`
+  border-top-width: 1px;
+  border-top-color: ${themedColors.tertiary};
+  background-color: ${themedColors.card};
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
 `;
 
 type Props = {
@@ -1040,6 +1049,24 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ formOptions: newOptions });
   };
 
+  generatePopularSwaps = () => {
+    const { assets, exchangeSupportedAssets } = this.props;
+    const fromOptions = this.generateAssetsOptions(assets);
+    const toOptions = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
+    return POPULAR_SWAPS.filter(({ from, to }) => {
+      return fromOptions.find(({ key }) => key === from) && toOptions.find(({ key }) => key === to);
+    });
+  }
+
+  onSwapPress = (fromAssetCode, toAssetCode) => {
+    const { assets, exchangeSupportedAssets } = this.props;
+    const fromOptions = this.generateAssetsOptions(assets);
+    const toOptions = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
+    const fromAsset = fromOptions.find(option => option.key === fromAssetCode);
+    const toAsset = toOptions.find(option => option.key === toAssetCode);
+    this.handleFormChange({ fromInput: { selector: fromAsset, input: '' }, toInput: { selector: toAsset, input: '' } });
+  }
+
   render() {
     const {
       offers,
@@ -1102,6 +1129,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       paddingVertical: 10,
     };
 
+    const swaps = this.generatePopularSwaps();
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -1132,6 +1161,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           keyboardShouldPersistTaps="handled"
           disableOnAndroid
         >
+          <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />
           <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
             <Form
               ref={node => { this.exchangeForm = node; }}
@@ -1162,7 +1192,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             )}
             ListEmptyComponent={isSubmitted
               && (
-                <ESWrapper style={{ marginTop: '15%' }}>
+                <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
                   <EmptyStateParagraph
                     title="No live offers"
                     bodyText="Currently no matching offers from exchange services are provided.
@@ -1173,6 +1203,14 @@ class ExchangeScreen extends React.Component<Props, State> {
                 </ESWrapper>
               )}
           />}
+          {!!isSubmitted && (
+            <FooterWrapper>
+              <MediumText medium style={{ marginBottom: spacing.medium }}>
+                Try these popular swaps
+              </MediumText>
+              <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
+            </FooterWrapper>
+          )}
         </ScrollView>}
       </ContainerWithHeader>
     );
