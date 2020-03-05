@@ -142,7 +142,6 @@ import {
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import {
   keyPairAddress,
@@ -179,7 +178,7 @@ import type {
 
 import { initialAssets } from 'fixtures/assets';
 
-import { addAccountAction } from 'actions/accountsActions';
+import { removeAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
@@ -294,7 +293,7 @@ export const loadBitcoinAddressesAction = () => {
 
     if (loaded.length) {
       dispatch(setBitcoinAddressesAction(loaded));
-      dispatch(addAccountAction(loaded[0], ACCOUNT_TYPES.BITCOIN_WALLET));
+      dispatch(removeAccountAction(loaded[0]));
     }
   };
 };
