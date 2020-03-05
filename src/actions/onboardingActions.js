@@ -91,6 +91,7 @@ import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'ac
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
+import { resetAppState } from 'actions/authActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -259,7 +260,11 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
     // STEP 0: Clear local storage and reset app state
-    await storage.removeAll();
+    if (isImported) {
+      await resetAppState(dispatch, getState);
+    } else {
+      await storage.removeAll();
+    }
 
     dispatch({ type: UPDATE_ACCOUNTS, payload: [] });
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
