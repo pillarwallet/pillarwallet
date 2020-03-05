@@ -47,7 +47,7 @@ import { TYPE_ACCEPTED, TYPE_RECEIVED, UPDATE_INVITATIONS } from 'constants/invi
 import { RESET_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
-import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
+import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -129,7 +129,7 @@ const getTokenWalletAndRegister = async (
 
   dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
   dispatch({
-    type: UPDATE_USER,
+    type: SET_USER,
     payload: {
       user: userInfo,
       state: userState,
@@ -260,6 +260,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     // STEP 0: Clear local storage and reset app state
     await storage.removeAll();
+
     dispatch({ type: UPDATE_ACCOUNTS, payload: [] });
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
     dispatch({ type: UPDATE_INVITATIONS, payload: [] });
