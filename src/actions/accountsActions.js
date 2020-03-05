@@ -185,7 +185,9 @@ export const removeAccountAction = (accountAddress: string) => {
     const { accounts: { data: accounts } } = getState();
 
     const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
-
+    if (accounts.length === updatedAccounts.length) {
+      return;
+    }
     dispatch({
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,
