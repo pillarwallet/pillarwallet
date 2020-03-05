@@ -106,9 +106,11 @@ const getTokenWalletAndRegister = async (
   user: Object,
   dispatch: Dispatch,
 ) => {
+  // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
   await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
   await firebaseMessaging.requestPermission().catch(() => {});
   const fcmToken = await firebaseMessaging.getToken().catch(() => null);
+
   if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
   const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken || 'NotAvailable', user.username);
   // TODO: remove 'NotAvailable' once back-end makes fcmToken optional

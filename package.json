@@ -111,6 +111,7 @@
     "react-native-level-fs": "^3.0.0",
     "react-native-linear-gradient": "2.5.4",
     "react-native-modal": "^9.0.0",
+    "react-native-notifications": "^3.1.2",
     "react-native-os": "^1.0.1",
     "react-native-parsed-text": "^0.0.21",
     "react-native-permissions": "^1.2.1",

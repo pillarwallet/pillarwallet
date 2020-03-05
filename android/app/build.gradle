@@ -143,10 +143,9 @@ android {
         versionCode System.getenv('APP_BUILD_NUMBER') ? System.getenv('APP_BUILD_NUMBER').toInteger() : 1
         versionName System.getenv('buildNumber') ? System.getenv('buildNumber') : '1.0'
         multiDexEnabled true
-        // react-native-camera:
-        missingDimensionStrategy 'react-native-camera', 'general'
-        // react-native-image-crop-picker:
-        vectorDrawables.useSupportLibrary = true
+        missingDimensionStrategy 'react-native-camera', 'general' // react-native-camera
+        vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
+        missingDimensionStrategy "RNNotifications.reactNativeVersion", "reactNative59" // react-native-notifications
     }
 
     splits {
@@ -231,11 +230,14 @@ dependencies {
     implementation project(':lottie-react-native')
     implementation project(':@react-native-community_async-storage')
     implementation project(':@matt-block_react-native-in-app-browser')
+    implementation project(':react-native-notifications')
+    implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-push-notification
+    implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-push-notification override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
     implementation "androidx.multidex:multidex:${rootProject.ext.multidex_version}" // custom: support multidex builds
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation "com.facebook.react:react-native:+"
 }
 
 // Run this once to be able to run the application with BUCK
@@ -245,4 +247,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-apply plugin: 'com.google.gms.google-services' // @react-native-firebase/app init
+apply plugin: 'com.google.gms.google-services' // @react-native-firebase/app init, react-native-notification

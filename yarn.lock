@@ -14800,6 +14800,11 @@ react-native-modal@^9.0.0:
     prop-types "^15.6.2"
     react-native-animatable "^1.2.4"
 
+react-native-notifications@^3.1.2:
+  version "3.1.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-notifications/-/react-native-notifications-3.1.2.tgz#fb679e40e81b121041604a6f7403878ed48e099f"
+  integrity sha1-+2eeQOgbEhBBYEpvdAOHjtSOCZ8=
+
 react-native-os@^1.0.1:
   version "1.2.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-os/-/react-native-os-1.2.6.tgz#1bb16d78ccad1143972183a04f443cf1af9fbefa"

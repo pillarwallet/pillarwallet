@@ -89,6 +89,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 import { reportLog } from 'utils/common';
 
+
 const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
@@ -233,7 +234,6 @@ export const startListeningNotificationsAction = () => {
       return;
     }
     const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
-    console.log('firebaseNotificationsEnabled: ', firebaseNotificationsEnabled);
     if (!firebaseNotificationsEnabled) {
       try {
         await firebaseMessaging.requestPermission();

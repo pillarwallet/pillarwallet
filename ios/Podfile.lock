@@ -113,6 +113,8 @@ PODS:
   - react-native-intercom (12.3.0):
     - Intercom (~> 5.0)
     - React/Core
+  - react-native-notifications (3.1.2):
+    - React
   - react-native-randombytes (3.5.3):
     - React
   - react-native-splash-screen (3.2.0):
@@ -237,6 +239,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-intercom (from `../node_modules/react-native-intercom`)
+  - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-udp (from `../node_modules/react-native-udp`)
@@ -320,6 +323,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fetch-blob"
   react-native-intercom:
     :path: "../node_modules/react-native-intercom"
+  react-native-notifications:
+    :path: "../node_modules/react-native-notifications"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-splash-screen:
@@ -403,6 +408,7 @@ SPEC CHECKSUMS:
   react-native-camera: 9c50d7def800895e7991ccda6203929553ceec9c
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
+  react-native-notifications: 16c03890f6656ecb3df4b981443c41b11b47bf10
   react-native-randombytes: d3184d351604f78e019535178766590188bbc133
   react-native-splash-screen: a49be22f0f6648b8416f3bd28258645eeaa5b42b
   react-native-udp: 1dc04d3429ff13a251126092feeb35e175a1b0d8
@@ -431,6 +437,6 @@ SPEC CHECKSUMS:
   TcpSockets: 79fa266772261bb627e8634c5987a7ad88ef7dfd
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 86eb88ee6e182725c9ada9f03a15f2925db1db8d
+PODFILE CHECKSUM: 28bfdb9e4e1c00f1e972352a4d03dc7e39681305
 
 COCOAPODS: 1.5.3

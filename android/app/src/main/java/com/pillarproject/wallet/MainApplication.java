@@ -1,7 +1,5 @@
 package com.pillarproject.wallet;
 
-import android.app.Application;
-
 import androidx.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
@@ -49,6 +47,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.wix.reactnativenotifications.RNNotificationsPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -100,7 +99,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new LottiePackage(),
             new AsyncStoragePackage(),
             new RNInAppBrowserPackage(),
-            new NativeShadowPackage()
+            new NativeShadowPackage(),
+            new RNNotificationsPackage(MainApplication.this)
       );
     }
 

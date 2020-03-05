@@ -57,12 +57,12 @@
 
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
-<!--        &lt;!&ndash; react-native-firebase override push notification subscription &ndash;&gt;-->
-<!--        <service android:name="com.pillarproject.wallet.PillarFirebaseMessagingService">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
+        <!-- react-native-notifications override push notification subscription -->
+        <service android:name="com.pillarproject.wallet.PillarFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
 <!--        &lt;!&ndash; react-native-firebase trigger FCM instance ID event &ndash;&gt;-->
 <!--        <service android:name="io.invertase.firebase.messaging.RNFirebaseInstanceIdService">-->
@@ -71,10 +71,10 @@
 <!--            </intent-filter>-->
 <!--        </service>-->
 
-<!--        &lt;!&ndash; react-native-firebase custom push notification icon &ndash;&gt;-->
-<!--        <meta-data-->
-<!--            android:name="com.google.firebase.messaging.default_notification_icon"-->
-<!--            android:resource="@mipmap/ic_notification" />-->
+        <!-- react-native-notifications custom push notification icon -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_notification" />
 
     </application>
 
