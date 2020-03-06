@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { StatusBar, View, TouchableOpacity } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -29,8 +28,6 @@ import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
-import ProfileImage from 'components/ProfileImage';
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { responsiveSize } from 'utils/ui';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
@@ -63,7 +60,6 @@ type Props = {
   wrapperStyle?: Object,
   noHorizonatalPadding?: boolean,
   forceInsetTop?: string,
-  user: Object,
 };
 
 const Wrapper = styled.View`
@@ -99,13 +95,6 @@ const HeaderRow = styled.View`
   width: 100%;
   align-items: center;
   justify-content: space-between;
-`;
-
-const HeaderProfileImage = styled(ProfileImage)``;
-
-const UserButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
 `;
 
 const CenterItems = styled.View`
@@ -190,8 +179,6 @@ const IconImage = styled(CachedImage)`
   height: 24px;
 `;
 
-const profileImageWidth = 24;
-
 const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
@@ -259,31 +246,12 @@ class HeaderBlock extends React.Component<Props> {
     );
   };
 
-  renderUser = () => {
-    const { user, navigation } = this.props;
-    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
-    return (
-      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
-        <HeaderProfileImage
-          uri={userImageUri}
-          userName={user.username}
-          diameter={profileImageWidth}
-          noShadow
-          borderWidth={0}
-        />
-      </UserButton>
-    );
-  };
-
   renderSideItems = (item, type = '') => {
     const { navigation, theme, onClose } = this.props;
     const colors = getThemeColors(theme);
     const { style: itemStyle = {} } = item;
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
-    if (item.userIcon) {
-      return this.renderUser();
-    }
     if (item.title) {
       return (
         <View
@@ -428,10 +396,4 @@ class HeaderBlock extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  user: { data: user },
-}) => ({
-  user,
-});
-
-export default withTheme(connect(mapStateToProps)(HeaderBlock));
+export default withTheme(HeaderBlock);

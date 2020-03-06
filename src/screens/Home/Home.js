@@ -39,6 +39,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
 import IconButton from 'components/IconButton';
+import ProfileImage from 'components/ProfileImage';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -46,6 +47,7 @@ import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
   MENU,
+  MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -139,6 +141,15 @@ type State = {
   scrollY: Animated.Value,
   isScanning: boolean,
 };
+
+const profileImageWidth = 24;
+
+const HeaderProfileImage = styled(ProfileImage)``;
+
+const UserButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
 
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
@@ -293,6 +304,22 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  renderUser = () => {
+    const { user, navigation } = this.props;
+    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
+    return (
+      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
+        <HeaderProfileImage
+          uri={userImageUri}
+          userName={user.username}
+          diameter={profileImageWidth}
+          noShadow
+          borderWidth={0}
+        />
+      </UserButton>
+    );
+  };
+
   render() {
     const {
       cancelInvitation,
@@ -403,7 +430,7 @@ class HomeScreen extends React.Component<Props, State> {
               ),
             },
           ],
-          centerItems: [{ userIcon: true }],
+          centerItems: [{ custom: this.renderUser() }],
           rightItems: [
             {
               link: 'Support',
