@@ -39,6 +39,7 @@ import {
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
+  IMPORTED,
 } from 'constants/walletConstants';
 import { SigningKey } from 'ethers/utils/signing-key';
 
@@ -134,6 +135,7 @@ const walletReducer = (
         ...state,
         onboarding: { ...state.onboarding, importedWallet, apiUser },
         backupStatus: { ...state.backupStatus, isImported: true },
+        walletState: IMPORTED,
       };
     case RESET_WALLET_IMPORT:
       return {
