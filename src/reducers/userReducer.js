@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_USERNAME, UPDATE_USER, USER_PHONE_VERIFIED } from 'constants/userConstants';
+import { SET_USERNAME, UPDATE_USER, USER_PHONE_VERIFIED, SET_USER } from 'constants/userConstants';
 import merge from 'lodash.merge';
 
 export type UserReducerState = {
@@ -43,6 +43,12 @@ const userReducer = (
   action: UserReducerAction,
 ): UserReducerState => {
   switch (action.type) {
+    case SET_USER:
+      return {
+        ...state,
+        data: { ...initialState.data, ...action.payload.user },
+        userState: action.payload.state,
+      };
     case UPDATE_USER:
       const { state: userState, user } = action.payload;
       return {

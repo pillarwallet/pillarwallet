@@ -33,7 +33,7 @@ import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
-import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
+import { SET_USER, REGISTERED } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -189,7 +189,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
+      { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
@@ -257,7 +257,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
+      { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
@@ -337,7 +337,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
+      { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       { type: UPDATE_RATES, payload: mockExchangeRates },
