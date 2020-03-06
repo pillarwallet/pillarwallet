@@ -132,10 +132,9 @@ export async function generateKeyPairThreadPool(
   const derivePathBase = 'm/44/60\'/0\'/0/0';
   let promiseJobs = [];
   if (connectionsKeyPairCount <= PRE_KEY_THRESHOLD) {
-    const isIOSDebuggingEnabled = Platform.OS === 'ios'
-      && typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
+    const isDebuggingEnabled = typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
       && location.href.toLowerCase().includes('debug'); // eslint-disable-line no-restricted-globals,no-undef
-    if (isIOSDebuggingEnabled) {
+    if (isDebuggingEnabled && __DEV__) {
       promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
     } else {
       const threads = await threadPoolCreation(5);
