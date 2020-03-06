@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Platform } from 'react-native';
 import { utils } from 'ethers';
 import { Thread } from 'react-native-threads';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
@@ -133,7 +134,8 @@ export async function generateKeyPairThreadPool(
   if (connectionsKeyPairCount <= PRE_KEY_THRESHOLD) {
     const isDebuggingEnabled = typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
       && location.href.toLowerCase().includes('debug'); // eslint-disable-line no-restricted-globals,no-undef
-    if (isDebuggingEnabled) {
+    const isAndroidDev = __DEV__ && Platform.OS === 'android';
+    if (isDebuggingEnabled || isAndroidDev) {
       promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
     } else {
       const threads = await threadPoolCreation(5);
