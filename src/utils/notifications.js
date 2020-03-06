@@ -20,6 +20,7 @@
 import { Platform } from 'react-native';
 import { utils } from 'ethers';
 import { Notifications } from 'react-native-notifications';
+// $FlowFixMe – throws "react-native-android-badge" not found
 import BadgeAndroid from 'react-native-android-badge';
 
 // constants

@@ -181,6 +181,22 @@ export const addAccountAction = (
   };
 };
 
+export const removeAccountAction = (accountAddress: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+
+    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    if (accounts.length === updatedAccounts.length) {
+      return;
+    }
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: updatedAccounts,
+    });
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
 export const setActiveAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
