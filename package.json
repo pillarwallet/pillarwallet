@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "clean": "rimraf node_modules ios/build ios/Pods ios/Podfile.lock",
-    "android": "node node_modules/react-native/local-cli/cli.js run-android --variant=devDebug",
+    "android": "node node_modules/react-native/local-cli/cli.js run-android",
     "ios": "node node_modules/react-native/local-cli/cli.js run-ios",
     "generate:ios:ipa": "mkdir ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",
     "build:ios": "node node_modules/react-native/local-cli/cli.js bundle --entry-file='index.js' --bundle-output='./ios/pillarwallet/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
