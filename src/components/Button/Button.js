@@ -246,7 +246,7 @@ const getButtonFontSize = (props) => {
 
 const ButtonIcon = styled(Icon)`
   font-size: ${(props) => getButtonFontSize(props)};
-  ${({ isOnLeft }) => isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
+  ${({ isOnLeft }) => isOnLeft ? 'margin-right: 6px;' : 'margin-left: 6px;'}
   color: ${({ theme }) => theme.colors.text};
   line-height: ${props => getButtonFontSize(props)};
 `;
