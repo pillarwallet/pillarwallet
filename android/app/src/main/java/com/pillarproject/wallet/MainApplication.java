@@ -3,6 +3,7 @@ package com.pillarproject.wallet;
 import androidx.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
+import me.jhen.react.BadgePackage;
 import io.sentry.RNSentryPackage;
 
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
@@ -64,6 +65,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new BadgePackage(),
             new RNSentryPackage(),
             new ReactNativeFirebaseAppPackage(),
             new ReactNativeFirebaseMessagingPackage(),

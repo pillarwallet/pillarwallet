@@ -195,6 +195,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-android-badge')
     implementation project(':@sentry_react-native')
     implementation project(':@react-native-firebase_messaging')
     implementation project(':@react-native-firebase_iid')

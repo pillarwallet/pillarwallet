@@ -25,6 +25,7 @@ import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
+import { Notifications } from 'react-native-notifications';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -82,7 +83,7 @@ import { SOCKET } from 'services/sockets';
 import { firebaseMessaging } from 'services/firebase';
 
 // utils
-import { processNotification } from 'utils/notifications';
+import { processNotification, resetAppNotificationsBadgeNumber } from 'utils/notifications';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -316,11 +317,15 @@ export const stopListeningNotificationsAction = () => {
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Dispatch) => {
     await SOCKET.init();
-    // TODO: change to other notifications lib as firebase v6 excluded notifications
-    const notificationOpen = {}; // await firebase.notifications().getInitialNotification();
-    if (!isEmpty(notificationOpen)) {
-      checkForSupportAlert(notificationOpen.notification._data);
-      const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
+    /*
+    * TODO: Android initial notification and onOpened event are not working
+    * seems like native lifecycle onIntent event is not fired
+    * this can be linked to 0.59 version support and we should check after upgrade to latest
+    */
+    const initialNotification = await Notifications.getInitialNotification();
+    if (!isEmpty(initialNotification)) {
+      checkForSupportAlert(initialNotification.payload);
+      const { type, navigationParams } = processNotification(initialNotification.payload) || {};
       if (type === SIGNAL) {
         dispatch(getExistingChatsAction());
       }
@@ -329,19 +334,19 @@ export const startListeningOnOpenNotificationAction = () => {
         lastActiveScreen: notificationRoute,
         lastActiveScreenParams: navigationParams,
       });
-      // firebase.notifications().setBadge(0);
+      resetAppNotificationsBadgeNumber();
     }
     if (notificationsOpenerListener) return;
-    // notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
-    notificationsOpenerListener = (message) => {
-      // $FlowFixMe TODO: add new push notifications lib
-      checkForSupportAlert(message.notification._data);
-      // firebase.notifications().setBadge(0);
+    notificationsOpenerListener = (openedNotification, completion) => {
+      completion({ alert: true, sound: true, badge: false });
+      if (isEmpty(openedNotification)) return;
+      const { payload: openedNotificationPayload } = openedNotification;
+      checkForSupportAlert(openedNotificationPayload);
+      resetAppNotificationsBadgeNumber();
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
-      // $FlowFixMe TODO: add new push notifications lib
-      const { type, asset, navigationParams = {} } = processNotification(message.notification._data) || {};
+      const { type, asset, navigationParams = {} } = processNotification(openedNotificationPayload) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
@@ -380,14 +385,15 @@ export const startListeningOnOpenNotificationAction = () => {
         navigate(navigateToAppAction);
       }
     };
+    Notifications.events().registerNotificationOpened(notificationsOpenerListener);
   };
 };
 
 export const stopListeningOnOpenNotificationAction = () => {
   return () => {
     if (!notificationsOpenerListener) return;
-    notificationsOpenerListener();
     notificationsOpenerListener = null;
+    Notifications.events().registerNotificationOpened(null);
   };
 };
 

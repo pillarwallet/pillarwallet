@@ -14,11 +14,13 @@
 #import "RNSplashScreen.h"
 #import "RCTLinkingManager.h"
 #import "Intercom/intercom.h"
+#import "RNNotifications.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [RNNotifications startMonitorNotifications];
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
   }

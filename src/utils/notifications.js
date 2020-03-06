@@ -17,7 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Platform } from 'react-native';
 import { utils } from 'ethers';
+import { Notifications } from 'react-native-notifications';
+import BadgeAndroid from 'react-native-android-badge';
 
 // constants
 import {
@@ -203,3 +206,11 @@ export const mapInviteNotifications = (notifications: ApiNotification[]): Object
   .filter(({ createdAt, ...rest }) => !isEmpty(rest)) // filter if notification empty after parsing
   .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
   .sort((a, b) => b.createdAt - a.createdAt);
+
+export const resetAppNotificationsBadgeNumber = () => {
+  if (Platform.OS === 'ios') {
+    Notifications.ios.setBadgeCount(0);
+    return;
+  }
+  BadgeAndroid.setBadge(0);
+};

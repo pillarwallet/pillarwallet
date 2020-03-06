@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Animated, RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
+import { Animated, RefreshControl, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -84,6 +84,7 @@ import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
+import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -203,10 +204,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     logScreenView('View home', 'Home');
 
-    if (Platform.OS === 'ios') {
-      // TODO: change to other notifications lib as firebase v6 excluded notifications
-      // firebase.notifications().setBadge(0);
-    }
+    resetAppNotificationsBadgeNumber();
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
