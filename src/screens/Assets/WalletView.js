@@ -81,7 +81,8 @@ import {
 import { hideAssetAction } from 'actions/userSettingsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { deploySmartWalletAction, dismissSmartWalletUpgradeAction } from 'actions/smartWalletActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
@@ -121,7 +122,8 @@ type Props = {
   deploySmartWallet: () => void,
   showDeploySmartWallet?: boolean,
   theme: Theme,
-  dismissSmartWalletUpgrade: () => void,
+  dismissSmartWalletInsight: () => void,
+  SWInsightDismissed: boolean,
 }
 
 type State = {
@@ -381,7 +383,8 @@ class WalletView extends React.Component<Props, State> {
       fetchAssetsBalances,
       fetchAllCollectiblesData,
       theme,
-      dismissSmartWalletUpgrade,
+      dismissSmartWalletInsight,
+      SWInsightDismissed,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -475,7 +478,7 @@ class WalletView extends React.Component<Props, State> {
           navigation={navigation}
         />}
         {!blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
-          smartWalletState.upgradeDismissed ?
+          SWInsightDismissed ?
             (
               <SWActivationCard
                 message="To start sending and exchanging assets you need to activate Smart Wallet"
@@ -487,7 +490,7 @@ class WalletView extends React.Component<Props, State> {
                 title="Why Smart Wallet knocks out your old private key wallet?"
                 itemsList={initialSWInsights}
                 buttonTitle="Wow, that's cool"
-                onButtonPress={dismissSmartWalletUpgrade}
+                onButtonPress={dismissSmartWalletInsight}
               />
             )
           )
@@ -543,6 +546,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  insights: { SWInsightDismissed },
 }: RootReducerState): $Shape<Props> => ({
   assetsSearchState,
   assetsSearchResults,
@@ -551,6 +555,7 @@ const mapStateToProps = ({
   accounts,
   smartWalletState,
   smartWalletFeatureEnabled,
+  SWInsightDismissed,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -574,7 +579,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction(true)),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
-  dismissSmartWalletUpgrade: () => dispatch(dismissSmartWalletUpgradeAction()),
+  dismissSmartWalletInsight: () => dispatch(dismissSmartWalletInsightAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView)));

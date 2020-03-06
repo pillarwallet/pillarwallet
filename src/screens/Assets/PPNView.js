@@ -27,7 +27,8 @@ import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { fetchVirtualAccountBalanceAction, dismissPPNInsightAction } from 'actions/smartWalletActions';
+import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
+import { dismissPPNInsightAction } from 'actions/insightsActions';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -97,6 +98,7 @@ type Props = {
   fetchTransactionsHistory: () => void,
   theme: Theme,
   dismissPPNInsight: () => void,
+  PPNInsightDismissed: boolean,
 }
 
 type State = {
@@ -161,10 +163,10 @@ class PPNView extends React.Component<Props, State> {
 
   renderInsight = (disableTopUpAndSettle) => {
     const {
-      smartWalletState, dismissPPNInsight, availableStake, navigation,
+      dismissPPNInsight, availableStake, navigation, PPNInsightDismissed,
     } = this.props;
     if (disableTopUpAndSettle) {
-      if (smartWalletState.PPNInsightDismissed) {
+      if (PPNInsightDismissed) {
         return (
           <SWActivationCard
             message="To use Pillar Network you need to activate Smart Wallet"
@@ -382,6 +384,7 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
+  insights: { PPNInsightDismissed },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -389,6 +392,7 @@ const mapStateToProps = ({
   accounts,
   contacts,
   contactsSmartAddresses,
+  PPNInsightDismissed,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -54,8 +54,6 @@ import {
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
-  DISMISS_SMART_WALLET_UPGRADE,
-  DISMISS_PPN_INSIGHT,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -63,6 +61,10 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
   SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
 } from 'constants/smartWalletConstants';
+import {
+  DISMISS_SMART_WALLET_INSIGHT,
+  DISMISS_PPN_INSIGHT,
+} from 'constants/insightsConstants';
 import {
   UPDATE_PAYMENT_NETWORK_BALANCES,
   UPDATE_PAYMENT_NETWORK_STAKED,
@@ -205,8 +207,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       dispatch(loadBitcoinBalancesAction());
 
-      if (appSettings.smartWalletUpgradeDismissed) {
-        dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
+      if (appSettings.smartWalletInsightDismissed) {
+        dispatch({ type: DISMISS_SMART_WALLET_INSIGHT });
       }
 
       if (appSettings.PPNInsightDismissed) {
