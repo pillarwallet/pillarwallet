@@ -35,7 +35,7 @@ const CardOutter = styled.View`
 const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
-  border-radius: ${({ borderRadius }) => borderRadius || 6}px;
+  border-radius: ${({ borderRadius }) => borderRadius}px;
   background: ${themedColors.card};
   width: 100%;
   opacity: ${({ opacity }) => opacity};
@@ -153,14 +153,14 @@ class ShadowedCard extends React.Component<Props, State> {
             left: -(SHADOW_LENGTH / 2),
             opacity: disabled ? 0.4 : 0.8,
           }}
-          shadowRadius={4}
+          shadowRadius={(borderRadius || 6) - 2}
         />}
         <TouchableWithoutFeedback onPress={onPress}>
           <ContentWrapper
             style={upperContentWrapperStyle}
             isAnimated={isAnimated}
             opacity={contentOpacity}
-            borderRadius={borderRadius}
+            borderRadius={borderRadius || 6}
           >
             <View
               style={contentWrapperStyle}
