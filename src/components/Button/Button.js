@@ -53,8 +53,6 @@ export type Props = {
   flexRight?: boolean,
   small?: boolean,
   extraSmall?: boolean,
-  icon?: string,
-  iconSize?: string,
   listItemButton?: boolean,
   height?: number,
   debounceTime?: number,
@@ -63,6 +61,10 @@ export type Props = {
   isLoading?: boolean,
   regularText?: boolean,
   theme: Theme,
+  leftIconName?: string,
+  leftIconStyle?: Object,
+  rightIconName?: string,
+  rightIconStyle?: Object,
 };
 
 type State = {
@@ -244,10 +246,8 @@ const getButtonFontSize = (props) => {
 };
 
 const ButtonIcon = styled(Icon)`
-  font-size: ${({ iconSize = 'medium' }) => fontSizes[iconSize]};
-  margin-horizontal: ${props => props.customTheme.iconHorizontalMargin || props.customTheme.iconHorizontalMargin === 0
-    ? props.customTheme.iconHorizontalMargin
-    : props.marginRight || 8}px;
+  font-size: ${(props) => getButtonFontSize(props)};
+  ${({ isOnLeft }) => isOnLeft ? 'margin-right: 6px;' : 'margin-left: 6px;'}
   color: ${({ theme }) => theme.colors.text};
   line-height: ${props => getButtonFontSize(props)};
 `;
@@ -394,6 +394,30 @@ class Button extends React.Component<Props, State> {
     );
   };
 
+  renderButtonContent = ({ customTheme, updatedTheme }) => {
+    const {
+      isLoading,
+      title,
+      leftIconName,
+      leftIconStyle,
+      rightIconName,
+      rightIconStyle,
+    } = this.props;
+
+    if (isLoading) {
+      return (
+        <Spinner width={20} height={20} />
+      );
+    }
+    return (
+      <React.Fragment>
+        {!!leftIconName && <ButtonIcon name={leftIconName} theme={updatedTheme} isOnLeft style={leftIconStyle} />}
+        {!!title && this.renderButtonText(customTheme, updatedTheme)}
+        {!!rightIconName && <ButtonIcon name={rightIconName} theme={updatedTheme} style={rightIconStyle} />}
+      </React.Fragment>
+    );
+  };
+
   render() {
     const customTheme = themes[getThemeType(this.props)];
     const {
@@ -418,17 +442,7 @@ class Button extends React.Component<Props, State> {
         borderRadius={this.props.small ? 3 : 6}
         style={style}
       >
-        {!!isLoading && <Spinner width={20} height={20} />}
-        {!!this.props.icon && !isLoading &&
-          <ButtonIcon
-            marginRight={this.props.marginRight}
-            iconSize={this.props.iconSize}
-            name={this.props.icon}
-            customTheme={customTheme}
-            theme={updatedTheme}
-          />
-        }
-        {!!this.props.title && !isLoading && this.renderButtonText(customTheme, updatedTheme)}
+        {this.renderButtonContent({ customTheme, updatedTheme })}
         {children}
       </ButtonWrapper>
     );

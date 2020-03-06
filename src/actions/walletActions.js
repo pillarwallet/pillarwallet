@@ -33,6 +33,8 @@ import {
   BACKUP_WALLET,
   REMOVE_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
+  UPDATE_WALLET_STATE,
+  IMPORTING,
 } from 'constants/walletConstants';
 import { PIN_CODE_CONFIRMATION, NEW_PROFILE } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
@@ -47,6 +49,11 @@ import { registerWalletAction } from './onboardingActions';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: IMPORTING,
+    });
+
     try {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
 
@@ -83,6 +90,11 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
 
 export const importWalletFromPrivateKeyAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: IMPORTING,
+    });
+
     const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);

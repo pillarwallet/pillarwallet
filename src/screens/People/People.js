@@ -48,7 +48,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
-import Button from 'components/Button/Button';
+import Button from 'components/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -287,8 +287,8 @@ class PeopleScreen extends React.Component<Props, State> {
             height={80}
             onPress={() => this.manageConnection(actionType, data)}
             title={capitalize(title)}
-            icon={icon}
-            iconSize="small"
+            leftIconName={icon}
+            leftIconStyle={{ fontSize: fontSizes.small, marginLeft: 6 }}
             {...btnProps}
             style={{ marginTop: 2 }}
             textStyle={{ marginTop: 6, fontSize: fontSizes.small }}
