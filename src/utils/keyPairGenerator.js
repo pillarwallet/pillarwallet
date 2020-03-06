@@ -133,7 +133,7 @@ export async function generateKeyPairThreadPool(
   if (connectionsKeyPairCount <= PRE_KEY_THRESHOLD) {
     const isDebuggingEnabled = typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
       && location.href.toLowerCase().includes('debug'); // eslint-disable-line no-restricted-globals,no-undef
-    if (isDebuggingEnabled && __DEV__) {
+    if (isDebuggingEnabled) {
       promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
     } else {
       const threads = await threadPoolCreation(5);
