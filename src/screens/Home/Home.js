@@ -144,13 +144,6 @@ type State = {
 
 const profileImageWidth = 24;
 
-const HeaderProfileImage = styled(ProfileImage)``;
-
-const UserButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-`;
-
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
   background-color: ${themedColors.surface};
@@ -308,15 +301,14 @@ class HomeScreen extends React.Component<Props, State> {
     const { user, navigation } = this.props;
     const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
     return (
-      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
-        <HeaderProfileImage
-          uri={userImageUri}
-          userName={user.username}
-          diameter={profileImageWidth}
-          noShadow
-          borderWidth={0}
-        />
-      </UserButton>
+      <ProfileImage
+        uri={userImageUri}
+        userName={user.username}
+        diameter={profileImageWidth}
+        noShadow
+        borderWidth={0}
+        onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}
+      />
     );
   };
 

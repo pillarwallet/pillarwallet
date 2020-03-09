@@ -51,6 +51,7 @@ import type { Theme } from 'models/Theme';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { BackupStatus } from 'reducers/walletReducer';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
@@ -120,7 +121,6 @@ class Menu extends React.Component<Props, State> {
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-
 
     return [
       {

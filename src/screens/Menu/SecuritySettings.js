@@ -34,6 +34,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 import { SettingsSection } from './SettingsSection';
 
+
 type State = {
   visibleModal: ?string,
   supportedBiometryType: string,
@@ -120,8 +121,12 @@ class SecuritySettings extends React.Component<Props, State> {
     ];
   }
 
-  render() {
+  onPinValid = (pin, { privateKey }) => {
     const { useBiometrics } = this.props;
+    this.handleChangeUseBiometrics(!useBiometrics, !useBiometrics ? privateKey : undefined);
+  }
+
+  render() {
     const { visibleModal } = this.state;
     return (
       <ContainerWithHeader
@@ -150,11 +155,7 @@ class SecuritySettings extends React.Component<Props, State> {
         >
           <Wrapper flex={1}>
             <CheckPin
-              onPinValid={
-                (pin, { privateKey }) => this.handleChangeUseBiometrics(
-                  !useBiometrics, !useBiometrics ? privateKey : undefined,
-                )
-              }
+              onPinValid={this.onPinValid}
             />
           </Wrapper>
         </SlideModal>

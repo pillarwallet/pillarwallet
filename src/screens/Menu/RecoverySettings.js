@@ -35,6 +35,7 @@ import type { Theme } from 'models/Theme';
 
 import { SettingsSection } from './SettingsSection';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   backupStatus: BackupStatus,

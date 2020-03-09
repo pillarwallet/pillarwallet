@@ -38,11 +38,9 @@ import {
   saveOptOutTrackingAction,
 } from 'actions/appSettingsActions';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-
-
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-
 import { SettingsSection } from './SettingsSection';
+
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -95,16 +93,20 @@ class AppSettings extends React.Component<Props, State> {
     joinBetaPressed: false,
   }
 
-  renderListItem = (field: string, onSelect: Function, currentValue: string) => ({ item: { name, value } }: Object) => {
-    return (
-      <SettingsListItem
-        key={value}
-        label={name}
-        isSelected={value === currentValue}
-        onPress={() => onSelect({ [field]: value })}
-      />
-    );
-  };
+  renderListItem = (
+    field: string,
+    onSelect: Function,
+    currentValue: string,
+  ) => ({
+    item: { name, value },
+  }: Object) => (
+    <SettingsListItem
+      key={value}
+      label={name}
+      isSelected={value === currentValue}
+      onPress={() => onSelect({ [field]: value })}
+    />
+  );
 
   handleCurrencyUpdate = ({ currency }: Object) => {
     const { saveBaseFiatCurrency } = this.props;
@@ -146,12 +148,6 @@ class AppSettings extends React.Component<Props, State> {
         onPress: () => this.setState({ visibleModal: 'baseCurrency' }),
         value: baseFiatCurrency || defaultFiatCurrency,
       },
-      /*
-      {
-        key: 'notificationSettings',
-        title: 'Notification settings',
-      },
-      */
       {
         key: 'darkMode',
         title: 'Dark mode',
@@ -179,8 +175,13 @@ class AppSettings extends React.Component<Props, State> {
     ];
   }
 
+  renderCurrencyListItem = () => {
+    const { baseFiatCurrency } = this.props;
+    return this.renderListItem('currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency);
+  }
+
   render() {
-    const { baseFiatCurrency, optOutTracking } = this.props;
+    const { optOutTracking } = this.props;
     const { visibleModal } = this.state;
 
     return (
@@ -209,8 +210,7 @@ class AppSettings extends React.Component<Props, State> {
           </SettingsModalTitle>
           <FlatList
             data={currencies}
-            renderItem={this.renderListItem(
-              'currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)}
+            renderItem={this.renderCurrencyListItem}
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
@@ -236,9 +236,7 @@ class AppSettings extends React.Component<Props, State> {
             <Button
               title="Opt in"
               onPress={() => this.setState({ visibleModal: null, joinBetaPressed: true })}
-              style={{
-                marginBottom: 13,
-              }}
+              style={{ marginBottom: 13 }}
             />
           </StyledWrapper>
         </SlideModal>

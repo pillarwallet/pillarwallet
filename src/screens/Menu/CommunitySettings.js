@@ -38,10 +38,6 @@ import {
 } from 'constants/communityConstants';
 import { SettingsSection } from './SettingsSection';
 
-type Props = {
-
-};
-
 type State = {
   email: string,
   isSubmitted: boolean,
@@ -51,7 +47,7 @@ const NewsletterWrapper = styled.View`
   margin: 0 ${spacing.layoutSides}px;
 `;
 
-class CommunitySettings extends React.Component<Props, State> {
+class CommunitySettings extends React.Component<{}, State> {
   state = {
     email: '',
     isSubmitted: false,
