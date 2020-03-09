@@ -170,7 +170,6 @@ class PPNView extends React.Component<Props, State> {
         return (
           <SWActivationCard
             message="To use Pillar Network you need to activate Smart Wallet"
-            buttonTitle="Activate Smart Wallet"
           />
         );
       }

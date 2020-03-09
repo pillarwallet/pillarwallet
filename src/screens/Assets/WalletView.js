@@ -26,7 +26,6 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
-import get from 'lodash.get';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
@@ -81,12 +80,11 @@ import {
 import { hideAssetAction } from 'actions/userSettingsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
-import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 // partials
@@ -119,7 +117,6 @@ type Props = {
   smartWalletFeatureEnabled: boolean,
   fetchAssetsBalances: () => void,
   fetchAllCollectiblesData: () => void,
-  deploySmartWallet: () => void,
   showDeploySmartWallet?: boolean,
   theme: Theme,
   dismissSmartWalletInsight: () => void,
@@ -379,7 +376,6 @@ class WalletView extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       showDeploySmartWallet,
-      deploySmartWallet,
       fetchAssetsBalances,
       fetchAllCollectiblesData,
       theme,
@@ -419,13 +415,10 @@ class WalletView extends React.Component<Props, State> {
 
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
 
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
-    const deploymentErrorMessage = deploymentData.error ?
-      getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
     const isAllInsightListDone = !insightList.some(({ status, key }) => !status && key !== 'biometric');
 
     const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
@@ -454,13 +447,7 @@ class WalletView extends React.Component<Props, State> {
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         />
         {smartWalletFeatureEnabled && blockAssetsView &&
-          <SWActivationCard
-            title={deploymentErrorMessage.title}
-            message={deploymentErrorMessage.message}
-            onButtonPress={deploymentData.error ? () => deploySmartWallet() : null}
-            buttonTitle="Retry"
-            forceRetry={!!deploymentData.error}
-          />}
+          <SWActivationCard />}
         {!blockAssetsView &&
         <SearchBlock
           hideSearch={blockAssetsView}
@@ -483,7 +470,6 @@ class WalletView extends React.Component<Props, State> {
             (
               <SWActivationCard
                 message="To start sending and exchanging assets you need to activate Smart Wallet"
-                buttonTitle="Activate Smart Wallet"
               />
             ) :
             (
@@ -579,7 +565,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction(true)),
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   dismissSmartWalletInsight: () => dispatch(dismissSmartWalletInsightAction()),
 });
 

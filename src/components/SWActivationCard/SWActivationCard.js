@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import get from 'lodash.get';
 import InsightWithButton from 'components/InsightWithButton';
 import ActionModal from 'components/ActionModal';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -34,7 +35,7 @@ import type { Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -46,7 +47,6 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   onButtonPress?: () => void,
-  forceRetry?: boolean,
   title?: string,
   balances: Balances,
   rates: Rates,
@@ -95,7 +95,13 @@ class SWActivationCard extends React.Component<Props, State> {
 
   render() {
     const {
-      title, message, buttonTitle, accounts, smartWalletState, onButtonPress, forceRetry,
+      title,
+      buttonTitle = 'Activate Smart Wallet',
+      message = 'To start sending assets you need to activate Smart Wallet',
+      accounts,
+      smartWalletState,
+      onButtonPress,
+      deploySmartWallet,
     } = this.props;
     const { isModalVisible } = this.state;
 
@@ -110,15 +116,30 @@ class SWActivationCard extends React.Component<Props, State> {
         SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
       ].includes(smartWalletStatus.status);
 
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+
+    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+    const deploymentErrorMessage = deploymentData.error ?
+      getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
+
     return (
       <React.Fragment>
-        <InsightWithButton
-          title={title}
-          description={message}
-          buttonTitle={buttonTitle}
-          onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
-          spinner={isDeploying && !forceRetry}
-        />
+        {deploymentData.error ? (
+          <InsightWithButton
+            title={deploymentErrorMessage.title}
+            description={deploymentErrorMessage.message}
+            buttonTitle="Retry"
+            onButtonPress={deploySmartWallet}
+          />
+        ) : (
+          <InsightWithButton
+            title={title}
+            description={message}
+            buttonTitle={buttonTitle}
+            onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
+            spinner={isDeploying}
+          />
+        )}
         <ActionModal
           isVisible={isModalVisible}
           onModalClose={(action) => {

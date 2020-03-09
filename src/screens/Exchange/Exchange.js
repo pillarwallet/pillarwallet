@@ -54,7 +54,6 @@ import {
   getMetaDataAction,
   getExchangeSupportedAssetsAction,
 } from 'actions/exchangeActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // constants
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
@@ -69,7 +68,7 @@ import { fiatCurrencies } from 'fixtures/assets';
 import { spacing, fontStyles } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
-import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
 import { getThemeColors, themedColors } from 'utils/themes';
 
@@ -150,7 +149,6 @@ type Props = {
   oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
-  deploySmartWallet: Function,
   smartWalletFeatureEnabled: boolean,
   getMetaData: () => void,
   exchangeSupportedAssets: Asset[],
@@ -1078,7 +1076,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       markNotificationAsSeen,
       accounts,
       smartWalletState,
-      deploySmartWallet,
       theme,
     } = this.props;
 
@@ -1108,9 +1105,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
-    const deploymentErrorMessage = deploymentData.error ?
-      getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
     const blockView = !isEmpty(sendingBlockedMessage)
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
 
@@ -1158,14 +1152,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           </React.Fragment>
         )}
       >
-        {!!blockView &&
-        <SWActivationCard
-          title={deploymentErrorMessage.title}
-          message={deploymentErrorMessage.message}
-          onButtonPress={deploymentData.error ? () => deploySmartWallet() : null}
-          buttonTitle="Retry"
-          forceRetry={!!deploymentData.error}
-        />}
+        {!!blockView && <SWActivationCard />}
         {!blockView &&
         <ScrollView
           contentContainerStyle={scrollContentStyle}
@@ -1286,7 +1273,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback),
   ),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });

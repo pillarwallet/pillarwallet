@@ -293,7 +293,6 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         {disableSend &&
           <SWActivationCard
             message="To start sending and exchanging assets you need to activate Smart Wallet"
-            buttonTitle="Activate Smart Wallet"
           />
         }
         {!disableSend &&

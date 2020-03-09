@@ -408,10 +408,7 @@ class AssetScreen extends React.Component<Props, State> {
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
             {!isSendActive &&
-              <SWActivationCard
-                message="To start sending assets you need to activate Smart Wallet"
-                buttonTitle="Activate Smart Wallet"
-              />
+              <SWActivationCard />
             }
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
