@@ -25,6 +25,7 @@ import {
   SENDING_OTP,
   OTP_SENT,
   RESET_OTP_STATUS,
+  SET_USER,
 } from 'constants/userConstants';
 import merge from 'lodash.merge';
 
@@ -81,6 +82,13 @@ const userReducer = (
         ...state,
         sendingOneTimePassword: false,
         oneTimePasswordSent: false,
+      };
+
+    case SET_USER:
+      return {
+        ...state,
+        data: { ...initialState.data, ...action.payload.user },
+        userState: action.payload.state,
       };
 
     case UPDATE_USER:

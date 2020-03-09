@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { withTheme } from 'styled-components';
+import capitalize from 'lodash.capitalize';
 
 // constants
 import {
@@ -33,18 +33,13 @@ import {
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-
-// utils
-import { fontSizes, lineHeights } from 'utils/variables';
-import { getThemeColors } from 'utils/themes';
-
-import type { Theme } from 'models/Theme';
+import { Paragraph } from 'components/Typography';
 
 /* eslint max-len:0 */
 const subtitleDescription = {
-  block: `You will no longer be able to find this user, chat, and make any transactions.
-  Your chat history will be erased on your device. No notifications on this user's actions will be received.
-  This user will not  be able to see any of your activity. You can unblock the user from your blocked list.`,
+  block: 'You will no longer be able to find this user, chat, and make any transactions.\n' +
+"Your chat history will be erased on your device. No notifications on this user's actions will be received.\n" +
+'This user will not be able to see any of your activity. \nYou can unblock the user from your blocked list.',
   disconnect: 'After disconnecting you will no longer be able to chat and send assets. You can re-establish connection later.',
   mute: 'If you mute the user, you will not longer be able to receive notifications for chat or transactions. You can unmute later.',
   unmute: 'If you unmute the user, you will be able to receive notifications for chat and transactions.',
@@ -54,7 +49,7 @@ const subtitleDescription = {
 const titleConfirmation = (manageContactType: string, username: string) => {
   const contactType = manageContactType;
   const usernameToConfirm = username;
-  return `${contactType} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}`;
+  return `${capitalize(contactType)} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}`;
 };
 
 type Props = {
@@ -63,7 +58,6 @@ type Props = {
   showConfirmationModal: boolean,
   manageContactType: string,
   contact: Object,
-  theme: Theme,
 };
 
 const ConnectionConfirmationModal = (props: Props) => {
@@ -73,9 +67,7 @@ const ConnectionConfirmationModal = (props: Props) => {
     showConfirmationModal,
     manageContactType,
     contact,
-    theme,
   } = props;
-  const colors = getThemeColors(theme);
 
   const { username, status } = contact;
   let contactType = manageContactType;
@@ -92,19 +84,11 @@ const ConnectionConfirmationModal = (props: Props) => {
       isVisible={showConfirmationModal}
       onModalHide={onModalHide}
       title={titleConfirmation(contactType, username)}
-      fullWidthTitle
-      noWrapTitle
       noClose
-      subtitle={subtitle}
-      subtitleStyles={{
-        color: colors.secondaryText,
-        fontSize: fontSizes.medium,
-        lineHeight: lineHeights.medium,
-        letterSpacing: 0.1,
-        marginTop: 7,
-        marginBottom: 22,
-      }}
     >
+      <Paragraph small light style={{ marginTop: 7, marginBottom: 22 }}>
+        {subtitle}
+      </Paragraph>
       <Button
         dangerInverted
         title={`Confirm ${contactType}`}
@@ -125,4 +109,4 @@ const ConnectionConfirmationModal = (props: Props) => {
   );
 };
 
-export default withTheme(ConnectionConfirmationModal);
+export default ConnectionConfirmationModal;

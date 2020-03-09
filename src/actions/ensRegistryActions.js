@@ -19,6 +19,7 @@
 */
 
 import get from 'lodash.get';
+import { sdkConstants } from '@smartwallet/sdk';
 
 // constants
 import { ADD_ENS_REGISTRY_RECORD, SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
@@ -31,7 +32,21 @@ import { lookupAddress } from 'utils/common';
 
 // actions
 import { saveDbAction } from './dbActions';
+import { setSmartWalletEnsNameAction } from './smartWalletActions';
 
+
+export const setUserEnsIfEmptyAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const user = get(getState(), 'user.data', {});
+    const accountState = get(getState(), 'smartWallet.connectedAccount.state');
+    const ensName = get(getState(), 'smartWallet.connectedAccount.ensName');
+
+    // check if user needs to set the ens name
+    if (!ensName && user.username && accountState === sdkConstants.AccountStates.Deployed) {
+      dispatch(setSmartWalletEnsNameAction(user.username));
+    }
+  };
+};
 
 export const addEnsRegistryRecordAction = (address: string, ensName: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {

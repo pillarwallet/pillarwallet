@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import get from 'lodash.get';
 import { sdkConstants } from '@smartwallet/sdk';
 import {
   ADD_ACCOUNT,
@@ -33,7 +32,6 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
   connectSmartWalletAccountAction,
   initSmartWalletSdkAction,
-  setSmartWalletEnsNameAction,
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
@@ -53,6 +51,7 @@ import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+import { setUserEnsIfEmptyAction } from './ensRegistryActions';
 
 const storage = Storage.getInstance('db');
 
@@ -180,6 +179,22 @@ export const addAccountAction = (
   };
 };
 
+export const removeAccountAction = (accountAddress: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+
+    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    if (accounts.length === updatedAccounts.length) {
+      return;
+    }
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: updatedAccounts,
+    });
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
 export const setActiveAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -235,6 +250,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
       await dispatch(initSmartWalletSdkAction(privateKey));
       await dispatch(connectSmartWalletAccountAction(accountId));
       await dispatch(setActiveAccountAction(accountId));
+      dispatch(setUserEnsIfEmptyAction());
     }
 
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
@@ -256,9 +272,6 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
         upgrade: {
           status: upgradeStatus,
         },
-      },
-      user: {
-        data: user,
       },
     } = getState();
 
@@ -286,11 +299,6 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
       });
     }
 
-    // check if user needs to set the ens name
-    const accountState = get(getState(), 'smartWallet.connectedAccount.state');
-    const ensName = get(getState(), 'smartWallet.connectedAccount.ensName');
-    if (!ensName && user.username && accountState === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletEnsNameAction(user.username));
-    }
+    dispatch(setUserEnsIfEmptyAction());
   };
 };

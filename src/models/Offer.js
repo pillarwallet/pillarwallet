@@ -55,12 +55,14 @@ export type OfferRequest = {
   provider: string,
   fromAssetAddress: string,
   toAssetAddress: string,
+  walletId: ?string,
 }
 
 export type TokenAllowanceRequest = {
   fromAssetAddress: string,
   toAssetAddress: string,
   provider: string,
+  walletId: ?string,
 }
 
 export type OfferOrder = {
