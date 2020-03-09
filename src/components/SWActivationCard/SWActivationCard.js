@@ -70,12 +70,12 @@ class SWActivationCard extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const ethBalance = getBalance(balances, ETH);
     const balanceInFiat = ethBalance * getRate(rates, ETH, fiatCurrency);
-    const fiatAmount = formatFiat(balanceInFiat, baseFiatCurrency || defaultFiatCurrency);
+    const fiatAmount = formatFiat(balanceInFiat, fiatCurrency);
 
     return [
       {
         label: 'I have ETH',
-        money: fiatAmount,
+        value: fiatAmount,
         onPress: deploySmartWallet,
         key: 'has ETH',
       },

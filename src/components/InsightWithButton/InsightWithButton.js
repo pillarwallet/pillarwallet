@@ -101,7 +101,7 @@ const InsightWithButton = ({
               {title}
             </TitleText>
           )}
-          {description && <DescriptionText medium center>{description}</DescriptionText>}
+          {!!description && <DescriptionText medium center>{description}</DescriptionText>}
           {itemsList && (
             <ItemsContainer>
               {itemsList.map(item => <Item text={item} key={item} />)}

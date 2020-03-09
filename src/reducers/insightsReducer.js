@@ -21,6 +21,7 @@
 import {
   DISMISS_SMART_WALLET_INSIGHT,
   DISMISS_PPN_INSIGHT,
+  SET_INSIGHTS_STATE,
 } from 'constants/insightsConstants';
 
 export type InsightsReducerState = {
@@ -30,6 +31,7 @@ export type InsightsReducerState = {
 
 export type InsightsReducerAction = {
   type: string,
+  payload: any,
 };
 
 export const initialState = {
@@ -51,6 +53,11 @@ export default function insightsReducer(
       return {
         ...state,
         PPNInsightDismissed: true,
+      };
+    case SET_INSIGHTS_STATE:
+      return {
+        ...state,
+        ...action.payload,
       };
     default:
       return state;

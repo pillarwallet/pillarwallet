@@ -92,7 +92,7 @@ class ActionModal extends React.Component<Props> {
         noClose
         background={colors.card}
         hideHeader
-        onModalHide={() => onModalClose()}
+        onModalHide={onModalClose}
         sideMargins={spacing.large}
       >
         <SafeAreaView>

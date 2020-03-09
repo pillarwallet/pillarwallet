@@ -27,14 +27,14 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 export const dismissSmartWalletInsightAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { smartWalletInsightDismissed: true } }));
+    dispatch(saveDbAction('insights', { insights: { SWInsightDismissed: true } }));
     dispatch({ type: DISMISS_SMART_WALLET_INSIGHT });
   };
 };
 
 export const dismissPPNInsightAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { PPNInsightDismissed: true } }));
+    dispatch(saveDbAction('insights', { insights: { PPNInsightDismissed: true } }));
     dispatch({ type: DISMISS_PPN_INSIGHT });
   };
 };

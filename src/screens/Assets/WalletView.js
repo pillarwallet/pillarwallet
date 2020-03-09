@@ -385,6 +385,7 @@ class WalletView extends React.Component<Props, State> {
       theme,
       dismissSmartWalletInsight,
       SWInsightDismissed,
+      smartWalletFeatureEnabled,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -452,7 +453,7 @@ class WalletView extends React.Component<Props, State> {
           onClose={() => { hideInsight(); }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         />
-        {blockAssetsView &&
+        {smartWalletFeatureEnabled && blockAssetsView &&
           <SWActivationCard
             title={deploymentErrorMessage.title}
             message={deploymentErrorMessage.message}
@@ -477,7 +478,7 @@ class WalletView extends React.Component<Props, State> {
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}
-        {!blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && true && (
+        {smartWalletFeatureEnabled && !blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && true && (
           SWInsightDismissed ?
             (
               <SWActivationCard
