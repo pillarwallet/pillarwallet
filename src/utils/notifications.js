@@ -20,6 +20,7 @@
 import { Platform } from 'react-native';
 import { utils } from 'ethers';
 import { Notifications } from 'react-native-notifications';
+import isEmpty from 'lodash.isempty';
 // $FlowFixMe – throws "react-native-android-badge" not found
 import BadgeAndroid from 'react-native-android-badge';
 
@@ -36,8 +37,12 @@ import {
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
+
+// utils
+import { reportLog } from 'utils/common';
+
+// models
 import type { ApiNotification } from 'models/Notification';
-import isEmpty from 'lodash.isempty';
 
 
 const parseNotification = (notificationBody: string): ?Object => {
@@ -53,6 +58,10 @@ const parseNotification = (notificationBody: string): ?Object => {
 const validBcxTransaction = (transaction: ?Object): boolean => {
   if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
   if (!transaction.status || !transaction.asset) return false;
+  if (transaction.value === undefined) {
+    reportLog('Wrong BCX tx notification received', { transaction });
+    return false;
+  }
   return true;
 };
 
