@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // components
-import { MediumText, TextLink } from 'components/Typography';
+import { BaseText, TextLink } from 'components/Typography';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -33,10 +33,11 @@ const Wrapper = styled.View`
   width: 100%;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   margin: 0 0 ${spacing.large}px;
 `;
 
-const CustomText = styled(MediumText)`
+const CustomText = styled(BaseText)`
   font-size: ${FontSize}px;
   line-height: ${FontSize}px;
 `;

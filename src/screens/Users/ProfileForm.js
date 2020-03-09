@@ -180,8 +180,10 @@ export default class ProfileForm extends React.Component<Props, State> {
       }
     }
 
-    const { onUpdate } = this.props;
-    if (onUpdate) {
+    const { value: originalValue, onUpdate } = this.props;
+    const isModified = !originalValue || !isEqual(value, originalValue[field]);
+
+    if (isModified && onUpdate) {
       onUpdate({ [field]: value });
     }
   };

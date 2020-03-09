@@ -28,9 +28,6 @@ import { CachedImage } from 'react-native-cached-image';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 
-// constants
-import { VERIFY_OTP } from 'constants/navigationConstants';
-
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -45,6 +42,7 @@ import { themedColors } from 'utils/themes';
 import { updateUserAction } from 'actions/userActions';
 
 import ProfileForm from './ProfileForm';
+import VerifyOTPModal from './VerifyOTPModal';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -56,6 +54,7 @@ type Props = {
 type State = {
   permissionsGranted: boolean,
   visibleModal: string,
+  verifyingField: ?string,
 };
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
@@ -96,20 +95,11 @@ const BlankAvatar = styled(CachedImage)`
 const blankAvatar = require('assets/icons/icon_blank_avatar.png');
 
 class AddOrEditUser extends React.PureComponent<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      permissionsGranted: false,
-      visibleModal: '',
-    };
-  }
-
-  startVerificationFlow(field: string) {
-    const { navigation } = this.props;
-
-    navigation.navigate(VERIFY_OTP, { field });
-  }
+  state = {
+    verifyingField: null,
+    permissionsGranted: false,
+    visibleModal: '',
+  };
 
   selectCountry = (value: Object) => {
     const {
@@ -143,15 +133,23 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   verifyEmail = () => {
-    this.startVerificationFlow('email');
+    this.setState({ verifyingField: 'email' });
   };
 
   verifyPhone = () => {
-    this.startVerificationFlow('phone');
+    this.setState({ verifyingField: 'phone' });
+  };
+
+  onCloseVerification = () => {
+    this.setState({ verifyingField: null });
   };
 
   render() {
-    const { permissionsGranted, visibleModal } = this.state;
+    const {
+      permissionsGranted,
+      visibleModal,
+      verifyingField,
+    } = this.state;
     const { user, navigation } = this.props;
     const { profileImage, lastUpdateTime = 0, username } = user;
     const cameraButtonLabel = profileImage ? 'Change profile picture' : 'Set profile picture';
@@ -269,6 +267,10 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           navigation={navigation}
         />
 
+        {!!verifyingField && <VerifyOTPModal
+          verifyingField={verifyingField}
+          onModalClose={this.onCloseVerification}
+        />}
       </ContainerWithHeader>
     );
   }

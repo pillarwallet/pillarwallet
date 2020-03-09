@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
 // types
@@ -41,51 +40,71 @@ import BoxTitle from 'components/ModalBox/BoxTitle';
 import BoxBody from 'components/ModalBox/BoxBody';
 import StatusLabel from 'components/Verification/StatusLabel';
 import ResendMessage from 'components/Verification/ResendMessage';
-import CheckIcon from 'components/Verification/CheckIcon';
 
 type Props = {
+  verifyingField: string,
   createOneTimePassword: (walletId: string, field: Object) => void,
   resetOneTimePassword: () => void,
   verifyEmail: (walletId: string, code: string) => void,
   verifyPhone: (walletId: string, code: string) => void,
-  navigation: NavigationScreenProp<*>,
   user: User,
   sendingOneTimePassword: boolean,
+  onModalClose: () => void,
 };
 
 type State = {
   code: string,
+  isModalVisible: boolean,
 };
 
-class UserSettings extends React.PureComponent<Props, State> {
-  verifyField: string;
-
+class VerifyOTPModal extends React.PureComponent<Props, State> {
   state = {
     code: '',
+    isModalVisible: true,
   };
-
-  constructor(props) {
-    super(props);
-
-    const {
-      state: { params: { field } },
-    } = props.navigation;
-
-    this.verifyField = field;
-  }
 
   componentDidMount() {
     this.sendOTP();
+  }
+
+  componentDidUpdate(oldProps: Props) {
+    const {
+      user: {
+        isEmailVerified: oldIsEmailVerified,
+        isPhoneVerified: oldIsPhoneVerified,
+      },
+    } = oldProps;
+
+    const {
+      verifyingField,
+      user: {
+        isEmailVerified,
+        isPhoneVerified,
+      },
+    } = this.props;
+
+    if (verifyingField === 'email') {
+      if (!oldIsEmailVerified && isEmailVerified) {
+        this.hideModal();
+      }
+    }
+
+    if (verifyingField === 'phone') {
+      if (!oldIsPhoneVerified && isPhoneVerified) {
+        this.hideModal();
+      }
+    }
   }
 
   sendOTP = () => {
     const {
       createOneTimePassword,
       user: { walletId },
+      verifyingField,
     } = this.props;
 
     createOneTimePassword(walletId, {
-      smsNotification: this.verifyField === 'phone',
+      smsNotification: verifyingField === 'phone',
     });
   }
 
@@ -100,9 +119,10 @@ class UserSettings extends React.PureComponent<Props, State> {
       verifyPhone,
       verifyEmail,
       user: { walletId },
+      verifyingField,
     } = this.props;
 
-    switch (this.verifyField) {
+    switch (verifyingField) {
       case 'email':
         verifyEmail(walletId, code);
         break;
@@ -124,47 +144,45 @@ class UserSettings extends React.PureComponent<Props, State> {
     });
   };
 
-  goBack = () => {
-    const { navigation } = this.props;
-
-    navigation.goBack(null);
+  hideModal = () => {
+    this.setState({ isModalVisible: false });
   };
 
   render() {
-    const { code } = this.state;
+    const { code, isModalVisible } = this.state;
     const {
       sendingOneTimePassword,
       user,
-      user: {
-        isEmailVerified,
-        isPhoneVerified,
-      },
+      verifyingField,
+      onModalClose,
     } = this.props;
-    const { verifyField } = this;
 
     const titleText = `Enter verification code (${
-      verifyField === 'email' ? 'Email' : 'SMS'
+      verifyingField === 'email' ? 'Email' : 'SMS'
     })`;
 
-    const isVerified = verifyField === 'email' ?
-      isEmailVerified : isPhoneVerified;
-    const enteringCode = !isVerified && !sendingOneTimePassword;
+    const enteringCode = !sendingOneTimePassword;
 
     return (
-      <ModalBox>
-        <BoxTitle title={titleText} onPressClose={this.goBack} />
+      <ModalBox
+        isVisible={isModalVisible}
+        onModalHide={onModalClose}
+      >
+        <BoxTitle
+          title={titleText}
+          onPressClose={this.hideModal}
+        />
         <StatusLabel
           user={user}
-          field={verifyField}
+          field={verifyingField}
           sendingOneTimePassword={sendingOneTimePassword}
         />
         <BoxBody>
-          {!isVerified && sendingOneTimePassword && <Spinner />}
+          {sendingOneTimePassword && <Spinner />}
           {enteringCode && <ConfirmCode
             code={code}
             updateCode={this.updateCode}
           />}
-          {isVerified && <CheckIcon />}
         </BoxBody>
         {enteringCode && <ResendMessage onPressResend={this.sendOTP} />}
       </ModalBox>
@@ -190,4 +208,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetOneTimePassword: () => dispatch(resetOneTimePasswordAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserSettings);
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyOTPModal);

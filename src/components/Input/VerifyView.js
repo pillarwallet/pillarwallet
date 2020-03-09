@@ -18,11 +18,10 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
 import { fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 const VerifyWrapper = styled(TouchableOpacity)`
+  height: 100%;
   align-items: center;
   flex-direction: row;
 `;
@@ -32,12 +31,6 @@ const VerifyLabel = styled(BaseText)`
     isVerified ? theme.colors.positive : theme.colors.primary};
   ${fontStyles.regular};
   margin: 0 4px 0;
-`;
-
-const CheckIcon = styled(Icon)`
-  color: ${themedColors.positive};
-  font-size: 8px;
-  margin-left: 4px;
 `;
 
 type Props = {
@@ -56,7 +49,6 @@ const VerifyView = (props: Props) => {
       <VerifyLabel isVerified={isVerified}>
         {isVerified ? 'Verified' : 'Verify'}
       </VerifyLabel>
-      {isVerified && <CheckIcon name="check" />}
     </VerifyWrapper>
   );
 };

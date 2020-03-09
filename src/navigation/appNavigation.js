@@ -84,7 +84,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import UserSettingsScreen from 'screens/Users/UserSettings';
-import VerifyOTPScreen from 'screens/Users/VerifyOTP';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import SettingsScreen from 'screens/Settings';
 import ChatScreen from 'screens/Chat';
@@ -199,7 +198,6 @@ import {
   PILLAR_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
   USER_SETTINGS,
-  VERIFY_OTP,
   ADD_EDIT_USER,
   SETTINGS,
   CHAT,
@@ -585,7 +583,6 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 const manageUsersFlow = createStackNavigator({
   [USER_SETTINGS]: UserSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
-  [VERIFY_OTP]: VerifyOTPScreen,
 }, StackNavigatorConfig);
 
 manageUsersFlow.navigationOptions = hideTabNavigatorOnChildView;

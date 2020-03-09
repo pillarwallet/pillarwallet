@@ -24,18 +24,12 @@ import styled from 'styled-components/native';
 import TextInput from 'components/TextInput';
 
 // utils
-import { spacing, fontSizes } from 'utils/variables';
+import { spacing } from 'utils/variables';
 
 const FormWrapper = styled.View`
   padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
   display: flex;
   width: 200px;
-`;
-
-const DigitInput = styled(TextInput)`
-  text-align: center;
-  margin: 0 10px;
-  font-size: ${fontSizes.giant};
 `;
 
 type Props = {
@@ -60,7 +54,7 @@ const ConfirmCode = (props: Props) => {
 
   return (
     <FormWrapper>
-      <DigitInput inputProps={inputProps} />
+      <TextInput inputProps={inputProps} />
     </FormWrapper>
   );
 };

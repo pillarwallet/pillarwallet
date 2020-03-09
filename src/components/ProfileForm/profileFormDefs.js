@@ -97,7 +97,7 @@ CityStructDef.getValidationErrorMessage = (city): string => {
 
 PhoneStructDef.getValidationErrorMessage = (phone): string => {
   if (phone && !isValidPhone(phone)) {
-    return 'Please enter a valid phone number';
+    return 'Please enter a valid phone number with country code';
   }
   return '';
 };

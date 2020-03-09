@@ -35,7 +35,8 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 9px ${spacing.large}px 0;
+  align-content: center;
+  padding: 0 ${spacing.large}px 0;
   background-color: ${themedColors.card};
   border-bottom-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
   border-top-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
@@ -219,9 +220,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
 
     return (
       <Wrapper style={wrapperStyle}>
-        <StyledItemView
-          hasErrors={hasErrors}
-        >
+        <StyledItemView hasErrors={hasErrors}>
           {inputSection}
           {showVerification &&
             <VerifyView isVerified={!!isVerified} onPress={onPressVerify} />}

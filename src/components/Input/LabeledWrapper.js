@@ -22,6 +22,7 @@ import { themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 
 const ItemLabel = styled(MediumText)`
+  margin-top: 9px;
   ${fontStyles.small};
   color: ${themedColors.secondaryText};
   flex-wrap: wrap;
@@ -47,7 +48,7 @@ const LabeledWrapper = (props: Props) => {
   } = props;
 
   return (
-    <ItemSelectHolder onPress={onPress}>
+    <ItemSelectHolder disabled={!onPress} onPress={onPress}>
       <ItemLabel>
         {label}
       </ItemLabel>

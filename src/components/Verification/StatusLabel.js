@@ -48,14 +48,14 @@ const statusText = (props: Props) => {
 
   const destination = user[field];
   if (isEmpty(destination)) {
-    return `No ${field} to show`;
+    return `(No ${field} to show)`;
   }
 
   if (sendingOneTimePassword) {
-    return `Sending to: ${destination}`;
+    return `Sending to ${destination}`;
   }
 
-  return `Sent to: ${destination}`;
+  return `It was sent to ${destination}`;
 };
 
 const StatusLabel = (props: Props) => {

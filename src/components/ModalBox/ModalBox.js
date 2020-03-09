@@ -19,10 +19,13 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import Modal from 'react-native-modal';
 
-import { baseColors } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 type Props = {
+  isVisible: boolean,
+  onModalHide: () => void,
   children: React.Node,
 };
 
@@ -32,7 +35,7 @@ const Wrapper = styled.View`
   flex-direction: column;
   padding: 0 10px
   align-items: center;
-  background-color: ${baseColors.slateBlack};
+  background-color: transparent;
 `;
 
 const Box = styled.View`
@@ -41,17 +44,23 @@ const Box = styled.View`
   width: 100%;
   margin: auto 0;
   align-self: center;
-  border-radius: 15px;
-  ${({ theme }) => `
-      background-color: ${theme.colors.card};`}
+  border-radius: 10px;
+  background-color: ${themedColors.card};
 `;
 
 const ModalBox = (props: Props) => (
-  <Wrapper>
-    <Box>
-      {props.children}
-    </Box>
-  </Wrapper>
+  <Modal
+    isVisible={props.isVisible}
+    hasBackdrop
+    backdropOpacity={1}
+    onModalHide={props.onModalHide}
+  >
+    <Wrapper>
+      <Box>
+        {props.children}
+      </Box>
+    </Wrapper>
+  </Modal>
 );
 
 export default ModalBox;
