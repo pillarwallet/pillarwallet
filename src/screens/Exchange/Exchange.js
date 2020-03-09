@@ -1056,7 +1056,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     return POPULAR_SWAPS.filter(({ from, to }) => {
       return fromOptions.find(({ key }) => key === from) && toOptions.find(({ key }) => key === to);
     });
-  }
+  };
 
   onSwapPress = (fromAssetCode, toAssetCode) => {
     const { assets, exchangeSupportedAssets } = this.props;
@@ -1065,7 +1065,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const fromAsset = fromOptions.find(option => option.key === fromAssetCode);
     const toAsset = toOptions.find(option => option.key === toAssetCode);
     this.handleFormChange({ fromInput: { selector: fromAsset, input: '' }, toInput: { selector: toAsset, input: '' } });
-  }
+  };
 
   render() {
     const {
@@ -1135,12 +1135,24 @@ class ExchangeScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
-        footer={!isSubmitted && !reorderedOffers.length && (
-          <PromoWrapper>
-            <PromoText>
-              Aggregated from many decentralized exchanges and token swap services
-            </PromoText>
-          </PromoWrapper>
+        footer={!reorderedOffers.length && (
+          <React.Fragment>
+            {!isSubmitted
+              ?
+                <PromoWrapper>
+                  <PromoText>
+                    Aggregated from many decentralized exchanges and token swap services
+                  </PromoText>
+                </PromoWrapper>
+              :
+                <FooterWrapper>
+                  <MediumText medium style={{ marginBottom: spacing.medium }}>
+                    Try these popular swaps
+                  </MediumText>
+                  <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
+                </FooterWrapper>
+            }
+          </React.Fragment>
         )}
       >
         {!!blockView &&
@@ -1157,7 +1169,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           keyboardShouldPersistTaps="handled"
           disableOnAndroid
         >
-          <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />
+          {!isSubmitted && <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />}
           <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
             <Form
               ref={node => { this.exchangeForm = node; }}
@@ -1203,14 +1215,6 @@ class ExchangeScreen extends React.Component<Props, State> {
                 </ESWrapper>
               )}
           />}
-          {!!isSubmitted && (
-            <FooterWrapper>
-              <MediumText medium style={{ marginBottom: spacing.medium }}>
-                Try these popular swaps
-              </MediumText>
-              <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
-            </FooterWrapper>
-          )}
         </ScrollView>}
       </ContainerWithHeader>
     );
