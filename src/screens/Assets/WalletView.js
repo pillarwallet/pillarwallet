@@ -477,7 +477,7 @@ class WalletView extends React.Component<Props, State> {
           itemSearchState={!!isInSearchMode}
           navigation={navigation}
         />}
-        {!blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
+        {!blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && true && (
           SWInsightDismissed ?
             (
               <SWActivationCard
