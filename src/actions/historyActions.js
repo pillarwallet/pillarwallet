@@ -277,6 +277,8 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         memo[tx.hash] = tx;
         return memo;
       }, {});
+    // Flow won't allow Object.values
+    const minedTransactionsValues = Object.keys(minedTransactions).map(key => minedTransactions[key]);
 
     const pendingTransactions = mappedHistoryNotifications
       .filter(tx => tx.status === TX_PENDING_STATUS);
@@ -284,7 +286,11 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     // add new records & update data for mined transactions
     const { history: { data: currentHistory } } = getState();
     const accountHistory = (currentHistory[accountId] || []).filter(tx => !!tx.createdAt);
-    const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
+    const updatedAccountHistory = uniqBy([
+      ...accountHistory,
+      ...pendingTransactions,
+      ...minedTransactionsValues,
+    ], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
         const {
