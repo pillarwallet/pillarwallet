@@ -44,7 +44,7 @@ const Wrapper = styled.View`
 
 const Title = styled(MediumText)`
   margin: ${spacing.large}px;
-  flex-grow: 1;
+  flex: 1;
   font-size: ${fontSizes.big}px;
 `;
 

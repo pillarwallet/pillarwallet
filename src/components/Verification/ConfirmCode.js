@@ -34,6 +34,7 @@ const FormWrapper = styled.View`
 
 type Props = {
   updateCode: (code: string) => void,
+  errorMessage: ?string,
   code: string,
 };
 
@@ -43,6 +44,7 @@ const ConfirmCode = (props: Props) => {
   const {
     code,
     updateCode,
+    errorMessage,
   } = props;
 
   const inputProps = {
@@ -54,7 +56,10 @@ const ConfirmCode = (props: Props) => {
 
   return (
     <FormWrapper>
-      <TextInput inputProps={inputProps} />
+      <TextInput
+        inputProps={inputProps}
+        errorMessage={errorMessage}
+      />
     </FormWrapper>
   );
 };

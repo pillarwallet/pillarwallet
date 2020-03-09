@@ -21,6 +21,7 @@ import {
   SENDING_OTP,
   OTP_SENT,
   RESET_OTP_STATUS,
+  VERIFICATION_FAILED,
   UPDATE_USER,
   REGISTERED,
   USER_PHONE_VERIFIED,
@@ -35,6 +36,10 @@ import { saveDbAction } from './dbActions';
 
 const sendingOneTimePasswordAction = () => ({
   type: SENDING_OTP,
+});
+
+const verificationFailedAction = () => ({
+  type: VERIFICATION_FAILED,
 });
 
 const oneTimePasswordSentAction = () => ({
@@ -116,29 +121,21 @@ export const verifyEmailAction = (walletId: string, code: string) => {
 
     const { responseStatus } = response;
 
-    if (responseStatus === 200) {
-      dispatch(logEventAction('email_verified'));
-
-      dispatch({ type: USER_EMAIL_VERIFIED });
-      dispatch({
-        type: ADD_NOTIFICATION,
-        payload: {
-          message: 'Email verification was successful',
-          title: 'Validation successful',
-          messageType: 'success',
-        },
-      });
-    } else {
-      dispatch(oneTimePasswordSentAction());
-      dispatch({
-        type: ADD_NOTIFICATION,
-        payload: {
-          message: 'Please try again',
-          title: 'We can\'t verify your email',
-          messageType: 'warning',
-        },
-      });
+    if (responseStatus !== 200) {
+      dispatch(verificationFailedAction());
+      return;
     }
+
+    dispatch(logEventAction('email_verified'));
+    dispatch({ type: USER_EMAIL_VERIFIED });
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: 'Email verification was successful',
+        title: 'Validation successful',
+        messageType: 'success',
+      },
+    });
   };
 };
 
@@ -169,7 +166,7 @@ export const verifyPhoneAction = (
 
       if (callback) callback();
     } else {
-      dispatch(oneTimePasswordSentAction());
+      dispatch(verificationFailedAction());
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {

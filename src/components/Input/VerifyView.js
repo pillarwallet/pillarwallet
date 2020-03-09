@@ -42,7 +42,10 @@ const VerifyView = ({
   isVerified,
   onPress,
 }: Props) => (
-  <VerifyWrapper onPress={isVerified ? null : onPress}>
+  <VerifyWrapper
+    onPress={isVerified ? null : onPress}
+    disabled={isVerified}
+  >
     <VerifyLabel isVerified={isVerified}>
       {isVerified ? 'Verified' : 'Verify'}
     </VerifyLabel>

@@ -28,3 +28,4 @@ export const PENDING = 'PENDING';
 export const SENDING_OTP = 'SENDING_OTP';
 export const OTP_SENT = 'OTP_SENT';
 export const RESET_OTP_STATUS = 'RESET_OTP_STATUS';
+export const VERIFICATION_FAILED = 'VERIFICATION_FAILED';

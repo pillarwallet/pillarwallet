@@ -49,6 +49,7 @@ type Props = {
   verifyPhone: (walletId: string, code: string) => void,
   user: User,
   sendingOneTimePassword: boolean,
+  verificationFailed: boolean,
   onModalClose: () => void,
 };
 
@@ -108,10 +109,6 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
     });
   }
 
-  resetOTP = () => {
-    this.props.resetOneTimePassword();
-  };
-
   confirmOTP = (code) => {
     const {
       verifyPhone,
@@ -135,6 +132,15 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
   };
 
   updateCode = (code: string) => {
+    const {
+      verificationFailed,
+      resetOneTimePassword,
+    } = this.props;
+
+    if (verificationFailed) {
+      resetOneTimePassword();
+    }
+
     this.setState({ code }, () => {
       if (code.length === 5) {
         this.confirmOTP(code);
@@ -150,13 +156,14 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
     const { code, isModalVisible } = this.state;
     const {
       sendingOneTimePassword,
+      verificationFailed,
       user,
       verifyingField,
       onModalClose,
     } = this.props;
 
     const titleText = `Enter verification code (${
-      verifyingField === 'email' ? 'Email' : 'SMS'
+      verifyingField === 'email' ? 'email' : 'SMS'
     })`;
 
     const enteringCode = !sendingOneTimePassword;
@@ -180,6 +187,8 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
           {enteringCode && <ConfirmCode
             code={code}
             updateCode={this.updateCode}
+            errorMessage={verificationFailed ?
+              "That didn't work, please try again" : null}
           />}
         </BoxBody>
         {enteringCode && <ResendMessage onPressResend={this.sendOTP} />}
@@ -192,10 +201,12 @@ const mapStateToProps = ({
   user: {
     data: user,
     sendingOneTimePassword,
+    verificationFailed,
   },
 }: RootReducerState): $Shape<Props> => ({
   user,
   sendingOneTimePassword,
+  verificationFailed,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

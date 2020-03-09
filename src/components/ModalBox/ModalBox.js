@@ -52,7 +52,7 @@ const ModalBox = (props: Props) => (
   <Modal
     isVisible={props.isVisible}
     hasBackdrop
-    backdropOpacity={1}
+    backdropOpacity={0.7}
     onModalHide={props.onModalHide}
   >
     <Wrapper>
