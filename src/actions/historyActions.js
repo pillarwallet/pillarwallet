@@ -277,7 +277,8 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         memo[tx.hash] = tx;
         return memo;
       }, {});
-    // Flow won't allow Object.values
+
+    // Flow doesn't allow Object.values
     const minedTransactionsValues = Object.keys(minedTransactions).map(key => minedTransactions[key]);
 
     const pendingTransactions = mappedHistoryNotifications
