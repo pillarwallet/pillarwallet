@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
+import { Sentry } from 'react-native-sentry';
 
 // constants
 import {
@@ -49,6 +50,10 @@ const parseNotification = (notificationBody: string): ?Object => {
 const validBcxTransaction = (transaction: ?Object): boolean => {
   if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
   if (!transaction.status || !transaction.asset) return false;
+  if (transaction.value === undefined) {
+    Sentry.captureMessage('Wrong BCX tx notification received', { extra: { transaction } });
+    return false;
+  }
   return true;
 };
 
