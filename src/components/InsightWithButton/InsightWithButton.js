@@ -55,7 +55,7 @@ const ItemText = styled(BaseText)`
 const CheckIcon = styled(Icon)`
   margin-right: ${spacing.small}px;
   color: ${themedColors.positive};
-  ${fontStyles.medium}
+  ${fontStyles.medium};
 `;
 
 const ItemsContainer = styled.View`
@@ -63,7 +63,7 @@ const ItemsContainer = styled.View`
 `;
 
 const TitleText = styled(MediumText)`
-margin-bottom: ${spacing.large}px;
+  margin-bottom: ${spacing.large}px;
 `;
 
 const DescriptionText = styled(BaseText)`
