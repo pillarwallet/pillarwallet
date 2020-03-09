@@ -22,10 +22,13 @@ import styled, { withTheme } from 'styled-components/native';
 
 import type { Theme } from 'models/Theme';
 
+// components
 import { MediumText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 
+// utils
 import { fontSizes, spacing } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
 
 type Props = {
   title: string,
@@ -47,19 +50,23 @@ const Title = styled(MediumText)`
 
 const CloseIcon = styled(IconButton)`
   padding: ${spacing.large}px;
-  width: 59px;
+  width: 58px;
 `;
 
-const BoxTitle = (props: Props) => (
-  <Wrapper>
-    <Title>{props.title}</Title>
-    <CloseIcon
-      icon="close"
-      onPress={props.onPressClose}
-      fontSize={fontSizes.big}
-      color={props.theme.colors.text}
-    />
-  </Wrapper>
-);
+const BoxTitle = (props: Props) => {
+  const colors = getThemeColors(props.theme);
+
+  return (
+    <Wrapper>
+      <Title>{props.title}</Title>
+      <CloseIcon
+        icon="close"
+        onPress={props.onPressClose}
+        fontSize={fontSizes.regular}
+        color={colors.text}
+      />
+    </Wrapper>
+  );
+};
 
 export default withTheme(BoxTitle);

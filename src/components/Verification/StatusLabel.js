@@ -58,10 +58,8 @@ const statusText = (props: Props) => {
   return `It was sent to ${destination}`;
 };
 
-const StatusLabel = (props: Props) => {
-  return (
-    <Message>{statusText(props)}</Message>
-  );
-};
+const StatusLabel = (props: Props) => (
+  <Message>{statusText(props)}</Message>
+);
 
 export default StatusLabel;

@@ -21,6 +21,8 @@
 import React from 'react';
 import t from 'tcomb-form-native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
 import {
   FirstNameStruct,
   LastNameStruct,
@@ -162,8 +164,13 @@ export default class ProfileForm extends React.Component<Props, State> {
   handleChange = (value: Object) => {
     this.setState({ value });
     const key = Object.keys(value)[0];
+    const { _formRef } = this;
 
-    const component = this._formRef.getComponent(key);
+    if (!_formRef) {
+      return;
+    }
+
+    const component = _formRef.getComponent(key);
 
     component.validate();
   };
@@ -172,12 +179,8 @@ export default class ProfileForm extends React.Component<Props, State> {
     const component = this._formRef.getComponent(field);
 
     const result = component.validate();
-    if (result) {
-      const { errors = [] } = result;
-
-      if (errors.length > 0) {
-        return;
-      }
+    if (!isEmpty(get(result, 'errors'))) {
+      return;
     }
 
     const { value: originalValue, onUpdate } = this.props;
@@ -192,13 +195,11 @@ export default class ProfileForm extends React.Component<Props, State> {
     const { value } = this.state;
     const { value: originalValue, fields } = this.props;
 
-    const formFields = fields.map(field => {
-      return {
-        ...field,
-        onBlur: this.handleBlur,
-        isModified: !isEqual(value, originalValue),
-      };
-    });
+    const formFields = fields.map(field => ({
+      ...field,
+      onBlur: this.handleBlur,
+      isModified: !isEqual(value, originalValue),
+    }));
 
     const formOptions = generateFormOptions(formFields);
     const formStructure = getFormStructure(formFields);

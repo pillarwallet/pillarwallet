@@ -109,9 +109,7 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
   }
 
   resetOTP = () => {
-    const { resetOneTimePassword } = this.props;
-
-    resetOneTimePassword();
+    this.props.resetOneTimePassword();
   };
 
   confirmOTP = (code) => {

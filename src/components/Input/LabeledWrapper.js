@@ -40,22 +40,18 @@ type Props = {
   onPress?: () => void,
 };
 
-const LabeledWrapper = (props: Props) => {
-  const {
-    onPress,
-    children,
-    label,
-  } = props;
+const LabeledWrapper = ({
+  onPress,
+  children,
+  label,
+}: Props) => (
+  <ItemSelectHolder disabled={!onPress} onPress={onPress}>
+    <ItemLabel>
+      {label}
+    </ItemLabel>
 
-  return (
-    <ItemSelectHolder disabled={!onPress} onPress={onPress}>
-      <ItemLabel>
-        {label}
-      </ItemLabel>
-
-      {children}
-    </ItemSelectHolder>
-  );
-};
+    {children}
+  </ItemSelectHolder>
+);
 
 export default LabeledWrapper;

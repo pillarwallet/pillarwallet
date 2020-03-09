@@ -38,19 +38,15 @@ type Props = {
   onPress?: () => void,
 };
 
-const VerifyView = (props: Props) => {
-  const {
-    isVerified,
-    onPress,
-  } = props;
-
-  return (
-    <VerifyWrapper onPress={isVerified ? null : onPress}>
-      <VerifyLabel isVerified={isVerified}>
-        {isVerified ? 'Verified' : 'Verify'}
-      </VerifyLabel>
-    </VerifyWrapper>
-  );
-};
+const VerifyView = ({
+  isVerified,
+  onPress,
+}: Props) => (
+  <VerifyWrapper onPress={isVerified ? null : onPress}>
+    <VerifyLabel isVerified={isVerified}>
+      {isVerified ? 'Verified' : 'Verify'}
+    </VerifyLabel>
+  </VerifyWrapper>
+);
 
 export default VerifyView;

@@ -51,15 +51,11 @@ type Props = {
   onPressResend: () => void,
 };
 
-const ResendMessage = (props: Props) => {
-  const { onPressResend } = props;
-
-  return (
-    <Wrapper>
-      <CustomText>Didn&apos;t receive the code?</CustomText>
-      <CustomLink onPress={onPressResend}> Resend it. </CustomLink>
-    </Wrapper>
-  );
-};
+const ResendMessage = ({ onPressResend }: Props) => (
+  <Wrapper>
+    <CustomText>Didn&apos;t receive the code?</CustomText>
+    <CustomLink onPress={onPressResend}> Resend it. </CustomLink>
+  </Wrapper>
+);
 
 export default ResendMessage;
