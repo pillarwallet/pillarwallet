@@ -15,20 +15,59 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { Input } from 'native-base';
 
+// utils
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
+// types
+import type { Event } from 'react-native';
+
+// components
 import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Switcher from 'components/Switcher';
 import LabeledWrapper from 'components/Input/LabeledWrapper';
 import VerifyView from 'components/Input/VerifyView';
 
+// partials
 import SelectList from './SelectList';
+
+
+type InputProps = {
+  fieldName: string,
+  value?: string,
+  onChange?: (value: any) => void,
+  onSelect?: (value: any) => void,
+  onBlur?: (field: string, value: ?string) => void,
+};
+
+type Option = {
+  name: string,
+};
+
+type Props = {
+  hasVerification?: boolean,
+  isModified?: boolean,
+  isVerified?: boolean,
+  disabledInput?: ?boolean,
+  inputType?: string,
+  errorMessage?: ?string,
+  inputProps: InputProps,
+  hasSwitch?: boolean,
+  label: string,
+  wrapperStyle?: Object,
+  options?: Option[],
+  optionsTitle?: string,
+  onPressVerify?: () => void,
+};
+
+type State = {
+  showModal: boolean,
+};
+
 
 const StyledItemView = styled.View`
   display: flex;
@@ -36,12 +75,9 @@ const StyledItemView = styled.View`
   justify-content: space-between;
   align-items: center;
   align-content: center;
-  padding: 0 ${spacing.large}px 0;
-  background-color: ${themedColors.card};
-  border-bottom-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
-  border-top-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
-  border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-top-width: ${StyleSheet.hairlineWidth}px;
+  padding: 0 ${spacing.layoutSides}px 0;
+  border-bottom-color: ${({ hasErrors }) => hasErrors ? themedColors.negative : themedColors.tertiary};
+  border-bottom-width: 1px;
   height: 60px;
 `;
 
@@ -59,7 +95,7 @@ const ErrorMessage = styled(BaseText)`
 
 const ItemValue = styled(Input)`
   color: ${themedColors.text};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   flex-wrap: wrap;
   width:100%;
   padding: 0 0 9px;
@@ -86,41 +122,6 @@ const ModalTitle = styled(MediumText)`
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
-type InputProps = {
-  fieldName: string,
-  value?: string,
-  onChange?: (value: any) => void,
-  onSelect?: (value: any) => void,
-  onBlur?: (field: string, value: ?string) => void,
-};
-
-type Option = {
-  name: string,
-};
-
-type Props = {
-  hasVerification?: boolean,
-  isModified: boolean,
-  isVerified?: boolean,
-  disabledInput?: ?boolean,
-  inputType?: string,
-  errorMessage?: ?string,
-  inputProps: InputProps,
-  hasSwitch?: boolean,
-  label: string,
-  wrapperStyle?: Object,
-  options?: Option[],
-  optionsTitle?: string,
-  onPressVerify?: () => void,
-};
-
-type State = {
-  showModal: boolean,
-};
-
-type EventLike = {
-  nativeEvent: Object,
-};
 
 export default class InputWithSwitch extends React.Component<Props, State> {
   state = {
@@ -141,7 +142,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     }
   };
 
-  handleChange = (e: EventLike) => {
+  handleChange = (e: Event) => {
     const { inputProps: { onChange } } = this.props;
     const { nativeEvent: { text } } = e;
 
@@ -209,6 +210,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     ) : (
       <LabeledWrapper label={label}>
         <ItemValue
+          {...inputProps}
           disabled={disabledInput}
           onChange={this.handleChange}
           onBlur={this.handleBlur}

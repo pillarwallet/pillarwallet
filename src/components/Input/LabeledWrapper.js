@@ -21,24 +21,26 @@ import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 
-const ItemLabel = styled(MediumText)`
-  margin-top: 9px;
-  ${fontStyles.small};
-  color: ${themedColors.secondaryText};
-  flex-wrap: wrap;
-  width: 100%;
-  margin-bottom: 6px;
-`;
-
-const ItemSelectHolder = styled.TouchableOpacity`
-  flex: 1;
-`;
 
 type Props = {
   label: string,
   children: React.Node,
   onPress?: () => void,
 };
+
+
+const ItemLabel = styled(MediumText)`
+  margin: 4px 0;
+  ${fontStyles.regular};
+  color: ${themedColors.accent};
+  flex-wrap: wrap;
+  width: 100%;
+`;
+
+const ItemSelectHolder = styled.TouchableOpacity`
+  flex: 1;
+`;
+
 
 const LabeledWrapper = ({
   onPress,

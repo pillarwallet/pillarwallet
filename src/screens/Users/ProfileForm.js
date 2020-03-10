@@ -32,6 +32,8 @@ import {
   CodeStruct,
 } from 'components/ProfileForm/profileFormDefs';
 import InputWithSwitch from 'components/Input/InputWithSwitch';
+import { spacing } from 'utils/variables';
+
 
 type Field = {
   name: string,
@@ -45,6 +47,8 @@ type Field = {
   isVerified?: boolean,
   onPressVerify?: () => void,
   isModified?: boolean,
+  autoCapitalize?: string,
+  keyboardType?: string,
 };
 
 type Props = {
@@ -70,6 +74,7 @@ const defaultTypes = {
 };
 
 const { Form } = t.form;
+
 
 export const InputSwitchTemplate = (locals: Object) => {
   const { config = {} } = locals;
@@ -104,7 +109,7 @@ export const InputSwitchTemplate = (locals: Object) => {
       inputType={inputType}
       inputProps={inputProps}
       label={label}
-      wrapperStyle={{ marginBottom: 20 }}
+      wrapperStyle={{ marginTop: spacing.mediumLarge }}
       options={options}
       hasVerification={hasVerification}
       isModified={isModified}
@@ -139,11 +144,14 @@ const generateFormOptions = (fields: Field[]): Object => {
         hasVerification: field.hasVerification,
         isModified: field.isModified,
         isVerified: field.isVerified,
+        autoCapitalize: field.autoCapitalize,
+        keyboardType: field.keyboardType,
       },
     };
 
     return memo;
   }, {});
+
   return {
     fields: {
       ...options,
