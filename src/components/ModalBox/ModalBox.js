@@ -22,6 +22,7 @@ import styled from 'styled-components/native';
 import Modal from 'react-native-modal';
 
 import { themedColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 type Props = {
   isVisible: boolean,
@@ -33,7 +34,6 @@ const Wrapper = styled.View`
   height: 100%;
   flex: 1;
   flex-direction: column;
-  padding: 0 10px
   align-items: center;
   background-color: transparent;
 `;

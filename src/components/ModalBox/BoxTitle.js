@@ -18,9 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
-
-import type { Theme } from 'models/Theme';
+import styled from 'styled-components/native';
 
 // components
 import { MediumText } from 'components/Typography';
@@ -28,45 +26,42 @@ import IconButton from 'components/IconButton';
 
 // utils
 import { fontSizes, spacing } from 'utils/variables';
-import { getThemeColors } from 'utils/themes';
 
 type Props = {
   title: string,
   onPressClose: () => void,
-  theme: Theme,
 };
 
 const Wrapper = styled.View`
+  align-items: flex-start;
   display: flex;
   width: 100%;
+  padding: 0;
   flex-direction: row;
 `;
 
 const Title = styled(MediumText)`
-  margin: ${spacing.large}px;
   flex: 1;
+  margin: ${spacing.rhythm}px;
+  margin-bottom: ${spacing.small};
   font-size: ${fontSizes.big}px;
 `;
 
-const CloseIcon = styled(IconButton)`
-  padding: ${spacing.large}px;
-  width: 58px;
+const CloseIcon = styled(IconButton).attrs({
+  icon: 'close',
+  fontSize: fontSizes.regular,
+  secondary: true,
+})`
+  margin: ${spacing.layoutSides}px;
 `;
 
 const BoxTitle = (props: Props) => {
-  const colors = getThemeColors(props.theme);
-
   return (
     <Wrapper>
       <Title>{props.title}</Title>
-      <CloseIcon
-        icon="close"
-        onPress={props.onPressClose}
-        fontSize={fontSizes.regular}
-        color={colors.text}
-      />
+      <CloseIcon onPress={props.onPressClose} />
     </Wrapper>
   );
 };
 
-export default withTheme(BoxTitle);
+export default BoxTitle;
