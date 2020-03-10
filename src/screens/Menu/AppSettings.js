@@ -253,16 +253,16 @@ class AppSettings extends React.Component<Props, State> {
         >
           <StyledWrapper regularPadding flex={1}>
             <Paragraph small>
-                By confirming, you will leave the Early Access program. As a result, your access to the
-                Smart Wallet, Pillar Payment Network, Bitcoin Wallet and any funds stored on them will be lost.
+              By confirming, you will leave the Early Access program. As a result, your access to the
+              Smart Wallet, Pillar Payment Network, Bitcoin Wallet and any funds stored on them will be lost.
             </Paragraph>
             <Paragraph small>
-                We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
-                Based Wallet before leaving this Program.
+              We strongly recommend that you transfer all assets from the Smart Wallet and Pillar Network to your Key
+              Based Wallet before leaving this Program.
             </Paragraph>
             <Paragraph small>
-                If you wish to re-gain early access to Smart Wallet or Bitcoin Wallet (and re-gain access to the funds
-                on your Smart Wallet or Bitcoin Wallet), you will need to apply again.
+              If you wish to re-gain early access to Smart Wallet or Bitcoin Wallet (and re-gain access to the funds
+              on your Smart Wallet or Bitcoin Wallet), you will need to apply again.
             </Paragraph>
             <Button
               title="Leave Program"

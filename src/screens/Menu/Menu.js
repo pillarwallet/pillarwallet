@@ -285,11 +285,11 @@ class Menu extends React.Component<Props, State> {
             <Footer>
               <LinksSection>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('termsOfService')}>
-                 Terms of Use
+                  Terms of Use
                 </LegalTextLink>
                 <LegalTextLink>  •  </LegalTextLink>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('privacyPolicy')}>
-                 Privacy policy
+                  Privacy policy
                 </LegalTextLink>
               </LinksSection>
               <LogoutSection>
