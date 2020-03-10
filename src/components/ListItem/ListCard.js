@@ -44,6 +44,7 @@ type Props = {
     label: string,
     color?: string,
   },
+  customIcon?: React.Node,
 }
 
 const CardRow = styled.View`
@@ -108,6 +109,7 @@ export const ListCard = (props: Props) => {
     disabled,
     children,
     labelBadge,
+    customIcon,
   } = props;
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
@@ -121,6 +123,7 @@ export const ListCard = (props: Props) => {
     >
       <CardRow>
         {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
+        {customIcon}
         <ContentWrapper>
           <CardContent>
             <TitleWrapper>

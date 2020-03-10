@@ -19,20 +19,26 @@
 */
 import * as React from 'react';
 import renderer from 'react-test-renderer';
+import { Provider } from 'react-redux';
 import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { delay } from 'utils/common';
+import configureStore from '../../../../configureStore';
 import SlideModal from '../SlideModal';
+
+const { store } = configureStore();
 
 describe('Slide Modal', () => {
   it('should render SlideModal correctly', () => {
     const component = renderer.create(
-      <ThemeProvider theme={defaultTheme}>
-        <SlideModal title="title" isVisible />
-      </ThemeProvider>).toJSON();
+      <Provider store={store}>
+        <ThemeProvider theme={defaultTheme}>
+          <SlideModal title="title" isVisible />
+        </ThemeProvider>
+      </Provider>).toJSON();
     expect(component).toMatchSnapshot();
   });
 
@@ -50,9 +56,11 @@ describe('Slide Modal', () => {
   it('should close modal on dismiss', async () => {
     const onModalHide = jest.fn();
     const component = renderer.create(
-      <ThemeProvider theme={defaultTheme}>
-        <SlideModal title="title" isVisible onModalHide={onModalHide} />
-      </ThemeProvider>);
+      <Provider store={store}>
+        <ThemeProvider theme={defaultTheme}>
+          <SlideModal title="title" isVisible onModalHide={onModalHide} />
+        </ThemeProvider>
+      </Provider>);
     const instance = component.root;
     const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.regular });
     button.props.onPress();

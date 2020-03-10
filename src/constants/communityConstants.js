@@ -17,30 +17,34 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
-import Toast from 'components/Toast';
-import { RECOVERY_SETTINGS } from 'constants/navigationConstants';
-import { navigate } from 'services/navigation';
 
-const BACKUP_MESSAGE =
-  'Go to wallet settings on the assets screen and complete the wallet backup. ' +
-  'Pillar cannot help you retrieve your wallet if it is lost.';
+import { Platform } from 'react-native';
 
-export const toastWalletBackup = (isWalletBackedUp: boolean) => {
-  if (isWalletBackedUp) {
-    return;
-  }
+export const TWITTER_SOCIAL_ADDRESS = {
+  web: 'https://twitter.com/PillarWallet',
+  app: 'twitter://user?screen_name=PillarWallet',
+};
 
-  Toast.show({
-    message: BACKUP_MESSAGE,
-    type: 'warning',
-    title: 'Please ensure you backup your wallet now',
-    autoClose: false,
-    onPress: () => {
-      const action = NavigationActions.navigate({
-        routeName: RECOVERY_SETTINGS,
-      });
-      navigate(action);
-    },
-  });
+export const TELEGRAM_SOCIAL_ADDRESS = {
+  web: 'https://t.me/pillarofficial',
+};
+
+export const YOUTUBE_SOCIAL_ADDRESS = {
+  web: 'https://www.youtube.com/c/PillarProject',
+};
+
+export const MEDIUM_SOCIAL_ADDRESS = {
+  web: 'https://medium.com/pillarproject',
+};
+
+export const FACEBOOK_SOCIAL_ADDRESS = {
+  web: 'https://facebook.com/pillarproject/',
+  app: Platform.select({
+    android: 'fb://page/277505029373839',
+    ios: 'fb://profile/277505029373839',
+  }),
+};
+
+export const FORUM_SOCIAL_ADDRESS = {
+  web: 'https://forum.pillarproject.io/',
 };

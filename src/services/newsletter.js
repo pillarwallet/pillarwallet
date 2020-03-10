@@ -17,30 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
-import Toast from 'components/Toast';
-import { RECOVERY_SETTINGS } from 'constants/navigationConstants';
-import { navigate } from 'services/navigation';
+import { NEWSLETTER_SUBSCRIBE_URL } from 'react-native-dotenv';
+import axios from 'axios';
 
-const BACKUP_MESSAGE =
-  'Go to wallet settings on the assets screen and complete the wallet backup. ' +
-  'Pillar cannot help you retrieve your wallet if it is lost.';
-
-export const toastWalletBackup = (isWalletBackedUp: boolean) => {
-  if (isWalletBackedUp) {
-    return;
-  }
-
-  Toast.show({
-    message: BACKUP_MESSAGE,
-    type: 'warning',
-    title: 'Please ensure you backup your wallet now',
-    autoClose: false,
-    onPress: () => {
-      const action = NavigationActions.navigate({
-        routeName: RECOVERY_SETTINGS,
-      });
-      navigate(action);
-    },
-  });
+export const subscribeToNewsletter = (email: string) => {
+  return axios.post(`${NEWSLETTER_SUBSCRIBE_URL}&EMAIL=${email}`);
 };
