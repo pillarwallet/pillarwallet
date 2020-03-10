@@ -47,6 +47,8 @@ type Field = {
   isVerified?: boolean,
   onPressVerify?: () => void,
   isModified?: boolean,
+  autoCapitalize?: string,
+  keyboardType?: string,
 };
 
 type Props = {
@@ -60,7 +62,6 @@ type State = {
   value: Object,
 };
 
-
 const defaultTypes = {
   string: t.String,
   code: CodeStruct,
@@ -73,6 +74,7 @@ const defaultTypes = {
 };
 
 const { Form } = t.form;
+
 
 export const InputSwitchTemplate = (locals: Object) => {
   const { config = {} } = locals;
@@ -142,11 +144,14 @@ const generateFormOptions = (fields: Field[]): Object => {
         hasVerification: field.hasVerification,
         isModified: field.isModified,
         isVerified: field.isVerified,
+        autoCapitalize: field.autoCapitalize,
+        keyboardType: field.keyboardType,
       },
     };
 
     return memo;
   }, {});
+
   return {
     fields: {
       ...options,

@@ -210,6 +210,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     ) : (
       <LabeledWrapper label={label}>
         <ItemValue
+          {...inputProps}
           disabled={disabledInput}
           onChange={this.handleChange}
           onBlur={this.handleBlur}

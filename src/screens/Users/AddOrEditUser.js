@@ -237,6 +237,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               hasVerification: true,
               isVerified: isEmailVerified,
               onPressVerify: this.verifyEmail,
+              autoCapitalize: 'none',
+              keyboardType: 'email-address',
             }]}
             onUpdate={this.handleUserFieldUpdate}
             value={{ email }}
@@ -250,6 +252,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               hasVerification: true,
               isVerified: isPhoneVerified,
               onPressVerify: this.verifyPhone,
+              keyboardType: 'number-pad',
             }]}
             onUpdate={this.handleUserFieldUpdate}
             value={{ phone }}
