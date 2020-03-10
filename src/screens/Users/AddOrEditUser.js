@@ -34,6 +34,7 @@ import { ScrollWrapper } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import { TextLink } from 'components/Typography';
 import Camera from 'components/Camera';
+import InputWithSwitch from 'components/Input/InputWithSwitch';
 
 import { spacing } from 'utils/variables';
 import countries from 'utils/countries.json';
@@ -151,8 +152,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       verifyingField,
     } = this.state;
     const { user, navigation } = this.props;
-    const { profileImage, lastUpdateTime = 0, username } = user;
-    const cameraButtonLabel = profileImage ? 'Change profile picture' : 'Set profile picture';
 
     const {
       firstName,
@@ -163,7 +162,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       city,
       isEmailVerified,
       isPhoneVerified,
+      profileImage,
+      lastUpdateTime = 0,
+      username,
     } = user;
+
+    const cameraButtonLabel = profileImage ? 'Change profile picture' : 'Set profile picture';
 
     return (
       <ContainerWithHeader
@@ -190,6 +194,16 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <CameraButtonLabel>{cameraButtonLabel}</CameraButtonLabel>
             </ImageWrapper>
           </CameraButton>
+
+          <InputWithSwitch
+            disabledInput
+            inputProps={{
+              value: username,
+              fieldName: 'username',
+            }}
+            label="User name"
+            wrapperStyle={{ marginBottom: 20 }}
+          />
 
           <ProfileForm
             fields={[{

@@ -100,7 +100,7 @@ type Option = {
 
 type Props = {
   hasVerification?: boolean,
-  isModified: boolean,
+  isModified?: boolean,
   isVerified?: boolean,
   disabledInput?: ?boolean,
   inputType?: string,
