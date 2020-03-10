@@ -38,7 +38,7 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
-import HeaderTitleText from 'components/HeaderBlock/HeaderTitleText';
+import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
 
 // constants
@@ -46,7 +46,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
-  SETTINGS,
+  MENU,
   MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
@@ -142,6 +142,8 @@ type State = {
   isScanning: boolean,
 };
 
+const profileImageWidth = 24;
+
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
   background-color: ${themedColors.surface};
@@ -164,23 +166,6 @@ const BadgesWrapper = styled.View`
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
-
-const User = ({ user, navigation }) => {
-  const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
-  return (
-    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <ProfileImage
-        uri={userImageUri}
-        userName={user.username}
-        diameter={24}
-        noShadow
-        borderWidth={0}
-        onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}
-      />
-      <HeaderTitleText style={{ marginLeft: 8 }}>{user.username}</HeaderTitleText>
-    </View>
-  );
-};
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -312,6 +297,21 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  renderUser = () => {
+    const { user, navigation } = this.props;
+    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
+    return (
+      <ProfileImage
+        uri={userImageUri}
+        userName={user.username}
+        diameter={profileImageWidth}
+        noShadow
+        borderWidth={0}
+        onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}
+      />
+    );
+  };
+
   render() {
     const {
       cancelInvitation,
@@ -333,7 +333,6 @@ class HomeScreen extends React.Component<Props, State> {
       theme,
       baseFiatCurrency,
       activeBlockchainNetwork,
-      user,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -416,16 +415,18 @@ class HomeScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={colors.card}
         headerProps={{
-          leftItems: [{ custom: <User user={user} navigation={navigation} /> }],
-          rightItems: [
+          leftItems: [
             {
-              link: 'Settings',
-              onPress: () => { navigation.navigate(SETTINGS); },
+              custom: (
+                <IconButton icon="hamburger" onPress={() => navigation.navigate(MENU)} fontSize={fontSizes.large} />
+              ),
             },
+          ],
+          centerItems: [{ custom: this.renderUser() }],
+          rightItems: [
             {
               link: 'Support',
               onPress: () => Intercom.displayMessenger(),
-              withBackground: true,
               addon: hasIntercomNotifications && (
                 <View
                   style={{
@@ -440,6 +441,7 @@ class HomeScreen extends React.Component<Props, State> {
               ),
             },
           ],
+          sideFlex: 4,
         }}
         inset={{ bottom: 0 }}
       >
