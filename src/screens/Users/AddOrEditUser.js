@@ -36,14 +36,18 @@ import { TextLink } from 'components/Typography';
 import Camera from 'components/Camera';
 import InputWithSwitch from 'components/Input/InputWithSwitch';
 
+// utils
 import { spacing } from 'utils/variables';
 import countries from 'utils/countries.json';
 import { themedColors } from 'utils/themes';
 
+// actions
 import { updateUserAction } from 'actions/userActions';
 
+// partials
 import ProfileForm from './ProfileForm';
 import VerifyOTPModal from './VerifyOTPModal';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -84,7 +88,6 @@ const ProfileImagePlaceholder = styled.View`
   border-radius: 48px;
   align-items: center;
   justify-content: center;
-  background-color: ${themedColors.card};
   border: 2px dashed ${themedColors.border};
 `;
 
@@ -94,6 +97,7 @@ const BlankAvatar = styled(CachedImage)`
 `;
 
 const blankAvatar = require('assets/icons/icon_blank_avatar.png');
+
 
 class AddOrEditUser extends React.PureComponent<Props, State> {
   state = {
@@ -201,8 +205,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               value: username,
               fieldName: 'username',
             }}
-            label="User name"
-            wrapperStyle={{ marginBottom: 20 }}
+            label="Username"
+            wrapperStyle={{ marginTop: spacing.mediumLarge }}
           />
 
           <ProfileForm
@@ -227,7 +231,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
           <ProfileForm
             fields={[{
-              label: 'Email',
+              label: 'E-mail',
               name: 'email',
               type: 'email',
               hasVerification: true,
@@ -236,6 +240,19 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             }]}
             onUpdate={this.handleUserFieldUpdate}
             value={{ email }}
+          />
+
+          <ProfileForm
+            fields={[{
+              label: 'Phone',
+              name: 'phone',
+              type: 'phone',
+              hasVerification: true,
+              isVerified: isPhoneVerified,
+              onPressVerify: this.verifyPhone,
+            }]}
+            onUpdate={this.handleUserFieldUpdate}
+            value={{ phone }}
           />
 
           <ProfileForm
@@ -260,18 +277,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             value={{ city }}
           />
 
-          <ProfileForm
-            fields={[{
-              label: 'Phone',
-              name: 'phone',
-              type: 'phone',
-              hasVerification: true,
-              isVerified: isPhoneVerified,
-              onPressVerify: this.verifyPhone,
-            }]}
-            onUpdate={this.handleUserFieldUpdate}
-            value={{ phone }}
-          />
         </ScrollWrapper>
 
         <Camera

@@ -32,6 +32,8 @@ import {
   CodeStruct,
 } from 'components/ProfileForm/profileFormDefs';
 import InputWithSwitch from 'components/Input/InputWithSwitch';
+import { spacing } from 'utils/variables';
+
 
 type Field = {
   name: string,
@@ -57,6 +59,7 @@ type Props = {
 type State = {
   value: Object,
 };
+
 
 const defaultTypes = {
   string: t.String,
@@ -104,7 +107,7 @@ export const InputSwitchTemplate = (locals: Object) => {
       inputType={inputType}
       inputProps={inputProps}
       label={label}
-      wrapperStyle={{ marginBottom: 20 }}
+      wrapperStyle={{ marginTop: spacing.mediumLarge }}
       options={options}
       hasVerification={hasVerification}
       isModified={isModified}
