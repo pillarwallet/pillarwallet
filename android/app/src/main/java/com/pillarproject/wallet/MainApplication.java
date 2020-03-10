@@ -1,56 +1,24 @@
 package com.pillarproject.wallet;
 
-import androidx.multidex.MultiDexApplication;
-
-import com.facebook.react.ReactApplication;
-import me.jhen.react.BadgePackage;
-import io.sentry.RNSentryPackage;
-
-import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
-import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
-import io.invertase.firebase.iid.ReactNativeFirebaseIidPackage;
-import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
-import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
-import com.crypho.scrypt.RNScryptPackage;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
-import com.swmansion.rnscreens.RNScreensPackage;
-
-import io.intercom.android.sdk.Intercom;
-import lt.imas.react_native_signal.RNSignalClientPackage;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.tradle.react.UdpSocketsModule;
-import com.reactlibrary.RNThreadPackage;
-import com.peel.react.TcpSocketsModule;
-import com.horcrux.svg.SvgPackage;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import cl.json.RNSharePackage;
-import com.bitgo.randombytes.RandomBytesPackage;
-import com.peel.react.rnos.RNOSModule;
 import com.BV.LinearGradient.LinearGradientPackage;
-import com.oblador.keychain.KeychainPackage;
-import com.robinpowered.react.Intercom.IntercomPackage;
-import com.reactnative.ivpusic.imagepicker.PickerPackage;
-import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.psykar.cookiemanager.CookieManagerPackage;
-import iyegoroff.RNColorMatrixImageFilters.ColorMatrixImageFiltersPackage;
-import org.reactnative.camera.RNCameraPackage;
-import com.ocetnik.timer.BackgroundTimerPackage;
-import io.expo.appearance.RNCAppearancePackage;
-import nativeShadow.NativeShadowPackage;
-
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-import com.mattblock.reactnative.inappbrowser.RNInAppBrowserPackage;
+import com.bitgo.randombytes.RandomBytesPackage;
+import com.crypho.scrypt.RNScryptPackage;
+import com.facebook.react.PackageList;
+import androidx.multidex.MultiDexApplication;
+import com.facebook.react.ReactApplication;
+
+import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
+import cl.json.RNSharePackage;
+import io.expo.appearance.RNCAppearancePackage;
+import io.intercom.android.sdk.Intercom;
+import nativeShadow.NativeShadowPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
@@ -63,47 +31,14 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new BadgePackage(),
-            new RNSentryPackage(),
-            new ReactNativeFirebaseAppPackage(),
-            new ReactNativeFirebaseMessagingPackage(),
-            new ReactNativeFirebaseIidPackage(),
-            new ReactNativeFirebaseCrashlyticsPackage(),
-            new ReactNativeFirebaseAnalyticsPackage(),
-            new RNScryptPackage(),
-            new RNFetchBlobPackage(),
-            new RNGestureHandlerPackage(),
-            new RNScreensPackage(),
-            new RNSignalClientPackage(),
-            new RNCWebViewPackage(),
-            new VectorIconsPackage(),
-            new UdpSocketsModule(),
-            new RNThreadPackage(mReactNativeHost, new RandomBytesPackage()), // randombytes needed for connections keypair generation in thread
-            new TcpSocketsModule(),
-            new SvgPackage(),
-            new SplashScreenReactPackage(),
-            new RNSharePackage(),
-            new RandomBytesPackage(),
-            new RNOSModule(),
-            new LinearGradientPackage(),
-            new KeychainPackage(),
-            new IntercomPackage(),
-            new PickerPackage(),
-            new ExtraDimensionsPackage(),
-            new RNDeviceInfo(),
-            new CookieManagerPackage(),
-            new ColorMatrixImageFiltersPackage(),
-            new RNCameraPackage(),
-            new BackgroundTimerPackage(),
-            new RNCAppearancePackage(),
-            new LottiePackage(),
-            new AsyncStoragePackage(),
-            new RNInAppBrowserPackage(),
-            new NativeShadowPackage(),
-            new RNNotificationsPackage(MainApplication.this)
-      );
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        List<ReactPackage> packages = new PackageList(this).getPackages();
+        // Packages that cannot be autolinked yet can be added manually here, for example:
+        // packages.add(new MyReactNativePackage());
+        packages.add(new RNFetchBlobPackage());
+        packages.add(new RNNotificationsPackage(MainApplication.this));
+        packages.add(new NativeShadowPackage());
+        return packages;
     }
 
     @Override

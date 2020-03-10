@@ -3,7 +3,6 @@ package com.pillarproject.wallet;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.wix.reactnativenotifications.fcm.FcmInstanceIdListenerService;
 

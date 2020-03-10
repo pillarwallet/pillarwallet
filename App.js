@@ -20,7 +20,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
+import { StatusBar, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
@@ -30,6 +30,7 @@ import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
 import { AppearanceProvider } from 'react-native-appearance';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 
 import { setTopLevelNavigator } from 'services/navigation';
 
@@ -96,25 +97,30 @@ class App extends React.Component<Props, *> {
   componentWillUnmount() {
     const { stopListeningOnOpenNotification } = this.props;
     stopListeningOnOpenNotification();
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+    if (this.removeNetInfoEventListener) {
+      this.removeNetInfoEventListener();
+      delete this.removeNetInfoEventListener;
+    }
     Linking.removeEventListener('url', this.handleDeepLinkEvent);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       executeDeepLink,
     } = this.props;
-    const isOnline = await NetInfo.isConnected.fetch();
-    this.setOnlineStatus(isOnline); // set initial online status
+    NetInfo.fetch()
+      .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
+      .catch(() => null);
+    this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');
     }
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+
     Linking.getInitialURL()
       .then(url => {
         if (url) executeDeepLink(url);
@@ -142,7 +148,9 @@ class App extends React.Component<Props, *> {
     updateOfflineQueueNetworkStatus(isOnline);
   };
 
-  handleConnectivityChange = isOnline => {
+  handleConnectivityChange = (state: NetInfoState) => {
+    const isOnline = state.isInternetReachable;
+    console.log('handleConnectivityChange isOnline: ', isOnline);
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
       Toast.show({

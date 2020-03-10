@@ -19,7 +19,6 @@
 */
 import { Platform } from 'react-native';
 import { utils } from 'ethers';
-import { Thread } from 'react-native-threads';
 import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 
 const { HDNode } = utils;
@@ -113,14 +112,15 @@ const threadJobWorkerSeed = (
 
 async function threadPoolCreation(threadCount: number = 5) {
   const threads = [];
-  for (let i = 0; i < threadCount; i++) {
-    threads.push(new Thread('index.thread.js'));
-  }
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(threads);
-    }, 1000);
-  });
+  // TODO: remove
+  // for (let i = 0; i < threadCount; i++) {
+  //   threads.push(new Thread('index.thread.js'));
+  // }
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve(threads);
+  //   }, 1000);
+  // });
 }
 
 export async function generateKeyPairThreadPool(
