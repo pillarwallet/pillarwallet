@@ -161,7 +161,6 @@ class App extends React.Component<Props, *> {
     const { url: deepLink } = event;
     if (deepLink === undefined) return;
     executeDeepLink(deepLink);
-    executeDeepLink(deepLink);
   };
 
   render() {
