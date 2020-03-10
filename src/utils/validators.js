@@ -148,7 +148,8 @@ export function isValidCityName(cityName: string) {
   return re.test(cityName);
 }
 
-export function isValidUKPhone(phone: string) {
-  const re = /^(\+44\d{10}\b)/;
+export function isValidPhone(phone: string) {
+  const re = /^(\+\d{10,20}\b)/;
+
   return re.test(phone);
 }
