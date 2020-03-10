@@ -219,11 +219,14 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 };
 
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
-      dispatch(fetchInitialAssetsAction(false));
+      const accountAssets = accountAssetsSelector(getState());
+      if (isEmpty(accountAssets)) {
+        dispatch(fetchInitialAssetsAction(false));
+      }
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
