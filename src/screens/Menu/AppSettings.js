@@ -175,9 +175,9 @@ class AppSettings extends React.Component<Props, State> {
     ];
   }
 
-  renderCurrencyListItem = () => {
+  renderCurrencyListItem = (item) => {
     const { baseFiatCurrency } = this.props;
-    return this.renderListItem('currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency);
+    return this.renderListItem('currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
   }
 
   render() {
