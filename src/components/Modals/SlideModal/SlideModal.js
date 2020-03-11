@@ -108,7 +108,7 @@ const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
   ${props => props.fullScreen ? 'padding-top: 20px;' : ''}
-  ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}  
+  ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
 `;
 
 const Backdrop = styled.TouchableWithoutFeedback`

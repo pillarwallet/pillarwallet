@@ -56,8 +56,7 @@ import {
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, SETTINGS } from 'constants/navigationConstants';
-import { KEY_SECTION } from 'screens/Settings';
+import { ACCOUNTS, RECOVERY_SETTINGS, SECURITY_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
@@ -224,7 +223,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Backup wallet',
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(SETTINGS, { scrollTo: KEY_SECTION })
+          ? () => navigation.navigate(RECOVERY_SETTINGS)
           : null,
       },
       {
@@ -240,7 +239,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Enable biometric login (optional)',
         status: useBiometrics,
         onPress: !useBiometrics
-          ? () => navigation.navigate(SETTINGS)
+          ? () => navigation.navigate(SECURITY_SETTINGS)
           : null,
       };
       return [...keyWalletInsights, biometricsInsight];

@@ -65,7 +65,7 @@ type SelectorValueType = {
     iconFallback?: string,
     value: string | number,
   }
-}
+};
 
 type SelectorOptions = {
   options?: Array<Object>,
@@ -91,12 +91,12 @@ type InputPropsType = {
   onSelectorOpen?: () => void,
   onSelectorChange?: () => void,
   label?: string,
-}
+};
 
 type Props = {
   errorMessage?: string,
   inputProps: InputPropsType,
-  trim: boolean,
+  trim?: boolean,
   autoCorrect?: boolean,
   keyboardAvoidance?: boolean,
   loading?: boolean,
@@ -114,17 +114,17 @@ type Props = {
   selectorOptions?: SelectorOptions,
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
-}
+};
 
 type State = {
   isFocused: boolean,
   showOptionsSelector: boolean,
   query: string,
-}
+};
 
 type EventLike = {
   nativeEvent: Object,
-}
+};
 
 const getFontSize = (props: Props) => {
   const { inputProps: { value }, numeric } = props;
@@ -205,7 +205,7 @@ const InputFooter = styled(View)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 0 2px; 
+  padding: 0 2px;
   margin-bottom: 6px;
   margin-top: -4px;
 `;
