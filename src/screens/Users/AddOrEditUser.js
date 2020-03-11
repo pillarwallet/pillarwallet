@@ -180,6 +180,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             { title: 'User settings' },
           ],
         }}
+        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper disableOnAndroid>
           <CameraButton onPress={this.openCamera}>

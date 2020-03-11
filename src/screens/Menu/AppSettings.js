@@ -187,6 +187,7 @@ class AppSettings extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'App settings' }] }}
+        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper
           contentContainerStyle={{

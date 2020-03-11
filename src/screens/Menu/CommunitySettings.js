@@ -134,6 +134,7 @@ class CommunitySettings extends React.Component<{}, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Community' }] }}
+        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper
           contentContainerStyle={{ paddingVertical: spacing.mediumLarge }}
