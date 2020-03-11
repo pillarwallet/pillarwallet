@@ -1851,10 +1851,10 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.40.1725":
-  version "1.40.1725"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.40.1725.tgz#e3b69ec39e43e5fa5aa0ff65274ba280be95ee65"
-  integrity sha1-47aew55D5fpaoP9lJ0uigL6V7mU=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.43":
+  version "1.43.1772"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.43.1772.tgz#667fb570f480500639ccf395542dc886778f2374"
+  integrity sha1-Zn+1cPSAUAY5zPOVVC3IhnePI3Q=
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"

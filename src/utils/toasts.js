@@ -19,9 +19,8 @@
 */
 import { NavigationActions } from 'react-navigation';
 import Toast from 'components/Toast';
-import { SETTINGS } from 'constants/navigationConstants';
+import { RECOVERY_SETTINGS } from 'constants/navigationConstants';
 import { navigate } from 'services/navigation';
-import { KEY_SECTION } from 'screens/Settings';
 
 const BACKUP_MESSAGE =
   'Go to wallet settings on the assets screen and complete the wallet backup. ' +
@@ -39,8 +38,7 @@ export const toastWalletBackup = (isWalletBackedUp: boolean) => {
     autoClose: false,
     onPress: () => {
       const action = NavigationActions.navigate({
-        routeName: SETTINGS,
-        params: { scrollTo: KEY_SECTION },
+        routeName: RECOVERY_SETTINGS,
       });
       navigate(action);
     },

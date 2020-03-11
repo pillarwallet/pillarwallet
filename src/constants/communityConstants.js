@@ -18,14 +18,33 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const SET_USERNAME = 'SET_USERNAME';
-export const SET_USER = 'SET_USER';
-export const UPDATE_USER = 'UPDATE_USER';
-export const USER_PHONE_VERIFIED = 'USER_PHONE_VERIFIED';
-export const USER_EMAIL_VERIFIED = 'USER_EMAIL_VERIFIED';
-export const REGISTERED = 'REGISTERED';
-export const PENDING = 'PENDING';
-export const SENDING_OTP = 'SENDING_OTP';
-export const OTP_SENT = 'OTP_SENT';
-export const RESET_OTP_STATUS = 'RESET_OTP_STATUS';
-export const VERIFICATION_FAILED = 'VERIFICATION_FAILED';
+import { Platform } from 'react-native';
+
+export const TWITTER_SOCIAL_ADDRESS = {
+  web: 'https://twitter.com/PillarWallet',
+  app: 'twitter://user?screen_name=PillarWallet',
+};
+
+export const TELEGRAM_SOCIAL_ADDRESS = {
+  web: 'https://t.me/pillarofficial',
+};
+
+export const YOUTUBE_SOCIAL_ADDRESS = {
+  web: 'https://www.youtube.com/c/PillarProject',
+};
+
+export const MEDIUM_SOCIAL_ADDRESS = {
+  web: 'https://medium.com/pillarproject',
+};
+
+export const FACEBOOK_SOCIAL_ADDRESS = {
+  web: 'https://facebook.com/pillarproject/',
+  app: Platform.select({
+    android: 'fb://page/277505029373839',
+    ios: 'fb://profile/277505029373839',
+  }),
+};
+
+export const FORUM_SOCIAL_ADDRESS = {
+  web: 'https://forum.pillarproject.io/',
+};
