@@ -1,8 +1,6 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-# lottie-react-native, react-native-in-app-browser
-use_modular_headers!
 
 target 'pillarwallet' do
   # Pods for pillarwallet
