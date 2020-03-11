@@ -10,6 +10,7 @@
 # Add any project specific keep options here:
 
 # react-native-keychain:
--keep class com.facebook.crypto.** {
-    *;
-}
+-keep class com.facebook.crypto.** { *; }
+
+# hermes
+-keep class com.facebook.hermes.unicode.** { *; }

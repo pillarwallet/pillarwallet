@@ -245,7 +245,10 @@ const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App)
 
 const AppRoot = () => SHOW_ONLY_STORYBOOK ? <Storybook /> : (
   <Provider store={store}>
-    <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
+    <PersistGate
+      loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
+      persistor={persistor}
+    >
       <AppWithNavigationState />
     </PersistGate>
   </Provider>
