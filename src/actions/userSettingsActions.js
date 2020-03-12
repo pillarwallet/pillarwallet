@@ -50,7 +50,7 @@ export const hideAssetAction = (asset: Asset) => {
       autoClose: true,
     });
 
-    dispatch(saveDbAction('userSettings', { userSettings: { hiddenAssets: updatedHiddenAssets } }));
+    dispatch(saveDbAction('userSettings', { userSettings: { hiddenAssets: updatedHiddenAssets } }, true));
     dispatch({ type: SET_HIDDEN_ASSETS, payload: updatedHiddenAssets });
   };
 };
@@ -72,7 +72,7 @@ export const showAssetAction = (asset: Asset) => {
       [accountId]: updatedHiddenAccountAssets,
     };
 
-    dispatch(saveDbAction('userSettings', { userSettings: { hiddenAssets: updatedHiddenAssets } }));
+    dispatch(saveDbAction('userSettings', { userSettings: { hiddenAssets: updatedHiddenAssets } }, true));
     dispatch({ type: SET_HIDDEN_ASSETS, payload: updatedHiddenAssets });
   };
 };
