@@ -30,7 +30,7 @@ import { Label } from 'components/Typography';
 import { spacing } from 'utils/variables';
 
 const Message = styled(Label)`
-  margin: 0 ${spacing.large}px;
+  margin: 0 ${spacing.rhythm}px;
 `;
 
 type Props = {
