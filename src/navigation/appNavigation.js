@@ -539,13 +539,13 @@ const backupWalletFlow = createStackNavigator({
 
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
   [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
-  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
 smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;

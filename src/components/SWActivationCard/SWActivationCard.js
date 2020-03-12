@@ -19,26 +19,55 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation';
+import { withNavigation, SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import InsightWithButton from 'components/InsightWithButton';
-import ActionModal from 'components/ActionModal';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { EXCHANGE } from 'constants/navigationConstants';
-import { getBalance, getRate } from 'utils/assets';
-import { formatFiat } from 'utils/common';
-import { accountBalancesSelector } from 'selectors/balances';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
-import type { Balances, Rates } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
+import isEqual from 'lodash.isequal';
+import { utils } from 'ethers';
+import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 
+// components
+import InsightWithButton from 'components/InsightWithButton';
+import SlideModal from 'components/Modals/SlideModal';
+import Button from 'components/Button';
+import { MediumText, BaseText } from 'components/Typography';
+import RadioButton from 'components/RadioButton';
+import { Spacing } from 'components/Layout';
+
+// services
+import { calculateGasEstimate } from 'services/assets';
+import smartWalletService from 'services/smartWallet';
+
+// constants
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
+
+// actions
+import { fetchGasInfoAction } from 'actions/historyActions';
+import { switchAccountAction } from 'actions/accountsActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
+
+// utils
+import { spacing } from 'utils/variables';
+import { getRate, getAssetsAsList, getBalance } from 'utils/assets';
+import { formatFiat, getGasPriceWei } from 'utils/common';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 
+// selectors
+import { balancesSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
+
+// types
+import type { Balances, Rates, Assets } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+import type { GasInfo } from 'models/GasInfo';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -48,49 +77,238 @@ type Props = {
   smartWalletState: Object,
   onButtonPress?: () => void,
   title?: string,
-  balances: Balances,
+  balances: {
+    [account: string]: Balances,
+  },
   rates: Rates,
   baseFiatCurrency: ?string,
   deploySmartWallet: () => void,
+  fetchGasInfo: () => void,
+  switchAccount: (accountId: string, privateKey?: string) => void,
+  gasInfo: GasInfo,
+  assets: Assets,
 };
 
 type State = {
   isModalVisible: boolean,
+  selectedWallet: string,
+  deployEstimateFee: number,
+  gasEstimate: number,
+};
+
+const OptionContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+`;
+
+const OptionLeft = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ModalContainer = styled.View`
+  padding: 20px ${spacing.layoutSides}px 80px;
+`;
+
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+
+const Option = ({
+  name, checked, eth, onPress,
+}) => {
+  return (
+    <OptionContainer>
+      <OptionLeft>
+        <RadioButton checked={checked} onPress={onPress} />
+        <Spacing w={8} />
+        <MediumText big>{name}</MediumText>
+      </OptionLeft>
+      <BaseText medium secondary>{eth} ETH</BaseText>
+    </OptionContainer>
+  );
 };
 
 class SWActivationCard extends React.Component<Props, State> {
-  state = {
-    isModalVisible: false,
+  constructor(props) {
+    super(props);
+    const { accounts } = this.props;
+    const smartWalletAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+
+    this.state = {
+      isModalVisible: false,
+      selectedWallet: smartWalletAccount ? ACCOUNT_TYPES.SMART_WALLET : ACCOUNT_TYPES.KEY_BASED,
+      deployEstimateFee: 0,
+      gasEstimate: 0,
+    };
+  }
+
+  componentDidMount() {
+    const { fetchGasInfo } = this.props;
+    fetchGasInfo();
+    this.updateEstimations();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { gasInfo } = this.props;
+    if (!isEqual(prevProps.gasInfo, gasInfo)) {
+      this.updateEstimations();
+    }
+  }
+
+  getFormattedAmount = (amount) => {
+    const { baseFiatCurrency, rates } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const balanceInFiat = amount * getRate(rates, ETH, fiatCurrency);
+    return formatFiat(balanceInFiat, baseFiatCurrency || defaultFiatCurrency);
+  }
+
+  updateEstimations = () => {
+    const { gasInfo } = this.props;
+    smartWalletService.estimateAccountDeployment(gasInfo)
+      .then(deployEstimateFee => {
+        this.setState({ deployEstimateFee });
+        this.updateTransferGasEstimate(deployEstimateFee);
+      })
+      .catch(() => {});
   };
 
-  getModalItems = () => {
-    const {
-      navigation, baseFiatCurrency, balances, rates, deploySmartWallet,
-    } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const ethBalance = getBalance(balances, ETH);
-    const balanceInFiat = ethBalance * getRate(rates, ETH, fiatCurrency);
-    const fiatAmount = formatFiat(balanceInFiat, fiatCurrency);
+  updateTransferGasEstimate = (amount) => {
+    const { accounts } = this.props;
 
-    return [
-      {
-        label: 'I have ETH',
-        value: fiatAmount,
-        onPress: deploySmartWallet,
-        key: 'has ETH',
-      },
-      {
-        label: "I'd like to have some",
-        chevron: true,
-        onPress: () => {
-          navigation.navigate(EXCHANGE, {
-            fromAssetCode: fiatCurrency,
-            toAssetCode: ETH,
-          });
-        },
-        key: 'no ETH',
-      },
-    ];
+    const SWAccount = accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET);
+    const keyBasedAccount = accounts.find(account => account.type === ACCOUNT_TYPES.KEY_BASED);
+
+    calculateGasEstimate({
+      symbol: ETH, from: keyBasedAccount && keyBasedAccount.id, to: SWAccount && SWAccount.id, amount,
+    }).then(gasEstimate => {
+      this.setState({ gasEstimate });
+    }).catch(() => {});
+  }
+
+  getTransactionEstimate = () => {
+    const {
+      deployEstimateFee, gasEstimate, selectedWallet,
+    } = this.state;
+    const { gasInfo } = this.props;
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    let totalFees = parseInt(deployEstimateFee, 10);
+
+    if (selectedWallet === ACCOUNT_TYPES.KEY_BASED) {
+      totalFees += gasPriceWei.mul(gasEstimate).toNumber();
+    }
+    return parseFloat(utils.formatEther(totalFees.toString()));
+  }
+
+  deployFromLegacyWallet = async () => {
+    const {
+      switchAccount, accounts, navigation, gasInfo, assets,
+    } = this.props;
+    const { deployEstimateFee, gasEstimate } = this.state;
+    const keyBasedAccount = accounts.find(account => account.type === ACCOUNT_TYPES.KEY_BASED);
+    if (!keyBasedAccount) return;
+    await switchAccount(keyBasedAccount.id);
+
+    const gasPriceWei = getGasPriceWei(gasInfo);
+    const gasPrice = gasPriceWei.toNumber();
+    const assetsArray = getAssetsAsList(assets);
+    const asset: any = assetsArray.find((_asset: any) => _asset.name === 'Ethereum');
+    const {
+      symbol,
+      address: contractAddress,
+      decimals,
+    } = asset;
+
+
+    navigation.navigate(SMART_WALLET_UNLOCK, {
+      transferTransactions: [{
+        gasLimit: gasEstimate,
+        gasPrice,
+        symbol,
+        contractAddress,
+        decimals,
+        amount: parseFloat(utils.formatEther(deployEstimateFee.toString())),
+      }],
+    });
+  }
+
+  activateSW = () => {
+    const { selectedWallet } = this.state;
+    const { deploySmartWallet } = this.props;
+    if (selectedWallet === ACCOUNT_TYPES.SMART_WALLET) {
+      deploySmartWallet();
+    } else {
+      this.deployFromLegacyWallet();
+    }
+    this.setState({ isModalVisible: false });
+  }
+
+  renderModal = () => {
+    const { balances, accounts } = this.props;
+    const { isModalVisible, selectedWallet } = this.state;
+
+    const legacyWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.KEY_BASED);
+    const smartWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+
+    const ethBalanceInKeyWallet = legacyWallet && getBalance(balances[legacyWallet.id], ETH);
+    const ethBalanceInSmartWallet = smartWallet && getBalance(balances[smartWallet.id], ETH);
+
+    const transactionEstimate = this.getTransactionEstimate();
+
+    const buttonEnabled = selectedWallet === ACCOUNT_TYPES.SMART_WALLET ?
+      (ethBalanceInSmartWallet && ethBalanceInSmartWallet > transactionEstimate) :
+      (ethBalanceInKeyWallet && ethBalanceInKeyWallet > transactionEstimate);
+
+
+    return (
+      <SlideModal
+        isVisible={isModalVisible}
+        onModalHide={() => {
+          this.setState({ isModalVisible: false });
+        }}
+        hideHeader
+      >
+        <SafeAreaView>
+          <ModalContainer>
+            <MediumText center medium>Activate Smart Wallet</MediumText>
+            <Spacing h={18} />
+            <CachedImage style={{ width: 64, height: 64, alignSelf: 'center' }} source={smartWalletIcon} />
+            <Spacing h={20} />
+            <BaseText medium>
+              Enable better security and free instant transactions via Pillar Network. You will get a new badge too.
+            </BaseText>
+            <Spacing h={15} />
+            {!!ethBalanceInSmartWallet && (
+              <React.Fragment>
+                <Option
+                  name="From Smart Wallet"
+                  eth={ethBalanceInSmartWallet}
+                  checked={selectedWallet === ACCOUNT_TYPES.SMART_WALLET}
+                  onPress={() => this.setState({ selectedWallet: ACCOUNT_TYPES.SMART_WALLET })}
+                />
+                <Option
+                  name="From Key wallet"
+                  eth={ethBalanceInKeyWallet}
+                  checked={selectedWallet === ACCOUNT_TYPES.KEY_BASED}
+                  onPress={() => this.setState({ selectedWallet: ACCOUNT_TYPES.KEY_BASED })}
+                />
+              </React.Fragment>
+            )}
+            <Spacing h={15} />
+            <Button
+              secondaryLight
+              title={buttonEnabled ? 'Activate' : 'Not enough ETH'}
+              disabled={!buttonEnabled}
+              onPress={this.activateSW}
+            />
+            <Spacing h={20} />
+            <BaseText regular center secondary>
+              Transaction fee{'\n'}{transactionEstimate} ETH (${this.getFormattedAmount(transactionEstimate)})
+            </BaseText>
+          </ModalContainer>
+        </SafeAreaView>
+      </SlideModal>
+    );
   }
 
   render() {
@@ -103,7 +321,6 @@ class SWActivationCard extends React.Component<Props, State> {
       onButtonPress,
       deploySmartWallet,
     } = this.props;
-    const { isModalVisible } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
@@ -140,13 +357,7 @@ class SWActivationCard extends React.Component<Props, State> {
             spinner={isDeploying}
           />
         )}
-        <ActionModal
-          isVisible={isModalVisible}
-          onModalClose={(action) => {
-            this.setState({ isModalVisible: false }, action);
-          }}
-          items={this.getModalItems()}
-        />
+        {this.renderModal()}
       </React.Fragment>
     );
   }
@@ -157,15 +368,18 @@ const mapStateToProps = ({
   rates: { data: rates },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
+  history: { gasInfo },
 }) => ({
   baseFiatCurrency,
   rates,
   accounts,
   smartWalletState,
+  gasInfo,
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
+  balances: balancesSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -174,7 +388,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
 });
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(SWActivationCard));
