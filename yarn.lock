@@ -14822,16 +14822,16 @@ react-native-background-timer@2.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-background-timer/-/react-native-background-timer-2.1.1.tgz#9a2489681ab2f8033c213c73272e9d4c47572cd5"
   integrity sha1-miSJaBqy+AM8ITxzJy6dTEdXLNU=
 
-react-native-cached-image@^1.4.3:
-  version "1.4.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-cached-image/-/react-native-cached-image-1.4.3.tgz#0942e2cd078284a1f0438de8dfe17f2b36a89752"
-  integrity sha1-CULizQeChKHwQ43o3+F/Kzaol1I=
+"react-native-cached-image@https://github.com/poocart/react-native-cached-image":
+  version "1.4.5"
+  resolved "https://github.com/poocart/react-native-cached-image#24180bd45f959af8b04073e1c570fa3c6d4aaafe"
   dependencies:
+    "@react-native-community/netinfo" "^5.6.1"
     crypto-js "3.1.9-1"
     lodash "4.17.4"
     prop-types "15.5.10"
     react-native-clcasher "1.0.0"
-    react-native-fetch-blob "0.10.8"
+    rn-fetch-blob "0.10.16"
     url-parse "1.1.9"
 
 react-native-camera@^3.17.0:
@@ -14928,14 +14928,6 @@ react-native-extra-dimensions-android@^1.2.5:
   version "1.2.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-1.2.5.tgz#8ade91029aaac7519bf305116d39019e618a60f0"
   integrity sha1-it6RApqqx1Gb8wURbTkBnmGKYPA=
-
-react-native-fetch-blob@0.10.8:
-  version "0.10.8"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-fetch-blob/-/react-native-fetch-blob-0.10.8.tgz#4fc256abae0cb5f10e7c41f28c11b3ff330d72a9"
-  integrity sha1-T8JWq64MtfEOfEHyjBGz/zMNcqk=
-  dependencies:
-    base-64 "0.1.0"
-    glob "7.0.6"
 
 react-native-gesture-handler@1.4.1:
   version "1.4.1"
@@ -16143,6 +16135,22 @@ rn-color-matrices@^4.0.0:
   integrity sha1-msXOPX2q8z0za4d1CGSUacs5+KU=
   dependencies:
     clamp "^1.0.1"
+
+rn-fetch-blob@0.10.16:
+  version "0.10.16"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-fetch-blob/-/rn-fetch-blob-0.10.16.tgz#bd54f66c94f7a8e06c213077483646478ae8d230"
+  integrity sha1-vVT2bJT3qOBsITB3SDZGR4ro0jA=
+  dependencies:
+    base-64 "0.1.0"
+    glob "7.0.6"
+
+rn-fetch-blob@^0.12.0:
+  version "0.12.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-fetch-blob/-/rn-fetch-blob-0.12.0.tgz#ec610d2f9b3f1065556b58ab9c106eeb256f3cba"
+  integrity sha1-7GENL5s/EGVVa1irnBBu6yVvPLo=
+  dependencies:
+    base-64 "0.1.0"
+    glob "7.0.6"
 
 rn-nodeify@^10.0.1:
   version "10.2.0"

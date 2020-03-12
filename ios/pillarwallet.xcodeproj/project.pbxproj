@@ -17,8 +17,6 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* pillarwalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* pillarwalletTests.m */; };
 		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
-		6953B3FD240982F5007C6E78 /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6953B3FC240982F5007C6E78 /* SignalProtocol.framework */; };
-		6953B3FE240982F5007C6E78 /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6953B3FC240982F5007C6E78 /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */; };
 		696ACF1224049931009B0BEC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF1124049931009B0BEC /* LaunchScreen.xib */; };
 		696ACF5524049EBC009B0BEC /* EuclidCircularB-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */; };
@@ -28,6 +26,7 @@
 		696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5124049C74009B0BEC /* PillarIcons.ttf */; };
 		69BA0CCD2409A6B100DD424D /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */; };
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
+		69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */; };
 		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
 		ED2971652150620600B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2971642150620600B7C4FE /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
@@ -57,13 +56,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6953B429240982F6007C6E78 /* Embed Frameworks */ = {
+		69F4F7EB2419E2B50091BBB2 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6953B3FE240982F5007C6E78 /* SignalProtocol.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,7 +91,6 @@
 		60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.staging.release.xcconfig"; sourceTree = "<group>"; };
 		634393275889C749282DA649 /* Pods-pillarwallet-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet-tvOS/Pods-pillarwallet-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		693DE4BC2405A31E00587060 /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
-		6953B3FC240982F5007C6E78 /* SignalProtocol.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SignalProtocol.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		696ACF1124049931009B0BEC /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Light.otf"; path = "../src/assets/fonts/EuclidCircularB-Light.otf"; sourceTree = "<group>"; };
@@ -133,7 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				69BA0CCD2409A6B100DD424D /* libPods-pillarwallet.a in Frameworks */,
-				6953B3FD240982F5007C6E78 /* SignalProtocol.framework in Frameworks */,
+				69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,7 +262,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				6953B3FC240982F5007C6E78 /* SignalProtocol.framework */,
 				13B07FAE1A68108700A75B9A /* pillarwallet */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* pillarwalletTests */,
@@ -322,11 +318,11 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				6953B429240982F6007C6E78 /* Embed Frameworks */,
 				D1239AF02BEFA5D2D485A054 /* [CP] Copy Pods Resources */,
 				0177230598910A3E2B7FFD9C /* [CP-User] [RNFB] Core Configuration */,
 				3F62B2343FC21AB27FA7F1FA /* [CP-User] [RNFB] Crashlytics Configuration */,
 				696129E12418405F000DE513 /* Start Packager */,
+				69F4F7EB2419E2B50091BBB2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -414,6 +410,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -819,7 +816,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2EC0CEE1655E7E907B493644 /* Pods-pillarwallet.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
@@ -900,8 +896,10 @@
 					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
 					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -921,7 +919,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7981F34B57593772B61C067A /* Pods-pillarwallet.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
@@ -1002,8 +999,10 @@
 					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
 					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1206,7 +1205,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconStaging;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
@@ -1288,8 +1286,10 @@
 					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
 					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/LinkingIOS",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

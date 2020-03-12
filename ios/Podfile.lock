@@ -340,6 +340,8 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.5)
   - ReactNativePermissions (1.2.1):
     - React
+  - rn-fetch-blob (0.12.0):
+    - React-Core
   - RNCAsyncStorage (1.8.0):
     - React
   - RNColorMatrixImageFilters (5.2.4):
@@ -444,6 +446,7 @@ DEPENDENCIES:
   - ReactCommon/jscallinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -572,6 +575,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNColorMatrixImageFilters:
@@ -674,6 +679,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   ReactNativePermissions: 7cfad56d13c8961cd2a1005b4955b1400c79ef3e
+  rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: 5d83b49070d41fd72906a116c5e7bdac4ea3a814
   RNColorMatrixImageFilters: c120b5bff0d3c39f0eb3ba1751a4d70ed7f4b56a
   RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
@@ -697,6 +703,6 @@ SPEC CHECKSUMS:
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: fad1453a90dda36c860abbee73ecef466ae09f7f
+PODFILE CHECKSUM: b5ccbd81ce87fd0147f94e64997d7e2621b25138
 
 COCOAPODS: 1.9.1
