@@ -4,6 +4,7 @@ set -euo pipefail
 applicationName=$1
 targetEnvironment=$2
 appBuildNumber=$3
+pr_description=$4
 
 payload=$(
 cat <<EOM
@@ -15,7 +16,7 @@ cat <<EOM
             "pretext": "<!here> - $applicationName deployed to $targetEnvironment.",
             "title": "$CIRCLE_PROJECT_REPONAME",
             "title_link": "https://circleci.com/workflow-run/$CIRCLE_WORKFLOW_WORKSPACE_ID",
-            "text": "build number: $appBuildNumber",
+            "text": "build number: $appBuildNumber\n \n $pr_description",
             "ts": $(date '+%s')
         }
     ]
