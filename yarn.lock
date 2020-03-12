@@ -14822,9 +14822,9 @@ react-native-background-timer@2.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-background-timer/-/react-native-background-timer-2.1.1.tgz#9a2489681ab2f8033c213c73272e9d4c47572cd5"
   integrity sha1-miSJaBqy+AM8ITxzJy6dTEdXLNU=
 
-"react-native-cached-image@https://github.com/poocart/react-native-cached-image":
+"react-native-cached-image@https://github.com/poocart/react-native-cached-image#105378788f2b447a7bc43b949bc7835298bf3e6a":
   version "1.4.5"
-  resolved "https://github.com/poocart/react-native-cached-image#24180bd45f959af8b04073e1c570fa3c6d4aaafe"
+  resolved "https://github.com/poocart/react-native-cached-image#105378788f2b447a7bc43b949bc7835298bf3e6a"
   dependencies:
     "@react-native-community/netinfo" "^5.6.1"
     crypto-js "3.1.9-1"
