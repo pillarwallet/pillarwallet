@@ -253,7 +253,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               hasVerification: true,
               isVerified: isPhoneVerified,
               onPressVerify: this.verifyPhone,
-              keyboardType: 'number-pad',
+              keyboardType: 'phone-pad',
             }]}
             onUpdate={this.handleUserFieldUpdate}
             value={{ phone }}
