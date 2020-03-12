@@ -36,33 +36,5 @@ target 'pillarwallet' do
 
   pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
 
-  # TODO: remove?
-  # post_install do |installer|
-  #   installer.pods_project.targets.each do |target|
-  #     if target.name == "React"
-  #       target.remove_from_project
-  #     end
-  #   end
-  # end
-
-  # TODO: remove?
-  # pod 'Intercom', '~> 5.2.1'
-  # pod 'react-native-intercom', :path => '../node_modules/react-native-intercom'
-
-  target 'pillarwalletTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
   use_native_modules!
-end
-
-target 'pillarwallet-tvOS' do
-  # Pods for pillarwallet-tvOS
-
-  target 'pillarwallet-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
 end

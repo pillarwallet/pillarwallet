@@ -46,6 +46,27 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "pillarwallet-tvOS";
 		};
+		69D45C7D241AB1CA0008AEE9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 63AA759B1EB8AEF500D153DE;
+			remoteInfo = Sentry;
+		};
+		69D45C7F241AB1CA0008AEE9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 63AA76651EB8CB2F00D153DE;
+			remoteInfo = SentryTests;
+		};
+		69D45C81241AB1CA0008AEE9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6387B7C21ED84F910045A84C;
+			remoteInfo = SentryStatic;
+		};
 		69E6D3ED240465C000CF4B51 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */;
@@ -73,7 +94,6 @@
 		00E356EE1AD99517003FC87E /* pillarwalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pillarwalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* pillarwalletTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = pillarwalletTests.m; sourceTree = "<group>"; };
-		0D0054F5BD022AE27BA7C59E /* Pods-pillarwallet-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet-tvOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet-tvOSTests/Pods-pillarwallet-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* pillarwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pillarwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pillarwallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pillarwallet/AppDelegate.m; sourceTree = "<group>"; };
@@ -81,15 +101,11 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = pillarwallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = pillarwallet/main.m; sourceTree = "<group>"; };
 		2862B28966EF4024B1921B80 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
-		29B493AF8B58A034D1BA4155 /* Pods-pillarwallet-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet-tvOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet-tvOSTests/Pods-pillarwallet-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2A7EEF887FF44A36AD0F530E /* libRNCookieManagerIOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCookieManagerIOS.a; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* pillarwallet-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pillarwallet-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* pillarwallet-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pillarwallet-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EC0CEE1655E7E907B493644 /* Pods-pillarwallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.debug.xcconfig"; sourceTree = "<group>"; };
-		373216930BFC48AA3FF91B67 /* Pods-pillarwallet-tvOSTests.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet-tvOSTests.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet-tvOSTests/Pods-pillarwallet-tvOSTests.staging.release.xcconfig"; sourceTree = "<group>"; };
-		5C55200601E639841BB91681 /* Pods-pillarwallet-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet-tvOS/Pods-pillarwallet-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.staging.release.xcconfig"; sourceTree = "<group>"; };
-		634393275889C749282DA649 /* Pods-pillarwallet-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet-tvOS/Pods-pillarwallet-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		693DE4BC2405A31E00587060 /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
 		696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		696ACF1124049931009B0BEC /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
@@ -102,16 +118,13 @@
 		69D2EB02240865F50039EA75 /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		69D2EB03240865F60039EA75 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		69D38E4C24047B11003F1E10 /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		6AB50CEC5FDA71F1DEEFF70B /* Pods-pillarwalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwalletTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwalletTests/Pods-pillarwalletTests.debug.xcconfig"; sourceTree = "<group>"; };
+		69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sentry.xcodeproj; path = "../node_modules/@sentry/react-native/ios/Sentry/Sentry.xcodeproj"; sourceTree = "<group>"; };
 		7981F34B57593772B61C067A /* Pods-pillarwallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.release.xcconfig"; sourceTree = "<group>"; };
 		7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SignalMessagingSwift.xcodeproj; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift.xcodeproj"; sourceTree = "<group>"; };
 		7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		9E95A04510F04A62ADB9D3BB /* libRNInAppBrowser.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNInAppBrowser.a; sourceTree = "<group>"; };
-		ADD182156E22AD926DE9E7D7 /* Pods-pillarwalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwalletTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwalletTests/Pods-pillarwalletTests.release.xcconfig"; sourceTree = "<group>"; };
 		B21AA84A61474812A45DB8BF /* libRNThread.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNThread.a; sourceTree = "<group>"; };
-		B5CB5A6B7D7FE84AAC33A239 /* Pods-pillarwallet-tvOS.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet-tvOS.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet-tvOS/Pods-pillarwallet-tvOS.staging.release.xcconfig"; sourceTree = "<group>"; };
-		B918EDFAD4A1B3174B6D4ECD /* Pods-pillarwalletTests.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwalletTests.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwalletTests/Pods-pillarwalletTests.staging.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		FFCFBC2148F44473941435CF /* libSignalMessagingSwift.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSignalMessagingSwift.a; sourceTree = "<group>"; };
@@ -193,15 +206,6 @@
 				2EC0CEE1655E7E907B493644 /* Pods-pillarwallet.debug.xcconfig */,
 				7981F34B57593772B61C067A /* Pods-pillarwallet.release.xcconfig */,
 				60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */,
-				5C55200601E639841BB91681 /* Pods-pillarwallet-tvOS.debug.xcconfig */,
-				634393275889C749282DA649 /* Pods-pillarwallet-tvOS.release.xcconfig */,
-				B5CB5A6B7D7FE84AAC33A239 /* Pods-pillarwallet-tvOS.staging.release.xcconfig */,
-				29B493AF8B58A034D1BA4155 /* Pods-pillarwallet-tvOSTests.debug.xcconfig */,
-				0D0054F5BD022AE27BA7C59E /* Pods-pillarwallet-tvOSTests.release.xcconfig */,
-				373216930BFC48AA3FF91B67 /* Pods-pillarwallet-tvOSTests.staging.release.xcconfig */,
-				6AB50CEC5FDA71F1DEEFF70B /* Pods-pillarwalletTests.debug.xcconfig */,
-				ADD182156E22AD926DE9E7D7 /* Pods-pillarwalletTests.release.xcconfig */,
-				B918EDFAD4A1B3174B6D4ECD /* Pods-pillarwalletTests.staging.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -215,6 +219,16 @@
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		69D45C77241AB1CA0008AEE9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				69D45C7E241AB1CA0008AEE9 /* Sentry.framework */,
+				69D45C80241AB1CA0008AEE9 /* SentryTests.xctest */,
+				69D45C82241AB1CA0008AEE9 /* libSentryStatic.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		69E6D369240465A700CF4B51 /* Recovered References */ = {
@@ -254,6 +268,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */,
 				7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */,
 			);
 			name = Libraries;
@@ -294,7 +309,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "pillarwalletTests" */;
 			buildPhases = (
-				45ADD0F969A96860EB95BB1C /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
@@ -337,7 +351,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "pillarwallet-tvOS" */;
 			buildPhases = (
-				44881203386336D1A7C9AB9E /* [CP] Check Pods Manifest.lock */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
 				2D02E4791E0B4A5D006451C7 /* Resources */,
@@ -356,7 +369,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "pillarwallet-tvOSTests" */;
 			buildPhases = (
-				12866B8B2054E6909B96D8E2 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -419,6 +431,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 69D45C77241AB1CA0008AEE9 /* Products */;
+					ProjectRef = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
+				},
+				{
 					ProductGroup = 69E6D3E7240465C000CF4B51 /* Products */;
 					ProjectRef = 7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */;
 				},
@@ -434,6 +450,27 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		69D45C7E241AB1CA0008AEE9 /* Sentry.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Sentry.framework;
+			remoteRef = 69D45C7D241AB1CA0008AEE9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69D45C80241AB1CA0008AEE9 /* SentryTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SentryTests.xctest;
+			remoteRef = 69D45C7F241AB1CA0008AEE9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69D45C82241AB1CA0008AEE9 /* libSentryStatic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSentryStatic.a;
+			remoteRef = 69D45C81241AB1CA0008AEE9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -512,28 +549,6 @@
 			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    _JSON_OUTPUT_BASE64=$(python -c 'import json,sys,base64;print(base64.b64encode(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"').read())['${_JSON_ROOT}'])))' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes usful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"firebase_crashlytics_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\n\n  # config.admob_delay_app_measurement_init\n  _ADMOB_DELAY_APP_MEASUREMENT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_delay_app_measurement_init\")\n  if [[ $_ADMOB_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.admob_ios_app_id\n  _ADMOB_IOS_APP_ID=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_ios_app_id\")\n  if [[ $_ADMOB_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_ADMOB_IOS_APP_ID\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally \n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n\n";
 			showEnvVarsInLog = 0;
 		};
-		12866B8B2054E6909B96D8E2 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-pillarwallet-tvOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -557,50 +572,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\nif [[ ${PODS_ROOT} ]]; then\n  echo \"info: Exec Fabric Run from Pods\"\n  \"${PODS_ROOT}/Fabric/run\"\nelse\n  echo \"info: Exec Fabric Run from framework\"\n  \"${PROJECT_DIR}/Fabric.framework/run\"\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		44881203386336D1A7C9AB9E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-pillarwallet-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		45ADD0F969A96860EB95BB1C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-pillarwalletTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		696129E12418405F000DE513 /* Start Packager */ = {
@@ -755,7 +726,6 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6AB50CEC5FDA71F1DEEFF70B /* Pods-pillarwalletTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -786,7 +756,6 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = ADD182156E22AD926DE9E7D7 /* Pods-pillarwalletTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1019,7 +988,6 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5C55200601E639841BB91681 /* Pods-pillarwallet-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1054,7 +1022,6 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 634393275889C749282DA649 /* Pods-pillarwallet-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1089,7 +1056,6 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 29B493AF8B58A034D1BA4155 /* Pods-pillarwallet-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1123,7 +1089,6 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D0054F5BD022AE27BA7C59E /* Pods-pillarwallet-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1306,7 +1271,6 @@
 		};
 		693DE50C2405C8C500587060 /* Staging.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B918EDFAD4A1B3174B6D4ECD /* Pods-pillarwalletTests.staging.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1334,7 +1298,6 @@
 		};
 		693DE50D2405C8C500587060 /* Staging.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B5CB5A6B7D7FE84AAC33A239 /* Pods-pillarwallet-tvOS.staging.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1369,7 +1332,6 @@
 		};
 		693DE50E2405C8C500587060 /* Staging.Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 373216930BFC48AA3FF91B67 /* Pods-pillarwallet-tvOSTests.staging.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
