@@ -131,6 +131,7 @@ class SecuritySettings extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Security settings' }] }}
+        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper>
           <SettingsSection
