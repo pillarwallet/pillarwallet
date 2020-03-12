@@ -22,7 +22,6 @@ import styled from 'styled-components/native';
 import Modal from 'react-native-modal';
 
 import { themedColors } from 'utils/themes';
-import { spacing } from 'utils/variables';
 
 type Props = {
   isVisible: boolean,

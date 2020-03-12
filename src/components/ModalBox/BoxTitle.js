@@ -36,14 +36,13 @@ const Wrapper = styled.View`
   align-items: flex-start;
   display: flex;
   width: 100%;
-  padding: 0;
   flex-direction: row;
 `;
 
 const Title = styled(MediumText)`
   flex: 1;
   margin: ${spacing.rhythm}px;
-  margin-bottom: ${spacing.small};
+  margin-bottom: ${spacing.small}px;
   font-size: ${fontSizes.big}px;
 `;
 
@@ -52,7 +51,7 @@ const CloseIcon = styled(IconButton).attrs({
   fontSize: fontSizes.regular,
   secondary: true,
 })`
-  margin: ${spacing.layoutSides}px;
+  padding: ${spacing.layoutSides}px;
 `;
 
 const BoxTitle = (props: Props) => {
