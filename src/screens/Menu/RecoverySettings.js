@@ -121,6 +121,7 @@ class RecoverySettings extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Recovery' }] }}
+        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper>
           <SettingsSection
