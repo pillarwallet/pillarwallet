@@ -14822,9 +14822,9 @@ react-native-background-timer@2.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-background-timer/-/react-native-background-timer-2.1.1.tgz#9a2489681ab2f8033c213c73272e9d4c47572cd5"
   integrity sha1-miSJaBqy+AM8ITxzJy6dTEdXLNU=
 
-"react-native-cached-image@https://github.com/poocart/react-native-cached-image#105378788f2b447a7bc43b949bc7835298bf3e6a":
+"react-native-cached-image@https://github.com/pillarwallet/react-native-cached-image":
   version "1.4.5"
-  resolved "https://github.com/poocart/react-native-cached-image#105378788f2b447a7bc43b949bc7835298bf3e6a"
+  resolved "https://github.com/pillarwallet/react-native-cached-image#105378788f2b447a7bc43b949bc7835298bf3e6a"
   dependencies:
     "@react-native-community/netinfo" "^5.6.1"
     crypto-js "3.1.9-1"
@@ -16167,10 +16167,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.212:
-  version "1.0.212"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.212.tgz#10c6b8d2bfa11cd6510779516962b3404c5f2134"
-  integrity sha1-EMa40r+hHNZRB3lRaWKzQExfITQ=
+rn-signal-protocol-messaging@1.0.215:
+  version "1.0.215"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.215.tgz#360f5a79a38a45916992931ab7d17d9d0bbf1610"
+  integrity sha1-Ng9aeaOKRZFpkpMat9F9nQu/FhA=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
