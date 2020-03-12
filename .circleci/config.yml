@@ -425,11 +425,6 @@ jobs:
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
       - run:
-           name: Announce Prod Builds
-           command: |
-             chmod +x .circleci/announceProdBuilds.sh
-             .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
-      - run:
            name: Announce Deployment
            command: |
              chmod +x .circleci/announceDeployment.sh
@@ -571,12 +566,6 @@ jobs:
             aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
       - run:
-          name: Announce Prod Builds
-          command: |
-            cd ~/pillarwallet
-            chmod +x .circleci/announceProdBuilds.sh
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
-      - run:
            name: Announce Deployment
            command: |
              chmod +x .circleci/announceDeployment.sh
@@ -621,9 +610,16 @@ jobs:
             . ./setReleaseInfo.sh
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
+            echo $RELEASE_DESCRIPTION > pr_description.txt
             github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n "$RELEASE_TITLE" --description "$RELEASE_DESCRIPTION"
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$APP_VERSION.apk" -f /tmp/workspace/android-release/*.apk
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$APP_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
+      - run:
+          name: Announce new RC to support channel
+          command: |
+            chmod +x .circleci/announceProdBuilds.sh
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/pr_description.txt)"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/pr_description.txt)"
 
 workflows:
   version: 2.1
