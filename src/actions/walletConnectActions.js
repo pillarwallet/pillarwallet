@@ -45,6 +45,7 @@ import {
   SESSION_KILLED_ERROR,
   SESSION_APPROVAL_ERROR,
   SESSION_REJECTION_ERROR,
+  TOGGLE_WALLET_CONNECT_PROMO_CARD,
 } from 'constants/walletConnectConstants';
 import {
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
@@ -83,6 +84,7 @@ import type {
   WalletConnectCallRequest,
   WalletConnectCallRejected,
   WalletConnectCallApproved,
+  WalletConnectTogglePromoCard,
 } from 'reducers/walletConnectReducer';
 
 const walletConnectError = (code: string, message: string): WalletConnectError => ({
@@ -152,7 +154,6 @@ const onWalletConnectCallRequest = (connector: Connector, payload: JsonRpcReques
     const navParams = {
       callId: request.callId,
       method: request.method,
-      goBackDismiss: true,
     };
 
     if (!isNavigationAllowed()) {
@@ -371,6 +372,11 @@ export const requestSessionAction = (uri: string) => {
   };
 };
 
+export const toggleWCPromoCardAction = (collapsed: boolean): WalletConnectTogglePromoCard => ({
+  type: TOGGLE_WALLET_CONNECT_PROMO_CARD,
+  collapsed,
+});
+
 export const approveSessionAction = (peerId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { pendingConnector: connector } } = getState();
@@ -409,6 +415,7 @@ export const approveSessionAction = (peerId: string) => {
     dispatch(walletConnectSessionApproved(connector));
     dispatch(walletConnectSessionAddedAction(connector.session));
     dispatch(subscribeToEvents(connector));
+    dispatch(toggleWCPromoCardAction(true));
 
     dispatch(logEventAction('walletconnect_connected'));
   };
