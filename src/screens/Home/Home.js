@@ -94,6 +94,7 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import { getKeychainDataObject } from '../../utils/keychain';
 
 
 type Props = {
@@ -181,6 +182,15 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
+
+    getKeychainDataObject().then(d => {
+      if (!(Object.keys(d).length)) {
+        console.log("not object")
+      }
+      console.log("getkc")
+      console.log(d)
+    }).catch(e => { console.log("eror")})
+
     const {
       logScreenView,
       fetchBadges,

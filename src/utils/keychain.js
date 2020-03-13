@@ -30,10 +30,10 @@ type KeyChainData = {
 
 export const setKeychainDataObject = (data: KeyChainData) => Keychain
   .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
-    accessControl: Platform.select({
-      ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
-      android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-    }),
+    // accessControl: Platform.select({
+    //   ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+    //   android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+    // }),
     accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
     service: KEYCHAIN_SERVICE,
   })
@@ -55,3 +55,5 @@ export const resetKeychainDataObject = () => Keychain
 export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
   Keychain.getSupportedBiometryType().then(resHandler).catch(errorHandler || (() => null));
 };
+
+export const doesKeychainDataExist = (data?: KeyChainData) => !!data && !!(Object.keys(data).length);

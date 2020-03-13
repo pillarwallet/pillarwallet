@@ -37,7 +37,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import Toast from 'components/Toast';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject, getSupportedBiometryType } from 'utils/keychain';
+import { getKeychainDataObject, getSupportedBiometryType, doesKeychainDataExist } from 'utils/keychain';
 import { getBiometryType } from 'utils/settings';
 
 const ACTIVE_APP_STATE = 'active';
@@ -136,7 +136,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       getKeychainDataObject()
         .then(data => {
           this.setState({ biometricsShown: false });
-          if (!data || !Object.keys(data).length) {
+          if (!doesKeychainDataExist(data)) {
             this.setState({ updateKeychain: true });
             return;
           }
@@ -187,7 +187,13 @@ class PinCodeUnlock extends React.Component<Props, State> {
   handlePinSubmit = (pin: string) => {
     const { loginWithPin } = this.props;
     const { updateKeychain } = this.state;
-    loginWithPin(pin, this.onLoginSuccess, updateKeychain);
+    if (!updateKeychain) {
+      getKeychainDataObject()
+        .then(data => loginWithPin(pin, this.onLoginSuccess, !doesKeychainDataExist(data)))
+        .catch(() => { loginWithPin(pin, this.onLoginSuccess, false); });
+    } else {
+      loginWithPin(pin, this.onLoginSuccess, false);
+    }
     this.handleLocking(false);
   };
 
