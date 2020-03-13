@@ -33,7 +33,6 @@ const Wrapper = styled.View`
   height: 100%;
   flex: 1;
   flex-direction: column;
-  padding: 0 10px
   align-items: center;
   background-color: transparent;
 `;
