@@ -102,7 +102,7 @@ const formStructure = t.struct({
 
 const PROFILE_IMAGE_WIDTH = 144;
 
-const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => ({
+const getDefaultFormOptions = (inputDisabled: boolean, showRightPlaceholder?: boolean) => ({
   fields: {
     username: {
       auto: 'placeholders',
@@ -110,7 +110,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
       template: InputTemplate,
       maxLength: MAX_USERNAME_LENGTH,
       config: {
-        isLoading,
+        isLoading: false,
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
@@ -119,7 +119,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
         statusIcon: null,
         statusIconColor: null,
         inputType: 'bigText',
-        rightPlaceholder: '.pillar.eth',
+        rightPlaceholder: showRightPlaceholder ? '.pillar.eth' : null,
       },
     },
   },
@@ -157,12 +157,13 @@ class NewProfile extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { apiUser } = props;
+    const { apiUser, importedWallet } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
     const inputDisabled = !!(apiUser && apiUser.id);
+    const showRightPlaceholder = !importedWallet;
     this.state = {
       value,
-      formOptions: getDefaultFormOptions(inputDisabled),
+      formOptions: getDefaultFormOptions(inputDisabled, showRightPlaceholder),
       hasAgreedToTerms: false,
       hasAgreedToPolicy: false,
       isPendingCheck: false,
