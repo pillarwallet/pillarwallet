@@ -216,6 +216,17 @@ const calculateAmountToBuy = (askRate: number | string, amountToSell: number | s
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
+const getFormattedBalanceInFiat = (
+  baseFiatCurrency: ?string,
+  assetBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string) => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const assetBalanceInFiat = assetBalance ?
+    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : null;
+  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : null;
+};
+
 const generateFormStructure = (balances: Balances) => {
   let balance;
   let maxAmount;
@@ -945,10 +956,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         && !!exchangeSupportedAssets.some(asset => asset.symbol === symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
-        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const assetBalanceInFiat = assetBalance ?
-          parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : null;
-        const formattedBalanceInFiat = assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : null;
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         return ({
           key: symbol,
           value: symbol,
@@ -980,10 +988,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       .map(({ symbol, iconUrl, ...rest }) => {
         const rawAssetBalance = getBalance(balances, symbol);
         const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const assetBalanceInFiat = assetBalance ?
-          parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : null;
-        const formattedBalanceInFiat = assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : null;
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         return {
           key: symbol,
           value: symbol,
