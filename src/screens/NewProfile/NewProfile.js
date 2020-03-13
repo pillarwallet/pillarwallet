@@ -119,6 +119,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
         statusIcon: null,
         statusIconColor: null,
         inputType: 'bigText',
+        rightPlaceholder: '.pillar.eth',
       },
     },
   },
