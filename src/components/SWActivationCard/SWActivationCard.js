@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import { utils } from 'ethers';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
 // components
@@ -45,6 +45,7 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -56,6 +57,7 @@ import { spacing } from 'utils/variables';
 import { getRate, getAssetsAsList, getBalance } from 'utils/assets';
 import { formatFiat, getGasPriceWei } from 'utils/common';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getThemeType } from 'utils/themes';
 
 // selectors
 import { balancesSelector } from 'selectors';
@@ -67,6 +69,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { GasInfo } from 'models/GasInfo';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
@@ -87,6 +90,7 @@ type Props = {
   switchAccount: (accountId: string, privateKey?: string) => void,
   gasInfo: GasInfo,
   assets: Assets,
+  theme: Theme,
 };
 
 type State = {
@@ -113,6 +117,7 @@ const ModalContainer = styled.View`
 `;
 
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+const smartWalletIconDark = require('assets/icons/icon_smart_wallet_dark.png');
 
 const Option = ({
   name, checked, eth, onPress,
@@ -244,7 +249,7 @@ class SWActivationCard extends React.Component<Props, State> {
   }
 
   renderModal = () => {
-    const { balances, accounts } = this.props;
+    const { balances, accounts, theme } = this.props;
     const { isModalVisible, selectedWallet } = this.state;
 
     const legacyWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.KEY_BASED);
@@ -259,6 +264,8 @@ class SWActivationCard extends React.Component<Props, State> {
       (ethBalanceInSmartWallet && ethBalanceInSmartWallet > transactionEstimate) :
       (ethBalanceInKeyWallet && ethBalanceInKeyWallet > transactionEstimate);
 
+    const themeType = getThemeType(theme);
+
 
     return (
       <SlideModal
@@ -272,7 +279,10 @@ class SWActivationCard extends React.Component<Props, State> {
           <ModalContainer>
             <MediumText center medium>Activate Smart Wallet</MediumText>
             <Spacing h={18} />
-            <CachedImage style={{ width: 64, height: 64, alignSelf: 'center' }} source={smartWalletIcon} />
+            <CachedImage
+              style={{ width: 64, height: 64, alignSelf: 'center' }}
+              source={themeType === DARK_THEME ? smartWalletIconDark : smartWalletIcon}
+            />
             <Spacing h={20} />
             <BaseText medium>
               Enable better security and free instant transactions via Pillar Network. You will get a new badge too.
@@ -393,4 +403,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
 });
 
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(SWActivationCard));
+export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(SWActivationCard)));
