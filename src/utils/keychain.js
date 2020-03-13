@@ -51,3 +51,7 @@ export const resetKeychainDataObject = () => Keychain
     service: KEYCHAIN_SERVICE,
   })
   .catch(() => null);
+
+export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
+  Keychain.getSupportedBiometryType().then(resHandler).catch(errorHandler || (() => null));
+};

@@ -94,6 +94,7 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import { getSupportedBiometryType } from '../../utils/keychain';
 
 
 type Props = {

@@ -23,7 +23,6 @@ import { FlatList, Alert, ScrollView, Keyboard, View } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import * as Keychain from 'react-native-keychain';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import {
   CHANGE_PIN_FLOW,
@@ -56,6 +55,7 @@ import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'ac
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
+import { getSupportedBiometryType } from 'utils/keychain';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { fontTrackings, spacing, fontStyles } from 'utils/variables';
@@ -226,9 +226,7 @@ class Profile extends React.Component<Props, State> {
 
     logScreenView('View profile', 'Profile');
 
-    Keychain.getSupportedBiometryType()
-      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
-      .catch(() => null);
+    getSupportedBiometryType(biometryType => this.setState({ showBiometricsSelector: !!biometryType }));
   }
 
   clearLocalStorage() {

@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
-import * as Keychain from 'react-native-keychain';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
@@ -38,7 +37,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import Toast from 'components/Toast';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject } from 'utils/keychain';
+import { getKeychainDataObject, getSupportedBiometryType } from 'utils/keychain';
 import { getBiometryType } from 'utils/settings';
 
 const ACTIVE_APP_STATE = 'active';
@@ -92,12 +91,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (useBiometrics
       && !this.errorMessage
       && lastAppState !== BACKGROUND_APP_STATE) {
-      Keychain.getSupportedBiometryType()
-        .then((biometryType) => {
-          this.setState({ supportedBiometryType: getBiometryType(biometryType) });
-          this.showBiometricLogin();
-        })
-        .catch(() => null);
+      getSupportedBiometryType(biometryType => {
+        this.setState({ supportedBiometryType: getBiometryType(biometryType) });
+        this.showBiometricLogin();
+      });
     }
     this.handleLocking(true);
   }

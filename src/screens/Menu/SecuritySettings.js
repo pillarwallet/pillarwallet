@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as Keychain from 'react-native-keychain';
 import type { NavigationScreenProp } from 'react-navigation';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
@@ -29,6 +28,7 @@ import { getBiometryType } from 'utils/settings';
 import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { changeUseBiometricsAction } from 'actions/appSettingsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { getSupportedBiometryType } from 'utils/keychain';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -59,13 +59,11 @@ class SecuritySettings extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    Keychain.getSupportedBiometryType()
-      .then(biometryType => {
-        // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
-        // and getBiometryType has default string value
-        this.setState({ supportedBiometryType: biometryType ? getBiometryType(biometryType) : '' });
-      })
-      .catch(() => null);
+    getSupportedBiometryType(biometryType => {
+      // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
+      // and getBiometryType has default string value
+      this.setState({ supportedBiometryType: biometryType ? getBiometryType(biometryType) : '' });
+    });
   }
 
   handleChangeUseBiometrics = (enabled: boolean, privateKey?: string) => {
