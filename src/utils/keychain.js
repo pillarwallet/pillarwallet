@@ -58,6 +58,6 @@ export const getSupportedBiometryType = (resHandler: (biometryType?: string) => 
 };
 
 export const getPrivateKey = (data?: KeyChainData) => {
-  if (!data || !(Object.keys(data).length)) return null;
+  if (!data || !(Object.keys(data).length) || !data.privateKey) return null;
   return get(data, 'privateKey', null);
 };
