@@ -19,12 +19,13 @@
 */
 import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
+import get from 'lodash.get';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
 const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
 
-type KeyChainData = {
+export type KeyChainData = {
   privateKey?: string,
 };
 
@@ -56,4 +57,7 @@ export const getSupportedBiometryType = (resHandler: (biometryType?: string) => 
   Keychain.getSupportedBiometryType().then(resHandler).catch(errorHandler || (() => null));
 };
 
-export const doesKeychainDataExist = (data?: KeyChainData) => !!data && !!(Object.keys(data).length);
+export const getPrivateKey = (data?: KeyChainData) => {
+  if (!data || !(Object.keys(data).length)) return null;
+  return get(data, 'privateKey', null);
+};

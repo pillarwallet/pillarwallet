@@ -21,7 +21,6 @@ import * as React from 'react';
 import { AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
-import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -37,7 +36,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import Toast from 'components/Toast';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject, getSupportedBiometryType, doesKeychainDataExist } from 'utils/keychain';
+import { getKeychainDataObject, getSupportedBiometryType, getPrivateKey, type KeyChainData } from 'utils/keychain';
 import { getBiometryType } from 'utils/settings';
 
 const ACTIVE_APP_STATE = 'active';
@@ -55,7 +54,6 @@ type Props = {
 type State = {
   waitingTime: number,
   biometricsShown: boolean,
-  updateKeychain: boolean,
   lastAppState: string,
   supportedBiometryType: string,
 };
@@ -67,7 +65,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
   state = {
     waitingTime: 0,
     biometricsShown: false,
-    updateKeychain: false,
     lastAppState: AppState.currentState,
     supportedBiometryType: '',
   };
@@ -88,13 +85,17 @@ class PinCodeUnlock extends React.Component<Props, State> {
       this.handlePinSubmit(DEFAULT_PIN);
     }
 
-    if (useBiometrics
-      && !this.errorMessage
-      && lastAppState !== BACKGROUND_APP_STATE) {
-      getSupportedBiometryType(biometryType => {
-        this.setState({ supportedBiometryType: getBiometryType(biometryType) });
-        this.showBiometricLogin();
-      });
+    if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {
+      if (useBiometrics) {
+        getSupportedBiometryType(biometryType => {
+          this.setState({ supportedBiometryType: getBiometryType(biometryType) });
+          this.showBiometricLogin();
+        });
+      } else {
+        getKeychainDataObject().then(data => {
+          this.loginWithPrivateKey(data);
+        }).catch(() => {});
+      }
     }
     this.handleLocking(true);
   }
@@ -103,6 +104,15 @@ class PinCodeUnlock extends React.Component<Props, State> {
     removeAppStateChangeListener(this.handleAppStateChange);
     if (this.interval) {
       clearInterval(this.interval);
+    }
+  }
+
+  loginWithPrivateKey = (data: KeyChainData) => {
+    const { loginWithPrivateKey } = this.props;
+    const privateKey = getPrivateKey(data);
+    if (privateKey) {
+      removeAppStateChangeListener(this.handleAppStateChange);
+      loginWithPrivateKey(privateKey, this.onLoginSuccess);
     }
   }
 
@@ -119,7 +129,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   showBiometricLogin() {
-    const { loginWithPrivateKey, connectionKeyPairs: { data: connKeys, lastConnectionKeyIndex } } = this.props;
+    const { connectionKeyPairs: { data: connKeys, lastConnectionKeyIndex } } = this.props;
     const { biometricsShown, supportedBiometryType } = this.state;
 
     if (biometricsShown || connKeys.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1) {
@@ -136,15 +146,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       getKeychainDataObject()
         .then(data => {
           this.setState({ biometricsShown: false });
-          if (!doesKeychainDataExist(data)) {
-            this.setState({ updateKeychain: true });
-            return;
-          }
-          const privateKey = get(data, 'privateKey', null);
-          if (privateKey) {
-            removeAppStateChangeListener(this.handleAppStateChange);
-            loginWithPrivateKey(privateKey, this.onLoginSuccess);
-          }
+          this.loginWithPrivateKey(data);
         })
         .catch(() => this.setState({ biometricsShown: false }));
     });
@@ -186,14 +188,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handlePinSubmit = (pin: string) => {
     const { loginWithPin } = this.props;
-    const { updateKeychain } = this.state;
-    if (!updateKeychain) {
-      getKeychainDataObject()
-        .then(data => loginWithPin(pin, this.onLoginSuccess, !doesKeychainDataExist(data)))
-        .catch(() => { loginWithPin(pin, this.onLoginSuccess, false); });
-    } else {
-      loginWithPin(pin, this.onLoginSuccess, false);
-    }
+    getKeychainDataObject() // update keychain if privateKey isn't stored
+      .then(data => loginWithPin(pin, this.onLoginSuccess, !getPrivateKey(data)))
+      .catch(() => { loginWithPin(pin, this.onLoginSuccess, false); });
     this.handleLocking(false);
   };
 

@@ -112,7 +112,7 @@ class BackupPhrase extends React.Component<Props, State> {
       return (
         <Container>
           <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
-          <CheckPin revealMnemonic onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
+          <CheckPin revealMnemonic autoLogin={false} onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
         </Container>
       );
     }

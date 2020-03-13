@@ -21,7 +21,6 @@ import * as React from 'react';
 import { AppState } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import get from 'lodash.get';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
@@ -31,7 +30,7 @@ import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject } from 'utils/keychain';
+import { getKeychainDataObject, getPrivateKey, type KeyChainData } from 'utils/keychain';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function, options: Object) => void,
@@ -42,6 +41,7 @@ type Props = {
   isChecking: boolean,
   title?: string,
   useBiometrics: ?boolean,
+  autoLogin?: boolean,
 }
 
 type State = {
@@ -61,6 +61,7 @@ const BACKGROUND_APP_STATE = 'background';
 class CheckPin extends React.Component<Props, State> {
   static defaultProps = {
     revealMnemonic: false,
+    autoLogin: true,
   };
   state = {
     biometricsShown: false,
@@ -69,12 +70,25 @@ class CheckPin extends React.Component<Props, State> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics, revealMnemonic } = this.props;
+    const { useBiometrics, revealMnemonic, autoLogin } = this.props;
     const { lastAppState } = this.state;
     if (useBiometrics
       && !revealMnemonic
       && lastAppState !== BACKGROUND_APP_STATE) {
       this.showBiometricLogin();
+    } else if (lastAppState !== BACKGROUND_APP_STATE && autoLogin) { // todo check conditions
+      getKeychainDataObject().then(data => {
+        this.checkPrivateKey(data);
+      }).catch(() => {});
+    }
+  }
+
+  checkPrivateKey = (data: KeyChainData) => {
+    const { onPinValid, checkPrivateKey } = this.props;
+    const privateKey = getPrivateKey(data);
+    if (privateKey) {
+      removeAppStateChangeListener(this.handleAppStateChange);
+      checkPrivateKey(privateKey, onPinValid);
     }
   }
 
@@ -91,18 +105,13 @@ class CheckPin extends React.Component<Props, State> {
   };
 
   showBiometricLogin() {
-    const { checkPrivateKey, onPinValid } = this.props;
     const { biometricsShown } = this.state;
     if (biometricsShown) return;
     this.setState({ biometricsShown: true }, () => {
       getKeychainDataObject()
         .then(data => {
           this.setState({ biometricsShown: false });
-          const privateKey = get(data, 'privateKey', null);
-          if (privateKey) {
-            removeAppStateChangeListener(this.handleAppStateChange);
-            checkPrivateKey(privateKey, onPinValid);
-          }
+          this.checkPrivateKey(data);
         })
         .catch(() => this.setState({ biometricsShown: false }));
     });
