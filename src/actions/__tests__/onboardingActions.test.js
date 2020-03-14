@@ -63,16 +63,16 @@ import { WebSocket } from 'mock-socket';
 
 global.WebSocket = WebSocket;
 
-type SDK = {
-  registerOnAuthServer: Function,
-  fetchInitialAssets: Function,
-  updateUser: Function,
-  userInfo: Function,
-};
+// type SDK = {
+//   registerOnAuthServer: Function,
+//   fetchInitialAssets: Function,
+//   updateUser: Function,
+//   userInfo: Function,
+// };
 
 const mockUser = { username: 'snow', walletId: 2 };
 
-const pillarSdk: SDK = new PillarSdk();
+const pillarSdk = new PillarSdk();
 pillarSdk.registerOnAuthServer = jest.fn(() => ({
   userId: 1,
   walletId: 2,

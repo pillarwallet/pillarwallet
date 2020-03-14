@@ -241,13 +241,13 @@ const mapIdentityKeysResponseMock = [
   },
 ];
 
-type SDK = {
-  connectionsCount: Function,
-  updateIdentityKeys: Function,
-  mapIdentityKeys: Function,
-};
+// type SDK = {
+//   connectionsCount: Function,
+//   updateIdentityKeys: Function,
+//   mapIdentityKeys: Function,
+// };
 
-const pillarSdk: SDK = new PillarSdk();
+const pillarSdk = new PillarSdk();
 pillarSdk.connectionsCount = jest.fn((walletIdParam) => {
   if (walletIdParam) {
     return connectionCountResponseMock;

@@ -67,12 +67,12 @@ const sendWyreOfferMock = {
   offerRestricted: null,
 };
 
-type SDK = {
-  fetchMoonPayOffers: Function,
-  fetchSendWyreOffers: Function,
-};
+// type SDK = {
+//   fetchMoonPayOffers: Function,
+//   fetchSendWyreOffers: Function,
+// };
 
-const pillarSdk: SDK = new PillarSdk();
+const pillarSdk = new PillarSdk();
 pillarSdk.fetchMoonPayOffers = jest.fn(() => Promise.resolve({ provider: PROVIDER_MOONPAY }));
 pillarSdk.fetchSendWyreOffers = jest.fn(() => Promise.resolve({ provider: PROVIDER_SENDWYRE }));
 

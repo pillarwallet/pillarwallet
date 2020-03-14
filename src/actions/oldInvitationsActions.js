@@ -270,7 +270,7 @@ export const acceptOldInvitationAction = (invitation: Object) => {
     const updatedContacts = contacts
       .filter(({ id }) => id !== invitation.id)
       .concat(invitation)
-      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
+      .map(({ connectionKey, ...rest }) => ({ ...rest }));
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
     const updatedAccessTokens = accessTokens

@@ -29,8 +29,6 @@ import WalletConnectMock from './walletConnectMock';
 
 process.env.IS_TEST = 'TEST';
 
-jest.mock('NativeAnimatedHelper');
-
 /**
  * Set up DOM in node.js environment for Enzyme to mount to
  */
@@ -65,11 +63,8 @@ const MockAsyncStorage = new StorageMock(storageCache);
 
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
 
-jest.setMock('AsyncStorage', MockAsyncStorage);
-
-jest.mock('NativeEventEmitter');
-
 jest.setMock('@react-native-firebase/crashlytics');
+jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
 
 jest.mock('@react-native-firebase/app', () => ({
   firebase: {
@@ -233,13 +228,6 @@ jest.setMock('react-native-cached-image', {
     clearCache: () => Promise.resolve(),
   }),
   CachedImage: jest.fn(),
-});
-
-jest.setMock('react-native-threads', {
-  Thread: () => ({
-    onmessage: () => Promise.resolve(),
-    postMessage: () => Promise.resolve(),
-  }),
 });
 
 const mockSmartWalletAccount = {
@@ -428,3 +416,6 @@ jest.setMock('@sentry/react-native', {
   withScope: () => {},
   Severity: {},
 });
+
+jest.setMock('react-native-notifications');
+jest.setMock('@react-native-community/netinfo');

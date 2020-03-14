@@ -309,7 +309,7 @@ type SDK = {
   acceptInvitation: Function,
 };
 
-const pillarSdk: SDK = new PillarSdk();
+const pillarSdk = new PillarSdk();
 pillarSdk.mapIdentityKeys = jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
   if (connectionKeyIdentityMap) {
     const { identityKeys } = connectionKeyIdentityMap;
@@ -322,18 +322,11 @@ pillarSdk.mapIdentityKeys = jest.fn((connectionKeyIdentityMap: ConnectionIdentit
   }
   return null;
 });
-pillarSdk.sendInvitation = jest.fn((id) => {
-  return id;
-});
-pillarSdk.acceptInvitation = jest.fn((id) => {
-  return id;
-});
-pillarSdk.cancelInvitation = jest.fn((id) => {
-  return id;
-});
-pillarSdk.rejectInvitation = jest.fn((id) => {
-  return id;
-});
+pillarSdk.sendInvitation = jest.fn((id) => id);
+pillarSdk.acceptInvitation = jest.fn((id) => id);
+pillarSdk.cancelInvitation = jest.fn((id) => id);
+pillarSdk.rejectInvitation = jest.fn((id) => id);
+
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('Invitations Actions tests', () => {

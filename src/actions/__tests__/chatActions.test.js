@@ -35,8 +35,8 @@ describe('Chat Actions', () => {
   });
 
   afterEach(() => {
-    dispatchMock.mockClear();
-    getState.mockClear();
+    (dispatchMock: any).mockClear();
+    (getState: any).mockClear();
   });
 
   describe('sendMessageByContactAction()', () => {
@@ -57,7 +57,7 @@ describe('Chat Actions', () => {
           sourceIdentityKey: 'source-identity-key',
           targetIdentityKey: 'target-identity-key',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
           connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
@@ -77,7 +77,7 @@ describe('Chat Actions', () => {
 
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
-        getState.mockRestore();
+        (getState: any).mockRestore();
       });
 
       it('should call the chatService.client.sendMessageByContact function', () => {
@@ -124,7 +124,7 @@ describe('Chat Actions', () => {
           sourceIdentityKey: 'source-identity-key',
           targetIdentityKey: 'target-identity-key',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
           connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
@@ -139,7 +139,7 @@ describe('Chat Actions', () => {
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
         Toast.show.mockRestore();
-        getState.mockRestore();
+        (getState: any).mockRestore();
       });
 
       it('should call the Toast.show function', () => {

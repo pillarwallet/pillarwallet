@@ -35,8 +35,8 @@ describe('Transaction Notes Actions', () => {
   });
 
   afterEach(() => {
-    dispatchMock.mockClear();
-    getState.mockClear();
+    (dispatchMock: any).mockClear();
+    (getState: any).mockClear();
   });
 
   describe('sendTxNoteByContactAction()', () => {
@@ -56,7 +56,7 @@ describe('Transaction Notes Actions', () => {
           sourceIdentityKey: 'source-identity-key',
           targetIdentityKey: 'target-identity-key',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
           connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
@@ -117,7 +117,7 @@ describe('Transaction Notes Actions', () => {
           sourceIdentityKey: 'source-identity-key',
           targetIdentityKey: 'target-identity-key',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
           connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },

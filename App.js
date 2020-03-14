@@ -30,7 +30,7 @@ import styled from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
 import { AppearanceProvider } from 'react-native-appearance';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 
 import { setTopLevelNavigator } from 'services/navigation';
 
@@ -82,6 +82,8 @@ type Props = {
 }
 
 class App extends React.Component<Props, *> {
+  removeNetInfoEventListener: NetInfoSubscription;
+
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {

@@ -23,6 +23,7 @@ import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 
 const { HDNode } = utils;
 
+// TODO: remove
 export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string, connIndex: number): any {
   const dP1 = derivePath.replace('connType', '0');
   const dP2 = derivePath.replace('connType', '1');
@@ -39,6 +40,7 @@ export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string, connIn
   }
 }
 
+// TODO: remove
 export function generateKeyPairPool(
   mnemonic: ?string, privateKey: ?string,
   lastConnectionKeyIndex: number,
@@ -64,6 +66,7 @@ export function generateKeyPairPool(
   return keyPairs;
 }
 
+// TODO: remove
 const threadJobWorkerSeed = (
   mnemonic,
   privateKey,
@@ -75,44 +78,46 @@ const threadJobWorkerSeed = (
   threadCount,
 ) => {
   return () => {
-    return new Promise((resolve, reject) => {
-      let count = 5;
-      let lastCount = lastConnectionKeyIndex + (threadIndex * count);
-      if (lastConnectionKeyIndex < 0) {
-        count = Math.ceil(((threadCount * count) + connectionsCount) / threadCount);
-        lastCount = threadIndex * count;
-      }
-      try {
-        const params = {
-          lastCount,
-          count,
-          derivePathBase,
-          mnemonic,
-          privateKey,
-        };
-
-        thread.postMessage(JSON.stringify(params));
-
-        thread.onmessage = (message) => {
-          let parsedMessage = {};
-          try {
-            parsedMessage = JSON.parse(message);
-          } catch (e) {
-            //
-          }
-          resolve(parsedMessage);
-          thread.terminate();
-        };
-      } catch (e) {
-        reject(e);
-      }
-    });
+    return Promise.resolve();
+    // return new Promise((resolve, reject) => {
+    //   let count = 5;
+    //   let lastCount = lastConnectionKeyIndex + (threadIndex * count);
+    //   if (lastConnectionKeyIndex < 0) {
+    //     count = Math.ceil(((threadCount * count) + connectionsCount) / threadCount);
+    //     lastCount = threadIndex * count;
+    //   }
+    //   try {
+    //     const params = {
+    //       lastCount,
+    //       count,
+    //       derivePathBase,
+    //       mnemonic,
+    //       privateKey,
+    //     };
+    //
+    //     thread.postMessage(JSON.stringify(params));
+    //
+    //     thread.onmessage = (message) => {
+    //       let parsedMessage = {};
+    //       try {
+    //         parsedMessage = JSON.parse(message);
+    //       } catch (e) {
+    //         //
+    //       }
+    //       resolve(parsedMessage);
+    //       thread.terminate();
+    //     };
+    //   } catch (e) {
+    //     reject(e);
+    //   }
+    // });
   };
 };
 
+// TODO: remove
 async function threadPoolCreation(threadCount: number = 5) {
-  const threads = [];
-  // TODO: remove
+  return Promise.resolve();
+  // const threads = [];
   // for (let i = 0; i < threadCount; i++) {
   //   threads.push(new Thread('index.thread.js'));
   // }
@@ -123,38 +128,40 @@ async function threadPoolCreation(threadCount: number = 5) {
   // });
 }
 
+// TODO: remove?
 export async function generateKeyPairThreadPool(
   mnemonic: ?string,
   privateKey: ?string,
   connectionsCount: number = 0,
   connectionsKeyPairCount: number = 0,
   lastConnectionKeyIndex: number = -1): Promise<Array<any>> {
-  const derivePathBase = 'm/44/60\'/0\'/0/0';
-  let promiseJobs = [];
-  if (connectionsKeyPairCount <= PRE_KEY_THRESHOLD) {
-    const isIOSDebuggingEnabled = Platform.OS === 'ios'
-      && typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
-      && location.href.toLowerCase().includes('debug'); // eslint-disable-line no-restricted-globals,no-undef
-    if (isIOSDebuggingEnabled) {
-      promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
-    } else {
-      const threads = await threadPoolCreation(5);
-      for (let i = 0; i < threads.length; i++) {
-        const job = threadJobWorkerSeed(
-          mnemonic,
-          privateKey,
-          derivePathBase,
-          i,
-          connectionsCount,
-          threads[i],
-          lastConnectionKeyIndex,
-          threads.length,
-        );
-        promiseJobs.push(job);
-      }
-    }
-  }
-  const threadPairs = await Promise.all(promiseJobs.map(task => task()));
-  const allPairsResults = [].concat(...threadPairs);
-  return allPairsResults.sort((a, b) => { return a.connIndex < b.connIndex ? -1 : 1; });
+  return Promise.resolve([]);
+  // const derivePathBase = 'm/44/60\'/0\'/0/0';
+  // let promiseJobs = [];
+  // if (connectionsKeyPairCount <= PRE_KEY_THRESHOLD) {
+  //   const isIOSDebuggingEnabled = Platform.OS === 'ios'
+  //     && typeof location !== 'undefined' // eslint-disable-line no-restricted-globals
+  //     && location.href.toLowerCase().includes('debug'); // eslint-disable-line no-restricted-globals,no-undef
+  //   if (isIOSDebuggingEnabled) {
+  //     promiseJobs = generateKeyPairPool(mnemonic, privateKey, lastConnectionKeyIndex, connectionsCount, 25);
+  //   } else {
+  //     const threads = await threadPoolCreation(5);
+  //     for (let i = 0; i < threads.length; i++) {
+  //       const job = threadJobWorkerSeed(
+  //         mnemonic,
+  //         privateKey,
+  //         derivePathBase,
+  //         i,
+  //         connectionsCount,
+  //         threads[i],
+  //         lastConnectionKeyIndex,
+  //         threads.length,
+  //       );
+  //       promiseJobs.push(job);
+  //     }
+  //   }
+  // }
+  // const threadPairs = await Promise.all(promiseJobs.map(task => task()));
+  // const allPairsResults = [].concat(...threadPairs);
+  // return allPairsResults.sort((a, b) => { return a.connIndex < b.connIndex ? -1 : 1; });
 }

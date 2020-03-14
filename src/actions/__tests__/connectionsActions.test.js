@@ -230,11 +230,11 @@ const invitationsResultMock = [
   },
 ];
 
-type SDK = {
-  mapIdentityKeys: Function,
-};
+// type SDK = {
+//   mapIdentityKeys: Function,
+// };
 
-const pillarSdk: SDK = new PillarSdk();
+const pillarSdk = new PillarSdk();
 pillarSdk.mapIdentityKeys = jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
   if (connectionKeyIdentityMap) {
     const { identityKeys } = connectionKeyIdentityMap;

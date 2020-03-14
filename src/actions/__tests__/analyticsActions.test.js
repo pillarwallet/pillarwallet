@@ -26,7 +26,7 @@ describe('Analytics Actions', () => {
   const getState: GetState = jest.fn();
 
   const optOutTracking = (value) => {
-    getState.mockImplementation(() => ({
+    (getState: any).mockImplementation(() => ({
       appSettings: { data: { optOutTracking: value } },
     }));
   };
@@ -36,8 +36,8 @@ describe('Analytics Actions', () => {
   });
 
   afterEach(() => {
-    dispatch.mockClear();
-    getState.mockClear();
+    (dispatch: any).mockClear();
+    (getState: any).mockClear();
   });
 
   describe('logEventAction', () => {

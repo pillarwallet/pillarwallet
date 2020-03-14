@@ -31,6 +31,7 @@ import { saveDbAction } from 'actions/dbActions';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
+// TODO: remove?
 export const useConnectionKeyPairs = (count: number = 1) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { connectionKeyPairs: { data: connectionKeyPairs } } = getState();
@@ -44,6 +45,7 @@ export const useConnectionKeyPairs = (count: number = 1) => {
   };
 };
 
+// TODO: remove?
 export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -59,6 +61,7 @@ export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
   };
 };
 
+// TODO: remove?
 export const updateConnectionIdentityKeys = (successfulConnIdentityKeys: Object[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { connectionIdentityKeys: { data: connectionIdentityKeys } } = getState();
@@ -76,6 +79,7 @@ export const updateConnectionIdentityKeys = (successfulConnIdentityKeys: Object[
   };
 };
 
+// TODO: remove?
 export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: GetState, api: Object) => {
     const {
@@ -121,6 +125,7 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId
   };
 };
 
+// TODO: remove?
 export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: GetState, api: Object) => {
     const {
@@ -215,10 +220,9 @@ export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?
   };
 };
 
+// TODO: remove?
 export const backgroundPreKeyGeneratorAction = (mnemonic: ?string, privateKey: ?string, insideRun?: ?boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    return;
-    // TODO: remove?
     // if (insideRun) {
     //   InteractionManager.runAfterInteractions(async () => {
     //     const { connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex } } = getState();
@@ -247,6 +251,7 @@ export const backgroundPreKeyGeneratorAction = (mnemonic: ?string, privateKey: ?
   };
 };
 
+// TODO: remove?
 const patchConnections = (theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
@@ -338,88 +343,87 @@ const patchConnections = (theWalletId?: ?string = null) => {
   };
 };
 
+// TODO: remove
 export const updateConnectionKeyPairs = (
   mnemonic: ?string,
   privateKey: ?string,
   walletId: string,
   generateKeys: boolean = true,
 ) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    return;
-    // TODO: remove
-    // const {
-    //   connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
-    //   connectionIdentityKeys: { data: connectionIdentityKeys },
-    // } = getState();
-    //
-    // const numberOfConnections = await api.connectionsCount(walletId);
-    // if (!numberOfConnections) {
-    //   return Promise.resolve(false);
-    // }
-    //
-    // const { currentConnectionsCount, oldConnectionsCount, newReceivedConnectonsCount } = numberOfConnections;
-    // const totalConnections = currentConnectionsCount + oldConnectionsCount + newReceivedConnectonsCount;
-    //
-    // if (generateKeys && totalConnections === 0 && connectionKeyPairs.length === 0 && lastConnectionKeyIndex === -1) {
-    //   /* NOTE: -1 would be no keys generated yet at all, 0 for connections number in order not to overgenerate those 2
-    //    ( countToGenerate + connectionsCount in the function algorithm otherwise). These 2 are added in the
-    //    blocking(in progress) screen just in case a user connects to a target
-    //    before the background task kicks in - 10 seconds after this initial generation. */
-    //   const promiseJobs = await generateKeyPairPool(mnemonic, privateKey, -1, 0, 2);
-    //   const resultPairs = await Promise.all(promiseJobs.map(task => task()));
-    //   const allPairsResults = [].concat(...resultPairs);
-    //   const initialConnKeyPairs = allPairsResults.sort((a, b) => a.connIndex < b.connIndex ? -1 : 1);
-    //   await dispatch({
-    //     type: UPDATE_CONNECTION_KEY_PAIRS,
-    //     payload: initialConnKeyPairs,
-    //   });
-    //   await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: initialConnKeyPairs }, true));
-    // }
-    //
-    // if (oldConnectionsCount > 0 || currentConnectionsCount > connectionIdentityKeys.length) {
-    //   if (generateKeys) {
-    //     await dispatch({
-    //       type: UPDATE_WALLET_STATE,
-    //       payload: GENERATING_CONNECTIONS,
-    //     });
-    //
-    //     try {
-    //       if (lastConnectionKeyIndex === -1) {
-    //         const newKeyPairs =
-    //           await generateKeyPairThreadPool(
-    //             mnemonic,
-    //             privateKey,
-    //             totalConnections,
-    //             connectionKeyPairs.length,
-    //             lastConnectionKeyIndex);
-    //         const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
-    //         await dispatch({
-    //           type: UPDATE_CONNECTION_KEY_PAIRS,
-    //           payload: resultConnectionKeys,
-    //         });
-    //         await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
-    //       }
-    //     } catch (e) {
-    //       await dispatch({
-    //         type: UPDATE_WALLET_STATE,
-    //         payload: DECRYPTED,
-    //       });
-    //     }
-    //   }
-    //   await dispatch(fetchOldInviteNotificationsAction(walletId));
-    //   await dispatch(restoreAccessTokensAction(walletId));
-    //   await dispatch(mapIdentityKeysAction(totalConnections + 25, walletId));
-    //   await dispatch(updateOldConnections(oldConnectionsCount, walletId));
-    // }
-    //
-    // await dispatch(updateConnectionsAction(walletId));
-    //
-    // await dispatch(patchConnections(walletId));
-    //
-    // if (generateKeys) {
-    //   dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
-    // }
-    //
-    // return Promise.resolve(true);
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
+      connectionIdentityKeys: { data: connectionIdentityKeys },
+    } = getState();
+
+    const numberOfConnections = await api.connectionsCount(walletId);
+    if (!numberOfConnections) {
+      return Promise.resolve(false);
+    }
+
+    const { currentConnectionsCount, oldConnectionsCount, newReceivedConnectonsCount } = numberOfConnections;
+    const totalConnections = currentConnectionsCount + oldConnectionsCount + newReceivedConnectonsCount;
+
+    if (generateKeys && totalConnections === 0 && connectionKeyPairs.length === 0 && lastConnectionKeyIndex === -1) {
+      /* NOTE: -1 would be no keys generated yet at all, 0 for connections number in order not to overgenerate those 2
+       ( countToGenerate + connectionsCount in the function algorithm otherwise). These 2 are added in the
+       blocking(in progress) screen just in case a user connects to a target
+       before the background task kicks in - 10 seconds after this initial generation. */
+      const promiseJobs = await generateKeyPairPool(mnemonic, privateKey, -1, 0, 2);
+      const resultPairs = await Promise.all(promiseJobs.map(task => task()));
+      const allPairsResults = [].concat(...resultPairs);
+      const initialConnKeyPairs = allPairsResults.sort((a, b) => a.connIndex < b.connIndex ? -1 : 1);
+      await dispatch({
+        type: UPDATE_CONNECTION_KEY_PAIRS,
+        payload: initialConnKeyPairs,
+      });
+      await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: initialConnKeyPairs }, true));
+    }
+
+    if (oldConnectionsCount > 0 || currentConnectionsCount > connectionIdentityKeys.length) {
+      if (generateKeys) {
+        await dispatch({
+          type: UPDATE_WALLET_STATE,
+          payload: GENERATING_CONNECTIONS,
+        });
+
+        try {
+          if (lastConnectionKeyIndex === -1) {
+            const newKeyPairs =
+              await generateKeyPairThreadPool(
+                mnemonic,
+                privateKey,
+                totalConnections,
+                connectionKeyPairs.length,
+                lastConnectionKeyIndex);
+            const resultConnectionKeys = connectionKeyPairs.concat(newKeyPairs);
+            await dispatch({
+              type: UPDATE_CONNECTION_KEY_PAIRS,
+              payload: resultConnectionKeys,
+            });
+            await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+          }
+        } catch (e) {
+          await dispatch({
+            type: UPDATE_WALLET_STATE,
+            payload: DECRYPTED,
+          });
+        }
+      }
+      await dispatch(fetchOldInviteNotificationsAction(walletId));
+      await dispatch(restoreAccessTokensAction(walletId));
+      await dispatch(mapIdentityKeysAction(totalConnections + 25, walletId));
+      await dispatch(updateOldConnections(oldConnectionsCount, walletId));
+    }
+
+    await dispatch(updateConnectionsAction(walletId));
+
+    await dispatch(patchConnections(walletId));
+
+    if (generateKeys) {
+      dispatch(backgroundPreKeyGeneratorAction(mnemonic, privateKey));
+    }
+
+    return Promise.resolve(true);
   };
 };

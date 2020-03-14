@@ -88,7 +88,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -175,7 +177,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -262,6 +266,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
       }
       resetKeyboardSpace={[Function]}
       scrollForExtraHeightOnAndroid={[Function]}
+      scrollIntoView={[Function]}
       scrollToEnd={[Function]}
       scrollToFocusedInput={[Function]}
       scrollToPosition={[Function]}
@@ -274,6 +279,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           "paddingHorizontal": 0,
         }
       }
+      update={[Function]}
       viewIsInsideTabBar={false}
     >
       <RCTRefreshControl />
@@ -936,7 +942,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -965,7 +973,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -1047,7 +1059,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             </View>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1076,7 +1090,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button_disabled.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -1185,6 +1203,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -1273,6 +1293,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1527,7 +1549,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         >
                           <View
                             accessible={true}
+                            focusable={true}
                             isTVSelectable={true}
+                            onClick={[Function]}
                             onResponderGrant={[Function]}
                             onResponderMove={[Function]}
                             onResponderRelease={[Function]}
@@ -2144,7 +2168,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   >
                     <View
                       accessible={true}
+                      focusable={true}
                       isTVSelectable={true}
+                      onClick={[Function]}
                       onResponderGrant={[Function]}
                       onResponderMove={[Function]}
                       onResponderRelease={[Function]}
@@ -2251,7 +2277,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     </View>
                     <View
                       accessible={true}
+                      focusable={true}
                       isTVSelectable={true}
+                      onClick={[Function]}
                       onResponderGrant={[Function]}
                       onResponderMove={[Function]}
                       onResponderRelease={[Function]}
@@ -2382,7 +2410,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     }
                   >
                     <Image
-                      source={1}
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/visa.png",
+                        }
+                      }
                     />
                     <View
                       style={
@@ -2395,7 +2427,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       }
                     />
                     <Image
-                      source={1}
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/mastercard.png",
+                        }
+                      }
                     />
                   </View>
                 </View>
@@ -2549,7 +2585,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -2604,7 +2642,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2622,7 +2662,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -2705,6 +2747,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -2793,6 +2837,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2942,7 +2988,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         >
                           <View
                             accessible={true}
+                            focusable={true}
                             isTVSelectable={true}
+                            onClick={[Function]}
                             onResponderGrant={[Function]}
                             onResponderMove={[Function]}
                             onResponderRelease={[Function]}
@@ -3175,7 +3223,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -3230,7 +3280,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -3248,7 +3300,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}

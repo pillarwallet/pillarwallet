@@ -15,10 +15,14 @@ node_modules/warning/.*
 ; Flow doesn't support platforms
 .*/Libraries/Utilities/LoadingView.js
 
+; ;;; custom ignore start ;;;
+<PROJECT_ROOT>/node_modules/findup/.*
+; ;;; custom ignore start ;;;
+
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
 
-; ;;; custom ignores start ;;;
+; ;;; custom untyped start ;;;
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
 <PROJECT_ROOT>/node_modules/react-native/Libraries/.*
 <PROJECT_ROOT>/node_modules/findup/.*
@@ -33,7 +37,8 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/react-native-device-info/.*
 <PROJECT_ROOT>/node_modules/react-native-keychain/.*
 <PROJECT_ROOT>/node_modules/@storybook/.*/polished
-; ;;; custom ignores end ;;;
+<PROJECT_ROOT>/node_modules/redux-persist/.*
+; ;;; custom untyped end ;;;
 
 [include]
 
