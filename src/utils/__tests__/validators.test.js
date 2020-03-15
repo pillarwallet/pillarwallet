@@ -26,7 +26,7 @@ import {
   isValidEmail,
   isValidName,
   isValidCityName,
-  isValidUKPhone,
+  isValidPhone,
 } from 'utils/validators';
 
 import {
@@ -219,25 +219,15 @@ describe('Validators', () => {
     });
   });
 
-  describe('isValidUKPhone', () => {
+  describe('isValidPhone', () => {
     it('should return true as valid number', () => {
       const phone = '+447473222885';
-      expect(isValidUKPhone(phone)).toBeTruthy();
-    });
-
-    it('should return false for too long number', () => {
-      const phone = '+4474732228852';
-      expect(isValidUKPhone(phone)).toBeFalsy();
-    });
-
-    it('should return false for other prefix than +44', () => {
-      const phone = '+407473222885';
-      expect(isValidUKPhone(phone)).toBeFalsy();
+      expect(isValidPhone(phone)).toBeTruthy();
     });
 
     it('should return false for missing +', () => {
       const phone = '447473222885';
-      expect(isValidUKPhone(phone)).toBeFalsy();
+      expect(isValidPhone(phone)).toBeFalsy();
     });
   });
 });

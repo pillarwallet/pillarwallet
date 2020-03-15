@@ -275,6 +275,7 @@ class Menu extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ leftItems: [{ close: true }], centerItems: [{ custom: <HeaderLogo source={logo} /> }] }}
+        inset={{ bottom: 'never' }}
       >
         <FlatList
           data={items}

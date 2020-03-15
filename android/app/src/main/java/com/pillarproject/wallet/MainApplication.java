@@ -34,8 +34,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
 
         @Override
         protected String getJSMainModuleName() {
-      return "index";
-    }
+          return "index";
+        }
     };
 
 
@@ -54,9 +54,9 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
         }
         SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this); // Remove this line if you don't want Flipper enabled
-        // TODO: remove this call?
-    //    long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
-    //    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
+        // react-native-async-storage custom max storage
+        long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
+        com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
     }
 
     /**

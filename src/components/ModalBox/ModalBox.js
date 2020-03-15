@@ -19,50 +19,47 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontStyles } from 'utils/variables';
-import { BaseText, MediumText } from 'components/Typography';
+import Modal from 'react-native-modal';
+
 import { themedColors } from 'utils/themes';
 
 type Props = {
-  title?: string,
-  bodyText?: string,
-  large?: boolean,
-  wide?: boolean,
-}
-
-const EmptySectionTextWrapper = styled.View`
-  ${({ wide }) => !wide && 'width: 234px;'}
-  align-items: center;
-  justify-content: center;
-`;
-
-const EmptySectionTitle = styled(MediumText)`
-  ${({ large }) => large ? fontStyles.large : fontStyles.big};
-  margin-bottom: 6px;
-  text-align: center;
-`;
-
-const EmptySectionText = styled(BaseText)`
-  ${fontStyles.regular};
-  text-align: center;
-  flex-wrap: wrap;
-  color: ${themedColors.secondaryText};
-`;
-
-const EmptyStateParagraph = (props: Props) => {
-  const {
-    title,
-    bodyText,
-    large,
-    wide,
-  } = props;
-
-  return (
-    <EmptySectionTextWrapper wide={wide}>
-      {!!title && <EmptySectionTitle large={large}>{title}</EmptySectionTitle>}
-      {!!bodyText && <EmptySectionText>{bodyText}</EmptySectionText>}
-    </EmptySectionTextWrapper>
-  );
+  isVisible: boolean,
+  onModalHide: () => void,
+  children: React.Node,
 };
 
-export default EmptyStateParagraph;
+const Wrapper = styled.View`
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+`;
+
+const Box = styled.View`
+  flex-direction: column;
+  height: 320px;
+  width: 100%;
+  margin: auto 0;
+  align-self: center;
+  border-radius: 10px;
+  background-color: ${themedColors.card};
+`;
+
+const ModalBox = (props: Props) => (
+  <Modal
+    isVisible={props.isVisible}
+    hasBackdrop
+    backdropOpacity={0.7}
+    onModalHide={props.onModalHide}
+  >
+    <Wrapper>
+      <Box>
+        {props.children}
+      </Box>
+    </Wrapper>
+  </Modal>
+);
+
+export default ModalBox;

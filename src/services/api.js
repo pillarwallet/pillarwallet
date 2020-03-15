@@ -115,6 +115,11 @@ type MapContactsAddresses = Array<{
   },
 }>;
 
+type VerifyEmail = {|
+  walletId: string,
+  oneTimePassword: string,
+|};
+
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 class SDKWrapper {
@@ -248,6 +253,25 @@ class SDKWrapper {
           status,
           message,
         }, Sentry.Severity.Error);
+        return { responseStatus: status, message };
+      });
+  }
+
+  verifyEmail(params: VerifyEmail) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.validateEmail(params))
+      .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: params.walletId }))
+      .catch(error => {
+        const status = get(error, 'response.status');
+        const message = get(error, 'response.data.message');
+
+        Sentry.captureException({
+          error: 'Can\'t verify code',
+          walletId: params.walletId,
+          user: params,
+          status,
+          message,
+        });
         return { responseStatus: status, message };
       });
   }
