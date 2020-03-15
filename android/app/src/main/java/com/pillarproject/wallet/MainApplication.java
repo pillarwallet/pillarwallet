@@ -1,17 +1,9 @@
 package com.pillarproject.wallet;
 
 import android.content.Context;
-import com.BV.LinearGradient.LinearGradientPackage;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.airbnb.android.react.lottie.LottiePackage;
-import com.bitgo.randombytes.RandomBytesPackage;
-import com.crypho.scrypt.RNScryptPackage;
-import com.facebook.react.PackageList;
 import androidx.multidex.MultiDexApplication;
+import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
-import cl.json.RNSharePackage;
-import io.expo.appearance.RNCAppearancePackage;
 import io.intercom.android.sdk.Intercom;
 import nativeShadow.NativeShadowPackage;
 import com.facebook.react.ReactNativeHost;
@@ -35,7 +27,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             List<ReactPackage> packages = new PackageList(this).getPackages();
             // Packages that cannot be autolinked yet can be added manually here, for example:
             // packages.add(new MyReactNativePackage());
-            packages.add(new RNFetchBlobPackage());
             packages.add(new RNNotificationsPackage(MainApplication.this));
             packages.add(new NativeShadowPackage());
             return packages;

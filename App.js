@@ -54,15 +54,11 @@ import { getThemeByType, defaultTheme } from 'utils/themes';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import Storybook from 'screens/Storybook';
 
-import configureStore from './src/configureStore';
-
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
   align-items: center;
   justify-content: center;
 `;
-
-const { store, persistor } = configureStore();
 
 type Props = {
   dispatch: Function,
@@ -152,7 +148,6 @@ class App extends React.Component<Props, *> {
 
   handleConnectivityChange = (state: NetInfoState) => {
     const isOnline = state.isInternetReachable;
-    console.log('handleConnectivityChange isOnline: ', isOnline);
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
       Toast.show({
@@ -245,15 +240,17 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
-const AppRoot = () => SHOW_ONLY_STORYBOOK ? <Storybook /> : (
-  <Provider store={store}>
-    <PersistGate
-      loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
-      persistor={persistor}
-    >
-      <AppWithNavigationState />
-    </PersistGate>
-  </Provider>
-);
+const AppRoot = (props: { store: any, persistor: any }) => SHOW_ONLY_STORYBOOK
+  ? <Storybook />
+  : (
+    <Provider store={props.store}>
+      <PersistGate
+        loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
+        persistor={props.persistor}
+      >
+        <AppWithNavigationState />
+      </PersistGate>
+    </Provider>
+  );
 
 export default AppRoot;
