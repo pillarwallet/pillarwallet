@@ -30,7 +30,7 @@ import { updateConnectionsAction } from 'actions/connectionsActions';
 
 const walletId = 'walletId';
 
-const contactsMock = [
+const mockContacts = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -41,7 +41,7 @@ const contactsMock = [
   },
 ];
 
-const invitationsMock = [
+const mockInvitations = [
   {
     id: 4,
     username: 'user4',
@@ -52,7 +52,7 @@ const invitationsMock = [
   },
 ];
 
-const mapIdentityKeysResponseMock = [
+const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 2,
@@ -163,7 +163,7 @@ const mapIdentityKeysResponseMock = [
   },
 ];
 
-const contactsResultMock = [
+const mockContactsResult = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -211,7 +211,7 @@ const contactsResultMock = [
   },
 ];
 
-const invitationsResultMock = [
+const mockInvitationsResult = [
   {
     id: 4,
     username: 'user4',
@@ -230,23 +230,22 @@ const invitationsResultMock = [
   },
 ];
 
-// type SDK = {
-//   mapIdentityKeys: Function,
-// };
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  mapIdentityKeys: jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
+    if (connectionKeyIdentityMap) {
+      const { identityKeys } = connectionKeyIdentityMap;
+      return mockMapIdentityKeysResponse.filter(({
+        sourceIdentityKey: mapSourceIdentityKey,
+        targetIdentityKey: mapTargetIdentityKey,
+      }) => identityKeys.find(({ sourceIdentityKey, targetIdentityKey }) =>
+        sourceIdentityKey === mapSourceIdentityKey && targetIdentityKey === mapTargetIdentityKey,
+      ));
+    }
+    return null;
+  }),
+})));
 
 const pillarSdk = new PillarSdk();
-pillarSdk.mapIdentityKeys = jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
-  if (connectionKeyIdentityMap) {
-    const { identityKeys } = connectionKeyIdentityMap;
-    return mapIdentityKeysResponseMock.filter(({
-      sourceIdentityKey: mapSourceIdentityKey,
-      targetIdentityKey: mapTargetIdentityKey,
-    }) => identityKeys.find(({ sourceIdentityKey, targetIdentityKey }) =>
-      sourceIdentityKey === mapSourceIdentityKey && targetIdentityKey === mapTargetIdentityKey,
-    ));
-  }
-  return null;
-});
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
@@ -261,10 +260,10 @@ describe('Connections Actions tests', () => {
   beforeEach(() => {
     const connectionKeyPairsStoreMock = {
       contacts: {
-        data: [...contactsMock],
+        data: [...mockContacts],
       },
       invitations: {
-        data: [...invitationsMock],
+        data: [...mockInvitations],
       },
       user: {
         data: { walletId },
@@ -275,7 +274,7 @@ describe('Connections Actions tests', () => {
         },
       },
       connectionIdentityKeys: {
-        data: [...mapIdentityKeysResponseMock],
+        data: [...mockMapIdentityKeysResponse],
       },
     };
     store = mockStore({ ...connectionKeyPairsStoreMock });
@@ -283,9 +282,9 @@ describe('Connections Actions tests', () => {
 
   it('Should expect processed contacts and invitations by the mapIdentityKeys result from api', () => {
     const expectedActions = [
-      { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mapIdentityKeysResponseMock] },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
+      { type: UPDATE_CONTACTS, payload: mockContactsResult },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mockMapIdentityKeysResponse] },
     ];
     return store.dispatch(updateConnectionsAction())
       .then(() => {

@@ -36,7 +36,7 @@ import {
 
 const walletId = 'walletId';
 
-const contactsMock = [
+const mockContacts = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -47,7 +47,7 @@ const contactsMock = [
   },
 ];
 
-const apiUserMock = {
+const mockApiUser = {
   id: '22',
   ethAddress: '0x0022',
   username: 'targetUsername',
@@ -55,7 +55,7 @@ const apiUserMock = {
   connectionKey: '222',
 };
 
-const invitationsMock = [
+const mockInvitations = [
   {
     id: 4,
     username: 'user4',
@@ -92,7 +92,7 @@ const invitationsMock = [
   },
 ];
 
-const connectionKeyPairsMock = [
+const mockConnectionKeyPair = [
   {
     A: '0x0123456789012345678901234567890123456789012345678901234567890108',
     Ad: '0x0123456789012345678901234567890123456789012345678901234567890118',
@@ -110,7 +110,7 @@ const connectionKeyPairsMock = [
   },
 ];
 
-const mapIdentityKeysResponseMock = [
+const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 2,
@@ -221,7 +221,7 @@ const mapIdentityKeysResponseMock = [
   },
 ];
 
-const contactsResultMock = [
+const mockContactsResult = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -269,7 +269,7 @@ const contactsResultMock = [
   },
 ];
 
-const invitationsResultMock = [
+const mockInvitationsResult = [
   {
     id: 4,
     username: 'user4',
@@ -301,31 +301,26 @@ const invitationsResultMock = [
   },
 ];
 
-type SDK = {
-  mapIdentityKeys: Function,
-  sendInvitation: Function,
-  cancelInvitation: Function,
-  rejectInvitation: Function,
-  acceptInvitation: Function,
-};
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  mapIdentityKeys: jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
+    if (connectionKeyIdentityMap) {
+      const { identityKeys } = connectionKeyIdentityMap;
+      return mockMapIdentityKeysResponse.filter(({
+        sourceIdentityKey: mapSourceIdentityKey,
+        targetIdentityKey: mapTargetIdentityKey,
+      }) => identityKeys.find(({ sourceIdentityKey, targetIdentityKey }) =>
+        sourceIdentityKey === mapSourceIdentityKey && targetIdentityKey === mapTargetIdentityKey,
+      ));
+    }
+    return null;
+  }),
+  sendInvitation: jest.fn((id) => id),
+  acceptInvitation: jest.fn((id) => id),
+  cancelInvitation: jest.fn((id) => id),
+  rejectInvitation: jest.fn((id) => id),
+})));
 
 const pillarSdk = new PillarSdk();
-pillarSdk.mapIdentityKeys = jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
-  if (connectionKeyIdentityMap) {
-    const { identityKeys } = connectionKeyIdentityMap;
-    return mapIdentityKeysResponseMock.filter(({
-      sourceIdentityKey: mapSourceIdentityKey,
-      targetIdentityKey: mapTargetIdentityKey,
-    }) => identityKeys.find(({ sourceIdentityKey, targetIdentityKey }) =>
-      sourceIdentityKey === mapSourceIdentityKey && targetIdentityKey === mapTargetIdentityKey,
-    ));
-  }
-  return null;
-});
-pillarSdk.sendInvitation = jest.fn((id) => id);
-pillarSdk.acceptInvitation = jest.fn((id) => id);
-pillarSdk.cancelInvitation = jest.fn((id) => id);
-pillarSdk.rejectInvitation = jest.fn((id) => id);
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
@@ -333,12 +328,12 @@ describe('Invitations Actions tests', () => {
   let store;
 
   beforeEach(() => {
-    const connectionKeyPairsStoreMock = {
+    const mockConnectionKeyPairsStore = {
       contacts: {
-        data: [...contactsMock],
+        data: [...mockContacts],
       },
       invitations: {
-        data: [...invitationsMock],
+        data: [...mockInvitations],
       },
       user: {
         data: { walletId },
@@ -349,29 +344,29 @@ describe('Invitations Actions tests', () => {
         },
       },
       connectionIdentityKeys: {
-        data: [...mapIdentityKeysResponseMock],
+        data: [...mockMapIdentityKeysResponse],
       },
       connectionKeyPairs: {
-        data: [...connectionKeyPairsMock],
+        data: [...mockConnectionKeyPair],
       },
       accessTokens: {
         data: [],
       },
     };
-    store = mockStore({ ...connectionKeyPairsStoreMock });
+    store = mockStore({ ...mockConnectionKeyPairsStore });
   });
 
   it('Should expect connection key reservation on sendInvitationAction.', () => {
     const expectedActions = [
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[2]] },
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock] },
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[2]] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [mockConnectionKeyPair[2]] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPair] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [mockConnectionKeyPair[2]] },
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation sent' } },
-      { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mapIdentityKeysResponseMock] },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
+      { type: UPDATE_CONTACTS, payload: mockContactsResult },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mockMapIdentityKeysResponse] },
     ];
-    return store.dispatch(sendInvitationAction(apiUserMock))
+    return store.dispatch(sendInvitationAction(mockApiUser))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -380,16 +375,16 @@ describe('Invitations Actions tests', () => {
 
   it('Should expect set of actions on acceptInvitationAction of new connections system.', () => {
     const expectedActions = [
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[2]] },
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock] },
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[2]] },
-      { type: UPDATE_INVITATIONS, payload: [invitationsMock[0], invitationsMock[2]] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [mockConnectionKeyPair[2]] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPair] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [mockConnectionKeyPair[2]] },
+      { type: UPDATE_INVITATIONS, payload: [mockInvitations[0], mockInvitations[2]] },
       { type: ADD_NOTIFICATION, payload: { message: 'Connection request accepted' } },
-      { type: UPDATE_INVITATIONS, payload: [invitationsResultMock[0], invitationsResultMock[1]] },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mapIdentityKeysResponseMock] },
+      { type: UPDATE_INVITATIONS, payload: [mockInvitationsResult[0], mockInvitationsResult[1]] },
+      { type: UPDATE_CONTACTS, payload: mockContactsResult },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mockMapIdentityKeysResponse] },
     ];
-    return store.dispatch(acceptInvitationAction(invitationsMock[1]))
+    return store.dispatch(acceptInvitationAction(mockInvitations[1]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -399,12 +394,12 @@ describe('Invitations Actions tests', () => {
   it('Should expect set of actions on cancelInvitationAction of new connections system.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation cancelled' } },
-      { type: UPDATE_INVITATIONS, payload: [invitationsMock[0], invitationsMock[1]] },
-      { type: UPDATE_INVITATIONS, payload: [...invitationsResultMock] },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mapIdentityKeysResponseMock] },
+      { type: UPDATE_INVITATIONS, payload: [mockInvitations[0], mockInvitations[1]] },
+      { type: UPDATE_INVITATIONS, payload: [...mockInvitationsResult] },
+      { type: UPDATE_CONTACTS, payload: mockContactsResult },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mockMapIdentityKeysResponse] },
     ];
-    return store.dispatch(cancelInvitationAction(invitationsMock[2]))
+    return store.dispatch(cancelInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -414,12 +409,12 @@ describe('Invitations Actions tests', () => {
   it('Should expect set of actions on rejectInvitationAction of new connections system.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation rejected' } },
-      { type: UPDATE_INVITATIONS, payload: [invitationsMock[0], invitationsMock[1]] },
-      { type: UPDATE_INVITATIONS, payload: [...invitationsResultMock] },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mapIdentityKeysResponseMock] },
+      { type: UPDATE_INVITATIONS, payload: [mockInvitations[0], mockInvitations[1]] },
+      { type: UPDATE_INVITATIONS, payload: [...mockInvitationsResult] },
+      { type: UPDATE_CONTACTS, payload: mockContactsResult },
+      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mockMapIdentityKeysResponse] },
     ];
-    return store.dispatch(rejectInvitationAction(invitationsMock[2]))
+    return store.dispatch(rejectInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

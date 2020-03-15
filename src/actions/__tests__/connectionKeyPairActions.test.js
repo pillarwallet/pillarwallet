@@ -36,7 +36,8 @@ import * as oldInvitationsActions from 'actions/oldInvitationsActions';
 const walletId = 'walletId';
 const mnemonic = 'one two three four five six seven eight nine ten eleven twelve';
 const privateKey = '0x0123456789012345678901234567890123456789012345678901234567890123';
-const connectionKeyPairsMock = [
+
+const mockConnectionKeyPairs = [
   {
     A: '0x0123456789012345678901234567890123456789012345678901234567890111',
     Ad: '0x0123456789012345678901234567890123456789012345678901234567890112',
@@ -74,7 +75,7 @@ const connectionKeyPairsMock = [
   },
 ];
 
-const accessTokensMock = [
+const mockAccessTokens = [
   {
     myAccessToken: '111',
     userAccessToken: '222',
@@ -89,7 +90,7 @@ const accessTokensMock = [
   },
 ];
 
-const contactsMock = [
+const mockContacts = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -100,7 +101,7 @@ const contactsMock = [
   },
 ];
 
-const invitationsMock = [
+const mockInvitations = [
   {
     id: 4,
     username: 'user4',
@@ -111,8 +112,9 @@ const invitationsMock = [
   },
 ];
 
-const connectionCountResponseMock = { currentConnectionsCount: 4, oldConnectionsCount: 2 };
-const updateIdentityKeysResponseMock = [
+const mockConnectionCountResponse = { currentConnectionsCount: 4, oldConnectionsCount: 2 };
+
+const mockUpdateIdentityKeysResponse = [
   {
     sourceUserAccessKey: '111',
     targetUserAccessKey: '222',
@@ -129,8 +131,9 @@ const updateIdentityKeysResponseMock = [
   },
 ];
 
-const connectionIdentityKeysMock = [];
-const mapIdentityKeysResponseMock = [
+const mockConnectionIdentityKeys = [];
+
+const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 2,
@@ -241,37 +244,37 @@ const mapIdentityKeysResponseMock = [
   },
 ];
 
-// type SDK = {
-//   connectionsCount: Function,
-//   updateIdentityKeys: Function,
-//   mapIdentityKeys: Function,
-// };
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  fetchAccessTokens: jest.fn(),
+  fetchNotifications: jest.fn(),
+  patchIdentityKeys: jest.fn(),
+  connectionsCount: jest.fn((walletIdParam) => {
+    if (walletIdParam) {
+      return mockConnectionCountResponse;
+    }
+    return null;
+  }),
+  updateIdentityKeys: jest.fn((updatedIdentityKeys: ConnectionUpdateIdentityKeys) => {
+    if (updatedIdentityKeys) {
+      return mockUpdateIdentityKeysResponse;
+    }
+    return null;
+  }),
+  mapIdentityKeys: jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
+    if (connectionKeyIdentityMap) {
+      const { identityKeys } = connectionKeyIdentityMap;
+      return mockMapIdentityKeysResponse.filter(({
+        sourceIdentityKey: mapSourceIdentityKey,
+        targetIdentityKey: mapTargetIdentityKey,
+      }) => identityKeys.find(({ sourceIdentityKey, targetIdentityKey }) =>
+        sourceIdentityKey === mapSourceIdentityKey && targetIdentityKey === mapTargetIdentityKey,
+      ));
+    }
+    return null;
+  }),
+})));
 
 const pillarSdk = new PillarSdk();
-pillarSdk.connectionsCount = jest.fn((walletIdParam) => {
-  if (walletIdParam) {
-    return connectionCountResponseMock;
-  }
-  return null;
-});
-pillarSdk.updateIdentityKeys = jest.fn((updatedIdentityKeys: ConnectionUpdateIdentityKeys) => {
-  if (updatedIdentityKeys) {
-    return updateIdentityKeysResponseMock;
-  }
-  return null;
-});
-pillarSdk.mapIdentityKeys = jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
-  if (connectionKeyIdentityMap) {
-    const { identityKeys } = connectionKeyIdentityMap;
-    return mapIdentityKeysResponseMock.filter(({
-      sourceIdentityKey: mapSourceIdentityKey,
-      targetIdentityKey: mapTargetIdentityKey,
-    }) => identityKeys.find(({ sourceIdentityKey, targetIdentityKey }) =>
-      sourceIdentityKey === mapSourceIdentityKey && targetIdentityKey === mapTargetIdentityKey,
-    ));
-  }
-  return null;
-});
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
@@ -287,17 +290,17 @@ describe('ConnectionKeyPair actions', () => {
     jest.useFakeTimers();
     const connectionKeyPairsStoreMock = {
       connectionKeyPairs: {
-        data: [...connectionKeyPairsMock],
+        data: [...mockConnectionKeyPairs],
         lastConnectionKeyIndex: -1,
       },
       accessTokens: {
-        data: [...accessTokensMock],
+        data: [...mockAccessTokens],
       },
       contacts: {
-        data: [...contactsMock],
+        data: [...mockContacts],
       },
       invitations: {
-        data: [...invitationsMock],
+        data: [...mockInvitations],
       },
       user: {
         data: { walletId },
@@ -308,7 +311,7 @@ describe('ConnectionKeyPair actions', () => {
         },
       },
       connectionIdentityKeys: {
-        data: connectionIdentityKeysMock,
+        data: mockConnectionIdentityKeys,
       },
     };
     store = mockStore({ ...connectionKeyPairsStoreMock });
@@ -319,15 +322,15 @@ describe('ConnectionKeyPair actions', () => {
       // TODO : The second call to UPDATE_CONNECTION_KEY_PAIRS should have 5 elements, state is not updated.
       const expectedActions = [
         { type: UPDATE_WALLET_STATE, payload: GENERATING_CONNECTIONS },
-        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock] },
-        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(3, 7)] },
-        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(3, 7)] },
-        { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock.slice(0, 2) },
-        { type: UPDATE_INVITATIONS, payload: [...invitationsMock] },
-        { type: UPDATE_CONTACTS, payload: [...contactsMock] },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPairs] },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPairs.slice(3, 7)] },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPairs.slice(3, 7)] },
+        { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mockMapIdentityKeysResponse.slice(0, 2) },
+        { type: UPDATE_INVITATIONS, payload: [...mockInvitations] },
+        { type: UPDATE_CONTACTS, payload: [...mockContacts] },
         { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
-        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(3, 7)] },
-        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock.slice(2, 7)] },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPairs.slice(3, 7)] },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPairs.slice(2, 7)] },
       ];
 
       // $FlowFixMe
@@ -344,14 +347,14 @@ describe('ConnectionKeyPair actions', () => {
 
   it('Should expect state to have one used keyPair when using 1 connectionKeyPair from the pre-keys pool', () => {
     const expectedActions = [
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...connectionKeyPairsMock].slice(1, 7) },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [...mockConnectionKeyPairs].slice(1, 7) },
     ];
     return store.dispatch(useConnectionKeyPairs(1))
       .then((result) => {
         const actualActions = store.getActions();
         const actualState = store.getState();
         expect(actualActions).toEqual(expectedActions);
-        expect(actualState.connectionKeyPairs.data.length).toEqual(connectionKeyPairsMock.length - 1);
+        expect(actualState.connectionKeyPairs.data.length).toEqual(mockConnectionKeyPairs.length - 1);
         expect(result.length).toEqual(1);
       });
   });

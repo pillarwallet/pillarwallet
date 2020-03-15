@@ -63,25 +63,29 @@ import { WebSocket } from 'mock-socket';
 
 global.WebSocket = WebSocket;
 
-// type SDK = {
-//   registerOnAuthServer: Function,
-//   fetchInitialAssets: Function,
-//   updateUser: Function,
-//   userInfo: Function,
-// };
-
 const mockUser = { username: 'snow', walletId: 2 };
 
+const mockFetchInitialAssetsResponse = transformAssetsToObject(mockInitialAssets);
+
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  init: jest.fn(),
+  setUsername: jest.fn(),
+  fetchAccessTokens: jest.fn(),
+  fetchNotifications: jest.fn(),
+  listAccounts: jest.fn(),
+  registerOnAuthServer: jest.fn(() => ({
+    userId: 1,
+    walletId: 2,
+    refreshToken: 'uniqueRefreshToken',
+    accessToken: 'uniqueAccessToken',
+  })),
+  updateUser: jest.fn(() => mockUser),
+  userInfo: jest.fn(() => mockUser),
+  fetchInitialAssets: jest.fn(() => mockFetchInitialAssetsResponse),
+})));
+
 const pillarSdk = new PillarSdk();
-pillarSdk.registerOnAuthServer = jest.fn(() => ({
-  userId: 1,
-  walletId: 2,
-  refreshToken: 'uniqueRefreshToken',
-  accessToken: 'uniqueAccessToken',
-}));
-pillarSdk.updateUser = jest.fn(() => mockUser);
-pillarSdk.userInfo = jest.fn(() => mockUser);
-pillarSdk.fetchInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
+
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 const mockWallet: Object = {
