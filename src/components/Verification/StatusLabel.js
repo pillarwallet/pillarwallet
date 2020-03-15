@@ -18,23 +18,48 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
+import isEmpty from 'lodash.isempty';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+import type { User } from 'models/User';
+
+// components
+import { Label } from 'components/Typography';
+
+// utils
+import { spacing } from 'utils/variables';
+
+const Message = styled(Label)`
+  margin: 0 ${spacing.rhythm}px;
+`;
 
 type Props = {
-  children: React.Node,
+  field: string,
+  user: User,
+  sendingOneTimePassword: boolean,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
+const statusText = (props: Props) => {
+  const {
+    sendingOneTimePassword,
+    user,
+    field,
+  } = props;
+
+  const destination = user[field];
+  if (isEmpty(destination)) {
+    return `(No ${field} to show)`;
+  }
+
+  if (sendingOneTimePassword) {
+    return `Sending to ${destination}`;
+  }
+
+  return `It was sent to ${destination}`;
 };
 
-export default CenterView;
+const StatusLabel = (props: Props) => (
+  <Message>{statusText(props)}</Message>
+);
+
+export default StatusLabel;

@@ -18,23 +18,48 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
+import Modal from 'react-native-modal';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+import { themedColors } from 'utils/themes';
 
 type Props = {
+  isVisible: boolean,
+  onModalHide: () => void,
   children: React.Node,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
-};
+const Wrapper = styled.View`
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+`;
 
-export default CenterView;
+const Box = styled.View`
+  flex-direction: column;
+  height: 320px;
+  width: 100%;
+  margin: auto 0;
+  align-self: center;
+  border-radius: 10px;
+  background-color: ${themedColors.card};
+`;
+
+const ModalBox = (props: Props) => (
+  <Modal
+    isVisible={props.isVisible}
+    hasBackdrop
+    backdropOpacity={0.7}
+    onModalHide={props.onModalHide}
+  >
+    <Wrapper>
+      <Box>
+        {props.children}
+      </Box>
+    </Wrapper>
+  </Modal>
+);
+
+export default ModalBox;

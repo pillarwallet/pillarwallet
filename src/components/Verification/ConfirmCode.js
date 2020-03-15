@@ -18,23 +18,50 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+// components
+import TextInput from 'components/TextInput';
+
+// utils
+import { spacing } from 'utils/variables';
+
+const FormWrapper = styled.View`
+  padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
+  display: flex;
+  width: 200px;
+`;
 
 type Props = {
-  children: React.Node,
+  updateCode: (code: string) => void,
+  errorMessage: ?string,
+  code: string,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
+const maxDigits = 5;
+
+const ConfirmCode = (props: Props) => {
+  const {
+    code,
+    updateCode,
+    errorMessage,
+  } = props;
+
+  const inputProps = {
+    value: code,
+    onChange: updateCode,
+    keyboardType: 'number-pad',
+    maxLength: maxDigits,
+  };
+
+  return (
+    <FormWrapper>
+      <TextInput
+        inputProps={inputProps}
+        errorMessage={errorMessage}
+      />
+    </FormWrapper>
+  );
 };
 
-export default CenterView;
+export default ConfirmCode;

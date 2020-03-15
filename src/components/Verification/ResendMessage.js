@@ -18,23 +18,44 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+// components
+import { BaseText, TextLink } from 'components/Typography';
+
+// utils
+import { spacing, fontSizes } from 'utils/variables';
+
+const FontSize = fontSizes.regular;
+
+const Wrapper = styled.View`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 ${spacing.large}px;
+`;
+
+const CustomText = styled(BaseText)`
+  font-size: ${FontSize}px;
+  line-height: ${FontSize}px;
+`;
+
+const CustomLink = styled(TextLink)`
+  font-size: ${FontSize}px;
+  line-height: ${FontSize}px;
+`;
 
 type Props = {
-  children: React.Node,
+  onPressResend: () => void,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
-};
+const ResendMessage = ({ onPressResend }: Props) => (
+  <Wrapper>
+    <CustomText>Didn&apos;t receive the code?</CustomText>
+    <CustomLink onPress={onPressResend}> Resend it. </CustomLink>
+  </Wrapper>
+);
 
-export default CenterView;
+export default ResendMessage;

@@ -18,23 +18,49 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import styled from 'styled-components/native';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+// components
+import { MediumText } from 'components/Typography';
+import IconButton from 'components/IconButton';
+
+// utils
+import { fontSizes, spacing } from 'utils/variables';
 
 type Props = {
-  children: React.Node,
+  title: string,
+  onPressClose: () => void,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
+const Wrapper = styled.View`
+  align-items: flex-start;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+`;
+
+const Title = styled(MediumText)`
+  flex: 1;
+  margin: ${spacing.rhythm}px;
+  margin-bottom: ${spacing.small}px;
+  font-size: ${fontSizes.big}px;
+`;
+
+const CloseIcon = styled(IconButton).attrs({
+  icon: 'close',
+  fontSize: fontSizes.regular,
+  secondary: true,
+})`
+  padding: ${spacing.layoutSides}px;
+`;
+
+const BoxTitle = (props: Props) => {
+  return (
+    <Wrapper>
+      <Title>{props.title}</Title>
+      <CloseIcon onPress={props.onPressClose} />
+    </Wrapper>
+  );
 };
 
-export default CenterView;
+export default BoxTitle;
