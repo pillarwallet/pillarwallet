@@ -1,0 +1,86 @@
+--- a/node_modules/react-native-notifications/lib/dist/NotificationsAndroid.js
++++ b/node_modules/react-native-notifications/lib/dist/NotificationsAndroid.js
+@@ -4,7 +4,7 @@ const react_native_1 = require("react-native");
+ class NotificationsAndroid {
+     constructor(commands) {
+         this.commands = commands;
+-        return new Proxy(this, {
++        return {
+             get(target, name) {
+                 if (react_native_1.Platform.OS === 'android') {
+                     return target[name];
+@@ -13,7 +13,7 @@ class NotificationsAndroid {
+                     return () => { };
+                 }
+             }
+-        });
++        };
+     }
+     /**
+     * Refresh FCM token
+diff --git a/node_modules/react-native-notifications/lib/dist/NotificationsIOS.js b/node_modules/react-native-notifications/lib/dist/NotificationsIOS.js
+index b3acedf..3c5e985 100644
+--- a/node_modules/react-native-notifications/lib/dist/NotificationsIOS.js
++++ b/node_modules/react-native-notifications/lib/dist/NotificationsIOS.js
+@@ -5,7 +5,7 @@ class NotificationsIOS {
+     constructor(commands, eventsRegistry) {
+         this.commands = commands;
+         this.eventsRegistry = eventsRegistry;
+-        return new Proxy(this, {
++        return {
+             get(target, name) {
+                 if (react_native_1.Platform.OS === 'ios') {
+                     return target[name];
+@@ -14,7 +14,7 @@ class NotificationsIOS {
+                     return () => { };
+                 }
+             }
+-        });
++        };
+     }
+     /**
+     * Request permissions to send remote notifications
+diff --git a/node_modules/react-native-notifications/lib/src/NotificationsAndroid.ts b/node_modules/react-native-notifications/lib/src/NotificationsAndroid.ts
+index 33686e2..f93e732 100644
+--- a/node_modules/react-native-notifications/lib/src/NotificationsAndroid.ts
++++ b/node_modules/react-native-notifications/lib/src/NotificationsAndroid.ts
+@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
+
+ export class NotificationsAndroid {
+   constructor(private readonly commands: Commands) {
+-    return new Proxy(this, {
++    return {
+       get(target, name) {
+         if (Platform.OS === 'android') {
+           return (target as any)[name];
+@@ -11,7 +11,7 @@ export class NotificationsAndroid {
+           return () => {};
+         }
+       }
+-    });
++    };
+   }
+
+   /**
+diff --git a/node_modules/react-native-notifications/lib/src/NotificationsIOS.ts b/node_modules/react-native-notifications/lib/src/NotificationsIOS.ts
+index b4218ab..ee931d8 100644
+--- a/node_modules/react-native-notifications/lib/src/NotificationsIOS.ts
++++ b/node_modules/react-native-notifications/lib/src/NotificationsIOS.ts
+@@ -5,7 +5,7 @@ import { EventsRegistryIOS } from './events/EventsRegistryIOS';
+
+ export class NotificationsIOS {
+   constructor(private readonly commands: Commands, private readonly eventsRegistry: EventsRegistryIOS) {
+-    return new Proxy(this, {
++    return {
+       get(target, name) {
+         if (Platform.OS === 'ios') {
+           return (target as any)[name];
+@@ -13,7 +13,7 @@ export class NotificationsIOS {
+           return () => {};
+         }
+       }
+-    });
++    };
+   }
+
+   /**

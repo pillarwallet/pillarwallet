@@ -144,7 +144,7 @@ export const loginAction = (
 
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
+        const decryptionOptions = {}; // TODO: remove: generateNewConnKeys ? { mnemonic: true } : {};
         wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);

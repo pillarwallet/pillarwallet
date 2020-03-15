@@ -20,14 +20,5 @@
 import { AppRegistry } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';
-import configureStore from './src/configureStore';
-
-/**
- * create store instance at top level lets
- * React Native Fast Refresh (https://reactnative.dev/docs/fast-refresh)
- * to run without issues, otherwise redux store replacement error is thrown
- * additional note: other Hot Reload "workarounds" doesn't work with Fast Refresh
- */
-configureStore();
 
 AppRegistry.registerComponent(appName, () => App);

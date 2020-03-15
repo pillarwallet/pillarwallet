@@ -75,23 +75,16 @@ const enhancer = composeWithDevTools({
   // Options: https://github.com/jhen0409/react-native-debugger#options
 })(applyMiddleware(...middlewares));
 
-let store;
-let persistor;
-
 const configureStore = (initialState: ?Object): Object => {
-  if (!store) {
-    store = createStore(
-      pReducer,
-      initialState,
-      enhancer,
-    );
-  }
+  const store = createStore(
+    pReducer,
+    initialState,
+    enhancer,
+  );
 
-  if (!persistor) persistor = persistStore(store);
+  const persistor = persistStore(store);
 
-  return {
-    store,
-    persistor,
-  };
+  return { store, persistor };
 };
+
 export default configureStore;

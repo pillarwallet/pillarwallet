@@ -317,7 +317,8 @@ describe('ConnectionKeyPair actions', () => {
     store = mockStore({ ...connectionKeyPairsStoreMock });
   });
 
-  it('should expect series of actions with payload to be dispatched on first updateConnectionKeyPairs execution',
+  // skipping test as we'll remove connections
+  xit('should expect series of actions with payload to be dispatched on first updateConnectionKeyPairs execution',
     () => {
       // TODO : The second call to UPDATE_CONNECTION_KEY_PAIRS should have 5 elements, state is not updated.
       const expectedActions = [
