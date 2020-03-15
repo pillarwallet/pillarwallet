@@ -59,7 +59,7 @@ const EmptyStateParagraph = (props: Props) => {
 
   return (
     <EmptySectionTextWrapper wide={wide}>
-      <EmptySectionTitle large={large}>{title}</EmptySectionTitle>
+      {!!title && <EmptySectionTitle large={large}>{title}</EmptySectionTitle>}
       {!!bodyText && <EmptySectionText>{bodyText}</EmptySectionText>}
     </EmptySectionTextWrapper>
   );

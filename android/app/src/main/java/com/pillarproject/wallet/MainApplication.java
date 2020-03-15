@@ -64,45 +64,45 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new BadgePackage(),
-            new RNSentryPackage(),
-            new ReactNativeFirebaseAppPackage(),
-            new ReactNativeFirebaseMessagingPackage(),
-            new ReactNativeFirebaseIidPackage(),
-            new ReactNativeFirebaseCrashlyticsPackage(),
-            new ReactNativeFirebaseAnalyticsPackage(),
-            new RNScryptPackage(),
-            new RNFetchBlobPackage(),
-            new RNGestureHandlerPackage(),
-            new RNScreensPackage(),
-            new RNSignalClientPackage(),
-            new RNCWebViewPackage(),
-            new VectorIconsPackage(),
-            new UdpSocketsModule(),
-            new RNThreadPackage(mReactNativeHost, new RandomBytesPackage()), // randombytes needed for connections keypair generation in thread
-            new TcpSocketsModule(),
-            new SvgPackage(),
-            new SplashScreenReactPackage(),
-            new RNSharePackage(),
-            new RandomBytesPackage(),
-            new RNOSModule(),
-            new LinearGradientPackage(),
-            new KeychainPackage(),
-            new IntercomPackage(),
-            new PickerPackage(),
-            new ExtraDimensionsPackage(),
-            new RNDeviceInfo(),
-            new CookieManagerPackage(),
-            new ColorMatrixImageFiltersPackage(),
-            new RNCameraPackage(),
-            new BackgroundTimerPackage(),
-            new RNCAppearancePackage(),
-            new LottiePackage(),
-            new AsyncStoragePackage(),
-            new RNInAppBrowserPackage(),
-            new NativeShadowPackage(),
-            new RNNotificationsPackage(MainApplication.this)
+        new MainReactPackage(),
+        new BadgePackage(),
+        new RNSentryPackage(),
+        new ReactNativeFirebaseAppPackage(),
+        new ReactNativeFirebaseMessagingPackage(),
+        new ReactNativeFirebaseIidPackage(),
+        new ReactNativeFirebaseCrashlyticsPackage(),
+        new ReactNativeFirebaseAnalyticsPackage(),
+        new RNScryptPackage(),
+        new RNFetchBlobPackage(),
+        new RNGestureHandlerPackage(),
+        new RNScreensPackage(),
+        new RNSignalClientPackage(),
+        new RNCWebViewPackage(),
+        new VectorIconsPackage(),
+        new UdpSocketsModule(),
+        new RNThreadPackage(mReactNativeHost, new RandomBytesPackage()), // randombytes needed for connections keypair generation in thread
+        new TcpSocketsModule(),
+        new SvgPackage(),
+        new SplashScreenReactPackage(),
+        new RNSharePackage(),
+        new RandomBytesPackage(),
+        new RNOSModule(),
+        new LinearGradientPackage(),
+        new KeychainPackage(),
+        new IntercomPackage(),
+        new PickerPackage(),
+        new ExtraDimensionsPackage(),
+        new RNDeviceInfo(),
+        new CookieManagerPackage(),
+        new ColorMatrixImageFiltersPackage(),
+        new RNCameraPackage(),
+        new BackgroundTimerPackage(),
+        new RNCAppearancePackage(),
+        new LottiePackage(),
+        new AsyncStoragePackage(),
+        new RNInAppBrowserPackage(),
+        new NativeShadowPackage(),
+        new RNNotificationsPackage(MainApplication.this)
       );
     }
 
@@ -126,8 +126,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
       Intercom.initialize(this, "android_sdk-b989462efb366f8046f5ca1a12c75d67ecb7592c", "s70dqvb2");
     }
     SoLoader.init(this, /* native exopackage */ false);
-    // TODO: remove this call?
-//    long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
-//    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
+    // react-native-async-storage custom max storage
+    long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
+    com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
   }
 }
