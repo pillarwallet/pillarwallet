@@ -54,11 +54,15 @@ import { getThemeByType, defaultTheme } from 'utils/themes';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import Storybook from 'screens/Storybook';
 
+import configureStore from './src/configureStore';
+
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
   align-items: center;
   justify-content: center;
 `;
+
+const { store, persistor } = configureStore();
 
 type Props = {
   dispatch: Function,
@@ -240,13 +244,13 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
-const AppRoot = (props: { store: any, persistor: any }) => SHOW_ONLY_STORYBOOK
+const AppRoot = () => SHOW_ONLY_STORYBOOK
   ? <Storybook />
   : (
-    <Provider store={props.store}>
+    <Provider store={store}>
       <PersistGate
         loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
-        persistor={props.persistor}
+        persistor={persistor}
       >
         <AppWithNavigationState />
       </PersistGate>

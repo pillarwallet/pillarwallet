@@ -17,18 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
 import { AppRegistry } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';
 import configureStore from './src/configureStore';
 
 /**
- * create store at top level allows React Native fast refresh https://reactnative.dev/docs/fast-refresh
- * otherwise redux store replacement error is thrown
+ * create store instance at top level lets
+ * React Native Fast Refresh (https://reactnative.dev/docs/fast-refresh)
+ * to run without issues, otherwise redux store replacement error is thrown
  * additional note: other Hot Reload "workarounds" doesn't work with Fast Refresh
  */
-const { store, persistor } = configureStore();
+configureStore();
 
-// required return: registerReturnFn() => componentReturnFn() => component
-AppRegistry.registerComponent(appName, () => () => <App store={store} persistor={persistor} />);
+AppRegistry.registerComponent(appName, () => App);
