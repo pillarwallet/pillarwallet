@@ -76,10 +76,13 @@ const CardTitle = styled(MediumText)`
   ${fontStyles.big};
 `;
 
+const CardSubtitleView = styled.View`
+  padding-right: 10%;
+`;
+
 const CardSubtitle = styled(BaseText)`
   color: ${themedColors.secondaryText};
   ${fontStyles.medium};
-  padding-right: 10%;
 `;
 
 const TitleWrapper = styled.View`
@@ -137,7 +140,11 @@ export const ListCard = (props: Props) => {
                 />
               )}
             </TitleWrapper>
-            {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
+            {!!subtitle && (
+              <CardSubtitleView>
+                <CardSubtitle>{subtitle}</CardSubtitle>
+              </CardSubtitleView>
+            )}
           </CardContent>
         </ContentWrapper>
       </CardRow>

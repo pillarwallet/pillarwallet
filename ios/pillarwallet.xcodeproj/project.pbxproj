@@ -22,6 +22,7 @@
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
 		69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */; };
 		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
+		E8D6A657BFCADF2ACC09F4FE /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +108,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */,
+				E8D6A657BFCADF2ACC09F4FE /* libPods-pillarwallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14403,6 +14403,11 @@ proxy-from-env@^1.0.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/proxy-from-env/-/proxy-from-env-1.0.0.tgz#33c50398f70ea7eb96d21f7b817630a55791c7ee"
   integrity sha1-M8UDmPcOp+uW0h97gXYwpVeRx+4=
 
+proxy-polyfill@^0.3.1:
+  version "0.3.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/proxy-polyfill/-/proxy-polyfill-0.3.1.tgz#163d5283cf928dd8ddb5c5e88528e4ccd233496f"
+  integrity sha1-Fj1Sg8+SjdjdtcXohSjkzNIzSW8=
+
 prr@~0.0.0:
   version "0.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/prr/-/prr-0.0.0.tgz#1a84b85908325501411853d0081ee3fa86e2926a"
