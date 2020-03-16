@@ -97,7 +97,7 @@ type State = {
   isModalVisible: boolean,
   selectedWallet: string,
   deployEstimateFee: number,
-  gasEstimate: number,
+  ethTransferGasEstimate: number,
 };
 
 const OptionContainer = styled.View`
@@ -144,7 +144,7 @@ class SWActivationCard extends React.Component<Props, State> {
       isModalVisible: false,
       selectedWallet: smartWalletAccount ? ACCOUNT_TYPES.SMART_WALLET : ACCOUNT_TYPES.KEY_BASED,
       deployEstimateFee: 0,
-      gasEstimate: 0,
+      ethTransferGasEstimate: 0,
     };
   }
 
@@ -185,22 +185,25 @@ class SWActivationCard extends React.Component<Props, State> {
     const keyBasedAccount = accounts.find(account => account.type === ACCOUNT_TYPES.KEY_BASED);
 
     calculateGasEstimate({
-      symbol: ETH, from: keyBasedAccount && keyBasedAccount.id, to: SWAccount && SWAccount.id, amount,
-    }).then(gasEstimate => {
-      this.setState({ gasEstimate });
-    }).catch(() => {});
+      symbol: ETH,
+      from: keyBasedAccount && keyBasedAccount.id,
+      to: SWAccount && SWAccount.id,
+      amount,
+    })
+      .then(ethTransferGasEstimate => this.setState({ ethTransferGasEstimate }))
+      .catch(() => {});
   };
 
   getTransactionEstimate = () => {
     const {
-      deployEstimateFee, gasEstimate, selectedWallet,
+      deployEstimateFee, ethTransferGasEstimate, selectedWallet,
     } = this.state;
     const { gasInfo } = this.props;
     const gasPriceWei = getGasPriceWei(gasInfo);
     let totalFees = parseInt(deployEstimateFee, 10);
 
     if (selectedWallet === ACCOUNT_TYPES.KEY_BASED) {
-      totalFees += gasPriceWei.mul(gasEstimate).toNumber();
+      totalFees += gasPriceWei.mul(ethTransferGasEstimate).toNumber();
     }
     return parseFloat(utils.formatEther(totalFees.toString()));
   };
@@ -209,7 +212,7 @@ class SWActivationCard extends React.Component<Props, State> {
     const {
       switchAccount, accounts, navigation, gasInfo, assets,
     } = this.props;
-    const { deployEstimateFee, gasEstimate } = this.state;
+    const { deployEstimateFee, ethTransferGasEstimate } = this.state;
     const keyBasedAccount = accounts.find(account => account.type === ACCOUNT_TYPES.KEY_BASED);
     if (!keyBasedAccount) return;
     await switchAccount(keyBasedAccount.id);
@@ -224,10 +227,9 @@ class SWActivationCard extends React.Component<Props, State> {
       decimals,
     } = asset;
 
-
     navigation.navigate(SMART_WALLET_UNLOCK, {
       transferTransactions: [{
-        gasLimit: gasEstimate,
+        gasLimit: ethTransferGasEstimate,
         gasPrice,
         symbol,
         contractAddress,
