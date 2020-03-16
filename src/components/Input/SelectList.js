@@ -32,7 +32,9 @@ const SearchBarWrapper = styled.View`
 
 type Props = {
   onSelect: Function,
-  options: Object[]
+  options: Object[],
+  customClickable?: boolean,
+  flatListProps?: Object,
 }
 
 type State = {
@@ -55,18 +57,19 @@ export default class SelectList extends React.Component<Props, State> {
   };
 
   renderListItem = ({ item: { name } }: Object) => {
-    const { onSelect } = this.props;
+    const { onSelect, customClickable } = this.props;
     return (
       <ProfileSettingsItem
         key={name}
         label={name}
         onPress={() => onSelect(name)}
+        customClickable={customClickable}
       />
     );
   };
 
   render() {
-    const { options } = this.props;
+    const { options, flatListProps } = this.props;
     const { query } = this.state;
     const filteredOptions = (query && query.length >= MIN_QUERY_LENGTH && options.length)
       ? options.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
@@ -90,6 +93,17 @@ export default class SelectList extends React.Component<Props, State> {
           renderItem={this.renderListItem}
           keyExtractor={({ name }) => name}
           keyboardShouldPersistTaps="handled"
+          initialNumToRender={10}
+          viewabilityConfig={{
+            minimumViewTime: 300,
+            viewAreaCoveragePercentThreshold: 100,
+            waitForInteraction: true,
+          }}
+          getItemLayout={(data, index) => ({
+            length: 70,
+            offset: 70 * index,
+            index,
+          })}
           ListEmptyComponent={
             <Wrapper
               fullScreen
@@ -102,6 +116,7 @@ export default class SelectList extends React.Component<Props, State> {
               <EmptyStateParagraph title="Nothing found" />
             </Wrapper>
           }
+          {...flatListProps}
         />
       </React.Fragment>
     );

@@ -67,6 +67,7 @@ type Props = {
   theme: Theme,
   noPadding?: boolean,
   headerLeftItems?: Object[],
+  propagateSwipe?: boolean,
 };
 
 const themes = {
@@ -177,6 +178,7 @@ class SlideModal extends React.Component<Props, *> {
 
   handleScroll = (p: ScrollToProps) => {
     const { handleScrollTo } = this.props;
+
     if (Toast.isVisible()) {
       Toast.close();
     }
@@ -204,6 +206,7 @@ class SlideModal extends React.Component<Props, *> {
       theme,
       noPadding,
       headerLeftItems,
+      propagateSwipe,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -276,6 +279,7 @@ class SlideModal extends React.Component<Props, *> {
     };
 
     const animationTiming = 400;
+
     return (
       <Modal
         isVisible={isVisible}
@@ -295,6 +299,7 @@ class SlideModal extends React.Component<Props, *> {
         swipeDirection={!noSwipeToDismiss ? 'down' : null}
         avoidKeyboard={avoidKeyboard}
         scrollOffsetMax={scrollOffsetMax}
+        propagateSwipe={propagateSwipe}
         style={{
           margin: 0,
           position: 'relative',

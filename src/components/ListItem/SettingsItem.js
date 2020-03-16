@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, PanResponder } from 'react-native';
 import styled from 'styled-components/native';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { Badge as NBBadge } from 'native-base';
@@ -28,6 +28,7 @@ import NativeTouchable from 'components/NativeTouchable';
 import Switcher from 'components/Switcher';
 import { LabelBadge } from 'components/LabelBadge';
 import { themedColors } from 'utils/themes';
+
 
 type Props = {
   label: string,
@@ -46,18 +47,25 @@ type Props = {
   labelBadge?: {
     label: string,
     color?: string,
-  }
-}
+  },
+  customClickable?: boolean,
+};
+
+type State = {
+  opacity: number,
+};
+
 
 const MainWrapper = styled.View`
   flex: 1;
   padding: 22px ${spacing.large}px 24px;
+  height: 70px;
   ${({ bordered, theme }) => bordered
     ? `
-   border-bottom-width: ${StyleSheet.hairlineWidth}px;
-   border-top-width: ${StyleSheet.hairlineWidth}px;
-   border-color: ${theme.colors.border};
-   `
+     border-bottom-width: ${StyleSheet.hairlineWidth}px;
+     border-top-width: ${StyleSheet.hairlineWidth}px;
+     border-color: ${theme.colors.border};
+     `
     : ''}
 `;
 
@@ -136,7 +144,32 @@ const Description = styled(BaseText)`
   padding-right: 10%;
 `;
 
-class SettingsListItem extends React.Component<Props> {
+const CustomTouchable = styled.View`
+  width: 100%;
+  color: ${themedColors.surface};
+`;
+
+class SettingsListItem extends React.Component<Props, State> {
+  _panResponder: PanResponder;
+
+  constructor(props: Props) {
+    super(props);
+    this._panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponderCapture: () => false,
+      onPanResponderGrant: () => { this.setState({ opacity: 0.7 }); },
+      onPanResponderRelease: () => {
+        if (props.onPress) props.onPress();
+        this.setState({ opacity: 1 });
+      },
+    });
+    this.state = {
+      opacity: 1,
+    };
+  }
+
   renderContent(processedValue: ?string | ?boolean) {
     const {
       label,
@@ -202,7 +235,10 @@ class SettingsListItem extends React.Component<Props> {
       onPress,
       toggle,
       value,
+      customClickable,
     } = this.props;
+
+    const { opacity } = this.state;
 
     let processedValue;
 
@@ -216,6 +252,17 @@ class SettingsListItem extends React.Component<Props> {
       }
     } else {
       processedValue = value;
+    }
+
+    if (customClickable) {
+      return (
+        <CustomTouchable
+          {...this._panResponder.panHandlers}
+          style={{ opacity }}
+        >
+          {this.renderContent(processedValue)}
+        </CustomTouchable>
+      );
     }
 
     return (

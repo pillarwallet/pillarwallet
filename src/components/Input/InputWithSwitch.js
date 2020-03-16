@@ -17,6 +17,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Input } from 'native-base';
+import get from 'lodash.get';
 
 // utils
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
@@ -24,6 +25,8 @@ import { themedColors } from 'utils/themes';
 
 // types
 import type { Event } from 'react-native';
+import { FlatList } from 'react-native';
+import type { ScrollToProps } from 'components/Modals/SlideModal';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -34,7 +37,6 @@ import VerifyView from 'components/Input/VerifyView';
 
 // partials
 import SelectList from './SelectList';
-
 
 type InputProps = {
   fieldName: string,
@@ -66,8 +68,10 @@ type Props = {
 
 type State = {
   showModal: boolean,
+  contentOffsetY: number,
+  containerHeight: number,
+  contentContainerHeight: number,
 };
-
 
 const StyledItemView = styled.View`
   display: flex;
@@ -124,9 +128,18 @@ const ModalTitle = styled(MediumText)`
 
 
 export default class InputWithSwitch extends React.Component<Props, State> {
-  state = {
-    showModal: false,
-  };
+  scrollViewRef: React.ElementRef<FlatList>;
+
+  constructor(props: Props) {
+    super(props);
+    this.scrollViewRef = React.createRef();
+    this.state = {
+      showModal: false,
+      contentOffsetY: 0,
+      containerHeight: 0,
+      contentContainerHeight: 0,
+    };
+  }
 
   handleBlur = () => {
     const {
@@ -178,8 +191,36 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     this.setState({ showModal: !showModal });
   };
 
+  handleModalScrollTo = (p: ScrollToProps) => {
+    if (!p || !this.scrollViewRef) return;
+    this.scrollViewRef.scrollToOffset({ animated: false, offset: p.y });
+  };
+
+  handleListOnScroll = (event: Object) => {
+    const contentOffsetY = get(event, 'nativeEvent.contentOffset.y');
+    this.setState({ contentOffsetY });
+  };
+
+  onListLayout = (event: Object) => {
+    const { containerHeight } = this.state;
+    const { height } = event.nativeEvent.layout;
+    if (!containerHeight || containerHeight !== height) {
+      this.setState({ containerHeight: height });
+    }
+  };
+
+  onContentSizeChange = (width: number, height: number) => {
+    this.setState({ contentContainerHeight: height });
+  };
+
   render() {
-    const { showModal } = this.state;
+    const {
+      showModal,
+      contentOffsetY,
+      contentContainerHeight,
+      containerHeight,
+    } = this.state;
+
     const {
       disabledInput,
       errorMessage,
@@ -238,20 +279,34 @@ export default class InputWithSwitch extends React.Component<Props, State> {
         <ErrorMessage>
           {errorMessage}
         </ErrorMessage>}
-
         <SlideModal
           isVisible={showModal}
           fullScreen
           showHeader
           onModalHide={this.toggleModal}
           avoidKeyboard
+          handleScrollTo={this.handleModalScrollTo}
+          scrollOffsetMax={contentContainerHeight && containerHeight ? contentContainerHeight - containerHeight : null}
+          scrollOffset={contentOffsetY}
+          propagateSwipe
         >
           <Wrapper flex={1}>
             {!!optionsTitle &&
             <ModalTitle extraHorizontalSpacing>
               {optionsTitle}
             </ModalTitle>}
-            <SelectList options={options || []} onSelect={this.selectOption} />
+            <SelectList
+              options={options || []}
+              onSelect={this.selectOption}
+              flatListProps={{
+                ref: (ref) => { this.scrollViewRef = ref; },
+                scrollEventThrottle: 16,
+                onScroll: this.handleListOnScroll,
+                onLayout: this.onListLayout,
+                onContentSizeChange: this.onContentSizeChange,
+              }}
+              customClickable
+            />
           </Wrapper>
         </SlideModal>
       </Wrapper>
