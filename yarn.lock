@@ -15212,7 +15212,7 @@ react-native-vector-icons@6.1.0:
     prop-types "^15.6.2"
     yargs "^8.0.2"
 
-react-native-vector-icons@^6.4.2:
+react-native-vector-icons@^6.6.0:
   version "6.6.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-vector-icons/-/react-native-vector-icons-6.6.0.tgz#66cf004918eb05d90778d64bd42077c1800d481b"
   integrity sha1-Zs8ASRjrBdkHeNZL1CB3wYANSBs=

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList, Alert, View } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -104,11 +104,6 @@ const LogoutTextLink = styled(TextLink)`
   color: ${themedColors.negative};
   ${fontStyles.regular};
 `;
-
-const StyledEmoji = styled(Emoji)`
-  margin-right: 10px;
-`;
-
 
 class Menu extends React.Component<Props, State> {
   state = {
@@ -218,7 +213,7 @@ class Menu extends React.Component<Props, State> {
           title={title}
           action={action}
           labelBadge={labelBadge}
-          customIcon={<StyledEmoji name={emoji} />}
+          customIcon={<View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
         />
       );
     }
