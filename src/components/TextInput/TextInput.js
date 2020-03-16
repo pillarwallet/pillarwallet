@@ -114,6 +114,7 @@ type Props = {
   selectorOptions?: SelectorOptions,
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
+  rightPlaceholder?: string,
 };
 
 type State = {
@@ -264,6 +265,11 @@ const ValueWrapper = styled.View`
 
 const Placeholder = styled(MediumText)`
   ${fontStyles.big};
+`;
+
+const PlaceholderRight = styled(BaseText)`
+  ${fontStyles.medium};
+  margin-right: 8px;
 `;
 
 const SelectorValue = styled(MediumText)`
@@ -508,6 +514,7 @@ class TextInput extends React.Component<Props, State> {
       leftSideText,
       numeric,
       iconProps,
+      rightPlaceholder,
       selectorOptions = {},
       errorMessageOnTop,
       inputWrapperStyle = {},
@@ -540,7 +547,7 @@ class TextInput extends React.Component<Props, State> {
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
-    const showRightAddon = !!iconProps || loading;
+    const showRightAddon = !!iconProps || loading || rightPlaceholder;
 
     const selectorOptionsCount = options.length + horizontalOptions.length;
     const {
@@ -648,6 +655,7 @@ class TextInput extends React.Component<Props, State> {
               />}
               {showRightAddon &&
               <RightSideWrapper>
+                {!!rightPlaceholder && <PlaceholderRight color={colors.accent}>{rightPlaceholder}</PlaceholderRight>}
                 {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
                 {!!loading && <Spinner width={30} height={30} />}
               </RightSideWrapper>}
