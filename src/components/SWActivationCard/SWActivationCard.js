@@ -166,7 +166,7 @@ class SWActivationCard extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const balanceInFiat = amount * getRate(rates, ETH, fiatCurrency);
     return formatFiat(balanceInFiat, baseFiatCurrency || defaultFiatCurrency);
-  }
+  };
 
   updateEstimations = () => {
     const { gasInfo } = this.props;
@@ -189,7 +189,7 @@ class SWActivationCard extends React.Component<Props, State> {
     }).then(gasEstimate => {
       this.setState({ gasEstimate });
     }).catch(() => {});
-  }
+  };
 
   getTransactionEstimate = () => {
     const {
@@ -203,7 +203,7 @@ class SWActivationCard extends React.Component<Props, State> {
       totalFees += gasPriceWei.mul(gasEstimate).toNumber();
     }
     return parseFloat(utils.formatEther(totalFees.toString()));
-  }
+  };
 
   deployFromLegacyWallet = async () => {
     const {
@@ -235,7 +235,7 @@ class SWActivationCard extends React.Component<Props, State> {
         amount: parseFloat(utils.formatEther(deployEstimateFee.toString())),
       }],
     });
-  }
+  };
 
   activateSW = () => {
     const { selectedWallet } = this.state;
@@ -246,7 +246,7 @@ class SWActivationCard extends React.Component<Props, State> {
       this.deployFromLegacyWallet();
     }
     this.setState({ isModalVisible: false });
-  }
+  };
 
   renderModal = () => {
     const { balances, accounts, theme } = this.props;
@@ -265,7 +265,6 @@ class SWActivationCard extends React.Component<Props, State> {
       (ethBalanceInKeyWallet && ethBalanceInKeyWallet > transactionEstimate);
 
     const themeType = getThemeType(theme);
-
 
     return (
       <SlideModal
@@ -319,7 +318,7 @@ class SWActivationCard extends React.Component<Props, State> {
         </SafeAreaView>
       </SlideModal>
     );
-  }
+  };
 
   render() {
     const {
