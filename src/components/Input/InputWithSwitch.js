@@ -82,7 +82,7 @@ const StyledItemView = styled.View`
   padding: 0 ${spacing.layoutSides}px 0;
   border-bottom-color: ${({ hasErrors }) => hasErrors ? themedColors.negative : themedColors.tertiary};
   border-bottom-width: 1px;
-  height: 60px;
+  height: 65px;
 `;
 
 const Wrapper = styled.View`
@@ -106,12 +106,12 @@ const ItemValue = styled(Input)`
   font-family: ${appFont.medium};
 `;
 
-const SelectedOption = styled(BaseText)`
-  ${fontStyles.medium};
+const SelectedOption = styled(MediumText)`
+  ${fontStyles.big};
   flex-wrap: wrap;
   flex: 1;
   padding: 0 0 9px;
-  width:100%;
+  width: 100%;
 `;
 
 const ItemAddon = styled.View`
