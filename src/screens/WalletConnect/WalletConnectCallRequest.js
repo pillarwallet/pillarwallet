@@ -129,15 +129,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
   }
 
-  handleBack = () => {
-    const { navigation } = this.props;
-    if (navigation.getParam('goBackDismiss', false)) {
-      navigation.dismiss();
-    } else {
-      navigation.goBack(null);
-    }
-  }
-
   handleFormSubmit = () => {
     Keyboard.dismiss();
 
