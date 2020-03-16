@@ -374,7 +374,7 @@ export const requestSessionAction = (uri: string) => {
 
 export const toggleWCPromoCardAction = (collapsed: boolean): WalletConnectTogglePromoCard => ({
   type: TOGGLE_WALLET_CONNECT_PROMO_CARD,
-  collapsed,
+  payload: { collapsed },
 });
 
 export const approveSessionAction = (peerId: string) => {

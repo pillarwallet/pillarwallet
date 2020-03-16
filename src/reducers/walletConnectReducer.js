@@ -116,7 +116,9 @@ export type WalletConnectError = {|
 
 export type WalletConnectTogglePromoCard = {|
   type: 'TOGGLE_WALLET_CONNECT_PROMO_CARD',
-  collapsed: boolean,
+  payload: {|
+    collapsed: boolean,
+  |},
 |};
 
 export type WalletConnectReducerAction =
@@ -213,7 +215,7 @@ const walletConnectReducer = (
     case TOGGLE_WALLET_CONNECT_PROMO_CARD:
       return {
         ...state,
-        promoCardCollapsed: action.collapsed,
+        promoCardCollapsed: action.payload.collapsed,
       };
 
     default:
