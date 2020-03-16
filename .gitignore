@@ -52,8 +52,16 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
-# Bundle artifact
+# ruby bundler
+/*/.bundle/
+/*/Gemfile.lock
+/*/vendor/
+
+# bundle artifact
 *.jsbundle
 
-# Other
+# other
 /.env.*
+/.npmrc
+/reports/
+package-lock.json
