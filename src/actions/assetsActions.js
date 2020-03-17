@@ -524,7 +524,7 @@ export const updateAccountBalancesAction = (accountId: string, balances: Balance
       ...allBalances,
       [accountId]: balances,
     };
-    await dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
     dispatch({
       type: UPDATE_BALANCES,
       payload: updatedBalances,
