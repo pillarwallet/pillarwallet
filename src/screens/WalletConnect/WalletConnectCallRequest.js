@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
@@ -24,32 +25,47 @@ import { connect } from 'react-redux';
 import { utils, Interface } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
+
+// components
 import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
+
+// actions
 import { rejectCallRequestAction } from 'actions/walletConnectActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
+
+// utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
+import { images } from 'utils/images';
+
+// services
 import { calculateGasEstimate } from 'services/assets';
+
+// constants
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import { ETH } from 'constants/assetsConstants';
-import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountAddressSelector } from 'selectors';
 
+// types
 import type { Asset, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+import { activeAccountAddressSelector } from 'selectors';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -69,6 +85,7 @@ type State = {
   note: ?string,
   gasLimit: number,
 };
+
 
 const FooterWrapper = styled.View`
   flex-direction: column;
@@ -98,7 +115,6 @@ const OptionButton = styled(Button)`
   flex-grow: 1;
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   request: ?CallRequest = null;
@@ -328,6 +344,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         }
         const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
         const recipientUsername = getUserName(contact);
+        const { genericToken } = images(theme);
 
         body = (
           <ScrollWrapper regularPadding>

@@ -151,7 +151,6 @@ const ActionsWrapper = styled(Wrapper)`
   border-color: ${themedColors.border};
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 /**
  * due to KeyboardAwareScrollView issues with stickyHeaderIndices on Android
@@ -209,10 +208,7 @@ class WalletView extends React.Component<Props, State> {
   }
 
   renderFoundTokensList() {
-    const {
-      assets,
-      assetsSearchResults,
-    } = this.props;
+    const { assets, assetsSearchResults } = this.props;
     const addedAssets = [];
     const foundAssets = [];
 
@@ -243,7 +239,7 @@ class WalletView extends React.Component<Props, State> {
           label={name}
           subtext={symbol}
           itemImageUrl={fullIconUrl}
-          fallbackSource={genericToken}
+          fallbackToGenericToken
           small
         >
           <Switcher

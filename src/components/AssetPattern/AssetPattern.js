@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Dimensions, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { themedColors } from 'utils/themes';
-import { image } from 'utils/images';
+import { images } from 'utils/images';
 import { CachedImage } from 'react-native-cached-image';
 import {
   ColorMatrix,
@@ -268,7 +268,7 @@ class AssetPattern extends React.Component<Props, State> {
     } = this.props;
     const { errorLoading } = this.state;
     const patternIcon = iconSource || { uri: icon };
-    const noIconImageSource = image(theme).patternPlaceholder;
+    const noIconImageSource = images(theme).patternPlaceholder;
     return (
       <Wrapper>
         {(!isListed || !(icon || iconSource) || errorLoading) ?

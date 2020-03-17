@@ -57,6 +57,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
+
 type Props = {
   fetchAssetsBalances: () => void,
   assets: Assets,
@@ -91,7 +92,6 @@ type NextScreenCollectibleData = {
   tokenType: string,
 };
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 const ContentBackground = styled(Wrapper)`
    flex: 1;
@@ -101,6 +101,7 @@ const InnerWrapper = styled(Wrapper)`
    flex: 1;
    margin-top: ${spacing.large}px;
 `;
+
 
 class SendTokenAssetsScreen extends React.Component<Props, State> {
   state = {
@@ -164,9 +165,9 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.proceedSendingAsset(nextScreenAssetData)}
         label={item.name}
-        itemImageUrl={fullIconUrl || genericToken}
+        itemImageUrl={fullIconUrl}
         itemValue={`${assetBalance} ${item.symbol}`}
-        fallbackSource={genericToken}
+        fallbackToGenericToken
         customAddon={paymentNetworkBalance ? (
           <TankAssetBalance
             amount={paymentNetworkBalanceFormatted}
@@ -184,8 +185,8 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.proceedSendingCollectible(item)}
         label={item.name}
-        itemImageUrl={item.icon || genericToken}
-        fallbackSource={genericToken}
+        itemImageUrl={item.icon}
+        fallbackToGenericToken
       />
     );
   };

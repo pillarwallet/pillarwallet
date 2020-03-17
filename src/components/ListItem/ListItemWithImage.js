@@ -36,6 +36,7 @@ import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
 import { fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 import type { Theme, ThemeColors } from 'models/Theme';
 
@@ -87,7 +88,8 @@ type Props = {
   iconSource?: string,
   imageWrapperStyle?: Object,
   theme: Theme,
-}
+  fallbackToGenericToken?: boolean,
+};
 
 type AddonProps = {
   unreadCount?: number | string,
@@ -104,14 +106,15 @@ type AddonProps = {
   acceptInvitation?: ?() => void,
   balance?: Object,
   colors: ThemeColors,
-}
+};
 
 type ImageWrapperProps = {
   children: React.Node,
   hasShadow?: boolean,
   imageDiameter?: number,
   imageWrapperStyle?: Object,
-}
+};
+
 
 const ItemWrapper = styled.View`
   flex-direction: column;
@@ -297,6 +300,7 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
+
 const ImageWrapper = (props: ImageWrapperProps) => {
   const {
     children,
@@ -339,6 +343,7 @@ const ItemImage = (props: Props) => {
     iconName,
     itemImageUrl,
     fallbackSource,
+    fallbackToGenericToken,
     navigateToProfile,
     imageUpdateTimeStamp,
     customImage,
@@ -346,7 +351,10 @@ const ItemImage = (props: Props) => {
     diameter,
     iconColor,
     iconSource,
+    theme,
   } = props;
+
+  const { genericToken } = images(theme);
 
   if (iconName) {
     return (
@@ -367,11 +375,15 @@ const ItemImage = (props: Props) => {
   if (customImage) return customImage;
 
   if (itemImageUrl) {
-    return (<TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />);
+    return (<TokenImage diameter={diameter} source={{ uri: itemImageUrl }} />);
   }
 
   if (itemImageSource) {
-    return (<TokenImage diameter={diameter} source={itemImageSource} fallbackSource={fallbackSource} />);
+    return (<TokenImage diameter={diameter} source={itemImageSource} />);
+  }
+
+  if ((!itemImageUrl || !itemImageSource) && (fallbackToGenericToken || fallbackSource)) {
+    return (<TokenImage diameter={diameter} source={genericToken} fallbackSource={fallbackSource} />);
   }
 
   const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;

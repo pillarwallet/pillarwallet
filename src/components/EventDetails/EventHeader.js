@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { MediumText, BaseText } from 'components/Typography';
@@ -33,10 +34,12 @@ import {
   TYPE_ACCEPTED,
 } from 'constants/invitationsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
+
 import { getThemeColors, themedColors } from 'utils/themes';
+import { images } from 'utils/images';
+
 import type { Theme } from 'models/Theme';
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 type Props = {
   onClose: Function,
@@ -50,7 +53,8 @@ type Props = {
   imageDiameter?: number,
   imageWrapperStyle?: Object,
   theme: Theme,
-}
+};
+
 
 const getEventInfo = (eventType, eventStatus, colors) => {
   if (eventType === TRANSACTION_EVENT) {
@@ -185,6 +189,7 @@ const EventHeader = (props: Props) => {
   const thisEvent = getEventInfo(eventType, eventStatus, colors);
   // in case iconUrl is an empty string, but it's an COLLECTIBLE TRX event
   const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION || eventType === BADGE_REWARD_EVENT;
+  const { genericToken } = images(theme);
 
   return (
     <Wrapper>

@@ -24,18 +24,23 @@ import { getThemeType } from './themes';
 
 const patternPlaceholderLight = require('assets/images/no_logo.png');
 const patternPlaceholderDark = require('assets/images/no_logo_dark.png');
-
+const genericTokenLight = require('assets/images/tokens/genericTokenLight.png');
+const genericTokenDark = require('assets/images/tokens/genericTokenDark.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
 }
 
-export const image = (theme: Theme) => {
+export const images = (theme: Theme) => {
   const currentTheme = getThemeType(theme);
   return {
     patternPlaceholder: getImageByTheme(currentTheme, {
       lightTheme: patternPlaceholderLight,
       darkTheme: patternPlaceholderDark,
+    }),
+    genericToken: getImageByTheme(currentTheme, {
+      lightTheme: genericTokenLight,
+      darkTheme: genericTokenDark,
     }),
   };
 };
