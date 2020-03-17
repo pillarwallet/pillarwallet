@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
@@ -35,10 +34,12 @@ import {
   IMPORT_WALLET_TWORDS_PHRASE,
   TWORDSPHRASE,
   PRIVATEKEY,
+  IMPORTING,
+  IMPORTED,
 } from 'constants/walletConstants';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
@@ -67,6 +68,7 @@ type State = {
   backupPhrase: Object,
   currentWordIndex: number,
   currentBPWord: string,
+  isImporting: boolean,
 };
 
 const DEV = 'DEV';
@@ -132,29 +134,10 @@ const ButtonText = styled(BaseText)`
   font-size: ${fontSizes.medium}px;
 `;
 
-const ButtonIcon = styled(CachedImage)`
-  height: 24px;
-  width: 24px;
-  justify-content: center;
+const ButtonIcon = styled(Icon)`
+  font-size: ${fontSizes.big}px;
   margin-right: 8px;
-`;
-
-const ButtonInner = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const ButtonLabel = styled(MediumText)`
-  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
-  font-size: ${fontSizes.big}px;
-  margin-bottom: 2px;
-`;
-
-const ButtonIconArrow = styled(Icon)`
-  font-size: ${fontSizes.big}px;
-  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
-  ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
-  ${props => props.flip ? 'transform: rotate(180deg);' : ''}
+  color: ${themedColors.primary};
 `;
 
 const getButtonLabel = (currentWordIndex, error) => {
@@ -165,8 +148,6 @@ const getButtonLabel = (currentWordIndex, error) => {
   }
   return { text: 'Finish', showArrow: false };
 };
-
-const iconReceive = require('assets/icons/icon_receive.png');
 
 class ImportWallet extends React.Component<Props, State> {
   backupPhraseInput: Object;
@@ -184,6 +165,7 @@ class ImportWallet extends React.Component<Props, State> {
     isScanning: false,
     activeTab: TWORDSPHRASE,
     inputEnabled: false,
+    isImporting: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -196,6 +178,17 @@ class ImportWallet extends React.Component<Props, State> {
         ...prevState,
         errorMessage,
         errorField: error.field,
+        isImporting: false,
+      };
+    } else if (walletState === IMPORTING) {
+      return {
+        ...prevState,
+        isImporting: true,
+      };
+    } else if (walletState === IMPORTED) {
+      return {
+        ...prevState,
+        isImporting: false,
       };
     } else if (walletState !== WALLET_ERROR) {
       return {
@@ -208,26 +201,29 @@ class ImportWallet extends React.Component<Props, State> {
   }
 
   handleImportSubmit = () => {
-    Keyboard.dismiss();
-    const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    const {
-      privateKey,
-      tWordsPhrase,
-      activeTab,
-      backupPhrase,
-    } = this.state;
+    this.setState({ isImporting: true });
+    requestAnimationFrame(() => {
+      Keyboard.dismiss();
+      const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
+      const {
+        privateKey,
+        tWordsPhrase,
+        activeTab,
+        backupPhrase,
+      } = this.state;
 
-    if (activeTab === PRIVATEKEY) {
-      importWalletFromPrivateKey(privateKey);
-    } else if (activeTab === TWORDSPHRASE) {
-      const trimmedPhrase = Object.values(backupPhrase).join(' ');
-      importWalletFromTWordsPhrase(trimmedPhrase);
-    } else if (activeTab === DEV) {
-      const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
-      importWalletFromTWordsPhrase(trimmedPhrase);
-    } else {
-      this.setState({ errorField: '' });
-    }
+      if (activeTab === PRIVATEKEY) {
+        importWalletFromPrivateKey(privateKey);
+      } else if (activeTab === TWORDSPHRASE) {
+        const trimmedPhrase = Object.values(backupPhrase).join(' ');
+        importWalletFromTWordsPhrase(trimmedPhrase);
+      } else if (activeTab === DEV) {
+        const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
+        importWalletFromTWordsPhrase(trimmedPhrase);
+      } else {
+        this.setState({ errorField: '' });
+      }
+    });
   };
 
   handleQRScannerOpen = async () => {
@@ -344,45 +340,47 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   renderFooterButtons = (tabsInfo) => {
-    const { activeTab, currentBPWord, currentWordIndex } = this.state;
+    const {
+      activeTab,
+      currentBPWord,
+      currentWordIndex,
+      isImporting,
+    } = this.state;
 
     if (activeTab === TWORDSPHRASE) {
       const { errorMessage } = tabsInfo[activeTab];
-      const showPrev = currentWordIndex > 1;
+      const showPrev = currentWordIndex > 1 && !isImporting;
       const { text: nextButtonText, showArrow: showBackArrow } = getButtonLabel(currentWordIndex, errorMessage);
       return (
         <ButtonsWrapper isRow>
-          {!!showPrev &&
-          <StyledButton
-            primaryInverted
+          {!!showPrev && <StyledButton
+            title="Prev"
             onPress={this.showPrevWord}
-          >
-            <ButtonInner>
-              <ButtonIconArrow name="back" primary isOnLeft />
-              <ButtonLabel primary>Prev</ButtonLabel>
-            </ButtonInner>
-          </StyledButton>}
+            leftIconName="back"
+            disabled={isImporting}
+            secondary
+          />}
           <StyledButton
-            disabled={!currentBPWord}
+            title={nextButtonText}
             onPress={this.showNextWord}
-          >
-            <ButtonInner>
-              <ButtonLabel>{nextButtonText}</ButtonLabel>
-              {!!showBackArrow && <ButtonIconArrow name="back" flip />}
-            </ButtonInner>
-          </StyledButton>
+            rightIconName={showBackArrow ? 'back' : null}
+            rightIconStyle={{ transform: [{ rotate: '180deg' }] }}
+            disabled={!currentBPWord || isImporting}
+            isLoading={isImporting}
+          />
         </ButtonsWrapper>
       );
     } else if (activeTab === PRIVATEKEY) {
       return (
         <ButtonsWrapper>
           <Button
-            disabled={!tabsInfo[activeTab].value}
+            disabled={!tabsInfo[activeTab].value || isImporting}
             title="Re-import"
             onPress={this.handleImportSubmit}
+            isLoading={isImporting}
           />
           <ScannerButton onPress={this.handleQRScannerOpen}>
-            <ButtonIcon source={iconReceive} />
+            <ButtonIcon name="qrDetailed" />
             <ButtonText>QR code scan</ButtonText>
           </ScannerButton>
         </ButtonsWrapper>
@@ -391,9 +389,10 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <Button
-        disabled={!tabsInfo[activeTab].value}
+        disabled={!tabsInfo[activeTab].value || isImporting}
         title="Re-import"
         onPress={this.handleImportSubmit}
+        isLoading={isImporting}
       />
     );
   };

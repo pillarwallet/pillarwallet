@@ -20,7 +20,15 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Item as NBItem, Input } from 'native-base';
-import { View, Platform, TextInput as RNInput, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
+import {
+  View,
+  Platform,
+  TextInput as RNInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
@@ -28,20 +36,19 @@ import get from 'lodash.get';
 import { ETH } from 'constants/assetsConstants';
 
 import IconButton from 'components/IconButton';
-import { BaseText, MediumText, SubHeadingMedium } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
 import SearchBar from 'components/SearchBar';
-import { ScrollWrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
-import Separator from 'components/Separator';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ProfileImage from 'components/ProfileImage';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
-import { fontSizes, spacing, fontStyles, appFont, itemSizes } from 'utils/variables';
+import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { formatMoney, noop } from 'utils/common';
 
@@ -58,7 +65,7 @@ type SelectorValueType = {
     iconFallback?: string,
     value: string | number,
   }
-}
+};
 
 type SelectorOptions = {
   options?: Array<Object>,
@@ -69,6 +76,7 @@ type SelectorOptions = {
   horizontalOptionsTitle?: string,
   optionsTitle?: string,
   selectorModalTitle?: string,
+  optionsSearchPlaceholder?: string,
 };
 
 type Value = string | number;
@@ -82,12 +90,13 @@ type InputPropsType = {
   multiline?: boolean,
   onSelectorOpen?: () => void,
   onSelectorChange?: () => void,
-}
+  label?: string,
+};
 
 type Props = {
   errorMessage?: string,
   inputProps: InputPropsType,
-  trim: boolean,
+  trim?: boolean,
   autoCorrect?: boolean,
   keyboardAvoidance?: boolean,
   loading?: boolean,
@@ -105,19 +114,18 @@ type Props = {
   selectorOptions?: SelectorOptions,
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
-  label?: string,
-  hideErrorMessage?: boolean,
-}
+  rightPlaceholder?: string,
+};
 
 type State = {
   isFocused: boolean,
   showOptionsSelector: boolean,
   query: string,
-}
+};
 
 type EventLike = {
   nativeEvent: Object,
-}
+};
 
 const getFontSize = (props: Props) => {
   const { inputProps: { value }, numeric } = props;
@@ -166,7 +174,7 @@ const InputField = styled(Input)`
 `;
 
 const IosFocusInput = styled(RNInput)`
-  position: relative;
+  position: absolute;
   bottom: 0;
   left: 0;
   height: 1px;
@@ -175,37 +183,40 @@ const IosFocusInput = styled(RNInput)`
 const Item = styled(NBItem)`
   border-bottom-color: transparent;
   border-bottom-width: 0;
-  height: ${props => props.height}px;
   flex-direction: row;
   min-height: 0;
   height: ${({ height }) => height}px;
   width: 100%;
+  margin: 0;
+`;
+
+const InputBorder = styled.View`
+  border-radius: 4px;
+  border: 1px;
+  border-color: ${({ error, theme }) => error ? theme.colors.negative : 'transparent'};
 `;
 
 const ItemHolder = styled.View`
   background-color: ${({ error, theme }) => error ? theme.colors.card : theme.colors.tertiary};
-  border-radius: 4px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: ${({ error, theme }) => error ? theme.colors.negative : theme.colors.tertiary};
   position: relative;
+  border-radius: 4px;
 `;
 
 const InputFooter = styled(View)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 0 2px; 
+  padding: 0 2px;
   margin-bottom: 6px;
   margin-top: -4px;
 `;
 
-const ButtonWrapper = styled.TouchableOpacity`
-  padding: 4px 5px;
+const ButtonWrapper = styled.View`
+  padding: 4px;
 `;
 
 const LeftSideWrapper = styled.View`
-  padding-left: 16px;
+  padding-left: 14px;
   flex-direction: row;
   align-items: center;
   max-width: 25%;
@@ -230,12 +241,21 @@ const AddonRegularText = styled(BaseText)`
 `;
 
 const Selector = styled.TouchableOpacity`
-  height: 100%;
+  height: ${({ height }) => height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0 10px 16px;
-  ${props => props.fullWidth ? 'flex: 1; padding-right: 14px;' : ''}
+  padding-left: 16px;
+  padding-right: 10px;
+  background-color: ${themedColors.card};
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  ${({ fullWidth, theme }) => fullWidth && `
+    flex: 1;
+    border: 1px solid ${theme.colors.secondaryAccent};
+    border-radius: 4px;
+  `}
+  margin: 0;
 `;
 
 const ValueWrapper = styled.View`
@@ -243,9 +263,13 @@ const ValueWrapper = styled.View`
   align-items: center;
 `;
 
-const Placeholder = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+const Placeholder = styled(MediumText)`
+  ${fontStyles.big};
+`;
+
+const PlaceholderRight = styled(BaseText)`
+  ${fontStyles.medium};
+  margin-right: 8px;
 `;
 
 const SelectorValue = styled(MediumText)`
@@ -254,27 +278,17 @@ const SelectorValue = styled(MediumText)`
   margin-left: 8px;
 `;
 
-const ChevronWrapper = styled.View`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  margin-left: 15px;
-`;
-
 const SelectorChevron = styled(Icon)`
-  font-size: 8px;
+  font-size: 16px;
   color: ${themedColors.primary};
+  margin-left: 15px;
 `;
 
 const Wrapper = styled.View`
 `;
 
 const SearchBarWrapper = styled.View`
-  padding: 0 ${spacing.large}px;
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${themedColors.border};
+  padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
 `;
 
 const HorizontalOptions = styled.View`
@@ -284,24 +298,22 @@ const HorizontalOptions = styled.View`
   padding-bottom: ${spacing.small}px;
 `;
 
-const HorizontalOptionsScrollView = styled.ScrollView`
-`;
-
 const HorizontalOptionItem = styled.TouchableOpacity`
   align-items: center;
-  width: ${itemSizes.avatarCircleMedium + 4}px;
-  margin: 0 8px;
+  width: 68px;
 `;
 
 const HorizontalOptionItemName = styled(BaseText)`
   ${fontStyles.small};
   color: ${themedColors.secondaryText};
   padding: 0 4px;
-  margin-top: 3px;
+  margin-top: 10px;
 `;
 
-const OptionsHeader = styled(SubHeadingMedium)`
-  margin: ${spacing.large}px ${spacing.large}px 0;
+const OptionsHeader = styled(MediumText)`
+  margin: ${spacing.large}px ${spacing.layoutSides}px 0;
+  ${fontStyles.regular};
+  color: ${themedColors.secondaryText};
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
@@ -311,9 +323,7 @@ const EmptyStateWrapper = styled(Wrapper)`
 `;
 
 const InputLabel = styled(MediumText)`
-  margin-bottom: ${spacing.medium}px;
-  color: ${themedColors.accent};
-  ${fontStyles.medium};
+  margin-bottom: 8px;
 `;
 
 class TextInput extends React.Component<Props, State> {
@@ -402,6 +412,7 @@ class TextInput extends React.Component<Props, State> {
   }
 
   openSelector = () => {
+    Keyboard.dismiss();
     this.setState({ showOptionsSelector: true });
     const { inputProps } = this.props;
     const { onSelectorOpen } = inputProps;
@@ -410,10 +421,10 @@ class TextInput extends React.Component<Props, State> {
 
   renderOption = ({ item: option }: Object) => {
     const {
-      value,
       name,
       symbol,
       assetBalance,
+      formattedBalanceInFiat,
       paymentNetworkBalance,
     } = option;
     const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
@@ -423,44 +434,43 @@ class TextInput extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.selectValue(option)}
         label={name}
-        subtext={value}
         itemImageUrl={iconUrl || genericToken}
-        itemValue={assetBalance ? `${assetBalance} ${symbol}` : null}
         fallbackSource={genericToken}
-        customAddon={paymentNetworkBalance
-          ? (
-            <TankAssetBalance
-              amount={paymentNetworkBalanceFormatted}
-              isSynthetic={symbol !== ETH}
-            />)
-          : null
+        balance={!!formattedBalanceInFiat && {
+          balance: assetBalance,
+          value: formattedBalanceInFiat,
+          token: symbol,
+        }}
+        customAddon={!!paymentNetworkBalance &&
+          <TankAssetBalance
+            amount={paymentNetworkBalanceFormatted}
+            isSynthetic={symbol !== ETH}
+          />
         }
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}
       />
     );
   };
 
-  renderHorizontalOptions = (options: any) => {
-    return options
-      .map(option => {
-        const { name, icon } = option;
-        const iconUri = `${SDK_PROVIDER}/${icon}?size=3`;
-        return (
-          <HorizontalOptionItem
-            key={name}
-            onPress={() => this.selectValue(option)}
-          >
-            <ProfileImage
-              uri={iconUri}
-              userName={name}
-              diameter={itemSizes.avatarCircleMedium}
-              textStyle={{ fontSize: fontSizes.medium }}
-              noShadow
-            />
-            <HorizontalOptionItemName numberOfLines={1}>{name}</HorizontalOptionItemName>
-          </HorizontalOptionItem>
-        );
-      });
+  renderHorizontalOption = ({ item }) => {
+    const { symbol, iconUrl } = item;
+    const iconUri = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    return (
+      <HorizontalOptionItem
+        key={symbol}
+        onPress={() => this.selectValue(item)}
+      >
+        <ProfileImage
+          uri={iconUri}
+          userName={symbol}
+          diameter={64}
+          textStyle={{ fontSize: fontSizes.medium }}
+          noShadow
+          borderWidth={0}
+        />
+        <HorizontalOptionItemName numberOfLines={1}>{symbol}</HorizontalOptionItemName>
+      </HorizontalOptionItem>
+    );
   };
 
   selectValue = (selectedValue: Object) => {
@@ -486,16 +496,6 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
-  onWrapperPress = () => {
-    const { multilineInputField: { _root } } = this;
-
-    if (!_root) {
-      return;
-    }
-
-    _root.focus();
-  };
-
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
     const {
@@ -514,17 +514,15 @@ class TextInput extends React.Component<Props, State> {
       leftSideText,
       numeric,
       iconProps,
+      rightPlaceholder,
       selectorOptions = {},
       errorMessageOnTop,
       inputWrapperStyle = {},
-      label,
-      hideErrorMessage,
     } = this.props;
     const colors = getThemeColors(theme);
-    const { value = '', selectorValue = {} } = inputProps;
+    const { value = '', selectorValue = {}, label } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
-    const showErrorMessage = !!errorMessage && !hideErrorMessage;
 
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
@@ -545,10 +543,11 @@ class TextInput extends React.Component<Props, State> {
       horizontalOptionsTitle,
       optionsTitle,
       selectorModalTitle,
+      optionsSearchPlaceholder,
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
-    const showRightAddon = !!iconProps || loading;
+    const showRightAddon = !!iconProps || loading || rightPlaceholder;
 
     const selectorOptionsCount = options.length + horizontalOptions.length;
     const {
@@ -580,156 +579,159 @@ class TextInput extends React.Component<Props, State> {
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
-        {!!label && <InputLabel>{label}</InputLabel>}
-        {showErrorMessage && !!errorMessageOnTop &&
-        <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
+        {!!errorMessage && !!errorMessageOnTop &&
+          <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
         }
-        <ItemHolder error={showErrorMessage}>
-          <Item
-            stackedLabel
-            isFocused={isFocused}
-            height={inputHeight}
-          >
-            {!!Object.keys(selectorOptions).length &&
-            <Selector
-              fullWidth={fullWidthSelector}
-              onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
-              disabled={selectorOptionsCount < 1}
+        {!!label &&
+          <InputLabel>{label}</InputLabel>
+        }
+        <InputBorder error={!!errorMessage}>
+          <ItemHolder error={!!errorMessage}>
+            <Item
+              isFocused={isFocused}
+              height={inputHeight}
             >
-              {Object.keys(selector).length
-                ? (
-                  <ValueWrapper>
-                    <Image
-                      key={selectedValue}
-                      source={optionImageSource}
-                      fallbackSource={optionImageSource ? selectedOptionFallback : optionImageSource}
-                      resizeMode="contain"
-                    />
-                    <SelectorValue>{selectedValue}</SelectorValue>
-                  </ValueWrapper>
-                )
-                : (<Placeholder>{selectorPlaceholder || 'select'}</Placeholder>)}
-              {selectorOptionsCount > 1 &&
-              <ChevronWrapper>
-                <SelectorChevron
-                  name="chevron-right"
-                  style={{ transform: [{ rotate: '-90deg' }] }}
-                />
-                <SelectorChevron
-                  name="chevron-right"
-                  style={{
-                    transform: [{ rotate: '90deg' }],
-                    marginTop: 4,
-                  }}
-                />
-              </ChevronWrapper>}
-            </Selector>}
-            {showLeftAddon &&
-            <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
-              <LeftSideWrapper>
-                {(innerImageURI || fallbackSource) && <Image
-                  source={imageSource}
-                  fallbackSource={!imageSource ? fallbackSource : imageSource}
-                  style={{ marginRight: 9 }}
-                />}
-                {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
-              </LeftSideWrapper>
-            </TouchableWithoutFeedback>}
-            {!fullWidthSelector &&
-            <InputField
-              {...inputProps}
-              innerRef={(input) => {
-                const inputRoot = get(input, '_root');
-                if (inputRoot) {
-                  this.multilineInputField = inputRoot;
-                  if (getInputRef) getInputRef(inputRoot);
-                }
-              }}
-              onChange={this.handleChange}
-              onBlur={this.handleBlur}
-              onEndEditing={this.handleBlur}
-              onFocus={variableFocus}
-              value={textInputValue}
-              autoCorrect={autoCorrect}
-              style={[{
-                fontSize: getFontSize(this.props),
-                lineHeight: getLineHeight(this.props),
-                fontFamily: getFontFamily(this.props),
-                textAlignVertical: inputProps.multiline ? 'top' : 'center',
-                height: inputHeight,
-              }, customStyle,
-                additionalStyle,
-              ]}
-              onLayout={onLayout}
-              placeholderTextColor={colors.accent}
-              alignTextOnRight={!!numeric}
+              {!!Object.keys(selectorOptions).length &&
+              <Selector
+                fullWidth={fullWidthSelector}
+                onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
+                disabled={selectorOptionsCount < 1}
+                height={inputHeight}
+              >
+                {selector.value
+                  ? (
+                    <ValueWrapper>
+                      <Image
+                        key={selectedValue}
+                        source={optionImageSource}
+                        fallbackSource={optionImageSource ? selectedOptionFallback : optionImageSource}
+                        resizeMode="contain"
+                      />
+                      <SelectorValue>{selectedValue}</SelectorValue>
+                    </ValueWrapper>
+                    )
+                  : (<Placeholder>{selectorPlaceholder || 'select'}</Placeholder>)}
+                {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}
+              </Selector>}
+              {showLeftAddon &&
+              <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
+                <LeftSideWrapper>
+                  {(innerImageURI || fallbackSource) && <Image
+                    source={imageSource}
+                    fallbackSource={!imageSource ? fallbackSource : imageSource}
+                    style={{ marginRight: 9 }}
+                  />}
+                  {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
+                </LeftSideWrapper>
+              </TouchableWithoutFeedback>}
+              {!fullWidthSelector &&
+              <InputField
+                {...inputProps}
+                innerRef={(input) => {
+                  const inputRoot = get(input, '_root');
+                  if (inputRoot) {
+                    this.multilineInputField = inputRoot;
+                    if (getInputRef) getInputRef(inputRoot);
+                  }
+                }}
+                onChange={this.handleChange}
+                onBlur={this.handleBlur}
+                onEndEditing={this.handleBlur}
+                onFocus={variableFocus}
+                value={textInputValue}
+                autoCorrect={autoCorrect}
+                style={[{
+                  fontSize: getFontSize(this.props),
+                  lineHeight: getLineHeight(this.props),
+                  fontFamily: getFontFamily(this.props),
+                  textAlignVertical: inputProps.multiline ? 'top' : 'center',
+                  height: inputHeight,
+                }, customStyle,
+                  additionalStyle,
+                ]}
+                onLayout={onLayout}
+                placeholderTextColor={colors.accent}
+                alignTextOnRight={!!numeric}
+              />}
+              {showRightAddon &&
+              <RightSideWrapper>
+                {!!rightPlaceholder && <PlaceholderRight color={colors.accent}>{rightPlaceholder}</PlaceholderRight>}
+                {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
+                {!!loading && <Spinner width={30} height={30} />}
+              </RightSideWrapper>}
+              {!!buttonProps &&
+              <ButtonWrapper>
+                <Button height={48} {...buttonProps} />
+              </ButtonWrapper>}
+            </Item>
+            {Platform.OS === 'ios' && <IosFocusInput
+              caretHidden
+              autoCorrect={false}
+              innerRef={(ref) => { this.rnInput = ref; }}
+              onFocus={this.handleRNFocus}
             />}
-            {showRightAddon &&
-            <RightSideWrapper>
-              {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
-              {!!loading && <Spinner width={30} height={30} />}
-            </RightSideWrapper>}
-            {!!buttonProps &&
-            <ButtonWrapper activeOpacity={1} onPress={this.onWrapperPress}>
-              <Button height={48} {...buttonProps} />
-            </ButtonWrapper>}
-          </Item>
-          {Platform.OS === 'ios' && <IosFocusInput
-            caretHidden
-            autoCorrect={false}
-            innerRef={(ref) => { this.rnInput = ref; }}
-            onFocus={this.handleRNFocus}
-          />}
-        </ItemHolder>
+          </ItemHolder>
+        </InputBorder>
         <InputFooter>
-          {showErrorMessage && !errorMessageOnTop &&
-          <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
+          {!!errorMessage && !errorMessageOnTop &&
+            <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
           }
         </InputFooter>
         <SlideModal
           isVisible={showOptionsSelector}
           fullScreen
-          showHeader={!!selectorModalTitle}
           onModalShow={this.focusInput}
-          onModalHidden={() => this.setState({ query: '' })}
+          onModalHidden={() => {
+            this.setState({ query: '' });
+            Keyboard.dismiss();
+          }}
           noSwipeToDismiss
           noClose
-          title={selectorModalTitle}
           backgroundColor={colors.card}
         >
-          <Wrapper flex={1}>
-            <SearchBarWrapper>
-              <SearchBar
-                inputProps={{
-                  onChange: this.handleSearch,
-                  value: query,
-                  autoCapitalize: 'none',
-                }}
-                placeholder="Search for an asset"
-                inputRef={ref => { this.searchInput = ref; }}
-                customCloseAction={() => {
-                  this.setState({ showOptionsSelector: false, query: '' });
-                  Keyboard.dismiss();
-                }}
-                forceShowCloseButton
-              />
-            </SearchBarWrapper>
-            <ScrollWrapper
+          <ContainerWithHeader
+            headerProps={{
+              noPaddingTop: true,
+              customOnBack: () => {
+                this.setState({ showOptionsSelector: false, query: '' });
+                Keyboard.dismiss();
+              },
+              centerItems: [{ title: selectorModalTitle }],
+            }}
+          >
+            <ScrollView
               contentContainerStyle={{ paddingBottom: 30 }}
-              disableOnAndroid
+              stickyHeaderIndices={[0]}
+              onScroll={() => Keyboard.dismiss()}
+              keyboardShouldPersistTaps="always"
             >
+              <SearchBarWrapper>
+                <SearchBar
+                  inputProps={{
+                    onChange: this.handleSearch,
+                    value: query,
+                    autoCapitalize: 'none',
+                  }}
+                  placeholder={optionsSearchPlaceholder}
+                  inputRef={ref => { this.searchInput = ref; }}
+                  noClose
+                  marginBottom="0"
+                />
+              </SearchBarWrapper>
               {!!filteredHorizontalListData.length &&
               <HorizontalOptions>
                 {(showOptionsTitles && !!horizontalOptionsTitle) &&
                 <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
                 }
-                <HorizontalOptionsScrollView
+                <FlatList
+                  data={filteredHorizontalListData}
+                  keyExtractor={({ name }) => name}
                   keyboardShouldPersistTaps="always"
+                  renderItem={this.renderHorizontalOption}
                   horizontal
-                  contentContainerStyle={{ paddingHorizontal: spacing.large / 2, paddingVertical: spacing.medium }}
-                >
-                  {this.renderHorizontalOptions(filteredHorizontalListData)}
-                </HorizontalOptionsScrollView>
+                  contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+                  ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
+                />
               </HorizontalOptions>
               }
               {!!filteredListData.length &&
@@ -737,8 +739,7 @@ class TextInput extends React.Component<Props, State> {
                 data={filteredListData}
                 renderItem={this.renderOption}
                 keyExtractor={({ value: val }) => val}
-                keyboardShouldPersistTaps="handled"
-                ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+                keyboardShouldPersistTaps="always"
                 initialNumToRender={10}
                 viewabilityConfig={viewConfig}
                 ListHeaderComponent={
@@ -759,8 +760,8 @@ class TextInput extends React.Component<Props, State> {
                 <EmptyStateParagraph title="Nothing found" />
               </EmptyStateWrapper>
               }
-            </ScrollWrapper>
-          </Wrapper>
+            </ScrollView>
+          </ContainerWithHeader>
         </SlideModal>
       </View>
     );

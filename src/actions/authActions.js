@@ -47,9 +47,9 @@ import {
   LOGOUT_PENDING,
 } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
+import { SET_USERNAME, UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
-import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
@@ -90,7 +90,6 @@ import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
-
 
 const Crashlytics = firebase.crashlytics();
 
@@ -157,6 +156,11 @@ export const loginAction = (
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
+
+      if (user.username) {
+        dispatch({ type: SET_USERNAME, payload: user.username });
+      }
+
       if (userState === REGISTERED) {
         // signal credentials
         const signalCredentials = {
@@ -441,20 +445,26 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
   };
 };
 
+export const resetAppState = async (dispatch: Dispatch, getState: GetState) => {
+  Intercom.logout();
+  await firebase.iid().delete().catch(() => {});
+  await chat.client.resetAccount().catch(() => null);
+  await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
+  await storage.removeAll();
+  const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+  if (smartWalletFeatureEnabled) await smartWalletService.reset();
+  clearWebViewCookies();
+};
+
 export const logoutAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
-    Intercom.logout();
-    await firebase.iid().delete().catch(() => {});
-    await chat.client.resetAccount().catch(() => null);
-    await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
-    await storage.removeAll();
-    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-    if (smartWalletFeatureEnabled) await smartWalletService.reset();
-    clearWebViewCookies();
-    dispatch({ type: LOG_OUT });
-    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
-    dispatch(setAppThemeAction());
+    const themeType = get(getState(), 'appSettings.data.themeType', '');
+    await resetAppState(dispatch, getState);
+    await dispatch({ type: LOG_OUT });
+    await dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    if (themeType === DARK_THEME) await dispatch(setAppThemeAction(DARK_THEME)); // to persist dark theme after storage
+    // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

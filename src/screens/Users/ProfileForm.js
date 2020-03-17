@@ -20,6 +20,9 @@
 
 import React from 'react';
 import t from 'tcomb-form-native';
+import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
 import {
   FirstNameStruct,
   LastNameStruct,
@@ -29,7 +32,8 @@ import {
   CodeStruct,
 } from 'components/ProfileForm/profileFormDefs';
 import InputWithSwitch from 'components/Input/InputWithSwitch';
-import { noop } from 'utils/common';
+import { spacing } from 'utils/variables';
+
 
 type Field = {
   name: string,
@@ -39,19 +43,24 @@ type Field = {
   onSelect?: Function,
   options?: Object[],
   optionsTitle?: string,
-}
+  hasVerification?: boolean,
+  isVerified?: boolean,
+  onPressVerify?: () => void,
+  isModified?: boolean,
+  autoCapitalize?: string,
+  keyboardType?: string,
+};
 
 type Props = {
   fields: Field[],
   value?: Object,
   buttonTitle?: string,
-  getFormRef: Function,
-  onChange?: Function,
-}
+  onUpdate?: (update: Object) => void,
+};
 
 type State = {
   value: Object,
-}
+};
 
 const defaultTypes = {
   string: t.String,
@@ -66,7 +75,8 @@ const defaultTypes = {
 
 const { Form } = t.form;
 
-const InputSwitchTemplate = (locals: Object) => {
+
+export const InputSwitchTemplate = (locals: Object) => {
   const { config = {} } = locals;
   const {
     inputType,
@@ -75,6 +85,10 @@ const InputSwitchTemplate = (locals: Object) => {
     onBlur,
     onSelect,
     options,
+    hasVerification,
+    isModified,
+    isVerified,
+    onPressVerify,
   } = config;
   const errorMessage = locals.error;
   const inputProps = {
@@ -95,8 +109,12 @@ const InputSwitchTemplate = (locals: Object) => {
       inputType={inputType}
       inputProps={inputProps}
       label={label}
-      wrapperStyle={{ marginBottom: 20 }}
+      wrapperStyle={{ marginTop: spacing.mediumLarge }}
       options={options}
+      hasVerification={hasVerification}
+      isModified={isModified}
+      isVerified={isVerified}
+      onPressVerify={onPressVerify}
     />
   );
 };
@@ -104,6 +122,7 @@ const InputSwitchTemplate = (locals: Object) => {
 const getFormStructure = (fields: Field[]) => {
   const fieldsStructure = fields.reduce((memo, field) => {
     memo[field.name] = defaultTypes[field.type];
+
     return memo;
   }, {});
   return t.struct(fieldsStructure);
@@ -117,15 +136,22 @@ const generateFormOptions = (fields: Field[]): Object => {
         inputType: defaultTypes[field.type],
         label: field.label,
         fieldName: field.name,
-        onBlur: field.onBlur || noop,
-        onSelect: field.onSelect || noop,
-        options: field.options || [],
+        onBlur: field.onBlur,
+        onSelect: field.onSelect,
+        onPressVerify: field.onPressVerify,
+        options: field.options,
         optionsTitle: field.optionsTitle || '',
+        hasVerification: field.hasVerification,
+        isModified: field.isModified,
+        isVerified: field.isVerified,
+        autoCapitalize: field.autoCapitalize,
+        keyboardType: field.keyboardType,
       },
     };
 
     return memo;
   }, {});
+
   return {
     fields: {
       ...options,
@@ -134,6 +160,8 @@ const generateFormOptions = (fields: Field[]): Object => {
 };
 
 export default class ProfileForm extends React.Component<Props, State> {
+  _formRef: t.form;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -142,20 +170,51 @@ export default class ProfileForm extends React.Component<Props, State> {
   }
 
   handleChange = (value: Object) => {
-    const { onChange } = this.props;
     this.setState({ value });
-    if (onChange) onChange(value);
+    const key = Object.keys(value)[0];
+    const { _formRef } = this;
+
+    if (!_formRef) {
+      return;
+    }
+
+    const component = _formRef.getComponent(key);
+
+    component.validate();
+  };
+
+  handleBlur = (field: string, value: string) => {
+    const component = this._formRef.getComponent(field);
+
+    const result = component.validate();
+    if (!isEmpty(get(result, 'errors'))) {
+      return;
+    }
+
+    const { value: originalValue, onUpdate } = this.props;
+    const isModified = !originalValue || !isEqual(value, originalValue[field]);
+
+    if (isModified && onUpdate) {
+      onUpdate({ [field]: value });
+    }
   };
 
   render() {
     const { value } = this.state;
-    const { fields, getFormRef } = this.props;
-    const formOptions = generateFormOptions(fields);
-    const formStructure = getFormStructure(fields);
+    const { value: originalValue, fields } = this.props;
+
+    const formFields = fields.map(field => ({
+      ...field,
+      onBlur: this.handleBlur,
+      isModified: !isEqual(value, originalValue),
+    }));
+
+    const formOptions = generateFormOptions(formFields);
+    const formStructure = getFormStructure(formFields);
 
     return (
       <Form
-        ref={node => { getFormRef(node); }}
+        ref={node => { this._formRef = node; }}
         type={formStructure}
         options={formOptions}
         value={value}

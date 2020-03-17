@@ -147,24 +147,6 @@ aliases:
       paths:
         - ~/android/.gradle
         - ~/android/.m2
-  # - &set_staging_env
-  #     run:
-  #       name: Set staging environment
-  #       command: |
-  #         cd ~/pillarwallet
-  #         git config user.email "devops@pillar.io"
-  #         git config user.name "Issabot"
-  #         npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
-  #         export buildNumber=$(node -e "console.log(require('./package.json').version);")
-  #         rm .env
-  #         cp environments/.env.staging ./.env
-  #         sed -i.bak "s/_build_number_/$buildNumber/g" .env
-  #         sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-  #         sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
-  #         sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
-  #         sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
-  #         sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
-  #         echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 jobs:
   build-and-test:
@@ -195,7 +177,7 @@ jobs:
           name: Run validation
           command: yarn validate
 
-  hockeyapp_ios:
+  appcenter_ios:
     executor: ios-executor
     steps:
       - checkout
@@ -226,7 +208,7 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -239,11 +221,11 @@ jobs:
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           no_output_timeout: 20m
-          name: Upload to Hockeyapp
+          name: Upload to App Center
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd ios && bundle exec fastlane deploy_ios_hockeyapp APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
+            cd ios && bundle exec fastlane deploy_ios_appcenter APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -253,7 +235,7 @@ jobs:
           path: ./toArchive
           destination: app_build
 
-  hockeyapp_android:
+  appcenter_android:
     executor: android-executor
     steps:
       - checkout
@@ -320,15 +302,15 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
-          name: Upload to Hockeyapp
+          name: Upload to App Center
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
-            cd android && bundle exec fastlane deploy_android_hockeyapp
+            cd android && bundle exec fastlane deploy_android_appcenter
       - store_artifacts:
           path: android/app/build/outputs/apk
-          destination: apks          
+          destination: apks   
 
   get-latest-tag:
     executor: node10-executor
@@ -340,9 +322,12 @@ jobs:
           name: Fetch and set the latest GitHub tag
           command: |
             TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+            APP_VERSION=${TAG_VERSION#?}
             cd /tmp/workspace/build-num
             echo $TAG_VERSION
+            echo $APP_VERSION
             echo $TAG_VERSION > gh_tag_version.txt
+            echo $APP_VERSION > app_version.txt
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
@@ -366,7 +351,7 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export buildNumber="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
@@ -441,29 +426,24 @@ jobs:
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
       - run:
-           name: Announce Prod Builds
-           command: |
-             chmod +x .circleci/announceProdBuilds.sh
-             .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
-      - run:
            name: Announce Deployment
            command: |
              chmod +x .circleci/announceDeployment.sh
-             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
           name: Announce production iOS URL
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
           name: prepare to archive ipa file
           command: |
-            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
             mkdir -p ./toArchive
             mkdir -p /tmp/workspace/ios-release
             cp ./ios/output/gym/pillarwallet.ipa ./toArchive
-            cp ./ios/output/gym/pillarwallet.ipa /tmp/workspace/ios-release/pillarwallet-prod-ios-$TAG_VERSION.ipa
+            cp ./ios/output/gym/pillarwallet.ipa /tmp/workspace/ios-release/pillarwallet-prod-ios-$APP_VERSION.ipa
       - store_artifacts:
           path: ./toArchive
           destination: app_build
@@ -498,7 +478,7 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export buildNumber="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
@@ -588,30 +568,24 @@ jobs:
             aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
       - run:
-          name: Announce Prod Builds
-          command: |
-            cd ~/pillarwallet
-            chmod +x .circleci/announceProdBuilds.sh
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
-      - run:
            name: Announce Deployment
            command: |
              chmod +x .circleci/announceDeployment.sh
-             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* Android internal track - Tests pending" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* Android internal track - Tests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
           name: Announce Prod Android URL
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
           name: prepare to archive apk file
           command: |
-            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
             mkdir -p ./toArchive
             mkdir -p /tmp/workspace/android-release
             cp ./android/app/build/outputs/apk/prod/release/app-prod-release.apk ./toArchive
-            cp ./android/app/build/outputs/apk/prod/release/app-prod-release.apk /tmp/workspace/android-release/pillarwallet-prod-android-$TAG_VERSION.apk
+            cp ./android/app/build/outputs/apk/prod/release/app-prod-release.apk /tmp/workspace/android-release/pillarwallet-prod-android-$APP_VERSION.apk
       - store_artifacts:
           path: ./toArchive
           destination: apks
@@ -622,32 +596,46 @@ jobs:
 
   publish_releases_to_github:
     docker:
-      - image: cibuilds/github:0.10
+      - image: circleci/golang:1.8
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - run:
+          name: Install github-release
+          command: |
+            go get github.com/aktau/github-release
+      - run:
           name: Set tag and publish releases to GitHub
           command: |
+            chmod +x setReleaseInfo.sh
+            . ./setReleaseInfo.sh
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
-            echo $TAG_VERSION
-            ghr $TAG_VERSION /tmp/workspace/android-release/
-            ghr $TAG_VERSION /tmp/workspace/ios-release/ 
+            APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
+            echo $RELEASE_DESCRIPTION > pr_description.txt
+            github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n "$RELEASE_TITLE" --description "$RELEASE_DESCRIPTION"
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$APP_VERSION.apk" -f /tmp/workspace/android-release/*.apk
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$APP_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
+      - run:
+          name: Announce new RC to support channel
+          command: |
+            chmod +x .circleci/announceProdBuilds.sh
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/pr_description.txt)"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/pr_description.txt)"
 
 workflows:
   version: 2.1
   build_and_deploy:
     jobs:
       - build-and-test
-      - hockeyapp_ios:
+      - appcenter_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
                   - develop
-      - hockeyapp_android:
+      - appcenter_android:
           requires:
             - build-and-test
           filters:
@@ -679,5 +667,5 @@ workflows:
                   - master
       - publish_releases_to_github:
           requires:
-            - prod_ios
             - prod_android
+            - prod_ios

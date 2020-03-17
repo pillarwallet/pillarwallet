@@ -26,7 +26,7 @@ import {
   DECRYPTING,
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
-import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
+import { UPDATE_USER, PENDING, REGISTERED, SET_USERNAME } from 'constants/userConstants';
 import { INITIAL_FEATURE_FLAGS, SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import Storage from 'services/storage';
@@ -82,6 +82,7 @@ describe('Auth actions', () => {
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: SET_USERNAME, payload: mockUser.username },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
         type: DECRYPT_WALLET,
@@ -107,6 +108,7 @@ describe('Auth actions', () => {
     storage.save('user', { user: registeredMockUser });
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: SET_USERNAME, payload: registeredMockUser.username },
       { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: { ...mockWallet, privateKey: undefined } },

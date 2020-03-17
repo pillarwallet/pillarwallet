@@ -51,6 +51,7 @@ import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+import { setUserEnsIfEmptyAction } from './ensRegistryActions';
 
 const storage = Storage.getInstance('db');
 
@@ -178,6 +179,22 @@ export const addAccountAction = (
   };
 };
 
+export const removeAccountAction = (accountAddress: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+
+    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    if (accounts.length === updatedAccounts.length) {
+      return;
+    }
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: updatedAccounts,
+    });
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
 export const setActiveAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -233,6 +250,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
       await dispatch(initSmartWalletSdkAction(privateKey));
       await dispatch(connectSmartWalletAccountAction(accountId));
       await dispatch(setActiveAccountAction(accountId));
+      dispatch(setUserEnsIfEmptyAction());
     }
 
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
@@ -280,5 +298,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
         payload: blockchainNetwork,
       });
     }
+
+    dispatch(setUserEnsIfEmptyAction());
   };
 };

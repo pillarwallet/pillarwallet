@@ -23,7 +23,10 @@ import { connect } from 'react-redux';
 import Permissions from 'react-native-permissions';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import t from 'tcomb-form-native';
+
+// types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { User } from 'models/User';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -31,32 +34,35 @@ import { ScrollWrapper } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import { TextLink } from 'components/Typography';
 import Camera from 'components/Camera';
+import InputWithSwitch from 'components/Input/InputWithSwitch';
 
+// utils
 import { spacing } from 'utils/variables';
 import countries from 'utils/countries.json';
-import { isProdEnv } from 'utils/environment';
 import { themedColors } from 'utils/themes';
 
-import { updateUserAction, createOneTimePasswordAction } from 'actions/userActions';
+// actions
+import { updateUserAction } from 'actions/userActions';
 
-import { OTP } from 'constants/navigationConstants';
-
+// partials
 import ProfileForm from './ProfileForm';
+import VerifyOTPModal from './VerifyOTPModal';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  user: Object,
-  updateUser: Function,
-  createOneTimePassword: Function,
-}
+  oneTimePasswordSent: boolean,
+  user: User,
+  updateUser: (walletId: string, field: Object) => void,
+};
 
 type State = {
   permissionsGranted: boolean,
   visibleModal: string,
-}
+  verifyingField: ?string,
+};
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
-
 
 const ImageWrapper = styled.View`
   width: 100%;
@@ -82,7 +88,6 @@ const ProfileImagePlaceholder = styled.View`
   border-radius: 48px;
   align-items: center;
   justify-content: center;
-  background-color: ${themedColors.card};
   border: 2px dashed ${themedColors.border};
 `;
 
@@ -93,21 +98,13 @@ const BlankAvatar = styled(CachedImage)`
 
 const blankAvatar = require('assets/icons/icon_blank_avatar.png');
 
-class AddOrEditUser extends React.PureComponent<Props, State> {
-  _nameForm: t.form;
-  _surnameForm: t.form;
-  _emailForm: t.form;
-  _countryForm: t.form;
-  _cityForm: t.form;
-  _phoneForm: t.form;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      permissionsGranted: false,
-      visibleModal: '',
-    };
-  }
+class AddOrEditUser extends React.PureComponent<Props, State> {
+  state = {
+    verifyingField: null,
+    permissionsGranted: false,
+    visibleModal: '',
+  };
 
   selectCountry = (value: Object) => {
     const {
@@ -118,39 +115,13 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     updateUser(user.walletId, value);
   };
 
-  handleUserFieldChange = (value, formRef) => {
-    formRef.getComponent(Object.keys(value)[0]).validate();
-  };
-
-  handleUserFieldUpdate = (value: Object, formRef) => {
+  handleUserFieldUpdate = (update: Object) => {
     const {
       updateUser,
       user,
     } = this.props;
-    const valueKey = Object.keys(value)[0];
-    const validation = formRef.getComponent(valueKey).validate() || {};
-    const { errors = [] } = validation;
-    if (!value[valueKey] || !errors.length) updateUser(user.walletId, value);
-  };
 
-  handleUserPhoneFieldUpdate = (value: Object) => {
-    const {
-      updateUser,
-      user,
-      navigation,
-      createOneTimePassword,
-    } = this.props;
-    const validation = this._phoneForm.getComponent(Object.keys(value)[0]).validate() || {};
-    const { errors } = validation;
-    if (!errors || errors.length) return;
-
-    const createOTP = () => {
-      createOneTimePassword(user.walletId, value, () => {
-        navigation.navigate(OTP, { phone: value.phone });
-      });
-    };
-
-    updateUser(user.walletId, value, createOTP);
+    updateUser(user.walletId, update);
   };
 
   openCamera = async () => {
@@ -166,11 +137,25 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.setState({ visibleModal: '' });
   };
 
+  verifyEmail = () => {
+    this.setState({ verifyingField: 'email' });
+  };
+
+  verifyPhone = () => {
+    this.setState({ verifyingField: 'phone' });
+  };
+
+  onCloseVerification = () => {
+    this.setState({ verifyingField: null });
+  };
+
   render() {
-    const { permissionsGranted, visibleModal } = this.state;
+    const {
+      permissionsGranted,
+      visibleModal,
+      verifyingField,
+    } = this.state;
     const { user, navigation } = this.props;
-    const { profileImage, lastUpdateTime = 0, username } = user;
-    const cameraButtonLabel = profileImage ? 'Change profile picture' : 'Set profile picture';
 
     const {
       firstName,
@@ -179,7 +164,14 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       phone,
       country,
       city,
+      isEmailVerified,
+      isPhoneVerified,
+      profileImage,
+      lastUpdateTime = 0,
+      username,
     } = user;
+
+    const cameraButtonLabel = profileImage ? 'Change profile picture' : 'Set profile picture';
 
     return (
       <ContainerWithHeader
@@ -188,6 +180,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             { title: 'User settings' },
           ],
         }}
+        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper disableOnAndroid>
           <CameraButton onPress={this.openCamera}>
@@ -206,16 +199,25 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <CameraButtonLabel>{cameraButtonLabel}</CameraButtonLabel>
             </ImageWrapper>
           </CameraButton>
+
+          <InputWithSwitch
+            disabledInput
+            inputProps={{
+              value: username,
+              fieldName: 'username',
+            }}
+            label="Username"
+            wrapperStyle={{ marginTop: spacing.mediumLarge }}
+          />
+
           <ProfileForm
             fields={[{
               label: 'Name',
               name: 'firstName',
               type: 'firstName',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._nameForm),
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._nameForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ firstName }}
-            getFormRef={node => { this._nameForm = node; }}
           />
 
           <ProfileForm
@@ -223,23 +225,38 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               label: 'Surname',
               name: 'lastName',
               type: 'lastName',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._surnameForm),
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._surnameForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ lastName }}
-            getFormRef={node => { this._surnameForm = node; }}
           />
 
           <ProfileForm
             fields={[{
-              label: 'Email',
+              label: 'E-mail',
               name: 'email',
               type: 'email',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._emailForm),
+              hasVerification: true,
+              isVerified: isEmailVerified,
+              onPressVerify: this.verifyEmail,
+              autoCapitalize: 'none',
+              keyboardType: 'email-address',
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._emailForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ email }}
-            getFormRef={node => { this._emailForm = node; }}
+          />
+
+          <ProfileForm
+            fields={[{
+              label: 'Phone',
+              name: 'phone',
+              type: 'phone',
+              hasVerification: true,
+              isVerified: isPhoneVerified,
+              onPressVerify: this.verifyPhone,
+              keyboardType: 'phone-pad',
+            }]}
+            onUpdate={this.handleUserFieldUpdate}
+            value={{ phone }}
           />
 
           <ProfileForm
@@ -252,7 +269,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               optionsTitle: 'Choose your country',
             }]}
             value={{ country }}
-            getFormRef={node => { this._countryForm = node; }}
           />
 
           <ProfileForm
@@ -260,25 +276,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               label: 'City',
               name: 'city',
               type: 'city',
-              onBlur: (val) => this.handleUserFieldUpdate(val, this._cityForm),
             }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._cityForm)}
+            onUpdate={this.handleUserFieldUpdate}
             value={{ city }}
-            getFormRef={node => { this._cityForm = node; }}
           />
 
-          {!isProdEnv &&
-          <ProfileForm
-            fields={[{
-              label: 'Phone',
-              name: 'phone',
-              type: 'phone',
-              onBlur: this.handleUserPhoneFieldUpdate,
-            }]}
-            onChange={(val) => this.handleUserFieldChange(val, this._phoneForm)}
-            value={{ phone }}
-            getFormRef={node => { this._phoneForm = node; }}
-          />}
         </ScrollWrapper>
 
         <Camera
@@ -288,24 +290,28 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           navigation={navigation}
         />
 
+        {!!verifyingField && <VerifyOTPModal
+          verifyingField={verifyingField}
+          onModalClose={this.onCloseVerification}
+        />}
       </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  wallet: { backupStatus },
-  user: { data: user },
-}) => ({
-  backupStatus,
+  user: {
+    data: user,
+    oneTimePasswordSent,
+  },
+}: RootReducerState): $Shape<Props> => ({
   user,
+  oneTimePasswordSent,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  updateUser: (walletId: string, field: Object, callback?: Function) =>
-    dispatch(updateUserAction(walletId, field, callback)),
-  createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
-    dispatch(createOneTimePasswordAction(walletId, field, callback)),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  updateUser: (walletId: string, field: Object) =>
+    dispatch(updateUserAction(walletId, field)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddOrEditUser);

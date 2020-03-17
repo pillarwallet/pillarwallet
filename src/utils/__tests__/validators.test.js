@@ -26,7 +26,7 @@ import {
   isValidEmail,
   isValidName,
   isValidCityName,
-  isValidUKPhone,
+  isValidPhone,
 } from 'utils/validators';
 
 import {
@@ -65,7 +65,27 @@ describe('Validators', () => {
       expect(isValid).toBeTruthy();
     });
 
-    it('should return false for the invvalid ETH address', () => {
+    it('should return true for the valid ENS name', () => {
+      const isValid = isValidETHAddress('test.eth');
+      expect(isValid).toBeTruthy();
+    });
+
+    it('should return true for the valid ENS name with subdomain', () => {
+      const isValid = isValidETHAddress('pillar.test.eth');
+      expect(isValid).toBeTruthy();
+    });
+
+    it('should return false for the unsupported ENS name', () => {
+      const isValid = isValidETHAddress('test.com');
+      expect(isValid).toBeFalsy();
+    });
+
+    it('should return false for the wrong ENS name', () => {
+      const isValid = isValidETHAddress('testeth');
+      expect(isValid).toBeFalsy();
+    });
+
+    it('should return false for the invalid ETH address', () => {
       const isValid = isValidETHAddress('Jon Snow');
       expect(isValid).toBeFalsy();
     });
@@ -199,25 +219,15 @@ describe('Validators', () => {
     });
   });
 
-  describe('isValidUKPhone', () => {
+  describe('isValidPhone', () => {
     it('should return true as valid number', () => {
       const phone = '+447473222885';
-      expect(isValidUKPhone(phone)).toBeTruthy();
-    });
-
-    it('should return false for too long number', () => {
-      const phone = '+4474732228852';
-      expect(isValidUKPhone(phone)).toBeFalsy();
-    });
-
-    it('should return false for other prefix than +44', () => {
-      const phone = '+407473222885';
-      expect(isValidUKPhone(phone)).toBeFalsy();
+      expect(isValidPhone(phone)).toBeTruthy();
     });
 
     it('should return false for missing +', () => {
       const phone = '447473222885';
-      expect(isValidUKPhone(phone)).toBeFalsy();
+      expect(isValidPhone(phone)).toBeFalsy();
     });
   });
 });

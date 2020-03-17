@@ -83,9 +83,7 @@ import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
-import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import SettingsScreen from 'screens/Settings';
 import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
@@ -98,6 +96,12 @@ import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticU
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import ServicesScreen from 'screens/Services';
+import StorybookScreen from 'screens/Storybook';
+import MenuScreen from 'screens/Menu';
+import AppSettingsScreen from 'screens/Menu/AppSettings';
+import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
+import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
+import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -197,9 +201,8 @@ import {
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
-  USER_SETTINGS,
   ADD_EDIT_USER,
-  SETTINGS,
+  MENU,
   CHAT,
   FIAT_EXCHANGE,
   FIAT_CRYPTO,
@@ -219,6 +222,12 @@ import {
   UNSETTLED_ASSETS_FLOW,
   REFER_FRIENDS,
   SERVICES,
+  STORYBOOK,
+  SECURITY_SETTINGS,
+  RECOVERY_SETTINGS,
+  COMMUNITY_SETTINGS,
+  APP_SETTINGS,
+  MENU_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -237,7 +246,7 @@ const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
-const iconWallet = require('assets/icons/icon_wallet_new_light.png');
+const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
@@ -283,8 +292,9 @@ const assetsFlow = createStackNavigator(
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
-    [SETTINGS]: SettingsScreen,
     [EXCHANGE]: ExchangeScreen,
+    [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+    [SECURITY_SETTINGS]: SecuritySettingsScreen,
   },
   StackNavigatorConfig,
 );
@@ -330,7 +340,6 @@ const walletConnectFlow = createStackNavigator(
 // HOME FLOW
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
-  [SETTINGS]: SettingsScreen,
   [LOGIN]: LoginScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
@@ -341,6 +350,8 @@ const homeFlow = createStackNavigator({
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
   [REFER_FRIENDS]: ReferFriendsScreen,
+  [STORYBOOK]: StorybookScreen,
+  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -582,7 +593,6 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
-  [USER_SETTINGS]: UserSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
@@ -619,6 +629,15 @@ const tankWithdrawalFlow = createStackNavigator({
 
 tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const menuFlow = createStackNavigator({
+  [MENU]: MenuScreen,
+  [SECURITY_SETTINGS]: SecuritySettingsScreen,
+  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
+  [APP_SETTINGS]: AppSettingsScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
+}, StackNavigatorConfig);
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -644,6 +663,7 @@ const AppFlowNavigation = createStackNavigator(
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
     [LOGOUT_PENDING]: LogoutPendingScreen,
+    [MENU_FLOW]: menuFlow,
   },
   modalTransition,
 );
@@ -788,7 +808,6 @@ class AppFlow extends React.Component<Props, State> {
       startListeningChatWebSocket,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
-      navigation,
       isPickingImage,
       isBrowsingWebView,
       stopListeningForBalanceChange,
@@ -805,6 +824,7 @@ class AppFlow extends React.Component<Props, State> {
       // close walkthrough shade or tooltips
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
+        const { navigation } = this.props;
         const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
         const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
         const lastActiveScreenParams = pathAndParams.params;

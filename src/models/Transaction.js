@@ -28,19 +28,24 @@ type TxWithdrawalExtra = {
   paymentHash: string,
 };
 
+type EnsTransactionExtra = {
+  ensName: string,
+};
+
 export type SyntheticTransaction = {
   transactionId: string,
   fromAmount: number,
   toAmount: number,
   toAssetCode: string,
   toAddress: string,
+  receiverEnsName?: string,
 };
 
 export type SyntheticTransactionExtra = {
   syntheticTransaction: $Shape<SyntheticTransaction>,
 };
 
-export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra;
+export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra | EnsTransactionExtra;
 
 export type Transaction = {
   _id: string,
@@ -70,6 +75,7 @@ export type TokenTransactionPayload = {
   gasLimit: number,
   amount: number | string,
   to: string,
+  receiverEnsName?: string,
   gasPrice: number,
   txFeeInWei: number,
   txSpeed?: string,
@@ -88,6 +94,7 @@ export type TokenTransactionPayload = {
 
 export type CollectibleTransactionPayload = {
   to: string,
+  receiverEnsName?: string,
   name: string,
   contractAddress: ?string,
   tokenType: string,

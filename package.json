@@ -5,9 +5,17 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
+    "@storybook/addon-actions": "^5.3.12",
+    "@storybook/addon-links": "^5.3.12",
+    "@storybook/addon-ondevice-actions": "^5.3.12",
+    "@storybook/addon-storyshots": "^5.3.12",
+    "@storybook/addons": "^5.3.12",
+    "@storybook/react-native": "^5.3.12",
+    "@storybook/react-native-server": "^5.3.12",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^23.4.2",
+    "babel-loader": "^8.0.6",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "^1.5.1",
     "babel-runtime": "7.0.0-beta.3",
@@ -27,25 +35,29 @@
     "flow-bin": "0.70.0",
     "flow-typed": "^2.4.0",
     "husky": "^1.1.3",
+    "invariant": "^2.2.4",
     "jest": "^23.4.2",
     "jest-html-reporter": "2.0.0",
     "jest-react-native": "^18.0.0",
     "jest-styled-components": "^5.0.1",
     "jetifier": "^1.6.4",
+    "jsdom": "^16.1.0",
     "metro-react-native-babel-preset": "^0.51.1",
-    "mock-socket": "^8.0.5",
+    "mock-socket": "^9.0.3",
     "npm-run-all": "^4.1.5",
     "prop-types": "^15.6.1",
     "react-dom": "^16.3.0-alpha.1",
     "react-native-debugger-open": "^0.3.19",
     "react-native-dotenv": "^0.2.0",
+    "react-native-storybook-loader": "^1.8.1",
     "react-test-renderer": "16.6.3",
     "reactotron-react-native": "^3.2.2",
     "reactotron-redux": "^3.1.0",
     "redux-mock-store": "^1.5.1",
     "rimraf": "^2.6.3",
     "rn-nodeify": "^10.0.1",
-    "run-s": "^0.0.0"
+    "run-s": "^0.0.0",
+    "util-deprecate": "^1.0.2"
   },
   "scripts": {
     "clean": "rimraf node_modules ios/build ios/Pods ios/Podfile.lock",
@@ -69,7 +81,9 @@
     "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && patch-package && rndebugger-open && jetifier -r",
     "precommit": "yarn run validate",
     "build-thread-ios": "node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./ios --entry-file index.thread.js --platform ios --bundle-output ./ios/index.thread.jsbundle",
-    "build-thread-android": "node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./android/app/src/main/res/ --entry-file index.thread.js --platform android --bundle-output ./android/app/src/main/assets/threads/index.thread.bundle"
+    "build-thread-android": "node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./android/app/src/main/res/ --entry-file index.thread.js --platform android --bundle-output ./android/app/src/main/assets/threads/index.thread.bundle",
+    "storybook": "start-storybook -p 7007",
+    "prestorybook": "rnstl"
   },
   "jest": {
     "preset": "react-native",
@@ -112,9 +126,9 @@
   "dependencies": {
     "@matt-block/react-native-in-app-browser": "^2.1.3",
     "@netgum/utils": "^0.1.3",
-    "@pillarwallet/pillarwallet-nodejs-sdk": "1.40.1725",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "1.43",
     "@react-native-community/async-storage": "^1.7.1",
-    "@smartwallet/sdk": "1.1.0",
+    "@smartwallet/sdk": "1.2.3",
     "@tradle/react-native-http": "^2.0.0",
     "@walletconnect/react-native": "^1.0.0-beta.29",
     "@walletconnect/utils": "^1.0.0-beta.29",
@@ -134,7 +148,7 @@
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
     "ethereumjs-util": "^6.1.0",
-    "ethers": "https://github.com/pillarwallet/ethers.js#v4",
+    "ethers": "https://github.com/pillarwallet/ethers.js#pillar-v4.0.44",
     "ethjs-abi": "^0.2.1",
     "events": "^1.0.0",
     "https-browserify": "~0.0.0",
@@ -207,6 +221,7 @@
     "react-native-share": "^1.1.1",
     "react-native-splash-screen": "^3.1.1",
     "react-native-svg": "^9.3.7",
+    "react-native-svg-animations": "^0.1.9",
     "react-native-swipeout": "^2.3.6",
     "react-native-swiper": "^1.5.14",
     "react-native-tcp": "^3.2.1",
@@ -302,5 +317,15 @@
   },
   "metro": {
     "maxWorkers": 4
+  },
+  "config": {
+    "react-native-storybook-loader": {
+      "searchDir": [
+        "./src",
+        "./storybook/stories"
+      ],
+      "pattern": "**/*.stories.js",
+      "outputFile": "./storybook/storyLoader.js"
+    }
   }
 }

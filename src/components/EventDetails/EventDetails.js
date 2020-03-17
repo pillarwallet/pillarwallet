@@ -32,13 +32,15 @@ import isEmpty from 'lodash.isempty';
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 import { CachedImage } from 'react-native-cached-image';
 
-// models
+// types
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Asset } from 'models/Asset';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+
 // components
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -65,6 +67,7 @@ import { themedColors } from 'utils/themes';
 // actions
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
+import { lookupAddressAction } from 'actions/ensRegistryActions';
 
 // constants
 import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
@@ -88,6 +91,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -96,6 +100,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // local components
 import EventHeader from './EventHeader';
+
 
 type Props = {
   transaction: Transaction,
@@ -122,11 +127,13 @@ type Props = {
   getMaxScrollOffset?: (number) => number,
   accounts: Accounts,
   bitcoinAddresses: BitcoinAddress[],
-}
+  ensRegistry: EnsRegistry,
+  lookupAddress: (address: string) => void,
+};
 
-type State = {
+type State = {|
   containerHeight: ?number,
-}
+|};
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -211,6 +218,8 @@ class EventDetails extends React.Component<Props, State> {
       getTxNoteByContact,
       contacts,
       history,
+      ensRegistry,
+      lookupAddress,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
@@ -228,6 +237,12 @@ class EventDetails extends React.Component<Props, State> {
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
       updateTransactionStatus(eventData.hash);
+    }
+
+    const isReceived = this.wasTransactionReceived(txInfo.to, txInfo.tag);
+    const relatedAddress = isReceived ? txInfo.from : txInfo.to;
+    if (!ensRegistry[relatedAddress]) {
+      lookupAddress(relatedAddress);
     }
   }
 
@@ -324,16 +339,23 @@ class EventDetails extends React.Component<Props, State> {
       || {};
   };
 
+  wasTransactionReceived = (txReceiver: string, txTag?: string = ''): boolean => {
+    const { activeAccountAddress, bitcoinAddresses } = this.props;
+    const wasReceived = addressesEqual(txReceiver, activeAccountAddress)
+      || txTag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+      || bitcoinAddresses.some(e => e.address === txReceiver);
+    return wasReceived;
+  };
+
   renderEventBody = (eventType) => {
     const {
       eventData,
-      activeAccountAddress,
       history,
       txNotes,
       assets,
       supportedAssets,
       accounts,
-      bitcoinAddresses,
+      ensRegistry,
     } = this.props;
     const {
       hideAmount,
@@ -368,9 +390,7 @@ class EventDetails extends React.Component<Props, State> {
         btcFee,
       } = txInfo;
 
-      const isReceived = addressesEqual(to, activeAccountAddress)
-        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-        || bitcoinAddresses.some(e => e.address === to);
+      const isReceived = this.wasTransactionReceived(to, tag);
       const toMyself = isReceived && addressesEqual(from, to);
       let transactionNote = note;
       if (txNotes && txNotes.length > 0) {
@@ -388,8 +408,11 @@ class EventDetails extends React.Component<Props, State> {
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedAddress = isReceived ? from : to;
       const relatedUser = isReceived ? senderContact : recipientContact;
-      // $FlowFixMe
-      let relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || relatedAddress;
+      let relatedUserTitle = relatedUser.username
+        // $FlowFixMe
+        || getAccountName(relatedUser.type, accounts)
+        || ensRegistry[relatedAddress]
+        || relatedAddress;
       if (addressesEqual(to, from)) {
         relatedUserTitle = 'My account';
       }
@@ -398,14 +421,16 @@ class EventDetails extends React.Component<Props, State> {
       const showProfileImage = !relatedUser.type;
 
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
-      const freeTx = isPPNTransaction;
+      const freeTx = isPPNTransaction || tag === SET_SMART_WALLET_ACCOUNT_ENS;
 
       const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
       let showNote = true;
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
-      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT || tag === PAYMENT_NETWORK_ACCOUNT_TOPUP ||
-        tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL) {
+      if (tag === PAYMENT_NETWORK_TX_SETTLEMENT
+        || tag === PAYMENT_NETWORK_ACCOUNT_TOPUP
+        || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+      ) {
         showNote = false;
       }
 
@@ -452,6 +477,12 @@ class EventDetails extends React.Component<Props, State> {
             })}
           />
           }
+          {tag === SET_SMART_WALLET_ACCOUNT_ENS &&
+          <ListItemUnderlined
+            label="Address"
+            value={extra.ensName || ''}
+          />
+          }
           {showFeeBlock &&
           <ListItemUnderlined
             label="TRANSACTION FEE"
@@ -483,7 +514,7 @@ class EventDetails extends React.Component<Props, State> {
         gasPrice,
       } = eventData;
 
-      const isReceived = addressesEqual(to, activeAccountAddress);
+      const isReceived = this.wasTransactionReceived(to);
       const toMyself = isReceived && addressesEqual(from, to);
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       let transactionNote = note;
@@ -498,10 +529,12 @@ class EventDetails extends React.Component<Props, State> {
       const recipientContact = this.findMatchingContactOrAccount(to);
       const senderContact = this.findMatchingContactOrAccount(from);
       const relatedUser = isReceived ? senderContact : recipientContact;
-      // $FlowFixMe
-      const relatedUserTitle = relatedUser.username || getAccountName(relatedUser.type, accounts) || (isReceived
-        ? `${from.slice(0, 7)}…${from.slice(-7)}`
-        : `${to.slice(0, 7)}…${to.slice(-7)}`);
+      const relatedAddress = isReceived ? from : to;
+      const relatedUserTitle = relatedUser.username
+        // $FlowFixMe
+        || getAccountName(relatedUser.type, accounts)
+        || ensRegistry[relatedAddress]
+        || relatedAddress;
       const relatedUserProfileImage = relatedUser.profileImage || null;
       // $FlowFixMe
       const showProfileImage = !relatedUser.type;
@@ -817,12 +850,14 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   txNotes: { data: txNotes },
   accounts: { data: accounts },
+  ensRegistry: { data: ensRegistry },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   txNotes,
   contactsSmartAddresses,
   inactiveAccounts: getInactiveUserAccounts(accounts),
   accounts,
+  ensRegistry,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -841,6 +876,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
+  lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EventDetails);

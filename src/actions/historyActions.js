@@ -34,6 +34,7 @@ import {
   TX_CONFIRMED_STATUS,
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
+  ADD_TRANSACTION,
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
@@ -66,6 +67,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
+import type { Transaction } from 'models/Transaction';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -80,6 +82,7 @@ import {
 } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
+import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -206,6 +209,7 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     dispatch(getExistingTxNotesAction());
     syncAccountHistory(history, accountId, dispatch, getState);
+    dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
   };
 };
 
@@ -274,13 +278,20 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         return memo;
       }, {});
 
+    // Flow doesn't allow Object.values
+    const minedTransactionsValues = Object.keys(minedTransactions).map(key => minedTransactions[key]);
+
     const pendingTransactions = mappedHistoryNotifications
       .filter(tx => tx.status === TX_PENDING_STATUS);
 
     // add new records & update data for mined transactions
     const { history: { data: currentHistory } } = getState();
     const accountHistory = (currentHistory[accountId] || []).filter(tx => !!tx.createdAt);
-    const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
+    const updatedAccountHistory = uniqBy([
+      ...accountHistory,
+      ...pendingTransactions,
+      ...minedTransactionsValues,
+    ], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
         const {
@@ -595,5 +606,21 @@ export const patchSmartWalletSentSignedTransactionsAction = () => {
     });
 
     dispatch(setAssetsTransferTransactionsAction(patchedTransferTransactions));
+  };
+};
+
+export const insertTransactionAction = (historyTx: Transaction, accountId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({
+      type: ADD_TRANSACTION,
+      payload: {
+        accountId,
+        historyTx,
+      },
+    });
+
+    // get the updated state and save it into the storage
+    const { history: { data: currentHistory } } = getState();
+    await dispatch(saveDbAction('history', { history: currentHistory }, true));
   };
 };

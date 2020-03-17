@@ -111,3 +111,9 @@ export const findAccountById = (accountId: string, accounts: Accounts): ?Account
 export const getAccountWalletId = (account: Account): string => {
   return get(account, 'walletId', '');
 };
+
+export const normalizeForEns = (value: string): string => {
+  return value
+    .toLowerCase()
+    .replace(/ /g, '-');
+};

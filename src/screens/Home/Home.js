@@ -39,14 +39,17 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Toast from 'components/Toast';
 import { Banner } from 'components/Banner';
+import IconButton from 'components/IconButton';
+import ProfileImage from 'components/ProfileImage';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
-  SETTINGS,
   REFER_FRIENDS,
+  MENU,
+  MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -80,7 +83,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
@@ -93,6 +96,7 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -141,6 +145,8 @@ type State = {
   isReferralBannerVisible: boolean,
 };
 
+const profileImageWidth = 24;
+
 const WalletConnectWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
   background-color: ${themedColors.surface};
@@ -167,12 +173,6 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
-const allIconNormal = require('assets/icons/all_normal.png');
-const allIconActive = require('assets/icons/all_active.png');
-const socialIconNormal = require('assets/icons/social_normal.png');
-const socialIconActive = require('assets/icons/social_active.png');
-const transactionsIconNormal = require('assets/icons/transactions_normal.png');
-const transactionsIconActive = require('assets/icons/transactions_active.png');
 const iconConnect = require('assets/icons/icon_receive.png');
 const referralImage = require('assets/images/referral_gift.png');
 
@@ -307,6 +307,21 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  renderUser = () => {
+    const { user, navigation } = this.props;
+    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
+    return (
+      <ProfileImage
+        uri={userImageUri}
+        userName={user.username}
+        diameter={profileImageWidth}
+        noShadow
+        borderWidth={0}
+        onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}
+      />
+    );
+  };
+
   render() {
     const {
       cancelInvitation,
@@ -361,8 +376,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: ALL,
         name: 'All',
-        tabImageNormal: allIconNormal,
-        tabImageActive: allIconActive,
+        icon: 'cube',
         onPress: () => this.setActiveTab(ALL),
         data: [
           ...transactionsOnMainnet,
@@ -380,8 +394,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: TRANSACTIONS,
         name: 'Transactions',
-        tabImageNormal: transactionsIconNormal,
-        tabImageActive: transactionsIconActive,
+        icon: 'paperPlane',
         onPress: () => this.setActiveTab(TRANSACTIONS),
         data: [...transactionsOnMainnet, ...mappedCTransactions],
         emptyState: {
@@ -392,8 +405,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: SOCIAL,
         name: 'Social',
-        tabImageNormal: socialIconNormal,
-        tabImageActive: socialIconActive,
+        icon: 'cup',
         onPress: () => this.setActiveTab(SOCIAL),
         data: [...mappedContacts, ...invitations],
         emptyState: {
@@ -417,16 +429,18 @@ class HomeScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         backgroundColor={colors.card} // so tabs would have white background only when not sticky
         headerProps={{
-          leftItems: [{ user: true }],
-          rightItems: [
+          leftItems: [
             {
-              link: 'Settings',
-              onPress: () => { navigation.navigate(SETTINGS); },
+              custom: (
+                <IconButton icon="hamburger" onPress={() => navigation.navigate(MENU)} fontSize={fontSizes.large} />
+              ),
             },
+          ],
+          centerItems: [{ custom: this.renderUser() }],
+          rightItems: [
             {
               link: 'Support',
               onPress: () => Intercom.displayMessenger(),
-              withBackground: true,
               addon: hasIntercomNotifications && (
                 <View
                   style={{
@@ -441,6 +455,7 @@ class HomeScreen extends React.Component<Props, State> {
               ),
             },
           ],
+          sideFlex: 4,
         }}
         inset={{ bottom: 0 }}
       >
@@ -482,8 +497,9 @@ class HomeScreen extends React.Component<Props, State> {
               onSettingsPress={this.openQRScanner}
               onSettingsLoadingPress={this.cancelWaiting}
               isLoading={!!pendingConnector}
-              settingsIconSource={iconConnect}
+              settingsIcon="qrDetailed"
               settingsLabel="Connect"
+              iconStyle={{ fontSize: fontSizes.large }}
             />
           </WalletConnectWrapper>
           <Banner

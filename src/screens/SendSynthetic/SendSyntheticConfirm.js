@@ -100,12 +100,13 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
 
   onConfirmPress = () => {
     const { note } = this.state;
-    const { fromAmount } = this.syntheticTransaction;
+    const { fromAmount, receiverEnsName } = this.syntheticTransaction;
     const { symbol, decimals, address: contractAddress } = this.assetData;
     const syntheticTransaction = { ...this.syntheticTransaction };
     const transactionPayload = {
       amount: fromAmount,
       to: SYNTHETICS_CONTRACT_ADDRESS,
+      receiverEnsName,
       symbol,
       contractAddress,
       decimals,
@@ -140,6 +141,7 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
       toAmount,
       toAssetCode,
       toAddress,
+      receiverEnsName,
     } = this.syntheticTransaction;
 
     let errorMessage;
@@ -162,6 +164,12 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
             <LabeledRow>
               <Label>Recipient Username</Label>
               <Value>{recipientUsername}</Value>
+            </LabeledRow>
+            }
+            {!!receiverEnsName &&
+            <LabeledRow>
+              <Label>Recipient ENS name</Label>
+              <Value>{receiverEnsName}</Value>
             </LabeledRow>
             }
             <LabeledRow>
