@@ -358,6 +358,13 @@ class SWActivationCard extends React.Component<Props, State> {
     const deploymentErrorMessage = deploymentData.error ?
       getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
 
+    let showMessage = message;
+    if (deploymentStarted) {
+      showMessage = 'Activating your account';
+    } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS) {
+      showMessage = 'Transferring assets';
+    }
+
     return (
       <React.Fragment>
         {deploymentData.error ? (
@@ -370,7 +377,7 @@ class SWActivationCard extends React.Component<Props, State> {
         ) : (
           <InsightWithButton
             title={title}
-            description={message}
+            description={showMessage}
             buttonTitle={buttonTitle}
             onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
             spinner={isDeploying}
