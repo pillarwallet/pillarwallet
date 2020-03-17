@@ -82,7 +82,6 @@ const StyledItemView = styled.View`
   padding: 0 ${spacing.layoutSides}px 0;
   border-bottom-color: ${({ hasErrors }) => hasErrors ? themedColors.negative : themedColors.tertiary};
   border-bottom-width: 1px;
-  height: 65px;
 `;
 
 const Wrapper = styled.View`
@@ -196,12 +195,12 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     this.scrollViewRef.scrollToOffset({ animated: false, offset: p.y });
   };
 
-  handleListOnScroll = (event: Object) => {
+  onListScroll = (event: Event) => {
     const contentOffsetY = get(event, 'nativeEvent.contentOffset.y');
     this.setState({ contentOffsetY });
   };
 
-  onListLayout = (event: Object) => {
+  onListLayout = (event: Event) => {
     const { containerHeight } = this.state;
     const { height } = event.nativeEvent.layout;
     if (!containerHeight || containerHeight !== height) {
@@ -301,7 +300,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
               flatListProps={{
                 ref: (ref) => { this.scrollViewRef = ref; },
                 scrollEventThrottle: 16,
-                onScroll: this.handleListOnScroll,
+                onScroll: this.onListScroll,
                 onLayout: this.onListLayout,
                 onContentSizeChange: this.onContentSizeChange,
               }}
