@@ -19,13 +19,15 @@
 */
 import * as React from 'react';
 import { Dimensions, Image } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { themedColors } from 'utils/themes';
+import { image } from 'utils/images';
 import { CachedImage } from 'react-native-cached-image';
 import {
   ColorMatrix,
   saturate,
 } from 'react-native-color-matrix-image-filters';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   token: string,
@@ -34,7 +36,8 @@ type Props = {
   isListed: boolean,
   sideIconsLeftDiff?: number,
   innerIconsLeftDiff?: number,
-  tops?: Array<number>
+  tops?: Array<number>,
+  theme: Theme,
 }
 
 type State = {
@@ -67,8 +70,6 @@ const NoIconWrapper = styled.View`
   opacity: ${props => props.isUnlisted ? 0.7 : 1};
 `;
 
-const noIconImageSource = require('assets/images/no_logo.png');
-
 const IconWrapper = styled.View`
   height: ${props => props.diameter}px;
   width: ${props => props.diameter}px;
@@ -92,7 +93,7 @@ const NoIconImage = styled(CachedImage)`
   width: 192px;
 `;
 
-export default class AssetPattern extends React.Component<Props, State> {
+class AssetPattern extends React.Component<Props, State> {
   state = {
     errorLoading: false,
     didLoad: false,
@@ -263,9 +264,11 @@ export default class AssetPattern extends React.Component<Props, State> {
       icon,
       isListed,
       iconSource,
+      theme,
     } = this.props;
     const { errorLoading } = this.state;
     const patternIcon = iconSource || { uri: icon };
+    const noIconImageSource = image(theme).patternPlaceholder;
     return (
       <Wrapper>
         {(!isListed || !(icon || iconSource) || errorLoading) ?
@@ -282,3 +285,5 @@ export default class AssetPattern extends React.Component<Props, State> {
     );
   }
 }
+
+export default withTheme(AssetPattern);
