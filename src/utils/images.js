@@ -26,6 +26,14 @@ const patternPlaceholderLight = require('assets/images/no_logo.png');
 const patternPlaceholderDark = require('assets/images/no_logo_dark.png');
 const genericTokenLight = require('assets/images/tokens/genericTokenLight.png');
 const genericTokenDark = require('assets/images/tokens/genericTokenDark.png');
+const pillarLogoLight = require('assets/images/landing-pillar-logo.png');
+const pillarLogoDark = require('assets/images/landing-pillar-logo-dark-theme.png');
+const pillarLogoSmallLight = require('assets/images/landing-pillar-logo.png');
+const pillarLogoSmallDark = require('assets/images/landing-pillar-logo-dark-theme.png');
+const actionButtonBackgroundLight = require('assets/images/bg_action_button.png');
+const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
+const actionButtonBackgroundLightDisabled = require('assets/images/bg_action_button_disabled.png');
+const actionButtonBackgroundDarkDisabled = require('assets/images/bg_action_button_dark_disabled.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -34,13 +42,29 @@ function getImageByTheme(currentTheme, values) {
 export const images = (theme: Theme) => {
   const currentTheme = getThemeType(theme);
   return {
-    patternPlaceholder: getImageByTheme(currentTheme, {
+    towellie: getImageByTheme(currentTheme, {
       lightTheme: patternPlaceholderLight,
       darkTheme: patternPlaceholderDark,
     }),
     genericToken: getImageByTheme(currentTheme, {
       lightTheme: genericTokenLight,
       darkTheme: genericTokenDark,
+    }),
+    pillarLogo: getImageByTheme(currentTheme, {
+      lightTheme: pillarLogoLight,
+      darkTheme: pillarLogoDark,
+    }),
+    pillarLogoSmall: getImageByTheme(currentTheme, {
+      lightTheme: pillarLogoSmallLight,
+      darkTheme: pillarLogoSmallDark,
+    }),
+    actionButtonBackground: getImageByTheme(currentTheme, {
+      lightTheme: actionButtonBackgroundLight,
+      darkTheme: actionButtonBackgroundDark,
+    }),
+    actionButtonBackgroundDisabled: getImageByTheme(currentTheme, {
+      lightTheme: actionButtonBackgroundLightDisabled,
+      darkTheme: actionButtonBackgroundDarkDisabled,
     }),
   };
 };

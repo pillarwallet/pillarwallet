@@ -268,7 +268,7 @@ class AssetPattern extends React.Component<Props, State> {
     } = this.props;
     const { errorLoading } = this.state;
     const patternIcon = iconSource || { uri: icon };
-    const noIconImageSource = images(theme).patternPlaceholder;
+    const { towellie: noIconImageSource } = images(theme);
     return (
       <Wrapper>
         {(!isListed || !(icon || iconSource) || errorLoading) ?
