@@ -454,7 +454,7 @@ class Contact extends React.Component<Props, State> {
                 {disableSend &&
                   <SWActivationCard
                     message={this.getSWActivationMessage(sendingBlockedMessage)}
-                    buttonTitle="Deploy Smart Wallet"
+                    buttonTitle="Activate Smart Wallet"
                   />}
                 <ActivityFeed
                   feedTitle="Activity"

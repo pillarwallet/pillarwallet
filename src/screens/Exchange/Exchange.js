@@ -1182,8 +1182,8 @@ class ExchangeScreen extends React.Component<Props, State> {
           </FormWrapper>
           {!!disableNonFiatExchange &&
             <SWActivationCard
-              message="To exchange assets, deploy Smart Wallet first. You will have to pay a small fee."
-              buttonTitle="Deploy Smart Wallet"
+              message="To start exchanging assets you need to activate your Smart Wallet"
+              buttonTitle="Activate Smart Wallet"
             />
           }
           {!!isSubmitted &&
