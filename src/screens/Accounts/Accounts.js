@@ -46,6 +46,7 @@ import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { themedColors } from 'utils/themes';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
+import { getPrivateKey } from 'utils/keychain';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -69,7 +70,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { resetIncorrectPasswordAction, checkAuthAction } from 'actions/authActions';
 import { initializeBitcoinWalletAction, refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // selectors
@@ -201,6 +202,16 @@ class AccountsScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
+  loginWithPrivateKey = (onSuccess: Function) => {
+    const { checkPrivateKey } = this.props;
+    const privateKey = getPrivateKey();
+    if (privateKey) {
+      checkPrivateKey(privateKey, onSuccess);
+    } else {
+      this.setState({ showPinModal: true, onPinValidAction: onSuccess });
+    }
+  }
+
   handleCheckPinModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
@@ -217,7 +228,7 @@ class AccountsScreen extends React.Component<Props, State> {
       setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
       navigation.navigate(ASSETS);
     } else {
-      this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAndGoToPPN });
+      this.loginWithPrivateKey(this.switchToSmartWalletAndGoToPPN);
     }
   };
 
@@ -252,7 +263,7 @@ class AccountsScreen extends React.Component<Props, State> {
         navigation.navigate(ASSETS);
       } else {
         this.switchToWallet = wallet;
-        this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAccount });
+        this.loginWithPrivateKey(this.switchToSmartWalletAccount);
       }
     } else if (wallet.type === ACCOUNT_TYPES.KEY_BASED) {
       switchAccount(wallet.id);
@@ -377,7 +388,7 @@ class AccountsScreen extends React.Component<Props, State> {
   }
 
   startBTCInit = () => {
-    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC });
+    this.loginWithPrivateKey(this.initialiseBTC);
   };
 
   initialiseBTC = async (_: string, wallet: EthereumWallet) => {
@@ -610,6 +621,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
+  checkPrivateKey: (privateKey: string, onValidated: Function) => {
+    dispatch(checkAuthAction(null, privateKey, onValidated));
+  },
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);

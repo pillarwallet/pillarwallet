@@ -30,7 +30,7 @@ import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject, getPrivateKey, type KeyChainData } from 'utils/keychain';
+import { getKeychainDataObject, getPrivateKeyFromKeychainData, type KeyChainData } from 'utils/keychain';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function, options: Object) => void,
@@ -87,7 +87,7 @@ class CheckPin extends React.Component<Props, State> {
 
   checkPrivateKey = (data: KeyChainData) => {
     const { onPinValid, checkPrivateKey } = this.props;
-    const privateKey = getPrivateKey(data);
+    const privateKey = getPrivateKeyFromKeychainData(data);
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       checkPrivateKey(privateKey, onPinValid);

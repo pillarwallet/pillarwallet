@@ -36,7 +36,12 @@ import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import Toast from 'components/Toast';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject, getSupportedBiometryType, getPrivateKey, type KeyChainData } from 'utils/keychain';
+import {
+  getKeychainDataObject,
+  getSupportedBiometryType,
+  getPrivateKeyFromKeychainData,
+  type KeyChainData,
+} from 'utils/keychain';
 import { getBiometryType } from 'utils/settings';
 
 const ACTIVE_APP_STATE = 'active';
@@ -111,7 +116,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   loginWithPrivateKey = (data: KeyChainData) => {
     const { loginWithPrivateKey } = this.props;
-    const privateKey = getPrivateKey(data);
+    const privateKey = getPrivateKeyFromKeychainData(data);
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       loginWithPrivateKey(privateKey, this.onLoginSuccess);
@@ -193,7 +198,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   handlePinSubmit = (pin: string) => {
     const { loginWithPin } = this.props;
     getKeychainDataObject() // update keychain if privateKey isn't stored
-      .then(data => loginWithPin(pin, this.onLoginSuccess, !getPrivateKey(data)))
+      .then(data => loginWithPin(pin, this.onLoginSuccess, !getPrivateKeyFromKeychainData(data)))
       .catch(() => { loginWithPin(pin, this.onLoginSuccess, false); });
     this.handleLocking(false);
   };

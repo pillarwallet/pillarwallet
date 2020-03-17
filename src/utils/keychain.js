@@ -57,7 +57,11 @@ export const getSupportedBiometryType = (resHandler: (biometryType?: string) => 
   Keychain.getSupportedBiometryType().then(resHandler).catch(errorHandler || (() => null));
 };
 
-export const getPrivateKey = (data?: KeyChainData) => {
+export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
   if (!data || !(Object.keys(data).length) || !data.privateKey) return null;
   return get(data, 'privateKey', null);
+};
+
+export const getPrivateKey = () => {
+  return getKeychainDataObject().then(data => getPrivateKeyFromKeychainData(data));
 };
