@@ -58,6 +58,7 @@ import { getRate, getAssetsAsList, getBalance } from 'utils/assets';
 import { formatFiat, getGasPriceWei } from 'utils/common';
 import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
 import { getThemeType } from 'utils/themes';
+import { findKeyBasedAccount } from 'utils/accounts';
 
 // selectors
 import { balancesSelector } from 'selectors';
@@ -135,6 +136,8 @@ const Option = ({
 };
 
 class SWActivationCard extends React.Component<Props, State> {
+  _isMounted: boolean;
+
   constructor(props) {
     super(props);
     const { accounts } = this.props;
@@ -149,6 +152,7 @@ class SWActivationCard extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     const { fetchGasInfo } = this.props;
     fetchGasInfo();
     this.updateEstimations();
@@ -161,6 +165,10 @@ class SWActivationCard extends React.Component<Props, State> {
     }
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   getFormattedAmount = (amount) => {
     const { baseFiatCurrency, rates } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -170,8 +178,11 @@ class SWActivationCard extends React.Component<Props, State> {
 
   updateEstimations = () => {
     const { gasInfo } = this.props;
+    if (!gasInfo.isFetched) return;
+
     smartWalletService.estimateAccountDeployment(gasInfo)
       .then(deployEstimateFee => {
+        if (!this._isMounted) return;
         this.setState({ deployEstimateFee });
         this.updateTransferGasEstimate(deployEstimateFee);
       })
@@ -213,26 +224,23 @@ class SWActivationCard extends React.Component<Props, State> {
       switchAccount, accounts, navigation, gasInfo, assets,
     } = this.props;
     const { deployEstimateFee, ethTransferGasEstimate } = this.state;
-    const keyBasedAccount = accounts.find(account => account.type === ACCOUNT_TYPES.KEY_BASED);
+    const keyBasedAccount = findKeyBasedAccount(accounts);
     if (!keyBasedAccount) return;
+
     await switchAccount(keyBasedAccount.id);
 
     const gasPriceWei = getGasPriceWei(gasInfo);
     const gasPrice = gasPriceWei.toNumber();
     const assetsArray = getAssetsAsList(assets);
-    const asset: any = assetsArray.find((_asset: any) => _asset.name === 'Ethereum');
-    const {
-      symbol,
-      address: contractAddress,
-      decimals,
-    } = asset;
+    const asset = assetsArray.find(({ symbol }) => symbol === ETH);
+    if (!asset) return;
 
+    const { symbol, decimals } = asset;
     navigation.navigate(SMART_WALLET_UNLOCK, {
       transferTransactions: [{
         gasLimit: ethTransferGasEstimate,
         gasPrice,
         symbol,
-        contractAddress,
         decimals,
         amount: parseFloat(utils.formatEther(deployEstimateFee.toString())),
       }],
