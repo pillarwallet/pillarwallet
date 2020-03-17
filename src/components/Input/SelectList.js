@@ -90,6 +90,17 @@ export default class SelectList extends React.Component<Props, State> {
           renderItem={this.renderListItem}
           keyExtractor={({ name }) => name}
           keyboardShouldPersistTaps="handled"
+          initialNumToRender={10}
+          viewabilityConfig={{
+            minimumViewTime: 300,
+            viewAreaCoveragePercentThreshold: 100,
+            waitForInteraction: true,
+          }}
+          getItemLayout={(data, index) => ({
+            length: 70,
+            offset: 70 * index,
+            index,
+          })}
           ListEmptyComponent={
             <Wrapper
               fullScreen
