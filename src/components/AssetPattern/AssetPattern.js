@@ -20,13 +20,11 @@
 import * as React from 'react';
 import { Dimensions, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
+import { ColorMatrix, saturate } from 'react-native-color-matrix-image-filters';
+import { CachedImage } from 'react-native-cached-image';
+
 import { themedColors } from 'utils/themes';
 import { images } from 'utils/images';
-import { CachedImage } from 'react-native-cached-image';
-import {
-  ColorMatrix,
-  saturate,
-} from 'react-native-color-matrix-image-filters';
 import type { Theme } from 'models/Theme';
 
 type Props = {
