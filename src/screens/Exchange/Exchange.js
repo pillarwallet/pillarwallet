@@ -1113,11 +1113,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       });
     }
 
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockView = !isEmpty(sendingBlockedMessage)
-      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
-
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+      && !deploymentData.error;
 
     const isSelectedFiat = !isEmpty(selectedFromOption) &&
       fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
@@ -1162,7 +1163,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           </React.Fragment>
         )}
       >
-        {!!blockView && <SWActivationCard />}
+        {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
         <ScrollView
           contentContainerStyle={scrollContentStyle}

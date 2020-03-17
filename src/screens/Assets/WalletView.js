@@ -26,6 +26,8 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Tabs from 'components/Tabs';
@@ -415,10 +417,12 @@ class WalletView extends React.Component<Props, State> {
 
     const hasSmartWallet = smartWalletStatus.hasAccount;
     const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
 
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const blockAssetsView = !!Object.keys(sendingBlockedMessage).length
-      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
+    const blockAssetsView = !isEmpty(sendingBlockedMessage)
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+      && !deploymentData.error;
     const isAllInsightListDone = !insightList.some(({ status, key }) => !status && key !== 'biometric');
 
     const isInSearchAndFocus = hideInsightForSearch || isInSearchMode;
@@ -446,8 +450,9 @@ class WalletView extends React.Component<Props, State> {
           onClose={() => { hideInsight(); }}
           wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         />
-        {smartWalletFeatureEnabled && blockAssetsView &&
-          <SWActivationCard />}
+        {smartWalletFeatureEnabled && (blockAssetsView || !!deploymentData.error) &&
+          <SWActivationCard />
+        }
         {!blockAssetsView &&
         <SearchBlock
           hideSearch={blockAssetsView}
