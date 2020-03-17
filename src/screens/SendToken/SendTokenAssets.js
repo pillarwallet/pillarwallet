@@ -80,6 +80,7 @@ type NextScreenAssetData = {
   contractAddress: string,
   decimals: number,
   icon: string,
+  iconColor: string,
 };
 
 type NextScreenCollectibleData = {
@@ -115,6 +116,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       contractAddress,
       decimals,
       icon,
+      iconColor,
     } = nextScreenAssetData;
 
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
@@ -123,6 +125,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         contractAddress,
         decimals,
         icon,
+        iconColor,
       },
       receiver: ethAddress,
       source: 'Assets',
@@ -156,6 +159,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       decimals: item.decimals,
       ethAddress: contact.ethAddress,
       icon: fullIconMonoUrl,
+      iconColor: fullIconUrl,
     };
     if (assetShouldRender) {
       return null;
