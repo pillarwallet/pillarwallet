@@ -56,6 +56,7 @@ type State = {
   biometricsShown: boolean,
   lastAppState: string,
   supportedBiometryType: string,
+  showPin: Boolean,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -67,6 +68,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     biometricsShown: false,
     lastAppState: AppState.currentState,
     supportedBiometryType: '',
+    showPin: false,
   };
 
   constructor(props) {
@@ -113,6 +115,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       loginWithPrivateKey(privateKey, this.onLoginSuccess);
+    } else {
+      this.setState({ showPin: true });
     }
   }
 
@@ -200,7 +204,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   render() {
     const { walletState } = this.props.wallet;
-    const { waitingTime } = this.state;
+    const { waitingTime, showPin } = this.state;
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
@@ -211,24 +215,27 @@ class PinCodeUnlock extends React.Component<Props, State> {
         </Container>
       );
     }
+    if (showPin) {
+      return (
+        <Container>
+          <Header centerTitle title="Enter pincode" />
+          {showError}
+          {waitingTime > 0 &&
+            <ErrorMessage>Too many attempts, please try again in {waitingTime.toFixed(0)} seconds.</ErrorMessage>
+          }
+          {waitingTime <= 0 &&
+            <PinCode
+              onPinEntered={this.handlePinSubmit}
+              pageInstructions=""
+              onForgotPin={this.handleForgotPasscode}
+              pinError={!!pinError}
+            />
+          }
+        </Container>
+      );
+    }
 
-    return (
-      <Container>
-        <Header centerTitle title="Enter pincode" />
-        {showError}
-        {waitingTime > 0 &&
-          <ErrorMessage>Too many attempts, please try again in {waitingTime.toFixed(0)} seconds.</ErrorMessage>
-        }
-        {waitingTime <= 0 &&
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            pageInstructions=""
-            onForgotPin={this.handleForgotPasscode}
-            pinError={!!pinError}
-          />
-        }
-      </Container>
-    );
+    return null;
   }
 }
 

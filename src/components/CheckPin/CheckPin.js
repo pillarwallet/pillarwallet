@@ -47,6 +47,7 @@ type Props = {
 type State = {
   biometricsShown: boolean,
   lastAppState: string,
+  showPin: Boolean,
 }
 
 const CheckPinWrapper = styled(Container)`
@@ -66,6 +67,7 @@ class CheckPin extends React.Component<Props, State> {
   state = {
     biometricsShown: false,
     lastAppState: AppState.currentState,
+    showPin: false,
   };
 
   componentDidMount() {
@@ -89,6 +91,8 @@ class CheckPin extends React.Component<Props, State> {
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       checkPrivateKey(privateKey, onPinValid);
+    } else {
+      this.setState({ showPin: true });
     }
   }
 
@@ -139,7 +143,8 @@ class CheckPin extends React.Component<Props, State> {
   };
 
   render() {
-    const { wallet: { walletState }, isChecking } = this.props;
+    const { wallet: { walletState }, isChecking, autoLogin } = this.props;
+    const { showPin } = this.state;
     const pinError = this.getPinError(walletState);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
@@ -151,17 +156,21 @@ class CheckPin extends React.Component<Props, State> {
       );
     }
 
-    return (
-      <CheckPinWrapper>
-        {showError}
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          pageInstructions=""
-          showForgotButton={false}
-          pinError={!!pinError}
-        />
-      </CheckPinWrapper>
-    );
+    if (!autoLogin || showPin) {
+      return (
+        <CheckPinWrapper>
+          {showError}
+          <PinCode
+            onPinEntered={this.handlePinSubmit}
+            pageInstructions=""
+            showForgotButton={false}
+            pinError={!!pinError}
+          />
+        </CheckPinWrapper>
+      );
+    }
+
+    return null;
   }
 }
 
