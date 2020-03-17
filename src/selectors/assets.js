@@ -17,14 +17,23 @@ export const accountAssetsSelector = createSelector(
   },
 );
 
-export const allAccountsAssetsSelector = createSelector(assetsSelector, (assets) => {
-  const uniqueAssets = [];
-  Object.keys(assets).forEach(accountId => {
-    const accountAssets = get(assets, accountId, {});
-    Object.keys(accountAssets).forEach(asset => {
-      if (!uniqueAssets.includes(asset)) return;
-      uniqueAssets.push(asset);
+export const allAccountsAssetsSelector = createSelector(
+  assetsSelector,
+  hiddenAssetsSelector,
+  (assets, hiddenAssets) => {
+    const uniqueAssets = [];
+
+    Object.keys(assets).forEach(accountId => {
+      const accountAssets = get(assets, accountId, {});
+      const accountHiddenAssets = get(hiddenAssets, accountId, []);
+      const enabledAssets = getEnabledAssets(accountAssets, accountHiddenAssets);
+
+      Object.keys(enabledAssets).forEach(asset => {
+        if (!uniqueAssets.includes(asset)) return;
+        uniqueAssets.push(asset);
+      });
     });
-  });
-  return uniqueAssets;
-});
+
+    return uniqueAssets;
+  },
+);
