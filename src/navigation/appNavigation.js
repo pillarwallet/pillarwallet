@@ -118,7 +118,7 @@ import {
   stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
   startListeningForBalanceChangeAction,
@@ -675,7 +675,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchAssetsBalances: () => Function,
+  fetchAllAccountsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -719,7 +719,7 @@ class AppFlow extends React.Component<Props, State> {
       startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
-      fetchAssetsBalances,
+      fetchAllAccountsBalances,
       getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
@@ -727,7 +727,7 @@ class AppFlow extends React.Component<Props, State> {
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances();
+    fetchAllAccountsBalances();
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
@@ -915,7 +915,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
+  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },
