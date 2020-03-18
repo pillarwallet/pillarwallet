@@ -390,10 +390,12 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
-    if (enableBiometrics) await dispatch(changeUseBiometricsAction(true, wallet.privateKey, true));
-
     // STEP 7: save private key to keychain
-    await setKeychainDataObject({ privateKey: wallet.privateKey });
+    if (enableBiometrics) {
+      await dispatch(changeUseBiometricsAction(true, wallet.privateKey, true));
+    } else {
+      await setKeychainDataObject({ privateKey: wallet.privateKey });
+    }
 
     // STEP 8: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;

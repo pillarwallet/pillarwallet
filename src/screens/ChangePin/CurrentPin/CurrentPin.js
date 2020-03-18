@@ -56,6 +56,7 @@ class CurrentPin extends React.Component<Props> {
         revealMnemonic
         onPinValid={(currentPin) => navigation.navigate(CHANGE_PIN_NEW_PIN, { currentPin })}
         headerProps={{ onClose: this.handleScreenDismissal }}
+        autoLogin={false}
       />
     );
   }

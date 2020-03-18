@@ -61,7 +61,7 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
-import { setKeychainDataObject } from 'utils/keychain';
+import { setKeychainDataObject, resetKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -463,6 +463,7 @@ export const logoutAction = () => {
     await resetAppState(dispatch, getState);
     await dispatch({ type: LOG_OUT });
     await dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    await resetKeychainDataObject();
     if (themeType === DARK_THEME) await dispatch(setAppThemeAction(DARK_THEME)); // to persist dark theme after storage
     // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));

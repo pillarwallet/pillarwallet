@@ -29,12 +29,12 @@ export type KeyChainData = {
   privateKey?: string,
 };
 
-export const setKeychainDataObject = (data: KeyChainData) => Keychain
+export const setKeychainDataObject = (data: KeyChainData, biometry?: boolean) => Keychain
   .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
-    // accessControl: Platform.select({
-    //   ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
-    //   android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-    // }),
+    accessControl: biometry && Platform.select({
+      ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+      android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+    }),
     accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
     service: KEYCHAIN_SERVICE,
   })
