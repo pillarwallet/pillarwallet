@@ -101,8 +101,6 @@ type State = {
     [accountType: string]: number,
   },
   feesLoaded: boolean,
-  enoughInSmartWallet: boolean,
-  enoughInKeyWallet: boolean,
 };
 
 const OptionContainer = styled.View`
@@ -149,8 +147,6 @@ class SWActivationCard extends React.Component<Props, State> {
     selectedWallet: null,
     totalFees: {},
     feesLoaded: false,
-    enoughInSmartWallet: false,
-    enoughInKeyWallet: false,
   };
 
   componentDidMount() {
@@ -211,8 +207,6 @@ class SWActivationCard extends React.Component<Props, State> {
     let updateState = {
       feesLoaded: true,
       totalFees,
-      enoughInSmartWallet,
-      enoughInKeyWallet,
     };
     if (!selectedWallet && (enoughInKeyWallet || enoughInSmartWallet)) {
       updateState = {
@@ -288,14 +282,14 @@ class SWActivationCard extends React.Component<Props, State> {
     const {
       isModalVisible,
       selectedWallet,
-      enoughInSmartWallet,
-      enoughInKeyWallet,
       totalFees,
       feesLoaded,
     } = this.state;
 
     const ethBalanceInSmartWallet = this.getAccountBalance(ACCOUNT_TYPES.SMART_WALLET);
     const ethBalanceInKeyWallet = this.getAccountBalance(ACCOUNT_TYPES.KEY_BASED);
+    const enoughInSmartWallet = feesLoaded && ethBalanceInSmartWallet > totalFees[ACCOUNT_TYPES.SMART_WALLET];
+    const enoughInKeyWallet = feesLoaded && ethBalanceInKeyWallet > totalFees[ACCOUNT_TYPES.KEY_BASED];
 
     let buttonEnabled = false;
     if (selectedWallet) {
