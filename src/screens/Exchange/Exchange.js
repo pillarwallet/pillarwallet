@@ -38,8 +38,8 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
-import DeploymentView from 'components/DeploymentView';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import SWActivationCard from 'components/SWActivationCard';
 import OfferCard from 'components/OfferCard/OfferCard';
 
 // actions
@@ -54,10 +54,9 @@ import {
   getMetaDataAction,
   getExchangeSupportedAssetsAction,
 } from 'actions/exchangeActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // constants
-import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS } from 'constants/assetsConstants';
 import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -69,7 +68,7 @@ import { fiatCurrencies } from 'fixtures/assets';
 import { spacing, fontStyles } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
-import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
 import { getThemeColors, themedColors } from 'utils/themes';
 
@@ -150,7 +149,6 @@ type Props = {
   oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
-  deploySmartWallet: Function,
   smartWalletFeatureEnabled: boolean,
   getMetaData: () => void,
   exchangeSupportedAssets: Asset[],
@@ -214,6 +212,17 @@ const calculateMaxAmount = (token: string, balance: number | string): number => 
 
 const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
+};
+
+const getFormattedBalanceInFiat = (
+  baseFiatCurrency: ?string,
+  assetBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string) => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const assetBalanceInFiat = assetBalance ?
+    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : null;
+  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : null;
 };
 
 const generateFormStructure = (balances: Balances) => {
@@ -935,6 +944,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       balances,
       exchangeSupportedAssets,
       baseFiatCurrency,
+      rates,
     } = this.props;
 
     if (selectedToSymbol && !exchangeSupportedAssets.some(({ symbol }) => symbol === selectedToSymbol)) return [];
@@ -944,8 +954,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         && !!exchangeSupportedAssets.some(asset => asset.symbol === symbol))
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
-        const assetBalanceInFiat = formatAmount(getBalance(balances, symbol));
-        const formattedBalanceInFiat = formatFiat(assetBalanceInFiat, baseFiatCurrency);
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         return ({
           key: symbol,
           value: symbol,
@@ -972,13 +981,12 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   generateSupportedAssetsOptions = (assets: Asset[]) => {
     if (!Array.isArray(assets)) return [];
-    const { balances, baseFiatCurrency } = this.props;
+    const { balances, baseFiatCurrency, rates } = this.props;
     return [...assets] // prevent mutation of param
       .map(({ symbol, iconUrl, ...rest }) => {
         const rawAssetBalance = getBalance(balances, symbol);
         const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-        const assetBalanceInFiat = rawAssetBalance ? formatAmount(getBalance(balances, symbol)) : null;
-        const formattedBalanceInFiat = assetBalanceInFiat ? formatFiat(assetBalanceInFiat, baseFiatCurrency) : null;
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
         return {
           key: symbol,
           value: symbol,
@@ -1078,7 +1086,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       markNotificationAsSeen,
       accounts,
       smartWalletState,
-      deploySmartWallet,
       theme,
     } = this.props;
 
@@ -1106,14 +1113,15 @@ class ExchangeScreen extends React.Component<Props, State> {
       });
     }
 
+    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockView = !isEmpty(sendingBlockedMessage)
-      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED;
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+      && !deploymentData.error;
+
     const isSelectedFiat = !isEmpty(selectedFromOption) &&
       fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
-
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
     const colors = getThemeColors(theme);
     const scrollContentStyle = {
@@ -1135,7 +1143,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
-        footer={!reorderedOffers.length && (
+        footer={!blockView && !reorderedOffers.length && (
           <React.Fragment>
             {!isSubmitted
               ?
@@ -1155,13 +1163,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           </React.Fragment>
         )}
       >
-        {!!blockView &&
-        <DeploymentView
-          message={deploymentData.error ? getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage}
-          buttonAction={deploymentData.error ? () => deploySmartWallet() : null}
-          buttonLabel="Retry"
-          forceRetry={!!deploymentData.error}
-        />}
+        {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
         <ScrollView
           contentContainerStyle={scrollContentStyle}
@@ -1180,14 +1182,10 @@ class ExchangeScreen extends React.Component<Props, State> {
             />
           </FormWrapper>
           {!!disableNonFiatExchange &&
-          <DeploymentView
-            message={{
-              title: 'To exchange assets, deploy Smart Wallet first',
-              message: 'You will have to pay a small fee',
-            }}
-            buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-            buttonLabel="Deploy Smart Wallet"
-          />
+            <SWActivationCard
+              message="To start exchanging assets you need to activate your Smart Wallet"
+              buttonTitle="Activate Smart Wallet"
+            />
           }
           {!!isSubmitted &&
           <FlatList
@@ -1286,7 +1284,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback),
   ),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
 });

@@ -18,36 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import OryginalStorybook from 'storybook';
-import { connect } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { AppearanceProvider } from 'react-native-appearance';
-import { getThemeByType } from 'utils/themes';
+import { storiesOf } from '@storybook/react-native';
+import ActionModal from './ActionModal';
 
-import type { RootReducerState } from 'reducers/rootReducer';
+const items = [
+  {
+    label: 'First item',
+    chevron: true,
+    key: 'first',
+  },
+  {
+    label: 'Second item',
+    money: '123$',
+    key: 'second',
+  },
+];
 
-type Props = {
-  themeType: string,
-};
-
-const Storybook = (props) => {
-  const {
-    themeType,
-  } = props;
-  const theme = getThemeByType(themeType);
-  return (
-    <AppearanceProvider>
-      <ThemeProvider theme={theme}>
-        <OryginalStorybook />
-      </ThemeProvider>
-    </AppearanceProvider>
-  );
-};
-
-const mapStateToProps = ({
-  appSettings: { data: { themeType } },
-}: RootReducerState): $Shape<Props> => ({
-  themeType,
-});
-
-export default connect(mapStateToProps)(Storybook);
+storiesOf('ActionModal', module).add('default', () => (
+  <ActionModal items={items} isVisible onModalClose={() => {}} />
+));
