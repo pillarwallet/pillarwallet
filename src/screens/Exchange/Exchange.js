@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -94,6 +95,7 @@ const ListHeader = styled.View`
   width: 100%;
   align-items: flex-start;
   margin-bottom: 8px;
+  padding: 0 ${spacing.layoutSides}px;
 `;
 
 const FormWrapper = styled.View`
@@ -104,6 +106,7 @@ const FormWrapper = styled.View`
 const ESWrapper = styled.View`
   width: 100%;
   align-items: center;
+  padding: 0 ${spacing.layoutSides}px;
 `;
 
 const PromoWrapper = styled.View`
@@ -119,11 +122,16 @@ const PromoText = styled(BaseText)`
   text-align: center;
 `;
 
-const FooterWrapper = styled.View`
+const PopularSwapsGridWrapper = styled.View`
   border-top-width: 1px;
-  border-top-color: ${themedColors.tertiary};
+  border-bottom-width: 1px;
+  border-color: ${themedColors.tertiary};
   background-color: ${themedColors.card};
-  padding: ${spacing.large}px ${spacing.layoutSides}px;
+  padding: ${spacing.large}px ${spacing.layoutSides}px 0;
+`;
+
+const OfferCardWrapper = styled.View`
+  padding: 0 ${spacing.layoutSides}px;
 `;
 
 type Props = {
@@ -896,46 +904,50 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     if (isFiat) {
       return (
-        <OfferCard
-          isDisabled={isTakeButtonDisabled || disableOffer}
-          onPress={() => this.onFiatOfferPress(offer)}
-          labelTop="Amount total"
-          valueTop={`${askRate} ${fromAssetCode}`}
-          cardImageSource={providerLogo}
-          cardTopButton={getCardTopButtonData(topButtonProps)}
-          labelBottom="Fees total"
-          valueBottom={feeAmount ?
-            `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
-            : 'Will be calculated'
-          }
-          cardMainButton={{
-            label: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
-            onPress: () => this.onFiatOfferPress(offer),
-            isDisabled: disableFiatExchange,
-            isLoading: isTakeOfferPressed,
-          }}
-          cardNote={offerRestricted}
-        />
+        <OfferCardWrapper>
+          <OfferCard
+            isDisabled={isTakeButtonDisabled || disableOffer}
+            onPress={() => this.onFiatOfferPress(offer)}
+            labelTop="Amount total"
+            valueTop={`${askRate} ${fromAssetCode}`}
+            cardImageSource={providerLogo}
+            cardTopButton={getCardTopButtonData(topButtonProps)}
+            labelBottom="Fees total"
+            valueBottom={feeAmount ?
+              `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
+              : 'Will be calculated'
+            }
+            cardMainButton={{
+              label: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
+              onPress: () => this.onFiatOfferPress(offer),
+              isDisabled: disableFiatExchange,
+              isLoading: isTakeOfferPressed,
+            }}
+            cardNote={offerRestricted}
+          />
+        </OfferCardWrapper>
       );
     }
 
     return (
-      <OfferCard
-        isDisabled={isTakeButtonDisabled || disableOffer}
-        onPress={() => this.onOfferPress(offer)}
-        labelTop="Exchange rate"
-        valueTop={formatAmountDisplay(askRate)}
-        cardImageSource={providerLogo}
-        cardTopButton={getCardTopButtonData(topButtonProps)}
-        labelBottom="Available"
-        valueBottom={available}
-        cardMainButton={{
+      <OfferCardWrapper>
+        <OfferCard
+          isDisabled={isTakeButtonDisabled || disableOffer}
+          onPress={() => this.onOfferPress(offer)}
+          labelTop="Exchange rate"
+          valueTop={formatAmountDisplay(askRate)}
+          cardImageSource={providerLogo}
+          cardTopButton={getCardTopButtonData(topButtonProps)}
+          labelBottom="Available"
+          valueBottom={available}
+          cardMainButton={{
           label: `${amountToBuyString} ${toAssetCode}`,
           onPress: () => this.onOfferPress(offer),
           isDisabled: isTakeButtonDisabled || disableNonFiatExchange,
           isLoading: isTakeOfferPressed,
         }}
-      />
+        />
+      </OfferCardWrapper>
     );
   };
 
@@ -1126,12 +1138,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const scrollContentStyle = {
       backgroundColor: isSubmitted ? colors.surface : colors.card,
+      flex: 1,
     };
 
     const flatListContentStyle = {
       width: '100%',
-      paddingHorizontal: spacing.layoutSides,
       paddingVertical: 10,
+      flexGrow: 1,
     };
 
     const swaps = this.generatePopularSwaps();
@@ -1144,23 +1157,11 @@ class ExchangeScreen extends React.Component<Props, State> {
         }}
         inset={{ bottom: 'never' }}
         footer={!blockView && !reorderedOffers.length && (
-          <React.Fragment>
-            {!isSubmitted
-              ?
-                <PromoWrapper>
-                  <PromoText>
-                    Aggregated from many decentralized exchanges and token swap services
-                  </PromoText>
-                </PromoWrapper>
-              :
-                <FooterWrapper>
-                  <MediumText medium style={{ marginBottom: spacing.medium }}>
-                    Try these popular swaps
-                  </MediumText>
-                  <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
-                </FooterWrapper>
-            }
-          </React.Fragment>
+          <PromoWrapper>
+            <PromoText>
+              Aggregated from many decentralized exchanges and token swap services
+            </PromoText>
+          </PromoWrapper>
         )}
       >
         {(blockView || !!deploymentData.error) && <SWActivationCard />}
@@ -1187,32 +1188,43 @@ class ExchangeScreen extends React.Component<Props, State> {
               buttonTitle="Activate Smart Wallet"
             />
           }
-          {!!isSubmitted &&
-          <FlatList
-            data={reorderedOffers}
-            keyExtractor={(item) => item._id}
-            style={{ width: '100%' }}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={flatListContentStyle}
-            renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
-            ListHeaderComponent={(
-              <ListHeader>
-                <ExchangeStatus isVisible={isSubmitted} />
-              </ListHeader>
-            )}
-            ListEmptyComponent={isSubmitted
-              && (
+          {!!isSubmitted && (
+            <FlatList
+              data={reorderedOffers}
+              keyExtractor={(item) => item._id}
+              style={{ width: '100%', flex: 1 }}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={flatListContentStyle}
+              renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
+              ListHeaderComponent={(
+                <ListHeader>
+                  <ExchangeStatus isVisible={isSubmitted} />
+                </ListHeader>
+              )}
+              ListEmptyComponent={
                 <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
                   <EmptyStateParagraph
                     title="No live offers"
                     bodyText="Currently no matching offers from exchange services are provided.
-                    New offers may appear at any time — don’t miss it."
+                              New offers may appear at any time — don’t miss it."
                     large
                     wide
                   />
                 </ESWrapper>
-              )}
-          />}
+              }
+              ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }}
+              ListFooterComponent={
+                <PopularSwapsGridWrapper>
+                  <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
+                    <MediumText medium style={{ marginBottom: spacing.medium }}>
+                        Try these popular swaps
+                    </MediumText>
+                    <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
+                  </SafeAreaView>
+                </PopularSwapsGridWrapper>
+              }
+            />
+          )}
         </ScrollView>}
       </ContainerWithHeader>
     );
