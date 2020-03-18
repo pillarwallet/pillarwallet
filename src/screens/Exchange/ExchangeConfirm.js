@@ -361,7 +361,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
                 {errorMessage}
               </BaseText>}
               <ButtonText
-                buttonText="Advanced options"
+                buttonText="Speed settings"
                 leftIconProps={{ name: 'options', style: { fontSize: 16 } }}
                 onPress={() => this.setState({ showFeeModal: true })}
               />
