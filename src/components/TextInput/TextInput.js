@@ -253,9 +253,9 @@ const Selector = styled.TouchableOpacity`
   background-color: ${themedColors.card};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  ${({ fullWidth, theme }) => fullWidth && `
+  border: 1px solid ${themedColors.secondaryAccent};
+  ${({ fullWidth }) => fullWidth && `
     flex: 1;
-    border: 1px solid ${theme.colors.secondaryAccent};
     border-radius: 4px;
   `}
   margin: 0;
