@@ -259,10 +259,6 @@ const generateFormStructure = (balances: Balances) => {
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
-    if (isEmpty(selector)) {
-      return 'Asset should be selected.';
-    }
-
     const { symbol, decimals } = selector;
 
     const isFiat = isFiatCurrency(symbol);
@@ -584,41 +580,22 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   provideOptions = () => {
-    const { assets, exchangeSupportedAssets, fiatExchangeSupportedAssets } = this.props;
+    const { assets, exchangeSupportedAssets } = this.props;
 
-    const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
-    const selectedToAssetSymbol = get(this.state, 'value.toInput.selector.symbol', '');
-    const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
-
-    const assetsOptionsBuying = this.generateSupportedAssetsOptions(isFromSelectedFiat
-      ? fiatExchangeSupportedAssets : exchangeSupportedAssets);
-
-    const assetsOptionsFrom = this.generateAssetsOptions(assets, selectedToAssetSymbol);
-
-    const initialAssetsOptionsBuying = selectedFromAssetSymbol
-      ? assetsOptionsBuying.filter(({ value }) => value !== selectedFromAssetSymbol)
-      : assetsOptionsBuying;
-
-    const initialAssetsOptionsSelling = selectedToAssetSymbol
-      ? assetsOptionsFrom.filter(({ value }) => value !== selectedToAssetSymbol)
-      : assetsOptionsFrom;
-
-    // show FIAT options only if TO value isn't selected or selected TO value is supported by fiat exchange providers
-    const fiatOptionsFrom = !selectedToAssetSymbol
-    || fiatExchangeSupportedAssets.some(({ symbol }) => symbol === selectedToAssetSymbol)
-      ? this.generateFiatOptions()
-      : [];
+    const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
+    const assetsOptionsFrom = this.generateAssetsOptions(assets);
+    const fiatOptionsFrom = this.generateFiatOptions();
 
     const popularOptions = POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
-      const popularAsset = initialAssetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
+      const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
       if (popularAsset) return [...popularAssetsList, popularAsset];
       return popularAssetsList;
     }, []);
 
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
-    thisStateFormOptionsCopy.fields.fromInput.config.options = initialAssetsOptionsSelling;
+    thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
     thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
-    thisStateFormOptionsCopy.fields.toInput.config.options = initialAssetsOptionsBuying;
+    thisStateFormOptionsCopy.fields.toInput.config.options = assetsOptionsBuying;
     thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions = popularOptions;
 
     this.setState({
@@ -951,15 +928,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     );
   };
 
-  generateAssetsOptions = (assets: Assets, selectedToSymbol?: string) => {
+  generateAssetsOptions = (assets: Assets) => {
     const {
       balances,
       exchangeSupportedAssets,
       baseFiatCurrency,
       rates,
     } = this.props;
-
-    if (selectedToSymbol && !exchangeSupportedAssets.some(({ symbol }) => symbol === selectedToSymbol)) return [];
 
     return sortAssets(assets)
       .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
@@ -1014,6 +989,19 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   handleFormChange = (value: Object) => {
     this.resetSearch(); // reset all cards before they change according to input values
+    const { value: currentValue } = this.state;
+
+    const selectedFromAsset = get(value, 'fromInput.selector.value', '');
+    const selectedToAsset = get(value, 'toInput.selector.value', '');
+
+    if (selectedFromAsset === selectedToAsset) {
+      if (get(currentValue, 'fromInput.selector.value') === selectedFromAsset) {
+        value.fromInput = { selector: {}, input: '' };
+      } else if (get(currentValue, 'toInput.selector.value') === selectedToAsset) {
+        value.toInput = { selector: {}, input: '' };
+      }
+    }
+
     this.setState({ value });
     this.updateOptions(value);
     if (!this.exchangeForm.getValue()) return; // this validates form!
@@ -1027,9 +1015,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
     } = this.props;
-    const { fromInput, toInput } = value;
+    const { fromInput } = value;
     const { selector: selectedFromOption, input: amount } = fromInput;
-    const { selector: selectedToOption } = toInput;
     let amountValueInFiat;
     let valueInFiatToShow;
     if (amount && !isEmpty(selectedFromOption)) {
@@ -1041,27 +1028,18 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
 
     const optionsFrom = this.generateAssetsOptions(assets);
-    let newOptionsFrom = optionsFrom;
-    if (!isEmpty(selectedToOption)) {
-      newOptionsFrom = optionsFrom.filter((option) => option.value !== selectedToOption.value);
-    }
-
     const optionsTo = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
-    let newOptionsTo = optionsTo;
-    if (!isEmpty(selectedFromOption)) {
-      newOptionsTo = optionsTo.filter((option) => option.value !== selectedFromOption.value);
-    }
 
     const newOptions = t.update(this.state.formOptions, {
       fields: {
         fromInput: {
           config: {
-            options: { $set: newOptionsFrom },
+            options: { $set: optionsFrom },
             inputAddonText: { $set: valueInFiatToShow },
           },
         },
         toInput: {
-          config: { options: { $set: newOptionsTo } },
+          config: { options: { $set: optionsTo } },
         },
       },
     });
