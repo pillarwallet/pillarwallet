@@ -96,9 +96,13 @@ type Props = {
 
 type State = {
   isModalVisible: boolean,
-  selectedWallet: string,
-  deployEstimateFee: number,
-  ethTransferGasEstimate: number,
+  selectedWallet: ?string,
+  totalFees: {
+    [accountType: string]: number,
+  },
+  feesLoaded: boolean,
+  enoughInSmartWallet: boolean,
+  enoughInKeyWallet: boolean,
 };
 
 const OptionContainer = styled.View`
@@ -137,31 +141,29 @@ const Option = ({
 
 class SWActivationCard extends React.Component<Props, State> {
   _isMounted: boolean;
+  deployEstimateFee: number = 0;
+  ethTransferGasEstimate: number = 0;
 
-  constructor(props) {
-    super(props);
-    const { accounts } = this.props;
-    const smartWalletAccount = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-
-    this.state = {
-      isModalVisible: false,
-      selectedWallet: smartWalletAccount ? ACCOUNT_TYPES.SMART_WALLET : ACCOUNT_TYPES.KEY_BASED,
-      deployEstimateFee: 0,
-      ethTransferGasEstimate: 0,
-    };
-  }
+  state = {
+    isModalVisible: false,
+    selectedWallet: null,
+    totalFees: {},
+    feesLoaded: false,
+    enoughInSmartWallet: false,
+    enoughInKeyWallet: false,
+  };
 
   componentDidMount() {
     this._isMounted = true;
     const { fetchGasInfo } = this.props;
     fetchGasInfo();
-    this.updateEstimations();
+    this.fetchEstimations();
   }
 
   componentDidUpdate(prevProps: Props) {
     const { gasInfo } = this.props;
     if (!isEqual(prevProps.gasInfo, gasInfo)) {
-      this.updateEstimations();
+      this.fetchEstimations();
     }
   }
 
@@ -169,61 +171,76 @@ class SWActivationCard extends React.Component<Props, State> {
     this._isMounted = false;
   }
 
-  getFormattedAmount = (amount) => {
-    const { baseFiatCurrency, rates } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const balanceInFiat = amount * getRate(rates, ETH, fiatCurrency);
-    return formatFiat(balanceInFiat, baseFiatCurrency || defaultFiatCurrency);
-  };
-
-  updateEstimations = () => {
-    const { gasInfo } = this.props;
+  fetchEstimations = async () => {
+    const { accounts, gasInfo } = this.props;
     if (!gasInfo.isFetched) return;
 
-    smartWalletService.estimateAccountDeployment(gasInfo)
-      .then(deployEstimateFee => {
-        if (!this._isMounted) return;
-        this.setState({ deployEstimateFee });
-        this.updateTransferGasEstimate(deployEstimateFee);
-      })
-      .catch(() => {});
-  };
+    this.deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo).catch(() => {});
+    if (!this.deployEstimateFee) return;
 
-  updateTransferGasEstimate = (amount) => {
-    const { accounts } = this.props;
+    const smartWallet = accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET);
+    const keyBasedWallet = accounts.find(account => account.type === ACCOUNT_TYPES.KEY_BASED);
 
-    const SWAccount = accounts.find(account => account.type === ACCOUNT_TYPES.SMART_WALLET);
-    const keyBasedAccount = accounts.find(account => account.type === ACCOUNT_TYPES.KEY_BASED);
-
-    calculateGasEstimate({
+    this.ethTransferGasEstimate = await calculateGasEstimate({
       symbol: ETH,
-      from: keyBasedAccount && keyBasedAccount.id,
-      to: SWAccount && SWAccount.id,
-      amount,
-    })
-      .then(ethTransferGasEstimate => this.setState({ ethTransferGasEstimate }))
-      .catch(() => {});
+      from: keyBasedWallet && keyBasedWallet.id,
+      to: smartWallet && smartWallet.id,
+      amount: this.deployEstimateFee,
+    }).catch(() => {});
+    if (!this.ethTransferGasEstimate) return;
+
+    this.updateFees();
   };
 
-  getTransactionEstimate = () => {
-    const {
-      deployEstimateFee, ethTransferGasEstimate, selectedWallet,
-    } = this.state;
+  getAccountBalance = (accountType) => {
+    const { accounts, balances } = this.props;
+    const foundAccount = accounts.find(account => account.type === accountType);
+    if (!foundAccount) return 0;
+    return getBalance(balances[foundAccount.id], ETH);
+  };
+
+  updateFees = () => {
+    const { selectedWallet } = this.state;
+
+    const ethBalanceInSmartWallet = this.getAccountBalance(ACCOUNT_TYPES.SMART_WALLET);
+    const ethBalanceInKeyWallet = this.getAccountBalance(ACCOUNT_TYPES.KEY_BASED);
+    const totalFees = this.calculateFeesPerAccount();
+    const enoughInSmartWallet = ethBalanceInSmartWallet > totalFees[ACCOUNT_TYPES.SMART_WALLET];
+    const enoughInKeyWallet = ethBalanceInKeyWallet > totalFees[ACCOUNT_TYPES.KEY_BASED];
+
+    let updateState = {
+      feesLoaded: true,
+      totalFees,
+      enoughInSmartWallet,
+      enoughInKeyWallet,
+    };
+    if (!selectedWallet && (enoughInKeyWallet || enoughInSmartWallet)) {
+      updateState = {
+        ...updateState,
+        selectedWallet: enoughInSmartWallet ? ACCOUNT_TYPES.SMART_WALLET : ACCOUNT_TYPES.KEY_BASED,
+      };
+    }
+
+    if (!this._isMounted) return;
+    this.setState({ ...updateState });
+  };
+
+  calculateFeesPerAccount = () => {
     const { gasInfo } = this.props;
     const gasPriceWei = getGasPriceWei(gasInfo);
-    let totalFees = parseInt(deployEstimateFee, 10);
+    const smartWalletFee = parseInt(this.deployEstimateFee, 10);
+    const keyBasedFee = smartWalletFee + gasPriceWei.mul(this.ethTransferGasEstimate).toNumber();
 
-    if (selectedWallet === ACCOUNT_TYPES.KEY_BASED) {
-      totalFees += gasPriceWei.mul(ethTransferGasEstimate).toNumber();
-    }
-    return parseFloat(utils.formatEther(totalFees.toString()));
+    return {
+      [ACCOUNT_TYPES.SMART_WALLET]: parseFloat(utils.formatEther(smartWalletFee.toString())),
+      [ACCOUNT_TYPES.KEY_BASED]: parseFloat(utils.formatEther(keyBasedFee.toString())),
+    };
   };
 
   deployFromLegacyWallet = async () => {
     const {
       switchAccount, accounts, navigation, gasInfo, assets,
     } = this.props;
-    const { deployEstimateFee, ethTransferGasEstimate } = this.state;
     const keyBasedAccount = findKeyBasedAccount(accounts);
     if (!keyBasedAccount) return;
 
@@ -238,11 +255,11 @@ class SWActivationCard extends React.Component<Props, State> {
     const { symbol, decimals } = asset;
     navigation.navigate(SMART_WALLET_UNLOCK, {
       transferTransactions: [{
-        gasLimit: ethTransferGasEstimate,
+        gasLimit: this.ethTransferGasEstimate,
         gasPrice,
         symbol,
         decimals,
-        amount: parseFloat(utils.formatEther(deployEstimateFee.toString())),
+        amount: parseFloat(utils.formatEther(this.deployEstimateFee.toString())),
       }],
     });
   };
@@ -250,6 +267,7 @@ class SWActivationCard extends React.Component<Props, State> {
   activateSW = () => {
     const { selectedWallet } = this.state;
     const { deploySmartWallet } = this.props;
+    if (!selectedWallet) return;
     if (selectedWallet === ACCOUNT_TYPES.SMART_WALLET) {
       deploySmartWallet();
     } else {
@@ -258,21 +276,44 @@ class SWActivationCard extends React.Component<Props, State> {
     this.setState({ isModalVisible: false });
   };
 
+  getFormattedAmount = (amount) => {
+    const { baseFiatCurrency, rates } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const balanceInFiat = amount * getRate(rates, ETH, fiatCurrency);
+    return formatFiat(balanceInFiat, baseFiatCurrency || defaultFiatCurrency);
+  };
+
   renderModal = () => {
-    const { balances, accounts, theme } = this.props;
-    const { isModalVisible, selectedWallet } = this.state;
+    const { theme } = this.props;
+    const {
+      isModalVisible,
+      selectedWallet,
+      enoughInSmartWallet,
+      enoughInKeyWallet,
+      totalFees,
+      feesLoaded,
+    } = this.state;
 
-    const legacyWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.KEY_BASED);
-    const smartWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+    const ethBalanceInSmartWallet = this.getAccountBalance(ACCOUNT_TYPES.SMART_WALLET);
+    const ethBalanceInKeyWallet = this.getAccountBalance(ACCOUNT_TYPES.KEY_BASED);
 
-    const ethBalanceInKeyWallet = legacyWallet && getBalance(balances[legacyWallet.id], ETH);
-    const ethBalanceInSmartWallet = smartWallet && getBalance(balances[smartWallet.id], ETH);
+    let buttonEnabled = false;
+    if (selectedWallet) {
+      buttonEnabled = selectedWallet === ACCOUNT_TYPES.SMART_WALLET ? enoughInSmartWallet : enoughInKeyWallet;
+    }
 
-    const transactionEstimate = this.getTransactionEstimate();
+    let feeText = '';
+    if (feesLoaded && selectedWallet) {
+      const transactionEstimate = totalFees[selectedWallet] || 0;
+      feeText = `${transactionEstimate} ETH (${this.getFormattedAmount(transactionEstimate)})`;
+    }
 
-    const buttonEnabled = selectedWallet === ACCOUNT_TYPES.SMART_WALLET ?
-      (ethBalanceInSmartWallet && ethBalanceInSmartWallet > transactionEstimate) :
-      (ethBalanceInKeyWallet && ethBalanceInKeyWallet > transactionEstimate);
+    let buttonText = '';
+    if (!feesLoaded) {
+      buttonText = 'Loading fees...';
+    } else {
+      buttonText = buttonEnabled ? 'Activate' : 'Not enough ETH';
+    }
 
     const themeType = getThemeType(theme);
 
@@ -297,32 +338,28 @@ class SWActivationCard extends React.Component<Props, State> {
               Enable better security and free instant transactions via Pillar Network. You will get a new badge too.
             </BaseText>
             <Spacing h={15} />
-            {!!ethBalanceInSmartWallet && (
-              <React.Fragment>
-                <Option
-                  name="From Smart Wallet"
-                  eth={ethBalanceInSmartWallet}
-                  checked={selectedWallet === ACCOUNT_TYPES.SMART_WALLET}
-                  onPress={() => this.setState({ selectedWallet: ACCOUNT_TYPES.SMART_WALLET })}
-                />
-                <Option
-                  name="From Key wallet"
-                  eth={ethBalanceInKeyWallet}
-                  checked={selectedWallet === ACCOUNT_TYPES.KEY_BASED}
-                  onPress={() => this.setState({ selectedWallet: ACCOUNT_TYPES.KEY_BASED })}
-                />
-              </React.Fragment>
-            )}
+            <Option
+              name="From Smart Wallet"
+              eth={ethBalanceInSmartWallet}
+              checked={selectedWallet === ACCOUNT_TYPES.SMART_WALLET}
+              onPress={() => enoughInSmartWallet && this.setState({ selectedWallet: ACCOUNT_TYPES.SMART_WALLET })}
+            />
+            <Option
+              name="From Key wallet"
+              eth={ethBalanceInKeyWallet}
+              checked={selectedWallet === ACCOUNT_TYPES.KEY_BASED}
+              onPress={() => enoughInKeyWallet && this.setState({ selectedWallet: ACCOUNT_TYPES.KEY_BASED })}
+            />
             <Spacing h={15} />
             <Button
               secondaryLight
-              title={buttonEnabled ? 'Activate' : 'Not enough ETH'}
+              title={buttonText}
               disabled={!buttonEnabled}
               onPress={this.activateSW}
             />
             <Spacing h={20} />
             <BaseText regular center secondary>
-              Transaction fee{'\n'}{transactionEstimate} ETH (${this.getFormattedAmount(transactionEstimate)})
+              Transaction fee{'\n'}{feeText}
             </BaseText>
           </ModalContainer>
         </SafeAreaView>
