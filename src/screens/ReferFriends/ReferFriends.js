@@ -45,6 +45,9 @@ import { themedColors } from 'utils/themes';
 // types
 import type { Dispatch } from 'reducers/rootReducer';
 
+// constants
+import { ADDRESS_BOOK_PERMISSION } from 'constants/navigationConstants';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -195,6 +198,8 @@ class ReferFriends extends React.Component<Props, State> {
       hideErrorMessage,
     } = this.state;
 
+    const { navigation } = this.props;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -215,7 +220,7 @@ class ReferFriends extends React.Component<Props, State> {
             wrapperPadding={0}
             wrapperStyle={{ marginBottom: 40 }}
           />
-          <Button title="Select contacts..." onPress={() => {}} block />
+          <Button title="Select contacts..." onPress={() => navigation.navigate(ADDRESS_BOOK_PERMISSION)} block />
           <FormWrapper>
             <Form
               ref={node => { this.referForm = node; }}
