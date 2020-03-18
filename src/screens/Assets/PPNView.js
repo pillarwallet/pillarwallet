@@ -232,7 +232,7 @@ class PPNView extends React.Component<Props, State> {
     const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
     const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
-        title: 'To top up PLR Tank or Settle transactions, deploy Smart Wallet first',
+        title: 'To top up PLR Tank or Settle transactions, activate Smart Wallet first',
         message: 'You will have to pay a small fee',
       }
       : smartWalletStatus.sendingBlockedMessage || {};
