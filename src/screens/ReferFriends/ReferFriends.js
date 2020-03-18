@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { ScrollView, Share } from 'react-native';
 import Intercom from 'react-native-intercom';
@@ -35,6 +36,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Insight from 'components/Insight';
 import TextInput from 'components/TextInput';
 import { EmailStruct } from 'components/ProfileForm/profileFormDefs';
+import Button from 'components/Button';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -43,21 +45,6 @@ import { themedColors } from 'utils/themes';
 // types
 import type { Dispatch } from 'reducers/rootReducer';
 
-
-const INSIGHT_ITEMS = [
-  {
-    title: 'Share your link',
-    body: 'Invite your friends to join Pillar',
-  },
-  {
-    title: 'Give Smart Wallet for free',
-    body: 'Friends who install Pillar with your link will get free Smart Wallet activation.',
-  },
-  {
-    title: 'Get free PLR',
-    body: 'Earn meta-tokens for referring friends.',
-  },
-];
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -75,6 +62,22 @@ type State = {
   hideErrorMessage: boolean,
 };
 
+
+const INSIGHT_ITEMS = [
+  {
+    title: 'Share your link',
+    body: 'Invite your friends to join Pillar',
+  },
+  {
+    title: 'Give Smart Wallet for free',
+    body: 'Friends who install Pillar with your link will get free Smart Wallet activation.',
+  },
+  {
+    title: 'Get free PLR',
+    body: 'Earn meta-tokens for referring friends.',
+  },
+];
+
 const FormWrapper = styled.View`
   padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
 `;
@@ -86,6 +89,7 @@ const ExplanationText = styled(MediumText)`
 `;
 
 const { Form } = t.form;
+
 
 const ReferralEmailInputTemplate = (locals) => {
   const {
@@ -194,7 +198,7 @@ class ReferFriends extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Refer friend' }],
+          centerItems: [{ title: 'Refer friends' }],
           rightItems: [
             {
               link: 'Support',
@@ -204,11 +208,14 @@ class ReferFriends extends React.Component<Props, State> {
           sideFlex: 2,
         }}
       >
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ paddingTop: 24, paddingHorizontal: spacing.layoutSides }}>
           <Insight
             isVisible
             insightNumberedList={INSIGHT_ITEMS}
+            wrapperPadding={0}
+            wrapperStyle={{ marginBottom: 40 }}
           />
+          <Button title="Select contacts..." onPress={() => {}} block />
           <FormWrapper>
             <Form
               ref={node => { this.referForm = node; }}
