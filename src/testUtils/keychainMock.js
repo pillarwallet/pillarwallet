@@ -18,16 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getPrivateKeyFromKeychainData } from 'utils/keychain';
-
-describe('keychain utils test', () => {
-  it('Should return null for invalid data provided', () => {
-    expect(getPrivateKeyFromKeychainData({})).toBeNull();
-    expect(getPrivateKeyFromKeychainData(undefined)).toBeNull();
-    expect(getPrivateKeyFromKeychainData({ testKey: 'testValue' })).toBeNull();
-  });
-
-  it('Should return privateKey for valid data provided', () => {
-    expect(getPrivateKeyFromKeychainData({ privateKey: 'testKey' })).toEqual('testKey');
-  });
-});
+export default {
+  ACCESSIBLE_WHEN_UNLOCKED: 'MOCK_ACCESSIBLE_WHEN_UNLOCKED',
+  setGenericPassword: jest.fn().mockResolvedValue(),
+  getGenericPassword: jest.fn().mockResolvedValue(),
+  resetGenericPassword: jest.fn().mockResolvedValue(),
+};

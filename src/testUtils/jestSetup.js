@@ -27,6 +27,7 @@ import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 import WalletConnectMock from './walletConnectMock';
+import { keychainMock } from './keychainMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -230,6 +231,8 @@ jest.mock('react-native-fabric', () => {
     },
   };
 });
+
+jest.mock('react-native-keychain', () => keychainMock);
 
 const mockSmartWalletAccount = {
   id: 123,

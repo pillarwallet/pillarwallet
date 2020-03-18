@@ -36,7 +36,7 @@ import Header from 'components/Header';
 
 type HeaderProps = {
   title?: String,
-  centerTitle?: Boolean,
+  centerTitle?: boolean,
   onClose?: Function,
   onBack?: Function,
 }
@@ -69,7 +69,7 @@ type Props = {
 type State = {
   biometricsShown: boolean,
   lastAppState: string,
-  showPin: Boolean,
+  showPin: boolean,
 }
 
 const CheckPinWrapper = styled(Container)`
@@ -166,6 +166,7 @@ class CheckPin extends React.Component<Props, State> {
 
   renderSlideModalWithPin = () => {
     const { modalProps } = this.props;
+    if (!modalProps) return null;
     const {
       title = 'Enter pincode',
       centerTitle = true,
@@ -195,6 +196,7 @@ class CheckPin extends React.Component<Props, State> {
 
   renderWrappedPin = () => {
     const { headerProps, errorMessage } = this.props;
+    if (!headerProps) return null;
     const { title = 'Enter pincode', centerTitle = true } = headerProps;
     return (
       <Container>

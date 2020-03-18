@@ -61,7 +61,7 @@ type State = {
   biometricsShown: boolean,
   lastAppState: string,
   supportedBiometryType: string,
-  showPin: Boolean,
+  showPin: boolean,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {

@@ -131,6 +131,7 @@ type Props = {|
   bitcoinBalances: BitcoinBalance,
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
+  checkPrivateKey: (privateKey: string, onValidated: Function) => void,
 |};
 
 type State = {|
