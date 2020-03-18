@@ -148,6 +148,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
         title: `${supportedBiometryType} could not be used`,
         autoClose: false,
       });
+      this.setState({ showPin: true });
       return;
     }
 
