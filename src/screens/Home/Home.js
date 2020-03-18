@@ -47,7 +47,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   MANAGE_DETAILS_SESSIONS,
   BADGE,
-  REFER_FRIENDS,
+  REFER_FLOW,
   MENU,
   MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
@@ -503,7 +503,7 @@ class HomeScreen extends React.Component<Props, State> {
           </WalletConnectWrapper>
           <Banner
             isVisible={isReferralBannerVisible}
-            onPress={() => navigation.navigate(REFER_FRIENDS)}
+            onPress={() => navigation.navigate(REFER_FLOW)}
             bannerText="Refer friends and earn rewards, free PLR and more."
             imageProps={{
               style: {

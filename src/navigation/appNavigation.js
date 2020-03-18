@@ -220,7 +220,7 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
-  REFER_FRIENDS,
+  REFER_FLOW,
   SERVICES,
   STORYBOOK,
   SECURITY_SETTINGS,
@@ -228,6 +228,7 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
+  REFER_MAIN_SCREEN,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -314,6 +315,13 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// REFER FLOW
+const referFlow = createStackNavigator({
+  [REFER_MAIN_SCREEN]: ReferFriendsScreen,
+}, StackNavigatorConfig);
+
+referFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
@@ -322,7 +330,7 @@ const peopleFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
-  [REFER_FRIENDS]: ReferFriendsScreen,
+  [REFER_FLOW]: referFlow,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -349,7 +357,7 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
-  [REFER_FRIENDS]: ReferFriendsScreen,
+  [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
 }, StackNavigatorConfig);

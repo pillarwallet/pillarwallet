@@ -56,7 +56,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 // constants
-import { CONTACT, CONNECTION_REQUESTS, REFER_FRIENDS } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS, REFER_FLOW } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import {
   DISCONNECT,
@@ -489,7 +489,7 @@ class PeopleScreen extends React.Component<Props, State> {
                   small
                   height={32}
                   title="Invite friends"
-                  onPress={() => { navigation.navigate(REFER_FRIENDS); }}
+                  onPress={() => { navigation.navigate(REFER_FLOW); }}
                   style={{ alignSelf: 'flex-start', marginTop: 14, marginBottom: 48 }}
                 />
               </ReferralCTAWrapper>
