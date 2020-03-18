@@ -98,6 +98,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 import type { ApiNotification } from 'models/Notification';
+import { setKeychainDataObject } from '../utils/keychain';
 
 const storage = Storage.getInstance('db');
 
@@ -391,7 +392,10 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     if (enableBiometrics) await dispatch(changeUseBiometricsAction(true, wallet.privateKey, true));
 
-    // STEP 7: all done, navigate to the home screen
+    // STEP 7: save private key to keychain
+    await setKeychainDataObject({ privateKey: wallet.privateKey });
+
+    // STEP 8: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp);
   };

@@ -202,9 +202,9 @@ class AccountsScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  loginWithPrivateKey = (onSuccess: Function) => {
+  loginWithPrivateKey = async (onSuccess: Function) => {
     const { checkPrivateKey } = this.props;
-    const privateKey = getPrivateKey();
+    const privateKey = await getPrivateKey();
     if (privateKey) {
       checkPrivateKey(privateKey, onSuccess);
     } else {
