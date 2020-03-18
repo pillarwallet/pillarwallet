@@ -26,23 +26,10 @@ import { Provider, connect } from 'react-redux';
 import { Sentry } from 'react-native-sentry';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled, { ThemeProvider } from 'styled-components/native';
-import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
-import { Appearance, AppearanceProvider } from 'react-native-appearance';
+import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
+import { AppearanceProvider } from 'react-native-appearance';
 
 // actions
-// ||||||| 216c2510
-// import styled from 'styled-components/native';
-// import { ThemeProvider } from 'styled-components';
-// import { Appearance, AppearanceProvider } from 'react-native-appearance';
-// import { setTopLevelNavigator } from 'services/navigation';
-// import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE } from 'react-native-dotenv';
-// =======
-import styled from 'styled-components/native';
-import { ThemeProvider } from 'styled-components';
-import { AppearanceProvider } from 'react-native-appearance';
-import { setTopLevelNavigator } from 'services/navigation';
-import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
-// >>>>>>> develop
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
@@ -51,19 +38,13 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
-// <<<<<<< HEAD
-import { changeAppThemeAction, markThemeAlertAsShownAction } from 'actions/appSettingsActions';
 import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
+import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 // constants
-import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 // components
-// ||||||| 216c2510
-import { changeAppThemeAction, markThemeAlertAsShownAction } from 'actions/appSettingsActions';
-// =======
-import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
-// >>>>>>> develop
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
@@ -79,20 +60,11 @@ import { setTopLevelNavigator } from 'services/navigation';
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
-// <<<<<<< HEAD
-// ||||||| 216c2510
-import { getThemeByType, defaultTheme } from 'utils/themes';
-import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-// =======
-import { getThemeByType, defaultTheme } from 'utils/themes';
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import Storybook from 'screens/Storybook';
-// >>>>>>> develop
 
 // other
 import RootNavigation from 'navigation/rootNavigation';
+import Storybook from 'screens/Storybook';
 import configureStore from './src/configureStore';
-
 
 const { store, persistor } = configureStore();
 

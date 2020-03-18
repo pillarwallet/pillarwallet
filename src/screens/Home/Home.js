@@ -173,7 +173,6 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
-const iconConnect = require('assets/icons/icon_receive.png');
 const referralImage = require('assets/images/referral_gift.png');
 
 class HomeScreen extends React.Component<Props, State> {
