@@ -66,6 +66,7 @@ import { delay, uniqBy } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import { mapInviteNotifications } from 'utils/notifications';
+import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -98,7 +99,6 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 import type { ApiNotification } from 'models/Notification';
-import { setKeychainDataObject } from '../utils/keychain';
 
 const storage = Storage.getInstance('db');
 
