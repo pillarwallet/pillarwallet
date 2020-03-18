@@ -324,6 +324,9 @@ function SelectorInputTemplate(locals) {
       horizontalOptionsTitle,
       optionsTitle,
       inputWrapperStyle,
+      fiatOptions,
+      fiatOptionsTitle,
+      displayFiatOptionsFirst,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -362,10 +365,13 @@ function SelectorInputTemplate(locals) {
         showOptionsTitles: !isEmpty(horizontalOptions),
         optionsTitle,
         horizontalOptionsTitle,
+        fiatOptions,
+        fiatOptionsTitle,
         fullWidth: !hasInput,
         selectorModalTitle: label,
         selectorPlaceholder: placeholderSelector,
         optionsSearchPlaceholder: 'Asset search',
+        displayFiatOptionsFirst,
       }}
       getInputRef={inputRef}
       inputWrapperStyle={inputWrapperStyle}
@@ -456,11 +462,14 @@ class ExchangeScreen extends React.Component<Props, State> {
               hasInput: true,
               options: [],
               horizontalOptions: [],
-              horizontalOptionsTitle: 'Fiat',
+              horizontalOptionsTitle: 'Popular',
+              fiatOptions: [],
+              fiatOptionsTitle: 'Fiat',
               optionsTitle: 'Crypto',
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
+              displayFiatOptionsFirst: get(props, 'navigation.state.params.displayFiatOptionsFirst'),
             },
             transformer: {
               parse: (value) => {
@@ -594,7 +603,8 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
-    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = fiatOptionsFrom;
+    thisStateFormOptionsCopy.fields.fromInput.config.fiatOptions = fiatOptionsFrom;
+    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = popularOptions;
     thisStateFormOptionsCopy.fields.toInput.config.options = assetsOptionsBuying;
     thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions = popularOptions;
 

@@ -70,13 +70,16 @@ type SelectorValueType = {
 type SelectorOptions = {
   options?: Array<Object>,
   horizontalOptions?: Array<Object>,
+  fiatOptions?: Array<Object>,
   selectorPlaceholder?: 'string',
   fullWidth?: boolean,
   showOptionsTitles?: boolean,
   horizontalOptionsTitle?: string,
   optionsTitle?: string,
+  fiatOptionsTitle?: string,
   selectorModalTitle?: string,
   optionsSearchPlaceholder?: string,
+  displayFiatOptionsFirst?: boolean,
 };
 
 type Value = string | number;
@@ -496,6 +499,26 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  renderHorizontalOptions = (data, title) => {
+    const { selectorOptions: { showOptionsTitles } = {} } = this.props;
+    return (
+      <HorizontalOptions>
+        {(showOptionsTitles && !!title) &&
+          <OptionsHeader>{title}</OptionsHeader>
+        }
+        <FlatList
+          data={data}
+          keyExtractor={({ name }) => name}
+          keyboardShouldPersistTaps="always"
+          renderItem={this.renderHorizontalOption}
+          horizontal
+          contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+          ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
+        />
+      </HorizontalOptions>
+    );
+  }
+
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
     const {
@@ -544,6 +567,9 @@ class TextInput extends React.Component<Props, State> {
       optionsTitle,
       selectorModalTitle,
       optionsSearchPlaceholder,
+      fiatOptions = [],
+      fiatOptionsTitle,
+      displayFiatOptionsFirst,
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
@@ -718,21 +744,14 @@ class TextInput extends React.Component<Props, State> {
                   marginBottom="0"
                 />
               </SearchBarWrapper>
+              {!!displayFiatOptionsFirst && !!fiatOptions.length &&
+                this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle)
+              }
               {!!filteredHorizontalListData.length &&
-              <HorizontalOptions>
-                {(showOptionsTitles && !!horizontalOptionsTitle) &&
-                <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
-                }
-                <FlatList
-                  data={filteredHorizontalListData}
-                  keyExtractor={({ name }) => name}
-                  keyboardShouldPersistTaps="always"
-                  renderItem={this.renderHorizontalOption}
-                  horizontal
-                  contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
-                  ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
-                />
-              </HorizontalOptions>
+                this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle)
+              }
+              {!displayFiatOptionsFirst && !!fiatOptions.length &&
+                this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle)
               }
               {!!filteredListData.length &&
               <FlatList

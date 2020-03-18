@@ -77,6 +77,7 @@ class ServicesScreen extends React.Component<Props> {
           {
             fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
             toAssetCode: ETH,
+            displayFiatOptionsFirst: true,
           }),
       },
     ];
