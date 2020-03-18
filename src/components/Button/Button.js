@@ -41,6 +41,8 @@ export type Props = {
   danger?: boolean,
   primaryInverted?: boolean,
   dangerInverted?: boolean,
+  positive?: boolean,
+  secondaryLight?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,
@@ -127,6 +129,15 @@ const themes = {
   positive: {
     borderWidth: 0,
   },
+  secondaryLight: {
+    borderWidth: 0,
+    shadow: false,
+  },
+  secondaryLightDisabled: {
+    borderWidth: 0,
+    opacity: 0.5,
+    shadow: false,
+  },
 };
 
 const themeColors = (theme) => {
@@ -196,6 +207,14 @@ const themeColors = (theme) => {
     positive: {
       surface: colors.positive,
       text: colors.control,
+    },
+    secondaryLight: {
+      surface: colors.buttonSecondaryBackground,
+      text: colors.primary,
+    },
+    secondaryLightDisabled: {
+      surface: colors.buttonSecondaryBackground,
+      text: colors.primary,
     },
   });
 };
@@ -325,6 +344,10 @@ const getThemeType = (props: Props, isForColors) => {
 
   if (props.secondaryTransparent && props.disabled) {
     return 'secondaryTransparentDisabled';
+  }
+
+  if (props.secondaryLight && props.disabled) {
+    return 'secondaryLightDisabled';
   }
 
   const propsKeys = Object.keys(props);
