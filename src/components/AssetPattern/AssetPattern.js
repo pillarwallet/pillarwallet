@@ -17,15 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Dimensions, Image } from 'react-native';
-import styled from 'styled-components/native';
-import { themedColors } from 'utils/themes';
+import styled, { withTheme } from 'styled-components/native';
+import { getThemeType, themedColors } from 'utils/themes';
 import { CachedImage } from 'react-native-cached-image';
 import {
   ColorMatrix,
   saturate,
 } from 'react-native-color-matrix-image-filters';
+
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import type { Theme } from 'models/Theme';
+
 
 type Props = {
   token: string,
@@ -34,15 +39,17 @@ type Props = {
   isListed: boolean,
   sideIconsLeftDiff?: number,
   innerIconsLeftDiff?: number,
-  tops?: Array<number>
-}
+  tops?: Array<number>,
+  theme: Theme,
+};
 
 type State = {
   errorLoading: boolean,
   didLoad: boolean,
-}
+};
 
 type Icon = string | { [uri: string]: ?string };
+
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -92,7 +99,7 @@ const NoIconImage = styled(CachedImage)`
   width: 192px;
 `;
 
-export default class AssetPattern extends React.Component<Props, State> {
+class AssetPattern extends React.Component<Props, State> {
   state = {
     errorLoading: false,
     didLoad: false,
@@ -100,10 +107,17 @@ export default class AssetPattern extends React.Component<Props, State> {
 
   generatePattern = (token: string, icon: Icon, isListed: boolean) => {
     const { didLoad } = this.state;
-    const { tops = [], sideIconsLeftDiff, innerIconsLeftDiff } = this.props;
+    const {
+      tops = [],
+      sideIconsLeftDiff,
+      innerIconsLeftDiff,
+      theme,
+    } = this.props;
     const paternDetails = [];
     const uniqueCode = [];
     const tokenSymbols = token.split('');
+    const currentTheme = getThemeType(theme);
+    const showShadow = currentTheme === LIGHT_THEME && didLoad;
 
     const [top1, top2, top3, top4] = tops;
 
@@ -233,7 +247,7 @@ export default class AssetPattern extends React.Component<Props, State> {
               { translateY: -(diameter / 2) },
             ],
           }}
-          addShadow={didLoad}
+          addShadow={showShadow}
         >
           <ColorMatrix
             matrix={saturate(saturation)}
@@ -282,3 +296,5 @@ export default class AssetPattern extends React.Component<Props, State> {
     );
   }
 }
+
+export default withTheme(AssetPattern);
