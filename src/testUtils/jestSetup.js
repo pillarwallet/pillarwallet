@@ -27,7 +27,6 @@ import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 import WalletConnectMock from './walletConnectMock';
-import { keychainMock } from './keychainMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -232,8 +231,6 @@ jest.mock('react-native-fabric', () => {
   };
 });
 
-jest.mock('react-native-keychain', () => keychainMock);
-
 const mockSmartWalletAccount = {
   id: 123,
   address: 'publicAddress',
@@ -292,11 +289,14 @@ jest.setMock('@smartwallet/sdk', {
 });
 
 jest.setMock('react-native-keychain', {
-  setGenericPassword: () => {},
-  getGenericPassword: () => {},
-  resetGenericPassword: () => {},
+  setGenericPassword: jest.fn().mockResolvedValue(),
+  getGenericPassword: jest.fn().mockResolvedValue(),
+  resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {
     BIOMETRY_ANY: 'BIOMETRY_ANY',
+  },
+  ACCESSIBLE: {
+    WHEN_UNLOCKED: 'WHEN_UNLOCKED',
   },
 });
 
