@@ -208,7 +208,7 @@ describe('bitcoin service', () => {
     });
 
     it('has consistent address derivation', async () => {
-      const root = await rootFromMnemonic(mnemonic);
+      const root = await rootFromMnemonic(mnemonic, 'testnet');
 
       expect(root.toWIF())
         .toEqual('cVA5PZZkVcgdDAEmWuiBXiLh7abCyq6amQ3gT3avwj6wtMtV3VDK');
