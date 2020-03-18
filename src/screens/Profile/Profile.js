@@ -660,22 +660,15 @@ class Profile extends React.Component<Props, State> {
             />
             }
 
-            <SlideModal
-              isVisible={showCheckPinModal}
-              onModalHide={this.handleCheckPinModalClose}
-              title="Enter pincode"
-              centerTitle
-              fullScreen
-              showHeader
-            >
-              <Wrapper flex={1}>
-                <CheckPin
-                  onPinValid={
-                    (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
-                  }
-                />
-              </Wrapper>
-            </SlideModal>
+            <CheckPin
+              onPinValid={
+                (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
+              }
+              modalProps={{
+                isVisible: showCheckPinModal,
+                onModalHide: this.handleCheckPinModalClose,
+              }}
+            />
 
             <ListSeparator>
               <SubHeading>APPEARANCE SETTINGS</SubHeading>

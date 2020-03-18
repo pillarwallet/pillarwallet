@@ -27,7 +27,6 @@ import { CachedImage } from 'react-native-cached-image';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Loader from 'components/Loader';
 import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
@@ -556,21 +555,14 @@ class AccountsScreen extends React.Component<Props, State> {
           <Loader noMessages />
         </Wrapper>}
 
-        <SlideModal
-          isVisible={showPinModal}
-          onModalHide={this.handleCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <Wrapper>
-            <CheckPin
-              onPinValid={onPinValidAction}
-              revealMnemonic
-            />
-          </Wrapper>
-        </SlideModal>
+        <CheckPin
+          onPinValid={onPinValidAction}
+          revealMnemonic
+          modalProps={{
+            isVisible: showPinModal,
+            onModalHide: this.handleCheckPinModalClose,
+          }}
+        />
       </ContainerWithHeader>
     );
   }

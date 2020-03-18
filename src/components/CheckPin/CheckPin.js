@@ -25,12 +25,31 @@ import { connect } from 'react-redux';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { checkAuthAction } from 'actions/authActions';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getKeychainDataObject, getPrivateKeyFromKeychainData, type KeyChainData } from 'utils/keychain';
+import SlideModal from 'components/Modals/SlideModal';
+import Header from 'components/Header';
+
+type HeaderProps = {
+  title?: String,
+  centerTitle?: Boolean,
+  onClose?: Function,
+  onBack?: Function,
+}
+
+type ModalProps = {
+  onModalHide: Function,
+  onModalHidden?: Function,
+  title?: string,
+  centerTitle?: boolean,
+  fullScreen?: boolean,
+  showHeader?: boolean,
+  isVisible?: boolean
+}
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function, options: Object) => void,
@@ -42,6 +61,9 @@ type Props = {
   title?: string,
   useBiometrics: ?boolean,
   autoLogin?: boolean,
+  modalProps?: ModalProps,
+  headerProps?: HeaderProps,
+  errorMessage?: string,
 }
 
 type State = {
@@ -142,11 +164,69 @@ class CheckPin extends React.Component<Props, State> {
     }
   };
 
-  render() {
-    const { wallet: { walletState }, isChecking, autoLogin } = this.props;
-    const { showPin } = this.state;
+  renderSlideModalWithPin = () => {
+    const { modalProps } = this.props;
+    const {
+      title = 'Enter pincode',
+      centerTitle = true,
+      fullScreen = true,
+      showHeader = true,
+      onModalHidden,
+      onModalHide,
+      isVisible,
+    } = modalProps;
+    return (
+      <SlideModal
+        {...modalProps}
+        title={title}
+        centerTitle={centerTitle}
+        fullScreen={fullScreen}
+        showHeader={showHeader}
+        onModalHidden={onModalHidden}
+        onModalHide={onModalHide}
+        isVisible={isVisible}
+      >
+        <Wrapper flex={1}>
+          {this.renderPinCode()}
+        </Wrapper>
+      </SlideModal>
+    );
+  }
+
+  renderWrappedPin = () => {
+    const { headerProps, errorMessage } = this.props;
+    const { title = 'Enter pincode', centerTitle = true } = headerProps;
+    return (
+      <Container>
+        <Header {...headerProps} title={title} centerTitle={centerTitle} />
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {this.renderPinCode()}
+      </Container>
+    );
+  }
+
+  renderPinCode = () => {
+    const { wallet: { walletState } } = this.props;
     const pinError = this.getPinError(walletState);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
+    return (
+      <CheckPinWrapper>
+        {showError}
+        <PinCode
+          onPinEntered={this.handlePinSubmit}
+          pageInstructions=""
+          showForgotButton={false}
+          pinError={!!pinError}
+        />
+      </CheckPinWrapper>
+    );
+  }
+
+  render() {
+    const {
+      wallet: { walletState }, isChecking, autoLogin, modalProps, headerProps,
+    } = this.props;
+    const { showPin } = this.state;
 
     if (walletState === DECRYPTING || isChecking || walletState === GENERATING_CONNECTIONS) {
       return (
@@ -157,17 +237,9 @@ class CheckPin extends React.Component<Props, State> {
     }
 
     if (!autoLogin || showPin) {
-      return (
-        <CheckPinWrapper>
-          {showError}
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            pageInstructions=""
-            showForgotButton={false}
-            pinError={!!pinError}
-          />
-        </CheckPinWrapper>
-      );
+      if (modalProps) return this.renderSlideModalWithPin();
+      if (headerProps) return this.renderWrappedPin();
+      return null;
     }
 
     return null;

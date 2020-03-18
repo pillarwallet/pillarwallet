@@ -24,9 +24,8 @@ import styled from 'styled-components/native';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { Paragraph } from 'components/Typography';
-import Header from 'components/Header';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/Button';
 import CheckPin from 'components/CheckPin';
@@ -110,10 +109,12 @@ class BackupPhrase extends React.Component<Props, State> {
 
     if (!pinIsValid) {
       return (
-        <Container>
-          <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
-          <CheckPin revealMnemonic autoLogin={false} onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
-        </Container>
+        <CheckPin
+          revealMnemonic
+          autoLogin={false}
+          onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
+          headerProps={{ onClose: this.handleScreenDismissal }}
+        />
       );
     }
 

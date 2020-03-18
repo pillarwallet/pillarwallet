@@ -21,9 +21,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
-import SlideModal from 'components/Modals/SlideModal';
 import { getBiometryType } from 'utils/settings';
 import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { changeUseBiometricsAction } from 'actions/appSettingsActions';
@@ -143,21 +142,14 @@ class SecuritySettings extends React.Component<Props, State> {
         </ScrollWrapper>
 
         {/* BIOMETRIC LOGIN */}
-        <SlideModal
-          isVisible={visibleModal === 'checkPin'}
-          onModalHidden={this.handleBiometricsCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-        >
-          <Wrapper flex={1}>
-            <CheckPin
-              onPinValid={this.onPinValid}
-            />
-          </Wrapper>
-        </SlideModal>
+        <CheckPin
+          onPinValid={this.onPinValid}
+          modalProps={{
+            isVisible: visibleModal === 'checkPin',
+            onModalHidden: this.handleBiometricsCheckPinModalClose,
+            onModalHide: () => this.setState({ visibleModal: null }),
+          }}
+        />
       </ContainerWithHeader>
     );
   }

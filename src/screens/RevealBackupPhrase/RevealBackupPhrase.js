@@ -76,10 +76,12 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     if (!pinIsValid) {
       return (
-        <Container>
-          <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
-          <CheckPin revealMnemonic autoLogin={false} onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
-        </Container>
+        <CheckPin
+          revealMnemonic
+          autoLogin={false}
+          onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
+          headerProps={{ onClose: this.handleScreenDismissal }}
+        />
       );
     }
 

@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container } from 'components/Layout';
-import Header from 'components/Header';
 import CheckPin from 'components/CheckPin';
 import Loader from 'components/Loader';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -53,17 +52,11 @@ class CurrentPin extends React.Component<Props> {
     }
 
     return (
-      <Container>
-        <Header
-          title="Enter pincode"
-          centerTitle
-          onClose={this.handleScreenDismissal}
-        />
-        <CheckPin
-          revealMnemonic
-          onPinValid={(currentPin) => navigation.navigate(CHANGE_PIN_NEW_PIN, { currentPin })}
-        />
-      </Container>
+      <CheckPin
+        revealMnemonic
+        onPinValid={(currentPin) => navigation.navigate(CHANGE_PIN_NEW_PIN, { currentPin })}
+        headerProps={{ onClose: this.handleScreenDismissal }}
+      />
     );
   }
 }

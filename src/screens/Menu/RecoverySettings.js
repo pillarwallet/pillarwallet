@@ -22,9 +22,8 @@ import { connect } from 'react-redux';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Container } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
-import Header from 'components/Header';
 import { getThemeColors } from 'utils/themes';
 import { BACKUP_WALLET_IN_SETTINGS_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -111,10 +110,11 @@ class RecoverySettings extends React.Component<Props, State> {
 
     if (!pinIsValid) {
       return (
-        <Container>
-          <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
-          <CheckPin revealMnemonic onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
-        </Container>
+        <CheckPin
+          revealMnemonic
+          onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
+          headerProps={{ onClose: this.handleScreenDismissal }}
+        />
       );
     }
 
