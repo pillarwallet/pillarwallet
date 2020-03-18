@@ -97,6 +97,7 @@ describe('Exchange Actions tests', () => {
 
   beforeEach(() => {
     const exchangeStoreMock = {
+      accounts: { data: [{ isActive: true, walletId }] },
       user: { data: { walletId } },
       oAuthTokens: { data: { oAuthTokens: oAuthTokensMock } },
       exchange: {
