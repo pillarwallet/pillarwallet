@@ -281,11 +281,12 @@ export const deploySmartWalletAction = () => {
         },
         upgrade: {
           status: upgradeStatus,
+          deploymentStarted,
         },
       },
     } = getState();
 
-    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING || !deploymentStarted) {
       dispatch({ type: START_SMART_WALLET_DEPLOYMENT });
     }
 
