@@ -640,7 +640,7 @@ workflows:
           filters:
             branches:
               only:
-                - feature/improve-pipeline
+                - develop
       - get-latest-tag:
           requires:
             - build-and-test
