@@ -552,7 +552,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       assets,
       exchangeSupportedAssets,
-      fiatExchangeSupportedAssets,
       oAuthAccessToken,
     } = this.props;
 
@@ -563,7 +562,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     // update from and to options when (supported) assets changes or user selects an option
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
-      || fiatExchangeSupportedAssets !== prevProps.fiatExchangeSupportedAssets
       || fromAssetSymbol !== prevFromAssetSymbol || toAssetSymbol !== prevToAssetSymbol) {
       this.provideOptions();
     }
@@ -647,6 +645,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   triggerSearch = () => {
     const {
       searchOffers,
+      fiatExchangeSupportedAssets,
     } = this.props;
     const {
       value: {
@@ -665,7 +664,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (!from || !to || !amount) return;
     this.setState({ isSubmitted: true });
     searchOffers(from, to, amount);
-    this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
+
+    // if it's not supported currecy, we show the empty message immadietely, otherwise we wait for 5 sec
+    if (isFiatCurrency(from) && !fiatExchangeSupportedAssets.some(({ symbol }) => symbol === to)) {
+      this.setState({ showEmptyMessage: true });
+    } else {
+      this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
+    }
   };
 
   onShapeshiftAuthPress = () => {
