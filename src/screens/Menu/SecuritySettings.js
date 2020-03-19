@@ -120,7 +120,7 @@ class SecuritySettings extends React.Component<Props, State> {
 
   onPinValid = (pin, { privateKey }) => {
     const { useBiometrics } = this.props;
-    this.handleChangeUseBiometrics(!useBiometrics, !useBiometrics ? privateKey : undefined);
+    this.handleChangeUseBiometrics(!useBiometrics, privateKey);
   }
 
   render() {

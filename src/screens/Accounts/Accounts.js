@@ -228,7 +228,7 @@ class AccountsScreen extends React.Component<Props, State> {
       setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
       navigation.navigate(ASSETS);
     } else {
-      this.loginWithPrivateKey(this.switchToSmartWalletAndGoToPPN);
+      this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAndGoToPPN });
     }
   };
 
@@ -263,7 +263,7 @@ class AccountsScreen extends React.Component<Props, State> {
         navigation.navigate(ASSETS);
       } else {
         this.switchToWallet = wallet;
-        this.loginWithPrivateKey(this.switchToSmartWalletAccount);
+        this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAccount });
       }
     } else if (wallet.type === ACCOUNT_TYPES.KEY_BASED) {
       switchAccount(wallet.id);
@@ -388,7 +388,7 @@ class AccountsScreen extends React.Component<Props, State> {
   }
 
   startBTCInit = () => {
-    this.loginWithPrivateKey(this.initialiseBTC);
+    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC });
   };
 
   initialiseBTC = async (_: string, wallet: EthereumWallet) => {

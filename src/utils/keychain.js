@@ -62,6 +62,6 @@ export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
   return get(data, 'privateKey', null);
 };
 
-export const getPrivateKey = () => {
-  return getKeychainDataObject().then(data => getPrivateKeyFromKeychainData(data));
+export const getPrivateKey = (errorHandler?: Function) => {
+  return getKeychainDataObject().then(data => getPrivateKeyFromKeychainData(data)).catch(errorHandler);
 };

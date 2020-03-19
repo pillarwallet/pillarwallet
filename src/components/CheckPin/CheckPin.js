@@ -30,7 +30,7 @@ import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject, getPrivateKeyFromKeychainData, type KeyChainData } from 'utils/keychain';
+import { getPrivateKey } from 'utils/keychain';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 
@@ -101,18 +101,33 @@ class CheckPin extends React.Component<Props, State> {
       && lastAppState !== BACKGROUND_APP_STATE) {
       this.showBiometricLogin();
     } else if (lastAppState !== BACKGROUND_APP_STATE && autoLogin) { // todo check conditions
-      getKeychainDataObject().then(data => {
-        this.checkPrivateKey(data);
-      }).catch(() => {});
+      this.checkPrivateKey();
     }
   }
 
-  checkPrivateKey = (data: KeyChainData) => {
-    const { onPinValid, checkPrivateKey } = this.props;
-    const privateKey = getPrivateKeyFromKeychainData(data);
+  // special case for modals
+  componentDidUpdate = (prevProps: Props) => {
+    const { modalProps } = this.props;
+    if (!modalProps || !prevProps.modalProps) return;
+    if (modalProps.isVisible && !prevProps.modalProps.isVisible) {
+      this.checkPrivateKey();
+    }
+  }
+
+  checkPrivateKey = async (errorHandler?: Function) => {
+    const { onPinValid, checkPrivateKey, modalProps } = this.props;
+    const privateKey = await getPrivateKey(errorHandler);
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       checkPrivateKey(privateKey, onPinValid);
+      if (modalProps && modalProps.isVisible) {
+        if (modalProps.onModalHide) {
+          modalProps.onModalHide();
+        }
+        if (modalProps.onModalHidden) {
+          modalProps.onModalHidden();
+        }
+      }
     } else {
       this.setState({ showPin: true });
     }
@@ -134,12 +149,8 @@ class CheckPin extends React.Component<Props, State> {
     const { biometricsShown } = this.state;
     if (biometricsShown) return;
     this.setState({ biometricsShown: true }, () => {
-      getKeychainDataObject()
-        .then(data => {
-          this.setState({ biometricsShown: false });
-          this.checkPrivateKey(data);
-        })
-        .catch(() => this.setState({ biometricsShown: false }));
+      this.checkPrivateKey(() => this.setState({ biometricsShown: false }));
+      this.setState({ biometricsShown: false });
     });
   }
 
