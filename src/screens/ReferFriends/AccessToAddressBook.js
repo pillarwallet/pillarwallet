@@ -28,6 +28,7 @@ import { Wrapper } from 'components/Layout';
 
 import { spacing } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
+import { REFERRAL_CONTACTS } from 'constants/navigationConstants';
 
 
 type Props = {
@@ -55,7 +56,7 @@ class AccessToAddressBook extends React.PureComponent<Props> {
             data.
           </Paragraph>
           <ButtonWrapper>
-            <Button title="Confirm" onPress={() => navigation.navigate('')} block />
+            <Button title="Confirm" onPress={() => navigation.navigate(REFERRAL_CONTACTS)} block />
           </ButtonWrapper>
         </Wrapper>
       </ContainerWithHeader>

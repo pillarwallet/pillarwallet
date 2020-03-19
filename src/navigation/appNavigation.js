@@ -96,6 +96,7 @@ import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticU
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
+import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
@@ -231,6 +232,7 @@ import {
   MENU_FLOW,
   REFER_MAIN_SCREEN,
   ADDRESS_BOOK_PERMISSION,
+  REFERRAL_CONTACTS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -321,6 +323,7 @@ servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 const referFlow = createStackNavigator({
   [REFER_MAIN_SCREEN]: ReferFriendsScreen,
   [ADDRESS_BOOK_PERMISSION]: AccessToAddressBookScreen,
+  [REFERRAL_CONTACTS]: ReferralContactsScreen,
 }, StackNavigatorConfig);
 
 referFlow.navigationOptions = hideTabNavigatorOnChildView;
