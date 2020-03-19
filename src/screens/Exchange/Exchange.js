@@ -443,6 +443,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       pressedOfferId: '',
       pressedTokenAllowanceId: '',
       isSubmitted: false,
+      showEmptyMessage: false,
       value: {
         fromInput: {
           selector: {},
@@ -577,7 +578,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { resetOffers } = this.props;
     resetOffers();
     this.setState({ isSubmitted: false, showEmptyMessage: false });
-    clearTimeout(this.emptyMessageTimeout);
+    if (this.emptyMessageTimeout) {
+      clearTimeout(this.emptyMessageTimeout);
+    }
     this.emptyMessageTimeout = null;
   };
 
