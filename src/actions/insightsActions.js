@@ -17,29 +17,25 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
-import { Text } from 'react-native';
 
-import { storiesOf } from '@storybook/react-native';
-import { action } from '@storybook/addon-actions';
-import { linkTo } from '@storybook/addon-links';
+import {
+  DISMISS_SMART_WALLET_INSIGHT,
+  DISMISS_PPN_INSIGHT,
+} from 'constants/insightsConstants';
+import { saveDbAction } from 'actions/dbActions';
+import type { Dispatch } from 'reducers/rootReducer';
 
-import Button from './Button';
-import CenterView from './CenterView';
-import Welcome from './Welcome';
+export const dismissSmartWalletInsightAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(saveDbAction('insights', { insights: { SWInsightDismissed: true } }));
+    dispatch({ type: DISMISS_SMART_WALLET_INSIGHT });
+  };
+};
 
-storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
+export const dismissPPNInsightAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(saveDbAction('insights', { insights: { PPNInsightDismissed: true } }));
+    dispatch({ type: DISMISS_PPN_INSIGHT });
+  };
+};
 
-storiesOf('Button', module)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
-  .add('with text', () => (
-    <Button onPress={action('clicked-text')}>
-      <Text>Hello Button</Text>
-    </Button>
-  ))
-  .add('with some emoji', () => (
-    <Button onPress={action('clicked-emoji')}>
-      {/* eslint-disable-next-line */}
-      <Text>😀 😎 👍 💯</Text>
-    </Button>
-  ));
