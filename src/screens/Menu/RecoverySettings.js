@@ -107,13 +107,13 @@ class RecoverySettings extends React.Component<Props, State> {
 
   render() {
     const { pinIsValid } = this.state;
-
     if (!pinIsValid) {
       return (
         <CheckPin
           revealMnemonic
           onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
           headerProps={{ onClose: this.handleScreenDismissal }}
+          autoLogin={false}
         />
       );
     }
