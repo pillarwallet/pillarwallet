@@ -174,6 +174,7 @@ type State = {
   pressedOfferId: string,
   pressedTokenAllowanceId: string,
   isSubmitted: boolean,
+  showEmptyMessage: boolean,
 };
 
 const getAvailable = (_min, _max, rate) => {
@@ -432,6 +433,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   fromInputRef: RNTextInput;
   listeners: NavigationEventSubscription[];
   _isMounted: boolean;
+  emptyMessageTimeout: ?TimeoutID;
 
   constructor(props: Props) {
     super(props);
@@ -576,7 +578,9 @@ class ExchangeScreen extends React.Component<Props, State> {
   resetSearch = () => {
     const { resetOffers } = this.props;
     resetOffers();
-    this.setState({ isSubmitted: false });
+    this.setState({ isSubmitted: false, showEmptyMessage: false });
+    clearTimeout(this.emptyMessageTimeout);
+    this.emptyMessageTimeout = null;
   };
 
   checkIfAssetsExchangeIsAllowed = () => {
@@ -661,6 +665,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (!from || !to || !amount) return;
     this.setState({ isSubmitted: true });
     searchOffers(from, to, amount);
+    this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
   };
 
   onShapeshiftAuthPress = () => {
@@ -1093,6 +1098,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       value,
       formOptions,
       isSubmitted,
+      showEmptyMessage,
     } = this.state;
     const { fromInput } = value;
     const { selector: selectedFromOption } = fromInput;
@@ -1189,7 +1195,7 @@ class ExchangeScreen extends React.Component<Props, State> {
                   <ExchangeStatus isVisible={isSubmitted} />
                 </ListHeader>
               )}
-              ListEmptyComponent={
+              ListEmptyComponent={!!showEmptyMessage && (
                 <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
                   <EmptyStateParagraph
                     title="No live offers"
@@ -1199,7 +1205,7 @@ class ExchangeScreen extends React.Component<Props, State> {
                     wide
                   />
                 </ESWrapper>
-              }
+              )}
               ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }}
               ListFooterComponent={
                 <PopularSwapsGridWrapper>
