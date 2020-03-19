@@ -1144,7 +1144,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
-        footer={!blockView && !reorderedOffers.length && (
+        footer={!blockView && !reorderedOffers.length && !isSubmitted && (
           <PromoWrapper>
             <PromoText>
               Aggregated from many decentralized exchanges and token swap services
