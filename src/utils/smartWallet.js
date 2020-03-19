@@ -91,6 +91,15 @@ export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
   return accounts.some(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
 };
 
+export const getPreferredWalletId = (accounts: Accounts = []): string => {
+  if (userHasSmartWallet(accounts)) {
+    const smartWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+    return smartWallet ? smartWallet.walletId : '';
+  }
+  const legacyWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.KEY_BASED);
+  return legacyWallet ? legacyWallet.walletId : '';
+};
+
 export const getSmartWalletStatus = (
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
