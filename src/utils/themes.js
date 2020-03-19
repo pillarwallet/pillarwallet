@@ -49,6 +49,7 @@ export const lightThemeColors = {
   danger: '#ff0005',
   helpIcon: '#f7931a',
   popularSwaps: '#d08cb1',
+  notice: '#ea480e',
 };
 
 export const darkThemeColors = {
@@ -79,6 +80,7 @@ export const darkThemeColors = {
   danger: '#ff0005',
   helpIcon: '#f7931a',
   popularSwaps: '#d08cb1',
+  notice: '#ea480e',
 };
 
 export const themedColors = {
@@ -189,6 +191,10 @@ export const themedColors = {
   popularSwaps: theme('current', {
     lightTheme: lightThemeColors.popularSwaps,
     darkTheme: darkThemeColors.popularSwaps,
+  }),
+  notice: theme('current', {
+    lightTheme: lightThemeColors.notice,
+    darkTheme: darkThemeColors.notice,
   }),
 };
 
