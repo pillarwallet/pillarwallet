@@ -645,7 +645,6 @@ class ExchangeScreen extends React.Component<Props, State> {
   triggerSearch = () => {
     const {
       searchOffers,
-      fiatExchangeSupportedAssets,
     } = this.props;
     const {
       value: {
@@ -666,12 +665,19 @@ class ExchangeScreen extends React.Component<Props, State> {
     searchOffers(from, to, amount);
 
     // if it's not supported currecy, we show the empty message immadietely, otherwise we wait for 5 sec
-    if (isFiatCurrency(from) && !fiatExchangeSupportedAssets.some(({ symbol }) => symbol === to)) {
+    if (!this.isSupportedExchange(from, to)) {
       this.setState({ showEmptyMessage: true });
     } else {
       this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
     }
   };
+
+  isSupportedExchange = (from: string, to: string) => {
+    const {
+      fiatExchangeSupportedAssets,
+    } = this.props;
+    return !(isFiatCurrency(from) && !fiatExchangeSupportedAssets.some(({ symbol }) => symbol === to));
+  }
 
   onShapeshiftAuthPress = () => {
     const { authorizeWithShapeshift } = this.props;
@@ -1105,8 +1111,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       isSubmitted,
       showEmptyMessage,
     } = this.state;
-    const { fromInput } = value;
+    const { fromInput, toInput } = value;
     const { selector: selectedFromOption } = fromInput;
+    const { selector: selectedToOption } = toInput;
 
     const formStructure = generateFormStructure(balances);
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
@@ -1147,6 +1154,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     };
 
     const swaps = this.generatePopularSwaps();
+
+    const isSupportedExchange = this.isSupportedExchange(selectedFromOption.symbol, selectedToOption.symbol);
 
     return (
       <ContainerWithHeader
@@ -1197,7 +1206,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
               ListHeaderComponent={(
                 <ListHeader>
-                  <ExchangeStatus isVisible={isSubmitted} />
+                  <ExchangeStatus isVisible={isSubmitted && isSupportedExchange} />
                 </ListHeader>
               )}
               ListEmptyComponent={!!showEmptyMessage && (
