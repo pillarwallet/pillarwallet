@@ -28,7 +28,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { inviteByEmailAction } from 'actions/referralsActions';
+import { inviteByEmailAction, removeContactForReferralAction } from 'actions/referralsActions';
 
 // components
 import { MediumText } from 'components/Typography';
@@ -37,13 +37,15 @@ import Insight from 'components/Insight';
 import TextInput from 'components/TextInput';
 import { EmailStruct } from 'components/ProfileForm/profileFormDefs';
 import Button from 'components/Button';
+import ClosablePillList from 'components/ClosablePillList';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // types
-import type { Dispatch } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { ReferralContact } from 'reducers/referralsReducer';
 
 // constants
 import { ADDRESS_BOOK_PERMISSION } from 'constants/navigationConstants';
@@ -52,6 +54,8 @@ import { ADDRESS_BOOK_PERMISSION } from 'constants/navigationConstants';
 type Props = {
   navigation: NavigationScreenProp<*>,
   inviteByEmail: (email: string) => void,
+  removeContactForReferral: (id: string) => void,
+  addedContactsToInvite: ReferralContact[],
 };
 
 type Value = {
@@ -190,6 +194,7 @@ class ReferFriends extends React.Component<Props, State> {
     });
   };
 
+
   render() {
     const {
       value,
@@ -198,7 +203,8 @@ class ReferFriends extends React.Component<Props, State> {
       hideErrorMessage,
     } = this.state;
 
-    const { navigation } = this.props;
+    const { navigation, addedContactsToInvite, removeContactForReferral } = this.props;
+    const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
 
     return (
       <ContainerWithHeader
@@ -220,7 +226,17 @@ class ReferFriends extends React.Component<Props, State> {
             wrapperPadding={0}
             wrapperStyle={{ marginBottom: 40 }}
           />
-          <Button title="Select contacts..." onPress={() => navigation.navigate(ADDRESS_BOOK_PERMISSION)} block />
+          <ClosablePillList
+            listItems={mappedContactsToInvite}
+            onItemClose={(id) => removeContactForReferral(id)}
+          />
+          <Button
+            title={addedContactsToInvite.length ? 'Send invites' : 'Select contacts...'}
+            onPress={addedContactsToInvite.length
+              ? () => {}
+              : () => navigation.navigate(ADDRESS_BOOK_PERMISSION)}
+            block
+          />
           <FormWrapper>
             <Form
               ref={node => { this.referForm = node; }}
@@ -249,9 +265,15 @@ class ReferFriends extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({
+  referrals: { addedContactsToInvite },
+}: RootReducerState): $Shape<Props> => ({
+  addedContactsToInvite,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   inviteByEmail: (email: string) => dispatch(inviteByEmailAction(email)),
+  removeContactForReferral: (id: string) => dispatch(removeContactForReferralAction(id)),
 });
 
-export default withTheme(connect(null, mapDispatchToProps)(ReferFriends));
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferFriends));

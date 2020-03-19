@@ -23,6 +23,7 @@ import isEmpty from 'lodash.isempty';
 
 // constants
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { ADD_CONTACTS_FOR_REFERRAL, REMOVE_CONTACT_FOR_REFERRAL } from 'constants/referralConstants';
 
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
@@ -30,6 +31,7 @@ import { logEvent, getUserReferralLink } from 'services/branchIo';
 // types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { ReferralContact } from 'reducers/referralsReducer';
 
 
 export type ClaimTokenAction = {
@@ -96,5 +98,23 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
         },
       });
     }
+  };
+};
+
+export const addContactsForReferralAction = (contacts: ReferralContact[]) => {
+  return (dispatch: Dispatch) => {
+    dispatch({
+      type: ADD_CONTACTS_FOR_REFERRAL,
+      payload: contacts,
+    });
+  };
+};
+
+export const removeContactForReferralAction = (id: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch({
+      type: REMOVE_CONTACT_FOR_REFERRAL,
+      payload: id,
+    });
   };
 };

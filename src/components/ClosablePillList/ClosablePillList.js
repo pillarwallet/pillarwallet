@@ -26,7 +26,7 @@ import type { PillItem } from 'components/ClosablePill';
 
 type Props = {
   listItems: PillItem[],
-  onItemClose?: (id: string) => void,
+  onItemClose: (id: string) => void,
   children?: React.Node,
 };
 
@@ -49,14 +49,13 @@ const ClosablePillList = (props: Props) => {
   return (
     <ListWrapper>
       {listItems.map(({ onClose, id, label }) => {
-        const onCloseAction = onClose || onItemClose;
         return (
           <ClosablePill
             key={id}
             id={id}
             label={label}
             style={{ marginVertical: 4, marginRight: 8 }}
-            onClose={onCloseAction ? () => onCloseAction(id) : null}
+            onClose={() => onClose ? onClose(id) : onItemClose(id)}
           />);
       })}
       {children}

@@ -20,8 +20,9 @@
 
 import * as React from 'react';
 import { FlatList, Keyboard } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
+import { connect } from 'react-redux';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
@@ -31,24 +32,24 @@ import Checkbox from 'components/Checkbox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 import { spacing } from 'utils/variables';
+
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Dispatch } from 'reducers/rootReducer';
+import type { ReferralContact } from 'reducers/referralsReducer';
 
+import { addContactsForReferralAction } from 'actions/referralsActions';
 
-type Contact = {
-  id: string,
-  name: string,
-  email?: string,
-  phone?: string,
-  photo?: string,
-};
+import { REFER_MAIN_SCREEN } from 'constants/navigationConstants';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  addContactsForReferral: (contacts: ReferralContact[]) => void,
 };
 
 type State = {
   query: string,
-  selectedContacts: Contact[],
+  selectedContacts: ReferralContact[],
 };
 
 
@@ -167,7 +168,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     this.setState({ query });
   };
 
-  renderContact = ({ item }: { item: Contact }) => {
+  renderContact = ({ item }: { item: ReferralContact }) => {
     const { selectedContacts } = this.state;
     const isPreviouslyInvited = fakePreviouslyInvited
       .some(({ email, phone }) => (!!email && email === item.email) || (!!phone && phone === item.phone));
@@ -193,7 +194,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     );
   };
 
-  selectContact = (contact: Contact) => {
+  selectContact = (contact: ReferralContact) => {
     const { selectedContacts } = this.state;
     const { id: relatedContactId } = contact;
 
@@ -205,8 +206,15 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     this.setState({ selectedContacts: updatedSelectedContacts });
   };
 
+  addContactsForReferral = () => {
+    const { addContactsForReferral, navigation } = this.props;
+    const { selectedContacts } = this.state;
+
+    addContactsForReferral(selectedContacts);
+    navigation.navigate(REFER_MAIN_SCREEN);
+  };
+
   render() {
-    const { navigation } = this.props;
     const { query, selectedContacts } = this.state;
     const filteredContacts = getFilteredContacts(fakeData, query);
 
@@ -234,7 +242,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             flexGrow: 1,
           }}
           ListFooterComponent={selectedContacts.length && (
-            <Button title="Confirm" onPress={() => navigation.navigate('')} block />
+            <Button title="Confirm" onPress={this.addContactsForReferral} block />
           )}
           ListFooterComponentStyle={{ flexGrow: 1, justifyContent: 'center', padding: spacing.layoutSides }}
           ListEmptyComponent={(
@@ -251,4 +259,8 @@ class ReferralContacts extends React.PureComponent<Props, State> {
   }
 }
 
-export default ReferralContacts;
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  addContactsForReferral: (contacts: ReferralContact[]) => dispatch(addContactsForReferralAction(contacts)),
+});
+
+export default withTheme(connect(null, mapDispatchToProps)(ReferralContacts));
