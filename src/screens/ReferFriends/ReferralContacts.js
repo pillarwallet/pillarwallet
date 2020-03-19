@@ -170,7 +170,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
   renderContact = ({ item }: { item: Contact }) => {
     const { selectedContacts } = this.state;
     const isPreviouslyInvited = fakePreviouslyInvited
-      .some(({ email = '', phone = '' }) => email === item.email || phone === item.phone);
+      .some(({ email, phone }) => (!!email && email === item.email) || (!!phone && phone === item.phone));
     const isSelected = selectedContacts.some(({ id }) => id === item.id) || isPreviouslyInvited;
     return (
       <ListItemWithImage

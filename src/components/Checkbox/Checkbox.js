@@ -32,7 +32,7 @@ type Props = {
   text?: string,
   onPress?: () => void,
   disabled?: boolean,
-  checked?: boolean,
+  checked: boolean,
   children?: React.Node,
   wrapperStyle?: Object,
   rounded?: boolean,
