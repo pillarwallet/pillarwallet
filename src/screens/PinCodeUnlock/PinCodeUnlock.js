@@ -197,10 +197,14 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handlePinSubmit = (pin: string) => {
-    const { loginWithPin } = this.props;
-    getKeychainDataObject() // update keychain if privateKey isn't stored
-      .then(data => loginWithPin(pin, this.onLoginSuccess, !getPrivateKeyFromKeychainData(data)))
-      .catch(() => { loginWithPin(pin, this.onLoginSuccess, false); });
+    const { loginWithPin, useBiometrics } = this.props;
+    if (useBiometrics) {
+      loginWithPin(pin, this.onLoginSuccess, false);
+    } else {
+      getKeychainDataObject() // update keychain if privateKey isn't stored
+        .then(data => loginWithPin(pin, this.onLoginSuccess, !getPrivateKeyFromKeychainData(data)))
+        .catch(() => { loginWithPin(pin, this.onLoginSuccess, false); });
+    }
     this.handleLocking(false);
   };
 

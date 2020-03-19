@@ -94,14 +94,19 @@ class CheckPin extends React.Component<Props, State> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics, revealMnemonic, autoLogin } = this.props;
+    const {
+      useBiometrics, revealMnemonic, autoLogin, modalProps,
+    } = this.props;
     const { lastAppState } = this.state;
-    if (useBiometrics
-      && !revealMnemonic
-      && lastAppState !== BACKGROUND_APP_STATE) {
-      this.showBiometricLogin();
-    } else if (lastAppState !== BACKGROUND_APP_STATE && autoLogin) { // todo check conditions
-      this.checkPrivateKey();
+    // do nothing if auth isn't supposed to be checked
+    if (!(modalProps && !modalProps.isVisible)) {
+      if (useBiometrics
+        && !revealMnemonic
+        && lastAppState !== BACKGROUND_APP_STATE) {
+        this.showBiometricLogin();
+      } else if (lastAppState !== BACKGROUND_APP_STATE && autoLogin) { // todo check conditions
+        this.checkPrivateKey();
+      }
     }
   }
 

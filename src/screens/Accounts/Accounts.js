@@ -45,7 +45,6 @@ import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { themedColors } from 'utils/themes';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
-import { getPrivateKey } from 'utils/keychain';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -69,7 +68,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
-import { resetIncorrectPasswordAction, checkAuthAction } from 'actions/authActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { initializeBitcoinWalletAction, refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // selectors
@@ -131,7 +130,6 @@ type Props = {|
   bitcoinBalances: BitcoinBalance,
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
-  checkPrivateKey: (privateKey: string, onValidated: Function) => void,
 |};
 
 type State = {|
@@ -200,16 +198,6 @@ class AccountsScreen extends React.Component<Props, State> {
     }
 
     return !isEq;
-  }
-
-  loginWithPrivateKey = async (onSuccess: Function) => {
-    const { checkPrivateKey } = this.props;
-    const privateKey = await getPrivateKey();
-    if (privateKey) {
-      checkPrivateKey(privateKey, onSuccess);
-    } else {
-      this.setState({ showPinModal: true, onPinValidAction: onSuccess });
-    }
   }
 
   handleCheckPinModalClose = () => {
@@ -614,9 +602,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
-  checkPrivateKey: (privateKey: string, onValidated: Function) => {
-    dispatch(checkAuthAction(null, privateKey, onValidated));
-  },
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);
