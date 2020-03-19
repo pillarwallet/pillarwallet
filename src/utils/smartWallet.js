@@ -61,7 +61,7 @@ const getMessage = (
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (!isSmartWalletActive) return {};
       return {
-        title: 'To send assets, deploy Smart Wallet first',
+        title: 'To send assets, activate Smart Wallet first',
         message: 'You will have to pay a small fee',
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
@@ -120,10 +120,10 @@ export const getSmartWalletStatus = (
 export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
 export const getDeployErrorMessage = (errorType: string) => ({
-  title: 'Smart Wallet deployment failed',
+  title: 'Smart Wallet activation failed',
   message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
     ? 'You need to top up your Smart Account first'
-    : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
+    : 'There was an error on our server. Please try to re-activate the account by clicking the button bellow',
 });
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
