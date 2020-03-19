@@ -17,37 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import OryginalStorybook from 'storybook';
-import { connect } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { AppearanceProvider } from 'react-native-appearance';
-import { getThemeByType } from 'utils/themes';
 
-import type { RootReducerState } from 'reducers/rootReducer';
-
-type Props = {
-  themeType: string,
-};
-
-const Storybook = (props) => {
-  const {
-    themeType,
-  } = props;
-  const theme = getThemeByType(themeType);
-  return (
-    <AppearanceProvider>
-      <ThemeProvider theme={theme}>
-        <OryginalStorybook />
-      </ThemeProvider>
-    </AppearanceProvider>
-  );
-};
-
-const mapStateToProps = ({
-  appSettings: { data: { themeType } },
-}: RootReducerState): $Shape<Props> => ({
-  themeType,
-});
-
-export default connect(mapStateToProps)(Storybook);
+export const DISMISS_SMART_WALLET_INSIGHT = 'DISMISS_SMART_WALLET_INSIGHT';
+export const DISMISS_PPN_INSIGHT = 'DISMISS_PPN_INSIGHT';
+export const SET_INSIGHTS_STATE = 'SET_INSIGHTS_STATE';

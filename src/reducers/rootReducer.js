@@ -62,6 +62,7 @@ import userEventsReducer from './userEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
+import insightsReducer from './insightsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -103,6 +104,7 @@ import type { UserEventsReducerAction, UserEventsReducerState } from './userEven
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
+import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -141,6 +143,7 @@ export type RootReducerState = {|
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
+  insights: InsightsReducerState,
 |};
 
 type RootReducerAction =
@@ -164,7 +167,8 @@ type RootReducerAction =
   | WalkthroughsReducerAction
   | DbAction
   | SyntheticsReducerAction
-  | EnsRegistryReducerAction;
+  | EnsRegistryReducerAction
+  | InsightsReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -213,6 +217,7 @@ const appReducer = combineReducers({
   walkthroughs: walkthroughsReducer,
   synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
+  insights: insightsReducer,
 });
 
 export const initialState = appReducer(undefined, {});
