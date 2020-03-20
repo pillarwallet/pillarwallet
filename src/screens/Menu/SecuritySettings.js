@@ -37,10 +37,6 @@ import { SettingsSection } from './SettingsSection';
 type State = {
   visibleModal: ?string,
   supportedBiometryType: string,
-  setBiometrics: ?{
-    enabled: boolean,
-    privateKey?: string,
-  },
 };
 
 type Props = {
