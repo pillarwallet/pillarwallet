@@ -40,7 +40,6 @@ import notificationsReducer from './notificationsReducer';
 import contactsReducer from './contactsReducer';
 import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
-import accessTokensReducer from './accessTokensReducer';
 import sessionReducer from './sessionReducer';
 import icosReducer from './icosReducer';
 import txNoteReducer from './txNoteReducer';
@@ -80,7 +79,6 @@ import type { NotificationsReducerState } from './notificationsReducer';
 import type { ContactsReducerState } from './contactsReducer';
 import type { InvitationsReducerState } from './invitationsReducer';
 import type { ChatReducerState } from './chatReducer';
-import type { AccessTokensReducerState } from './accessTokensReducer';
 import type { SessionReducerState } from './sessionReducer';
 import type { ICOsReducerState } from './icosReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
@@ -117,7 +115,6 @@ export type RootReducerState = {|
   contacts: ContactsReducerState,
   invitations: InvitationsReducerState,
   chat: ChatReducerState,
-  accessTokens: AccessTokensReducerState,
   session: SessionReducerState,
   icos: ICOsReducerState,
   txNotes: TxNoteReducerState,
@@ -189,7 +186,6 @@ const appReducer = combineReducers({
   contacts: contactsReducer,
   invitations: invitationsReducer,
   chat: chatReducer,
-  accessTokens: accessTokensReducer,
   session: sessionReducer,
   icos: icosReducer,
   txNotes: txNoteReducer,

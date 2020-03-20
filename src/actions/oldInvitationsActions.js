@@ -20,7 +20,6 @@
 
 // actions
 import { getExistingChatsAction } from 'actions/chatActions';
-import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 
 // constants
@@ -35,7 +34,6 @@ import {
   UPDATE_INVITATIONS,
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 
 // utils
 import { uniqBy } from 'utils/common';
@@ -60,13 +58,6 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     } = getState();
 
     if (!isOnline) return;
-
-    let accessTokens = getState().accessTokens.data;
-
-    if (accessTokens === undefined || !accessTokens.length) {
-      await dispatch(restoreAccessTokensAction(walletId));
-      accessTokens = getState().accessTokens.data;
-    }
 
     const types = [
       TYPE_RECEIVED,
@@ -123,18 +114,8 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }))
       .filter(updatedContact => !disconnectedConnectionsIds.includes(updatedContact.id));
 
-    // save new connections keys
-    let updatedAccessTokens = [...accessTokens];
-    newConnections.forEach(({ id, connectionKey }) => {
-      updatedAccessTokens = accessTokens.map(accessToken => {
-        if (accessToken.userId !== id) return accessToken;
-        return { ...accessToken, userAccessToken: connectionKey };
-      });
-    });
-
     await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
     await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
-    await dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     await dispatch({
       type: UPDATE_INVITATIONS,
@@ -143,10 +124,6 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     await dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
-    });
-    await dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
     });
 
     await dispatch(updateConnectionsAction());

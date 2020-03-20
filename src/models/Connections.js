@@ -18,10 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type ConnectionIdentityKeyPair = {
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
-}
 
 export type ConnectionIdentityKeyMap = {
   walletId: string,
