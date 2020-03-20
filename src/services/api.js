@@ -51,11 +51,6 @@ import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import type { ApiNotification } from 'models/Notification';
-import type {
-  ConnectionIdentityKeyMap,
-  ConnectionUpdateIdentityKeys,
-  ConnectionPatchIdentityKeys,
-} from 'models/Connections';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 
@@ -99,14 +94,6 @@ type RegisterSmartWalletPayload = {
 
 type MapContactsAddresses = Array<{
   contactId: string,
-  accessKeys?: {
-    userAccessKey: string,
-    contactAccessKey: string,
-  },
-  connectionKeys?: {
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-  },
 }>;
 
 type VerifyEmail = {|
@@ -677,46 +664,6 @@ SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: stri
       });
       return { error };
     });
-};
-
-SDKWrapper.prototype.connectionsCount = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.count({ walletId }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
-    .then(({ data }) => {
-      if (!Array.isArray(data)) {
-        Sentry.captureMessage('Wrong Identity Keys received', { extra: { data } });
-        return [];
-      }
-      return data;
-    })
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
-    .catch(() => false);
-};
-
-SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => {
-      if (data && !Array.isArray(data)) {
-        Sentry.captureMessage('Wrong response from patchIdentityKeys', { extra: { data } });
-        return false;
-      }
-      return data;
-    })
-    .catch(() => false);
 };
 
 SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, contacts: MapContactsAddresses) {

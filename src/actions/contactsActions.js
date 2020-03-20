@@ -279,7 +279,7 @@ export const syncContactsSmartAddressesAction = () => {
 
     // call the api
     const { smartWallets: contactsSmartAddresses } =
-      await api.getContactsSmartAddresses(walletId, connections).catch(() => null) || {};
+      await api.getContactsSmartAddresses(walletId, connections) || {};
 
     if (!contactsSmartAddresses) return;
 
