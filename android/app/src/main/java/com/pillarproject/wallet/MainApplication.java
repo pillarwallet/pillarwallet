@@ -54,6 +54,7 @@ import io.sentry.RNSentryPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactlibrary.RNThreadPackage;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
 // react-native-splash-screen >= 0.3.1
 
@@ -102,7 +103,8 @@ public class MainApplication extends Application implements ShareApplication, Re
         new PickerPackage(),
         new NativeShadowPackage(),
         new RNThreadPackage(mReactNativeHost),
-        new KeychainPackage()
+        new KeychainPackage(),
+        new ReactNativeContacts()
       );
     }
 

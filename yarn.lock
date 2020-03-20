@@ -1851,10 +1851,10 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.43":
-  version "1.43.1772"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.43.1772.tgz#667fb570f480500639ccf395542dc886778f2374"
-  integrity sha1-Zn+1cPSAUAY5zPOVVC3IhnePI3Q=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.44":
+  version "1.44.1779"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.44.1779.tgz#5b6e9e24cb06ded939bd9650deba6403f23c345e"
+  integrity sha1-W26eJMsG3tk5vZZQ3rpkA/I8NF4=
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
@@ -15306,6 +15306,11 @@ react-native-communications@2.2.1:
   version "2.2.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
+
+react-native-contacts@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-5.1.0.tgz#94ba9a94f3de2211b812d2dbd268c472441a6684"
+  integrity sha512-mLX9XWLiwmZ5C4iInODEaupzWmkVv3/oRDLcecqFCAvMhJ9cgnxuWvVKE9nMFGUwRIZN+KWjjJJ97/OxvErA7g==
 
 "react-native-cookies@https://github.com/joeferraro/react-native-cookies.git":
   version "3.3.0"

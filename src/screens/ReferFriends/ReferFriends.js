@@ -18,31 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { ScrollView, Share } from 'react-native';
+import { ScrollView } from 'react-native';
 import Intercom from 'react-native-intercom';
-import t from 'tcomb-form-native';
 import styled, { withTheme } from 'styled-components/native';
-import get from 'lodash.get';
-import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
-
-// actions
-import { inviteByEmailAction } from 'actions/referralsActions';
 
 // components
 import { MediumText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Insight from 'components/Insight';
-import TextInput from 'components/TextInput';
-import { EmailStruct } from 'components/ProfileForm/profileFormDefs';
+import FriendsList from 'screens/ReferFriends/FriendsList';
 
 // utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-
-// types
-import type { Dispatch } from 'reducers/rootReducer';
-
 
 const INSIGHT_ITEMS = [
   {
@@ -59,22 +47,6 @@ const INSIGHT_ITEMS = [
   },
 ];
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  inviteByEmail: (email: string) => void,
-};
-
-type Value = {
-  email: string,
-}
-
-type State = {
-  value: Value,
-  showFormButton: boolean,
-  isFormButtonDisabled: boolean,
-  hideErrorMessage: boolean,
-};
-
 const FormWrapper = styled.View`
   padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
 `;
@@ -85,161 +57,35 @@ const ExplanationText = styled(MediumText)`
   margin-top: 6px;
 `;
 
-const { Form } = t.form;
-
-const ReferralEmailInputTemplate = (locals) => {
-  const {
-    config: {
-      onIconPress,
-      label,
-      showButton,
-      isButtonDisabled,
-      hideErrorMessage,
-      onFormSubmit,
-    },
-  } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    placeholder: 'Enter your friend\'s email',
-    value: locals.value,
-    maxLength: 42,
-    letterSpacing: 0.1,
-    fontSize: fontSizes.medium,
-    keyboardType: 'email-address',
-    autoCapitalize: 'none',
-  };
-
-  const defaultButtonProps = {
-    title: 'Invite',
-    onPress: onFormSubmit,
-    disabledTransparent: false,
-  };
-
-  let buttonProps = { ...defaultButtonProps };
-
-  if (isButtonDisabled) buttonProps = { ...defaultButtonProps, disabledTransparent: true };
-
+const ReferFriends = () => {
   return (
-    <TextInput
-      errorMessage={errorMessage}
-      inputProps={inputProps}
-      iconProps={!showButton && {
-        icon: 'add-contact',
-        fontSize: 20,
-        onPress: onIconPress,
+    <ContainerWithHeader
+      headerProps={{
+        centerItems: [{ title: 'Refer friend' }],
+        rightItems: [
+          {
+            link: 'Support',
+            onPress: () => Intercom.displayMessenger(),
+          },
+        ],
+        sideFlex: 2,
       }}
-      label={label}
-      buttonProps={showButton && buttonProps}
-      hideErrorMessage={hideErrorMessage}
-    />
+    >
+      <ScrollView>
+        <Insight
+          isVisible
+          insightNumberedList={INSIGHT_ITEMS}
+        />
+        <FriendsList />
+        <FormWrapper>
+          <ExplanationText>
+            Upon invited, your friend will receive email link for download. Referral rewards are available with this
+            link only.
+          </ExplanationText>
+        </FormWrapper>
+      </ScrollView>
+    </ContainerWithHeader>
   );
 };
 
-const getReferralFormFields = (config: Object): Object => {
-  return {
-    fields: {
-      email: {
-        template: ReferralEmailInputTemplate,
-        config,
-      },
-    },
-  };
-};
-
-class ReferFriends extends React.Component<Props, State> {
-  referForm: t.form;
-
-  state = {
-    value: {
-      email: '',
-    },
-    showFormButton: false,
-    isFormButtonDisabled: true,
-    hideErrorMessage: true,
-  };
-
-  handleChange = (value: Object) => {
-    const email = get(value, 'email', '');
-    const validatedValue = this.referForm.getValue();
-    const showFormButton = !!email.length;
-    const isFormButtonDisabled = !validatedValue;
-    this.setState({ value, showFormButton, isFormButtonDisabled });
-  };
-
-  handleSubmit = () => {
-    const email = get(this.state.value, 'email', '');
-    this.props.inviteByEmail(email);
-    this.setState({ hideErrorMessage: false });
-  };
-
-  openShareDialog = () => {
-    Share.share({
-      title: 'Join Pillar',
-      message: '', // TODO: Add referral link as message
-    }, {
-      dialogTitle: 'Refer friend',
-    });
-  };
-
-  render() {
-    const {
-      value,
-      showFormButton,
-      isFormButtonDisabled,
-      hideErrorMessage,
-    } = this.state;
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Refer friend' }],
-          rightItems: [
-            {
-              link: 'Support',
-              onPress: () => Intercom.displayMessenger(),
-            },
-          ],
-          sideFlex: 2,
-        }}
-      >
-        <ScrollView>
-          <Insight
-            isVisible
-            insightNumberedList={INSIGHT_ITEMS}
-          />
-          <FormWrapper>
-            <Form
-              ref={node => { this.referForm = node; }}
-              type={t.struct({
-                email: EmailStruct,
-              })}
-              options={getReferralFormFields({
-                onIconPress: this.openShareDialog,
-                label: 'Friend\'s email',
-                showButton: showFormButton,
-                isButtonDisabled: isFormButtonDisabled,
-                hideErrorMessage,
-                onFormSubmit: this.handleSubmit,
-              })}
-              value={value}
-              onChange={this.handleChange}
-            />
-            <ExplanationText>
-              Upon invited, your friend will receive email link for download. Referral rewards are available with this
-              link only.
-            </ExplanationText>
-          </FormWrapper>
-        </ScrollView>
-      </ContainerWithHeader>
-    );
-  }
-}
-
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  inviteByEmail: (email: string) => dispatch(inviteByEmailAction(email)),
-});
-
-export default withTheme(connect(null, mapDispatchToProps)(ReferFriends));
+export default withTheme(ReferFriends);
