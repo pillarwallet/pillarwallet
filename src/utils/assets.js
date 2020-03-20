@@ -46,6 +46,13 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
   }, {});
 };
 
+export const transformBalancesToObject = (balancesArray: Balance[] = []): Balances => {
+  return balancesArray.reduce((memo, balance) => {
+    memo[balance.symbol] = balance;
+    return memo;
+  }, {});
+};
+
 export const getAssetsAsList = (assetsObject: Assets): Asset[] => {
   return Object.keys(assetsObject).map(id => assetsObject[id]);
 };

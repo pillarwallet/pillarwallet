@@ -119,7 +119,7 @@ import {
   stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
   startListeningForBalanceChangeAction,
@@ -370,7 +370,7 @@ const tabBarIcon = ({
         style={{
           width: 24,
           height: 24,
-          tintColor: focused ? colors.primary : colors.navbarItems,
+          tintColor: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
         }}
         resizeMode="contain"
         source={focused ? iconActive : icon}
@@ -398,7 +398,7 @@ const tabBarLabel = ({ text, theme }) => ({ focused }) => {
     <BaseText
       style={{
         fontSize: fontSizes.regular,
-        color: focused ? colors.primary : colors.navbarItems,
+        color: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
         textAlign: 'center',
       }}
       numberOfLines={1}
@@ -543,13 +543,13 @@ const backupWalletFlow = createStackNavigator({
 
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
   [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
-  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
 smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -679,7 +679,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchAssetsBalances: () => Function,
+  fetchAllAccountsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -723,7 +723,7 @@ class AppFlow extends React.Component<Props, State> {
       startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
-      fetchAssetsBalances,
+      fetchAllAccountsBalances,
       getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
@@ -731,7 +731,7 @@ class AppFlow extends React.Component<Props, State> {
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances();
+    fetchAllAccountsBalances();
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
@@ -919,7 +919,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
+  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },
