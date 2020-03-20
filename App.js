@@ -264,10 +264,10 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
-const AppRoot = () => SHOW_ONLY_STORYBOOK ? <Storybook /> : (
+const AppRoot = () => (
   <Provider store={store}>
     <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
-      <AppWithNavigationState />
+      {SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
     </PersistGate>
   </Provider>
 );

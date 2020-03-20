@@ -18,36 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import OryginalStorybook from 'storybook';
-import { connect } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { AppearanceProvider } from 'react-native-appearance';
-import { getThemeByType } from 'utils/themes';
+import { storiesOf } from '@storybook/react-native';
+import SWActivationCard from './SWActivationCard';
 
-import type { RootReducerState } from 'reducers/rootReducer';
-
-type Props = {
-  themeType: string,
-};
-
-const Storybook = (props) => {
-  const {
-    themeType,
-  } = props;
-  const theme = getThemeByType(themeType);
-  return (
-    <AppearanceProvider>
-      <ThemeProvider theme={theme}>
-        <OryginalStorybook />
-      </ThemeProvider>
-    </AppearanceProvider>
-  );
-};
-
-const mapStateToProps = ({
-  appSettings: { data: { themeType } },
-}: RootReducerState): $Shape<Props> => ({
-  themeType,
-});
-
-export default connect(mapStateToProps)(Storybook);
+storiesOf('SWActivationCard', module).add('default', () => (
+  <SWActivationCard navigation={{}} />
+));

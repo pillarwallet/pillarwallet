@@ -35,7 +35,6 @@ export const lightThemeColors = {
   tertiary: '#EBF0F6',
   control: '#FCFDFF',
   warning: '#ECA93A',
-  navbarItems: '#D4D9DB', // NOT IN DS BUT CURRENTLY REQUIRED
   indicator: '#F8E71C', // NOT IN DS BUT CURRENTLY REQUIRED
   userAvatar: '#d1d9e4', // NOT IN DS BUT CURRENTLY REQUIRED
   legacyWallet: '#FA574F', // NOT IN DS BUT CURRENTLY REQUIRED
@@ -50,6 +49,9 @@ export const lightThemeColors = {
   helpIcon: '#f7931a',
   popularSwaps: '#d08cb1',
   notice: '#ea480e',
+  activeTabBarIcon: '#007AFF',
+  inactiveTabBarIcon: '#D4D9DB',
+  buttonSecondaryBackground: '#e6f1f9',
 };
 
 export const darkThemeColors = {
@@ -66,7 +68,6 @@ export const darkThemeColors = {
   tertiary: '#171F31',
   control: '#FCFDFF',
   warning: 'blue', // TODO: add correct one when added to Design System
-  navbarItems: '#D4D9DB', // TODO: add correct one when added to Design System
   indicator: '#F8E71C', // TODO: add correct one when added to Design System
   userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
   legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
@@ -81,6 +82,9 @@ export const darkThemeColors = {
   helpIcon: '#f7931a',
   popularSwaps: '#d08cb1',
   notice: '#ea480e',
+  activeTabBarIcon: '#FFFFFF',
+  inactiveTabBarIcon: '#818eb3',
+  buttonSecondaryBackground: '#102132',
 };
 
 export const themedColors = {
@@ -140,10 +144,6 @@ export const themedColors = {
     lightTheme: lightThemeColors.indicator,
     darkTheme: darkThemeColors.indicator,
   }),
-  navbarItems: theme('current', {
-    lightTheme: lightThemeColors.navbarItems,
-    darkTheme: darkThemeColors.navbarItems,
-  }),
   userAvatar: theme('current', {
     lightTheme: lightThemeColors.userAvatar,
     darkTheme: darkThemeColors.userAvatar,
@@ -195,6 +195,18 @@ export const themedColors = {
   notice: theme('current', {
     lightTheme: lightThemeColors.notice,
     darkTheme: darkThemeColors.notice,
+  }),
+  activeTabBarIcon: theme('current', {
+    lightTheme: lightThemeColors.activeTabBarIcon,
+    darkTheme: darkThemeColors.activeTabBarIcon,
+  }),
+  inactiveTabBarIcon: theme('current', {
+    lightTheme: lightThemeColors.inactiveTabBarIcon,
+    darkTheme: darkThemeColors.inactiveTabBarIcon,
+  }),
+  buttonSecondaryBackground: theme('current', {
+    lightTheme: lightThemeColors.buttonSecondaryBackground,
+    darkTheme: darkThemeColors.buttonSecondaryBackground,
   }),
 };
 

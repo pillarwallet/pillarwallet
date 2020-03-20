@@ -431,7 +431,12 @@ class HomeScreen extends React.Component<Props, State> {
           leftItems: [
             {
               custom: (
-                <IconButton icon="hamburger" onPress={() => navigation.navigate(MENU)} fontSize={fontSizes.large} />
+                <IconButton
+                  icon="hamburger"
+                  onPress={() => navigation.navigate(MENU)}
+                  fontSize={fontSizes.large}
+                  secondary
+                />
               ),
             },
           ],

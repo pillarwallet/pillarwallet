@@ -18,36 +18,23 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import OryginalStorybook from 'storybook';
-import { connect } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { AppearanceProvider } from 'react-native-appearance';
-import { getThemeByType } from 'utils/themes';
+import { withTheme } from 'styled-components/native';
+import { TouchableOpacity } from 'react-native';
+import Svg, { Circle, G } from 'react-native-svg';
+import { getThemeColors } from 'utils/themes';
 
-import type { RootReducerState } from 'reducers/rootReducer';
-
-type Props = {
-  themeType: string,
-};
-
-const Storybook = (props) => {
-  const {
-    themeType,
-  } = props;
-  const theme = getThemeByType(themeType);
+const RadioButton = ({ checked, onPress, theme }) => {
+  const colors = getThemeColors(theme);
   return (
-    <AppearanceProvider>
-      <ThemeProvider theme={theme}>
-        <OryginalStorybook />
-      </ThemeProvider>
-    </AppearanceProvider>
+    <TouchableOpacity onPress={onPress}>
+      <Svg width={20} height={21} viewBox="0 0 20 21">
+        <G fill="none" fill-rule="evenodd">
+          <Circle cx="10" cy="11" r="9.5" stroke="#B7B8BB" />
+          {checked && <Circle cx="10" cy="11" r="6" fill={colors.positive} />}
+        </G>
+      </Svg>
+    </TouchableOpacity>
   );
 };
 
-const mapStateToProps = ({
-  appSettings: { data: { themeType } },
-}: RootReducerState): $Shape<Props> => ({
-  themeType,
-});
-
-export default connect(mapStateToProps)(Storybook);
+export default withTheme(RadioButton);

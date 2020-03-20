@@ -63,6 +63,7 @@ import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
 import referralsReducer from './referralsReducer';
+import insightsReducer from './insightsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -105,6 +106,7 @@ import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walk
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
+import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -144,6 +146,7 @@ export type RootReducerState = {|
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
   referrals: ReferralsReducerState,
+  insights: InsightsReducerState,
 |};
 
 type RootReducerAction =
@@ -168,7 +171,8 @@ type RootReducerAction =
   | DbAction
   | SyntheticsReducerAction
   | EnsRegistryReducerAction
-  | ReferralsReducerAction;
+  | ReferralsReducerAction
+  | InsightsReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -218,6 +222,7 @@ const appReducer = combineReducers({
   synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
   referrals: referralsReducer,
+  insights: insightsReducer,
 });
 
 export const initialState = appReducer(undefined, {});
