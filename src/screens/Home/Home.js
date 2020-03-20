@@ -41,6 +41,7 @@ import Toast from 'components/Toast';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
+import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -143,6 +144,7 @@ type State = {
   scrollY: Animated.Value,
   isScanning: boolean,
   isReferralBannerVisible: boolean,
+  showRewardModal: boolean,
 };
 
 const profileImageWidth = 24;
@@ -187,6 +189,7 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     isReferralBannerVisible: true,
+    showRewardModal: false,
   };
 
   componentDidMount() {
@@ -348,6 +351,7 @@ class HomeScreen extends React.Component<Props, State> {
       activeTab,
       isScanning,
       isReferralBannerVisible,
+      showRewardModal,
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
@@ -539,6 +543,10 @@ class HomeScreen extends React.Component<Props, State> {
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
+        <ReferralModalReward
+          isVisible={showRewardModal}
+          onModalHide={() => this.setState({ showRewardModal: false })}
+        />
         <QRCodeScanner
           validator={this.validateQRCode}
           isActive={isScanning}
