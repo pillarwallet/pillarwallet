@@ -54,7 +54,6 @@ class SecuritySettings extends React.Component<Props, State> {
   state = {
     visibleModal: null,
     supportedBiometryType: '',
-    setBiometrics: null,
   }
 
   componentDidMount() {
@@ -66,21 +65,10 @@ class SecuritySettings extends React.Component<Props, State> {
   }
 
   handleChangeUseBiometrics = (enabled: boolean, privateKey?: string) => {
+    const { resetIncorrectPassword, changeUseBiometrics } = this.props;
     this.setState({
       visibleModal: null,
-      setBiometrics: {
-        enabled,
-        privateKey,
-      },
     });
-  };
-
-  handleBiometricsCheckPinModalClose = () => {
-    const { resetIncorrectPassword, changeUseBiometrics } = this.props;
-    const { setBiometrics } = this.state;
-    if (!setBiometrics) return;
-    const { enabled, privateKey } = setBiometrics;
-    this.setState({ setBiometrics: null });
     resetIncorrectPassword();
     changeUseBiometrics(enabled, privateKey);
   };
@@ -146,7 +134,6 @@ class SecuritySettings extends React.Component<Props, State> {
           onPinValid={this.onPinValid}
           modalProps={{
             isVisible: visibleModal === 'checkPin',
-            onModalHidden: this.handleBiometricsCheckPinModalClose,
             onModalHide: () => this.setState({ visibleModal: null }),
           }}
         />
