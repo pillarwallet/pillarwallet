@@ -90,12 +90,6 @@ type BalancePayload = {
   assets: Asset[],
 };
 
-type UserInfoByIdPayload = {
-  walletId: string,
-  userAccessKey: string,
-  targetUserAccessKey: string,
-};
-
 type RegisterSmartWalletPayload = {
   walletId: string,
   privateKey: string,
@@ -339,9 +333,9 @@ SDKWrapper.prototype.userInfo = function (walletId: string) {
     .catch(() => ({}));
 };
 
-SDKWrapper.prototype.userInfoById = function (targetUserId: string, params: UserInfoByIdPayload) {
+SDKWrapper.prototype.userInfoById = function (targetUserId: string, myWalletId: string) {
   return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.infoById(targetUserId, params))
+    .then(() => this.pillarWalletSdk.user.infoById(targetUserId, { walletId: myWalletId }))
     .then(({ data }) => ({ ...data }))
     .catch(() => ({}));
 };
@@ -572,73 +566,13 @@ SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string)
     .catch(() => ({}));
 };
 
-SDKWrapper.prototype.sendOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.invite({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.cancelOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.cancel({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.acceptOldInvitation = function (
-  targetUserId: string,
-  targetUserAccessKey: string,
-  accessKey: string,
-  sourceIdentityKey: ?string,
-  targetIdentityKey: ?string,
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.accept({
-      sourceUserAccessKey: accessKey,
-      targetUserId,
-      targetUserAccessKey,
-      sourceUserIdentityKeys: {
-        sourceIdentityKey,
-        targetIdentityKey,
-      },
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.rejectOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.reject({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
 SDKWrapper.prototype.sendInvitation = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.invite({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -647,15 +581,11 @@ SDKWrapper.prototype.sendInvitation = function (
 
 SDKWrapper.prototype.cancelInvitation = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.cancel({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -664,21 +594,11 @@ SDKWrapper.prototype.cancelInvitation = function (
 
 SDKWrapper.prototype.acceptInvitation = function (
   targetUserId: string,
-  sourceUserIdentityKeys: {
-    sourceIdentityKey: string;
-    targetIdentityKey: string;
-  },
-  targetUserIdentityKeys: {
-    sourceIdentityKey: string;
-    targetIdentityKey: string;
-  },
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.accept({
       targetUserId,
-      sourceUserIdentityKeys,
-      targetUserIdentityKeys,
       walletId,
     }))
     .then(({ data }) => data)
@@ -687,15 +607,11 @@ SDKWrapper.prototype.acceptInvitation = function (
 
 SDKWrapper.prototype.rejectInvitation = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.reject({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -704,15 +620,11 @@ SDKWrapper.prototype.rejectInvitation = function (
 
 SDKWrapper.prototype.disconnectUser = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.disconnect({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -721,16 +633,12 @@ SDKWrapper.prototype.disconnectUser = function (
 
 SDKWrapper.prototype.muteUser = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
   mute: boolean,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.mute({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
       mute,
     }))
@@ -740,16 +648,12 @@ SDKWrapper.prototype.muteUser = function (
 
 SDKWrapper.prototype.blockUser = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
   block: boolean,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.block({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
       block,
     }))

@@ -46,9 +46,7 @@ import icosReducer from './icosReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
-import connectionKeyPairsReducer from './connectionKeyPairsReducer';
 import collectiblesReducer from './collectiblesReducer';
-import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 import badgesReducer from './badgesReducer';
 import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
@@ -88,9 +86,7 @@ import type { ICOsReducerState } from './icosReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
 import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
-import type { ConnectionKeyPairsReducerState } from './connectionKeyPairsReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
-import type { ConnectionIdentityKeysReducerState } from './connectionIdentityKeysReducer';
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
 import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
@@ -127,9 +123,7 @@ export type RootReducerState = {|
   txNotes: TxNoteReducerState,
   oAuthTokens: OAuthReducerState,
   txCount: TxCountReducerState,
-  connectionKeyPairs: ConnectionKeyPairsReducerState,
   collectibles: CollectiblesReducerState,
-  connectionIdentityKeys: ConnectionIdentityKeysReducerState,
   badges: BadgesReducerState,
   exchange: ExchangeReducerState,
   accounts: AccountsReducerState,
@@ -202,8 +196,6 @@ const appReducer = combineReducers({
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
-  connectionKeyPairs: connectionKeyPairsReducer,
-  connectionIdentityKeys: connectionIdentityKeysReducer,
   badges: badgesReducer,
   exchange: exchangeReducer,
   accounts: accountsReducer,

@@ -17,20 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
 
 // actions
 import { getExistingChatsAction } from 'actions/chatActions';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
-import {
-  mapIdentityKeysAction,
-  prependConnectionKeyPairs,
-} from 'actions/connectionKeyPairActions';
 
 // constants
 import {
-  ADD_INVITATION,
   TYPE_ACCEPTED,
   TYPE_BLOCKED,
   TYPE_CANCELLED,
@@ -41,17 +35,13 @@ import {
   UPDATE_INVITATIONS,
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 
 // utils
-import { generateAccessKey } from 'utils/invitations';
 import { uniqBy } from 'utils/common';
-import { getIdentityKeyPairs } from 'utils/connections';
 import { mapInviteNotifications } from 'utils/notifications';
 
 // models, types
-import type { ApiUser } from 'models/Contacts';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { ApiNotification } from 'models/Notification';
@@ -71,16 +61,11 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
 
     if (!isOnline) return;
 
-    let {
-      accessTokens: { data: accessTokens },
-    } = getState();
+    let accessTokens = getState().accessTokens.data;
 
     if (accessTokens === undefined || !accessTokens.length) {
       await dispatch(restoreAccessTokensAction(walletId));
-      const {
-        accessTokens: { data: updatedAccessTokens },
-      } = getState();
-      accessTokens = updatedAccessTokens;
+      accessTokens = getState().accessTokens.data;
     }
 
     const types = [
@@ -117,6 +102,7 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
 
     const sentInvitations = invitations.filter(invi => invi.type === TYPE_SENT);
 
+    // all latest notifications + sent invitations per contact
     const updatedInvitations = uniqBy(latestEventPerId.concat(sentInvitations), 'id')
       .filter(({ id }) => !invitationsToExclude.includes(id));
 
@@ -130,6 +116,9 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
     const disconnectedConnectionsIds = groupedNotifications.connectionDisconnectedEvent.map(({ id }) => id);
     const consistentLocalContacts = contacts.filter(({ id: contactId }) =>
       acceptedConnectionsIds.includes(contactId));
+
+    // newConnections -> just accepted our invite, are not yet stored
+    // consistentLocalContacts -> old contacts with the latest event = Accepted
     const updatedContacts = uniqBy(newConnections.concat(consistentLocalContacts), 'id')
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }))
       .filter(updatedContact => !disconnectedConnectionsIds.includes(updatedContact.id));
@@ -162,235 +151,5 @@ export const fetchOldInviteNotificationsAction = (theWalletId?: string = '') => 
 
     await dispatch(updateConnectionsAction());
     await dispatch(getExistingChatsAction());
-  };
-};
-
-export const sendOldInvitationAction = (user: ApiUser) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-      accessTokens: { data: accessTokens },
-    } = getState();
-
-    const index = invitations.findIndex(el => el.id === user.id);
-    if (index >= 0) {
-      dispatch(({
-        type: ADD_NOTIFICATION,
-        payload: { message: 'Invitation has already been sent' },
-      }));
-      return;
-    }
-
-    const accessKey = generateAccessKey();
-    const sentInvitation = await api.sendOldInvitation(user.id, accessKey, walletId);
-    if (!sentInvitation) return;
-    const invitation = {
-      ...user,
-      type: TYPE_SENT,
-      connectionKey: accessKey,
-      createdAt: +new Date() / 1000,
-    };
-    dispatch(saveDbAction('invitations', { invitations: [...invitations, invitation] }, true));
-
-    const updatedAccessTokens = accessTokens
-      .filter(({ userId }) => userId !== user.id)
-      .concat({
-        userId: user.id,
-        myAccessToken: accessKey,
-        userAccessToken: '',
-      });
-    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
-
-    dispatch({
-      type: ADD_INVITATION,
-      payload: invitation,
-    });
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation sent' },
-    }));
-    dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
-    });
-  };
-};
-
-export const acceptOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-      contacts: { data: contacts },
-      accessTokens: { data: accessTokens },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
-    } = getState();
-    const sourceUserAccessKey = generateAccessKey();
-
-    const {
-      sourceIdentityKey,
-      targetIdentityKey,
-      connIdKeyResult,
-      connKeyPairReserved,
-    } = await getIdentityKeyPairs(invitation.id, connectionIdentityKeys, dispatch);
-
-    const acceptedInvitation = await api.acceptOldInvitation(
-      invitation.id,
-      invitation.connectionKey,
-      sourceUserAccessKey,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-    );
-
-    if (!connIdKeyResult) {
-      await dispatch(prependConnectionKeyPairs(connKeyPairReserved));
-    }
-
-    if (!acceptedInvitation) {
-      dispatch(({
-        type: ADD_NOTIFICATION,
-        payload: { message: 'Invitation doesn\'t exist' },
-      }));
-      dispatch(fetchOldInviteNotificationsAction());
-      Sentry.captureMessage('Ghost invitation on acceptOld', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          connectionKey: invitation.connectionKey,
-          walletId,
-        },
-      });
-      return;
-    }
-
-    if (!connIdKeyResult) {
-      await dispatch(mapIdentityKeysAction(1));
-    }
-
-    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
-
-    const updatedContacts = contacts
-      .filter(({ id }) => id !== invitation.id)
-      .concat(invitation)
-      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
-    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
-
-    const updatedAccessTokens = accessTokens
-      .filter(({ userId }) => userId !== invitation.id)
-      .concat({
-        userId: invitation.id,
-        myAccessToken: sourceUserAccessKey,
-        userAccessToken: invitation.connectionKey,
-      });
-    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
-
-    dispatch({
-      type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
-    });
-    dispatch({
-      type: UPDATE_CONTACTS,
-      payload: updatedContacts,
-    });
-    dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
-    });
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Connection request accepted' },
-    }));
-  };
-};
-
-export const cancelOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-      accessTokens: { data: accessTokens },
-    } = getState();
-
-    const cancelledInvitation = await api.cancelOldInvitation(
-      invitation.id,
-      invitation.connectionKey,
-      walletId,
-    );
-
-    if (!cancelledInvitation) {
-      dispatch(({
-        type: ADD_NOTIFICATION,
-        payload: { title: invitation.username, message: 'Already accepted your request' },
-      }));
-      dispatch(fetchOldInviteNotificationsAction());
-      return;
-    }
-
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation cancelled' },
-    }));
-
-    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
-
-    const updatedAccessTokens = accessTokens.filter(({ userId }) => userId !== invitation.id);
-    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
-
-    dispatch({
-      type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
-    });
-    dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
-    });
-  };
-};
-
-export const rejectOldInvitationAction = (invitation: Object) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-    } = getState();
-    const rejectedInvitation = await api.rejectOldInvitation(
-      invitation.id,
-      invitation.connectionKey,
-      walletId,
-    );
-
-    if (!rejectedInvitation) {
-      dispatch(({
-        type: ADD_NOTIFICATION,
-        payload: { message: 'Invitation doesn\'t exist' },
-      }));
-      dispatch(fetchOldInviteNotificationsAction());
-      Sentry.captureMessage('Ghost invitation on rejectOld', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          connectionKey: invitation.connectionKey,
-          walletId,
-        },
-      });
-      return;
-    }
-
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation rejected' },
-    }));
-
-    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
-
-    dispatch({
-      type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
-    });
   };
 };
