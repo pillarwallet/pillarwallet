@@ -61,7 +61,7 @@ const ContentWrapper = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding: ${spacing.layoutSides}px;
+  padding: 40px ${spacing.layoutSides}px;
 `;
 
 const RewardBadge = styled(CachedImage)`
@@ -124,6 +124,7 @@ class ReferralModalReward extends React.Component<Props, State> {
                   Thanks for joining Pillar.
                   To celebrate this, <BoldText regular>we also give you 25 PLR</BoldText>.
                   You can use it to activate your Smart Wallet and enable Pillar Network at no cost.
+                  (Please remember to verify your phone and email address to activate rewards.)
                 </BaseText>
                 {!showActivationCard
                 ? (
