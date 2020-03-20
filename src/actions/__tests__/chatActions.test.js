@@ -72,7 +72,7 @@ describe('Chat Actions', () => {
 
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.resolve());
 
-        await sendMessageByContactAction(contact.username, message)(dispatchMock, getState);
+        await sendMessageByContactAction(contact.username, contact.id, message)(dispatchMock, getState);
       });
 
       afterEach(() => {
@@ -133,7 +133,7 @@ describe('Chat Actions', () => {
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.reject());
         jest.spyOn(Toast, 'show');
 
-        await sendMessageByContactAction(contact.username, {})(dispatchMock, getState);
+        await sendMessageByContactAction(contact.username, contact.id, {})(dispatchMock, getState);
       });
 
       afterEach(() => {
