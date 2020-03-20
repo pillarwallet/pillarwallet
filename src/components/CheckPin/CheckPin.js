@@ -168,7 +168,10 @@ class CheckPin extends React.Component<Props, State> {
     const options = {
       mnemonic: revealMnemonic,
     };
-    checkPin(pin, onPinValid, options);
+    checkPin(pin, (_, wallet) => {
+      onPinValid(_, wallet);
+      this.setState({ showPin: false });
+    }, options);
   };
 
   getPinError = (walletState: string) => {
