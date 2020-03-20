@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { ADD_CONTACTS_FOR_REFERRAL, REMOVE_CONTACT_FOR_REFERRAL } from 'constants/referralConstants';
+import { SET_CONTACTS_FOR_REFERRAL, REMOVE_CONTACT_FOR_REFERRAL } from 'constants/referralConstants';
 
 export type ReferralContact = {
   id: string,
@@ -46,8 +46,8 @@ export default function referralsReducer(
   action: ReferralsReducerAction,
 ) {
   switch (action.type) {
-    case ADD_CONTACTS_FOR_REFERRAL:
-      return { ...state, addedContactsToInvite: [...state.addedContactsToInvite, ...action.payload] };
+    case SET_CONTACTS_FOR_REFERRAL:
+      return { ...state, addedContactsToInvite: action.payload };
     case REMOVE_CONTACT_FOR_REFERRAL:
       return {
         ...state,

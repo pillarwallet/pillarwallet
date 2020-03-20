@@ -23,7 +23,7 @@ import isEmpty from 'lodash.isempty';
 
 // constants
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { ADD_CONTACTS_FOR_REFERRAL, REMOVE_CONTACT_FOR_REFERRAL } from 'constants/referralConstants';
+import { SET_CONTACTS_FOR_REFERRAL, REMOVE_CONTACT_FOR_REFERRAL } from 'constants/referralConstants';
 
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
@@ -101,10 +101,10 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
   };
 };
 
-export const addContactsForReferralAction = (contacts: ReferralContact[]) => {
+export const setContactsForReferralAction = (contacts: ReferralContact[]) => {
   return (dispatch: Dispatch) => {
     dispatch({
-      type: ADD_CONTACTS_FOR_REFERRAL,
+      type: SET_CONTACTS_FOR_REFERRAL,
       payload: contacts,
     });
   };

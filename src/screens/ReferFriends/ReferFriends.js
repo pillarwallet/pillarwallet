@@ -19,36 +19,31 @@
 */
 
 import * as React from 'react';
-import { ScrollView, Share } from 'react-native';
+import { ScrollView } from 'react-native';
 import Intercom from 'react-native-intercom';
-import t from 'tcomb-form-native';
 import styled, { withTheme } from 'styled-components/native';
-import get from 'lodash.get';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { inviteByEmailAction, removeContactForReferralAction } from 'actions/referralsActions';
+import { removeContactForReferralAction } from 'actions/referralsActions';
 
 // components
-import { MediumText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Insight from 'components/Insight';
-import TextInput from 'components/TextInput';
-import { EmailStruct } from 'components/ProfileForm/profileFormDefs';
 import Button from 'components/Button';
 import ClosablePillList from 'components/ClosablePillList';
 
 // utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact } from 'reducers/referralsReducer';
 
 // constants
-import { ADDRESS_BOOK_PERMISSION } from 'constants/navigationConstants';
+import { ADDRESS_BOOK_PERMISSION, REFERRAL_CONTACTS } from 'constants/navigationConstants';
 
 
 type Props = {
@@ -56,17 +51,6 @@ type Props = {
   inviteByEmail: (email: string) => void,
   removeContactForReferral: (id: string) => void,
   addedContactsToInvite: ReferralContact[],
-};
-
-type Value = {
-  email: string,
-}
-
-type State = {
-  value: Value,
-  showFormButton: boolean,
-  isFormButtonDisabled: boolean,
-  hideErrorMessage: boolean,
 };
 
 
@@ -85,127 +69,18 @@ const INSIGHT_ITEMS = [
   },
 ];
 
-const FormWrapper = styled.View`
-  padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
+const ButtonWrapper = styled.View`
+  flex: 1;
+  justify-content: ${({ justifyCenter }) => justifyCenter ? 'center' : 'flex-start'};
+  padding: ${spacing.large}px 0;
 `;
 
-const ExplanationText = styled(MediumText)`
-  color: ${themedColors.secondaryText};
-  ${fontStyles.small};
-  margin-top: 6px;
-`;
 
-const { Form } = t.form;
-
-
-const ReferralEmailInputTemplate = (locals) => {
-  const {
-    config: {
-      onIconPress,
-      label,
-      showButton,
-      isButtonDisabled,
-      hideErrorMessage,
-      onFormSubmit,
-    },
-  } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    placeholder: 'Enter your friend\'s email',
-    value: locals.value,
-    maxLength: 42,
-    letterSpacing: 0.1,
-    fontSize: fontSizes.medium,
-    keyboardType: 'email-address',
-    autoCapitalize: 'none',
-  };
-
-  const defaultButtonProps = {
-    title: 'Invite',
-    onPress: onFormSubmit,
-    disabledTransparent: false,
-  };
-
-  let buttonProps = { ...defaultButtonProps };
-
-  if (isButtonDisabled) buttonProps = { ...defaultButtonProps, disabledTransparent: true };
-
-  return (
-    <TextInput
-      errorMessage={errorMessage}
-      inputProps={inputProps}
-      iconProps={!showButton && {
-        icon: 'add-contact',
-        fontSize: 20,
-        onPress: onIconPress,
-      }}
-      label={label}
-      buttonProps={showButton && buttonProps}
-      hideErrorMessage={hideErrorMessage}
-    />
-  );
-};
-
-const getReferralFormFields = (config: Object): Object => {
-  return {
-    fields: {
-      email: {
-        template: ReferralEmailInputTemplate,
-        config,
-      },
-    },
-  };
-};
-
-class ReferFriends extends React.Component<Props, State> {
-  referForm: t.form;
-
-  state = {
-    value: {
-      email: '',
-    },
-    showFormButton: false,
-    isFormButtonDisabled: true,
-    hideErrorMessage: true,
-  };
-
-  handleChange = (value: Object) => {
-    const email = get(value, 'email', '');
-    const validatedValue = this.referForm.getValue();
-    const showFormButton = !!email.length;
-    const isFormButtonDisabled = !validatedValue;
-    this.setState({ value, showFormButton, isFormButtonDisabled });
-  };
-
-  handleSubmit = () => {
-    const email = get(this.state.value, 'email', '');
-    this.props.inviteByEmail(email);
-    this.setState({ hideErrorMessage: false });
-  };
-
-  openShareDialog = () => {
-    Share.share({
-      title: 'Join Pillar',
-      message: '', // TODO: Add referral link as message
-    }, {
-      dialogTitle: 'Refer friend',
-    });
-  };
-
-
+class ReferFriends extends React.PureComponent<Props> {
   render() {
-    const {
-      value,
-      showFormButton,
-      isFormButtonDisabled,
-      hideErrorMessage,
-    } = this.state;
-
     const { navigation, addedContactsToInvite, removeContactForReferral } = this.props;
     const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
-
+    const hasAddedContacts = !!mappedContactsToInvite.length;
     return (
       <ContainerWithHeader
         headerProps={{
@@ -224,41 +99,41 @@ class ReferFriends extends React.Component<Props, State> {
             isVisible
             insightNumberedList={INSIGHT_ITEMS}
             wrapperPadding={0}
-            wrapperStyle={{ marginBottom: 40 }}
+            wrapperStyle={{ marginBottom: hasAddedContacts ? 34 : 40 }}
           />
-          <ClosablePillList
-            listItems={mappedContactsToInvite}
-            onItemClose={(id) => removeContactForReferral(id)}
-          />
-          <Button
-            title={addedContactsToInvite.length ? 'Send invites' : 'Select contacts...'}
-            onPress={addedContactsToInvite.length
-              ? () => {}
-              : () => navigation.navigate(ADDRESS_BOOK_PERMISSION)}
-            block
-          />
-          <FormWrapper>
-            <Form
-              ref={node => { this.referForm = node; }}
-              type={t.struct({
-                email: EmailStruct,
-              })}
-              options={getReferralFormFields({
-                onIconPress: this.openShareDialog,
-                label: 'Friend\'s email',
-                showButton: showFormButton,
-                isButtonDisabled: isFormButtonDisabled,
-                hideErrorMessage,
-                onFormSubmit: this.handleSubmit,
-              })}
-              value={value}
-              onChange={this.handleChange}
+          {hasAddedContacts &&
+            <React.Fragment>
+              <MediumText accent>Your referrals</MediumText>
+              <ClosablePillList
+                listItems={mappedContactsToInvite}
+                onItemClose={(id) => removeContactForReferral(id)}
+              >
+                <Button
+                  title="Add contacts..."
+                  horizontalPaddings={8}
+                  height={32}
+                  small
+                  card
+                  onPress={() => navigation.navigate(REFERRAL_CONTACTS)}
+                  marginTop={4}
+                  marginBottom={4}
+                />
+              </ClosablePillList>
+              <BaseText style={{ marginTop: spacing.large }} secondary small>
+                Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after
+                confirming their phone number/email address. You will receive your reward after your contact has been
+                rewarded.
+              </BaseText>
+            </React.Fragment>}
+          <ButtonWrapper justifyCenter={hasAddedContacts}>
+            <Button
+              title={addedContactsToInvite.length ? 'Send invites' : 'Select contacts...'}
+              onPress={addedContactsToInvite.length
+                ? () => {}
+                : () => navigation.navigate(ADDRESS_BOOK_PERMISSION)}
+              block
             />
-            <ExplanationText>
-              Upon invited, your friend will receive email link for download. Referral rewards are available with this
-              link only.
-            </ExplanationText>
-          </FormWrapper>
+          </ButtonWrapper>
         </ScrollView>
       </ContainerWithHeader>
     );
@@ -272,7 +147,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  inviteByEmail: (email: string) => dispatch(inviteByEmailAction(email)),
   removeContactForReferral: (id: string) => dispatch(removeContactForReferralAction(id)),
 });
 

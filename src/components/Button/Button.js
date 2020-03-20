@@ -64,6 +64,8 @@ export type Props = {
   leftIconStyle?: Object,
   rightIconName?: string,
   rightIconStyle?: Object,
+  horizontalPaddings?: number,
+  card?: boolean,
 };
 
 type State = {
@@ -196,6 +198,11 @@ const themeColors = (theme: Theme) => {
       surface: colors.positive,
       text: colors.control,
     },
+    card: {
+      surface: colors.card,
+      text: colors.primary,
+      border: colors.card,
+    },
   });
 };
 
@@ -228,6 +235,10 @@ const getButtonWidth = (props) => {
 };
 
 const getButtonPadding = (props) => {
+  if (props.horizontalPaddings) {
+    return `${props.horizontalPaddings}px`;
+  }
+
   if (props.noPadding) {
     return '0';
   }
