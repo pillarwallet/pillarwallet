@@ -134,6 +134,7 @@ type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
+  smartWalletFeatureEnabled: boolean,
 };
 
 type State = {
@@ -324,6 +325,34 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  renderReferral(colors) {
+    const { navigation, smartWalletFeatureEnabled } = this.props;
+
+    const { isReferralBannerVisible } = this.state;
+
+    if (!smartWalletFeatureEnabled) {
+      return null;
+    }
+
+    return (
+      <Banner
+        isVisible={isReferralBannerVisible}
+        onPress={() => navigation.navigate(REFER_FRIENDS)}
+        bannerText="Refer friends and earn rewards, free PLR and more."
+        imageProps={{
+          style: {
+            width: 96,
+            height: 60,
+            marginLeft: 4,
+          },
+          source: referralImage,
+        }}
+        wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+        onClose={() => this.setState({ isReferralBannerVisible: false })}
+      />
+    );
+  }
+
   render() {
     const {
       cancelInvitation,
@@ -347,12 +376,7 @@ class HomeScreen extends React.Component<Props, State> {
       activeBlockchainNetwork,
     } = this.props;
 
-    const {
-      activeTab,
-      isScanning,
-      isReferralBannerVisible,
-      showRewardModal,
-    } = this.state;
+    const { activeTab, isScanning, showRewardModal } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -510,21 +534,7 @@ class HomeScreen extends React.Component<Props, State> {
               iconStyle={{ fontSize: fontSizes.large }}
             />
           </WalletConnectWrapper>
-          <Banner
-            isVisible={isReferralBannerVisible}
-            onPress={() => navigation.navigate(REFER_FRIENDS)}
-            bannerText="Refer friends and earn rewards, free PLR and more."
-            imageProps={{
-              style: {
-                width: 96,
-                height: 60,
-                marginLeft: 4,
-              },
-              source: referralImage,
-            }}
-            wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
-            onClose={() => this.setState({ isReferralBannerVisible: false })}
-          />
+          {this.renderReferral(colors)}
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
@@ -569,6 +579,7 @@ const mapStateToProps = ({
   session: { data: { isOnline } },
   userEvents: { data: userEvents },
   appSettings: { data: { baseFiatCurrency } },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -583,6 +594,7 @@ const mapStateToProps = ({
   isOnline,
   userEvents,
   baseFiatCurrency,
+  smartWalletFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
