@@ -26,7 +26,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import Header from 'components/Header';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { themedColors } from 'utils/themes';
@@ -76,9 +76,9 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     if (!pinIsValid) {
       return (
-        <CheckPin
+        <CheckAuth
           revealMnemonic
-          autoLogin={false}
+          enforcePin
           onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
           headerProps={{ onClose: this.handleScreenDismissal }}
         />

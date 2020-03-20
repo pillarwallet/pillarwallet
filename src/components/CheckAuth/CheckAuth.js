@@ -60,7 +60,7 @@ type Props = {
   isChecking: boolean,
   title?: string,
   useBiometrics: ?boolean,
-  autoLogin?: boolean,
+  enforcePin?: boolean,
   modalProps?: ModalProps,
   headerProps?: HeaderProps,
   errorMessage?: string,
@@ -72,7 +72,7 @@ type State = {
   showPin: boolean,
 }
 
-const CheckPinWrapper = styled(Container)`
+const CheckAuthWrapper = styled(Container)`
   margin-top: auto;
   height: 100%;
   flex: 1;
@@ -81,10 +81,9 @@ const CheckPinWrapper = styled(Container)`
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
-class CheckPin extends React.Component<Props, State> {
+class CheckAuth extends React.Component<Props, State> {
   static defaultProps = {
     revealMnemonic: false,
-    autoLogin: true,
   };
   state = {
     biometricsShown: false,
@@ -95,7 +94,7 @@ class CheckPin extends React.Component<Props, State> {
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
     const {
-      useBiometrics, revealMnemonic, autoLogin, modalProps,
+      useBiometrics, revealMnemonic, enforcePin, modalProps,
     } = this.props;
     const { lastAppState } = this.state;
     // do nothing if auth isn't supposed to be checked
@@ -104,7 +103,7 @@ class CheckPin extends React.Component<Props, State> {
         && !revealMnemonic
         && lastAppState !== BACKGROUND_APP_STATE) {
         this.showBiometricLogin();
-      } else if (lastAppState !== BACKGROUND_APP_STATE && autoLogin) { // todo check conditions
+      } else if (lastAppState !== BACKGROUND_APP_STATE && !enforcePin) {
         this.checkPrivateKey();
       }
     }
@@ -231,7 +230,7 @@ class CheckPin extends React.Component<Props, State> {
     const pinError = this.getPinError(walletState);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     return (
-      <CheckPinWrapper>
+      <CheckAuthWrapper>
         {showError}
         <PinCode
           onPinEntered={this.handlePinSubmit}
@@ -239,13 +238,13 @@ class CheckPin extends React.Component<Props, State> {
           showForgotButton={false}
           pinError={!!pinError}
         />
-      </CheckPinWrapper>
+      </CheckAuthWrapper>
     );
   }
 
   render() {
     const {
-      wallet: { walletState }, isChecking, autoLogin, modalProps, headerProps,
+      wallet: { walletState }, isChecking, enforcePin, modalProps, headerProps,
     } = this.props;
     const { showPin } = this.state;
 
@@ -257,7 +256,7 @@ class CheckPin extends React.Component<Props, State> {
       );
     }
 
-    if (!autoLogin || showPin) {
+    if (enforcePin || showPin) {
       if (modalProps) return this.renderSlideModalWithPin();
       if (headerProps) return this.renderWrappedPin();
       return null;
@@ -284,4 +283,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CheckPin);
+export default connect(mapStateToProps, mapDispatchToProps)(CheckAuth);

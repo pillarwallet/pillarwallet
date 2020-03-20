@@ -28,7 +28,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/Button';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -109,9 +109,9 @@ class BackupPhrase extends React.Component<Props, State> {
 
     if (!pinIsValid) {
       return (
-        <CheckPin
+        <CheckAuth
           revealMnemonic
-          autoLogin={false}
+          enforcePin
           onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
           headerProps={{ onClose: this.handleScreenDismissal }}
         />

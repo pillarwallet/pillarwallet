@@ -27,7 +27,7 @@ import { CachedImage } from 'react-native-cached-image';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import { BaseText } from 'components/Typography';
@@ -544,7 +544,7 @@ class AccountsScreen extends React.Component<Props, State> {
           <Loader noMessages />
         </Wrapper>}
 
-        <CheckPin
+        <CheckAuth
           onPinValid={onPinValidAction}
           revealMnemonic
           modalProps={{

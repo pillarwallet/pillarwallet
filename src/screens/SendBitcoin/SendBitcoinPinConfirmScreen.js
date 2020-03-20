@@ -20,7 +20,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import { sendTransactionAction } from 'actions/bitcoinActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -96,7 +96,7 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
   render() {
     const { isChecking, errorMessage } = this.state;
     return (
-      <CheckPin
+      <CheckAuth
         onPinValid={this.handleTransaction}
         isChecking={isChecking}
         pinError={!!errorMessage}

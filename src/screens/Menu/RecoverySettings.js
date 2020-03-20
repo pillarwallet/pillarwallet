@@ -23,7 +23,7 @@ import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import { getThemeColors } from 'utils/themes';
 import { BACKUP_WALLET_IN_SETTINGS_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -109,11 +109,11 @@ class RecoverySettings extends React.Component<Props, State> {
     const { pinIsValid } = this.state;
     if (!pinIsValid) {
       return (
-        <CheckPin
+        <CheckAuth
           revealMnemonic
           onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
           headerProps={{ onClose: this.handleScreenDismissal }}
-          autoLogin={false}
+          enforcePin
         />
       );
     }

@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import { getBiometryType } from 'utils/settings';
 import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { changeUseBiometricsAction } from 'actions/appSettingsActions';
@@ -142,7 +142,7 @@ class SecuritySettings extends React.Component<Props, State> {
         </ScrollWrapper>
 
         {/* BIOMETRIC LOGIN */}
-        <CheckPin
+        <CheckAuth
           onPinValid={this.onPinValid}
           modalProps={{
             isVisible: visibleModal === 'checkPin',

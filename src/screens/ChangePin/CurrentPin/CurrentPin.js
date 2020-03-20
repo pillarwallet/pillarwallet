@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { DECRYPTING, GENERATING_CONNECTIONS } from 'constants/walletConstants';
@@ -52,11 +52,11 @@ class CurrentPin extends React.Component<Props> {
     }
 
     return (
-      <CheckPin
+      <CheckAuth
         revealMnemonic
         onPinValid={(currentPin) => navigation.navigate(CHANGE_PIN_NEW_PIN, { currentPin })}
         headerProps={{ onClose: this.handleScreenDismissal }}
-        autoLogin={false}
+        enforcePin
       />
     );
   }

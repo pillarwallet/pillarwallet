@@ -42,7 +42,7 @@ import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
 import Checkbox from 'components/Checkbox';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import {
   saveBaseFiatCurrencyAction,
   changeUseBiometricsAction,
@@ -660,7 +660,7 @@ class Profile extends React.Component<Props, State> {
             />
             }
 
-            <CheckPin
+            <CheckAuth
               onPinValid={
                 (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
               }

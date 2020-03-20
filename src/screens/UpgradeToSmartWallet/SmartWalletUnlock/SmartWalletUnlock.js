@@ -21,7 +21,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ASSETS } from 'constants/navigationConstants';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import {
   initSmartWalletSdkAction,
   upgradeToSmartWalletAction,
@@ -88,7 +88,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
   render() {
     const { isChecking } = this.state;
     return (
-      <CheckPin
+      <CheckAuth
         onPinValid={this.handleUpgradeStep}
         isChecking={isChecking}
         headerProps={{ onBack: this.handleBack }}
