@@ -201,7 +201,7 @@ export const startListeningNotificationsAction = () => {
           data.type === CONNECTION_ACCEPTED_EVENT ||
           data.type === CONNECTION_DISCONNECTED_EVENT
         ) {
-          dispatch(updateConnectionsAction(senderUserId));
+          dispatch(updateConnectionsAction());
         }
         if (data.type === CONNECTION_COLLECTIBLE_EVENT) {
           dispatch(fetchAllCollectiblesDataAction());
