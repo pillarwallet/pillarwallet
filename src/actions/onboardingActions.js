@@ -87,6 +87,7 @@ import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
+import { updateConnectionsAction } from 'actions/connectionsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -211,6 +212,7 @@ const finishRegistration = async ({
   }
 
   await dispatch(fetchTransactionsHistoryAction());
+  dispatch(updateConnectionsAction());
   dispatch(labelUserAsLegacyAction());
 
   if (smartWalletFeatureEnabled) {
