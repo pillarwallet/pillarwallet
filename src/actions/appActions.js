@@ -54,7 +54,6 @@ import {
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
-  DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -62,6 +61,7 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
   SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
 } from 'constants/smartWalletConstants';
+import { SET_INSIGHTS_STATE } from 'constants/insightsConstants';
 import {
   UPDATE_PAYMENT_NETWORK_BALANCES,
   UPDATE_PAYMENT_NETWORK_STAKED,
@@ -189,6 +189,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { userEvents = [] } = await storage.get('userEvents');
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
+      const { insights = {} } = await storage.get('insights');
+      dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
+
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
@@ -203,10 +206,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch(loadBitcoinAddressesAction());
 
       dispatch(loadBitcoinBalancesAction());
-
-      if (appSettings.smartWalletUpgradeDismissed) {
-        dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
-      }
 
       const {
         upgradeTransferTransactions = [],

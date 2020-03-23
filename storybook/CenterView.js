@@ -17,14 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
+import styled from 'styled-components/native';
 
-type Props = {
-  onPress?: () => void,
-  children?: React.Node,
-}
+const CenterView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+`;
 
-export default function Button({ onPress, children }: Props) {
-  return <TouchableOpacity onPress={onPress}>{children}</TouchableOpacity>;
-}
+export default CenterView;

@@ -35,7 +35,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
-import DeploymentView from 'components/DeploymentView';
+import SWActivationCard from 'components/SWActivationCard';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -44,7 +44,7 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
@@ -80,7 +80,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
-
 
 const RECEIVE = 'RECEIVE';
 
@@ -409,11 +408,7 @@ class AssetScreen extends React.Component<Props, State> {
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
             {!isSendActive &&
-            <DeploymentView
-              message={sendingBlockedMessage}
-              buttonLabel="Deploy Smart Wallet"
-              buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-            />
+              <SWActivationCard />
             }
           </AssetCardWrapper>
           {!!relatedTransactions.length &&

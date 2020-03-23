@@ -27,7 +27,7 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { getExchangeRates } from 'services/assets';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector, allAccountsAssetsSelector } from 'selectors/assets';
 
 // models, types
 import type { Rates } from 'models/Asset';
@@ -50,6 +50,14 @@ export const fetchAccountAssetsRatesAction = () => {
     const accountAssets = accountAssetsSelector(getState());
     const rates = await getExchangeRates(Object.keys(accountAssets));
     dispatch(setRatesAction(rates));
+  };
+};
+
+export const fetchAllAccountsAssetsRatesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const allAssets = allAccountsAssetsSelector(getState());
+    const rates = await getExchangeRates(allAssets);
+    await dispatch(setRatesAction(rates));
   };
 };
 

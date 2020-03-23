@@ -136,6 +136,7 @@ jest.setMock('ethers', {
     formatUnits: utils.formatUnits,
     parseUnits: utils.parseUnits,
     HDNode: utils.HDNode,
+    formatEther: utils.formatEther,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -232,7 +233,7 @@ jest.setMock('react-native-cached-image', {
   ImageCacheManager: () => ({
     clearCache: () => Promise.resolve(),
   }),
-  CachedImage: jest.fn(),
+  CachedImage: () => null,
 });
 
 jest.setMock('react-native-threads', {
