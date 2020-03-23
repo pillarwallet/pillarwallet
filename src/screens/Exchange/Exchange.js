@@ -64,13 +64,14 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils, services
 import { wyreWidgetUrl } from 'services/sendwyre';
-import { fiatCurrencies } from 'fixtures/assets';
+import { fiatCurrencies, initialAssets } from 'fixtures/assets';
 import { spacing, fontStyles } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { satoshisToBtc } from 'utils/bitcoin';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -89,6 +90,7 @@ import type { Theme } from 'models/Theme';
 import ExchangeStatus from './ExchangeStatus';
 import { HotSwapsHorizontalList, HotSwapsGridList } from './HotSwapsList';
 
+const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
 
 const ListHeader = styled.View`
   width: 100%;
@@ -576,7 +578,12 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   provideOptions = () => {
-    const { assets, exchangeSupportedAssets, fiatExchangeSupportedAssets } = this.props;
+    const {
+      assets,
+      exchangeSupportedAssets,
+      fiatExchangeSupportedAssets,
+      btcAddresses,
+    } = this.props;
 
     const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
     const selectedToAssetSymbol = get(this.state, 'value.toInput.selector.symbol', '');
@@ -584,6 +591,9 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(isFromSelectedFiat
       ? fiatExchangeSupportedAssets : exchangeSupportedAssets);
+    if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
+      assetsOptionsBuying.push(this.generateBTCAssetOption());
+    }
 
     const assetsOptionsFrom = this.generateAssetsOptions(assets, selectedToAssetSymbol);
 
@@ -677,12 +687,17 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   openSendWyre(selectedSellAmount: string, offer: FiatOffer) {
-    const { accounts } = this.props;
-    const destAddress = getActiveAccountAddress(accounts);
-
+    const { accounts, btcAddresses } = this.props;
     const { fromAsset, toAsset } = offer;
     const { code: fromAssetCode } = fromAsset;
     const { code: toAssetCode } = toAsset;
+
+    let destAddress;
+    if (toAssetCode === 'BTC') {
+      destAddress = btcAddresses[0].address;
+    } else {
+      destAddress = getActiveAccountAddress(accounts);
+    }
 
     const wyreUrl = wyreWidgetUrl(
       destAddress,
@@ -979,6 +994,32 @@ class ExchangeScreen extends React.Component<Props, State> {
     paymentNetworkBalance: null,
   }));
 
+  generateBTCAssetOption = () => {
+    const symbol = 'BTC';
+    const {
+      btcAddresses,
+      btcBalances,
+      baseFiatCurrency,
+      rates,
+    } = this.props;
+    const { address } = btcAddresses[0];
+    const addressBalance = btcBalances[address];
+    const rawAssetBalance = addressBalance ? satoshisToBtc(addressBalance.confirmed) : 0;
+    const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
+    const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, 'BTC');
+    const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
+    return {
+      key: symbol,
+      value: symbol,
+      icon: bitcoinNetworkIcon,
+      iconUrl: btcAsset.iconUrl,
+      symbol,
+      ...btcAsset,
+      assetBalance,
+      formattedBalanceInFiat,
+    };
+  };
+
   generateSupportedAssetsOptions = (assets: Asset[]) => {
     if (!Array.isArray(assets)) return [];
     const { balances, baseFiatCurrency, rates } = this.props;
@@ -997,7 +1038,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           assetBalance,
           formattedBalanceInFiat,
         };
-      });
+      }).filter(asset => asset.key !== 'BTC');
   };
 
   handleFormChange = (value: Object) => {
@@ -1014,6 +1055,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       exchangeSupportedAssets,
       rates,
       baseFiatCurrency,
+      btcAddresses,
+      fiatExchangeSupportedAssets,
     } = this.props;
     const { fromInput, toInput } = value;
     const { selector: selectedFromOption, input: amount } = fromInput;
@@ -1034,10 +1077,16 @@ class ExchangeScreen extends React.Component<Props, State> {
       newOptionsFrom = optionsFrom.filter((option) => option.value !== selectedToOption.value);
     }
 
-    const optionsTo = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
+    const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
+    const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
+    const optionsTo = this.generateSupportedAssetsOptions(isFromSelectedFiat
+      ? fiatExchangeSupportedAssets : exchangeSupportedAssets);
     let newOptionsTo = optionsTo;
     if (!isEmpty(selectedFromOption)) {
       newOptionsTo = optionsTo.filter((option) => option.value !== selectedFromOption.value);
+      if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
+        newOptionsTo.push(this.generateBTCAssetOption());
+      }
     }
 
     const newOptions = t.update(this.state.formOptions, {
@@ -1242,6 +1291,12 @@ const mapStateToProps = ({
   },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
+  bitcoin: {
+    data: {
+      addresses: btcAddresses,
+      balances: btcBalances,
+    },
+  },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   offers,
@@ -1257,6 +1312,8 @@ const mapStateToProps = ({
   providersMeta,
   exchangeSupportedAssets,
   fiatExchangeSupportedAssets,
+  btcAddresses,
+  btcBalances,
 });
 
 const structuredSelector = createStructuredSelector({
