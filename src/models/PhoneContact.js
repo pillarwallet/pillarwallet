@@ -19,17 +19,20 @@
 */
 
 type PhoneContactEmail = {|
+  id: string,
   label: string,
   email: string,
 |};
 
 type PhoneContactPhone = {|
+  id: string,
   label: string,
   number: string,
 |};
 
 export type PhoneContact = {|
   recordID: string,
+  displayName: string,
   givenName: string,
   middleName: string,
   familyName: string,

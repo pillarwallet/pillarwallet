@@ -27,28 +27,80 @@ import { PHONE_CONTACTS_RECEIVED } from 'constants/phoneContactsConstants';
 import type { Dispatch } from 'reducers/rootReducer';
 import type { PhoneContact } from 'models/PhoneContact';
 import type { PhoneContactsReceivedAction } from 'reducers/phoneContactsReducer';
+import type { ReferralContact } from 'reducers/referralsReducer';
 
-const phoneContactsReceived = (contacts: PhoneContact[]): PhoneContactsReceivedAction => ({
+// utils
+import { isValidPhone } from 'utils/validators';
+
+
+const phoneContactsReceived = (contacts: ReferralContact[]): PhoneContactsReceivedAction => ({
   type: PHONE_CONTACTS_RECEIVED,
   payload: contacts,
 });
 
-const filterContacts = (contacts: PhoneContact[]): PhoneContact[] => {
-  return contacts.filter(contact =>
-    contact.emailAddresses.length || contact.phoneNumbers.length);
+const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
+  return contacts.reduce((array, contact) => {
+    const {
+      recordID,
+      displayName,
+      emailAddresses,
+      phoneNumbers,
+      thumbnailPath,
+    } = contact;
+    const formattedContact = {
+      name: displayName,
+      photo: thumbnailPath,
+    };
+    const arrayOfContacts = [];
+
+    if (emailAddresses.length) {
+      emailAddresses
+        .reduce((uniqueEmails, emailItem) => {
+          if (!uniqueEmails.some(({ email }) => email === emailItem.email)) return [...uniqueEmails, { ...emailItem }];
+          return uniqueEmails;
+        }, [])
+        .forEach((email) => {
+          arrayOfContacts.push({
+            ...formattedContact,
+            id: `${recordID}-${email.id}`,
+            email: email.email,
+            phone: '',
+          });
+        });
+    }
+
+    if (phoneNumbers.length) {
+      phoneNumbers
+        .reduce((uniqueValidPhones, phoneItem) => {
+          const phoneWithoutSpaces = phoneItem.number.replace(/\s/g, '');
+          if (!uniqueValidPhones.some(({ number }) =>
+            number === phoneWithoutSpaces) && isValidPhone(phoneWithoutSpaces)) {
+            return [...uniqueValidPhones, { ...phoneItem, number: phoneWithoutSpaces }];
+          }
+          return uniqueValidPhones;
+        }, [])
+        .forEach((phone) => {
+          arrayOfContacts.push({
+            ...formattedContact,
+            id: `${recordID}-${phone.id}`,
+            phone: phone.number,
+            email: '',
+          });
+        });
+    }
+
+    if (arrayOfContacts.length) {
+      return [...array, ...arrayOfContacts];
+    }
+    return array;
+  }, []);
 };
 
-const sortContacts = (contacts: PhoneContact[]): PhoneContact[] => {
+const sortContacts = (contacts: ReferralContact[]): ReferralContact[] => {
   return contacts.sort((a, b) => {
-    if (a.givenName === b.givenName) {
-      return 0;
-    }
-
-    if (a.givenName < b.givenName) {
-      return -1;
-    }
-
-    return 1;
+    if (a.name > b.name) return 1;
+    if (a.name < b.name) return -1;
+    return 0;
   });
 };
 
@@ -74,8 +126,8 @@ export const fetchPhoneContactsAction = () => {
             return;
           }
 
-          const filteredContacts = filterContacts(contacts);
-          dispatch(phoneContactsReceived(sortContacts(filteredContacts)));
+          const formattedContacts = formatContacts(contacts);
+          dispatch(phoneContactsReceived(sortContacts(formattedContacts)));
         });
       })
       .catch(() => null);

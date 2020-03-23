@@ -40,12 +40,17 @@ import type { ReferralContact } from 'reducers/referralsReducer';
 import { setContactsForReferralAction } from 'actions/referralsActions';
 
 import { REFER_MAIN_SCREEN } from 'constants/navigationConstants';
+import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   setContactsForReferral: (contacts: ReferralContact[]) => void,
   addedContactsToInvite: ReferralContact[],
+  phoneContacts: ReferralContact[],
+  isFetchingPhoneContacts: boolean,
+  isFetchingPhoneContactsComplete: boolean,
+  fetchPhoneContacts: () => void,
 };
 
 type State = {
@@ -60,88 +65,10 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
-const fakeData = [
-  {
-    id: '0',
-    name: 'Alexander Johansson',
-    email: 'test@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-  {
-    id: '1',
-    name: 'Alexander Johansson',
-    email: 'alexander@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-  {
-    id: '2',
-    name: 'Alexander Johansson',
-    email: 'alexander@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-  {
-    id: '3',
-    name: 'Alexander',
-    email: 'alexander@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-  {
-    id: '4',
-    name: 'Alexander Johansson',
-    email: 'alexander@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-  {
-    id: '5',
-    name: 'Alice',
-    email: 'alice@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-  {
-    id: '6',
-    name: 'Alexander Johansson',
-    email: 'alexander@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-  {
-    id: '7',
-    name: 'Alexander Johansson',
-    email: '',
-    phone: '+123456789',
-    photo: '',
-  },
-  {
-    id: '8',
-    name: 'Alexander Johansson',
-    email: 'prevInvited@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-];
-
-const fakePreviouslyInvited = [
-  {
-    id: '7',
-    name: 'Alexander Johansson',
-    email: '',
-    phone: '+123456789',
-    photo: '',
-  },
-  {
-    id: '8',
-    name: 'Alexander Johansson',
-    email: 'prevInvited@cryptomail.lt',
-    phone: '',
-    photo: '',
-  },
-];
+const ButtonWrapper = styled.View`
+  justify-content: center;
+  padding: ${spacing.layoutSides}px;
+`;
 
 const MIN_QUERY_LENGTH = 3;
 
@@ -165,20 +92,33 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     };
   }
 
+  componentDidMount() {
+    const {
+      isFetchingPhoneContactsComplete,
+      isFetchingPhoneContacts,
+      fetchPhoneContacts,
+    } = this.props;
+
+    if (!isFetchingPhoneContacts && !isFetchingPhoneContactsComplete) {
+      fetchPhoneContacts();
+    }
+  }
+
+
   handleSearch = (query: any) => {
     this.setState({ query });
   };
 
   renderContact = ({ item }: { item: ReferralContact }) => {
     const { selectedContacts } = this.state;
-    const isPreviouslyInvited = fakePreviouslyInvited
+    const isPreviouslyInvited = [] // TODO: previously invited
       .some(({ email, phone }) => (!!email && email === item.email) || (!!phone && phone === item.phone));
     const isSelected = selectedContacts.some(({ id }) => id === item.id) || isPreviouslyInvited;
     return (
       <ListItemWithImage
         label={item.name}
         subtext={item.email || item.phone}
-        avatarUrl={item.photo}
+        itemImageUrl={item.photo}
         onPress={!isPreviouslyInvited ? () => this.toggleContact(item) : null}
         wrapperOpacity={!isPreviouslyInvited ? 1 : 0.7}
         customAddon={(
@@ -217,10 +157,9 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
   render() {
     const { query, selectedContacts } = this.state;
-    const { addedContactsToInvite } = this.props;
-    const filteredContacts = getFilteredContacts(fakeData, query);
-    const showConfirmButton = selectedContacts.length || addedContactsToInvite.length;
-
+    const { addedContactsToInvite, phoneContacts } = this.props;
+    const filteredContacts = getFilteredContacts(phoneContacts, query);
+    const showConfirmButton = !!(selectedContacts.length || addedContactsToInvite.length);
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Select email contacts' }] }}
@@ -244,10 +183,6 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             paddingTop: 0,
             flexGrow: 1,
           }}
-          ListFooterComponent={showConfirmButton && (
-            <Button title="Confirm" onPress={this.setContactsForReferral} block />
-          )}
-          ListFooterComponentStyle={{ flexGrow: 1, justifyContent: 'center', padding: spacing.layoutSides }}
           ListEmptyComponent={(
             <EmptyStateWrapper>
               <EmptyStateParagraph
@@ -257,6 +192,10 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             </EmptyStateWrapper>
           )}
         />
+        {showConfirmButton && (
+          <ButtonWrapper>
+            <Button title="Confirm" onPress={this.setContactsForReferral} block />
+          </ButtonWrapper>)}
       </ContainerWithHeader>
     );
   }
@@ -264,13 +203,22 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
 const mapStateToProps = ({
   referrals: { addedContactsToInvite },
+  phoneContacts: {
+    data: phoneContacts,
+    isFetching: isFetchingPhoneContacts,
+    isFetchComplete: isFetchingPhoneContactsComplete,
+  },
 }: RootReducerState): $Shape<Props> => ({
   addedContactsToInvite,
+  isFetchingPhoneContacts,
+  isFetchingPhoneContactsComplete,
+  phoneContacts,
 });
 
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setContactsForReferral: (contacts: ReferralContact[]) => dispatch(setContactsForReferralAction(contacts)),
+  fetchPhoneContacts: () => dispatch(fetchPhoneContactsAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferralContacts));

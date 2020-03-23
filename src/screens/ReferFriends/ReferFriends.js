@@ -26,7 +26,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { removeContactForReferralAction } from 'actions/referralsActions';
+import { removeContactForReferralAction, sendReferralInvitationsAction } from 'actions/referralsActions';
 
 // components
 import { MediumText, BaseText } from 'components/Typography';
@@ -41,12 +41,10 @@ import { spacing } from 'utils/variables';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact } from 'reducers/referralsReducer';
+import type { ReferralInvitation } from 'actions/referralsActions';
 
 // constants
 import { ADDRESS_BOOK_PERMISSION, REFERRAL_CONTACTS } from 'constants/navigationConstants';
-
-// partials
-import FriendsList from './FriendsList';
 
 
 type Props = {
@@ -54,6 +52,7 @@ type Props = {
   inviteByEmail: (email: string) => void,
   removeContactForReferral: (id: string) => void,
   addedContactsToInvite: ReferralContact[],
+  sendInvitation: (invitations: ReferralInvitation[]) => void,
 };
 
 
@@ -80,6 +79,12 @@ const ButtonWrapper = styled.View`
 
 
 class ReferFriends extends React.PureComponent<Props> {
+  sendInvites = () => {
+    const { addedContactsToInvite, sendInvitation } = this.props;
+    const referralContacts = addedContactsToInvite.map(({ email, phone }) => ({ email, phone }));
+    sendInvitation(referralContacts);
+  };
+
   render() {
     const { navigation, addedContactsToInvite, removeContactForReferral } = this.props;
     const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
@@ -104,7 +109,6 @@ class ReferFriends extends React.PureComponent<Props> {
             wrapperPadding={0}
             wrapperStyle={{ marginBottom: hasAddedContacts ? 34 : 40 }}
           />
-          <FriendsList />
           {hasAddedContacts &&
             <React.Fragment>
               <MediumText accent>Your referrals</MediumText>
@@ -133,7 +137,7 @@ class ReferFriends extends React.PureComponent<Props> {
             <Button
               title={addedContactsToInvite.length ? 'Send invites' : 'Select contacts...'}
               onPress={addedContactsToInvite.length
-                ? () => {}
+                ? this.sendInvites
                 : () => navigation.navigate(ADDRESS_BOOK_PERMISSION)}
               block
             />
@@ -152,6 +156,9 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   removeContactForReferral: (id: string) => dispatch(removeContactForReferralAction(id)),
+  sendInvitation: (invitations: ReferralInvitation[]) => dispatch(
+    sendReferralInvitationsAction(invitations),
+  ),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferFriends));

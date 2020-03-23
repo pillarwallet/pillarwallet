@@ -17,22 +17,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { PhoneContact } from 'models/PhoneContact';
 
 import {
   PHONE_CONTACTS_RECEIVED,
   FETCHING_PHONE_CONTACTS,
 } from 'constants/phoneContactsConstants';
+import type { ReferralContact } from 'reducers/referralsReducer';
+
 
 export type PhoneContactsReducerState = {
-  data: PhoneContact[],
+  data: ReferralContact[],
   isFetchComplete: boolean,
   isFetching: boolean,
 };
 
 export type PhoneContactsReceivedAction = {|
   type: 'PHONE_CONTACTS_RECEIVED',
-  payload: PhoneContact[],
+  payload: ReferralContact[],
 |};
 
 export type FetchingPhoneContacts = {|
