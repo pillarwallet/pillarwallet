@@ -42,7 +42,6 @@ import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
 import accessTokensReducer from './accessTokensReducer';
 import sessionReducer from './sessionReducer';
-import icosReducer from './icosReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
@@ -84,7 +83,6 @@ import type { InvitationsReducerState } from './invitationsReducer';
 import type { ChatReducerState } from './chatReducer';
 import type { AccessTokensReducerState } from './accessTokensReducer';
 import type { SessionReducerState } from './sessionReducer';
-import type { ICOsReducerState } from './icosReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
 import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
@@ -123,7 +121,6 @@ export type RootReducerState = {|
   chat: ChatReducerState,
   accessTokens: AccessTokensReducerState,
   session: SessionReducerState,
-  icos: ICOsReducerState,
   txNotes: TxNoteReducerState,
   oAuthTokens: OAuthReducerState,
   txCount: TxCountReducerState,
@@ -197,7 +194,6 @@ const appReducer = combineReducers({
   chat: chatReducer,
   accessTokens: accessTokensReducer,
   session: sessionReducer,
-  icos: icosReducer,
   txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
