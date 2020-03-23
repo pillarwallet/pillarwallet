@@ -113,10 +113,11 @@ export const ListCard = (props: Props) => {
 
   return (
     <ShadowedCard
-      wrapperStyle={{ marginBottom: 10, width: '100%' }}
+      wrapperStyle={{ marginBottom: 16, width: '100%' }}
       contentWrapperStyle={{ ...wrapperStyle, ...contentWrapperStyle }}
       onPress={action}
       disabled={disabled}
+      noShadow
     >
       <CardRow>
         {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
