@@ -92,9 +92,10 @@ export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
 };
 
 export const getPreferredWalletId = (accounts: Accounts = []): string => {
-  if (userHasSmartWallet(accounts)) {
-    const smartWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-    return smartWallet ? smartWallet.walletId : '';
+  const smartWallet = accounts.find(({ type }) =>
+    type === ACCOUNT_TYPES.SMART_WALLET);
+  if (smartWallet) {
+    return smartWallet.walletId;
   }
   const legacyWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.KEY_BASED);
   return legacyWallet ? legacyWallet.walletId : '';
