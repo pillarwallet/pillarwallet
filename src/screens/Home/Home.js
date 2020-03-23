@@ -190,7 +190,7 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     isReferralBannerVisible: true,
-    showRewardModal: true,
+    showRewardModal: false,
   };
 
   componentDidMount() {
