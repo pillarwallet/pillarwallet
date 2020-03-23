@@ -500,6 +500,7 @@ class TextInput extends React.Component<Props, State> {
   };
 
   renderHorizontalOptions = (data, title) => {
+    if (!data.length) return null;
     const { selectorOptions: { showOptionsTitles } = {} } = this.props;
     return (
       <HorizontalOptions>
@@ -517,7 +518,7 @@ class TextInput extends React.Component<Props, State> {
         />
       </HorizontalOptions>
     );
-  }
+  };
 
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
@@ -602,6 +603,8 @@ class TextInput extends React.Component<Props, State> {
 
     const imageSource = this.resolveAssetSource(innerImageURI);
     const optionImageSource = this.resolveAssetSource(selectedOptionIcon);
+
+    const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
@@ -744,15 +747,9 @@ class TextInput extends React.Component<Props, State> {
                   marginBottom="0"
                 />
               </SearchBarWrapper>
-              {!!displayFiatOptionsFirst && !!fiatOptions.length &&
-                this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle)
-              }
-              {!!filteredHorizontalListData.length &&
-                this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle)
-              }
-              {!displayFiatOptionsFirst && !!fiatOptions.length &&
-                this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle)
-              }
+              {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
+              {this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle)}
+              {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
               {!!filteredListData.length &&
               <FlatList
                 data={filteredListData}
