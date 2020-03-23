@@ -86,6 +86,8 @@ import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
+import { updateConnectionsAction } from './connectionsActions';
+
 
 const Crashlytics = firebase.crashlytics();
 
@@ -271,6 +273,7 @@ export const loginAction = (
       }
 
       dispatch(fetchTransactionsHistoryAction());
+      if (user.walletId) dispatch(updateConnectionsAction());
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
