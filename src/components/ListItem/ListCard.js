@@ -75,7 +75,7 @@ const CardTitle = styled(MediumText)`
 
 const CardSubtitle = styled(BaseText)`
   color: ${themedColors.secondaryText};
-  ${fontStyles.medium};
+  ${fontStyles.regular};
   padding-right: 10%;
 `;
 
