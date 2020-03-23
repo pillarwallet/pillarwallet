@@ -12,7 +12,7 @@ exports[`Asset renders the Asset correctly 1`] = `
     style={
       Array [
         Object {
-          "backgroundColor": "#FFFFFF",
+          "backgroundColor": "#FAFAFA",
           "borderBottomColor": "#EDEDED",
           "borderBottomWidth": 1,
           "width": "100%",
@@ -1327,7 +1327,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "backgroundColor": "#FFFFFF",
+                      "backgroundColor": "#FAFAFA",
                       "width": "100%",
                     },
                     Object {
@@ -2621,7 +2621,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "backgroundColor": "#FFFFFF",
+                      "backgroundColor": "#FAFAFA",
                       "width": "100%",
                     },
                     Object {
