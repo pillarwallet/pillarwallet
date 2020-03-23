@@ -85,12 +85,11 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { HotSwapsHorizontalList, HotSwapsGridList } from './HotSwapsList';
-
-const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
 
 const ListHeader = styled.View`
   width: 100%;
@@ -158,6 +157,8 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   providersMeta: ProvidersMeta,
   theme: Theme,
+  btcAddresses: BitcoinAddress[],
+  btcBalances: BitcoinBalance,
 };
 
 type State = {
@@ -1006,13 +1007,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     const addressBalance = btcBalances[address];
     const rawAssetBalance = addressBalance ? satoshisToBtc(addressBalance.confirmed) : 0;
     const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-    const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, 'BTC');
-    const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
+    const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+    const btcAsset = initialAssets.find(e => e.symbol === symbol);
     return {
       key: symbol,
       value: symbol,
-      icon: bitcoinNetworkIcon,
-      iconUrl: btcAsset.iconUrl,
+      icon: btcAsset ? btcAsset.iconUrl : '',
+      iconUrl: btcAsset ? btcAsset.iconUrl : '',
       symbol,
       ...btcAsset,
       assetBalance,
