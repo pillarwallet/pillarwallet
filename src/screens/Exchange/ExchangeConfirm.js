@@ -115,7 +115,7 @@ const SettingsWrapper = styled.View`
 `;
 
 const SliderContentWrapper = styled.View`
-  margin-bottom: 30px;
+  margin: 30px 0;
 `;
 
 const SLOW = 'min';
@@ -361,7 +361,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
                 {errorMessage}
               </BaseText>}
               <ButtonText
-                buttonText="Advanced options"
+                buttonText="Speed settings"
                 leftIconProps={{ name: 'options', style: { fontSize: 16 } }}
                 onPress={() => this.setState({ showFeeModal: true })}
               />
@@ -391,6 +391,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         <SlideModal
           isVisible={showFeeModal}
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
+          hideHeader
         >
           <SliderContentWrapper>
             <TitleWithIcon iconName="lightning" title="Speed" />
