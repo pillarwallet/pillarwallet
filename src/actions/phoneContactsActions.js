@@ -21,12 +21,20 @@ import { Platform, PermissionsAndroid } from 'react-native';
 import Contacts from 'react-native-contacts';
 
 // constants
-import { PHONE_CONTACTS_RECEIVED } from 'constants/phoneContactsConstants';
+import {
+  PHONE_CONTACTS_ERROR,
+  PHONE_CONTACTS_RECEIVED,
+  FETCHING_PHONE_CONTACTS,
+} from 'constants/phoneContactsConstants';
 
 // models, types
 import type { Dispatch } from 'reducers/rootReducer';
 import type { PhoneContact } from 'models/PhoneContact';
-import type { PhoneContactsReceivedAction } from 'reducers/phoneContactsReducer';
+import type {
+  PhoneContactsReceivedAction,
+  PhoneContactsErrorAction,
+  FetchingPhoneContactsAction,
+} from 'reducers/phoneContactsReducer';
 import type { ReferralContact } from 'reducers/referralsReducer';
 
 // utils
@@ -36,6 +44,14 @@ import { isValidPhone } from 'utils/validators';
 const phoneContactsReceived = (contacts: ReferralContact[]): PhoneContactsReceivedAction => ({
   type: PHONE_CONTACTS_RECEIVED,
   payload: contacts,
+});
+
+const phoneContactsError = (): PhoneContactsErrorAction => ({
+  type: PHONE_CONTACTS_ERROR,
+});
+
+const fetchingPhoneContacts = (): FetchingPhoneContactsAction => ({
+  type: FETCHING_PHONE_CONTACTS,
 });
 
 const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
@@ -120,9 +136,10 @@ export const fetchPhoneContactsAction = () => {
   return async (dispatch: Dispatch) => {
     askPermission()
       .then(() => {
+        dispatch(fetchingPhoneContacts());
         Contacts.getAll((err, contacts) => {
           if (err === 'denied') {
-            // TODO: handle error?
+            dispatch(phoneContactsError());
             return;
           }
 
@@ -130,6 +147,9 @@ export const fetchPhoneContactsAction = () => {
           dispatch(phoneContactsReceived(sortContacts(formattedContacts)));
         });
       })
-      .catch(() => null);
+      .catch(() => {
+        dispatch(phoneContactsError());
+        return null;
+      });
   };
 };

@@ -24,12 +24,14 @@ import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import { connect } from 'react-redux';
 
+import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Spinner from 'components/Spinner';
 
 import { spacing } from 'utils/variables';
 
@@ -50,6 +52,7 @@ type Props = {
   phoneContacts: ReferralContact[],
   isFetchingPhoneContacts: boolean,
   isFetchingPhoneContactsComplete: boolean,
+  phoneContactsFetchError: boolean,
   fetchPhoneContacts: () => void,
 };
 
@@ -157,41 +160,61 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
   render() {
     const { query, selectedContacts } = this.state;
-    const { addedContactsToInvite, phoneContacts } = this.props;
+    const {
+      addedContactsToInvite,
+      phoneContacts,
+      isFetchingPhoneContacts,
+      phoneContactsFetchError,
+      fetchPhoneContacts,
+    } = this.props;
+
     const filteredContacts = getFilteredContacts(phoneContacts, query);
     const showConfirmButton = !!(selectedContacts.length || addedContactsToInvite.length);
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Select email contacts' }] }}
       >
-        <SearchBlock
-          searchInputPlaceholder="Search for contact"
-          onSearchChange={(q) => this.handleSearch(q)}
-          itemSearchState={query.length >= MIN_QUERY_LENGTH}
-          wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
-        />
-        <FlatList
-          data={filteredContacts}
-          extraData={selectedContacts}
-          keyExtractor={(item) => item.id}
-          renderItem={this.renderContact}
-          initialNumToRender={8}
-          onScroll={() => Keyboard.dismiss()}
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            paddingVertical: spacing.rhythm,
-            paddingTop: 0,
-            flexGrow: 1,
-          }}
-          ListEmptyComponent={(
-            <EmptyStateWrapper>
-              <EmptyStateParagraph
-                title="Nobody found"
-                bodyText="Make sure you entered name, e-mail address or phone number correctly"
-              />
-            </EmptyStateWrapper>
-          )}
-        />
+        {!!isFetchingPhoneContacts &&
+        <Wrapper flex={1} center>
+          <Spinner />
+        </Wrapper>}
+
+        {!isFetchingPhoneContacts &&
+          <React.Fragment>
+            <SearchBlock
+              searchInputPlaceholder="Search for contact"
+              onSearchChange={(q) => this.handleSearch(q)}
+              itemSearchState={query.length >= MIN_QUERY_LENGTH}
+              wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
+            />
+            <FlatList
+              data={filteredContacts}
+              extraData={selectedContacts}
+              keyExtractor={(item) => item.id}
+              renderItem={this.renderContact}
+              initialNumToRender={8}
+              onScroll={() => Keyboard.dismiss()}
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                paddingVertical: spacing.rhythm,
+                paddingTop: 0,
+                flexGrow: 1,
+              }}
+              ListEmptyComponent={(
+                <EmptyStateWrapper>
+                  <EmptyStateParagraph
+                    title={!phoneContactsFetchError ? 'Nobody found' : 'Could not fetch contacts'}
+                    bodyText={!phoneContactsFetchError
+                      ? 'Make sure you have entered name, e-mail address or phone number correctly'
+                    : ''}
+                  >
+                    <Button title="Try again" onPress={fetchPhoneContacts} marginTop={spacing.large} />
+                  </EmptyStateParagraph>
+                </EmptyStateWrapper>
+              )}
+            />
+          </React.Fragment>
+        }
         {showConfirmButton && (
           <ButtonWrapper>
             <Button title="Confirm" onPress={this.setContactsForReferral} block />
@@ -207,12 +230,14 @@ const mapStateToProps = ({
     data: phoneContacts,
     isFetching: isFetchingPhoneContacts,
     isFetchComplete: isFetchingPhoneContactsComplete,
+    fetchError: phoneContactsFetchError,
   },
 }: RootReducerState): $Shape<Props> => ({
   addedContactsToInvite,
   isFetchingPhoneContacts,
   isFetchingPhoneContactsComplete,
   phoneContacts,
+  phoneContactsFetchError,
 });
 
 
