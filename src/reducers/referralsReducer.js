@@ -18,7 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_CONTACTS_FOR_REFERRAL, REMOVE_CONTACT_FOR_REFERRAL } from 'constants/referralConstants';
+import {
+  SET_CONTACTS_FOR_REFERRAL,
+  REMOVE_CONTACT_FOR_REFERRAL,
+  INVITE_SENT,
+  SENDING_INVITE,
+} from 'constants/referralsConstants';
 
 export type ReferralContact = {
   id: string,
@@ -28,31 +33,84 @@ export type ReferralContact = {
   photo?: string,
 };
 
+export type ReferralsSendingInviteAction = {|
+  type: 'SENDING_INVITE',
+|};
+
+export type ReferralsInviteSentAction = {|
+  type: 'INVITE_SENT',
+|};
+
+type ReferralsSetContactsAction = {|
+  type: 'SET_CONTACTS_FOR_REFERRAL',
+  payload: ReferralContact[],
+|};
+
+export type ReferralsRemoveContactAction = {|
+  type: 'REMOVE_CONTACT_FOR_REFERRAL',
+  payload: string,
+|};
+
+export type ReferralsReducerAction =
+  | ReferralsSendingInviteAction
+  | ReferralsInviteSentAction
+  | ReferralsSetContactsAction
+  | ReferralsRemoveContactAction;
+
 export type ReferralsReducerState = {
+  isSendingInvite: boolean,
   addedContactsToInvite: ReferralContact[],
 };
 
-export type ReferralsReducerAction = {
-  type: string,
-  payload: any
+export const initialState = {
+  addedContactsToInvite: [],
+  isSendingInvite: false,
 };
 
-const initialState = {
-  addedContactsToInvite: [],
+
+const setContacts = (
+  state: ReferralsReducerState,
+  action: ReferralsSetContactsAction,
+): ReferralsReducerState => {
+  const { payload } = action;
+
+  return {
+    ...state,
+    addedContactsToInvite: payload,
+  };
 };
+
+const removeContact = (
+  state: ReferralsReducerState,
+  action: ReferralsRemoveContactAction,
+): ReferralsReducerState => {
+  const { payload } = action;
+  const { addedContactsToInvite } = state;
+
+  return {
+    ...state,
+    addedContactsToInvite: [...addedContactsToInvite.filter((contact) => contact.id !== payload)],
+  };
+};
+
 
 export default function referralsReducer(
   state: ReferralsReducerState = initialState,
   action: ReferralsReducerAction,
-) {
+): ReferralsReducerState {
   switch (action.type) {
+    case SENDING_INVITE:
+      return { ...state, isSendingInvite: true };
+
+    case INVITE_SENT:
+      return { ...state, isSendingInvite: false };
+
     case SET_CONTACTS_FOR_REFERRAL:
-      return { ...state, addedContactsToInvite: action.payload };
+      return setContacts(state, action);
+
     case REMOVE_CONTACT_FOR_REFERRAL:
-      return {
-        ...state,
-        addedContactsToInvite: [...state.addedContactsToInvite.filter((contact) => contact.id !== action.payload)],
-      };
+      return removeContact(state, action);
+
     default:
       return state;
   }

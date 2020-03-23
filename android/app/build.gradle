@@ -267,6 +267,7 @@ dependencies {
   implementation "com.facebook.react:react-native:+"  // From node_modules
   implementation project(':react-native-cookies')
   implementation project(':react-native-keychain')
+  implementation project(':react-native-contacts')
 
   // Testing
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

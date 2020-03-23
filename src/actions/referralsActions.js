@@ -21,17 +21,26 @@ import branch, { BranchEvent } from 'react-native-branch';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 
-// constants
-import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { SET_CONTACTS_FOR_REFERRAL, REMOVE_CONTACT_FOR_REFERRAL } from 'constants/referralConstants';
-
-// services
-import { logEvent, getUserReferralLink } from 'services/branchIo';
-
 // types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { ReferralContact } from 'reducers/referralsReducer';
+import type {
+  ReferralsSendingInviteAction,
+  ReferralsInviteSentAction,
+  ReferralContact,
+} from 'reducers/referralsReducer';
+
+// constants
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import {
+  SENDING_INVITE,
+  INVITE_SENT,
+  SET_CONTACTS_FOR_REFERRAL,
+  REMOVE_CONTACT_FOR_REFERRAL,
+} from 'constants/referralsConstants';
+
+// services
+import { logEvent, getUserReferralLink } from 'services/branchIo';
 
 
 export type ClaimTokenAction = {
@@ -39,7 +48,20 @@ export type ClaimTokenAction = {
   code: string,
 };
 
+export type ReferralInvitation = {|
+  email?: string,
+  phone?: string,
+|};
+
 let branchIoSubscription;
+
+const sendingInviteAction = (): ReferralsSendingInviteAction => ({
+  type: SENDING_INVITE,
+});
+
+const inviteSentAction = (): ReferralsInviteSentAction => ({
+  type: INVITE_SENT,
+});
 
 export const completeRefferalsEventAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -48,14 +70,33 @@ export const completeRefferalsEventAction = () => {
   };
 };
 
-export const inviteByEmailAction = (email: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+export const sendReferralInvitationsAction = (invitations: ReferralInvitation[]) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletId = get(getState(), 'user.data.walletId');
-    // TODO: get security token from back-end and attach when creating link
-    const inviteSecurityToken = 'inviteSecurityToken';
-    const inviteLink = await getUserReferralLink(walletId, { email, token: inviteSecurityToken });
-    console.log('inviteLink: ', inviteLink);
-    // TODO: send invite link to back-end
+    dispatch(sendingInviteAction());
+
+    await Promise.all(invitations.map(async (invitation) => {
+      const { email, phone } = invitation;
+      const token = await api.generateReferralToken(walletId);
+
+      if (token.result === 'success') {
+        const referralLink = await getUserReferralLink(walletId, {
+          email,
+          phone,
+          token: token.token,
+        });
+
+        await api.sendReferralInvitation({
+          token: token.token,
+          walletId,
+          referralLink,
+          email,
+          phone,
+        });
+      }
+    }));
+
+    dispatch(inviteSentAction());
   };
 };
 

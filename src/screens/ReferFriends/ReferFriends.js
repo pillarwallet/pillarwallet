@@ -45,6 +45,9 @@ import type { ReferralContact } from 'reducers/referralsReducer';
 // constants
 import { ADDRESS_BOOK_PERMISSION, REFERRAL_CONTACTS } from 'constants/navigationConstants';
 
+// partials
+import FriendsList from './FriendsList';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -101,6 +104,7 @@ class ReferFriends extends React.PureComponent<Props> {
             wrapperPadding={0}
             wrapperStyle={{ marginBottom: hasAddedContacts ? 34 : 40 }}
           />
+          <FriendsList />
           {hasAddedContacts &&
             <React.Fragment>
               <MediumText accent>Your referrals</MediumText>
@@ -151,3 +155,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferFriends));
+

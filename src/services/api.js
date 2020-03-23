@@ -120,6 +120,14 @@ type VerifyEmail = {|
   oneTimePassword: string,
 |};
 
+type SendReferralInvitationParams = {|
+  walletId: string,
+  token: string,
+  referralLink: string,
+  email?: string,
+  phone?: string,
+|};
+
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 export default function SDKWrapper() {
@@ -296,6 +304,24 @@ SDKWrapper.prototype.verifyPhone = function (user: Object) {
       });
       return { responseStatus: status, message };
     });
+};
+
+SDKWrapper.prototype.generateReferralToken = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.referral.generateToken({
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch(() => ({ result: 'error' }));
+};
+
+SDKWrapper.prototype.sendReferralInvitation = function (params: SendReferralInvitationParams) {
+  console.log('sendReferralInvitation', params);
+
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
+    .then(({ data }) => data)
+    .catch((error) => ({ result: 'error', error }));
 };
 
 SDKWrapper.prototype.claimTokens = function ({ walletId, code }: ClaimTokenAction) {
