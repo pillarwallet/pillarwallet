@@ -128,9 +128,9 @@ export const ListCard = (props: Props) => {
     // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
     return (
       <TitleWithImagesWrapper>
-        {title.map(item => {
-          if (typeof item === 'string') return <CardTitle>{item}</CardTitle>;
-        return <ImageWrapper>{item}</ImageWrapper>;
+        {title.map((item, idx) => {
+          if (typeof item === 'string') return <CardTitle key={idx}>{item}</CardTitle>;
+        return <ImageWrapper key={idx}>{item}</ImageWrapper>;
         })}
       </TitleWithImagesWrapper>
     );

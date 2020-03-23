@@ -33,6 +33,7 @@ import type { Offer } from 'models/Offer';
 import { withTheme } from 'styled-components/native';
 import type { RootReducerState } from 'reducers/rootReducer';
 import { spacing } from 'utils/variables';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   theme: Theme,
@@ -115,13 +116,15 @@ class ServicesScreen extends React.Component<Props> {
 
   render() {
     const services = this.getServices();
+    const { theme } = this.props;
+    const isLightTheme = theme.current === LIGHT_THEME;
     return (
       <ContainerWithHeader
         headerProps={{
           noBack: true,
           rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
           leftItems: [{ title: 'Services' }],
-          noBottomBorder: true,
+          noBottomBorder: isLightTheme,
         }}
         inset={{ bottom: 'never' }}
       >
