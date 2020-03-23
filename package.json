@@ -190,7 +190,7 @@
     "react-native-canvas": "^0.1.20",
     "react-native-collapsible": "^1.4.0",
     "react-native-color-matrix-image-filters": "^5.1.4",
-    "react-native-contacts": "^5.1.0",
+    "react-native-contacts": "5.0.7",
     "react-native-cookies": "https://github.com/joeferraro/react-native-cookies.git",
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^1.5.0",

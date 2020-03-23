@@ -15307,10 +15307,10 @@ react-native-communications@2.2.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
 
-react-native-contacts@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-5.1.0.tgz#94ba9a94f3de2211b812d2dbd268c472441a6684"
-  integrity sha512-mLX9XWLiwmZ5C4iInODEaupzWmkVv3/oRDLcecqFCAvMhJ9cgnxuWvVKE9nMFGUwRIZN+KWjjJJ97/OxvErA7g==
+react-native-contacts@5.0.7:
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-5.0.7.tgz#19b59edd3702ebdc389db266089e5f9370ea7501"
+  integrity sha512-IRMiJCBJ98nK4v/oNueD1hXiqbmUOgncSIdL60NVSygH4ksqn2E2ipGwy81GAYmMk/yRgJgDB47QmOBlYt9Q1g==
 
 "react-native-cookies@https://github.com/joeferraro/react-native-cookies.git":
   version "3.3.0"
