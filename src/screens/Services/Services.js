@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
@@ -40,6 +40,9 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
 };
+
+const visaIcon = require('assets/icons/visa.png');
+const mastercardIcon = require('assets/icons/mastercard.png');
 
 class ServicesScreen extends React.Component<Props> {
   getServices = () => {
@@ -70,7 +73,13 @@ class ServicesScreen extends React.Component<Props> {
       },
       {
         key: 'buyCryptoWithFiat',
-        title: 'Buy crypto with fiat',
+        // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
+        title: [
+          'Buy crypto with ',
+          <Image source={mastercardIcon} style={{ marginBottom: 1 }} height={11} />,
+          ' & ',
+          <Image source={visaIcon} height={11} />,
+        ],
         body: 'USD, GBP, EUR supported',
         action: () => navigation.navigate(
           EXCHANGE,

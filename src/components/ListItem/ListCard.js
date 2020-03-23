@@ -31,7 +31,7 @@ import { LabelBadge } from 'components/LabelBadge';
 type Props = {
   iconSource?: string,
   fallbackIcon?: string,
-  title: string,
+  title: string | (string | React.Node)[],
   subtitle?: string,
   action?: Function,
   note?: Object,
@@ -76,7 +76,19 @@ const CardTitle = styled(MediumText)`
 const CardSubtitle = styled(BaseText)`
   color: ${themedColors.secondaryText};
   ${fontStyles.regular};
-  padding-right: 10%;
+  padding-right: 25%;
+`;
+
+const TitleWithImagesWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  color: ${themedColors.text};
+  ${fontStyles.big};
+`;
+
+const ImageWrapper = styled.View`
+  height: 16;
+  justify-content: flex-end;
 `;
 
 const TitleWrapper = styled.View`
@@ -111,6 +123,19 @@ export const ListCard = (props: Props) => {
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
 
+  const getTitle = () => {
+    if (typeof title === 'string') return <CardTitle style={titleStyle}>{title}</CardTitle>;
+    // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
+    return (
+      <TitleWithImagesWrapper>
+        {title.map(item => {
+          if (typeof item === 'string') return <CardTitle>{item}</CardTitle>;
+        return <ImageWrapper>{item}</ImageWrapper>;
+        })}
+      </TitleWithImagesWrapper>
+    );
+  };
+
   return (
     <ShadowedCard
       wrapperStyle={{ marginBottom: 16, width: '100%' }}
@@ -124,7 +149,7 @@ export const ListCard = (props: Props) => {
         {customIcon}
         <CardContent>
           <TitleWrapper>
-            <CardTitle style={titleStyle}>{title}</CardTitle>
+            {getTitle()}
             {!!label && <Label>{label}</Label>}
             {!!labelBadge && (
             <LabelBadge
