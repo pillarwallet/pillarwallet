@@ -61,14 +61,11 @@ const CardImage = styled(CachedImage)`
   margin-right: 20px;
 `;
 
-const ContentWrapper = styled.View`
-  flex: 1;
-`;
-
 const CardContent = styled.View`
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
+  flex: 1;
 `;
 
 const CardTitle = styled(MediumText)`
@@ -124,22 +121,20 @@ export const ListCard = (props: Props) => {
       <CardRow>
         {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
         {customIcon}
-        <ContentWrapper>
-          <CardContent>
-            <TitleWrapper>
-              <CardTitle style={titleStyle}>{title}</CardTitle>
-              {!!label && <Label>{label}</Label>}
-              {!!labelBadge && (
-                <LabelBadge
-                  label={labelBadge.label}
-                  labelStyle={{ fontSize: fontSizes.regular }}
-                  color={labelBadge.color}
-                />
+        <CardContent>
+          <TitleWrapper>
+            <CardTitle style={titleStyle}>{title}</CardTitle>
+            {!!label && <Label>{label}</Label>}
+            {!!labelBadge && (
+            <LabelBadge
+              label={labelBadge.label}
+              labelStyle={{ fontSize: fontSizes.regular }}
+              color={labelBadge.color}
+            />
               )}
-            </TitleWrapper>
-            {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
-          </CardContent>
-        </ContentWrapper>
+          </TitleWrapper>
+          {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
+        </CardContent>
       </CardRow>
       {!!note &&
       <Note {...note} containerStyle={{ marginTop: 14 }} />

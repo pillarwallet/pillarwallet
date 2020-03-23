@@ -64,7 +64,7 @@ type Props = {
 
 const Wrapper = styled.View`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.card};
+  background-color: ${({ theme }) => theme.colors.surface};
   ${({ noBottomBorder, theme }) => !noBottomBorder && `
     border-bottom-width: 1;
     border-bottom-color: ${theme.colors.border};
