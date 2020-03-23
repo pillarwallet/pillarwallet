@@ -22,30 +22,26 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { connect } from 'react-redux';
-import Intercom from 'react-native-intercom';
+import { withNavigation } from 'react-navigation';
 
 import { Wrapper } from 'components/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import { BaseText, MediumText, BoldText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import ButtonText from 'components/ButtonText';
-import SWActivationCard from 'components/SWActivationCard';
+
+import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
 import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
+import type { NavigationScreenProp } from 'react-navigation';
 
-type State = {
-  showActivationCard: boolean,
-};
 
 type Props = {
   isVisible: boolean,
-  onModalHide: () => void,
-  deploySmartWallet: () => void,
+  onModalHide: (callback: () => void) => void,
+  navigation: NavigationScreenProp<*>,
 };
 
 
@@ -83,19 +79,13 @@ const confettiTop = require('assets/images/rewardBackgroundTop.png');
 const confettiBottom = require('assets/images/rewardBackgroundBottom.png');
 
 
-class ReferralModalReward extends React.Component<Props, State> {
-  state = {
-    showActivationCard: false,
-  };
-
-  activateSW = () => {
-    const { deploySmartWallet } = this.props;
-    this.setState({ showActivationCard: true });
-    deploySmartWallet();
+class ReferralModalReward extends React.Component<Props> {
+  navigateToProfile = () => {
+    const { navigation, onModalHide } = this.props;
+    onModalHide(() => navigation.navigate(ADD_EDIT_USER));
   };
 
   render() {
-    const { showActivationCard } = this.state;
     const { isVisible, onModalHide } = this.props;
 
     return (
@@ -123,22 +113,14 @@ class ReferralModalReward extends React.Component<Props, State> {
                 <BaseText center regular style={{ marginTop: spacing.large }}>
                   Thanks for joining Pillar.
                   To celebrate this, <BoldText regular>we also give you 25 PLR</BoldText>.
-                  You can use it to activate your Smart Wallet and enable Pillar Network at no cost.
-                  (Please remember to verify your phone and email address to activate rewards.)
+                  You need to add and verify your email or phone in order to receive the reward.
                 </BaseText>
-                {!showActivationCard
-                ? (
-                  <React.Fragment>
-                    <Button
-                      title="Activate Smart Wallet"
-                      onPress={this.activateSW}
-                      marginBottom={spacing.mediumLarge}
-                      marginTop={40}
-                    />
-                    <ButtonText buttonText="What is Smart Wallet?" onPress={() => Intercom.displayHelpCenter()} />
-                  </React.Fragment>
-                  )
-                : <SWActivationCard />}
+                <Button
+                  title="Add details"
+                  onPress={this.navigateToProfile}
+                  marginBottom={spacing.mediumLarge}
+                  marginTop={40}
+                />
               </ContentWrapper>
             </StyledScrollView>
           </Wrapper>
@@ -148,9 +130,4 @@ class ReferralModalReward extends React.Component<Props, State> {
   }
 }
 
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
-});
-
-export default connect(null, mapDispatchToProps)(ReferralModalReward);
+export default withNavigation(ReferralModalReward);

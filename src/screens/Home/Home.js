@@ -190,7 +190,7 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     isReferralBannerVisible: true,
-    showRewardModal: false,
+    showRewardModal: true,
   };
 
   componentDidMount() {
@@ -555,7 +555,8 @@ class HomeScreen extends React.Component<Props, State> {
         </ScrollView>
         <ReferralModalReward
           isVisible={showRewardModal}
-          onModalHide={() => this.setState({ showRewardModal: false })}
+          onModalHide={(callback) => this.setState({ showRewardModal: false },
+            () => { if (callback) callback(); })}
         />
         <QRCodeScanner
           validator={this.validateQRCode}
