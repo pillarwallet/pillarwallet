@@ -70,13 +70,16 @@ type SelectorValueType = {
 type SelectorOptions = {
   options?: Array<Object>,
   horizontalOptions?: Array<Object>,
+  fiatOptions?: Array<Object>,
   selectorPlaceholder?: 'string',
   fullWidth?: boolean,
   showOptionsTitles?: boolean,
   horizontalOptionsTitle?: string,
   optionsTitle?: string,
+  fiatOptionsTitle?: string,
   selectorModalTitle?: string,
   optionsSearchPlaceholder?: string,
+  displayFiatOptionsFirst?: boolean,
 };
 
 type Value = string | number;
@@ -250,9 +253,9 @@ const Selector = styled.TouchableOpacity`
   background-color: ${themedColors.card};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  ${({ fullWidth, theme }) => fullWidth && `
+  border: 1px solid ${themedColors.secondaryAccent};
+  ${({ fullWidth }) => fullWidth && `
     flex: 1;
-    border: 1px solid ${theme.colors.secondaryAccent};
     border-radius: 4px;
   `}
   margin: 0;
@@ -496,6 +499,27 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  renderHorizontalOptions = (data, title) => {
+    if (!data.length) return null;
+    const { selectorOptions: { showOptionsTitles } = {} } = this.props;
+    return (
+      <HorizontalOptions>
+        {(showOptionsTitles && !!title) &&
+          <OptionsHeader>{title}</OptionsHeader>
+        }
+        <FlatList
+          data={data}
+          keyExtractor={({ name }) => name}
+          keyboardShouldPersistTaps="always"
+          renderItem={this.renderHorizontalOption}
+          horizontal
+          contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+          ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
+        />
+      </HorizontalOptions>
+    );
+  };
+
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
     const {
@@ -544,6 +568,9 @@ class TextInput extends React.Component<Props, State> {
       optionsTitle,
       selectorModalTitle,
       optionsSearchPlaceholder,
+      fiatOptions = [],
+      fiatOptionsTitle,
+      displayFiatOptionsFirst,
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
@@ -576,6 +603,8 @@ class TextInput extends React.Component<Props, State> {
 
     const imageSource = this.resolveAssetSource(innerImageURI);
     const optionImageSource = this.resolveAssetSource(selectedOptionIcon);
+
+    const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
@@ -718,22 +747,9 @@ class TextInput extends React.Component<Props, State> {
                   marginBottom="0"
                 />
               </SearchBarWrapper>
-              {!!filteredHorizontalListData.length &&
-              <HorizontalOptions>
-                {(showOptionsTitles && !!horizontalOptionsTitle) &&
-                <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
-                }
-                <FlatList
-                  data={filteredHorizontalListData}
-                  keyExtractor={({ name }) => name}
-                  keyboardShouldPersistTaps="always"
-                  renderItem={this.renderHorizontalOption}
-                  horizontal
-                  contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
-                  ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
-                />
-              </HorizontalOptions>
-              }
+              {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
+              {this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle)}
+              {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
               {!!filteredListData.length &&
               <FlatList
                 data={filteredListData}
