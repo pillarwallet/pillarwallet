@@ -1003,7 +1003,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
     } = this.props;
-    const { address } = btcAddresses[0];
+    const [{ address }] = btcAddresses;
     const addressBalance = btcBalances[address];
     const rawAssetBalance = addressBalance ? satoshisToBtc(addressBalance.confirmed) : 0;
     const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
