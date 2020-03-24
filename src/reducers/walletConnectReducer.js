@@ -32,6 +32,7 @@ import {
   WALLETCONNECT_CALL_REQUEST,
   WALLETCONNECT_CALL_REJECTED,
   WALLETCONNECT_CALL_APPROVED,
+  TOGGLE_WALLET_CONNECT_PROMO_CARD,
 } from 'constants/walletConnectConstants';
 
 import type { Connector, CallRequest } from 'models/WalletConnect';
@@ -45,6 +46,7 @@ export type WalletConnectReducerState = {|
     code: string,
     message: string,
   |},
+  promoCardCollapsed: boolean,
 |};
 
 export type WalletConnectSessionReceived = {|
@@ -112,6 +114,13 @@ export type WalletConnectError = {|
   |},
 |};
 
+export type WalletConnectTogglePromoCard = {|
+  type: 'TOGGLE_WALLET_CONNECT_PROMO_CARD',
+  payload: {|
+    collapsed: boolean,
+  |},
+|};
+
 export type WalletConnectReducerAction =
   | WalletConnectError
   | WalletConnectInitSessions
@@ -125,7 +134,8 @@ export type WalletConnectReducerAction =
   | WalletConnectCallApproved
   | SessionRequest
   | SessionCancelRequest
-  | SessionRejected;
+  | SessionRejected
+  | WalletConnectTogglePromoCard;
 
 const initialState: WalletConnectReducerState = {
   connectors: [],
@@ -133,6 +143,7 @@ const initialState: WalletConnectReducerState = {
   pendingConnector: null,
   requests: [],
   error: null,
+  promoCardCollapsed: false,
 };
 
 const removeConnector = (source: Connector[], connector: Connector): Connector[] => {
@@ -200,6 +211,12 @@ const walletConnectReducer = (
 
     case WALLETCONNECT_SESSION_RECEIVED:
       return { ...state, waitingForSession: false };
+
+    case TOGGLE_WALLET_CONNECT_PROMO_CARD:
+      return {
+        ...state,
+        promoCardCollapsed: action.payload.collapsed,
+      };
 
     default:
       return state;
