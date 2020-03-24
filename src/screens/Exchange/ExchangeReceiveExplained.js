@@ -25,6 +25,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 
+// constants
 import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
 
 // util
