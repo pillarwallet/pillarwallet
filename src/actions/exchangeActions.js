@@ -38,6 +38,7 @@ import {
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+  HAS_SEEN_EXCHANGE_INTRO,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -583,3 +584,10 @@ export const getExchangeSupportedAssetsAction = () => {
   };
 };
 
+export const updateHasSeenExchangeIntroAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: HAS_SEEN_EXCHANGE_INTRO,
+    });
+  };
+};

@@ -28,9 +28,11 @@ import {
   PROVIDER_SHAPESHIFT,
   PROVIDER_MOONPAY,
   PROVIDER_SENDWYRE,
+  HAS_SEEN_EXCHANGE_INTRO,
 } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
 import { searchOffersAction } from 'actions/exchangeActions';
+import reducer from 'reducers/exchangeReducer';
 
 const walletId = 'walletId';
 const oAuthTokensMock = {
@@ -102,6 +104,7 @@ describe('Exchange Actions tests', () => {
       exchange: {
         data: { connectedProviders: connectedProvidersMock },
         exchangeSupportedAssets: exchangeSupportedAssetsMock,
+        hasSeenExchangeIntro: false,
       },
     };
     store = mockStore({ ...exchangeStoreMock });
@@ -126,5 +129,13 @@ describe('Exchange Actions tests', () => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
       });
+  });
+
+  it('should handle HAS_SEEN_EXCHANGE_INTRO', () => {
+    const action = { type: HAS_SEEN_EXCHANGE_INTRO };
+    const expectedAssets = {
+      hasSeenExchangeIntro: true,
+    };
+    expect(reducer(undefined, action)).toMatchObject(expectedAssets);
   });
 });
