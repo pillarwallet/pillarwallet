@@ -600,15 +600,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       assets,
       exchangeSupportedAssets,
-      fiatExchangeSupportedAssets,
       btcAddresses,
     } = this.props;
 
     const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
-    const selectedToAssetSymbol = get(this.state, 'value.toInput.selector.symbol', '');
     const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
 
-    const assetsOptionsBuying = this.generateSupportedAssetsOptions( exchangeSupportedAssets);
+    const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
       assetsOptionsBuying.push(this.generateBTCAssetOption());
     }
@@ -696,7 +694,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       fiatExchangeSupportedAssets,
     } = this.props;
     return !(isFiatCurrency(from) && !fiatExchangeSupportedAssets.some(({ symbol }) => symbol === to));
-  }
+  };
 
   onShapeshiftAuthPress = () => {
     const { authorizeWithShapeshift } = this.props;
@@ -1091,7 +1089,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
       btcAddresses,
-      fiatExchangeSupportedAssets,
     } = this.props;
     const { fromInput } = value;
     const { selector: selectedFromOption, input: amount } = fromInput;
@@ -1106,21 +1103,11 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
 
     const optionsFrom = this.generateAssetsOptions(assets);
-    let newOptionsFrom = optionsFrom;
-    if (!isEmpty(selectedToOption)) {
-      newOptionsFrom = optionsFrom.filter((option) => option.value !== selectedToOption.value);
-    }
-
+    const optionsTo = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
     const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
-    const optionsTo = this.generateSupportedAssetsOptions(isFromSelectedFiat
-      ? fiatExchangeSupportedAssets : exchangeSupportedAssets);
-    let newOptionsTo = optionsTo;
-    if (!isEmpty(selectedFromOption)) {
-      newOptionsTo = optionsTo.filter((option) => option.value !== selectedFromOption.value);
-      if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
-        newOptionsTo.push(this.generateBTCAssetOption());
-      }
+    if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
+      optionsTo.push(this.generateBTCAssetOption());
     }
 
     const newOptions = t.update(this.state.formOptions, {
