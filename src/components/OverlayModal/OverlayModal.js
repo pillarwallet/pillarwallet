@@ -19,29 +19,30 @@
 */
 import * as React from 'react';
 import SlideModal from 'components/Modals/SlideModal';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
-import type { Theme } from 'models/Theme';
+import Button from 'components/Button';
 
 
 type Props = {
-    title: string,
-    content: string,
-    theme: Theme,
-    isVisible?: Boolean,
+  title: string,
+  content: string,
+  isVisible?: boolean,
+  onButtonPress: () => void,
+  buttonText: string,
 }
 
 const Wrapper = styled.View`
-    padding-top: 50%;
-    padding-left: 35;
-    padding-right: 35;
-    background-color: ${UIColors.darkShadowColor};
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  padding-top: 50%;
+  padding-left: 16;
+  padding-right: 16;
+  background-color: ${UIColors.darkShadowColor};
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 `;
 
 const ModalTitle = styled(BaseText)`
@@ -55,12 +56,33 @@ const ModalMessage = styled(BaseText)`
   color: ${baseColors.white};
 `;
 
-const OverlayModal = (props: Props) => {
-  const { title, content, isVisible } = props;
+const TextWrapper = styled.View`
+  padding-left: 20;
+  padding-right: 20;
+`;
+
+const ButtonWrapper = styled.View`
+  height: 100%;
+  justify-content: center;
+`;
+
+export default (props: Props) => {
+  const {
+    title, content, isVisible, onButtonPress, buttonText,
+  } = props;
   const contentComponent = (
     <Wrapper>
-      <ModalTitle>{title}</ModalTitle>
-      <ModalMessage>{content}</ModalMessage>
+      <TextWrapper>
+        <ModalTitle>{title}</ModalTitle>
+        <ModalMessage>{content}</ModalMessage>
+      </TextWrapper>
+      <ButtonWrapper>
+        <Button
+          title={buttonText}
+          onPress={onButtonPress}
+          height={48}
+        />
+      </ButtonWrapper>
     </Wrapper>
   );
 
@@ -75,5 +97,3 @@ const OverlayModal = (props: Props) => {
     />
   );
 };
-
-export default withTheme(OverlayModal);
