@@ -86,6 +86,7 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { toastReferral } from 'utils/toasts';
 import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 
 // models, types
@@ -96,13 +97,13 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-
+import type { User } from 'models/User';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   invitations: Object[],
-  user: Object,
+  user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -322,11 +323,18 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  handleReferralBannerPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
+
   renderReferral(colors) {
-    const {
-      navigation,
-      smartWalletFeatureEnabled,
-    } = this.props;
+    const { smartWalletFeatureEnabled } = this.props;
 
     const {
       isReferralBannerVisible,
@@ -339,7 +347,7 @@ class HomeScreen extends React.Component<Props, State> {
     return (
       <Banner
         isVisible={isReferralBannerVisible}
-        onPress={() => navigation.navigate(REFER_FLOW)}
+        onPress={this.handleReferralBannerPress}
         bannerText="Refer friends and earn rewards, free PLR and more."
         imageProps={{
           style: {
