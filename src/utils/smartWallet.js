@@ -97,7 +97,7 @@ export const getPreferredWalletId = (accounts: Accounts = []): string => {
   if (smartWallet) {
     return smartWallet.walletId;
   }
-  const legacyWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.KEY_BASED);
+  const legacyWallet = findKeyBasedAccount(accounts);
   return legacyWallet ? legacyWallet.walletId : '';
 };
 
