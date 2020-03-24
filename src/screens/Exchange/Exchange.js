@@ -1028,11 +1028,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
     const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
     const btcAsset = initialAssets.find(e => e.symbol === symbol);
+    const iconUrl = btcAsset ? btcAsset.iconUrl : '';
     return {
       key: symbol,
       value: symbol,
-      icon: btcAsset ? btcAsset.iconUrl : '',
-      iconUrl: btcAsset ? btcAsset.iconUrl : '',
+      icon: iconUrl,
+      iconUrl,
       symbol,
       ...btcAsset,
       assetBalance,
