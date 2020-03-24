@@ -34,6 +34,7 @@ import { getActiveAccountAddress } from 'utils/accounts';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
+import type { BitcoinAddress } from 'models/Bitcoin';
 
 type Props = {
   wallet: Object,
@@ -42,6 +43,7 @@ type Props = {
   user: Object,
   accounts: Accounts,
   setBrowsingWebView: Function,
+  btcAddresses: BitcoinAddress[],
 };
 
 type State = {
@@ -59,7 +61,7 @@ class FiatExchange extends React.Component<Props, State> {
 
   componentDidMount = () => {
     const {
-      user, accounts, navigation,
+      user, accounts, navigation, btcAddresses,
     } = this.props;
 
     const {
@@ -75,7 +77,12 @@ class FiatExchange extends React.Component<Props, State> {
 
     const { email = '' } = user;
 
-    const destAddress = getActiveAccountAddress(accounts);
+    let destAddress;
+    if (destCurrency === 'BTC') {
+      destAddress = btcAddresses[0].address;
+    } else {
+      destAddress = getActiveAccountAddress(accounts);
+    }
 
     const moonPayURL = `${MOONPAY_WIDGET_URL}`
       + `?apiKey=${MOONPAY_KEY}`
@@ -138,10 +145,12 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   user: { data: user },
   accounts: { data: accounts },
+  bitcoin: { data: { addresses: btcAddresses } },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   user,
   accounts,
+  btcAddresses,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
