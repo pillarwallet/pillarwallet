@@ -43,7 +43,7 @@ import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import { ETH } from 'constants/assetsConstants';
 
-import { getActiveAccount } from './accounts';
+import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
 import { getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction } from './history';
@@ -92,12 +92,11 @@ export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
 };
 
 export const getPreferredWalletId = (accounts: Accounts = []): string => {
-  const smartWallet = accounts.find(({ type }) =>
-    type === ACCOUNT_TYPES.SMART_WALLET);
+  const smartWallet = findFirstSmartAccount(accounts);
   if (smartWallet) {
     return smartWallet.walletId;
   }
-  const legacyWallet = accounts.find(acc => acc.type === ACCOUNT_TYPES.KEY_BASED);
+  const legacyWallet = findKeyBasedAccount(accounts);
   return legacyWallet ? legacyWallet.walletId : '';
 };
 
