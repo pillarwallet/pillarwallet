@@ -20,7 +20,7 @@
 import * as React from 'react';
 import SlideModal from 'components/Modals/SlideModal';
 import styled, { withTheme } from 'styled-components/native';
-import { fontStyles, UIColors } from 'utils/variables';
+import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 
@@ -46,13 +46,13 @@ const Wrapper = styled.View`
 
 const ModalTitle = styled(BaseText)`
   ${fontStyles.giant};
-  color: #FFFFFF;
+  color: ${baseColors.white};
 `;
 
 const ModalMessage = styled(BaseText)`
   ${fontStyles.medium};
   line-height: 26;
-  color: #FFFFFF;
+  color: ${baseColors.white};
 `;
 
 const OverlayModal = (props: Props) => {
