@@ -53,6 +53,7 @@ type Props = {
   removeContactForReferral: (id: string) => void,
   addedContactsToInvite: ReferralContact[],
   sendInvitation: (invitations: ReferralInvitation[]) => void,
+  isSendingInvite: boolean,
 };
 
 
@@ -86,7 +87,12 @@ class ReferFriends extends React.PureComponent<Props> {
   };
 
   render() {
-    const { navigation, addedContactsToInvite, removeContactForReferral } = this.props;
+    const {
+      navigation,
+      addedContactsToInvite,
+      removeContactForReferral,
+      isSendingInvite,
+    } = this.props;
     const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
     const hasAddedContacts = !!mappedContactsToInvite.length;
     return (
@@ -109,7 +115,7 @@ class ReferFriends extends React.PureComponent<Props> {
             wrapperPadding={0}
             wrapperStyle={{ marginBottom: hasAddedContacts ? 34 : 40 }}
           />
-          {hasAddedContacts &&
+          {hasAddedContacts && !isSendingInvite &&
             <React.Fragment>
               <MediumText accent>Your referrals</MediumText>
               <ClosablePillList
@@ -135,6 +141,7 @@ class ReferFriends extends React.PureComponent<Props> {
             </React.Fragment>}
           <ButtonWrapper justifyCenter={hasAddedContacts}>
             <Button
+              isLoading={isSendingInvite}
               title={addedContactsToInvite.length ? 'Send invites' : 'Select contacts...'}
               onPress={addedContactsToInvite.length
                 ? this.sendInvites
@@ -149,9 +156,10 @@ class ReferFriends extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
-  referrals: { addedContactsToInvite },
+  referrals: { addedContactsToInvite, isSendingInvite },
 }: RootReducerState): $Shape<Props> => ({
   addedContactsToInvite,
+  isSendingInvite,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

@@ -26,7 +26,6 @@ import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
   ReferralsSendingInviteAction,
-  ReferralsInviteSentAction,
   ReferralContact,
 } from 'reducers/referralsReducer';
 
@@ -37,6 +36,7 @@ import {
   INVITE_SENT,
   SET_CONTACTS_FOR_REFERRAL,
   REMOVE_CONTACT_FOR_REFERRAL,
+  REFERRAL_INVITE_ERROR,
 } from 'constants/referralsConstants';
 
 // services
@@ -59,9 +59,32 @@ const sendingInviteAction = (): ReferralsSendingInviteAction => ({
   type: SENDING_INVITE,
 });
 
-const inviteSentAction = (): ReferralsInviteSentAction => ({
-  type: INVITE_SENT,
-});
+const inviteSentAction = (dispatch) => {
+  dispatch({
+    type: INVITE_SENT,
+  });
+  dispatch({
+    type: ADD_NOTIFICATION,
+    payload: {
+      message: 'Invitations sent',
+      messageType: 'success',
+    },
+  });
+};
+
+const inviteErrorAction = (dispatch) => {
+  dispatch({
+    type: ADD_NOTIFICATION,
+    payload: {
+      message: 'Please try again later',
+      title: 'Invites have not been sent',
+      messageType: 'warning',
+    },
+  });
+  dispatch({
+    type: REFERRAL_INVITE_ERROR,
+  });
+};
 
 export const completeRefferalsEventAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -86,17 +109,22 @@ export const sendReferralInvitationsAction = (invitations: ReferralInvitation[])
           token: token.token,
         });
 
-        await api.sendReferralInvitation({
+        const referralInvitationStatus = await api.sendReferralInvitation({
           token: token.token,
           walletId,
           referralLink,
           email,
           phone,
         });
+        if (referralInvitationStatus.error) {
+          inviteErrorAction(dispatch);
+        } else {
+          inviteSentAction(dispatch);
+        }
+      } else {
+        inviteErrorAction(dispatch);
       }
     }));
-
-    dispatch(inviteSentAction());
   };
 };
 

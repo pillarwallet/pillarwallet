@@ -23,6 +23,7 @@ import {
   REMOVE_CONTACT_FOR_REFERRAL,
   INVITE_SENT,
   SENDING_INVITE,
+  REFERRAL_INVITE_ERROR,
 } from 'constants/referralsConstants';
 
 export type ReferralContact = {
@@ -41,6 +42,10 @@ export type ReferralsInviteSentAction = {|
   type: 'INVITE_SENT',
 |};
 
+export type ReferralsErrorErrorAction = {|
+  type: 'REFERRAL_INVITE_ERROR',
+|};
+
 type ReferralsSetContactsAction = {|
   type: 'SET_CONTACTS_FOR_REFERRAL',
   payload: ReferralContact[],
@@ -55,7 +60,8 @@ export type ReferralsReducerAction =
   | ReferralsSendingInviteAction
   | ReferralsInviteSentAction
   | ReferralsSetContactsAction
-  | ReferralsRemoveContactAction;
+  | ReferralsRemoveContactAction
+  | ReferralsErrorErrorAction;
 
 export type ReferralsReducerState = {
   isSendingInvite: boolean,
@@ -103,6 +109,9 @@ export default function referralsReducer(
       return { ...state, isSendingInvite: true };
 
     case INVITE_SENT:
+      return { ...state, isSendingInvite: false, addedContactsToInvite: [] };
+
+    case REFERRAL_INVITE_ERROR:
       return { ...state, isSendingInvite: false };
 
     case SET_CONTACTS_FOR_REFERRAL:
