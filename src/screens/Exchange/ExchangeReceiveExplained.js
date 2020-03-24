@@ -23,6 +23,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
+import Button from 'components/Button';
+
+// constants
+import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
 
 // util
 import { spacing } from 'utils/variables';
@@ -51,10 +55,11 @@ class ExchangeReceiveExplained extends React.Component<Props> {
   };
 
   render() {
+    const { navigation } = this.props;
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'New feature coming' }],
+          centerItems: [{ title: 'Activate Smart Wallet' }],
           rightItems: [{ close: true }],
           noBack: true,
           onClose: this.handleBack,
@@ -62,13 +67,14 @@ class ExchangeReceiveExplained extends React.Component<Props> {
       >
         <Wrapper flex={1} center regularPadding>
           <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-            <Paragraph center>Currently only exchange</Paragraph>
+            <Paragraph center>Activate Smart Wallet</Paragraph>
             <Paragraph center style={{ paddingBottom: spacing.rhythm }}>
-              to <ArrowSymbol /> Legacy Wallet is available.
+              in order to receive exchanged tokens into <ArrowSymbol /> Smart Wallet.
             </Paragraph>
-            <Paragraph center>
-              We are working on <ArrowSymbol /> Smart Wallet destination for exchanged tokens.
-            </Paragraph>
+            <Button
+              onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
+              title="Activate Smart Wallet"
+            />
           </View>
         </Wrapper>
       </ContainerWithHeader>

@@ -26,6 +26,11 @@ export const activeAccountIdSelector = createSelector(
   activeAccount => activeAccount ? activeAccount.id : null,
 );
 
+export const activeAccountWalletIdSelector = createSelector(
+  activeAccountSelector,
+  activeAccount => activeAccount ? activeAccount.walletId : null,
+);
+
 export const activeAccountAddressSelector = createSelector(
   activeAccountSelector,
   activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',

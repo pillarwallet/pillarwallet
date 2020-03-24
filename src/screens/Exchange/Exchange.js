@@ -1210,7 +1210,8 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const swaps = this.generatePopularSwaps();
 
-    const isSupportedExchange = this.isSupportedExchange(selectedFromOption.symbol, selectedToOption.symbol);
+    const isSupportedExchange = selectedFromOption &&
+      this.isSupportedExchange(selectedFromOption.symbol, selectedToOption.symbol);
 
     return (
       <ContainerWithHeader

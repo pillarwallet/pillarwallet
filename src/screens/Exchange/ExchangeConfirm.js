@@ -49,6 +49,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount, formatAmountDisplay, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
+import { userHasSmartWallet } from 'utils/smartWallet';
 import { getOfferProviderLogo } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
 
@@ -59,6 +60,8 @@ import type { OfferOrder, ProvidersMeta } from 'models/Offer';
 import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
+import type { Accounts } from 'models/Account';
+
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
@@ -75,6 +78,7 @@ type Props = {
   executingExchangeTransaction: boolean,
   setDismissTransaction: () => void,
   providersMeta: ProvidersMeta,
+  accounts: Accounts,
 };
 
 type State = {
@@ -286,8 +290,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       providersMeta,
       baseFiatCurrency,
       rates,
+      accounts,
     } = this.props;
 
+    const hasSmartWallet = userHasSmartWallet(accounts);
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const {
       receiveQuantity,
@@ -345,12 +351,19 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
               </AllowanceWrapper>
             }
-            <ButtonText
+            {!hasSmartWallet && <ButtonText
               buttonText="Legacy Wallet"
               rightIconProps={{ name: 'selector', style: { fontSize: 16 } }}
               onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}
               wrapperStyle={{ marginTop: 0 }}
-            />
+            />}
+            {!!hasSmartWallet &&
+              <SettingsWrapper>
+                <BaseText secondary regular center style={{ marginBottom: 0 }}>
+                  The assets will be transferred to your Smart Wallet.
+                </BaseText>
+              </SettingsWrapper>
+            }
             <SettingsWrapper>
               <BaseText secondary regular center style={{ marginBottom: 4 }}>
                 Transaction fee {formatAmount(utils.formatEther(txFeeInWei))} ETH
@@ -409,6 +422,7 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
   exchange: { data: { executingTransaction: executingExchangeTransaction }, providersMeta, exchangeSupportedAssets },
+  accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   session,
   rates,
@@ -417,6 +431,7 @@ const mapStateToProps = ({
   executingExchangeTransaction,
   providersMeta,
   exchangeSupportedAssets,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({
