@@ -47,8 +47,6 @@ const BalanceText = styled(BaseText)`
 const BalanceWrapper = styled.View`
   padding: ${spacing.medium}px ${spacing.layoutSides}px;
   width: 100%;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.border};
 `;
 
 class BalanceView extends React.PureComponent<Props> {
