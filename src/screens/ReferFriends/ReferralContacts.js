@@ -32,17 +32,19 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
+import { BaseText, TextLink } from 'components/Typography';
+import { Note } from 'components/Note';
 
-import { spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact } from 'reducers/referralsReducer';
 
 import { setContactsForReferralAction } from 'actions/referralsActions';
-
-import { REFER_MAIN_SCREEN } from 'constants/navigationConstants';
 import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
+
+import { ADD_EDIT_USER, REFER_MAIN_SCREEN } from 'constants/navigationConstants';
 
 
 type Props = {
@@ -54,6 +56,8 @@ type Props = {
   isFetchingPhoneContactsComplete: boolean,
   phoneContactsFetchError: boolean,
   fetchPhoneContacts: () => void,
+  isEmailVerified: boolean,
+  isPhoneVerified: boolean,
 };
 
 type State = {
@@ -73,7 +77,21 @@ const ButtonWrapper = styled.View`
   padding: ${spacing.layoutSides}px;
 `;
 
+const StyledTextLink = styled(TextLink)`
+  ${fontStyles.regular};
+`;
+
 const MIN_QUERY_LENGTH = 3;
+
+const getInfoTypes = (isPhoneVerified, isEmailVerified) => {
+  // one or another should be true, otherwise feature is not available at all
+  if (!isPhoneVerified) {
+    return 'phone';
+  } else if (!isEmailVerified) {
+    return 'email';
+  }
+  return null;
+};
 
 const getFilteredContacts = (contacts, _query: string) => {
   if (!_query || _query.length < MIN_QUERY_LENGTH) return contacts;
@@ -166,13 +184,19 @@ class ReferralContacts extends React.PureComponent<Props, State> {
       isFetchingPhoneContacts,
       phoneContactsFetchError,
       fetchPhoneContacts,
+      isEmailVerified,
+      isPhoneVerified,
+      navigation,
     } = this.props;
 
-    const filteredContacts = getFilteredContacts(phoneContacts, query);
     const showConfirmButton = !!(selectedContacts.length || addedContactsToInvite.length);
+    const missingType = getInfoTypes(isPhoneVerified, isEmailVerified);
+    const allowedContacts = !missingType ? phoneContacts : phoneContacts.filter((contact) => !contact[missingType]);
+    const filteredContacts = getFilteredContacts(allowedContacts, query);
+
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Select email contacts' }] }}
+        headerProps={{ centerItems: [{ title: 'Select contacts' }] }}
       >
         {!!isFetchingPhoneContacts &&
         <Wrapper flex={1} center>
@@ -181,6 +205,18 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
         {!isFetchingPhoneContacts &&
           <React.Fragment>
+            {!!missingType &&
+            <Note
+              containerStyle={{ margin: spacing.layoutSides, marginBottom: 0 }}
+              note={
+                <React.Fragment>
+                  <BaseText>
+                    {`To show your ${missingType} contacts, please add and verify your ${missingType}. `}
+                  </BaseText>
+                  <StyledTextLink onPress={() => navigation.navigate(ADD_EDIT_USER)}>Add</StyledTextLink>
+                </React.Fragment>
+              }
+            />}
             <SearchBlock
               searchInputPlaceholder="Search for contact"
               onSearchChange={(q) => this.handleSearch(q)}
@@ -225,6 +261,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 }
 
 const mapStateToProps = ({
+  user: { data: { isEmailVerified, isPhoneVerified } },
   referrals: { addedContactsToInvite },
   phoneContacts: {
     data: phoneContacts,
@@ -238,6 +275,8 @@ const mapStateToProps = ({
   isFetchingPhoneContactsComplete,
   phoneContacts,
   phoneContactsFetchError,
+  isEmailVerified,
+  isPhoneVerified,
 });
 
 
