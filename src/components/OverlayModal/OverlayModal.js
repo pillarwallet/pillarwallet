@@ -18,12 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import SlideModal from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-
+import type { ViewLayoutEvent } from 'react-native/Libraries/Components/View/ViewPropTypes';
+import { getDeviceHeight } from 'utils/common';
 
 type Props = {
   title: string,
@@ -34,15 +36,10 @@ type Props = {
 }
 
 const Wrapper = styled.View`
-  padding-top: 50%;
   padding-left: 16;
   padding-right: 16;
   background-color: ${UIColors.darkShadowColor};
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  ${{ ...StyleSheet.absoluteFillObject }};
 `;
 
 const ModalTitle = styled(BaseText)`
@@ -62,38 +59,54 @@ const TextWrapper = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  height: 100%;
+  height: ${({ height }) => height};
   justify-content: center;
 `;
 
-export default (props: Props) => {
-  const {
-    title, content, isVisible, onButtonPress, buttonText,
-  } = props;
-  const contentComponent = (
-    <Wrapper>
-      <TextWrapper>
-        <ModalTitle>{title}</ModalTitle>
-        <ModalMessage>{content}</ModalMessage>
-      </TextWrapper>
-      <ButtonWrapper>
-        <Button
-          title={buttonText}
-          onPress={onButtonPress}
-          height={48}
-        />
-      </ButtonWrapper>
-    </Wrapper>
-  );
+const Spacer = styled.View`
+  height: 30%;
+`;
 
-  return (
-    <SlideModal
-      isVisible={isVisible}
-      hideHeader
-      fullScreen
-      noSwipeToDismiss
-      backgroundColor="transparent"
-      fullScreenComponent={contentComponent}
-    />
-  );
-};
+export default class OverlayModal extends React.Component<Props> {
+    state = {
+      bottomSpaceHeight: 0,
+    }
+
+    handleTextLayout = (e: ViewLayoutEvent) => {
+      const { y, height } = e.nativeEvent.layout;
+      this.setState({ bottomSpaceHeight: getDeviceHeight() - y - height });
+    }
+
+    render() {
+      const {
+        title, content, isVisible, onButtonPress, buttonText,
+      } = this.props;
+      const { bottomSpaceHeight } = this.state;
+      const contentComponent = (
+        <Wrapper>
+          <Spacer />
+          <TextWrapper onLayout={this.handleTextLayout}>
+            <ModalTitle>{title}</ModalTitle>
+            <ModalMessage>{content}</ModalMessage>
+          </TextWrapper>
+          <ButtonWrapper height={bottomSpaceHeight}>
+            <Button
+              title={buttonText}
+              onPress={onButtonPress}
+              height={48}
+            />
+          </ButtonWrapper>
+        </Wrapper>
+      );
+      return (
+        <SlideModal
+          isVisible={isVisible}
+          hideHeader
+          fullScreen
+          noSwipeToDismiss
+          backgroundColor="transparent"
+          fullScreenComponent={contentComponent}
+        />
+      );
+    }
+}
