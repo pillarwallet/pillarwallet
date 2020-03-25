@@ -18,13 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import PromoCard from './PromoCard';
+import QRCodeScanButton from './QRCodeScanButton';
+import ActiveConnections from './ActiveConnections';
+import Requests from './Requests';
 
-type Props = {
-  onPress?: () => void,
-  children?: React.Node,
-}
 
-export default function Button({ onPress, children }: Props) {
-  return <TouchableOpacity onPress={onPress}>{children}</TouchableOpacity>;
-}
+const WalletConnectScreen = () => (
+  <ContainerWithHeader
+    headerProps={{ noBack: true, leftItems: [{ title: 'Connect' }] }}
+    inset={{ bottom: 0 }}
+  >
+    <ScrollView>
+      <PromoCard />
+      <Requests />
+      <QRCodeScanButton />
+      <ActiveConnections />
+    </ScrollView>
+  </ContainerWithHeader>
+);
+
+export default WalletConnectScreen;

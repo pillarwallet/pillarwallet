@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import { utils, Interface } from 'ethers';
+import { utils } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { Footer, ScrollWrapper } from 'components/Layout';
@@ -30,43 +30,44 @@ import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
-import { rejectCallRequestAction } from 'actions/walletConnectActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
+import { calculateGasEstimate } from 'services/assets';
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { getUserName } from 'utils/contacts';
 import { getBalance } from 'utils/assets';
-import { calculateGasEstimate } from 'services/assets';
-import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
-import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import { ETH } from 'constants/assetsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountAddressSelector } from 'selectors';
 
-import type { Asset, Balances } from 'models/Asset';
+import type { Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TokenTransactionPayload } from 'models/Transaction';
-import type { GasInfo } from 'models/GasInfo';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
+import type { GasInfo } from 'models/GasInfo';
+import type { TokenTransactionPayload } from 'models/Transaction';
+import withWCRequests from './withWCRequests';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  rejectCallRequest: (callId: number) => void,
   requests: CallRequest[],
   session: Object,
   contacts: Object[],
-  supportedAssets: Asset[],
   balances: Balances,
-  gasInfo: GasInfo,
-  fetchGasInfo: Function,
   activeAccountAddress: string,
   theme: Theme,
+  note: ?string,
+  handleNoteChange: (text: string) => void,
+  transactionDetails: (request: CallRequest) => Object,
+  getTokenTransactionPayload: (gasLimit: number, request: ?CallRequest) => {
+    unsupportedAction: boolean,
+    transaction: TokenTransactionPayload,
+  },
+  gasInfo: GasInfo,
+  fetchGasInfo: () => void,
+  rejectWCRequest: (request: CallRequest) => void,
+  acceptWCRequest: (request: CallRequest) => void,
 };
 
 type State = {
-  note: ?string,
   gasLimit: number,
 };
 
@@ -104,13 +105,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   request: ?CallRequest = null;
 
   state = {
-    note: null,
     gasLimit: 0,
   };
 
   componentDidMount() {
     this.props.fetchGasInfo();
-    const { navigation, activeAccountAddress, requests } = this.props;
+    const {
+      navigation, requests, activeAccountAddress, transactionDetails,
+    } = this.props;
 
     const requestCallId = +navigation.getParam('callId', 0);
     const request = requests.find(({ callId }) => callId === requestCallId);
@@ -121,105 +123,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     this.request = request;
 
     if (['eth_sendTransaction', 'eth_signTransaction'].includes(request.method)) {
-      calculateGasEstimate({ ...this.transactionDetails(), from: activeAccountAddress })
+      calculateGasEstimate({ ...transactionDetails(request), from: activeAccountAddress })
         .then(gasLimit => this.setState({ gasLimit }))
         .catch(() => null);
     }
   }
-
-  componentDidUpdate(prevProps: Props) {
-    const {
-      fetchGasInfo,
-      session: { isOnline },
-    } = this.props;
-    if (prevProps.session.isOnline !== isOnline && isOnline) {
-      fetchGasInfo();
-    }
-  }
-
-  handleBack = () => {
-    const { navigation } = this.props;
-    if (navigation.getParam('goBackDismiss', false)) {
-      navigation.dismiss();
-    } else {
-      navigation.goBack(null);
-    }
-  };
-
-  transactionDetails = () => {
-    const { request } = this;
-    if (!request) {
-      return {};
-    }
-
-    const { supportedAssets } = this.props;
-    const { value = 0, data } = request.params[0];
-    let { to = '' } = request.params[0];
-    let amount = utils.formatEther(utils.bigNumberify(value).toString());
-    const asset = supportedAssets.find(
-      ({ address: assetAddress = '' }) => assetAddress.toLowerCase() === to.toLowerCase(),
-    );
-    const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
-    if (asset && isTokenTransfer) {
-      const iface = new Interface(ERC20_CONTRACT_ABI);
-      const parsedTransaction = iface.parseTransaction({ data, value }) || {};
-      const {
-        args: [
-          methodToAddress,
-          methodValue = 0,
-        ],
-      } = parsedTransaction; // get method value and address input
-      // do not parse amount as number, last decimal numbers might change after converting
-      amount = utils.formatUnits(methodValue, asset.decimals);
-      to = methodToAddress;
-    }
-    return {
-      to,
-      amount,
-      data,
-      symbol: asset ? asset.symbol : ETH,
-      contractAddress: asset ? asset.address : '',
-      decimals: asset ? asset.decimals : 18,
-      note: this.state.note,
-      isTokenTransfer,
-    };
-  };
-
-  getTokenTransactionPayload = (): {
-    unsupportedAction: boolean,
-    transaction: TokenTransactionPayload,
-  } => {
-    const { gasInfo } = this.props;
-    const { gasLimit } = this.state;
-    const transaction = this.transactionDetails();
-    const { contractAddress, isTokenTransfer } = transaction;
-
-    /**
-     *  we're using our wallet avg gas price and gas limit
-     *
-     *  the reason we're not using gas price and gas limit provided by WC since it's
-     *  optional in platform end while also gas limit and gas price values provided
-     *  by platform are not always enough to fulfill transaction
-     *
-     *  if we start using gasPrice provided by then WC incoming value is gwei in hex
-     *  `gasPrice = utils.bigNumberify(gasPrice);`
-     *  and both gasPrice and gasLimit is not always present from plaforms
-     */
-
-    const defaultGasPrice = gasInfo.gasPrice.avg || 0;
-    const gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
-    const txFeeInWei = gasPrice.mul(gasLimit);
-
-    return {
-      unsupportedAction: isTokenTransfer && contractAddress === '',
-      transaction: {
-        ...transaction,
-        gasLimit,
-        gasPrice,
-        txFeeInWei,
-      },
-    };
-  };
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
@@ -229,44 +137,15 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       return;
     }
 
-    const { navigation } = this.props;
-
-    switch (request.method) {
-      case 'eth_sendTransaction':
-      case 'eth_signTransaction':
-        const {
-          transaction: transactionPayload,
-        } = this.getTokenTransactionPayload();
-
-        navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-          callId: request.callId,
-          transactionPayload,
-        });
-        break;
-
-      case 'eth_sign':
-      case 'personal_sign':
-        navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-          callId: request.callId,
-          transactionPayload: null,
-        });
-        break;
-
-      default:
-        break;
-    }
+    this.props.acceptWCRequest(request);
   };
-
-  handleNoteChange(text) {
-    this.setState({ note: text });
-  }
 
   handleDismissal = () => {
     const { request } = this;
-    const { navigation, rejectCallRequest } = this.props;
+    const { navigation, rejectWCRequest } = this.props;
 
     if (request) {
-      rejectCallRequest(request.callId);
+      rejectWCRequest(request);
     }
 
     navigation.dismiss();
@@ -278,6 +157,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       balances,
       session,
       theme,
+      getTokenTransactionPayload,
+      note,
+      handleNoteChange,
     } = this.props;
     const { gasLimit } = this.state;
     const colors = getThemeColors(theme);
@@ -310,7 +192,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             symbol,
             txFeeInWei,
           },
-        } = this.getTokenTransactionPayload();
+        } = getTokenTransactionPayload(gasLimit, request);
 
         if (unsupportedAction) {
           errorMessage = 'This data transaction or token is not supported in Pillar Wallet yet';
@@ -384,8 +266,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             {session.isOnline && !!recipientUsername &&
               <TextInput
                 inputProps={{
-                  onChange: text => this.handleNoteChange(text),
-                  value: this.state.note,
+                  onChange: text => handleNoteChange(text),
+                  value: note,
                   autoCapitalize: 'none',
                   multiline: true,
                   numberOfLines: 3,
@@ -447,7 +329,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: `${type} Request` }],
-          customOnBack: this.handleBack,
         }}
       >
         {body}
@@ -475,22 +356,15 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  assets: { supportedAssets },
   contacts: { data: contacts },
   session: { data: session },
-  walletConnect: { requests },
-  history: { gasInfo },
 }) => ({
   contacts,
   session,
-  supportedAssets,
-  requests,
-  gasInfo,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -498,9 +372,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  rejectCallRequest: (callId: number) => dispatch(rejectCallRequestAction(callId)),
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-});
-
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen));
+export default withWCRequests(withTheme(connect(combinedMapStateToProps)(WalletConnectCallRequestScreen)));

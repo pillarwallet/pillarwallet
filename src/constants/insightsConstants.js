@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const SET_ICOS = 'SET_ICOS';
-export const ICO = 'ICO';
-export const SET_ICO_FUNDING_INSTRUCTIONS = 'SET_ICO_FUNDING_INSTRUCTIONS';
 
+export const DISMISS_SMART_WALLET_INSIGHT = 'DISMISS_SMART_WALLET_INSIGHT';
+export const DISMISS_PPN_INSIGHT = 'DISMISS_PPN_INSIGHT';
+export const SET_INSIGHTS_STATE = 'SET_INSIGHTS_STATE';

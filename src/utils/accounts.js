@@ -18,7 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+import omit from 'lodash.omit';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
+import type { Assets } from 'models/Asset';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { addressesEqual } from './assets';
@@ -70,6 +73,10 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
+export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
+  return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+};
+
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
@@ -116,4 +123,11 @@ export const normalizeForEns = (value: string): string => {
   return value
     .toLowerCase()
     .replace(/ /g, '-');
+};
+
+export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[]): Assets => {
+  if (!isEmpty(allAccountAssets)) {
+    return omit(allAccountAssets, hiddenAssets);
+  }
+  return {};
 };

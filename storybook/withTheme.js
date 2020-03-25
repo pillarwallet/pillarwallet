@@ -18,23 +18,43 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View } from 'react-native';
+import { Provider, connect } from 'react-redux';
+import { ThemeProvider } from 'styled-components';
+import { getThemeByType } from 'utils/themes';
 
-const style = {
-  main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-};
+import type { RootReducerState } from 'reducers/rootReducer';
+
+import configureStore from '../src/configureStore';
+
+const { store } = configureStore();
 
 type Props = {
+  themeType: string,
   children: React.Node,
 };
 
-const CenterView = ({ children }: Props) => {
-  return <View style={style.main}>{children}</View>;
+const StoryWrapper = ({ themeType, children }: Props) => {
+  const theme = getThemeByType(themeType);
+
+  return (
+    <ThemeProvider theme={theme}>
+      {children}
+    </ThemeProvider>
+  );
 };
 
-export default CenterView;
+const mapStateToProps = ({
+  appSettings: { data: { themeType } },
+}: RootReducerState): $Shape<Props> => ({
+  themeType,
+});
+
+const StoryWrapperWithState = connect(mapStateToProps)(StoryWrapper);
+
+export default (story: Function) => (
+  <Provider store={store}>
+    <StoryWrapperWithState>
+      {story()}
+    </StoryWrapperWithState>
+  </Provider>
+);

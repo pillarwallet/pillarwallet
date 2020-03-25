@@ -197,3 +197,8 @@ export const Footer = (props: FooterProps) => {
     </FooterInner>
   );
 };
+
+export const Spacing = styled.View`
+  height: ${({ h }) => h || 0}px;
+  width: ${({ w }) => w || 0}px;
+`;

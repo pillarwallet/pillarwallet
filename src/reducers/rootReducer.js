@@ -42,7 +42,6 @@ import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
 import accessTokensReducer from './accessTokensReducer';
 import sessionReducer from './sessionReducer';
-import icosReducer from './icosReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
@@ -62,6 +61,7 @@ import userEventsReducer from './userEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
+import insightsReducer from './insightsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -83,7 +83,6 @@ import type { InvitationsReducerState } from './invitationsReducer';
 import type { ChatReducerState } from './chatReducer';
 import type { AccessTokensReducerState } from './accessTokensReducer';
 import type { SessionReducerState } from './sessionReducer';
-import type { ICOsReducerState } from './icosReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
 import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
@@ -103,6 +102,7 @@ import type { UserEventsReducerAction, UserEventsReducerState } from './userEven
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
+import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -121,7 +121,6 @@ export type RootReducerState = {|
   chat: ChatReducerState,
   accessTokens: AccessTokensReducerState,
   session: SessionReducerState,
-  icos: ICOsReducerState,
   txNotes: TxNoteReducerState,
   oAuthTokens: OAuthReducerState,
   txCount: TxCountReducerState,
@@ -141,6 +140,7 @@ export type RootReducerState = {|
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
+  insights: InsightsReducerState,
 |};
 
 type RootReducerAction =
@@ -164,7 +164,8 @@ type RootReducerAction =
   | WalkthroughsReducerAction
   | DbAction
   | SyntheticsReducerAction
-  | EnsRegistryReducerAction;
+  | EnsRegistryReducerAction
+  | InsightsReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -193,7 +194,6 @@ const appReducer = combineReducers({
   chat: chatReducer,
   accessTokens: accessTokensReducer,
   session: sessionReducer,
-  icos: icosReducer,
   txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
@@ -213,6 +213,7 @@ const appReducer = combineReducers({
   walkthroughs: walkthroughsReducer,
   synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
+  insights: insightsReducer,
 });
 
 export const initialState = appReducer(undefined, {});

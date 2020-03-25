@@ -17,35 +17,48 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_ICOS, SET_ICO_FUNDING_INSTRUCTIONS } from 'constants/icosConstants';
-import type { ICO, ICOFundingInstructions } from 'models/ICO';
 
-export type ICOsReducerState = {
-  data: ICO[],
-  instructions: ICOFundingInstructions | {},
-}
+import {
+  DISMISS_SMART_WALLET_INSIGHT,
+  DISMISS_PPN_INSIGHT,
+  SET_INSIGHTS_STATE,
+} from 'constants/insightsConstants';
 
-export type ICOsReducerAction = {
-  type: string,
-  payload: any,
-}
-
-const initialState = {
-  data: [],
-  instructions: {},
+export type InsightsReducerState = {
+  SWInsightDismissed: boolean,
+  PPNInsightDismissed: boolean,
 };
 
-export default function icosReducer(
-  state: ICOsReducerState = initialState,
-  action: ICOsReducerAction,
-) {
+export type InsightsReducerAction = {
+  type: string,
+  payload: any,
+};
+
+export const initialState = {
+  SWInsightDismissed: false,
+  PPNInsightDismissed: false,
+};
+
+export default function insightsReducer(
+  state: InsightsReducerState = initialState,
+  action: InsightsReducerAction,
+): InsightsReducerState {
   switch (action.type) {
-    case SET_ICOS:
-      const icos: ICO[] = action.payload;
-      return { ...state, data: icos };
-    case SET_ICO_FUNDING_INSTRUCTIONS:
-      const instructions: ICOFundingInstructions = action.payload;
-      return { ...state, instructions };
+    case DISMISS_SMART_WALLET_INSIGHT:
+      return {
+        ...state,
+        SWInsightDismissed: true,
+      };
+    case DISMISS_PPN_INSIGHT:
+      return {
+        ...state,
+        PPNInsightDismissed: true,
+      };
+    case SET_INSIGHTS_STATE:
+      return {
+        ...state,
+        ...action.payload,
+      };
     default:
       return state;
   }

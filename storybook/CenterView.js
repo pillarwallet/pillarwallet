@@ -17,26 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_ICOS, SET_ICO_FUNDING_INSTRUCTIONS } from 'constants/icosConstants';
+import styled from 'styled-components/native';
 
-export const fetchICOsAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { id: userId } } } = getState();
-    const icos = await api.fetchICOs(userId);
-    dispatch({
-      type: SET_ICOS,
-      payload: icos,
-    });
-  };
-};
+const CenterView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+`;
 
-export const fetchICOFundingInstructionsAction = (currency: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { walletId } } } = getState();
-    const instructions = await api.fetchICOFundingInstructions(walletId, currency);
-    dispatch({
-      type: SET_ICO_FUNDING_INSTRUCTIONS,
-      payload: instructions,
-    });
-  };
-};
+export default CenterView;
