@@ -38,6 +38,7 @@ import Toast from 'components/Toast';
 
 import { fontStyles, spacing } from 'utils/variables';
 import { getRemainingDailyInvitations } from 'utils/referrals';
+import { isValidPhone } from 'utils/validators';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -165,10 +166,18 @@ class ReferralContacts extends React.PureComponent<Props, State> {
   toggleContact = (contact: ReferralContact) => {
     const { selectedContacts } = this.state;
     const { sentInvitationsCount } = this.props;
-    const { id: relatedContactId } = contact;
+    const { id: relatedContactId, phone } = contact;
     const updatedSelectedContacts = selectedContacts.filter(({ id }) => id !== relatedContactId);
     if (!selectedContacts.find(({ id }) => id === relatedContactId)) {
       const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
+      if (!!phone && !isValidPhone(phone)) {
+        Toast.show({
+          message: 'Phone number should have country code',
+          type: 'warning',
+          title: 'Invalid phone number',
+        });
+        return;
+      }
       if (!availableInvites) {
         Toast.show({
           message: `You can only invite ${getRemainingDailyInvitations(sentInvitationsCount)} people today ` +
@@ -208,7 +217,6 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     const missingType = getInfoTypes(isPhoneVerified, isEmailVerified);
     const allowedContacts = !missingType ? phoneContacts : phoneContacts.filter((contact) => !contact[missingType]);
     const filteredContacts = getFilteredContacts(allowedContacts, query);
-
 
     return (
       <ContainerWithHeader

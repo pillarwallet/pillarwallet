@@ -37,10 +37,6 @@ import type {
 } from 'reducers/phoneContactsReducer';
 import type { ReferralContact } from 'reducers/referralsReducer';
 
-// utils
-import { isValidPhone } from 'utils/validators';
-
-
 const phoneContactsReceived = (contacts: ReferralContact[]): PhoneContactsReceivedAction => ({
   type: PHONE_CONTACTS_RECEIVED,
   payload: contacts,
@@ -88,8 +84,10 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
       phoneNumbers
         .reduce((uniqueValidPhones, phoneItem) => {
           const phoneWithoutSpaces = phoneItem.number.replace(/\s/g, '');
-          if (!uniqueValidPhones.some(({ number }) =>
-            number === phoneWithoutSpaces) && isValidPhone(phoneWithoutSpaces)) {
+          // we can filter out invalid phone numbers here using isValidPhone(phoneWithoutSpaces)
+          // yet I'm not sure if user would understand why some contacts are not showing
+          // (I've added Toast with error message when selecting contact with invalid phone number)
+          if (!uniqueValidPhones.some(({ number }) => number === phoneWithoutSpaces)) {
             return [...uniqueValidPhones, { ...phoneItem, number: phoneWithoutSpaces }];
           }
           return uniqueValidPhones;
