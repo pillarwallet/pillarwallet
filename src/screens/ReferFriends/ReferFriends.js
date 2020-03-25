@@ -26,7 +26,10 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { removeContactForReferralAction, sendReferralInvitationsAction } from 'actions/referralsActions';
+import {
+  removeContactForReferralAction,
+  sendReferralInvitationsAction,
+} from 'actions/referralsActions';
 
 // components
 import { MediumText, BaseText } from 'components/Typography';
@@ -37,11 +40,11 @@ import ClosablePillList from 'components/ClosablePillList';
 
 // utils
 import { spacing } from 'utils/variables';
+import { getRemainingDailyInvitations } from 'utils/referrals';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { ReferralContact } from 'reducers/referralsReducer';
-import type { ReferralInvitation } from 'actions/referralsActions';
+import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
 // constants
 import { ADDRESS_BOOK_PERMISSION, REFERRAL_CONTACTS } from 'constants/navigationConstants';
@@ -52,8 +55,10 @@ type Props = {
   inviteByEmail: (email: string) => void,
   removeContactForReferral: (id: string) => void,
   addedContactsToInvite: ReferralContact[],
-  sendInvitation: (invitations: ReferralInvitation[]) => void,
+  sendInvitation: (invitations: ReferralContact[]) => void,
   isSendingInvite: boolean,
+  hasAllowedToAccessContacts: boolean,
+  sentInvitationsCount: SentInvitationsCount,
 };
 
 
@@ -82,8 +87,16 @@ const ButtonWrapper = styled.View`
 class ReferFriends extends React.PureComponent<Props> {
   sendInvites = () => {
     const { addedContactsToInvite, sendInvitation } = this.props;
-    const referralContacts = addedContactsToInvite.map(({ email, phone }) => ({ email, phone }));
-    sendInvitation(referralContacts);
+    sendInvitation(addedContactsToInvite);
+  };
+
+  proceedToSelectContacts = () => {
+    const { navigation, hasAllowedToAccessContacts } = this.props;
+    if (hasAllowedToAccessContacts) {
+      navigation.navigate(REFERRAL_CONTACTS);
+    } else {
+      navigation.navigate(ADDRESS_BOOK_PERMISSION);
+    }
   };
 
   render() {
@@ -92,9 +105,12 @@ class ReferFriends extends React.PureComponent<Props> {
       addedContactsToInvite,
       removeContactForReferral,
       isSendingInvite,
+      sentInvitationsCount,
     } = this.props;
     const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
     const hasAddedContacts = !!mappedContactsToInvite.length;
+    const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - mappedContactsToInvite.length;
+    const availableInvitesText = !availableInvites ? 0 : `${availableInvites} more`;
     return (
       <ContainerWithHeader
         headerProps={{
@@ -117,7 +133,7 @@ class ReferFriends extends React.PureComponent<Props> {
           />
           {hasAddedContacts && !isSendingInvite &&
             <React.Fragment>
-              <MediumText accent>Your referrals</MediumText>
+              <MediumText accent>{`Your referrals (${availableInvitesText} available today)`}</MediumText>
               <ClosablePillList
                 listItems={mappedContactsToInvite}
                 onItemClose={(id) => removeContactForReferral(id)}
@@ -145,7 +161,7 @@ class ReferFriends extends React.PureComponent<Props> {
               title={addedContactsToInvite.length ? 'Send invites' : 'Select contacts...'}
               onPress={addedContactsToInvite.length
                 ? this.sendInvites
-                : () => navigation.navigate(ADDRESS_BOOK_PERMISSION)}
+                : this.proceedToSelectContacts}
               block
             />
           </ButtonWrapper>
@@ -156,15 +172,22 @@ class ReferFriends extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
-  referrals: { addedContactsToInvite, isSendingInvite },
+  referrals: {
+    addedContactsToInvite,
+    isSendingInvite,
+    hasAllowedToAccessContacts,
+    sentInvitationsCount,
+  },
 }: RootReducerState): $Shape<Props> => ({
   addedContactsToInvite,
   isSendingInvite,
+  hasAllowedToAccessContacts,
+  sentInvitationsCount,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   removeContactForReferral: (id: string) => dispatch(removeContactForReferralAction(id)),
-  sendInvitation: (invitations: ReferralInvitation[]) => dispatch(
+  sendInvitation: (invitations: ReferralContact[]) => dispatch(
     sendReferralInvitationsAction(invitations),
   ),
 });

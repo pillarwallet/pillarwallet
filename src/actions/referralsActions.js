@@ -27,6 +27,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
   ReferralsSendingInviteAction,
   ReferralContact,
+  InviteSentPayload,
 } from 'reducers/referralsReducer';
 
 // constants
@@ -37,10 +38,12 @@ import {
   SET_CONTACTS_FOR_REFERRAL,
   REMOVE_CONTACT_FOR_REFERRAL,
   REFERRAL_INVITE_ERROR,
+  ALLOW_ACCESS_PHONE_CONTACTS,
 } from 'constants/referralsConstants';
 
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
+import { saveDbAction } from './dbActions';
 
 
 export type ClaimTokenAction = {
@@ -59,9 +62,10 @@ const sendingInviteAction = (): ReferralsSendingInviteAction => ({
   type: SENDING_INVITE,
 });
 
-const inviteSentAction = (dispatch) => {
+const inviteSentAction = (dispatch: Dispatch, payload: InviteSentPayload) => {
   dispatch({
     type: INVITE_SENT,
+    payload,
   });
   dispatch({
     type: ADD_NOTIFICATION,
@@ -72,11 +76,11 @@ const inviteSentAction = (dispatch) => {
   });
 };
 
-const inviteErrorAction = (dispatch) => {
+const inviteErrorAction = (dispatch: Dispatch, errorMessage?: string) => {
   dispatch({
     type: ADD_NOTIFICATION,
     payload: {
-      message: 'Please try again later',
+      message: errorMessage || 'Please try again later',
       title: 'Invites have not been sent',
       messageType: 'warning',
     },
@@ -93,10 +97,15 @@ export const completeRefferalsEventAction = () => {
   };
 };
 
-export const sendReferralInvitationsAction = (invitations: ReferralInvitation[]) => {
+export const sendReferralInvitationsAction = (invitationContacts: ReferralContact[]) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletId = get(getState(), 'user.data.walletId');
+    const sentInvitationsCount = get(getState(), 'referrals.sentInvitationsCount');
+    const alreadyInvitedContacts = get(getState(), 'referrals.alreadyInvitedContacts', []);
+    const { count, date } = sentInvitationsCount;
     dispatch(sendingInviteAction());
+
+    const invitations = invitationContacts.map(({ email, phone }) => ({ email, phone }));
 
     await Promise.all(invitations.map(async (invitation) => {
       const { email, phone } = invitation;
@@ -109,17 +118,32 @@ export const sendReferralInvitationsAction = (invitations: ReferralInvitation[])
           token: token.token,
         });
 
-        const referralInvitationStatus = await api.sendReferralInvitation({
+        const { error } = await api.sendReferralInvitation({
           token: token.token,
           walletId,
           referralLink,
           email,
           phone,
         });
-        if (referralInvitationStatus.error) {
-          inviteErrorAction(dispatch);
+
+        if (error) {
+          const errorMessage = get(error, 'response.data.message');
+          inviteErrorAction(dispatch, errorMessage);
         } else {
-          inviteSentAction(dispatch);
+          let updatedInvitationCount = count + invitationContacts.length;
+          const currentDate = new Date().toJSON().slice(0, 10);
+          if (date !== currentDate) updatedInvitationCount = invitationContacts.length;
+          const updatedAlreadyInvitedContacts = [...alreadyInvitedContacts, ...invitationContacts];
+          await dispatch(saveDbAction('referralData', {
+            referrals: {
+              alreadyInvitedContacts: updatedAlreadyInvitedContacts,
+              sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
+            },
+          }));
+          inviteSentAction(dispatch, {
+            alreadyInvitedContacts: invitationContacts,
+            sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
+          });
         }
       } else {
         inviteErrorAction(dispatch);
@@ -184,6 +208,15 @@ export const removeContactForReferralAction = (id: string) => {
     dispatch({
       type: REMOVE_CONTACT_FOR_REFERRAL,
       payload: id,
+    });
+  };
+};
+
+export const allowToAccessPhoneContactsAction = () => {
+  return async (dispatch: Dispatch) => {
+    await dispatch(saveDbAction('referralData', { referrals: { hasAllowedToAccessContacts: true } }));
+    dispatch({
+      type: ALLOW_ACCESS_PHONE_CONTACTS,
     });
   };
 };

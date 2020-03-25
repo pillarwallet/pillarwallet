@@ -80,7 +80,6 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
             ...formattedContact,
             id: `${recordID}-${email.id}`,
             email: email.email,
-            phone: '',
           });
         });
     }
@@ -100,7 +99,6 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
             ...formattedContact,
             id: `${recordID}-${phone.id}`,
             phone: phone.number,
-            email: '',
           });
         });
     }

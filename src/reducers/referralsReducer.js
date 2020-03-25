@@ -24,7 +24,15 @@ import {
   INVITE_SENT,
   SENDING_INVITE,
   REFERRAL_INVITE_ERROR,
+  SET_ALREADY_INVITED_CONTACTS,
+  SET_REFERRALS_STATE,
+  ALLOW_ACCESS_PHONE_CONTACTS,
 } from 'constants/referralsConstants';
+
+export type SentInvitationsCount = {
+  count: number,
+  date: string,
+};
 
 export type ReferralContact = {
   id: string,
@@ -34,12 +42,18 @@ export type ReferralContact = {
   photo?: string,
 };
 
+export type InviteSentPayload = {
+  alreadyInvitedContacts: ReferralContact[],
+  sentInvitationsCount: SentInvitationsCount,
+};
+
 export type ReferralsSendingInviteAction = {|
   type: 'SENDING_INVITE',
 |};
 
 export type ReferralsInviteSentAction = {|
   type: 'INVITE_SENT',
+  payload: InviteSentPayload,
 |};
 
 export type ReferralsErrorErrorAction = {|
@@ -56,21 +70,46 @@ export type ReferralsRemoveContactAction = {|
   payload: string,
 |};
 
+export type ReferralsInviteAlreadySentAction = {|
+  type: 'SET_ALREADY_INVITED_CONTACTS',
+  payload: ReferralContact[],
+|};
+
+export type ReferralsStateAction = {|
+  type: 'SET_REFERRALS_STATE',
+  payload: {
+    addedContactsToInvite: ReferralContact[],
+    hasAllowedToAccessContacts: boolean,
+    sentInvitationsCount: SentInvitationsCount,
+  },
+|};
+
 export type ReferralsReducerAction =
   | ReferralsSendingInviteAction
   | ReferralsInviteSentAction
   | ReferralsSetContactsAction
   | ReferralsRemoveContactAction
-  | ReferralsErrorErrorAction;
+  | ReferralsErrorErrorAction
+  | ReferralsInviteAlreadySentAction
+  | ReferralsStateAction;
 
 export type ReferralsReducerState = {
   isSendingInvite: boolean,
   addedContactsToInvite: ReferralContact[],
+  alreadyInvitedContacts: ReferralContact[],
+  hasAllowedToAccessContacts: boolean,
+  sentInvitationsCount: SentInvitationsCount,
 };
 
 export const initialState = {
   addedContactsToInvite: [],
+  alreadyInvitedContacts: [],
   isSendingInvite: false,
+  hasAllowedToAccessContacts: false,
+  sentInvitationsCount: {
+    count: 0,
+    date: '',
+  },
 };
 
 
@@ -99,6 +138,39 @@ const removeContact = (
   };
 };
 
+const setInvitations = (
+  state: ReferralsReducerState,
+  action: ReferralsInviteSentAction,
+): ReferralsReducerState => {
+  const { payload } = action;
+  const { alreadyInvitedContacts: _alreadyInvitedContacts, sentInvitationsCount } = payload;
+  const { alreadyInvitedContacts } = state;
+
+  return {
+    ...state,
+    isSendingInvite: false,
+    addedContactsToInvite: [],
+    alreadyInvitedContacts: [...alreadyInvitedContacts, ..._alreadyInvitedContacts],
+    sentInvitationsCount,
+  };
+};
+
+const setAlreadySentInvites = (
+  state: ReferralsReducerState,
+  action: ReferralsInviteAlreadySentAction,
+): ReferralsReducerState => {
+  const { payload } = action;
+  return { ...state, alreadyInvitedContacts: payload };
+};
+
+const setReferralsState = (
+  state: ReferralsReducerState,
+  action: ReferralsStateAction,
+): ReferralsReducerState => {
+  const { payload } = action;
+  return { ...state, ...payload };
+};
+
 
 export default function referralsReducer(
   state: ReferralsReducerState = initialState,
@@ -108,17 +180,26 @@ export default function referralsReducer(
     case SENDING_INVITE:
       return { ...state, isSendingInvite: true };
 
+    case SET_REFERRALS_STATE:
+      return setReferralsState(state, action);
+
     case INVITE_SENT:
-      return { ...state, isSendingInvite: false, addedContactsToInvite: [] };
+      return setInvitations(state, action);
 
     case REFERRAL_INVITE_ERROR:
       return { ...state, isSendingInvite: false };
+
+    case SET_ALREADY_INVITED_CONTACTS:
+      return setAlreadySentInvites(state, action);
 
     case SET_CONTACTS_FOR_REFERRAL:
       return setContacts(state, action);
 
     case REMOVE_CONTACT_FOR_REFERRAL:
       return removeContact(state, action);
+
+    case ALLOW_ACCESS_PHONE_CONTACTS:
+      return { ...state, hasAllowedToAccessContacts: true };
 
     default:
       return state;

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 
 import { Paragraph } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -29,10 +29,14 @@ import { Wrapper } from 'components/Layout';
 import { spacing } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import { REFERRAL_CONTACTS } from 'constants/navigationConstants';
+import type { Dispatch } from 'reducers/rootReducer';
+import { connect } from 'react-redux';
+import { allowToAccessPhoneContactsAction } from 'actions/referralsActions';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  allowToAccessPhoneContacts: () => void,
 }
 
 const ButtonWrapper = styled.View`
@@ -42,9 +46,13 @@ const ButtonWrapper = styled.View`
 
 
 class AccessToAddressBook extends React.PureComponent<Props> {
-  render() {
-    const { navigation } = this.props;
+  navigateToContactsScreen = () => {
+    const { navigation, allowToAccessPhoneContacts } = this.props;
+    allowToAccessPhoneContacts();
+    navigation.navigate(REFERRAL_CONTACTS);
+  };
 
+  render() {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Access to address book' }] }}
@@ -56,7 +64,7 @@ class AccessToAddressBook extends React.PureComponent<Props> {
             data.
           </Paragraph>
           <ButtonWrapper>
-            <Button title="Confirm" onPress={() => navigation.navigate(REFERRAL_CONTACTS)} block />
+            <Button title="Confirm" onPress={this.navigateToContactsScreen} block />
           </ButtonWrapper>
         </Wrapper>
       </ContainerWithHeader>
@@ -64,4 +72,8 @@ class AccessToAddressBook extends React.PureComponent<Props> {
   }
 }
 
-export default AccessToAddressBook;
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  allowToAccessPhoneContacts: () => dispatch(allowToAccessPhoneContactsAction()),
+});
+
+export default withTheme(connect(null, mapDispatchToProps)(AccessToAddressBook));

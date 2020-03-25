@@ -34,17 +34,20 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
 import { BaseText, TextLink } from 'components/Typography';
 import { Note } from 'components/Note';
+import Toast from 'components/Toast';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { getRemainingDailyInvitations } from 'utils/referrals';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { ReferralContact } from 'reducers/referralsReducer';
+import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
 import { setContactsForReferralAction } from 'actions/referralsActions';
 import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
 
 import { ADD_EDIT_USER, REFER_MAIN_SCREEN } from 'constants/navigationConstants';
+import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 
 
 type Props = {
@@ -58,6 +61,8 @@ type Props = {
   fetchPhoneContacts: () => void,
   isEmailVerified: boolean,
   isPhoneVerified: boolean,
+  alreadyInvitedContacts: ReferralContact[],
+  sentInvitationsCount: SentInvitationsCount,
 };
 
 type State = {
@@ -132,7 +137,8 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
   renderContact = ({ item }: { item: ReferralContact }) => {
     const { selectedContacts } = this.state;
-    const isPreviouslyInvited = [] // TODO: previously invited
+    const { alreadyInvitedContacts } = this.props;
+    const isPreviouslyInvited = alreadyInvitedContacts
       .some(({ email, phone }) => (!!email && email === item.email) || (!!phone && phone === item.phone));
     const isSelected = selectedContacts.some(({ id }) => id === item.id) || isPreviouslyInvited;
     return (
@@ -158,13 +164,22 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
   toggleContact = (contact: ReferralContact) => {
     const { selectedContacts } = this.state;
+    const { sentInvitationsCount } = this.props;
     const { id: relatedContactId } = contact;
-
     const updatedSelectedContacts = selectedContacts.filter(({ id }) => id !== relatedContactId);
     if (!selectedContacts.find(({ id }) => id === relatedContactId)) {
+      const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
+      if (!availableInvites) {
+        Toast.show({
+          message: `You can only invite ${getRemainingDailyInvitations(sentInvitationsCount)} people today ` +
+          `(${ALLOWED_DAILY_INVITES} people per day).`,
+          type: 'warning',
+          title: 'Daily invitations limit reached',
+        });
+        return;
+      }
       updatedSelectedContacts.push(contact);
     }
-
     this.setState({ selectedContacts: updatedSelectedContacts });
   };
 
@@ -194,6 +209,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     const allowedContacts = !missingType ? phoneContacts : phoneContacts.filter((contact) => !contact[missingType]);
     const filteredContacts = getFilteredContacts(allowedContacts, query);
 
+
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Select contacts' }] }}
@@ -205,9 +221,15 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
         {!isFetchingPhoneContacts &&
           <React.Fragment>
+            <SearchBlock
+              searchInputPlaceholder="Search for contact"
+              onSearchChange={(q) => this.handleSearch(q)}
+              itemSearchState={query.length >= MIN_QUERY_LENGTH}
+              wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
+            />
             {!!missingType &&
             <Note
-              containerStyle={{ margin: spacing.layoutSides, marginBottom: 0 }}
+              containerStyle={{ margin: spacing.layoutSides, marginTop: 0 }}
               note={
                 <React.Fragment>
                   <BaseText>
@@ -217,12 +239,6 @@ class ReferralContacts extends React.PureComponent<Props, State> {
                 </React.Fragment>
               }
             />}
-            <SearchBlock
-              searchInputPlaceholder="Search for contact"
-              onSearchChange={(q) => this.handleSearch(q)}
-              itemSearchState={query.length >= MIN_QUERY_LENGTH}
-              wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
-            />
             <FlatList
               data={filteredContacts}
               extraData={selectedContacts}
@@ -262,7 +278,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
 const mapStateToProps = ({
   user: { data: { isEmailVerified, isPhoneVerified } },
-  referrals: { addedContactsToInvite },
+  referrals: { addedContactsToInvite, alreadyInvitedContacts, sentInvitationsCount },
   phoneContacts: {
     data: phoneContacts,
     isFetching: isFetchingPhoneContacts,
@@ -271,6 +287,8 @@ const mapStateToProps = ({
   },
 }: RootReducerState): $Shape<Props> => ({
   addedContactsToInvite,
+  alreadyInvitedContacts,
+  sentInvitationsCount,
   isFetchingPhoneContacts,
   isFetchingPhoneContactsComplete,
   phoneContacts,
