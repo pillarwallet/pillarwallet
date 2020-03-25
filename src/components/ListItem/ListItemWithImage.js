@@ -36,6 +36,7 @@ import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
 import { fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 import type { Theme, ThemeColors } from 'models/Theme';
 
@@ -87,7 +88,8 @@ type Props = {
   iconSource?: string,
   imageWrapperStyle?: Object,
   theme: Theme,
-}
+  fallbackToGenericToken?: boolean,
+};
 
 type AddonProps = {
   unreadCount?: number | string,
@@ -104,14 +106,15 @@ type AddonProps = {
   acceptInvitation?: ?() => void,
   balance?: Object,
   colors: ThemeColors,
-}
+};
 
 type ImageWrapperProps = {
   children: React.Node,
   hasShadow?: boolean,
   imageDiameter?: number,
   imageWrapperStyle?: Object,
-}
+};
+
 
 const ItemWrapper = styled.View`
   flex-direction: column;
@@ -297,6 +300,7 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
+
 const ImageWrapper = (props: ImageWrapperProps) => {
   const {
     children,
@@ -338,7 +342,7 @@ const ItemImage = (props: Props) => {
     avatarUrl,
     iconName,
     itemImageUrl,
-    fallbackSource,
+    fallbackToGenericToken,
     navigateToProfile,
     imageUpdateTimeStamp,
     customImage,
@@ -346,7 +350,11 @@ const ItemImage = (props: Props) => {
     diameter,
     iconColor,
     iconSource,
+    theme,
   } = props;
+
+  let { fallbackSource } = props;
+  if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
 
   if (iconName) {
     return (
@@ -384,6 +392,7 @@ const ItemImage = (props: Props) => {
       diameter={diameter || 52}
       textStyle={{ fontSize: fontSizes.big }}
       noShadow
+      fallbackImage={fallbackSource}
     />
   );
 };

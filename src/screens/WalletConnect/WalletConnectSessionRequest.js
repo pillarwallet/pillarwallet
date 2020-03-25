@@ -17,25 +17,35 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
+
 import { spacing, fontSizes } from 'utils/variables';
+import { images } from 'utils/images';
+
 import { approveSessionAction, rejectSessionAction } from 'actions/walletConnectActions';
+
+import type { Theme } from 'models/Theme';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   approveSession: Function,
   rejectSession: Function,
+  theme: Theme,
 };
+
 
 const FooterWrapper = styled.View`
   flex-direction: column;
@@ -55,7 +65,6 @@ const OptionButton = styled(Button)`
   flex-grow: 1;
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 class WalletConnectSessionRequestScreen extends React.Component<Props> {
   handleSessionApproval = () => {
@@ -75,7 +84,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
   };
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, theme } = this.props;
     const {
       description,
       url,
@@ -84,6 +93,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
     } = navigation.getParam('peerMeta', {});
 
     const icon = icons && icons.length ? icons[0] : null;
+    const { genericToken } = images(theme);
 
     return (
       <ContainerWithHeader
@@ -150,7 +160,4 @@ const mapDispatchToProps = dispatch => ({
   rejectSession: peerId => dispatch(rejectSessionAction(peerId)),
 });
 
-export default connect(
-  null,
-  mapDispatchToProps,
-)(WalletConnectSessionRequestScreen);
+export default withTheme(connect(null, mapDispatchToProps)(WalletConnectSessionRequestScreen));
