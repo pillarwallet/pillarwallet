@@ -510,7 +510,6 @@ class TextInput extends React.Component<Props, State> {
       getInputRef,
       errorMessageStyle,
       innerImageURI,
-      fallbackSource: _fallbackSource,
       fallbackToGenericToken,
       buttonProps,
       theme,
@@ -522,13 +521,13 @@ class TextInput extends React.Component<Props, State> {
       errorMessageOnTop,
       inputWrapperStyle = {},
     } = this.props;
+    let { fallbackSource } = this.props;
+
     const colors = getThemeColors(theme);
     const { value = '', selectorValue = {}, label } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
-    const { genericToken: _genericToken } = images(theme);
-    const genericToken = fallbackToGenericToken && _genericToken;
-    const fallbackSource = genericToken || _fallbackSource;
+    if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
 
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;

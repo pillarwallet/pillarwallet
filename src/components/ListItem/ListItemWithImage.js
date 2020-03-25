@@ -342,7 +342,6 @@ const ItemImage = (props: Props) => {
     avatarUrl,
     iconName,
     itemImageUrl,
-    fallbackSource,
     fallbackToGenericToken,
     navigateToProfile,
     imageUpdateTimeStamp,
@@ -354,7 +353,8 @@ const ItemImage = (props: Props) => {
     theme,
   } = props;
 
-  const { genericToken } = images(theme);
+  let { fallbackSource } = props;
+  if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
 
   if (iconName) {
     return (
@@ -375,15 +375,11 @@ const ItemImage = (props: Props) => {
   if (customImage) return customImage;
 
   if (itemImageUrl) {
-    return (<TokenImage diameter={diameter} source={{ uri: itemImageUrl }} />);
+    return (<TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />);
   }
 
   if (itemImageSource) {
-    return (<TokenImage diameter={diameter} source={itemImageSource} />);
-  }
-
-  if ((!itemImageUrl || !itemImageSource) && (fallbackToGenericToken || fallbackSource)) {
-    return (<TokenImage diameter={diameter} source={genericToken} fallbackSource={fallbackSource} />);
+    return (<TokenImage diameter={diameter} source={itemImageSource} fallbackSource={fallbackSource} />);
   }
 
   const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;
@@ -396,6 +392,7 @@ const ItemImage = (props: Props) => {
       diameter={diameter || 52}
       textStyle={{ fontSize: fontSizes.big }}
       noShadow
+      fallbackImage={fallbackSource}
     />
   );
 };
