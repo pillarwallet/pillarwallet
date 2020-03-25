@@ -47,7 +47,6 @@ export type UserReducerAction = {
 
 export const initialState: UserReducerState = {
   data: {
-    icoService: {},
     isLegacyUser: true,
     walletId: '',
     isEmailVerified: false,

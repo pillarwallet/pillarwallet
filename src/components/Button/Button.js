@@ -29,6 +29,8 @@ import { fontSizes, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import type { Theme } from 'models/Theme';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { DARK_THEME } from 'constants/appSettingsConstants';
+
 
 export type Props = {
   children?: React.Node,
@@ -144,6 +146,8 @@ const themes = {
 
 const themeColors = (theme: Theme) => {
   const colors = getThemeColors(theme);
+  const isDarkTheme = theme.current === DARK_THEME;
+
   return ({
     primary: {
       surface: colors.primary,
@@ -152,7 +156,8 @@ const themeColors = (theme: Theme) => {
     },
     primaryInverted: {
       surface: 'transparent',
-      text: colors.primary,
+      text: isDarkTheme ? colors.text : colors.primary,
+      border: isDarkTheme ? colors.tertiary : colors.secondaryAccent,
     },
     dangerInverted: {
       surface: 'transparent',

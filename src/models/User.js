@@ -24,7 +24,6 @@ export type User = {
   lastName?: string,
   country?: string,
   city?: string,
-  icoService: Object,
   isLegacyUser?: boolean,
   walletId: string,
   phone?: string,
