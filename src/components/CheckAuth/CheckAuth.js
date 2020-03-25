@@ -39,7 +39,7 @@ type HeaderProps = {
   centerTitle?: boolean,
   onClose?: Function,
   onBack?: Function,
-}
+};
 
 type ModalProps = {
   onModalHide: Function,
@@ -48,8 +48,8 @@ type ModalProps = {
   centerTitle?: boolean,
   fullScreen?: boolean,
   showHeader?: boolean,
-  isVisible?: boolean
-}
+  isVisible?: boolean,
+};
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function, options: Object) => void,
@@ -64,13 +64,13 @@ type Props = {
   modalProps?: ModalProps,
   headerProps?: HeaderProps,
   errorMessage?: string,
-}
+};
 
 type State = {
   biometricsShown: boolean,
   lastAppState: string,
   showPin: boolean,
-}
+};
 
 const CheckAuthWrapper = styled(Container)`
   margin-top: auto;
