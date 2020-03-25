@@ -81,6 +81,8 @@ const glyphMap = {
   signout: '\uE839',
   hamburger: '\uE875',
   exchange: '\uE86F',
+  'rounded-close': '\uE879',
+  'connect-active': '\uE87A',
 };
 
 export type IconProps = {

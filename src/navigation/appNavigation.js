@@ -60,6 +60,7 @@ import LoginScreen from 'screens/Home/Login';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import WalletConnectScreen from 'screens/WalletConnect';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
@@ -175,6 +176,7 @@ import {
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   WALLETCONNECT_FLOW,
+  WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
@@ -228,6 +230,7 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
+  CONNECT_TAB,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -250,10 +253,12 @@ const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
+const iconConnect = require('assets/icons/icon_connect.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
 const iconServicesActive = require('assets/icons/icon_services_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
 const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
+const iconConnectActive = require('assets/icons/icon_connect_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
@@ -330,6 +335,7 @@ peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
+    [WALLETCONNECT]: WalletConnectScreen,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
@@ -434,6 +440,18 @@ const tabNavigation = createBottomTabNavigator(
           theme: screenProps.theme,
         }),
         tabBarLabel: tabBarLabel({ text: 'Assets', theme: screenProps.theme }),
+      }),
+    },
+    [CONNECT_TAB]: {
+      screen: walletConnectFlow,
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconConnectActive,
+          icon: iconConnect,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
       }),
     },
     [PEOPLE]: {

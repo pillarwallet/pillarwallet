@@ -91,11 +91,10 @@ export const CURRENCY_SYMBOLS = {
 };
 
 export const POPULAR_SWAPS = [
-  { from: PLR, to: ETH },
   { from: ETH, to: PLR },
+  { from: ETH, to: DAI },
+  { from: DAI, to: ETH },
+  { from: PLR, to: ETH },
   { from: ETH, to: LINK },
   { from: ETH, to: BAT },
-  { from: ETH, to: AE },
-  { from: ETH, to: MKR },
-  { from: PLR, to: USDT },
 ];

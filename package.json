@@ -169,6 +169,7 @@
     "lodash.throttle": "^4.1.1",
     "lodash.truncate": "^4.4.2",
     "lodash.unionby": "^4.8.0",
+    "lodash.uniq": "^4.5.0",
     "lottie-ios": "2.5.0",
     "lottie-react-native": "2.6.1",
     "native-base": "2.7.2",

@@ -73,6 +73,10 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
+export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
+  return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+};
+
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
