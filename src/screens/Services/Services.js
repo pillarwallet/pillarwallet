@@ -23,6 +23,7 @@ import { FlatList, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import uniq from 'lodash.uniq';
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { EXCHANGE } from 'constants/navigationConstants';
@@ -52,8 +53,10 @@ class ServicesScreen extends React.Component<Props> {
     } = this.props;
     const colors = getThemeColors(theme);
 
-    const offersBadge = (offers && offers.length) ? {
-      label: `${offers.length} exchanges`,
+    const providersCount = uniq((offers || []).map(offer => offer.provider)).length;
+
+    const offersBadge = providersCount ? {
+      label: `${providersCount} exchanges`,
       color: colors.primary,
     } : null;
 
@@ -87,6 +90,7 @@ class ServicesScreen extends React.Component<Props> {
           {
             fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
             toAssetCode: ETH,
+            displayFiatOptionsFirst: true,
           }),
       },
     ];
