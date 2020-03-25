@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import OverlayModal from '../../components/OverlayModal/OverlayModal';
+import OverlayModal from 'components/OverlayModal/OverlayModal';
 
 type Props = {
     isVisible: boolean,
