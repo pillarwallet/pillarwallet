@@ -17,16 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { FlatList, Alert } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import styled, { withTheme } from 'styled-components/native';
-import { getThemeColors, themedColors, getThemeType } from 'utils/themes';
+
+import { getThemeColors, themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
+import { images } from 'utils/images';
+
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import { ListCard } from 'components/ListItem/ListCard';
 import { TextLink } from 'components/Typography';
@@ -34,6 +38,7 @@ import Icon from 'components/Icon';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SlideModal from 'components/Modals/SlideModal';
 import ReferralCodeModal from 'screens/Profile/ReferralCodeModal';
+
 import {
   SECURITY_SETTINGS,
   RECOVERY_SETTINGS,
@@ -43,7 +48,6 @@ import {
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
-import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import { logoutAction } from 'actions/authActions';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -64,8 +68,6 @@ type State = {
   visibleModal: ?string,
 };
 
-const headerLogo = require('assets/images/landing-pillar-logo.png');
-const headerLogoDarkMode = require('assets/images/landing-pillar-logo-dark-theme.png');
 
 const Footer = styled.View``;
 
@@ -113,7 +115,7 @@ const StyledEmoji = styled(Emoji)`
 class Menu extends React.Component<Props, State> {
   state = {
     visibleModal: null,
-  }
+  };
 
   getMenuItems = () => {
     const {
@@ -232,11 +234,11 @@ class Menu extends React.Component<Props, State> {
         iconColor={iconColor}
       />
     );
-  }
+  };
 
   toggleSlideModalOpen = (modal: ?string = null) => {
     this.setState({ visibleModal: modal });
-  }
+  };
 
   deleteWallet = () => {
     const { logoutUser, backupStatus, navigation } = this.props;
@@ -263,14 +265,13 @@ class Menu extends React.Component<Props, State> {
         ],
       );
     }
-  }
+  };
 
   render() {
     const items = this.getMenuItems();
     const { visibleModal } = this.state;
     const { user, theme } = this.props;
-    const currentTheme = getThemeType(theme);
-    const logo = currentTheme === LIGHT_THEME ? headerLogo : headerLogoDarkMode;
+    const { pillarLogoSmall: logo } = images(theme);
 
     return (
       <ContainerWithHeader

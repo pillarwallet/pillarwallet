@@ -17,13 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
 import { isValidNumber, parseNumber } from './common';
 import { spacing } from './variables';
 
-const genericToken = require('assets/images/tokens/genericTokenIcon.png');
 
 export function makeAmountForm(
   maxAmount: number,
@@ -99,7 +99,7 @@ function AmountInputTemplate(locals) {
       errorMessage={errorMessage}
       inputProps={inputProps}
       innerImageURI={icon}
-      fallbackSource={genericToken}
+      fallbackToGenericToken
       leftSideText={valueInFiatOutput}
       numeric
       errorMessageOnTop
