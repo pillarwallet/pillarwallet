@@ -136,8 +136,7 @@ export const loginAction = (
 
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        const decryptionOptions = {};
-        wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
+        wallet = await decryptWallet(encryptedWallet, saltedPin);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
