@@ -648,7 +648,7 @@ SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: stri
 
 SDKWrapper.prototype.getContacts = function (walletId: string) {
   return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.list(walletId))
+    .then(() => this.pillarWalletSdk.connectionV2.list({ walletId }))
     .then(({ data }) => {
       if (!Array.isArray(data)) {
         Sentry.captureMessage('Wrong connections received', { extra: { data } });
