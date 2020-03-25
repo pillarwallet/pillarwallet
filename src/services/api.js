@@ -59,9 +59,6 @@ import type {
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 
-// other
-import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos'; // temporary here
-
 // services
 import {
   fetchAssetBalances,
@@ -476,23 +473,6 @@ SDKWrapper.prototype.fetchNotifications = function (
       });
     })
     .catch(() => []);
-};
-
-SDKWrapper.prototype.fetchICOs = function (userId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
-    .then(({ data }) => data.data)
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.fetchICOFundingInstructions = function (walletId, currency) {
-  const cryptos = ['ETH', 'BTC', 'LTC']; // mock purposes;
-  const fixtures = {
-    ...icoFundingInstructionsFixtures,
-    currency,
-    paymentType: cryptos.includes(currency) ? 'crypto_currency' : 'bank_transfer',
-  };
-  return Promise.resolve(fixtures);
 };
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
