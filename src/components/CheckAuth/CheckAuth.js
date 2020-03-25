@@ -21,6 +21,7 @@ import * as React from 'react';
 import { AppState } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import get from 'lodash.get';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
@@ -33,6 +34,7 @@ import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/c
 import { getPrivateKey } from 'utils/keychain';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
+
 
 type HeaderProps = {
   title?: String,
@@ -97,15 +99,17 @@ class CheckAuth extends React.Component<Props, State> {
       useBiometrics, revealMnemonic, enforcePin, modalProps,
     } = this.props;
     const { lastAppState } = this.state;
+
     // do nothing if auth isn't supposed to be checked
-    if (!(modalProps && !modalProps.isVisible)) {
-      if (useBiometrics
-        && !revealMnemonic
-        && lastAppState !== BACKGROUND_APP_STATE) {
-        this.showBiometricLogin();
-      } else if (lastAppState !== BACKGROUND_APP_STATE && !enforcePin) {
-        this.checkPrivateKey();
-      }
+    if (!get(modalProps, 'isVisible')) return;
+
+    if (useBiometrics
+      && !revealMnemonic
+      && lastAppState !== BACKGROUND_APP_STATE
+    ) {
+      this.showBiometricLogin();
+    } else if (lastAppState !== BACKGROUND_APP_STATE && !enforcePin) {
+      this.checkPrivateKey();
     }
   }
 
@@ -116,6 +120,18 @@ class CheckAuth extends React.Component<Props, State> {
     if (modalProps.isVisible && !prevProps.modalProps.isVisible) {
       this.checkPrivateKey();
     }
+  };
+
+  hideModal(modalProps) {
+    if (!modalProps || !modalProps.isVisible) return;
+
+    if (modalProps.onModalHide) {
+      modalProps.onModalHide();
+    }
+
+    if (modalProps.onModalHidden) {
+      modalProps.onModalHidden();
+    }
   }
 
   checkPrivateKey = async (errorHandler?: Function) => {
@@ -124,18 +140,11 @@ class CheckAuth extends React.Component<Props, State> {
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       checkPrivateKey(privateKey, onPinValid);
-      if (modalProps && modalProps.isVisible) {
-        if (modalProps.onModalHide) {
-          modalProps.onModalHide();
-        }
-        if (modalProps.onModalHidden) {
-          modalProps.onModalHidden();
-        }
-      }
+      this.hideModal(modalProps);
     } else {
       this.setState({ showPin: true });
     }
-  }
+  };
 
   handleAppStateChange = (nextAppState: string) => {
     const { useBiometrics, revealMnemonic } = this.props;
@@ -210,7 +219,7 @@ class CheckAuth extends React.Component<Props, State> {
         </Wrapper>
       </SlideModal>
     );
-  }
+  };
 
   renderWrappedPin = () => {
     const { headerProps, errorMessage } = this.props;
@@ -223,7 +232,7 @@ class CheckAuth extends React.Component<Props, State> {
         {this.renderPinCode()}
       </Container>
     );
-  }
+  };
 
   renderPinCode = () => {
     const { wallet: { walletState } } = this.props;
@@ -240,7 +249,7 @@ class CheckAuth extends React.Component<Props, State> {
         />
       </CheckAuthWrapper>
     );
-  }
+  };
 
   render() {
     const {
