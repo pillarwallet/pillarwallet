@@ -23,7 +23,7 @@ import CheckAuth from 'components/CheckAuth';
 import { approveCallRequestAction, rejectCallRequestAction } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { SEND_TOKEN_TRANSACTION, WALLETCONNECT } from 'constants/navigationConstants';
 import { signMessage, signPersonalMessage, signTransaction } from 'utils/wallet';
 
 import type { TransactionPayload } from 'models/Transaction';
@@ -178,7 +178,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
   handleDismissal = () => {
     const { navigation, resetIncorrectPassword } = this.props;
-    navigation.dismiss();
+    navigation.navigate(WALLETCONNECT);
     resetIncorrectPassword();
   };
 
