@@ -22,8 +22,6 @@ import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
 import { isValidNumber, parseNumber } from './common';
 
-const genericToken = require('assets/images/tokens/genericTokenIcon.png');
-
 export function makeAmountForm(
   maxAmount: number,
   minAmount: number,
@@ -96,7 +94,7 @@ function AmountInputTemplate(locals) {
       errorMessage={errorMessage}
       inputProps={inputProps}
       innerImageURI={icon}
-      fallbackSource={genericToken}
+      fallbackToGenericToken
       leftSideText={valueInFiatOutput}
       numeric
       errorMessageOnTop

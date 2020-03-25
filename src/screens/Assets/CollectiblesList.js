@@ -21,7 +21,7 @@
 import * as React from 'react';
 
 import { FlatList, View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -37,9 +37,11 @@ import { COLLECTIBLE } from 'constants/navigationConstants';
 import { smallScreen } from 'utils/common';
 import { fontStyles, fontTrackings, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 // types
 import type { Collectible } from 'models/Collectible';
+import type { Theme } from 'models/Theme';
 
 const EmptyStateWrapper = styled.View`
   align-items: center;
@@ -74,15 +76,14 @@ type Props = {
   collectibles: Collectible[],
   searchQuery: string,
   navigation: NavigationScreenProp<*>,
+  theme: Theme,
 };
 
 type CollectibleItem = {
   item: Collectible,
 };
 
-const genericToken = require('assets/images/tokens/genericToken.png');
-
-export default class CollectiblesList extends React.PureComponent<Props> {
+class CollectiblesList extends React.PureComponent<Props> {
   handleCardTap = (assetData: Collectible) => {
     const { navigation } = this.props;
 
@@ -92,6 +93,8 @@ export default class CollectiblesList extends React.PureComponent<Props> {
   renderCollectible = ({ item }: CollectibleItem) => {
     const { name, image, icon: itemIcon } = item;
     const icon = itemIcon || image;
+    const { theme } = this.props;
+    const { genericToken } = images(theme);
 
     return (
       <View style={{ width: '50%', paddingHorizontal: 8, paddingVertical: 3 }}>
@@ -159,3 +162,5 @@ export default class CollectiblesList extends React.PureComponent<Props> {
     );
   }
 }
+
+export default withTheme(CollectiblesList);

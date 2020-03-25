@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { ImageBackground, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
@@ -24,8 +25,10 @@ import { fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
+import { images } from 'utils/images';
 import type { Theme, ThemeColors } from 'models/Theme';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+
 
 type Props = {
   disabled?: boolean,
@@ -36,29 +39,15 @@ type Props = {
   fontIconStyle?: Object,
   showIndicator?: boolean,
   theme: Theme,
-}
+};
 
 type ButtonIconWrapperProps = {
   disabled?: boolean,
   showIndicator?: boolean,
-  themeType: string,
+  theme: Theme,
   children: React.Node,
-}
+};
 
-const actionButtonBackground = require('assets/images/bg_action_button.png');
-const actionButtonBackgroundDisabled = require('assets/images/bg_action_button_disabled.png');
-const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
-const actionButtonBackgroundDarkDisabled = require('assets/images/bg_action_button_dark_disabled.png');
-
-function getButtonBackgroundSource(themeType: string, isDisabled?: boolean) {
-  if (themeType === DARK_THEME) {
-    if (isDisabled) return actionButtonBackgroundDarkDisabled;
-    return actionButtonBackgroundDark;
-  } else if (isDisabled) {
-    return actionButtonBackgroundDisabled;
-  }
-  return actionButtonBackground;
-}
 
 function getIconColor(colors: ThemeColors, isDisabled?: boolean, themeType: string) {
   if (themeType === DARK_THEME) {
@@ -127,15 +116,17 @@ const Indicator = styled.View`
   right: ${({ rightPos }) => rightPos}px;
 `;
 
+
 const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
   const {
     disabled,
     showIndicator,
-    themeType,
+    theme,
     children,
   } = props;
+  const { actionButtonBackground, actionButtonBackgroundDisabled } = images(theme);
 
-  const buttonBackground = getButtonBackgroundSource(themeType, disabled);
+  const buttonBackground = disabled ? actionButtonBackgroundDisabled : actionButtonBackground;
   return (
     <ImageBackground
       source={buttonBackground}
@@ -172,7 +163,7 @@ const CircleButton = (props: Props) => {
       disabled={disabled}
       onPress={() => onPress()}
     >
-      <ButtonIconWrapper {...props} themeType={themeType}>
+      <ButtonIconWrapper {...props}>
         {!!icon &&
         <CircleButtonIcon
           disabled={disabled}

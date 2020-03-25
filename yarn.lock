@@ -12371,8 +12371,6 @@ metro-babel7-plugin-react-transform@0.51.1:
   version "0.51.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/metro-babel7-plugin-react-transform/-/metro-babel7-plugin-react-transform-0.51.1.tgz#9cce2c340cc4006fc82aa6dfab27af22d592607e"
   integrity sha1-nM4sNAzEAG/IKqbfqyevItWSYH4=
-  dependencies:
-    "@babel/helper-module-imports" "^7.0.0"
 
 metro-cache@0.51.1:
   version "0.51.1"

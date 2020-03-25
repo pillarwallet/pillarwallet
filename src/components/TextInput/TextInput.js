@@ -51,12 +51,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { formatMoney, noop } from 'utils/common';
+import { images } from 'utils/images';
 
 import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 type SelectorValueType = {
   input: string | number,
@@ -118,6 +118,7 @@ type Props = {
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
   rightPlaceholder?: string,
+  fallbackToGenericToken?: boolean,
 };
 
 type State = {
@@ -329,6 +330,7 @@ const InputLabel = styled(MediumText)`
   margin-bottom: 8px;
 `;
 
+
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
   searchInput: RNInput;
@@ -437,8 +439,8 @@ class TextInput extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.selectValue(option)}
         label={name}
-        itemImageUrl={iconUrl || genericToken}
-        fallbackSource={genericToken}
+        itemImageUrl={iconUrl}
+        fallbackToGenericToken
         balance={!!formattedBalanceInFiat && {
           balance: assetBalance,
           value: formattedBalanceInFiat,
@@ -532,7 +534,7 @@ class TextInput extends React.Component<Props, State> {
       getInputRef,
       errorMessageStyle,
       innerImageURI,
-      fallbackSource,
+      fallbackToGenericToken,
       buttonProps,
       theme,
       leftSideText,
@@ -543,10 +545,13 @@ class TextInput extends React.Component<Props, State> {
       errorMessageOnTop,
       inputWrapperStyle = {},
     } = this.props;
+    let { fallbackSource } = this.props;
+
     const colors = getThemeColors(theme);
     const { value = '', selectorValue = {}, label } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
+    if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
 
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
@@ -647,7 +652,7 @@ class TextInput extends React.Component<Props, State> {
                 <LeftSideWrapper>
                   {(innerImageURI || fallbackSource) && <Image
                     source={imageSource}
-                    fallbackSource={!imageSource ? fallbackSource : imageSource}
+                    fallbackSource={fallbackSource}
                     style={{ marginRight: 9 }}
                   />}
                   {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
