@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import SlideModal from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
@@ -39,7 +38,7 @@ const Wrapper = styled.View`
   padding-left: 16;
   padding-right: 16;
   background-color: ${UIColors.darkShadowColor};
-  ${{ ...StyleSheet.absoluteFillObject }};
+  flex: 1;
 `;
 
 const ModalTitle = styled(BaseText)`
@@ -82,31 +81,26 @@ export default class OverlayModal extends React.Component<Props> {
         title, content, isVisible, onButtonPress, buttonText,
       } = this.props;
       const { bottomSpaceHeight } = this.state;
-      const contentComponent = (
-        <Wrapper>
-          <Spacer />
-          <TextWrapper onLayout={this.handleTextLayout}>
-            <ModalTitle>{title}</ModalTitle>
-            <ModalMessage>{content}</ModalMessage>
-          </TextWrapper>
-          <ButtonWrapper height={bottomSpaceHeight}>
-            <Button
-              title={buttonText}
-              onPress={onButtonPress}
-              height={48}
-            />
-          </ButtonWrapper>
-        </Wrapper>
-      );
       return (
         <SlideModal
           isVisible={isVisible}
           hideHeader
+          noTopPadding
           fullScreen
           noSwipeToDismiss
           backgroundColor="transparent"
-          fullScreenComponent={contentComponent}
-        />
+        >
+          <Wrapper>
+            <Spacer />
+            <TextWrapper onLayout={this.handleTextLayout}>
+              <ModalTitle>{title}</ModalTitle>
+              <ModalMessage>{content}</ModalMessage>
+            </TextWrapper>
+            <ButtonWrapper height={bottomSpaceHeight}>
+              <Button title={buttonText} onPress={onButtonPress} height={48} />
+            </ButtonWrapper>
+          </Wrapper>
+        </SlideModal>
       );
     }
 }
