@@ -430,7 +430,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={[4]}
+          stickyHeaderIndices={[3]}
           refreshControl={
             <RefreshControl
               refreshing={false}
