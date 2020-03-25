@@ -132,7 +132,7 @@ describe('Exchange Actions tests', () => {
   });
 
   it('should handle HAS_SEEN_EXCHANGE_INTRO', () => {
-    const action = { type: HAS_SEEN_EXCHANGE_INTRO };
+    const action = { type: HAS_SEEN_EXCHANGE_INTRO, payload: true };
     const expectedAssets = {
       hasSeenExchangeIntro: true,
     };

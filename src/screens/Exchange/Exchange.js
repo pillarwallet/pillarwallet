@@ -166,6 +166,8 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   providersMeta: ProvidersMeta,
   theme: Theme,
+  hasSeenExchangeIntro: boolean,
+  updateHasSeenExchangeIntro: () => void,
 };
 
 type State = {

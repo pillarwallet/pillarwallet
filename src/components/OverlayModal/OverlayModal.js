@@ -32,7 +32,11 @@ type Props = {
   isVisible?: boolean,
   onButtonPress: () => void,
   buttonText: string,
-}
+};
+
+type State = {
+  bottomSpaceHeight: number,
+};
 
 const Wrapper = styled.View`
   padding-left: 16;
@@ -66,8 +70,8 @@ const Spacer = styled.View`
   height: 30%;
 `;
 
-export default class OverlayModal extends React.Component<Props> {
-    state = {
+export default class OverlayModal extends React.Component<Props, State> {
+    state: State = {
       bottomSpaceHeight: 0,
     }
 

@@ -214,7 +214,7 @@ export default function exchangeReducer(
     case HAS_SEEN_EXCHANGE_INTRO:
       return {
         ...state,
-        hasSeenExchangeIntro: true,
+        hasSeenExchangeIntro: action.payload,
       };
     default:
       return state;

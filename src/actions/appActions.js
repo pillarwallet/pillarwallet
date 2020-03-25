@@ -51,6 +51,7 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+  HAS_SEEN_EXCHANGE_INTRO,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -191,6 +192,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { insights = {} } = await storage.get('insights');
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
+
+      const { hasSeenExchangeIntro = {} } = await storage.get('hasSeenExchangeIntro');
+      dispatch({ type: HAS_SEEN_EXCHANGE_INTRO, payload: hasSeenExchangeIntro });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

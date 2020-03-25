@@ -588,6 +588,8 @@ export const updateHasSeenExchangeIntroAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch({
       type: HAS_SEEN_EXCHANGE_INTRO,
+      payload: true,
     });
+    dispatch(saveDbAction('hasSeenExchangeIntro', { hasSeenExchangeIntro: true }, true));
   };
 };
