@@ -54,6 +54,7 @@ import {
   markNotificationAsSeenAction,
   getMetaDataAction,
   getExchangeSupportedAssetsAction,
+  updateHasSeenExchangeIntroAction,
 } from 'actions/exchangeActions';
 
 // constants
@@ -89,6 +90,7 @@ import type { Theme } from 'models/Theme';
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { HotSwapsHorizontalList, HotSwapsGridList } from './HotSwapsList';
+import ExchangeIntroModal from './ExchangeIntroModal';
 
 
 const ListHeader = styled.View`
@@ -1106,6 +1108,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       theme,
+      hasSeenExchangeIntro,
+      updateHasSeenExchangeIntro,
     } = this.props;
 
     const {
@@ -1175,6 +1179,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           </PromoWrapper>
         )}
       >
+        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
         {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
         <ScrollView
@@ -1256,6 +1261,7 @@ const mapStateToProps = ({
     providersMeta,
     exchangeSupportedAssets,
     fiatExchangeSupportedAssets,
+    hasSeenExchangeIntro,
   },
   rates: { data: rates },
   featureFlags: {
@@ -1280,6 +1286,7 @@ const mapStateToProps = ({
   providersMeta,
   exchangeSupportedAssets,
   fiatExchangeSupportedAssets,
+  hasSeenExchangeIntro,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1309,6 +1316,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
+  updateHasSeenExchangeIntro: () => dispatch(updateHasSeenExchangeIntroAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));
