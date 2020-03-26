@@ -31,7 +31,6 @@ import { INITIAL_FEATURE_FLAGS, SET_FEATURE_FLAGS } from 'constants/featureFlags
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
-import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { loginAction } from 'actions/authActions';
 
 const pillarSdk = new PillarSdk();
@@ -117,10 +116,6 @@ describe('Auth actions', () => {
     ];
 
     const pin = '123456';
-
-    // $FlowFixMe
-    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
-
     return store.dispatch(loginAction(pin))
       .then(() => {
         const actualActions = store.getActions();

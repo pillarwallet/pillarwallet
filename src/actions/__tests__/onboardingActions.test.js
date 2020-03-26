@@ -34,7 +34,6 @@ import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { SET_USER, REGISTERED } from 'constants/userConstants';
-import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -46,8 +45,6 @@ import {
   SMART_WALLET_UPGRADE_STATUSES,
   RESET_SMART_WALLET,
 } from 'constants/smartWalletConstants';
-import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
-import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
@@ -56,7 +53,6 @@ import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
-import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { transformAssetsToObject } from 'utils/assets';
 import PillarSdk from 'services/api';
 import { WebSocket } from 'mock-socket';
@@ -149,7 +145,7 @@ describe('Wallet actions', () => {
     store = mockStore({});
   });
 
-  it(`should expect series of actions with payload to be dispatched 
+  it(`should expect series of actions with payload to be dispatched
   on registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
       user: { data: mockUser },
@@ -170,7 +166,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
-      { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
       { type: UPDATE_COLLECTIBLES, payload: {} },
@@ -178,8 +173,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_BADGES, payload: [] },
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_FEATURE_FLAGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
@@ -204,9 +197,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
-    // $FlowFixMe
-    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
-
     return store.dispatch(registerWalletAction())
       .then(() => {
         const actualActions = store.getActions();
@@ -214,8 +204,8 @@ describe('Wallet actions', () => {
       });
   });
 
-  it(`should expect series of actions with payload to be dispatched 
-  on registerWalletAction execution when wallet wasn't imported 
+  it(`should expect series of actions with payload to be dispatched
+  on registerWalletAction execution when wallet wasn't imported
   and Smart Wallet feature enabled`, () => {
     store = mockStore({
       user: { data: mockUser },
@@ -238,7 +228,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
-      { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
       { type: UPDATE_COLLECTIBLES, payload: {} },
@@ -246,8 +235,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_BADGES, payload: [] },
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_FEATURE_FLAGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
@@ -284,9 +271,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
-    // $FlowFixMe
-    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
-
     return store.dispatch(registerWalletAction())
       .then(() => {
         const actualActions = store.getActions();
@@ -294,7 +278,7 @@ describe('Wallet actions', () => {
       });
   });
 
-  it(`should expect series of actions with payload to be 
+  it(`should expect series of actions with payload to be
   dispatch on registerWalletAction execution when wallet was imported`, () => {
     store = mockStore({
       user: { data: mockUser },
@@ -319,7 +303,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
-      { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: {} },
       { type: UPDATE_BALANCES, payload: {} },
       { type: UPDATE_COLLECTIBLES, payload: {} },
@@ -327,8 +310,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_BADGES, payload: [] },
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] },
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_FEATURE_FLAGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
@@ -351,9 +332,6 @@ describe('Wallet actions', () => {
       { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
-
-    // $FlowFixMe
-    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
 
     return store.dispatch(registerWalletAction())
       .then(() => {
