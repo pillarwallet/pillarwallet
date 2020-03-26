@@ -51,11 +51,6 @@ import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import type { ApiNotification } from 'models/Notification';
-import type {
-  ConnectionIdentityKeyMap,
-  ConnectionUpdateIdentityKeys,
-  ConnectionPatchIdentityKeys,
-} from 'models/Connections';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 
@@ -87,12 +82,6 @@ type BalancePayload = {
   assets: Asset[],
 };
 
-type UserInfoByIdPayload = {
-  walletId: string,
-  userAccessKey: string,
-  targetUserAccessKey: string,
-};
-
 type RegisterSmartWalletPayload = {
   walletId: string,
   privateKey: string,
@@ -102,14 +91,6 @@ type RegisterSmartWalletPayload = {
 
 type MapContactsAddresses = Array<{
   contactId: string,
-  accessKeys?: {
-    userAccessKey: string,
-    contactAccessKey: string,
-  },
-  connectionKeys?: {
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-  },
 }>;
 
 type VerifyEmail = {|
@@ -362,9 +343,9 @@ SDKWrapper.prototype.userInfo = function (walletId: string) {
     .catch(() => ({}));
 };
 
-SDKWrapper.prototype.userInfoById = function (targetUserId: string, params: UserInfoByIdPayload) {
+SDKWrapper.prototype.userInfoById = function (targetUserId: string, myWalletId: string) {
   return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.infoById(targetUserId, params))
+    .then(() => this.pillarWalletSdk.user.infoById(targetUserId, { walletId: myWalletId }))
     .then(({ data }) => ({ ...data }))
     .catch(() => ({}));
 };
@@ -578,73 +559,13 @@ SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string)
     .catch(() => ({}));
 };
 
-SDKWrapper.prototype.sendOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.invite({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.cancelOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.cancel({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.acceptOldInvitation = function (
-  targetUserId: string,
-  targetUserAccessKey: string,
-  accessKey: string,
-  sourceIdentityKey: ?string,
-  targetIdentityKey: ?string,
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.accept({
-      sourceUserAccessKey: accessKey,
-      targetUserId,
-      targetUserAccessKey,
-      sourceUserIdentityKeys: {
-        sourceIdentityKey,
-        targetIdentityKey,
-      },
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.rejectOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.reject({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
 SDKWrapper.prototype.sendInvitation = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.invite({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -653,15 +574,11 @@ SDKWrapper.prototype.sendInvitation = function (
 
 SDKWrapper.prototype.cancelInvitation = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.cancel({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -670,21 +587,11 @@ SDKWrapper.prototype.cancelInvitation = function (
 
 SDKWrapper.prototype.acceptInvitation = function (
   targetUserId: string,
-  sourceUserIdentityKeys: {
-    sourceIdentityKey: string;
-    targetIdentityKey: string;
-  },
-  targetUserIdentityKeys: {
-    sourceIdentityKey: string;
-    targetIdentityKey: string;
-  },
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.accept({
       targetUserId,
-      sourceUserIdentityKeys,
-      targetUserIdentityKeys,
       walletId,
     }))
     .then(({ data }) => data)
@@ -693,15 +600,11 @@ SDKWrapper.prototype.acceptInvitation = function (
 
 SDKWrapper.prototype.rejectInvitation = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.reject({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -710,15 +613,11 @@ SDKWrapper.prototype.rejectInvitation = function (
 
 SDKWrapper.prototype.disconnectUser = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.disconnect({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
@@ -727,16 +626,12 @@ SDKWrapper.prototype.disconnectUser = function (
 
 SDKWrapper.prototype.muteUser = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
   mute: boolean,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.mute({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
       mute,
     }))
@@ -746,28 +641,17 @@ SDKWrapper.prototype.muteUser = function (
 
 SDKWrapper.prototype.blockUser = function (
   targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
   walletId: string,
   block: boolean,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.block({
       targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
       block,
     }))
     .then(({ data }) => data)
     .catch(() => null);
-};
-
-SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
-    .then(({ data }) => data)
-    .catch(() => []);
 };
 
 SDKWrapper.prototype.setUsername = function (username: string) {
@@ -788,44 +672,17 @@ SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: stri
     });
 };
 
-SDKWrapper.prototype.connectionsCount = function (walletId: string) {
+SDKWrapper.prototype.getContacts = function (walletId: string) {
   return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.count({ walletId }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
+    .then(() => this.pillarWalletSdk.connectionV2.list({ walletId }))
     .then(({ data }) => {
       if (!Array.isArray(data)) {
-        Sentry.captureMessage('Wrong Identity Keys received', { extra: { data } });
+        Sentry.captureMessage('Wrong connections received', { extra: { data } });
         return [];
       }
       return data;
     })
     .catch(() => []);
-};
-
-SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
-    .catch(() => false);
-};
-
-SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => {
-      if (data && !Array.isArray(data)) {
-        Sentry.captureMessage('Wrong response from patchIdentityKeys', { extra: { data } });
-        return false;
-      }
-      return data;
-    })
-    .catch(() => false);
 };
 
 SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, contacts: MapContactsAddresses) {

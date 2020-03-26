@@ -40,14 +40,11 @@ import notificationsReducer from './notificationsReducer';
 import contactsReducer from './contactsReducer';
 import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
-import accessTokensReducer from './accessTokensReducer';
 import sessionReducer from './sessionReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
-import connectionKeyPairsReducer from './connectionKeyPairsReducer';
 import collectiblesReducer from './collectiblesReducer';
-import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 import badgesReducer from './badgesReducer';
 import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
@@ -83,14 +80,11 @@ import type { NotificationsReducerState } from './notificationsReducer';
 import type { ContactsReducerState } from './contactsReducer';
 import type { InvitationsReducerState } from './invitationsReducer';
 import type { ChatReducerState } from './chatReducer';
-import type { AccessTokensReducerState } from './accessTokensReducer';
 import type { SessionReducerState } from './sessionReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
 import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
-import type { ConnectionKeyPairsReducerState } from './connectionKeyPairsReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
-import type { ConnectionIdentityKeysReducerState } from './connectionIdentityKeysReducer';
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
 import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
@@ -123,14 +117,11 @@ export type RootReducerState = {|
   contacts: ContactsReducerState,
   invitations: InvitationsReducerState,
   chat: ChatReducerState,
-  accessTokens: AccessTokensReducerState,
   session: SessionReducerState,
   txNotes: TxNoteReducerState,
   oAuthTokens: OAuthReducerState,
   txCount: TxCountReducerState,
-  connectionKeyPairs: ConnectionKeyPairsReducerState,
   collectibles: CollectiblesReducerState,
-  connectionIdentityKeys: ConnectionIdentityKeysReducerState,
   badges: BadgesReducerState,
   exchange: ExchangeReducerState,
   accounts: AccountsReducerState,
@@ -201,14 +192,11 @@ const appReducer = combineReducers({
   contacts: contactsReducer,
   invitations: invitationsReducer,
   chat: chatReducer,
-  accessTokens: accessTokensReducer,
   session: sessionReducer,
   txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
-  connectionKeyPairs: connectionKeyPairsReducer,
-  connectionIdentityKeys: connectionIdentityKeysReducer,
   badges: badgesReducer,
   exchange: exchangeReducer,
   accounts: accountsReducer,

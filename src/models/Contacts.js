@@ -20,7 +20,6 @@
 export type ApiUser = {
   id: string,
   username: string,
-  connectionKey: string,
   profileImage?: string,
   profileLargeImage?: string,
   ethAddress: string,
@@ -38,4 +37,19 @@ export type ContactsSmartAddressesList = string[];
 export type ContactSmartAddressData = {
   userId: string,
   smartWallets: ContactsSmartAddressesList,
+};
+
+export type ApiContact = {
+  userId: string,
+  targetUserId: string,
+  status: string,
+  createdAt: string,
+  updatedAt: string,
+  targetUserInfo: {
+    userId: string,
+    username: string,
+    profileImage?: ?string,
+    profileLargeImage?: ?string,
+    ethAddress: string,
+  },
 };
