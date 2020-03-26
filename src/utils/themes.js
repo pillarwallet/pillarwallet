@@ -51,6 +51,7 @@ export const lightThemeColors = {
   activeTabBarIcon: '#007AFF',
   inactiveTabBarIcon: '#D4D9DB',
   buttonSecondaryBackground: '#e6f1f9',
+  synthetic: '#2329d6',
 };
 
 export const darkThemeColors = {
@@ -83,6 +84,7 @@ export const darkThemeColors = {
   activeTabBarIcon: '#FFFFFF',
   inactiveTabBarIcon: '#818eb3',
   buttonSecondaryBackground: '#102132',
+  synthetic: '#9396ff',
 };
 
 export const themedColors = {
@@ -201,6 +203,10 @@ export const themedColors = {
   buttonSecondaryBackground: theme('current', {
     lightTheme: lightThemeColors.buttonSecondaryBackground,
     darkTheme: darkThemeColors.buttonSecondaryBackground,
+  }),
+  synthetic: theme('current', {
+    lightTheme: lightThemeColors.synthetic,
+    darkTheme: darkThemeColors.synthetic,
   }),
 };
 

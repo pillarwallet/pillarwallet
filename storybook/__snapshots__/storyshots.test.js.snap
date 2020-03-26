@@ -6605,7 +6605,7 @@ Array [
                           },
                           Array [
                             Object {
-                              "color": "#007AFF",
+                              "color": "#2329d6",
                               "fontSize": 18,
                             },
                             undefined,
@@ -8824,7 +8824,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#2329d6",
                           "fontSize": 18,
                         },
                         undefined,
@@ -9057,7 +9057,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#2329d6",
                           "fontSize": 18,
                         },
                         undefined,
@@ -9636,6 +9636,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "smartWalletSurface": "#f3f7ff",
                       "smartWalletText": "#1D24D8",
                       "surface": "#007AFF",
+                      "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
                       "userAvatar": "#d1d9e4",
@@ -9866,6 +9867,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       "smartWalletSurface": "#f3f7ff",
                       "smartWalletText": "#1D24D8",
                       "surface": "#2AA057",
+                      "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
                       "userAvatar": "#d1d9e4",
@@ -10088,6 +10090,7 @@ Array [
                       "smartWalletSurface": "#f3f7ff",
                       "smartWalletText": "#1D24D8",
                       "surface": "#007AFF",
+                      "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
                       "userAvatar": "#d1d9e4",
@@ -11024,6 +11027,7 @@ Array [
                             "smartWalletSurface": "#f3f7ff",
                             "smartWalletText": "#1D24D8",
                             "surface": "#e6f1f9",
+                            "synthetic": "#2329d6",
                             "tertiary": "#EBF0F6",
                             "text": "#007AFF",
                             "userAvatar": "#d1d9e4",
