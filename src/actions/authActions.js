@@ -144,8 +144,13 @@ export const loginAction = (
 
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
+        const decryptionOptions = { mnemonic: true };
         wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
+        // no further code will be executed if pin is wrong
+        // migrate older users for keychain access
+        if (updateKeychain && wallet.privateKey) {
+          await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic, pin });
+        }
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -278,11 +283,6 @@ export const loginAction = (
         },
       });
       dispatch(updatePinAttemptsAction(false));
-
-      // migrate older users for keychain access with biometrics
-      if (wallet.privateKey && updateKeychain) {
-        await setKeychainDataObject({ privateKey: wallet.privateKey });
-      }
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
