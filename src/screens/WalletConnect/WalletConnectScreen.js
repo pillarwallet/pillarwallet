@@ -17,26 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_ICOS, SET_ICO_FUNDING_INSTRUCTIONS } from 'constants/icosConstants';
+import * as React from 'react';
+import { ScrollView } from 'react-native';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import PromoCard from './PromoCard';
+import QRCodeScanButton from './QRCodeScanButton';
+import ActiveConnections from './ActiveConnections';
+import Requests from './Requests';
 
-export const fetchICOsAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { id: userId } } } = getState();
-    const icos = await api.fetchICOs(userId);
-    dispatch({
-      type: SET_ICOS,
-      payload: icos,
-    });
-  };
-};
 
-export const fetchICOFundingInstructionsAction = (currency: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { walletId } } } = getState();
-    const instructions = await api.fetchICOFundingInstructions(walletId, currency);
-    dispatch({
-      type: SET_ICO_FUNDING_INSTRUCTIONS,
-      payload: instructions,
-    });
-  };
-};
+const WalletConnectScreen = () => (
+  <ContainerWithHeader
+    headerProps={{ noBack: true, leftItems: [{ title: 'Connect' }] }}
+    inset={{ bottom: 0 }}
+  >
+    <ScrollView>
+      <PromoCard />
+      <Requests />
+      <QRCodeScanButton />
+      <ActiveConnections />
+    </ScrollView>
+  </ContainerWithHeader>
+);
+
+export default WalletConnectScreen;

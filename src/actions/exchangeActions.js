@@ -43,7 +43,9 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 import { calculateGasEstimate } from 'services/assets';
 import { getActiveAccountAddress } from 'utils/accounts';
+import { getPreferredWalletId } from 'utils/smartWallet';
 import { isFiatCurrency } from 'utils/exchange';
+
 import SDKWrapper from 'services/api';
 
 import type { Offer, OfferOrder } from 'models/Offer';
@@ -87,11 +89,12 @@ export const takeOfferAction = (
     const {
       accounts: { data: accounts },
       exchange: { exchangeSupportedAssets },
-      user: { data: { walletId } },
     } = getState();
 
     const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
     const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
+
+    const activeWalletId = getPreferredWalletId(accounts);
 
     if (!fromAsset || !toAsset) {
       Toast.show({
@@ -120,7 +123,7 @@ export const takeOfferAction = (
       provider,
       fromAssetAddress,
       toAssetAddress,
-      walletId,
+      walletId: activeWalletId,
     };
     const order = await exchangeService.takeOffer(offerRequest, trackId);
     const offerOrderData = get(order, 'data');
@@ -173,7 +176,10 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     const {
       user: { data: { walletId: userWalletId } },
       exchange: { exchangeSupportedAssets },
+      accounts: { data: accounts },
     } = getState();
+
+    const activeWalletId = getPreferredWalletId(accounts);
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -245,7 +251,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
           .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established
-      const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount, userWalletId);
+      const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount, activeWalletId);
       const responseError = get(response, 'error');
 
       if (responseError) {
@@ -370,21 +376,21 @@ export const setTokenAllowanceAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     connectExchangeService(getState());
+
     const {
-      user: { data: { walletId } },
+      accounts: { data: accounts },
+      assets: { supportedAssets },
     } = getState();
+
+    const activeWalletId = getPreferredWalletId(accounts);
 
     const allowanceRequest = {
       provider,
       fromAssetAddress,
       toAssetAddress,
-      walletId,
+      walletId: activeWalletId,
     };
     const response = await exchangeService.setTokenAllowance(allowanceRequest, trackId);
-    const {
-      accounts: { data: accounts },
-      assets: { supportedAssets },
-    } = getState();
 
     if (!response || !response.data || response.error) {
       Toast.show({
