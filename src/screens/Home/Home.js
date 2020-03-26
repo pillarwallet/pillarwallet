@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Animated, RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
@@ -38,6 +39,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
+import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -130,6 +132,7 @@ type State = {
   scrollY: Animated.Value,
   isScanning: boolean,
   isReferralBannerVisible: boolean,
+  showRewardModal: boolean,
 };
 
 const profileImageWidth = 24;
@@ -165,6 +168,7 @@ class HomeScreen extends React.Component<Props, State> {
     usernameWidth: 0,
     isScanning: false,
     isReferralBannerVisible: true,
+    showRewardModal: false,
   };
 
   componentDidMount() {
@@ -256,14 +260,9 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   renderReferral(colors) {
-    const {
-      navigation,
-      smartWalletFeatureEnabled,
-    } = this.props;
+    const { navigation, smartWalletFeatureEnabled } = this.props;
 
-    const {
-      isReferralBannerVisible,
-    } = this.state;
+    const { isReferralBannerVisible } = this.state;
 
     if (!smartWalletFeatureEnabled) {
       return null;
@@ -309,7 +308,7 @@ class HomeScreen extends React.Component<Props, State> {
       activeBlockchainNetwork,
     } = this.props;
 
-    const { activeTab } = this.state;
+    const { activeTab, showRewardModal } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -469,6 +468,11 @@ class HomeScreen extends React.Component<Props, State> {
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
+        <ReferralModalReward
+          isVisible={showRewardModal}
+          onModalHide={(callback) => this.setState({ showRewardModal: false },
+            () => { if (callback) callback(); })}
+        />
       </ContainerWithHeader>
     );
   }
