@@ -56,7 +56,7 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
+import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
@@ -130,6 +130,7 @@ const STATUSES = {
   SENT: 'Sent',
   CONNECTED: 'Connected',
   REQUESTED: 'Requested',
+  BACKUP: 'Backup secured',
 };
 
 const elipsizeAddress = (address: string) => {
@@ -203,6 +204,13 @@ export class ActivityFeedItem extends React.Component<Props> {
           status: STATUSES.CREATED,
           statusColor: 'positive',
           badge: 'Need to activate',
+        };
+      case WALLET_BACKUP_EVENT:
+        return {
+          name: NAMES.KEY_WALLET,
+          icon: keyWalletIcon,
+          status: STATUSES.BACKUP,
+          statusColor: 'secondaryText',
         };
       default:
         return null;

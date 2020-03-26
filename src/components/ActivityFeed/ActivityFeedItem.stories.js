@@ -38,7 +38,7 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
+import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 import { withTheme } from 'styled-components/native';
@@ -437,6 +437,15 @@ storiesOf('ActivityFeedItem', module)
         asset: 'ETH',
         value: '1000000000000000000',
         from: '0x000000',
+      }}
+    />
+  ))
+  .add('Wallet backup', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: USER_EVENT,
+        subType: WALLET_BACKUP_EVENT,
       }}
     />
   ));
