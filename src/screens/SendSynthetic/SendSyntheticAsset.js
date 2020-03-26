@@ -50,12 +50,14 @@ import type { SyntheticAsset, AssetData } from 'models/Asset';
 import assetsConfig from 'configs/assetsConfig';
 import { TOKENS } from 'constants/assetsConstants';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAvailableSyntheticAssets: () => void,
   availableSyntheticAssets: SyntheticAsset[],
   isFetchingSyntheticAssets: boolean,
 };
+
 
 const InnerWrapper = styled(Wrapper)`
   flex: 1;
@@ -66,7 +68,6 @@ const ContentBackground = styled(Wrapper)`
   flex: 1;
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 class SendSyntheticAsset extends React.Component<Props> {
   componentDidMount() {
@@ -104,7 +105,7 @@ class SendSyntheticAsset extends React.Component<Props> {
         onPress={onPress}
         label={assetName}
         itemImageUrl={`${SDK_PROVIDER}/${iconUrl}?size=3`}
-        fallbackSource={genericToken}
+        fallbackToGenericToken
         balance={{
           syntheticBalance: balanceFormatted,
           value: availableLabel,

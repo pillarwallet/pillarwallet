@@ -1851,10 +1851,10 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.43":
-  version "1.43.1772"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.43.1772.tgz#667fb570f480500639ccf395542dc886778f2374"
-  integrity sha1-Zn+1cPSAUAY5zPOVVC3IhnePI3Q=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.45.1793":
+  version "1.45.1793"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.45.1793.tgz#198fec6131d1f8ce535e99879a089b4591c95a22"
+  integrity sha1-GY/sYTHR+M5TXpmHmgibRZHJWiI=
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
@@ -12371,6 +12371,8 @@ metro-babel7-plugin-react-transform@0.51.1:
   version "0.51.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/metro-babel7-plugin-react-transform/-/metro-babel7-plugin-react-transform-0.51.1.tgz#9cce2c340cc4006fc82aa6dfab27af22d592607e"
   integrity sha1-nM4sNAzEAG/IKqbfqyevItWSYH4=
+  dependencies:
+    "@babel/helper-module-imports" "^7.0.0"
 
 metro-cache@0.51.1:
   version "0.51.1"
@@ -16773,10 +16775,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.212:
-  version "1.0.212"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.212.tgz#10c6b8d2bfa11cd6510779516962b3404c5f2134"
-  integrity sha1-EMa40r+hHNZRB3lRaWKzQExfITQ=
+rn-signal-protocol-messaging@1.0.216:
+  version "1.0.216"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.216.tgz#ec1a2a9a947fcb4371f9e4c4ec9d1c63db3d8743"
+  integrity sha1-7BoqmpR/y0Nx+eTE7J0cY9s9h0M=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
