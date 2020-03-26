@@ -64,6 +64,8 @@ type Props = {
   isPhoneVerified: boolean,
   alreadyInvitedContacts: ReferralContact[],
   sentInvitationsCount: SentInvitationsCount,
+  userPhone: string,
+  userEmail: string,
 };
 
 type State = {
@@ -165,11 +167,19 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
   toggleContact = (contact: ReferralContact) => {
     const { selectedContacts } = this.state;
-    const { sentInvitationsCount } = this.props;
-    const { id: relatedContactId, phone } = contact;
+    const { sentInvitationsCount, userEmail, userPhone } = this.props;
+    const { id: relatedContactId, phone, email } = contact;
     const updatedSelectedContacts = selectedContacts.filter(({ id }) => id !== relatedContactId);
     if (!selectedContacts.find(({ id }) => id === relatedContactId)) {
       const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
+      if ((!!phone && phone === userPhone) || (!!email && email === userEmail)) {
+        Toast.show({
+          message: 'You can not send invitation to yourself',
+          type: 'warning',
+          title: 'Can not add this contact',
+        });
+        return;
+      }
       if (!!phone && !isValidPhone(phone)) {
         Toast.show({
           message: 'Phone number should have country code',
@@ -285,7 +295,14 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 }
 
 const mapStateToProps = ({
-  user: { data: { isEmailVerified, isPhoneVerified } },
+  user: {
+    data: {
+      isEmailVerified,
+      isPhoneVerified,
+      phone: userPhone,
+      email: userEmail,
+    },
+  },
   referrals: { addedContactsToInvite, alreadyInvitedContacts, sentInvitationsCount },
   phoneContacts: {
     data: phoneContacts,
@@ -303,6 +320,8 @@ const mapStateToProps = ({
   phoneContactsFetchError,
   isEmailVerified,
   isPhoneVerified,
+  userPhone,
+  userEmail,
 });
 
 
