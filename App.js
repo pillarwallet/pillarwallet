@@ -85,21 +85,11 @@ type Props = {
   executeDeepLink: (deepLinkUrl: string) => void,
   activeWalkthroughSteps: Steps,
   themeType: string,
-// <<<<<<< HEAD
   startReferralsListener: () => void,
   stopReferralsListener: () => void,
-  // changeAppTheme: (themeType: string) => void,
-  // markThemeAlertAsShown: () => void,
-  // seenThemeAlert: boolean,
-// ||||||| 216c2510
-  // changeAppTheme: (themeType: string) => void,
-  // markThemeAlertAsShown: () => void,
-  // seenThemeAlert: boolean,
-// =======
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
-// >>>>>>> develop
 }
 
 class App extends React.Component<Props, *> {
