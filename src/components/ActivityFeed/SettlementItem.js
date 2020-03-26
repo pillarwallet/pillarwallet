@@ -57,7 +57,7 @@ const ListWrapper = styled.View`
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.big}px;
-  color: ${themedColors.primary};
+  color: ${themedColors.positive};
   text-align: right;
 `;
 
@@ -76,7 +76,8 @@ export const SettlementItem = (props: Props) => {
     : settleData;
 
   const valueByAsset: Object = {};
-  const formattedPPNTransactions = ppnTransactions.map((trx) => {
+
+  ppnTransactions.forEach((trx) => {
     const { symbol, value: rawValue } = trx;
     const { decimals = 18 } = getAssetData(accountAssets, supportedAssets, symbol);
     const value = new BigNumber(rawValue);
@@ -86,11 +87,13 @@ export const SettlementItem = (props: Props) => {
       const { value: currentValue } = valueByAsset[symbol];
       valueByAsset[symbol].value = currentValue.plus(value);
     }
-    const formatted = formatAmount(formatUnits(value.toString(), decimals));
-    return { ...trx, formatted };
   });
 
   const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
+  const formattedValuesArray = valuesArray.map(({ symbol, value, decimals }) => ({
+    formatted: formatAmount(formatUnits(value.toString(), decimals)),
+    symbol,
+  }));
 
   const itemStatusIcon = (isPending && 'pending') || '';
   const rightColumnInnerStyle = (isPending && { flexDirection: 'row', alignItems: 'center' }) || {};
@@ -102,43 +105,44 @@ export const SettlementItem = (props: Props) => {
         <ListItemWithImage
           onPress={onPress}
           label="Deposit"
-          itemImageSource={ppnIcon}
+          iconName="received"
+          iconColor="#497391"
           subtext="to Smart Wallet"
           customAddon={(
             <ListWrapper>
-              {valuesArray.map(({ symbol, value, decimals }) => {
-                const formatted = formatAmount(formatUnits(value.toString(), decimals));
-                return (<ItemValue key={symbol}>{`${formatted} ${symbol}`}</ItemValue>);
-              })}
+              {formattedValuesArray.map(({ formatted, symbol }) =>
+                <ItemValue key={symbol}>{`+${formatted} ${symbol}`}</ItemValue>,
+              )}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
           itemStatusIcon={itemStatusIcon}
           customAddonAlignLeft={customAddonAlignLeft}
           rightColumnInnerStyle={rightColumnInnerStyle}
-          diameter={56}
+          diameter={48}
+          iconBackgroundColor="#eee"
         />
       }
       {(!type || type === SYNTHETIC) &&
         <ListItemWithImage
           onPress={onPress}
-          label="Withdrawal"
+          label="Settle"
           itemImageSource={ppnIcon}
-          subtext="from PLR Network"
+          subtext="to Smart Wallet"
           customAddon={(
             <ListWrapper>
-              {formattedPPNTransactions.map(({ symbol, formatted, hash }) => (
-                <TankAssetBalance
-                  key={hash}
+              {formattedValuesArray.map(({ formatted, symbol }) =>
+                (<TankAssetBalance
+                  key={symbol}
                   amount={`- ${formatted} ${symbol}`}
                   monoColor
-                />
-              ))}
+                />),
+              )}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
           itemStatusIcon={itemStatusIcon}
           customAddonAlignLeft={customAddonAlignLeft}
           rightColumnInnerStyle={rightColumnInnerStyle}
-          diameter={56}
+          diameter={48}
         />
       }
     </React.Fragment>
