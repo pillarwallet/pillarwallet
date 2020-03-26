@@ -44,7 +44,7 @@ import { getAssetsAsList, getBalance } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_C_CONFIRM } from 'constants/navigationConstants';
 import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
 import assetsConfig from 'configs/assetsConfig';
@@ -129,7 +129,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     const contact = navigation.getParam('contact', {});
 
-    this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+    this.props.navigation.navigate(SEND_COLLECTIBLE_C_CONFIRM, {
       assetData,
       receiver: contact.ethAddress,
       source: 'Assets',

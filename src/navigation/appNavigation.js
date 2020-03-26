@@ -174,6 +174,9 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
+  SEND_COLLECTIBLE_CONFIRM_FLOW,
+  SEND_COLLECTIBLE_C_CONFIRM,
+  SEND_COLLECTIBLE_CONTACTS,
   WALLETCONNECT_FLOW,
   WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
@@ -533,7 +536,14 @@ const sendTokenFromContactFlow = createStackNavigator({
 
 // SEND COLLECTIBLE FROM ASSET FLOW
 const sendCollectibleFromAssetFlow = createStackNavigator({
+  [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
   [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
+const sendCollectibleConfirmFlow = createStackNavigator({
+  [SEND_COLLECTIBLE_C_CONFIRM]: SendCollectibleConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
@@ -657,6 +667,7 @@ const AppFlowNavigation = createStackNavigator(
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
+    [SEND_COLLECTIBLE_CONFIRM_FLOW]: sendCollectibleConfirmFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
