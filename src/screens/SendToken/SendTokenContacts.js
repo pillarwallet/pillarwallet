@@ -25,6 +25,8 @@ import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
+import get from 'lodash.get';
+import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
@@ -39,7 +41,11 @@ import Spinner from 'components/Spinner';
 
 // constants
 import { COLLECTIBLES, BTC } from 'constants/assetsConstants';
-import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import {
+  ACCOUNTS,
+  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
+  SEND_COLLECTIBLE_CONTACTS,
+} from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -176,16 +182,14 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { navigation, blockchainNetworks } = this.props;
-    this.assetData = navigation.getParam('assetData', {});
+    const { blockchainNetworks } = this.props;
     this.isPPNTransaction = isPillarPaymentNetworkActive(blockchainNetworks);
-    const { token } = this.assetData;
-
+    this.updateAssetData();
     this.state = {
       isScanning: false,
       isValidatingEns: false,
       value: { address: '' },
-      formStructure: getFormStructure(this.props.wallet.address, token),
+      formStructure: getFormStructure(this.props.wallet.address, get(this.assetData, 'token')),
       formOptions: generateFormOptions({ onIconPress: this.handleQRScannerOpen }),
     };
   }
@@ -196,6 +200,27 @@ class SendTokenContacts extends React.Component<Props, State> {
       syncContactsSmartAddresses();
     }
   }
+
+  componentDidUpdate() {
+    const navigationAssetData = this.props.navigation.getParam('assetData');
+    if (navigationAssetData && !isEqual(navigationAssetData, this.assetData)) {
+      /**
+       * if nav stack is restored after app unlock then this view constructor is already initiated
+       * with empty values, when navigating back to this view in restored stack let's update with
+       * actual values if present (added on back from upper level screen)
+       */
+      this.updateAssetData();
+      this.updateFormStructure();
+    }
+  }
+
+  updateAssetData = () => {
+    this.assetData = this.props.navigation.getParam('assetData', {});
+  };
+
+  updateFormStructure = () => this.setState({
+    formStructure: getFormStructure(this.props.wallet.address, get(this.assetData, 'token')),
+  });
 
   handleChange = (value: Object) => {
     this.setState({ value });
@@ -315,11 +340,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { navigation, navigateToSendTokenAmount } = this.props;
 
     if (this.assetData.tokenType === COLLECTIBLES) {
-      navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+      navigation.navigate(SEND_COLLECTIBLE_CONTACTS_CONFIRM, {
         assetData: this.assetData,
         receiver: receiverAddress,
         source: 'Contact',
         receiverEnsName,
+        backTo: SEND_COLLECTIBLE_CONTACTS,
       });
       return;
     }
