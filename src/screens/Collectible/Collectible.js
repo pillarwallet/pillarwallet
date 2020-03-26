@@ -28,7 +28,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import ImageView from 'react-native-image-view';
 
-import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
+import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import IconButton from 'components/IconButton';
@@ -155,7 +155,7 @@ class CollectibleScreen extends React.Component<Props, State> {
   }
 
   goToSendTokenFlow = (assetData: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_CONTACTS, { assetData });
+    this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
 
   onTouchImage = () => {
