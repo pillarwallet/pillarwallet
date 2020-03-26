@@ -22,9 +22,9 @@ import * as React from 'react';
 import OverlayModal from 'components/OverlayModal/OverlayModal';
 
 type Props = {
-    isVisible: boolean,
-    onButtonPress: () => void,
-}
+  isVisible: boolean,
+  onButtonPress: () => void,
+};
 
 const content = `Pillar Exchange or Offers Engine, as we call it,\
  aggregates offers from multiple providers vetted by Pillar. 
