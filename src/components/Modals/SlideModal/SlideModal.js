@@ -306,6 +306,7 @@ class SlideModal extends React.Component<Props, *> {
           zIndex: 10,
         }}
       >
+        {!fullScreenComponent &&
         <Root>
           <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor}>
             {!fullScreen &&
@@ -315,8 +316,11 @@ class SlideModal extends React.Component<Props, *> {
             }
             {modalContent()}
           </ContentWrapper>
-        </Root>
-        {isVisible && fullScreenComponent}
+        </Root>}
+        {!!fullScreenComponent &&
+        <Root>
+          {fullScreenComponent}
+        </Root>}
       </Modal>
     );
   }

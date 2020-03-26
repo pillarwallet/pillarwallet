@@ -372,6 +372,7 @@ const homeFlow = createStackNavigator({
   [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
