@@ -21,34 +21,98 @@ import { Platform, PermissionsAndroid } from 'react-native';
 import Contacts from 'react-native-contacts';
 
 // constants
-import { PHONE_CONTACTS_RECEIVED } from 'constants/phoneContactsConstants';
+import {
+  PHONE_CONTACTS_ERROR,
+  PHONE_CONTACTS_RECEIVED,
+  FETCHING_PHONE_CONTACTS,
+} from 'constants/phoneContactsConstants';
 
 // models, types
 import type { Dispatch } from 'reducers/rootReducer';
 import type { PhoneContact } from 'models/PhoneContact';
-import type { PhoneContactsReceivedAction } from 'reducers/phoneContactsReducer';
+import type {
+  PhoneContactsReceivedAction,
+  PhoneContactsErrorAction,
+  FetchingPhoneContactsAction,
+} from 'reducers/phoneContactsReducer';
+import type { ReferralContact } from 'reducers/referralsReducer';
 
-const phoneContactsReceived = (contacts: PhoneContact[]): PhoneContactsReceivedAction => ({
+const phoneContactsReceived = (contacts: ReferralContact[]): PhoneContactsReceivedAction => ({
   type: PHONE_CONTACTS_RECEIVED,
   payload: contacts,
 });
 
-const filterContacts = (contacts: PhoneContact[]): PhoneContact[] => {
-  return contacts.filter(contact =>
-    contact.emailAddresses.length || contact.phoneNumbers.length);
+const phoneContactsError = (): PhoneContactsErrorAction => ({
+  type: PHONE_CONTACTS_ERROR,
+});
+
+const fetchingPhoneContacts = (): FetchingPhoneContactsAction => ({
+  type: FETCHING_PHONE_CONTACTS,
+});
+
+const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
+  return contacts.reduce((array, contact) => {
+    const {
+      recordID,
+      displayName,
+      emailAddresses,
+      phoneNumbers,
+      thumbnailPath,
+    } = contact;
+    const formattedContact = {
+      name: displayName,
+      photo: thumbnailPath,
+    };
+    const arrayOfContacts = [];
+
+    if (emailAddresses.length) {
+      emailAddresses
+        .reduce((uniqueEmails, emailItem) => {
+          if (!uniqueEmails.some(({ email }) => email === emailItem.email)) return [...uniqueEmails, { ...emailItem }];
+          return uniqueEmails;
+        }, [])
+        .forEach((email) => {
+          arrayOfContacts.push({
+            ...formattedContact,
+            id: `${recordID}-${email.id}`,
+            email: email.email,
+          });
+        });
+    }
+
+    if (phoneNumbers.length) {
+      phoneNumbers
+        .reduce((uniqueValidPhones, phoneItem) => {
+          const phoneWithoutSpaces = phoneItem.number.replace(/\s/g, '');
+          // we can filter out invalid phone numbers here using isValidPhone(phoneWithoutSpaces)
+          // yet I'm not sure if user would understand why some contacts are not showing
+          // (I've added Toast with error message when selecting contact with invalid phone number)
+          if (!uniqueValidPhones.some(({ number }) => number === phoneWithoutSpaces)) {
+            return [...uniqueValidPhones, { ...phoneItem, number: phoneWithoutSpaces }];
+          }
+          return uniqueValidPhones;
+        }, [])
+        .forEach((phone) => {
+          arrayOfContacts.push({
+            ...formattedContact,
+            id: `${recordID}-${phone.id}`,
+            phone: phone.number,
+          });
+        });
+    }
+
+    if (arrayOfContacts.length) {
+      return [...array, ...arrayOfContacts];
+    }
+    return array;
+  }, []);
 };
 
-const sortContacts = (contacts: PhoneContact[]): PhoneContact[] => {
+const sortContacts = (contacts: ReferralContact[]): ReferralContact[] => {
   return contacts.sort((a, b) => {
-    if (a.givenName === b.givenName) {
-      return 0;
-    }
-
-    if (a.givenName < b.givenName) {
-      return -1;
-    }
-
-    return 1;
+    if (a.name > b.name) return 1;
+    if (a.name < b.name) return -1;
+    return 0;
   });
 };
 
@@ -68,16 +132,20 @@ export const fetchPhoneContactsAction = () => {
   return async (dispatch: Dispatch) => {
     askPermission()
       .then(() => {
+        dispatch(fetchingPhoneContacts());
         Contacts.getAll((err, contacts) => {
           if (err === 'denied') {
-            // TODO: handle error?
+            dispatch(phoneContactsError());
             return;
           }
 
-          const filteredContacts = filterContacts(contacts);
-          dispatch(phoneContactsReceived(sortContacts(filteredContacts)));
+          const formattedContacts = formatContacts(contacts);
+          dispatch(phoneContactsReceived(sortContacts(formattedContacts)));
         });
       })
-      .catch(() => null);
+      .catch(() => {
+        dispatch(phoneContactsError());
+        return null;
+      });
   };
 };

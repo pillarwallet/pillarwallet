@@ -23,6 +23,7 @@ import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import styled, { withTheme } from 'styled-components/native';
 import { getThemeColors, themedColors, getThemeType } from 'utils/themes';
@@ -32,8 +33,6 @@ import { ListCard } from 'components/ListItem/ListCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import SlideModal from 'components/Modals/SlideModal';
-import ReferralCodeModal from 'screens/Profile/ReferralCodeModal';
 import {
   SECURITY_SETTINGS,
   RECOVERY_SETTINGS,
@@ -42,6 +41,7 @@ import {
   ADD_EDIT_USER,
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
+  REFER_FLOW,
 } from 'constants/navigationConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import { logoutAction } from 'actions/authActions';
@@ -50,14 +50,17 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { BackupStatus } from 'reducers/walletReducer';
+import type { User } from 'models/User';
 
+import { toastReferral } from 'utils/toasts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
-  user: Object,
+  user: User,
   backupStatus: BackupStatus,
   logoutUser: () => void,
+  smartWalletFeatureEnabled: boolean,
 };
 
 type State = {
@@ -113,16 +116,32 @@ const StyledEmoji = styled(Emoji)`
 class Menu extends React.Component<Props, State> {
   state = {
     visibleModal: null,
-  }
+  };
+
+  handleReferralItemPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
 
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus,
+      theme, navigation, backupStatus, smartWalletFeatureEnabled,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-
-    return [
+    const referalItem = {
+      key: 'referFriends',
+      title: 'Refer friends',
+      icon: 'present',
+      iconColor: colors.accent,
+      action: this.handleReferralItemPress,
+    };
+    const menuItems = [
       {
         key: 'securitySettings',
         title: 'Security settings',
@@ -155,15 +174,6 @@ class Menu extends React.Component<Props, State> {
         card: true,
         action: () => navigation.navigate(APP_SETTINGS),
       },
-      /*
-      {
-        key: 'referFriends',
-        title: 'Refer friends',
-        icon: 'present',
-        iconColor: colors.accent,
-        action: () => this.toggleSlideModalOpen('referralCode'),
-      },
-      */
       {
         key: 'community',
         title: 'Community',
@@ -194,7 +204,12 @@ class Menu extends React.Component<Props, State> {
         hidden: !__DEV__,
       },
     ];
-  }
+
+    if (smartWalletFeatureEnabled) {
+      menuItems.splice(4, 0, referalItem);
+    }
+    return menuItems;
+  };
 
   renderMenuItem = ({ item }) => {
     const {
@@ -268,7 +283,7 @@ class Menu extends React.Component<Props, State> {
   render() {
     const items = this.getMenuItems();
     const { visibleModal } = this.state;
-    const { user, theme } = this.props;
+    const { theme } = this.props;
     const currentTheme = getThemeType(theme);
     const logo = currentTheme === LIGHT_THEME ? headerLogo : headerLogoDarkMode;
 
@@ -314,15 +329,6 @@ class Menu extends React.Component<Props, State> {
           modalHide={this.toggleSlideModalOpen}
           htmlEndpoint="privacy_policy"
         />
-
-        {/* REFERRAL */}
-        <SlideModal
-          isVisible={visibleModal === 'referralCode'}
-          title="Referral code"
-          onModalHide={this.toggleSlideModalOpen}
-        >
-          <ReferralCodeModal username={user.username} onModalClose={this.toggleSlideModalOpen} />
-        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -331,9 +337,11 @@ class Menu extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
+  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

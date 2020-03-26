@@ -48,6 +48,7 @@ export const lightThemeColors = {
   danger: '#ff0005',
   helpIcon: '#f7931a',
   popularSwaps: '#d08cb1',
+  notice: '#ea480e',
   activeTabBarIcon: '#007AFF',
   inactiveTabBarIcon: '#D4D9DB',
   buttonSecondaryBackground: '#e6f1f9',
@@ -80,6 +81,7 @@ export const darkThemeColors = {
   danger: '#ff0005',
   helpIcon: '#f7931a',
   popularSwaps: '#d08cb1',
+  notice: '#ea480e',
   activeTabBarIcon: '#FFFFFF',
   inactiveTabBarIcon: '#818eb3',
   buttonSecondaryBackground: '#102132',
@@ -189,6 +191,10 @@ export const themedColors = {
   popularSwaps: theme('current', {
     lightTheme: lightThemeColors.popularSwaps,
     darkTheme: darkThemeColors.popularSwaps,
+  }),
+  notice: theme('current', {
+    lightTheme: lightThemeColors.notice,
+    darkTheme: darkThemeColors.notice,
   }),
   activeTabBarIcon: theme('current', {
     lightTheme: lightThemeColors.activeTabBarIcon,

@@ -17,36 +17,45 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { PhoneContact } from 'models/PhoneContact';
 
 import {
   PHONE_CONTACTS_RECEIVED,
   FETCHING_PHONE_CONTACTS,
+  PHONE_CONTACTS_ERROR,
 } from 'constants/phoneContactsConstants';
+import type { ReferralContact } from 'reducers/referralsReducer';
+
 
 export type PhoneContactsReducerState = {
-  data: PhoneContact[],
+  data: ReferralContact[],
   isFetchComplete: boolean,
   isFetching: boolean,
+  fetchError: boolean,
 };
 
 export type PhoneContactsReceivedAction = {|
   type: 'PHONE_CONTACTS_RECEIVED',
-  payload: PhoneContact[],
+  payload: ReferralContact[],
 |};
 
-export type FetchingPhoneContacts = {|
+export type PhoneContactsErrorAction = {|
+  type: 'PHONE_CONTACTS_ERROR',
+|};
+
+export type FetchingPhoneContactsAction = {|
   type: 'FETCHING_PHONE_CONTACTS',
 |};
 
 export type PhoneContactsReducerAction =
-  | FetchingPhoneContacts
-  | PhoneContactsReceivedAction;
+  | FetchingPhoneContactsAction
+  | PhoneContactsReceivedAction
+  | PhoneContactsErrorAction;
 
 export const initialState: PhoneContactsReducerState = {
   data: [],
   isFetchComplete: false,
   isFetching: false,
+  fetchError: false,
 };
 
 const ratesReducer = (
@@ -67,6 +76,15 @@ const ratesReducer = (
         ...state,
         isFetching: true,
         isFetchComplete: false,
+        fetchError: false,
+      };
+
+    case PHONE_CONTACTS_ERROR:
+      return {
+        ...state,
+        isFetching: false,
+        isFetchComplete: true,
+        fetchError: true,
       };
 
     default:

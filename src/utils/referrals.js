@@ -18,33 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-type PhoneContactEmail = {|
-  id: string,
-  label: string,
-  email: string,
-|};
+import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
+import type { SentInvitationsCount } from 'reducers/referralsReducer';
 
-type PhoneContactPhone = {|
-  id: string,
-  label: string,
-  number: string,
-|};
-
-export type PhoneContact = {|
-  recordID: string,
-  displayName: string,
-  givenName: string,
-  middleName: string,
-  familyName: string,
-  thumbnailPath: string,
-  emailAddresses: PhoneContactEmail[],
-  phoneNumbers: PhoneContactPhone[],
-|};
-
-export type PhoneContactSimple = {|
-  givenName: string,
-  familyName: string,
-  thumbnailPath: string,
-  emailAddress?: string,
-  phoneNumber?: string,
-|};
+export const getRemainingDailyInvitations = (sentInvitationsCount: SentInvitationsCount) => {
+  const { count, date } = sentInvitationsCount;
+  const currentDate = new Date().toJSON().slice(0, 10);
+  if (date !== currentDate) return ALLOWED_DAILY_INVITES;
+  return ALLOWED_DAILY_INVITES - count;
+};

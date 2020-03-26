@@ -30,6 +30,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 
+
 type InsightChecklistItem = {
   status?: boolean,
   title: string,
@@ -50,11 +51,15 @@ type Props = {
   isVisible: boolean,
   onLayout?: Function,
   wrapperStyle?: Object,
+  wrapperPadding?: number | string,
   theme: Theme,
-}
+};
+
 
 const Wrapper = styled.View`
-  padding: 16px ${spacing.layoutSides}px 6px ${spacing.layoutSides}px;
+  padding: 16px ${({ wrapperPadding }) => !!wrapperPadding || wrapperPadding === 0
+    ? wrapperPadding
+    : `${spacing.layoutSides}px 6px ${spacing.layoutSides}px`};
 `;
 
 const CardRow = styled.View`
@@ -177,6 +182,7 @@ const Insight = (props: Props) => {
     isVisible,
     onLayout,
     wrapperStyle,
+    wrapperPadding,
     theme,
   } = props;
 
@@ -184,7 +190,7 @@ const Insight = (props: Props) => {
 
   if (!isVisible) return null;
   return (
-    <Wrapper onLayout={onLayout} style={wrapperStyle}>
+    <Wrapper onLayout={onLayout} style={wrapperStyle} wrapperPadding={wrapperPadding}>
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10, width: '100%' }}
         contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40 }}

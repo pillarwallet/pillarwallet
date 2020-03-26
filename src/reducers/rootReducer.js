@@ -144,6 +144,7 @@ export type RootReducerState = {|
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
+  referrals: ReferralsReducerState,
   insights: InsightsReducerState,
   referrals: ReferralsReducerState,
   phoneContacts: PhoneContactsReducerState,

@@ -26,7 +26,8 @@ import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
   ReferralsSendingInviteAction,
-  ReferralsInviteSentAction,
+  ReferralContact,
+  InviteSentPayload,
 } from 'reducers/referralsReducer';
 
 // constants
@@ -34,10 +35,16 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import {
   SENDING_INVITE,
   INVITE_SENT,
+  SET_CONTACTS_FOR_REFERRAL,
+  REMOVE_CONTACT_FOR_REFERRAL,
+  REFERRAL_INVITE_ERROR,
+  ALLOW_ACCESS_PHONE_CONTACTS,
 } from 'constants/referralsConstants';
 
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
+import { saveDbAction } from './dbActions';
+
 
 export type ClaimTokenAction = {
   walletId: string,
@@ -55,9 +62,33 @@ const sendingInviteAction = (): ReferralsSendingInviteAction => ({
   type: SENDING_INVITE,
 });
 
-const inviteSentAction = (): ReferralsInviteSentAction => ({
-  type: INVITE_SENT,
-});
+const inviteSentAction = (dispatch: Dispatch, payload: InviteSentPayload) => {
+  dispatch({
+    type: INVITE_SENT,
+    payload,
+  });
+  dispatch({
+    type: ADD_NOTIFICATION,
+    payload: {
+      message: 'Invitations sent',
+      messageType: 'success',
+    },
+  });
+};
+
+const inviteErrorAction = (dispatch: Dispatch, errorMessage?: string) => {
+  dispatch({
+    type: ADD_NOTIFICATION,
+    payload: {
+      message: errorMessage || 'Please try again later',
+      title: 'Invites have not been sent',
+      messageType: 'warning',
+    },
+  });
+  dispatch({
+    type: REFERRAL_INVITE_ERROR,
+  });
+};
 
 export const completeRefferalsEventAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -66,10 +97,15 @@ export const completeRefferalsEventAction = () => {
   };
 };
 
-export const sendReferralInvitationsAction = (invitations: ReferralInvitation[]) => {
+export const sendReferralInvitationsAction = (invitationContacts: ReferralContact[]) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletId = get(getState(), 'user.data.walletId');
+    const sentInvitationsCount = get(getState(), 'referrals.sentInvitationsCount');
+    const alreadyInvitedContacts = get(getState(), 'referrals.alreadyInvitedContacts', []);
+    const { count, date } = sentInvitationsCount;
     dispatch(sendingInviteAction());
+
+    const invitations = invitationContacts.map(({ email, phone }) => ({ email, phone }));
 
     await Promise.all(invitations.map(async (invitation) => {
       const { email, phone } = invitation;
@@ -82,17 +118,37 @@ export const sendReferralInvitationsAction = (invitations: ReferralInvitation[])
           token: token.token,
         });
 
-        await api.sendReferralInvitation({
+        const { error } = await api.sendReferralInvitation({
           token: token.token,
           walletId,
           referralLink,
           email,
           phone,
         });
+
+        if (error) {
+          const errorMessage = get(error, 'response.data.message');
+          inviteErrorAction(dispatch, errorMessage);
+        } else {
+          let updatedInvitationCount = count + invitationContacts.length;
+          const currentDate = new Date().toJSON().slice(0, 10);
+          if (date !== currentDate) updatedInvitationCount = invitationContacts.length;
+          const updatedAlreadyInvitedContacts = [...alreadyInvitedContacts, ...invitationContacts];
+          await dispatch(saveDbAction('referralData', {
+            referrals: {
+              alreadyInvitedContacts: updatedAlreadyInvitedContacts,
+              sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
+            },
+          }));
+          inviteSentAction(dispatch, {
+            alreadyInvitedContacts: invitationContacts,
+            sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
+          });
+        }
+      } else {
+        inviteErrorAction(dispatch);
       }
     }));
-
-    dispatch(inviteSentAction());
   };
 };
 
@@ -135,5 +191,32 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
         },
       });
     }
+  };
+};
+
+export const setContactsForReferralAction = (contacts: ReferralContact[]) => {
+  return (dispatch: Dispatch) => {
+    dispatch({
+      type: SET_CONTACTS_FOR_REFERRAL,
+      payload: contacts,
+    });
+  };
+};
+
+export const removeContactForReferralAction = (id: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch({
+      type: REMOVE_CONTACT_FOR_REFERRAL,
+      payload: id,
+    });
+  };
+};
+
+export const allowToAccessPhoneContactsAction = () => {
+  return async (dispatch: Dispatch) => {
+    await dispatch(saveDbAction('referralData', { referrals: { hasAllowedToAccessContacts: true } }));
+    dispatch({
+      type: ALLOW_ACCESS_PHONE_CONTACTS,
+    });
   };
 };

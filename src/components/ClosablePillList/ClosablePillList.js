@@ -17,55 +17,50 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontStyles } from 'utils/variables';
-import { BaseText, MediumText } from 'components/Typography';
-import { themedColors } from 'utils/themes';
+import ClosablePill from 'components/ClosablePill';
+import type { PillItem } from 'components/ClosablePill';
+
 
 type Props = {
-  title: string,
-  bodyText?: string,
-  large?: boolean,
-  wide?: boolean,
+  listItems: PillItem[],
+  onItemClose: (id: string) => void,
   children?: React.Node,
-}
+};
 
-const EmptySectionTextWrapper = styled.View`
-  ${({ wide }) => !wide && 'width: 234px;'}
-  align-items: center;
-  justify-content: center;
-`;
 
-const EmptySectionTitle = styled(MediumText)`
-  ${({ large }) => large ? fontStyles.large : fontStyles.big};
-  margin-bottom: 6px;
-  text-align: center;
-`;
-
-const EmptySectionText = styled(BaseText)`
-  ${fontStyles.regular};
-  text-align: center;
+const ListWrapper = styled.View`
+  width: 100%;
   flex-wrap: wrap;
-  color: ${themedColors.secondaryText};
+  flex-direction: row;
+  margin: 4px 0;
 `;
 
-const EmptyStateParagraph = (props: Props) => {
+
+const ClosablePillList = (props: Props) => {
   const {
-    title,
-    bodyText,
-    large,
-    wide,
+    listItems,
+    onItemClose,
     children,
   } = props;
 
   return (
-    <EmptySectionTextWrapper wide={wide}>
-      <EmptySectionTitle large={large}>{title}</EmptySectionTitle>
-      {!!bodyText && <EmptySectionText>{bodyText}</EmptySectionText>}
+    <ListWrapper>
+      {listItems.map(({ onClose, id, label }) => {
+        return (
+          <ClosablePill
+            key={id}
+            id={id}
+            label={label}
+            style={{ marginVertical: 4, marginRight: 8 }}
+            onClose={() => onClose ? onClose(id) : onItemClose(id)}
+          />);
+      })}
       {children}
-    </EmptySectionTextWrapper>
+    </ListWrapper>
   );
 };
 
-export default EmptyStateParagraph;
+export default ClosablePillList;

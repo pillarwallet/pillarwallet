@@ -56,7 +56,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 // constants
-import { CONTACT, CONNECTION_REQUESTS, REFER_FRIENDS } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS, REFER_FLOW } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import {
   DISCONNECT,
@@ -70,11 +70,13 @@ import {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SearchResults } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
+import type { User } from 'models/User';
 
 // utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { sortLocalContacts } from 'utils/contacts';
+import { toastReferral } from 'utils/toasts';
 
 const referralImage = require('assets/images/referral_gift.png');
 
@@ -175,6 +177,8 @@ type Props = {
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
   theme: Theme,
+  user: User,
+  smartWalletFeatureEnabled: boolean,
 }
 
 type ConnectionStatusProps = {
@@ -395,6 +399,16 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
+  handleReferralBannerPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
+
   renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
     const {
       searchResults,
@@ -404,6 +418,7 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       chats,
       theme,
+      smartWalletFeatureEnabled,
     } = this.props;
 
     const usersFound = (apiUsers.length + localContacts.length) > 0;
@@ -479,6 +494,7 @@ class PeopleScreen extends React.Component<Props, State> {
                   bodyText="Build your connection list by searching for someone"
                 />
               </EmptyStateWrapper>
+              {!!smartWalletFeatureEnabled &&
               <ReferralCTAWrapper>
                 <ReferralCTAImage source={referralImage} />
                 <ReferralCTATitle>Pillar is social</ReferralCTATitle>
@@ -489,10 +505,10 @@ class PeopleScreen extends React.Component<Props, State> {
                   small
                   height={32}
                   title="Invite friends"
-                  onPress={() => { navigation.navigate(REFER_FRIENDS); }}
+                  onPress={this.handleReferralBannerPress}
                   style={{ alignSelf: 'flex-start', marginTop: 14, marginBottom: 48 }}
                 />
-              </ReferralCTAWrapper>
+              </ReferralCTAWrapper>}
             </Wrapper>
             }
           </View>
@@ -567,12 +583,16 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
+  user: { data: user },
+  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }: RootReducerState): $Shape<Props> => ({
   searchResults,
   isSearching,
   localContacts,
   invitations,
   chats,
+  user,
+  smartWalletFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

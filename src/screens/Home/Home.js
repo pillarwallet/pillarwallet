@@ -45,7 +45,7 @@ import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalRew
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   BADGE,
-  REFER_FRIENDS,
+  REFER_FLOW,
   MENU,
   MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
@@ -79,6 +79,7 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { toastReferral } from 'utils/toasts';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -88,13 +89,13 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-
+import type { User } from 'models/User';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   invitations: Object[],
-  user: Object,
+  user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -259,9 +260,18 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  renderReferral(colors) {
-    const { navigation, smartWalletFeatureEnabled } = this.props;
+  handleReferralBannerPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
 
+  renderReferral(colors) {
+    const { smartWalletFeatureEnabled } = this.props;
     const { isReferralBannerVisible } = this.state;
 
     if (!smartWalletFeatureEnabled) {
@@ -271,7 +281,7 @@ class HomeScreen extends React.Component<Props, State> {
     return (
       <Banner
         isVisible={isReferralBannerVisible}
-        onPress={() => navigation.navigate(REFER_FRIENDS)}
+        onPress={this.handleReferralBannerPress}
         bannerText="Refer friends and earn rewards, free PLR and more."
         imageProps={{
           style: {
@@ -421,7 +431,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={[4]}
+          stickyHeaderIndices={[3]}
           refreshControl={
             <RefreshControl
               refreshing={false}
