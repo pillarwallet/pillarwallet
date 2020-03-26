@@ -529,15 +529,10 @@ const sendTokenFromContactFlow = createStackNavigator({
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  // collectibles
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
 
 // SEND COLLECTIBLE FROM ASSET FLOW
 const sendCollectibleFromAssetFlow = createStackNavigator({
-  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
   [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
