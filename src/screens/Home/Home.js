@@ -122,7 +122,7 @@ type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
-  smartWalletFeatureEnabled: boolean,
+  referralsFeatureEnabled: boolean,
 };
 
 type State = {
@@ -271,10 +271,10 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   renderReferral(colors) {
-    const { smartWalletFeatureEnabled } = this.props;
+    const { referralsFeatureEnabled } = this.props;
     const { isReferralBannerVisible } = this.state;
 
-    if (!smartWalletFeatureEnabled) {
+    if (!referralsFeatureEnabled) {
       return null;
     }
 
@@ -497,7 +497,11 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   userEvents: { data: userEvents },
   appSettings: { data: { baseFiatCurrency } },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: {
+    data: {
+      REFERRALS_ENABLED: referralsFeatureEnabled,
+    },
+  },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -509,7 +513,7 @@ const mapStateToProps = ({
   accounts,
   userEvents,
   baseFiatCurrency,
-  smartWalletFeatureEnabled,
+  referralsFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
