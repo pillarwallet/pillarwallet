@@ -154,7 +154,6 @@ const ActionsWrapper = styled(Wrapper)`
   border-color: ${themedColors.border};
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 const initialSWInsights = [
   'It can be recovered from another linked device',
@@ -219,10 +218,7 @@ class WalletView extends React.Component<Props, State> {
   }
 
   renderFoundTokensList() {
-    const {
-      assets,
-      assetsSearchResults,
-    } = this.props;
+    const { assets, assetsSearchResults } = this.props;
     const addedAssets = [];
     const foundAssets = [];
 
@@ -253,7 +249,7 @@ class WalletView extends React.Component<Props, State> {
           label={name}
           subtext={symbol}
           itemImageUrl={fullIconUrl}
-          fallbackSource={genericToken}
+          fallbackToGenericToken
           small
         >
           <Switcher

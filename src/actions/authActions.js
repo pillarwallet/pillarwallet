@@ -69,9 +69,6 @@ import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 
-// configs
-import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
-
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
@@ -81,7 +78,6 @@ import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
 import { signalInitAction } from './signalClientActions';
-import { updateConnectionKeyPairs } from './connectionKeyPairActions';
 import { initOnLoginSmartWalletAccountAction, switchAccountAction } from './accountsActions';
 import { updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction, patchSmartWalletSentSignedTransactionsAction } from './historyActions';
@@ -90,6 +86,8 @@ import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
+import { updateConnectionsAction } from './connectionsActions';
+
 
 const Crashlytics = firebase.crashlytics();
 
@@ -120,18 +118,12 @@ export const loginAction = (
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     let { accounts: { data: accounts } } = getState();
     const {
-      connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
-      appSettings: {
-        data: {
-          blockchainNetwork = '',
-        },
-      },
+      appSettings: { data: { blockchainNetwork = '' } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
     } = getState();
-    const { wallet: encryptedWallet } = await storage.get('wallet');
 
-    const generateNewConnKeys = connectionKeyPairs.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1;
+    const { wallet: encryptedWallet } = await storage.get('wallet');
 
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -220,20 +212,12 @@ export const loginAction = (
         const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
         const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
 
-        // update connections
-        dispatch(updateConnectionKeyPairs(
-          wallet.mnemonic,
-          wallet.privateKey,
-          user.walletId,
-          generateNewConnKeys,
-        ));
-
         // init smart wallet
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
         }
 
-        // set ETHEREUM network as active
+        // set Ethereum network as active
         // if we disable feature flag or end beta testing program
         // while user has set PPN or BTC as active network
         const revertToDefaultNetwork =
@@ -289,6 +273,7 @@ export const loginAction = (
       }
 
       dispatch(fetchTransactionsHistoryAction());
+      if (user.walletId) dispatch(updateConnectionsAction());
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
