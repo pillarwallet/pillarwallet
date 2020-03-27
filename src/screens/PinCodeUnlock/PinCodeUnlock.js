@@ -27,7 +27,6 @@ import * as Keychain from 'react-native-keychain';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
-import { PRE_KEY_THRESHOLD } from 'configs/connectionKeysConfig';
 import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
@@ -41,6 +40,7 @@ import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/c
 import { getKeychainDataObject } from 'utils/keychain';
 import { getBiometryType } from 'utils/settings';
 
+
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
@@ -50,8 +50,7 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
-  connectionKeyPairs: Object,
-}
+};
 
 type State = {
   waitingTime: number,
@@ -122,10 +121,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   showBiometricLogin() {
-    const { loginWithPrivateKey, connectionKeyPairs: { data: connKeys, lastConnectionKeyIndex } } = this.props;
+    const { loginWithPrivateKey } = this.props;
     const { biometricsShown, supportedBiometryType } = this.state;
 
-    if (biometricsShown || connKeys.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1) {
+    if (biometricsShown) {
       Toast.show({
         message: 'Pin code is needed to finish setting up connections',
         type: 'warning',
@@ -235,11 +234,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
-  connectionKeyPairs,
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
-  connectionKeyPairs,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

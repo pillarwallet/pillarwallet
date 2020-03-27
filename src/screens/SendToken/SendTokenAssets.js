@@ -2,17 +2,14 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -40,14 +37,18 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import TankAssetBalance from 'components/TankAssetBalance';
-import DeploymentView from 'components/DeploymentView';
+import SWActivationCard from 'components/SWActivationCard';
 
 import { formatAmount, formatMoney } from 'utils/common';
 import { getAssetsAsList, getBalance } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
-import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import {
+  SEND_TOKEN_AMOUNT,
+  SEND_COLLECTIBLE_CONFIRM,
+  SEND_TOKEN_ASSETS,
+} from 'constants/navigationConstants';
 import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 
 import assetsConfig from 'configs/assetsConfig';
@@ -56,6 +57,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+
 
 type Props = {
   fetchAssetsBalances: () => void,
@@ -79,6 +81,7 @@ type NextScreenAssetData = {
   contractAddress: string,
   decimals: number,
   icon: string,
+  iconColor: string,
 };
 
 type NextScreenCollectibleData = {
@@ -91,7 +94,6 @@ type NextScreenCollectibleData = {
   tokenType: string,
 };
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 const ContentBackground = styled(Wrapper)`
    flex: 1;
@@ -101,6 +103,7 @@ const InnerWrapper = styled(Wrapper)`
    flex: 1;
    margin-top: ${spacing.large}px;
 `;
+
 
 class SendTokenAssetsScreen extends React.Component<Props, State> {
   state = {
@@ -114,6 +117,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       contractAddress,
       decimals,
       icon,
+      iconColor,
     } = nextScreenAssetData;
 
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
@@ -122,6 +126,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         contractAddress,
         decimals,
         icon,
+        iconColor,
       },
       receiver: ethAddress,
       source: 'Assets',
@@ -136,6 +141,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       assetData,
       receiver: contact.ethAddress,
       source: 'Assets',
+      backTo: SEND_TOKEN_ASSETS,
     });
   }
 
@@ -155,6 +161,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       decimals: item.decimals,
       ethAddress: contact.ethAddress,
       icon: fullIconMonoUrl,
+      iconColor: fullIconUrl,
     };
     if (assetShouldRender) {
       return null;
@@ -164,9 +171,9 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.proceedSendingAsset(nextScreenAssetData)}
         label={item.name}
-        itemImageUrl={fullIconUrl || genericToken}
+        itemImageUrl={fullIconUrl}
         itemValue={`${assetBalance} ${item.symbol}`}
-        fallbackSource={genericToken}
+        fallbackToGenericToken
         customAddon={paymentNetworkBalance ? (
           <TankAssetBalance
             amount={paymentNetworkBalanceFormatted}
@@ -184,8 +191,8 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.proceedSendingCollectible(item)}
         label={item.name}
-        itemImageUrl={item.icon || genericToken}
-        fallbackSource={genericToken}
+        itemImageUrl={item.icon}
+        fallbackToGenericToken
       />
     );
   };
@@ -294,11 +301,9 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: `Send to ${contactUsername}` }] }}
       >
         {disableSend &&
-        <DeploymentView
-          message={sendingBlockedMessage}
-          buttonLabel="Deploy Smart Wallet"
-          buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-        />
+          <SWActivationCard
+            message="To start sending and exchanging assets you need to activate Smart Wallet"
+          />
         }
         {!disableSend &&
         <ContentBackground>

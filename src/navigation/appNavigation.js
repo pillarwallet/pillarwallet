@@ -60,6 +60,7 @@ import LoginScreen from 'screens/Home/Login';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import WalletConnectScreen from 'screens/WalletConnect';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
@@ -118,7 +119,7 @@ import {
   stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
   startListeningForBalanceChangeAction,
@@ -173,7 +174,9 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
+  SEND_COLLECTIBLE_CONTACTS,
   WALLETCONNECT_FLOW,
+  WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
@@ -226,6 +229,8 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
+  CONNECT_TAB,
+  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -248,10 +253,12 @@ const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
+const iconConnect = require('assets/icons/icon_connect.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
 const iconServicesActive = require('assets/icons/icon_services_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
 const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
+const iconConnectActive = require('assets/icons/icon_connect_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
@@ -327,6 +334,7 @@ peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
+    [WALLETCONNECT]: WalletConnectScreen,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
@@ -366,7 +374,7 @@ const tabBarIcon = ({
         style={{
           width: 24,
           height: 24,
-          tintColor: focused ? colors.primary : colors.navbarItems,
+          tintColor: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
         }}
         resizeMode="contain"
         source={focused ? iconActive : icon}
@@ -394,7 +402,7 @@ const tabBarLabel = ({ text, theme }) => ({ focused }) => {
     <BaseText
       style={{
         fontSize: fontSizes.regular,
-        color: focused ? colors.primary : colors.navbarItems,
+        color: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
         textAlign: 'center',
       }}
       numberOfLines={1}
@@ -430,6 +438,18 @@ const tabNavigation = createBottomTabNavigator(
           theme: screenProps.theme,
         }),
         tabBarLabel: tabBarLabel({ text: 'Assets', theme: screenProps.theme }),
+      }),
+    },
+    [CONNECT_TAB]: {
+      screen: walletConnectFlow,
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconConnectActive,
+          icon: iconConnect,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
       }),
     },
     [PEOPLE]: {
@@ -492,35 +512,28 @@ const sendTokenFromAssetFlow = createStackNavigator(
 );
 
 // SEND BITCOIN FROM ASSET FLOW
-const sendBitcoinFromAssetFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
-    [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
-    [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-// SEND ASSETS FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-  // tokens
+const sendBitcoinFromAssetFlow = createStackNavigator({
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  // collectibles
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
+  [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
+  [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
 }, StackNavigatorModalConfig);
 
 // SEND COLLECTIBLE FROM ASSET FLOW
 const sendCollectibleFromAssetFlow = createStackNavigator({
-  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONTACTS_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
+// SEND TOKEN FROM CONTACT FLOW
+const sendTokenFromContactFlow = createStackNavigator({
+  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
   [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
@@ -539,13 +552,13 @@ const backupWalletFlow = createStackNavigator({
 
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
   [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
-  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
 smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -675,7 +688,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchAssetsBalances: () => Function,
+  fetchAllAccountsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -719,7 +732,7 @@ class AppFlow extends React.Component<Props, State> {
       startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
-      fetchAssetsBalances,
+      fetchAllAccountsBalances,
       getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
@@ -727,7 +740,7 @@ class AppFlow extends React.Component<Props, State> {
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances();
+    fetchAllAccountsBalances();
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
@@ -915,7 +928,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
+  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },

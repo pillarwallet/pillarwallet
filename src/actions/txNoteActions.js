@@ -38,12 +38,12 @@ import ChatService from 'services/chat';
 
 // utils
 import { isCaseInsensitiveMatch } from 'utils/common';
-import { isContactAvailable } from 'utils/contacts';
+import { findContactIdByUsername, isContactAvailable } from 'utils/contacts';
 import { extractTxNotesFromMessages } from 'utils/txNotes';
-import { getConnectionStateCheckParamsByUsername } from 'utils/chat';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+
 
 const chat = new ChatService();
 
@@ -61,20 +61,17 @@ export const getExistingTxNotesAction = () => {
 
 export const sendTxNoteByContactAction = (username: string, message: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
+    const {
+      contacts: { data: contacts },
+      user: { data: { id: userId } },
+    } = getState();
+
+    const targetUserId = findContactIdByUsername(contacts, username);
     const addContactParams = {
       username,
-      ...connectionStateCheckParams,
+      userId,
+      targetUserId,
     };
-
-    if (!addContactParams.userId) {
-      Toast.show({
-        message: 'Tx note send failed',
-        type: 'warning',
-        autoClose: false,
-      });
-      return;
-    }
 
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
@@ -91,7 +88,8 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
       const params = {
         username,
         message: content,
-        ...connectionStateCheckParams,
+        userId,
+        targetUserId,
       };
       await chat.sendMessage('tx-note', params, true, (requestId) => {
         // callback is ran if websocket message sent
@@ -132,6 +130,7 @@ export const getTxNoteByContactAction = (username: string) => {
       chat: { data: { isDecrypting } },
       session: { data: { isOnline } },
       contacts: { data: contacts },
+      user: { data: { id: userId } },
     } = getState();
     if (isDecrypting || !isOnline) return;
 
@@ -140,15 +139,11 @@ export const getTxNoteByContactAction = (username: string) => {
 
     dispatch({ type: TX_NOTE_DECRYPTING_STARTED });
 
-    const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
-    const addContactParams = { username, ...connectionStateCheckParams };
-    if (!addContactParams.userId) {
-      Toast.show({
-        message: `Unable to retrieve tx note for ${username}`,
-        type: 'warning',
-      });
-      return;
-    }
+    const addContactParams = {
+      username,
+      userId,
+      targetUserId: recipientContact.id,
+    };
 
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
@@ -187,19 +182,19 @@ export const getTxNoteByContactAction = (username: string) => {
 
 export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, params: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      contacts: { data: contacts },
+      user: { data: { id: userId } },
+    } = getState();
+
     const { username } = params;
-    const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
+    const targetUserId = findContactIdByUsername(contacts, username);
     const addContactParams = {
       username,
-      ...connectionStateCheckParams,
+      userId,
+      targetUserId,
     };
-    if (!addContactParams.userId) {
-      Toast.show({
-        message: `Can't send message to ${username}`,
-        type: 'warning',
-      });
-      return;
-    }
+
     try {
       await chat.client.addContact(addContactParams, true);
       await chat.sendMessage(tag, params, true);
@@ -218,19 +213,19 @@ export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, param
 
 export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      contacts: { data: contacts },
+      user: { data: { id: userId } },
+    } = getState();
+
     const { source: username } = message;
-    const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
+    const targetUserId = findContactIdByUsername(contacts, username);
     const addContactParams = {
       username,
-      ...connectionStateCheckParams,
+      userId,
+      targetUserId,
     };
-    if (!addContactParams.userId) {
-      Toast.show({
-        message: `Unable to retrieve tx note for ${username}`,
-        type: 'warning',
-      });
-      return;
-    }
+
     await chat.client.addContact(addContactParams, false).then(async () => {
       await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
       await chat.deleteMessage(message.source, message.timestamp, message.requestId);

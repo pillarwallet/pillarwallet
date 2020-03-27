@@ -51,12 +51,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { formatMoney, noop } from 'utils/common';
+import { images } from 'utils/images';
 
 import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 type SelectorValueType = {
   input: string | number,
@@ -70,13 +70,16 @@ type SelectorValueType = {
 type SelectorOptions = {
   options?: Array<Object>,
   horizontalOptions?: Array<Object>,
+  fiatOptions?: Array<Object>,
   selectorPlaceholder?: 'string',
   fullWidth?: boolean,
   showOptionsTitles?: boolean,
   horizontalOptionsTitle?: string,
   optionsTitle?: string,
+  fiatOptionsTitle?: string,
   selectorModalTitle?: string,
   optionsSearchPlaceholder?: string,
+  displayFiatOptionsFirst?: boolean,
 };
 
 type Value = string | number;
@@ -114,6 +117,8 @@ type Props = {
   selectorOptions?: SelectorOptions,
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
+  rightPlaceholder?: string,
+  fallbackToGenericToken?: boolean,
 };
 
 type State = {
@@ -249,9 +254,9 @@ const Selector = styled.TouchableOpacity`
   background-color: ${themedColors.card};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  ${({ fullWidth, theme }) => fullWidth && `
+  border: 1px solid ${themedColors.secondaryAccent};
+  ${({ fullWidth }) => fullWidth && `
     flex: 1;
-    border: 1px solid ${theme.colors.secondaryAccent};
     border-radius: 4px;
   `}
   margin: 0;
@@ -264,6 +269,11 @@ const ValueWrapper = styled.View`
 
 const Placeholder = styled(MediumText)`
   ${fontStyles.big};
+`;
+
+const PlaceholderRight = styled(BaseText)`
+  ${fontStyles.medium};
+  margin-right: 8px;
 `;
 
 const SelectorValue = styled(MediumText)`
@@ -319,6 +329,7 @@ const EmptyStateWrapper = styled(Wrapper)`
 const InputLabel = styled(MediumText)`
   margin-bottom: 8px;
 `;
+
 
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
@@ -428,8 +439,8 @@ class TextInput extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.selectValue(option)}
         label={name}
-        itemImageUrl={iconUrl || genericToken}
-        fallbackSource={genericToken}
+        itemImageUrl={iconUrl}
+        fallbackToGenericToken
         balance={!!formattedBalanceInFiat && {
           balance: assetBalance,
           value: formattedBalanceInFiat,
@@ -490,6 +501,27 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  renderHorizontalOptions = (data, title) => {
+    if (!data.length) return null;
+    const { selectorOptions: { showOptionsTitles } = {} } = this.props;
+    return (
+      <HorizontalOptions>
+        {(showOptionsTitles && !!title) &&
+          <OptionsHeader>{title}</OptionsHeader>
+        }
+        <FlatList
+          data={data}
+          keyExtractor={({ name }) => name}
+          keyboardShouldPersistTaps="always"
+          renderItem={this.renderHorizontalOption}
+          horizontal
+          contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+          ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
+        />
+      </HorizontalOptions>
+    );
+  };
+
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
     const {
@@ -502,20 +534,24 @@ class TextInput extends React.Component<Props, State> {
       getInputRef,
       errorMessageStyle,
       innerImageURI,
-      fallbackSource,
+      fallbackToGenericToken,
       buttonProps,
       theme,
       leftSideText,
       numeric,
       iconProps,
+      rightPlaceholder,
       selectorOptions = {},
       errorMessageOnTop,
       inputWrapperStyle = {},
     } = this.props;
+    let { fallbackSource } = this.props;
+
     const colors = getThemeColors(theme);
     const { value = '', selectorValue = {}, label } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
+    if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
 
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
@@ -537,10 +573,13 @@ class TextInput extends React.Component<Props, State> {
       optionsTitle,
       selectorModalTitle,
       optionsSearchPlaceholder,
+      fiatOptions = [],
+      fiatOptionsTitle,
+      displayFiatOptionsFirst,
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
-    const showRightAddon = !!iconProps || loading;
+    const showRightAddon = !!iconProps || loading || rightPlaceholder;
 
     const selectorOptionsCount = options.length + horizontalOptions.length;
     const {
@@ -569,6 +608,8 @@ class TextInput extends React.Component<Props, State> {
 
     const imageSource = this.resolveAssetSource(innerImageURI);
     const optionImageSource = this.resolveAssetSource(selectedOptionIcon);
+
+    const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
@@ -611,7 +652,7 @@ class TextInput extends React.Component<Props, State> {
                 <LeftSideWrapper>
                   {(innerImageURI || fallbackSource) && <Image
                     source={imageSource}
-                    fallbackSource={!imageSource ? fallbackSource : imageSource}
+                    fallbackSource={fallbackSource}
                     style={{ marginRight: 9 }}
                   />}
                   {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
@@ -648,6 +689,7 @@ class TextInput extends React.Component<Props, State> {
               />}
               {showRightAddon &&
               <RightSideWrapper>
+                {!!rightPlaceholder && <PlaceholderRight color={colors.accent}>{rightPlaceholder}</PlaceholderRight>}
                 {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
                 {!!loading && <Spinner width={30} height={30} />}
               </RightSideWrapper>}
@@ -710,22 +752,9 @@ class TextInput extends React.Component<Props, State> {
                   marginBottom="0"
                 />
               </SearchBarWrapper>
-              {!!filteredHorizontalListData.length &&
-              <HorizontalOptions>
-                {(showOptionsTitles && !!horizontalOptionsTitle) &&
-                <OptionsHeader>{horizontalOptionsTitle}</OptionsHeader>
-                }
-                <FlatList
-                  data={filteredHorizontalListData}
-                  keyExtractor={({ name }) => name}
-                  keyboardShouldPersistTaps="always"
-                  renderItem={this.renderHorizontalOption}
-                  horizontal
-                  contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
-                  ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
-                />
-              </HorizontalOptions>
-              }
+              {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
+              {this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle)}
+              {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
               {!!filteredListData.length &&
               <FlatList
                 data={filteredListData}

@@ -206,6 +206,38 @@ describe('bitcoin service', () => {
 
       expect(address1).toEqual(address2);
     });
+
+    it('has consistent address derivation', async () => {
+      const root = await rootFromMnemonic(mnemonic, 'testnet');
+
+      expect(root.toWIF())
+        .toEqual('cVA5PZZkVcgdDAEmWuiBXiLh7abCyq6amQ3gT3avwj6wtMtV3VDK');
+
+      expect(root.toBase58()).toEqual(
+        'tprv8ZgxMBicQKsPdN5wuuQH5xExXChNkkyV4HLSQeHaX2ceNcUg5o8' +
+        'koiUopqC8zS4znezXLP6d8rauuHZ5S72RBLGxpZWVFmvWsPXovD9W3vA',
+      );
+
+      expect(root.neutered().toBase58()).toEqual(
+        'tpubD6NzVbkrYhZ4Wq7joZ4sVMu56EDJv6APdawDhAKswJR3D6jSiBx' +
+        'LzD6fzxFtqYai64eCh1UDFRBbp2e47n5JMnHy5NFYpSMvFt2dEGmp586',
+      );
+
+      expect(keyPairAddress(root.derivePath('m/44\'/60\'/0\'/0')))
+        .toEqual('miVfBxLzerTXpaFcQwFaPcGACzRCFBp1zb');
+
+      expect(keyPairAddress(root.derivePath('m/44\'/60\'/0\'/1')))
+        .toEqual('mw41t6u54dPGUG9u5LNH4w63EXPG2hCqh1');
+
+      expect(keyPairAddress(root.derivePath('m/44\'/60\'/0\'/2')))
+        .toEqual('mybAueCX97uxipj7veAiD6zarquTP971ZH');
+
+      expect(keyPairAddress(root.derivePath('m/44\'/60\'/0\'/3')))
+        .toEqual('mwUa113C72XD2fUEp5U2kCuGkm47wgRTaR');
+
+      expect(keyPairAddress(root.derivePath('m/44\'/60\'/0\'/4')))
+        .toEqual('mgcZyTjAeWrFRZsFJZRW4vJqeWVmVtW4Hc');
+    });
   });
 
   describe('keyPairAddress', () => {
