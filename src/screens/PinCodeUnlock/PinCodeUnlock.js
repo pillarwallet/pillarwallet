@@ -39,6 +39,7 @@ import {
   getKeychainDataObject,
   getSupportedBiometryType,
   getPrivateKeyFromKeychainData,
+  shouldUpdateKeychainObject,
   type KeyChainData,
 } from 'utils/keychain';
 import { getBiometryType } from 'utils/settings';
@@ -121,12 +122,15 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   loginWithPrivateKey = (data: KeyChainData) => {
     const { loginWithPrivateKey } = this.props;
+    // migrate older users
+    if (shouldUpdateKeychainObject(data)) {
+      this.requirePinLogin();
+      return;
+    }
     const privateKey = getPrivateKeyFromKeychainData(data);
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       loginWithPrivateKey(privateKey, this.onLoginSuccess);
-    } else {
-      this.setState({ showPin: true });
     }
   };
 
@@ -142,17 +146,24 @@ class PinCodeUnlock extends React.Component<Props, State> {
     this.setState({ lastAppState: nextAppState });
   };
 
-  showBiometricLogin() {
-    const { biometricsShown, supportedBiometryType } = this.state;
-
-    if (biometricsShown) {
+  requirePinLogin = (withToast?: boolean) => {
+    const { supportedBiometryType } = this.state;
+    if (withToast) {
       Toast.show({
         message: 'Pin code is needed to finish setting up connections',
         type: 'warning',
         title: `${supportedBiometryType} could not be used`,
         autoClose: false,
       });
-      this.setState({ showPin: true });
+    }
+    this.setState({ showPin: true });
+  }
+
+  showBiometricLogin() {
+    const { biometricsShown } = this.state;
+
+    if (biometricsShown) {
+      this.requirePinLogin(true);
       return;
     }
 

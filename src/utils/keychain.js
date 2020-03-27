@@ -46,10 +46,7 @@ export const getKeychainDataObject = () => Keychain
     service: KEYCHAIN_SERVICE,
     authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
   })
-  .then(({ password = '{}' }) => {
-    console.warn("retrieved")
-    console.warn(password)
-    return JSON.parse(password)})
+  .then(({ password = '{}' }) => JSON.parse(password))
   .catch(() => {});
 
 export const resetKeychainDataObject = () => Keychain
@@ -69,4 +66,8 @@ export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
 
 export const getPrivateKey = (errorHandler?: Function) => {
   return getKeychainDataObject().then(data => getPrivateKeyFromKeychainData(data)).catch(errorHandler);
+};
+
+export const shouldUpdateKeychainObject = (data: KeyChainData) => {
+  return (!data || !data.privateKey || !data.mnemonic);
 };

@@ -171,7 +171,7 @@ const finishRegistration = async ({
   dispatch: Dispatch,
   getState: GetState,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
-  mnemonic: ?string,
+  mnemonic: string,
   privateKey: string,
   address: string,
   isImported: boolean,

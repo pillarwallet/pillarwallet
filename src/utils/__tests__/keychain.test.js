@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getPrivateKeyFromKeychainData } from 'utils/keychain';
+import { getPrivateKeyFromKeychainData, shouldUpdateKeychainObject } from 'utils/keychain';
 
 describe('keychain utils test', () => {
   it('Should return null for invalid data provided', () => {
@@ -29,5 +29,17 @@ describe('keychain utils test', () => {
 
   it('Should return privateKey for valid data provided', () => {
     expect(getPrivateKeyFromKeychainData({ privateKey: 'testKey' })).toEqual('testKey');
+  });
+
+  it('Should return true if keychain object update is necessary', () => {
+    expect(shouldUpdateKeychainObject({})).toEqual(true);
+    expect(shouldUpdateKeychainObject({ testKey: 'testValue' })).toEqual(true);
+    expect(shouldUpdateKeychainObject({ privateKey: 'testValue' })).toEqual(true);
+    expect(shouldUpdateKeychainObject({ mnemonic: 'testValue' })).toEqual(true);
+    expect(shouldUpdateKeychainObject({ privateKey: '', mnemonic: '' })).toEqual(true);
+  });
+
+  it('Should return false if keychain object update is not necessary', () => {
+    expect(shouldUpdateKeychainObject({ privateKey: 'testValue', mnemonic: 'testValue' })).toEqual(false);
   });
 });
