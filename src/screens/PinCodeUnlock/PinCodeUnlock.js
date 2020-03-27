@@ -81,12 +81,18 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.errorMessage = navigation.getParam('errorMessage', '');
     this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
+
+    if (navigation.getParam('forcePin')) {
+      this.state.showPin = true;
+    }
   }
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics } = this.props;
+    const { useBiometrics, navigation } = this.props;
     const { lastAppState } = this.state;
+
+    if (navigation.getParam('forcePin')) return;
 
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
@@ -123,7 +129,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     } else {
       this.setState({ showPin: true });
     }
-  }
+  };
 
   handleAppStateChange = (nextAppState: string) => {
     const { useBiometrics } = this.props;

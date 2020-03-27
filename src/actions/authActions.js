@@ -439,6 +439,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
         params: {
           onLoginSuccess,
           errorMessage,
+          forcePin: true,
         },
       }),
     }));
