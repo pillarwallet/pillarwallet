@@ -22,7 +22,7 @@ import React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
 
-import { MediumText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 
 import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
@@ -38,6 +38,7 @@ type Position = {
 type Props = {
   codeLength: number,
   inputProps?: Object,
+  errorMessage?: ?string,
 };
 
 type State = {
@@ -68,7 +69,7 @@ const FakeInput = styled.View`
   width: ${INPUT_SIDE}px;
   height: ${INPUT_SIDE}px;
   border-radius: 4px;
-  margin: 7px;
+  margin: 5px;
   background-color: ${themedColors.tertiary};
   align-items: center;
   justify-content: center;
@@ -130,10 +131,13 @@ export default class CodeInput extends React.Component<Props, State> {
   };
 
   onChange = (value: string) => {
-    const { codeLength } = this.props;
+    const { codeLength, inputProps = {} } = this.props;
+    const { onChange } = inputProps;
     const { value: currentValue } = this.state;
     if (currentValue.length < codeLength) {
-      this.setState({ value: (currentValue + value).slice(0, codeLength) });
+      const newValue = (currentValue + value).slice(0, codeLength);
+      this.setState({ value: newValue });
+      if (onChange) onChange(newValue);
     }
   };
 
@@ -150,7 +154,7 @@ export default class CodeInput extends React.Component<Props, State> {
       inputPositions,
       focusLastOne,
     } = this.state;
-    const { codeLength, inputProps = {} } = this.props;
+    const { codeLength, inputProps = {}, errorMessage } = this.props;
     const codeArray = new Array(codeLength).fill(0);
     const values = value.replace(/\s/g, '').split('');
 
@@ -194,6 +198,7 @@ export default class CodeInput extends React.Component<Props, State> {
             />
           </Row>
         </TouchableWithoutFeedback>
+        {!!errorMessage && <BaseText regular negative>{errorMessage}</BaseText>}
       </Wrapper>
     );
   }
