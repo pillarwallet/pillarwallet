@@ -161,17 +161,21 @@ const finishRegistration = async ({
   dispatch,
   getState,
   userInfo,
+  mnemonic,
   privateKey,
   address,
   isImported,
+  enableBiometrics,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
   getState: GetState,
-  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser)
+  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
+  mnemonic: ?string,
   privateKey: string,
   address: string,
   isImported: boolean,
+  enableBiometrics?: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -224,6 +228,14 @@ const finishRegistration = async ({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
   });
+
+  // save data to keychain
+  const keychainData: KeyChainData = { mnemonic, privateKey };
+  if (enableBiometrics) {
+    await dispatch(changeUseBiometricsAction(true, keychainData, true));
+  } else {
+    await setKeychainDataObject(keychainData);
+  }
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
@@ -246,7 +258,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       importedWallet,
       apiUser,
     } = currentState.wallet.onboarding;
-
     const mnemonicPhrase = mnemonic.original;
     const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
@@ -351,7 +362,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     // re-init API with OAuth update callback
     const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
     api.init(updateOAuth, oAuthTokens);
-
     // STEP 5: finish registration
     await finishRegistration({
       api,
@@ -361,23 +371,15 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
       isImported,
+      enableBiometrics,
+      mnemonic: wallet.mnemonic,
     });
 
     // STEP 6: add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
-    // STEP 7: save data to keychain
-    console.log(mnemonicPhrase)
-    console.log(wallet)
-    const keychainData: KeyChainData = { mnemonic: wallet.mnemonic, privateKey: wallet.privateKey };
-    if (enableBiometrics) {
-      await dispatch(changeUseBiometricsAction(true, keychainData, true));
-    } else {
-      await setKeychainDataObject(keychainData);
-    }
-
-    // STEP 8: all done, navigate to the home screen
+    // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp);
   };
@@ -396,15 +398,15 @@ export const registerOnBackendAction = () => {
         data: walletData,
         onboarding: {
           apiUser,
+          mnemonic,
           privateKey,
           importedWallet,
         },
         backupStatus: { isBackedUp, isImported },
       },
     } = getState();
-
+    const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
-
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
@@ -431,6 +433,7 @@ export const registerOnBackendAction = () => {
       getState,
       userInfo,
       address: normalizeWalletAddress(walletData.address),
+      mnemonic: walletMnemonic,
       privateKey: walletPrivateKey,
       isImported,
     });
