@@ -27,7 +27,6 @@ const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
 
 export type KeyChainData = {
   privateKey?: string,
-  pin?: string,
   mnemonic?: string,
 };
 

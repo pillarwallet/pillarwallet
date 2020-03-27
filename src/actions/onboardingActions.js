@@ -392,7 +392,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
     // STEP 7: save data to keychain
-    const keychainData: KeyChainData = { pin, mnemonic: finalMnemonic, privateKey: wallet.privateKey };
+    const keychainData: KeyChainData = { mnemonic: finalMnemonic, privateKey: wallet.privateKey };
     if (enableBiometrics) {
       await dispatch(changeUseBiometricsAction(true, keychainData, true));
     } else {

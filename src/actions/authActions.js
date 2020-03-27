@@ -149,7 +149,7 @@ export const loginAction = (
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access
         if (updateKeychain && wallet.privateKey) {
-          await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic, pin });
+          await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic });
         }
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
