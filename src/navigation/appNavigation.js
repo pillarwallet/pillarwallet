@@ -174,6 +174,7 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
+  SEND_COLLECTIBLE_CONTACTS,
   WALLETCONNECT_FLOW,
   WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
@@ -229,6 +230,7 @@ import {
   APP_SETTINGS,
   MENU_FLOW,
   CONNECT_TAB,
+  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -510,30 +512,28 @@ const sendTokenFromAssetFlow = createStackNavigator(
 );
 
 // SEND BITCOIN FROM ASSET FLOW
-const sendBitcoinFromAssetFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
-    [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
-    [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-// SEND ASSETS FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-  // tokens
+const sendBitcoinFromAssetFlow = createStackNavigator({
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
+  [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
+  [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
 }, StackNavigatorModalConfig);
 
 // SEND COLLECTIBLE FROM ASSET FLOW
 const sendCollectibleFromAssetFlow = createStackNavigator({
+  [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONTACTS_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
+// SEND TOKEN FROM CONTACT FLOW
+const sendTokenFromContactFlow = createStackNavigator({
+  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
   [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);

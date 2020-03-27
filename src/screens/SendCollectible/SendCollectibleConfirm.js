@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { BackHandler, Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -13,7 +13,11 @@ import type { GasInfo } from 'models/GasInfo';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import {
+  SEND_COLLECTIBLE_CONTACTS,
+  SEND_TOKEN_ASSETS,
+  SEND_TOKEN_PIN_CONFIRM,
+} from 'constants/navigationConstants';
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -27,6 +31,7 @@ import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
 import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 import { activeAccountAddressSelector } from 'selectors';
+
 
 const NORMAL = 'avg';
 
@@ -88,6 +93,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       activeAccountAddress,
       fetchGasInfo,
     } = this.props;
+    if (Platform.OS === 'android') BackHandler.addEventListener('hardwareBackPress', this.handleBackAction);
     fetchGasInfo();
     this.fetchETHBalanceInRinkeby();
     const {
@@ -109,6 +115,31 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       this.props.fetchGasInfo();
     }
   }
+
+  componentWillUnmount() {
+    if (Platform.OS === 'android') BackHandler.removeEventListener('hardwareBackPress', this.handleBackAction);
+  }
+
+  handleBackAction = () => {
+    const { navigation, contacts } = this.props;
+    const backTo = navigation.getParam('backTo');
+    switch (backTo) {
+      case SEND_COLLECTIBLE_CONTACTS:
+        navigation.navigate(SEND_COLLECTIBLE_CONTACTS, { assetData: this.assetData });
+        break;
+      case SEND_TOKEN_ASSETS:
+        const contact = contacts.find(({ ethAddress }) => addressesEqual(this.receiver, ethAddress));
+        if (!contact) {
+          // this is impossible, but rather dismiss whole flow than follow faulty
+          navigation.dismiss();
+          break;
+        }
+        navigation.navigate(SEND_TOKEN_ASSETS, { contact });
+        break;
+      default:
+        navigation.goBack();
+    }
+  };
 
   fetchETHBalanceInRinkeby = async () => {
     const { wallet } = this.props;
@@ -174,7 +205,10 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
+        headerProps={{
+          centerItems: [{ title: 'Review and confirm' }],
+          customOnBack: this.handleBackAction,
+        }}
         footer={(
           <FooterWrapper>
             <Button
