@@ -49,7 +49,7 @@ const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
 type Props = {
-  loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => void,
+  loginWithPin: (pin: string, callback: ?Function) => void,
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
@@ -123,7 +123,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
   loginWithPrivateKey = (data: KeyChainData) => {
     const { loginWithPrivateKey } = this.props;
     // migrate older users
-    console.warn(data)
     if (shouldUpdateKeychainObject(data)) {
       this.requirePinLogin();
       return;
