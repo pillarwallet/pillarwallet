@@ -31,9 +31,10 @@ import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getPrivateKey } from 'utils/keychain';
+import { getKeychainDataObject } from 'utils/keychain';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
+import type { EthereumWallet } from 'models/Wallet';
 
 
 type HeaderProps = {
@@ -73,6 +74,8 @@ type State = {
   lastAppState: string,
   showPin: boolean,
 };
+
+type ValidPinCallback = (pin: string, wallet: EthereumWallet) => Promise<void>;
 
 const CheckAuthWrapper = styled(Container)`
   margin-top: auto;
@@ -135,11 +138,15 @@ class CheckAuth extends React.Component<Props, State> {
   }
 
   checkPrivateKey = async (errorHandler?: Function) => {
-    const { onPinValid, checkPrivateKey, modalProps } = this.props;
-    const privateKey = await getPrivateKey(errorHandler);
-    if (privateKey) {
+    const {
+      onPinValid, checkPrivateKey, modalProps, revealMnemonic,
+    } = this.props;
+    const keychainData = await getKeychainDataObject(errorHandler);
+    const { privateKey, mnemonic } = keychainData;
+    if (privateKey && mnemonic) {
       removeAppStateChangeListener(this.handleAppStateChange);
-      checkPrivateKey(privateKey, onPinValid);
+      checkPrivateKey(privateKey, (_, wallet) => onPinValid(_,
+        revealMnemonic ? { ...wallet, mnemonic } : wallet));
       this.hideModal(modalProps);
     } else {
       this.setState({ showPin: true });
@@ -284,10 +291,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  checkPin: (pin: string, onValidPin: Function, options: Object) => {
+  checkPin: (pin: string, onValidPin: ValidPinCallback, options: Object) => {
     dispatch(checkAuthAction(pin, null, onValidPin, options));
   },
-  checkPrivateKey: (privateKey: string, onValidPin: Function) => {
+  checkPrivateKey: (privateKey: string, onValidPin: ValidPinCallback) => {
     dispatch(checkAuthAction(null, privateKey, onValidPin));
   },
 });

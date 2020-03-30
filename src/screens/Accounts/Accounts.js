@@ -220,7 +220,7 @@ class AccountsScreen extends React.Component<Props, State> {
     }
   };
 
-  switchToSmartWalletAndGoToPPN = async (_: string, wallet: Object) => {
+  switchToSmartWalletAndGoToPPN = async (_: string, wallet: EthereumWallet) => {
     const {
       accounts,
       setActiveBlockchainNetwork,
@@ -259,7 +259,7 @@ class AccountsScreen extends React.Component<Props, State> {
     }
   };
 
-  switchToSmartWalletAccount = async (_: string, wallet: Object) => {
+  switchToSmartWalletAccount = async (_: string, wallet: EthereumWallet) => {
     this.setState({ showPinModal: false, changingAccount: true });
     const { navigation, switchAccount } = this.props;
     if (!this.switchToWallet) return;

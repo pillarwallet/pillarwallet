@@ -41,13 +41,13 @@ export const setKeychainDataObject = (data: KeyChainData, biometry?: boolean) =>
   })
   .catch(() => null);
 
-export const getKeychainDataObject = () => Keychain
+export const getKeychainDataObject = (errorHandler?: Function) => Keychain
   .getGenericPassword({
     service: KEYCHAIN_SERVICE,
     authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
   })
   .then(({ password = '{}' }) => JSON.parse(password))
-  .catch(() => {});
+  .catch(errorHandler);
 
 export const resetKeychainDataObject = () => Keychain
   .resetGenericPassword({
@@ -62,10 +62,6 @@ export const getSupportedBiometryType = (resHandler: (biometryType?: string) => 
 export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
   if (!data || !(Object.keys(data).length) || !data.privateKey) return null;
   return get(data, 'privateKey', null);
-};
-
-export const getPrivateKey = (errorHandler?: Function) => {
-  return getKeychainDataObject().then(data => getPrivateKeyFromKeychainData(data)).catch(errorHandler);
 };
 
 export const shouldUpdateKeychainObject = (data: KeyChainData) => {
