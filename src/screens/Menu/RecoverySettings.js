@@ -113,7 +113,6 @@ class RecoverySettings extends React.Component<Props, State> {
           revealMnemonic
           onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
           headerProps={{ onClose: this.handleScreenDismissal }}
-          enforcePin
         />
       );
     }

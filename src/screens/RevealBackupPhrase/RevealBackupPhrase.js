@@ -73,12 +73,10 @@ class RevealBackupPhrase extends React.Component<Props, State> {
   render() {
     const { pinIsValid, wallet } = this.state;
     const showPrivateKey = get(this.props, 'navigation.state.params.showPrivateKey', false);
-
     if (!pinIsValid) {
       return (
         <CheckAuth
           revealMnemonic
-          enforcePin
           onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
           headerProps={{ onClose: this.handleScreenDismissal }}
         />

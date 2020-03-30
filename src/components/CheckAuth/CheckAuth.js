@@ -104,7 +104,7 @@ class CheckAuth extends React.Component<Props, State> {
     const { lastAppState } = this.state;
 
     // do nothing if auth isn't supposed to be checked
-    if (!get(modalProps, 'isVisible')) return;
+    if (modalProps && !get(modalProps, 'isVisible')) return;
 
     if (useBiometrics
       && !revealMnemonic
@@ -277,7 +277,6 @@ class CheckAuth extends React.Component<Props, State> {
       if (headerProps) return this.renderWrappedPin();
       return null;
     }
-
     return null;
   }
 }
