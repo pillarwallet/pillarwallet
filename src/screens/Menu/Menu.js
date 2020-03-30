@@ -248,6 +248,7 @@ class Menu extends React.Component<Props, State> {
           action={action}
           labelBadge={labelBadge}
           customIcon={<StyledEmoji name={emoji} />}
+          contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
         />
       );
     }

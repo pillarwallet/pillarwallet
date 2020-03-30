@@ -51,8 +51,8 @@ type Props = {
 
 const MainWrapper = styled.View`
   flex: 1;
-  padding: 22px ${spacing.large}px 24px;
   min-height: 70px;
+  padding: 24px ${spacing.large}px 24px;
   ${({ bordered, theme }) => bordered
     ? `
     border-bottom-width: ${StyleSheet.hairlineWidth}px;
