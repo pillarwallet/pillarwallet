@@ -24,7 +24,7 @@ import { Container } from 'components/Layout';
 import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { DECRYPTING, GENERATING_CONNECTIONS } from 'constants/walletConstants';
+import { DECRYPTING } from 'constants/walletConstants';
 import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -43,7 +43,7 @@ class CurrentPin extends React.Component<Props> {
   render() {
     const { navigation, walletState } = this.props;
 
-    if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
+    if (walletState === DECRYPTING) {
       return (
         <Container center>
           <Loader messages={['Checking']} />
