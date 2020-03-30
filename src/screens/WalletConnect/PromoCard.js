@@ -104,7 +104,7 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard }: Props) => {
             Swap tokens on decentralized exchanges, lend &amp; borrow crypto, play games and more
           </BaseText>
           <ButtonsContainer>
-            <Button small primaryInverted title="Learn more" />
+            <Button small secondary title="Learn more" />
             <Spacing w={15} />
             <Button small positive title="Explore" leftIconName="search" />
           </ButtonsContainer>

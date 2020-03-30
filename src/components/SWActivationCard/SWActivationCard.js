@@ -346,7 +346,7 @@ class SWActivationCard extends React.Component<Props, State> {
             />
             <Spacing h={15} />
             <Button
-              secondaryLight
+              secondary
               title={buttonText}
               disabled={!buttonEnabled}
               onPress={this.activateSW}
