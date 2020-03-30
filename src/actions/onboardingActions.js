@@ -171,10 +171,10 @@ const finishRegistration = async ({
   dispatch: Dispatch,
   getState: GetState,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
-  mnemonic: string,
   privateKey: string,
   address: string,
   isImported: boolean,
+  mnemonic?: string,
   enableBiometrics?: boolean,
 }) => {
   // set API username (local method)
@@ -230,7 +230,7 @@ const finishRegistration = async ({
   });
 
   // save data to keychain
-  const keychainData: KeyChainData = { mnemonic, privateKey };
+  const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
   if (enableBiometrics) {
     await dispatch(changeUseBiometricsAction(true, keychainData, true));
   } else {

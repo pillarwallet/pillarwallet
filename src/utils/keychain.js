@@ -65,5 +65,5 @@ export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
 };
 
 export const shouldUpdateKeychainObject = (data: KeyChainData) => {
-  return (!data || !data.privateKey || !data.mnemonic);
+  return (!data || !data.privateKey || !Object.keys(data).includes('mnemonic'));
 };
