@@ -20,6 +20,7 @@
 
 // actions
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 // constants
 import {
@@ -32,7 +33,7 @@ import {
   STATUS_REJECTED,
 } from 'constants/connectionsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import { TYPE_SENT, UPDATE_INVITATIONS, TYPE_RECEIVED } from 'constants/invitationsConstants';
 
 // utils
 import { uniqBy } from 'utils/common';
@@ -51,12 +52,11 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId = theWalletId } },
-      contacts: { data: allContacts },
-      invitations: { data: allInvitations },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      session: { data: { isOnline } },
     } = getState();
 
-    if (!walletId) {
+    if (!walletId || !isOnline) {
       return;
     }
 
@@ -67,62 +67,57 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
     const removeContacts = [];
     const removeInvitations = [];
 
-    connections.forEach(connection => {
-      if ([STATUS_ACCEPTED, STATUS_MUTED, STATUS_BLOCKED].includes(connection.status)) {
-        const contact = {
-          id: connection.targetUserId,
-          ethAddress: connection.targetUserInfo.ethAddress,
-          username: connection.targetUserInfo.username,
-          profileImage: connection.targetUserInfo.profileImage,
-          createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
-          updatedAt: connection.updatedAt ? Date.parse(connection.updatedAt) / 1000 : null,
-          status: connection.status,
-        };
-        contacts.push(contact);
-        removeInvitations.push(connection.targetUserId);
-      } else if (connection.status === STATUS_PENDING) {
-        const existingInvitation = allInvitations.find(({ id }) => id === connection.targetUserId);
-        let invitation;
-        if (existingInvitation) {
-          // received
-          invitation = {
-            ...existingInvitation,
+    connections.forEach((connection: ApiContact) => {
+      if (connection.targetUserInfo) {
+        if ([STATUS_ACCEPTED, STATUS_MUTED, STATUS_BLOCKED].includes(connection.status)) {
+          const contact = {
+            id: connection.targetUserId,
+            ethAddress: connection.targetUserInfo.ethAddress,
+            username: connection.targetUserInfo.username,
+            profileImage: connection.targetUserInfo.profileImage,
+            createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+            updatedAt: connection.updatedAt ? Date.parse(connection.updatedAt) / 1000 : null,
+            status: connection.status,
           };
-        } else {
-          // sent
-          invitation = {
+          contacts.push(contact);
+          removeInvitations.push(connection.targetUserId);
+        } else if (connection.status === STATUS_PENDING) {
+          const invitation = {
             id: connection.targetUserId,
             username: connection.targetUserInfo.username,
             profileImage: connection.targetUserInfo.profileImage,
-            type: TYPE_SENT,
+            type: connection.direction && connection.direction === 'sent' ? TYPE_SENT : TYPE_RECEIVED,
             createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+            updatedAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
           };
+          invitations.push(invitation);
+          removeContacts.push(connection.targetUserId);
+        } else if ([STATUS_REJECTED, STATUS_CANCELLED, STATUS_DISCONNECTED].includes(connection.status)) {
+          removeInvitations.push(connection.targetUserId);
+          removeContacts.push(connection.targetUserId);
         }
-        invitations.push(invitation);
-        removeContacts.push(connection.targetUserId);
-      } else if ([STATUS_REJECTED, STATUS_CANCELLED, STATUS_DISCONNECTED].includes(connection.status)) {
-        removeInvitations.push(connection.targetUserId);
-        removeContacts.push(connection.targetUserId);
       }
     });
 
-    const updatedContacts = uniqBy(contacts.concat(allContacts), 'id')
+    const updatedContacts = uniqBy(contacts, 'id')
       .filter(({ id }) => !removeContacts.includes(id));
-    const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id')
+    const updatedInvitations = uniqBy(invitations, 'id')
       .filter(({ id }) => !removeInvitations.includes(id));
 
-    dispatch({
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+
+    await dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
     });
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
-    dispatch({
+    await dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
-    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
+    await dispatch(getExistingChatsAction());
     if (smartWalletFeatureEnabled) {
       dispatch(syncContactsSmartAddressesAction());
     }

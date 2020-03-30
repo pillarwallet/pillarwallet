@@ -24,7 +24,9 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { UPDATE_CHATS } from 'constants/chatConstants';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import ChatService from 'services/chat';
 
 
 const walletId = 'walletId';
@@ -71,6 +73,7 @@ const getContactsResponseMock = [
     status: 'pending',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
+    direction: 'sent',
     targetUserInfo: {
       userId: 4,
       username: 'user4',
@@ -191,7 +194,8 @@ const invitationsResultMock = [
     username: 'user4',
     profileImage: 'profileImgUrl4',
     type: TYPE_SENT,
-    createdAt: 4444444444,
+    createdAt: 1555491474.547,
+    updatedAt: 1555491474.547,
   },
 ];
 
@@ -200,8 +204,10 @@ type SDK = {
 };
 
 const pillarSdk: SDK = new PillarSdk();
-pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
+const chatService = new ChatService();
 
+pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
+chatService.client.getUnreadMessagesCount = jest.fn(() => { return Promise.resolve({ unread: [] }); });
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('Connections Actions tests', () => {
@@ -215,6 +221,7 @@ describe('Connections Actions tests', () => {
       invitations: {
         data: [...invitationsMock],
       },
+      session: { data: { isOnline: true } },
       user: {
         data: { walletId },
       },
@@ -223,6 +230,7 @@ describe('Connections Actions tests', () => {
           SMART_WALLET_ENABLED: false,
         },
       },
+      chat: { data: { webSocketMessages: { received: [] } } },
     };
     store = mockStore({ ...storeMock });
   });
@@ -231,6 +239,7 @@ describe('Connections Actions tests', () => {
     const expectedActions = [
       { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
       { type: UPDATE_CONTACTS, payload: contactsResultMock },
+      { type: UPDATE_CHATS, payload: [] },
     ];
     return store.dispatch(updateConnectionsAction())
       .then(() => {

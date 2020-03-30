@@ -195,6 +195,8 @@ describe('Wallet actions', () => {
       },
       { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_INVITATIONS, payload: [] },
+      { type: UPDATE_CONTACTS, payload: [] },
     ];
 
     return store.dispatch(registerWalletAction())
@@ -269,6 +271,8 @@ describe('Wallet actions', () => {
         },
       },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_INVITATIONS, payload: [] },
+      { type: UPDATE_CONTACTS, payload: [] },
     ];
 
     return store.dispatch(registerWalletAction())
@@ -331,6 +335,8 @@ describe('Wallet actions', () => {
       },
       { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_INVITATIONS, payload: [] },
+      { type: UPDATE_CONTACTS, payload: [] },
     ];
 
     return store.dispatch(registerWalletAction())
