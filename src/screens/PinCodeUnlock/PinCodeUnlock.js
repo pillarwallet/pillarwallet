@@ -25,7 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
-import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
+import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
@@ -33,16 +33,13 @@ import Loader from 'components/Loader';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
-import Toast from 'components/Toast';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import {
   getKeychainDataObject,
-  getSupportedBiometryType,
   getPrivateKeyFromKeychainData,
   shouldUpdateKeychainObject,
   type KeyChainData,
 } from 'utils/keychain';
-import { getBiometryType } from 'utils/settings';
 
 
 const ACTIVE_APP_STATE = 'active';
@@ -60,7 +57,6 @@ type State = {
   waitingTime: number,
   biometricsShown: boolean,
   lastAppState: string,
-  supportedBiometryType: string,
   showPin: boolean,
 };
 
@@ -72,7 +68,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
     waitingTime: 0,
     biometricsShown: false,
     lastAppState: AppState.currentState,
-    supportedBiometryType: '',
     showPin: false,
   };
 
@@ -100,10 +95,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {
       if (useBiometrics) {
-        getSupportedBiometryType(biometryType => {
-          this.setState({ supportedBiometryType: getBiometryType(biometryType) });
-          this.showBiometricLogin();
-        });
+        this.showBiometricLogin();
       } else {
         getKeychainDataObject().then(data => {
           this.loginWithPrivateKey(data);
@@ -140,30 +132,22 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (nextAppState === ACTIVE_APP_STATE
       && lastAppState === BACKGROUND_APP_STATE
       && useBiometrics
-      && !this.errorMessage) {
+      && !this.errorMessage
+    ) {
       this.showBiometricLogin();
     }
     this.setState({ lastAppState: nextAppState });
   };
 
-  requirePinLogin = (withToast?: boolean) => {
-    const { supportedBiometryType } = this.state;
-    if (withToast) {
-      Toast.show({
-        message: 'Pin code is needed to finish setting up connections',
-        type: 'warning',
-        title: `${supportedBiometryType} could not be used`,
-        autoClose: false,
-      });
-    }
+  requirePinLogin = () => {
     this.setState({ showPin: true });
-  }
+  };
 
   showBiometricLogin() {
     const { biometricsShown } = this.state;
 
     if (biometricsShown) {
-      this.requirePinLogin(true);
+      this.requirePinLogin();
       return;
     }
 
@@ -227,7 +211,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
+    if (walletState === DECRYPTING) {
       return (
         <Container center>
           <Loader />

@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import get from 'lodash.get';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
+import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkAuthAction } from 'actions/authActions';
 import { Container, Wrapper } from 'components/Layout';
 import Loader from 'components/Loader';
@@ -264,7 +264,7 @@ class CheckAuth extends React.Component<Props, State> {
     } = this.props;
     const { showPin } = this.state;
 
-    if (walletState === DECRYPTING || isChecking || walletState === GENERATING_CONNECTIONS) {
+    if (walletState === DECRYPTING || isChecking) {
       return (
         <Container style={{ flex: 1, width: '100%' }} center color="transparent">
           <Loader messages={['Checking']} />
