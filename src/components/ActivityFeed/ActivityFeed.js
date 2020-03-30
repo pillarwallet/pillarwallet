@@ -44,13 +44,6 @@ import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { getAssetsAsList } from 'utils/assets';
 
-// constants
-import {
-  TYPE_ACCEPTED,
-  TYPE_SENT,
-} from 'constants/invitationsConstants';
-import { CHAT } from 'constants/chatConstants';
-
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 
@@ -235,24 +228,6 @@ class ActivityFeed extends React.Component<Props, State> {
       selectedEventData: eventData,
       showModal: true,
     });
-  };
-
-  navigateToChat = (contact) => {
-    const { navigation } = this.props;
-    navigation.navigate(CHAT, { username: contact.username });
-  };
-
-  getRightLabel = (type: string) => {
-    switch (type) {
-      case TYPE_ACCEPTED:
-        return 'Connected';
-      case TYPE_SENT:
-        return 'Requested';
-      case CHAT:
-        return 'Read';
-      default:
-        return null;
-    }
   };
 
   renderActivityFeedItem = ({ item: notification }: Object) => {
