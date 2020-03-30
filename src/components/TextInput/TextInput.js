@@ -34,6 +34,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 
 import { ETH } from 'constants/assetsConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
@@ -254,7 +255,9 @@ const Selector = styled.TouchableOpacity`
   background-color: ${themedColors.card};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  border: 1px solid ${themedColors.secondaryAccent};
+  border: 1px solid ${({ theme: { current, colors } }) => {
+    return current === DARK_THEME ? colors.tertiary : colors.secondaryAccent;
+  }};
   ${({ fullWidth }) => fullWidth && `
     flex: 1;
     border-radius: 4px;
