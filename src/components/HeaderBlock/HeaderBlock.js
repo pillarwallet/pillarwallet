@@ -162,7 +162,7 @@ const TextButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   ${fontStyles.regular}px;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.link};
 `;
 
 const Indicator = styled.View`
