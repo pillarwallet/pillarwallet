@@ -111,7 +111,7 @@ export const SettlementItem = (props: Props) => {
           customAddon={(
             <ListWrapper>
               {formattedValuesArray.map(({ formatted, symbol }) =>
-                <ItemValue key={symbol}>{`+${formatted} ${symbol}`}</ItemValue>,
+                <ItemValue key={symbol}>{`+ ${formatted} ${symbol}`}</ItemValue>,
               )}
             </ListWrapper>)}
           innerWrapperHorizontalAlign="flex-start"
