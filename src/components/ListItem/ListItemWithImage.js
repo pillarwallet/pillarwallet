@@ -31,6 +31,7 @@ import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
 import { Wrapper, Spacing } from 'components/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';
+import { LabelBadge } from 'components/LabelBadge/LabelBadge';
 
 import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
@@ -39,7 +40,6 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 
 import type { Theme, ThemeColors } from 'models/Theme';
-import { LabelBadge } from '../LabelBadge/LabelBadge';
 
 
 type Props = {
