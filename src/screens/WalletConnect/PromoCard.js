@@ -93,7 +93,7 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard }: Props) => {
   }
   return (
     <CardWrapper>
-      <ShadowedCard>
+      <ShadowedCard borderRadius={30}>
         <CachedImage
           source={promoImage}
           resizeMode="cover"
