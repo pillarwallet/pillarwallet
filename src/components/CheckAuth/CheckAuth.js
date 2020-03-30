@@ -143,7 +143,7 @@ class CheckAuth extends React.Component<Props, State> {
     } = this.props;
     const keychainData = await getKeychainDataObject(errorHandler);
     const { privateKey, mnemonic } = keychainData;
-    if (privateKey && mnemonic) {
+    if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
       checkPrivateKey(privateKey, (_, wallet) => onPinValid(_,
         revealMnemonic ? { ...wallet, mnemonic } : wallet));
