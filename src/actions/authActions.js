@@ -113,7 +113,6 @@ export const loginAction = (
   pin: ?string,
   privateKey: ?string,
   onLoginSuccess: ?Function,
-  updateKeychain?: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     let { accounts: { data: accounts } } = getState();
@@ -140,9 +139,7 @@ export const loginAction = (
         wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access
-        if (updateKeychain && wallet.privateKey) {
-          await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic });
-        }
+        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic });
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };

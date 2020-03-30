@@ -123,6 +123,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   loginWithPrivateKey = (data: KeyChainData) => {
     const { loginWithPrivateKey } = this.props;
     // migrate older users
+    console.warn(data)
     if (shouldUpdateKeychainObject(data)) {
       this.requirePinLogin();
       return;
@@ -212,14 +213,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handlePinSubmit = (pin: string) => {
-    const { loginWithPin, useBiometrics } = this.props;
-    if (useBiometrics) {
-      loginWithPin(pin, this.onLoginSuccess, false);
-    } else {
-      getKeychainDataObject() // update keychain if privateKey isn't stored
-        .then(data => loginWithPin(pin, this.onLoginSuccess, !getPrivateKeyFromKeychainData(data)))
-        .catch(() => { loginWithPin(pin, this.onLoginSuccess, false); });
-    }
+    const { loginWithPin } = this.props;
+    loginWithPin(pin, this.onLoginSuccess);
     this.handleLocking(false);
   };
 
@@ -273,8 +268,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loginWithPin: (pin: string, callback: ?Function, updateKeychain) => dispatch(
-    loginAction(pin, null, callback, updateKeychain),
+  loginWithPin: (pin: string, callback: ?Function) => dispatch(
+    loginAction(pin, null, callback),
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
 });
