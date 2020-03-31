@@ -311,7 +311,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             information,
             avatarUrl,
             iconName: !avatarUrl ? directionIcon : null,
-            iconColor: isReceived ? '#497391' : 'negative',
+            iconColor: isReceived ? 'transactionReceivedIcon' : 'negative',
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
             valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
           };
@@ -502,7 +502,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         iconName={iconName}
         iconColor={this.getColor(iconColor)}
         diameter={48}
-        iconBackgroundColor="#eee"
+        iconBackgroundColor={this.getColor('iconBackground')}
         itemValue={itemValue}
         valueColor={this.getColor(valueColor)}
         customAddon={customAddon}

@@ -52,6 +52,8 @@ export const lightThemeColors = {
   inactiveTabBarIcon: '#D4D9DB',
   buttonSecondaryBackground: '#e6f1f9',
   synthetic: '#2329d6',
+  transactionReceivedIcon: '#497391',
+  iconBackground: '#ebf0f5',
 };
 
 export const darkThemeColors = {
@@ -85,6 +87,8 @@ export const darkThemeColors = {
   inactiveTabBarIcon: '#818eb3',
   buttonSecondaryBackground: '#102132',
   synthetic: '#9396ff',
+  transactionReceivedIcon: '#00E097',
+  iconBackground: '#222c46',
 };
 
 export const themedColors = {
@@ -207,6 +211,14 @@ export const themedColors = {
   synthetic: theme('current', {
     lightTheme: lightThemeColors.synthetic,
     darkTheme: darkThemeColors.synthetic,
+  }),
+  transactionReceivedIcon: theme('current', {
+    lightTheme: lightThemeColors.transactionReceivedIcon,
+    darkTheme: darkThemeColors.transactionReceivedIcon,
+  }),
+  iconBackground: theme('current', {
+    lightTheme: lightThemeColors.iconBackground,
+    darkTheme: darkThemeColors.iconBackground,
   }),
 };
 
