@@ -71,40 +71,40 @@ const Spacer = styled.View`
 `;
 
 export default class OverlayModal extends React.Component<Props, State> {
-    state: State = {
-      bottomSpaceHeight: 0,
-    }
+  state: State = {
+    bottomSpaceHeight: 0,
+  }
 
-    handleTextLayout = (e: ViewLayoutEvent) => {
-      const { y, height } = e.nativeEvent.layout;
-      this.setState({ bottomSpaceHeight: getDeviceHeight() - y - height });
-    }
+  handleTextLayout = (e: ViewLayoutEvent) => {
+    const { y, height } = e.nativeEvent.layout;
+    this.setState({ bottomSpaceHeight: getDeviceHeight() - y - height });
+  }
 
-    render() {
-      const {
-        title, content, isVisible, onButtonPress, buttonText,
-      } = this.props;
-      const { bottomSpaceHeight } = this.state;
-      return (
-        <SlideModal
-          isVisible={isVisible}
-          hideHeader
-          noTopPadding
-          fullScreen
-          noSwipeToDismiss
-          backgroundColor="transparent"
-        >
-          <Wrapper>
-            <Spacer />
-            <TextWrapper onLayout={this.handleTextLayout}>
-              <ModalTitle>{title}</ModalTitle>
-              <ModalMessage>{content}</ModalMessage>
-            </TextWrapper>
-            <ButtonWrapper height={bottomSpaceHeight}>
-              <Button title={buttonText} onPress={onButtonPress} height={48} />
-            </ButtonWrapper>
-          </Wrapper>
-        </SlideModal>
-      );
-    }
+  render() {
+    const {
+      title, content, isVisible, onButtonPress, buttonText,
+    } = this.props;
+    const { bottomSpaceHeight } = this.state;
+    return (
+      <SlideModal
+        isVisible={isVisible}
+        hideHeader
+        noTopPadding
+        fullScreen
+        noSwipeToDismiss
+        backgroundColor="transparent"
+      >
+        <Wrapper>
+          <Spacer />
+          <TextWrapper onLayout={this.handleTextLayout}>
+            <ModalTitle>{title}</ModalTitle>
+            <ModalMessage>{content}</ModalMessage>
+          </TextWrapper>
+          <ButtonWrapper height={bottomSpaceHeight}>
+            <Button title={buttonText} onPress={onButtonPress} height={48} />
+          </ButtonWrapper>
+        </Wrapper>
+      </SlideModal>
+    );
+  }
 }
