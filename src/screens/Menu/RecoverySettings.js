@@ -31,6 +31,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Theme } from 'models/Theme';
+import type { EthereumWallet } from 'models/Wallet';
 
 import { SettingsSection } from './SettingsSection';
 
@@ -96,7 +97,7 @@ class RecoverySettings extends React.Component<Props, State> {
     ];
   }
 
-  onPinValid = (wallet: Object) => {
+  onPinValid = (pin: string, wallet: EthereumWallet) => {
     this.setState({ pinIsValid: true, wallet });
   };
 
@@ -111,7 +112,8 @@ class RecoverySettings extends React.Component<Props, State> {
       return (
         <CheckAuth
           revealMnemonic
-          onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
+          onPinValid={this.onPinValid}
+          enforcePin
           headerProps={{ onClose: this.handleScreenDismissal }}
         />
       );

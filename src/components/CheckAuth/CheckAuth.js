@@ -125,7 +125,7 @@ class CheckAuth extends React.Component<Props, State> {
     }
   }
 
-  hideModal = (modalProps: ModalProps) => {
+  hideModal = (modalProps?: ModalProps) => {
     if (!modalProps || !modalProps.isVisible) return;
 
     if (modalProps.onModalHide) {
@@ -265,7 +265,7 @@ class CheckAuth extends React.Component<Props, State> {
 
     if (walletState === DECRYPTING || isChecking) {
       return (
-        <Container style={{ flex: 1, width: '100%' }} center color="transparent">
+        <Container style={{ flex: 1, width: '100%' }} center >
           <Loader messages={['Checking']} />
         </Container>
       );
