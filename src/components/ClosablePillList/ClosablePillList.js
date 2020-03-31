@@ -29,16 +29,12 @@ type Props = {
   onItemClose: (id: string) => void,
   children?: React.Node,
 };
-
-
 const ListWrapper = styled.View`
   width: 100%;
   flex-wrap: wrap;
   flex-direction: row;
   margin: 4px 0;
 `;
-
-
 const ClosablePillList = (props: Props) => {
   const {
     listItems,

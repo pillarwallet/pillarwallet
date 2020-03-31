@@ -270,7 +270,7 @@ class HomeScreen extends React.Component<Props, State> {
     }
   };
 
-  renderReferral(colors) {
+  renderReferral = (colors) => {
     const { referralsFeatureEnabled } = this.props;
     const { isReferralBannerVisible } = this.state;
 
@@ -295,7 +295,7 @@ class HomeScreen extends React.Component<Props, State> {
         onClose={() => this.setState({ isReferralBannerVisible: false })}
       />
     );
-  }
+  };
 
   handleModalHide = (callback: () => void) => {
     this.setState({ showRewardModal: false }, () => {

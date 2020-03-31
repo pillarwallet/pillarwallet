@@ -37,7 +37,7 @@ import { allowToAccessPhoneContactsAction } from 'actions/referralsActions';
 type Props = {
   navigation: NavigationScreenProp<*>,
   allowToAccessPhoneContacts: () => void,
-}
+};
 
 const ButtonWrapper = styled.View`
   flex: 1;

@@ -194,23 +194,15 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
   };
 };
 
-export const setContactsForReferralAction = (contacts: ReferralContact[]) => {
-  return (dispatch: Dispatch) => {
-    dispatch({
-      type: SET_CONTACTS_FOR_REFERRAL,
-      payload: contacts,
-    });
-  };
-};
+export const setContactsForReferralAction = (contacts: ReferralContact[]) => ({
+  type: SET_CONTACTS_FOR_REFERRAL,
+  payload: contacts,
+});
 
-export const removeContactForReferralAction = (id: string) => {
-  return (dispatch: Dispatch) => {
-    dispatch({
-      type: REMOVE_CONTACT_FOR_REFERRAL,
-      payload: id,
-    });
-  };
-};
+export const removeContactForReferralAction = (id: string) => ({
+  type: REMOVE_CONTACT_FOR_REFERRAL,
+  payload: id,
+});
 
 export const allowToAccessPhoneContactsAction = () => {
   return async (dispatch: Dispatch) => {

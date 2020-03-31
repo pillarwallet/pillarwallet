@@ -33,7 +33,7 @@ type Props = {
   wrapperStyle?: Object,
   isVisible?: boolean,
   imageProps?: Object,
-}
+};
 
 const Wrapper = styled.View`
 `;

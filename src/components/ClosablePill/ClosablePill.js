@@ -64,8 +64,6 @@ const CloseIcon = styled(Icon)`
   font-size: 8px;
   color: ${themedColors.tertiary};
 `;
-
-
 const ClosablePill = (props: PillItem) => {
   const {
     label,
