@@ -48,14 +48,14 @@ import ChatService from 'services/chat';
 import Storage from 'services/storage';
 
 // utils
-import { getConnectionStateCheckParamsByUsername, getConnectionStateCheckParamsByUserId } from 'utils/chat';
 import { isCaseInsensitiveMatch } from 'utils/common';
-import { isContactAvailable } from 'utils/contacts';
+import { isContactAvailable, findContactIdByUsername } from 'utils/contacts';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
+
 
 const chat = new ChatService();
 const storage = Storage.getInstance('db');
@@ -120,9 +120,13 @@ export const getExistingChatsAction = () => {
   };
 };
 
-export const sendMessageByContactAction = (username: string, message: Object) => {
+export const sendMessageByContactAction = (username: string, contactId: string, message: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { session: { data: { isOnline } } } = getState();
+    const {
+      session: { data: { isOnline } },
+      user: { data: { id: userId } },
+    } = getState();
+
     if (!isOnline) {
       Toast.show({
         message: 'Cannot send message offline',
@@ -131,21 +135,14 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
       });
       return;
     }
+
     try {
-      const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
       const params = {
         username,
         message: message.text,
-        ...connectionStateCheckParams,
+        userId,
+        targetUserId: contactId,
       };
-      if (!params.userId) {
-        Toast.show({
-          message: `Unable to send message to ${username}`,
-          type: 'warning',
-          autoClose: false,
-        });
-        return;
-      }
       await chat.sendMessage('chat', params, false, (requestId) => {
         // callback is ran if websocket message sent
         dispatch({
@@ -231,6 +228,7 @@ export const getChatByContactAction = (
       chat: { data: { isDecrypting } },
       session: { data: { isOnline } },
       contacts: { data: contacts },
+      user: { data: { id: userId } },
     } = getState();
     if (isDecrypting) return;
 
@@ -255,9 +253,7 @@ export const getChatByContactAction = (
 
     dispatch({ type: FETCHING_CHATS });
 
-    const connectionStateCheckParams = getConnectionStateCheckParamsByUserId(getState, targetUserId);
-    const addContactParams = { username, ...connectionStateCheckParams };
-
+    const addContactParams = { username, userId, targetUserId };
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -382,20 +378,17 @@ export const getChatByContactAction = (
 
 export const addContactAndSendWebSocketChatMessageAction = (tag: string, params: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      contacts: { data: contacts },
+      user: { data: { id: userId } },
+    } = getState();
     const { username } = params;
-    const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
+    const targetUserId = findContactIdByUsername(contacts, username);
     const addContactParams = {
       username,
-      ...connectionStateCheckParams,
+      userId,
+      targetUserId,
     };
-    if (!addContactParams.userId) {
-      Toast.show({
-        message: `Unable to send message to ${username}`,
-        type: 'warning',
-        autoClose: false,
-      });
-      return;
-    }
     try {
       await chat.client.addContact(addContactParams, true);
       await chat.sendMessage(tag, params, false);

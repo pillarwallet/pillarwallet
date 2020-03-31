@@ -43,23 +43,15 @@ describe('Transaction Notes Actions', () => {
     describe('when the tx-note sent successfully', () => {
       let contact;
       let message;
-      let contactConnectionIdentityKeys;
 
       beforeEach(async () => {
         contact = {
           username: 'test-username',
           id: 'user-id',
         };
-        contactConnectionIdentityKeys = {
-          userId: 'self-id',
-          targetUserId: 'user-id',
-          sourceIdentityKey: 'source-identity-key',
-          targetIdentityKey: 'target-identity-key',
-        };
         getState.mockImplementation(() => ({
-          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
-          connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
+          user: { data: { id: 'self-id' } },
         }));
         message = {
           text: 'lorem',
@@ -83,8 +75,6 @@ describe('Transaction Notes Actions', () => {
             username: contact.username,
             userId: 'self-id',
             targetUserId: 'user-id',
-            sourceIdentityKey: 'source-identity-key',
-            targetIdentityKey: 'target-identity-key',
             message: JSON.stringify(message),
           });
       });
@@ -104,23 +94,15 @@ describe('Transaction Notes Actions', () => {
 
     describe('when sendSilentMessageByContact throws the exception', () => {
       let contact;
-      let contactConnectionIdentityKeys;
 
       beforeEach(async () => {
         contact = {
           username: 'test-username',
           id: 'user-id',
         };
-        contactConnectionIdentityKeys = {
-          userId: 'self-id',
-          targetUserId: 'user-id',
-          sourceIdentityKey: 'source-identity-key',
-          targetIdentityKey: 'target-identity-key',
-        };
         getState.mockImplementation(() => ({
-          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
           contacts: { data: [contact] },
-          connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
+          user: { data: { id: 'self-id' } },
         }));
         chatService.client.addContact = jest.fn().mockImplementation(() => Promise.resolve());
         chatService.client.sendSilentMessageByContact = jest.fn().mockImplementation(() => Promise.reject());

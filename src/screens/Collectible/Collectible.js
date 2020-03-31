@@ -160,11 +160,11 @@ class CollectibleScreen extends React.Component<Props, State> {
 
   onTouchImage = () => {
     this.setState({ isImageViewVisible: true });
-  }
+  };
 
   onCloseImageView = () => {
     this.setState({ isImageViewVisible: false });
-  }
+  };
 
   renderImageView(collectible: Collectible) {
     const { isImageViewVisible } = this.state;
