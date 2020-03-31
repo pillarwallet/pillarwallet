@@ -68,34 +68,33 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
     const removeInvitations = [];
 
     connections.forEach((connection: ApiContact) => {
-      if (connection.targetUserInfo) {
-        if ([STATUS_ACCEPTED, STATUS_MUTED, STATUS_BLOCKED].includes(connection.status)) {
-          const contact = {
-            id: connection.targetUserId,
-            ethAddress: connection.targetUserInfo.ethAddress,
-            username: connection.targetUserInfo.username,
-            profileImage: connection.targetUserInfo.profileImage,
-            createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
-            updatedAt: connection.updatedAt ? Date.parse(connection.updatedAt) / 1000 : null,
-            status: connection.status,
-          };
-          contacts.push(contact);
-          removeInvitations.push(connection.targetUserId);
-        } else if (connection.status === STATUS_PENDING) {
-          const invitation = {
-            id: connection.targetUserId,
-            username: connection.targetUserInfo.username,
-            profileImage: connection.targetUserInfo.profileImage,
-            type: connection.direction && connection.direction === 'sent' ? TYPE_SENT : TYPE_RECEIVED,
-            createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
-            updatedAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
-          };
-          invitations.push(invitation);
-          removeContacts.push(connection.targetUserId);
-        } else if ([STATUS_REJECTED, STATUS_CANCELLED, STATUS_DISCONNECTED].includes(connection.status)) {
-          removeInvitations.push(connection.targetUserId);
-          removeContacts.push(connection.targetUserId);
-        }
+      if (!connection.targetUserInfo) return;
+      if ([STATUS_ACCEPTED, STATUS_MUTED, STATUS_BLOCKED].includes(connection.status)) {
+        const contact = {
+          id: connection.targetUserId,
+          ethAddress: connection.targetUserInfo.ethAddress,
+          username: connection.targetUserInfo.username,
+          profileImage: connection.targetUserInfo.profileImage,
+          createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+          updatedAt: connection.updatedAt ? Date.parse(connection.updatedAt) / 1000 : null,
+          status: connection.status,
+        };
+        contacts.push(contact);
+        removeInvitations.push(connection.targetUserId);
+      } else if (connection.status === STATUS_PENDING) {
+        const invitation = {
+          id: connection.targetUserId,
+          username: connection.targetUserInfo.username,
+          profileImage: connection.targetUserInfo.profileImage,
+          type: connection.direction && connection.direction === 'sent' ? TYPE_SENT : TYPE_RECEIVED,
+          createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+          updatedAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+        };
+        invitations.push(invitation);
+        removeContacts.push(connection.targetUserId);
+      } else if ([STATUS_REJECTED, STATUS_CANCELLED, STATUS_DISCONNECTED].includes(connection.status)) {
+        removeInvitations.push(connection.targetUserId);
+        removeContacts.push(connection.targetUserId);
       }
     });
 
