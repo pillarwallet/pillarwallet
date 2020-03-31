@@ -48,6 +48,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
   TX_PENDING_STATUS,
+  CONNECTION_EVENT,
 } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
@@ -111,6 +112,8 @@ type EventData = {
   customAddon?: React.Node,
   statusIcon?: string,
   eventData?: Object,
+  eventType?: string,
+  eventStatus?: string,
 };
 
 const PPNIcon = require('assets/icons/icon_PPN.png');
@@ -374,6 +377,8 @@ export class ActivityFeedItem extends React.Component<Props> {
       status,
       avatarUrl: profileImage,
       eventData: { ...event },
+      eventType: CONNECTION_EVENT,
+      eventStatus: event.type,
       statusAsButton: type === TYPE_SENT,
     };
 
@@ -476,13 +481,15 @@ export class ActivityFeedItem extends React.Component<Props> {
       customAddon,
       statusIcon,
       eventData,
+      eventType,
+      eventStatus,
     } = itemData;
 
     return (
       <ListItemWithImage
         label={name}
         subtext={information}
-        onPress={eventData && (() => selectEvent(eventData, event.type, event.status))}
+        onPress={eventData && (() => selectEvent(eventData, eventType || event.type, eventStatus || event.status))}
         badge={badge}
         actionLabel={status}
         actionLabelColor={this.getColor(statusColor)}
