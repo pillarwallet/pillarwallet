@@ -54,12 +54,14 @@ type ModalProps = {
   isVisible?: boolean,
 };
 
+type ValidPinCallback = (pin: string, wallet: EthereumWallet) => Promise<void>;
+
 type Props = {
   checkPin: (pin: string, onValidPin: Function, options: Object) => void,
   checkPrivateKey: (privateKey: string, onValidPin: Function) => void,
   wallet: Object,
   revealMnemonic: boolean,
-  onPinValid: Function,
+  onPinValid: ValidPinCallback,
   isChecking: boolean,
   title?: string,
   useBiometrics: ?boolean,
@@ -75,7 +77,6 @@ type State = {
   showPin: boolean,
 };
 
-type ValidPinCallback = (pin: string, wallet: EthereumWallet) => Promise<void>;
 
 const CheckAuthWrapper = styled(Container)`
   margin-top: auto;
@@ -186,7 +187,8 @@ class CheckAuth extends React.Component<Props, State> {
 
   onPinValidSuccess = (pin: string, wallet: EthereumWallet) => {
     const { onPinValid } = this.props;
-    this.setState({ showPin: false }, () => { onPinValid(pin, wallet); });
+    onPinValid(pin, wallet);
+    this.setState({ showPin: false });
   };
 
   getPinError = (walletState: string) => {
