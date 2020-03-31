@@ -19,10 +19,15 @@
 */
 import branch, { BranchEvent } from 'react-native-branch';
 
+type LinkMetadata = {|
+  email?: string,
+  phone?: string,
+  token: string,
+|};
 
 export const getUserReferralLink = async (
   inviterWalletId: string,
-  data: Object,
+  data: LinkMetadata,
 ): Promise<string> => {
   const branchIoUniversalObject = await branch.createBranchUniversalObject(
     `${inviterWalletId}-referral-link-${+new Date()}`,

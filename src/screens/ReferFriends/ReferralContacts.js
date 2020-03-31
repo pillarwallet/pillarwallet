@@ -134,7 +134,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
   }
 
 
-  handleSearch = (query: any) => {
+  handleSearch = (query: string) => {
     this.setState({ query });
   };
 

@@ -297,6 +297,12 @@ class HomeScreen extends React.Component<Props, State> {
     );
   }
 
+  handleModalHide = (callback: () => void) => {
+    this.setState({ showRewardModal: false }, () => {
+      if (callback) callback();
+    });
+  }
+
   render() {
     const {
       cancelInvitation,
@@ -480,8 +486,7 @@ class HomeScreen extends React.Component<Props, State> {
         </ScrollView>
         <ReferralModalReward
           isVisible={showRewardModal}
-          onModalHide={(callback) => this.setState({ showRewardModal: false },
-            () => { if (callback) callback(); })}
+          onModalHide={this.handleModalHide}
         />
       </ContainerWithHeader>
     );

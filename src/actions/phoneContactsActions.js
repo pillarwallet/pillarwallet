@@ -29,13 +29,20 @@ import {
 
 // models, types
 import type { Dispatch } from 'reducers/rootReducer';
-import type { PhoneContact } from 'models/PhoneContact';
+import type {
+  PhoneContact,
+  PhoneContactEmail,
+  PhoneContactPhone,
+} from 'models/PhoneContact';
 import type {
   PhoneContactsReceivedAction,
   PhoneContactsErrorAction,
   FetchingPhoneContactsAction,
 } from 'reducers/phoneContactsReducer';
 import type { ReferralContact } from 'reducers/referralsReducer';
+
+// utils
+import { stringWithoutSpaces } from 'utils/common';
 
 const phoneContactsReceived = (contacts: ReferralContact[]): PhoneContactsReceivedAction => ({
   type: PHONE_CONTACTS_RECEIVED,
@@ -49,6 +56,28 @@ const phoneContactsError = (): PhoneContactsErrorAction => ({
 const fetchingPhoneContacts = (): FetchingPhoneContactsAction => ({
   type: FETCHING_PHONE_CONTACTS,
 });
+
+const filterDuplicateEmails = (emailAddresses: PhoneContactEmail[]): PhoneContactEmail[] => {
+  return emailAddresses.reduce((uniqueEmails, emailItem) => {
+    if (!uniqueEmails.some(({ email }) => email === emailItem.email)) {
+      return [...uniqueEmails, { ...emailItem }];
+    }
+
+    return uniqueEmails;
+  }, []);
+};
+
+const filterDuplicatePhones = (phoneNumbers: PhoneContactPhone[]): PhoneContactPhone[] => {
+  return phoneNumbers.reduce((uniqueValidPhones, phoneItem) => {
+    const phoneWithoutSpaces = stringWithoutSpaces(phoneItem.number);
+
+    if (!uniqueValidPhones.some(({ number }) => number === phoneWithoutSpaces)) {
+      return [...uniqueValidPhones, { ...phoneItem, number: phoneWithoutSpaces }];
+    }
+
+    return uniqueValidPhones;
+  }, []);
+};
 
 const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
   return contacts.reduce((array, contact) => {
@@ -66,11 +95,7 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
     const arrayOfContacts = [];
 
     if (emailAddresses.length) {
-      emailAddresses
-        .reduce((uniqueEmails, emailItem) => {
-          if (!uniqueEmails.some(({ email }) => email === emailItem.email)) return [...uniqueEmails, { ...emailItem }];
-          return uniqueEmails;
-        }, [])
+      filterDuplicateEmails(emailAddresses)
         .forEach((email) => {
           arrayOfContacts.push({
             ...formattedContact,
@@ -81,17 +106,7 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
     }
 
     if (phoneNumbers.length) {
-      phoneNumbers
-        .reduce((uniqueValidPhones, phoneItem) => {
-          const phoneWithoutSpaces = phoneItem.number.replace(/\s/g, '');
-          // we can filter out invalid phone numbers here using isValidPhone(phoneWithoutSpaces)
-          // yet I'm not sure if user would understand why some contacts are not showing
-          // (I've added Toast with error message when selecting contact with invalid phone number)
-          if (!uniqueValidPhones.some(({ number }) => number === phoneWithoutSpaces)) {
-            return [...uniqueValidPhones, { ...phoneItem, number: phoneWithoutSpaces }];
-          }
-          return uniqueValidPhones;
-        }, [])
+      filterDuplicatePhones(phoneNumbers)
         .forEach((phone) => {
           arrayOfContacts.push({
             ...formattedContact,

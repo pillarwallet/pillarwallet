@@ -18,13 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-type PhoneContactEmail = {|
+export type PhoneContactEmail = {|
   id: string,
   label: string,
   email: string,
 |};
 
-type PhoneContactPhone = {|
+export type PhoneContactPhone = {|
   id: string,
   label: string,
   number: string,

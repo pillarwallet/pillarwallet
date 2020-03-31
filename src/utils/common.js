@@ -52,6 +52,10 @@ const supportedAddressPrefixes = new RegExp(
   `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
 );
 
+export const stringWithoutSpaces = (s: string): string => {
+  return s.replace(/\s/g, '');
+};
+
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
     const timeout = setTimeout(() => {
