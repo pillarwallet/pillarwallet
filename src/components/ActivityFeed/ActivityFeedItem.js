@@ -159,6 +159,9 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   usernameOrAddress = (event: Object) => {
+    if (event.username) {
+      return event.username;
+    }
     const contact = this.getContact(event);
     if (contact) {
       return contact.username;
