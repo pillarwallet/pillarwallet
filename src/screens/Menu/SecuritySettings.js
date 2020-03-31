@@ -137,6 +137,7 @@ class SecuritySettings extends React.Component<Props, State> {
         <CheckAuth
           onPinValid={this.onPinValid}
           revealMnemonic
+          enforcePin
           modalProps={{
             isVisible: showPinModal,
             onModalHide: () => this.setState({ showPinModal: false }),

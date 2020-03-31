@@ -139,17 +139,22 @@ class CheckAuth extends React.Component<Props, State> {
 
   checkPrivateKey = async (errorHandler?: Function) => {
     const {
-      onPinValid, checkPrivateKey, modalProps, revealMnemonic,
+      onPinValid, checkPrivateKey, modalProps, revealMnemonic, enforcePin,
     } = this.props;
-    const keychainData = await getKeychainDataObject(errorHandler);
-    const { privateKey, mnemonic } = keychainData;
-    if (privateKey) {
-      removeAppStateChangeListener(this.handleAppStateChange);
-      checkPrivateKey(privateKey, (_, wallet) => onPinValid(_,
-        revealMnemonic ? { ...wallet, mnemonic } : wallet));
-      this.hideModal(modalProps);
-    } else {
+    if (enforcePin) {
       this.setState({ showPin: true });
+    } else {
+      const keychainData = await getKeychainDataObject(errorHandler);
+      if (keychainData) {
+        const { privateKey, mnemonic } = keychainData;
+        removeAppStateChangeListener(this.handleAppStateChange);
+        checkPrivateKey(privateKey, (_, wallet) => onPinValid(_,
+          revealMnemonic ? { ...wallet, mnemonic } : wallet));
+        this.hideModal(modalProps);
+      } else {
+        if (errorHandler) errorHandler();
+        this.setState({ showPin: true });
+      }
     }
   };
 

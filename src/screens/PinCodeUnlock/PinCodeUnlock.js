@@ -99,7 +99,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       } else {
         getKeychainDataObject().then(data => {
           this.loginWithPrivateKey(data);
-        }).catch(() => {});
+        }).catch(this.requirePinLogin);
       }
     }
     this.handleLocking(true);
