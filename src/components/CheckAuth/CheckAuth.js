@@ -180,19 +180,14 @@ class CheckAuth extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const {
-      checkPin,
-      onPinValid,
-      revealMnemonic,
-    } = this.props;
-    const options = {
-      mnemonic: revealMnemonic,
-    };
-    checkPin(pin, (_, wallet) => {
-      onPinValid(_, wallet);
-      this.setState({ showPin: false });
-    }, options);
+    const { checkPin, revealMnemonic } = this.props;
+    checkPin(pin, this.onPinValidSuccess, { mnemonic: revealMnemonic });
   };
+
+  onPinValidSuccess = (_: String, wallet: EthereumWallet) => {
+    const { onPinValid } = this.props;
+    this.setState({ showPin: false }, () => { onPinValid(_, wallet); });
+  }
 
   getPinError = (walletState: string) => {
     switch (walletState) {
