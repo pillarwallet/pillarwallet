@@ -294,8 +294,6 @@ SDKWrapper.prototype.generateReferralToken = function (walletId: string) {
 };
 
 SDKWrapper.prototype.sendReferralInvitation = function (params: SendReferralInvitationParams) {
-  console.log('sendReferralInvitation', params);
-
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
     .then(({ data }) => data)

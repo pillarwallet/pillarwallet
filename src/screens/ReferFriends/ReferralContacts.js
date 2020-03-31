@@ -72,8 +72,6 @@ type State = {
   query: string,
   selectedContacts: ReferralContact[],
 };
-
-
 const EmptyStateWrapper = styled.View`
   width: 100%;
   align-items: center;

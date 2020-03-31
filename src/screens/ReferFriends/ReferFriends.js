@@ -60,8 +60,6 @@ type Props = {
   hasAllowedToAccessContacts: boolean,
   sentInvitationsCount: SentInvitationsCount,
 };
-
-
 const INSIGHT_ITEMS = [
   {
     title: 'Share your link',
@@ -82,8 +80,6 @@ const ButtonWrapper = styled.View`
   justify-content: ${({ justifyCenter }) => justifyCenter ? 'center' : 'flex-start'};
   padding: ${spacing.large}px 0;
 `;
-
-
 class ReferFriends extends React.PureComponent<Props> {
   sendInvites = () => {
     const { addedContactsToInvite, sendInvitation } = this.props;
@@ -193,4 +189,3 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferFriends));
-
