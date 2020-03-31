@@ -322,6 +322,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         }
     }
     data.statusIcon = event.status === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
+    data.fallbackToGenericToken = true;
     if (activeBlockchainNetwork === 'BITCOIN') {
       data.information = 'Bitcoin wallet';
     }
@@ -350,6 +351,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       eventData: { ...event, contact },
       iconBackgroundColor: 'card',
       iconBorder: true,
+      fallbackToGenericToken: true,
     };
   }
 
@@ -491,6 +493,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       eventStatus,
       iconBackgroundColor,
       iconBorder,
+      fallbackToGenericToken,
     } = itemData;
 
     return (
@@ -516,6 +519,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         customAddon={customAddon}
         itemStatusIcon={statusIcon}
         iconBorder={iconBorder}
+        fallbackToGenericToken={fallbackToGenericToken}
       />
     );
   }
