@@ -20,6 +20,7 @@
 import branch, { BranchEvent } from 'react-native-branch';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import { format as formatDate } from 'date-fns';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -131,7 +132,7 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
           inviteErrorAction(dispatch, errorMessage);
         } else {
           let updatedInvitationCount = count + invitationContacts.length;
-          const currentDate = new Date().toJSON().slice(0, 10);
+          const currentDate = formatDate(new Date(), 'YYYY-MM-DD');
           if (date !== currentDate) updatedInvitationCount = invitationContacts.length;
           const updatedAlreadyInvitedContacts = [...alreadyInvitedContacts, ...invitationContacts];
           await dispatch(saveDbAction('referralData', {

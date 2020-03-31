@@ -178,7 +178,7 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   theme: Theme,
   user: User,
-  smartWalletFeatureEnabled: boolean,
+  referralsFeatureEnabled: boolean,
 }
 
 type ConnectionStatusProps = {
@@ -418,7 +418,7 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       chats,
       theme,
-      smartWalletFeatureEnabled,
+      referralsFeatureEnabled,
     } = this.props;
 
     const usersFound = (apiUsers.length + localContacts.length) > 0;
@@ -494,7 +494,7 @@ class PeopleScreen extends React.Component<Props, State> {
                   bodyText="Build your connection list by searching for someone"
                 />
               </EmptyStateWrapper>
-              {!!smartWalletFeatureEnabled &&
+              {!!referralsFeatureEnabled &&
               <ReferralCTAWrapper>
                 <ReferralCTAImage source={referralImage} />
                 <ReferralCTATitle>Pillar is social</ReferralCTATitle>
@@ -584,7 +584,9 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   chat: { data: { chats } },
   user: { data: user },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: {
+    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
+  },
 }: RootReducerState): $Shape<Props> => ({
   searchResults,
   isSearching,
@@ -592,7 +594,7 @@ const mapStateToProps = ({
   invitations,
   chats,
   user,
-  smartWalletFeatureEnabled,
+  referralsFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

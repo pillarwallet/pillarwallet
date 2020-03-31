@@ -63,7 +63,7 @@ type Props = {
   user: User,
   backupStatus: BackupStatus,
   logoutUser: () => void,
-  smartWalletFeatureEnabled: boolean,
+  referralsFeatureEnabled: boolean,
 };
 
 type State = {
@@ -131,7 +131,7 @@ class Menu extends React.Component<Props, State> {
 
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus, smartWalletFeatureEnabled,
+      theme, navigation, backupStatus, referralsFeatureEnabled,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
@@ -206,7 +206,7 @@ class Menu extends React.Component<Props, State> {
       },
     ];
 
-    if (smartWalletFeatureEnabled) {
+    if (referralsFeatureEnabled) {
       menuItems.splice(4, 0, referalItem);
     }
     return menuItems;
@@ -337,11 +337,13 @@ class Menu extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+  featureFlags: {
+    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
+  },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
-  smartWalletFeatureEnabled,
+  referralsFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

@@ -37,7 +37,11 @@ import { Note } from 'components/Note';
 import Toast from 'components/Toast';
 
 import { fontStyles, spacing } from 'utils/variables';
-import { getRemainingDailyInvitations } from 'utils/referrals';
+import {
+  getRemainingDailyInvitations,
+  isSameContact,
+  isSameContactData,
+} from 'utils/referrals';
 import { isValidPhone } from 'utils/validators';
 
 import type { NavigationScreenProp } from 'react-navigation';
@@ -139,9 +143,12 @@ class ReferralContacts extends React.PureComponent<Props, State> {
   renderContact = ({ item }: { item: ReferralContact }) => {
     const { selectedContacts } = this.state;
     const { alreadyInvitedContacts } = this.props;
+
     const isPreviouslyInvited = alreadyInvitedContacts
-      .some(({ email, phone }) => (!!email && email === item.email) || (!!phone && phone === item.phone));
+      .some(contact => isSameContact(item, contact));
+
     const isSelected = selectedContacts.some(({ id }) => id === item.id) || isPreviouslyInvited;
+
     return (
       <ListItemWithImage
         label={item.name}
@@ -166,11 +173,13 @@ class ReferralContacts extends React.PureComponent<Props, State> {
   toggleContact = (contact: ReferralContact) => {
     const { selectedContacts } = this.state;
     const { sentInvitationsCount, userEmail, userPhone } = this.props;
-    const { id: relatedContactId, phone, email } = contact;
+    const { id: relatedContactId, phone } = contact;
     const updatedSelectedContacts = selectedContacts.filter(({ id }) => id !== relatedContactId);
+
     if (!selectedContacts.find(({ id }) => id === relatedContactId)) {
       const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - selectedContacts.length;
-      if ((!!phone && phone === userPhone) || (!!email && email === userEmail)) {
+
+      if (isSameContactData(contact, userEmail, userPhone)) {
         Toast.show({
           message: 'You can not send invitation to yourself',
           type: 'warning',
@@ -178,6 +187,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         });
         return;
       }
+
       if (!!phone && !isValidPhone(phone)) {
         Toast.show({
           message: 'Phone number should have country code',
@@ -186,6 +196,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         });
         return;
       }
+
       if (!availableInvites) {
         Toast.show({
           message: `You can only invite ${getRemainingDailyInvitations(sentInvitationsCount)} people today ` +

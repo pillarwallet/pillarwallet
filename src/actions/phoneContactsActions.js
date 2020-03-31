@@ -19,11 +19,13 @@
 */
 import { Platform, PermissionsAndroid } from 'react-native';
 import Contacts from 'react-native-contacts';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import {
   PHONE_CONTACTS_ERROR,
   PHONE_CONTACTS_RECEIVED,
+  PHONE_CONTACTS_ACCESS_DENIED,
   FETCHING_PHONE_CONTACTS,
 } from 'constants/phoneContactsConstants';
 
@@ -94,7 +96,7 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
     };
     const arrayOfContacts = [];
 
-    if (emailAddresses.length) {
+    if (!isEmpty(emailAddresses)) {
       filterDuplicateEmails(emailAddresses)
         .forEach((email) => {
           arrayOfContacts.push({
@@ -105,7 +107,7 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
         });
     }
 
-    if (phoneNumbers.length) {
+    if (!isEmpty(phoneNumbers)) {
       filterDuplicatePhones(phoneNumbers)
         .forEach((phone) => {
           arrayOfContacts.push({
@@ -149,7 +151,7 @@ export const fetchPhoneContactsAction = () => {
       .then(() => {
         dispatch(fetchingPhoneContacts());
         Contacts.getAll((err, contacts) => {
-          if (err === 'denied') {
+          if (typeof err === 'string' && err.toLowerCase() === PHONE_CONTACTS_ACCESS_DENIED) {
             dispatch(phoneContactsError());
             return;
           }

@@ -19,7 +19,26 @@
 */
 
 import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
-import type { SentInvitationsCount } from 'reducers/referralsReducer';
+import type { SentInvitationsCount, ReferralContact } from 'reducers/referralsReducer';
+
+export const isSameContactData = (
+  base: ReferralContact,
+  otherEmail: ?string,
+  otherPhone: ?string,
+): boolean => {
+  const { email, phone } = base;
+
+  return (
+    (!!email && email === otherEmail) ||
+    (!!phone && phone === otherPhone)
+  );
+};
+
+export const isSameContact = (base: ReferralContact, other: ReferralContact): boolean => {
+  const { email, phone } = other;
+
+  return isSameContactData(base, email, phone);
+};
 
 export const getRemainingDailyInvitations = (sentInvitationsCount: SentInvitationsCount) => {
   const { count, date } = sentInvitationsCount;
