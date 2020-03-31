@@ -24,10 +24,7 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { UPDATE_CHATS } from 'constants/chatConstants';
 import { updateConnectionsAction } from 'actions/connectionsActions';
-import ChatService from 'services/chat';
-
 
 const walletId = 'walletId';
 
@@ -204,10 +201,8 @@ type SDK = {
 };
 
 const pillarSdk: SDK = new PillarSdk();
-const chatService = new ChatService();
 
 pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
-chatService.client.getUnreadMessagesCount = jest.fn(() => { return Promise.resolve({ unread: [] }); });
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('Connections Actions tests', () => {
@@ -230,7 +225,6 @@ describe('Connections Actions tests', () => {
           SMART_WALLET_ENABLED: false,
         },
       },
-      chat: { data: { webSocketMessages: { received: [] } } },
     };
     store = mockStore({ ...storeMock });
   });
@@ -239,7 +233,6 @@ describe('Connections Actions tests', () => {
     const expectedActions = [
       { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
       { type: UPDATE_CONTACTS, payload: contactsResultMock },
-      { type: UPDATE_CHATS, payload: [] },
     ];
     return store.dispatch(updateConnectionsAction())
       .then(() => {

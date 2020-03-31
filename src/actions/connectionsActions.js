@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
 
 // actions
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
@@ -62,6 +63,10 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
 
     const connections: ApiContact[] = await api.getContacts(walletId);
 
+    if (isEmpty(connections)) {
+      return;
+    }
+
     const contacts = [];
     const invitations = [];
     const removeContacts = [];
@@ -106,17 +111,17 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
     dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
-    await dispatch({
+    dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
     });
 
-    await dispatch({
+    dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
 
-    await dispatch(getExistingChatsAction());
+    dispatch(getExistingChatsAction());
     if (smartWalletFeatureEnabled) {
       dispatch(syncContactsSmartAddressesAction());
     }
