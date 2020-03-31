@@ -26,7 +26,6 @@ import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 
-
 const walletId = 'walletId';
 
 const contactsMock = [
@@ -71,6 +70,7 @@ const getContactsResponseMock = [
     status: 'pending',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
+    direction: 'sent',
     targetUserInfo: {
       userId: 4,
       username: 'user4',
@@ -191,7 +191,8 @@ const invitationsResultMock = [
     username: 'user4',
     profileImage: 'profileImgUrl4',
     type: TYPE_SENT,
-    createdAt: 4444444444,
+    createdAt: 1555491474.547,
+    updatedAt: 1555491474.547,
   },
 ];
 
@@ -200,8 +201,8 @@ type SDK = {
 };
 
 const pillarSdk: SDK = new PillarSdk();
-pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
 
+pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('Connections Actions tests', () => {
@@ -215,6 +216,7 @@ describe('Connections Actions tests', () => {
       invitations: {
         data: [...invitationsMock],
       },
+      session: { data: { isOnline: true } },
       user: {
         data: { walletId },
       },
