@@ -96,7 +96,7 @@ class SecuritySettings extends React.Component<Props, State> {
     } else {
       this.setState({ showPinModal: true });
     }
-  }
+  };
 
   getSmartWalletSettings = () => {
     return [

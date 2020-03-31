@@ -117,15 +117,15 @@ class CheckAuth extends React.Component<Props, State> {
   }
 
   // special case for modals
-  componentDidUpdate = (prevProps: Props) => {
+  componentDidUpdate(prevProps: Props) {
     const { modalProps } = this.props;
     if (!modalProps || !prevProps.modalProps) return;
     if (modalProps.isVisible && !prevProps.modalProps.isVisible) {
       this.checkPrivateKey();
     }
-  };
+  }
 
-  hideModal(modalProps) {
+  hideModal = (modalProps: ModalProps) => {
     if (!modalProps || !modalProps.isVisible) return;
 
     if (modalProps.onModalHide) {
@@ -135,7 +135,7 @@ class CheckAuth extends React.Component<Props, State> {
     if (modalProps.onModalHidden) {
       modalProps.onModalHidden();
     }
-  }
+  };
 
   checkPrivateKey = async (errorHandler?: Function) => {
     const {
@@ -184,10 +184,10 @@ class CheckAuth extends React.Component<Props, State> {
     checkPin(pin, this.onPinValidSuccess, { mnemonic: revealMnemonic });
   };
 
-  onPinValidSuccess = (_: String, wallet: EthereumWallet) => {
+  onPinValidSuccess = (pin: string, wallet: EthereumWallet) => {
     const { onPinValid } = this.props;
-    this.setState({ showPin: false }, () => { onPinValid(_, wallet); });
-  }
+    this.setState({ showPin: false }, () => { onPinValid(pin, wallet); });
+  };
 
   getPinError = (walletState: string) => {
     switch (walletState) {
@@ -244,10 +244,9 @@ class CheckAuth extends React.Component<Props, State> {
   renderPinCode = () => {
     const { wallet: { walletState } } = this.props;
     const pinError = this.getPinError(walletState);
-    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     return (
       <CheckAuthWrapper>
-        {showError}
+        {!!pinError && <ErrorMessage>{pinError}</ErrorMessage>}
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""
