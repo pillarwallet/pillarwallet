@@ -135,8 +135,7 @@ export const loginAction = (
 
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        const decryptionOptions = { mnemonic: true };
-        wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
+        wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access
         await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' });
