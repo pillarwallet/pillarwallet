@@ -45,4 +45,3 @@ export const MIN_MOONPAY_FIAT_VALUE = 20;
 
 export const EXCHANGE = 'EXCHANGE';
 
-export const HAS_SEEN_EXCHANGE_INTRO = 'HAS_SEEN_EXCHANGE_INTRO';

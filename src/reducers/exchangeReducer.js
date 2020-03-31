@@ -33,7 +33,6 @@ import {
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
-  HAS_SEEN_EXCHANGE_INTRO,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
 import type { Asset } from 'models/Asset';
@@ -51,7 +50,6 @@ export type ExchangeReducerState = {
   providersMeta: ProvidersMeta,
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
-  hasSeenExchangeIntro: boolean,
 }
 
 export type ExchangeReducerAction = {
@@ -70,7 +68,6 @@ export const initialState = {
   providersMeta: [],
   exchangeSupportedAssets: [],
   fiatExchangeSupportedAssets: [],
-  hasSeenExchangeIntro: false,
 };
 
 export default function exchangeReducer(
@@ -210,11 +207,6 @@ export default function exchangeReducer(
       return {
         ...state,
         fiatExchangeSupportedAssets: action.payload,
-      };
-    case HAS_SEEN_EXCHANGE_INTRO:
-      return {
-        ...state,
-        hasSeenExchangeIntro: action.payload,
       };
     default:
       return state;

@@ -54,8 +54,8 @@ import {
   markNotificationAsSeenAction,
   getMetaDataAction,
   getExchangeSupportedAssetsAction,
-  updateHasSeenExchangeIntroAction,
 } from 'actions/exchangeActions';
+import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
@@ -1304,7 +1304,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   oAuthTokens: { data: { accessToken: oAuthAccessToken } },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, hasSeenExchangeIntro } },
   exchange: {
     data: {
       offers,
@@ -1316,7 +1316,6 @@ const mapStateToProps = ({
     providersMeta,
     exchangeSupportedAssets,
     fiatExchangeSupportedAssets,
-    hasSeenExchangeIntro,
   },
   rates: { data: rates },
   featureFlags: {
@@ -1379,7 +1378,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
-  updateHasSeenExchangeIntro: () => dispatch(updateHasSeenExchangeIntroAction()),
+  updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));
