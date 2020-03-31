@@ -21,14 +21,13 @@ import { Sentry } from 'react-native-sentry';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import type { ApiUser } from 'models/Contacts';
-import { fetchOldInviteNotificationsAction } from 'actions/oldInvitationsActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
 
 export const fetchInviteNotificationsAction = () => {
   return async (dispatch: Function) => {
-    await dispatch(fetchOldInviteNotificationsAction());
+    await dispatch(updateConnectionsAction());
   };
 };
 
