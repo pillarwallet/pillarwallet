@@ -187,6 +187,8 @@ const IconCircle = styled.View`
   align-items: center;
   justify-content: center;
   text-align: center;
+  border-color: ${props => props.border ? themedColors.border : 'transparent'};
+  border-width: 1px;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -353,6 +355,7 @@ const ItemImage = (props: Props) => {
     iconSource,
     theme,
     iconBackgroundColor,
+    iconBorder,
   } = props;
 
   let { fallbackSource } = props;
@@ -360,7 +363,7 @@ const ItemImage = (props: Props) => {
 
   if (iconName) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor}>
+      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
         <ItemIcon name={iconName} iconColor={iconColor} />
       </IconCircle>
     );
@@ -368,7 +371,7 @@ const ItemImage = (props: Props) => {
 
   if (iconSource) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor}>
+      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
         <IconImage source={iconSource} />
       </IconCircle>
     );
@@ -377,7 +380,11 @@ const ItemImage = (props: Props) => {
   if (customImage) return customImage;
 
   if (itemImageUrl) {
-    return (<TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />);
+    return (
+      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+        <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
+      </IconCircle>
+    );
   }
 
   if (itemImageSource) {

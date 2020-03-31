@@ -317,6 +317,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             iconColor: isReceived ? 'transactionReceivedIcon' : 'negative',
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
             valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
+            iconBackgroundColor: 'iconBackground',
           };
         }
     }
@@ -347,6 +348,8 @@ export class ActivityFeedItem extends React.Component<Props> {
       status: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
       statusColor: isReceived ? 'positive' : 'text',
       eventData: { ...event, contact },
+      iconBackgroundColor: 'card',
+      iconBorder: true,
     };
   }
 
@@ -486,6 +489,8 @@ export class ActivityFeedItem extends React.Component<Props> {
       eventData,
       eventType,
       eventStatus,
+      iconBackgroundColor,
+      iconBorder,
     } = itemData;
 
     return (
@@ -505,11 +510,12 @@ export class ActivityFeedItem extends React.Component<Props> {
         iconName={iconName}
         iconColor={this.getColor(iconColor)}
         diameter={48}
-        iconBackgroundColor={this.getColor('iconBackground')}
+        iconBackgroundColor={this.getColor(iconBackgroundColor)}
         itemValue={itemValue}
         valueColor={this.getColor(valueColor)}
         customAddon={customAddon}
         itemStatusIcon={statusIcon}
+        iconBorder={iconBorder}
       />
     );
   }
