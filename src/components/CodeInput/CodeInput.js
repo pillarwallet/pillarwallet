@@ -31,21 +31,16 @@ import { responsiveSize } from 'utils/ui';
 import type { Event } from 'react-native';
 
 
-type Position = {
-  x: number,
-  y: number,
-};
-
 type Props = {
   codeLength: number,
   inputProps?: Object,
   errorMessage?: ?string,
+  onFilled?: (value: string) => void,
 };
 
 type State = {
   value: string,
   focused: boolean,
-  inputPositions: Position[],
   focusLastOne: boolean,
 };
 
@@ -92,16 +87,15 @@ const ErrorMessage = styled(MediumText)`
 
 const StyledTextInput = styled.TextInput`
   position: absolute;
-  color: ${themedColors.text};
-  font-size: ${FONT_SIZE}px;
-  text-align: center;
-  width: ${INPUT_SIDE}px;
-  height: ${INPUT_SIDE}px;
-  padding: 0;
+  opacity: 0;
+  top: 0;
+  left: 0;
 `;
 
 
 export default class CodeInput extends React.Component<Props, State> {
+  timeout: TimeoutID;
+
   static defaultProps = {
     codeLength: 1,
   };
@@ -111,9 +105,25 @@ export default class CodeInput extends React.Component<Props, State> {
   state = {
     value: '',
     focused: false,
-    inputPositions: [],
     focusLastOne: false,
   };
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { value } = this.state;
+    const { onFilled, codeLength } = this.props;
+    if (!!onFilled && prevState.value !== value && value.length === codeLength) {
+      this.timeout = setTimeout(() => {
+        onFilled(value);
+        clearTimeout(this.timeout);
+      }, 400);
+    } else if (prevState.value !== value && !!this.timeout) {
+      clearTimeout(this.timeout);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
 
   handleClick = () => {
     const { current } = this.input;
@@ -139,36 +149,24 @@ export default class CodeInput extends React.Component<Props, State> {
   };
 
   onChange = (value: string) => {
-    const { codeLength, inputProps = {} } = this.props;
-    const { onChange } = inputProps;
+    const { codeLength } = this.props;
     const { value: currentValue } = this.state;
     if (currentValue.length < codeLength) {
       const newValue = (currentValue + value).slice(0, codeLength);
       this.setState({ value: newValue });
-      if (onChange) onChange(newValue);
     }
-  };
-
-  setInputPosition = (pos: Position) => {
-    const { inputPositions } = this.state;
-    const updatedInputPositions = [...inputPositions, pos];
-    this.setState({ inputPositions: updatedInputPositions });
   };
 
   render() {
     const {
       value,
       focused,
-      inputPositions,
       focusLastOne,
     } = this.state;
     const { codeLength, inputProps = {}, errorMessage } = this.props;
     const codeArray = new Array(codeLength).fill(0);
     const values = value.replace(/\s/g, '').split('');
     const valueLength = values.length;
-    const selectedIndex = valueLength < codeLength ? valueLength : codeLength - 1;
-    const hideInput = valueLength > codeLength;
-    const { x, y } = inputPositions[selectedIndex] || {};
 
     return (
       <Wrapper>
@@ -177,16 +175,7 @@ export default class CodeInput extends React.Component<Props, State> {
             {codeArray.map((val, index) => {
               const selected = !focusLastOne ? valueLength === index : valueLength - 1 === index;
               return (
-                <FakeInput
-                  onLayout={({ nativeEvent }) => {
-                    this.setInputPosition({
-                      x: nativeEvent.layout.x,
-                      y: nativeEvent.layout.y,
-                    });
-                  }}
-                  focus={focused && selected}
-                  key={index.toString()}
-                >
+                <FakeInput focus={focused && selected} key={index.toString()}>
                   <InputValue>{values[index] || ''}</InputValue>
                 </FakeInput>
               );
@@ -199,11 +188,6 @@ export default class CodeInput extends React.Component<Props, State> {
               onKeyPress={this.onKeyPress}
               onFocus={this.onFocus}
               onBlur={this.onBlur}
-              style={{
-                left: x,
-                top: y,
-                opacity: hideInput ? 0 : 1,
-              }}
               maxLength={1}
             />
           </Row>

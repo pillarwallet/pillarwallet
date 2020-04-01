@@ -45,13 +45,12 @@ const ConfirmCode = (props: Props) => {
   } = props;
 
   const inputProps = {
-    onChange: updateCode,
     keyboardType: 'number-pad',
   };
 
   return (
     <FormWrapper>
-      <CodeInput codeLength={maxDigits} inputProps={inputProps} errorMessage={errorMessage} />
+      <CodeInput codeLength={maxDigits} inputProps={inputProps} errorMessage={errorMessage} onFilled={updateCode} />
     </FormWrapper>
   );
 };
