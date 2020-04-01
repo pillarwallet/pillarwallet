@@ -34,13 +34,20 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
 import Toast from 'components/Toast';
+// import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
+// import {
+//   setKeychainDataObject,
+//   resetKeychainDataObject,
+// } from 'utils/keychain';
+// import { setKeychainDataObject, type KeyChainData } from 'utils/keychain';
 
 // utils
-import { setKeychainDataObject, resetKeychainDataObject } from 'utils/keychain';
+import { setKeychainDataObject } from 'utils/keychain';
 
 // types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { KeyChainData } from 'utils/keychain';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -116,16 +123,10 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
   },
 });
 
-export const changeUseBiometricsAction = (value: boolean, privateKey?: string, noToast?: boolean) => {
+export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, noToast?: boolean) => {
   return async (dispatch: Dispatch) => {
-    let message;
-    if (value) {
-      await setKeychainDataObject({ privateKey });
-      message = 'Biometric login enabled';
-    } else {
-      await resetKeychainDataObject();
-      message = 'Biometric login disabled';
-    }
+    await setKeychainDataObject(data, value);
+    const message = `Biometric login ${value ? 'enabled' : 'disabled'}`;
     dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
@@ -210,5 +211,12 @@ export const handleSystemDefaultThemeChangeAction = () => {
     if (themeToSet === themeType) return;
 
     dispatch(setAppThemeAction(themeToSet));
+  };
+};
+
+export const hasSeenExchangeIntroAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { hasSeenExchangeIntro: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenExchangeIntro: true } });
   };
 };

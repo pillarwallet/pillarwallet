@@ -19,9 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Container } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
-import Header from 'components/Header';
+import CheckAuth from 'components/CheckAuth';
 import { approveCallRequestAction, rejectCallRequestAction } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -187,10 +185,11 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   render() {
     const { isChecking } = this.state;
     return (
-      <Container>
-        <Header onBack={this.handleBack} title="Enter pincode" />
-        <CheckPin onPinValid={this.handleCallRequest} isChecking={isChecking} />
-      </Container>
+      <CheckAuth
+        onPinValid={this.handleCallRequest}
+        isChecking={isChecking}
+        headerProps={{ onBack: this.handleBack }}
+      />
     );
   }
 }

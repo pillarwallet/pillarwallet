@@ -29,7 +29,7 @@ import { ScrollWrapper, Wrapper, Container } from 'components/Layout';
 import { MediumText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 
 import { fontStyles } from 'utils/variables';
@@ -187,7 +187,7 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
           showHeader
         >
           <ModalWrapper>
-            <CheckPin
+            <CheckAuth
               onPinValid={this.proceed}
               revealMnemonic
             />

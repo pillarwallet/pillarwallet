@@ -61,7 +61,7 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
-import { setKeychainDataObject } from 'utils/keychain';
+import { setKeychainDataObject, resetKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -113,7 +113,6 @@ export const loginAction = (
   pin: ?string,
   privateKey: ?string,
   onLoginSuccess: ?Function,
-  updateKeychain?: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     let { accounts: { data: accounts } } = getState();
@@ -136,7 +135,10 @@ export const loginAction = (
 
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin);
+        wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
+        // no further code will be executed if pin is wrong
+        // migrate older users for keychain access
+        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' });
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -261,11 +263,6 @@ export const loginAction = (
         },
       });
       dispatch(updatePinAttemptsAction(false));
-
-      // migrate older users for keychain access with biometrics
-      if (wallet.privateKey && updateKeychain) {
-        await setKeychainDataObject({ privateKey: wallet.privateKey });
-      }
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
@@ -423,6 +420,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
         params: {
           onLoginSuccess,
           errorMessage,
+          forcePin: true,
         },
       }),
     }));
@@ -447,6 +445,7 @@ export const logoutAction = () => {
     await resetAppState(dispatch, getState);
     await dispatch({ type: LOG_OUT });
     await dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    await resetKeychainDataObject();
     if (themeType === DARK_THEME) await dispatch(setAppThemeAction(DARK_THEME)); // to persist dark theme after storage
     // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));

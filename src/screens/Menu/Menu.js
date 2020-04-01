@@ -47,7 +47,7 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   REFER_FLOW,
 } from 'constants/navigationConstants';
-import { logoutAction } from 'actions/authActions';
+import { lockScreenAction, logoutAction } from 'actions/authActions';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -64,12 +64,12 @@ type Props = {
   backupStatus: BackupStatus,
   logoutUser: () => void,
   referralsFeatureEnabled: boolean,
+  lockScreen: () => void,
 };
 
 type State = {
   visibleModal: ?string,
 };
-
 
 const Footer = styled.View``;
 
@@ -87,6 +87,15 @@ const LogoutSection = styled.View`
   justify-content: center;
   align-items: center;
   padding: ${spacing.large}px;
+`;
+
+const LockScreenSection = styled.View`
+  border-top-color: ${themedColors.tertiary};
+  border-top-width: 1px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.mediumLarge}px;
 `;
 
 const HeaderLogo = styled(CachedImage)`
@@ -109,10 +118,14 @@ const LogoutTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
+const LockScreenTextLink = styled(TextLink)`
+  color: ${themedColors.orange};
+  ${fontStyles.regular};
+`;
+
 const StyledEmoji = styled(Emoji)`
   margin-right: 10px;
 `;
-
 
 class Menu extends React.Component<Props, State> {
   state = {
@@ -284,7 +297,7 @@ class Menu extends React.Component<Props, State> {
   render() {
     const items = this.getMenuItems();
     const { visibleModal } = this.state;
-    const { theme } = this.props;
+    const { theme, lockScreen } = this.props;
     const { pillarLogoSmall: logo } = images(theme);
 
     return (
@@ -308,6 +321,11 @@ class Menu extends React.Component<Props, State> {
                  Privacy policy
                 </LegalTextLink>
               </LinksSection>
+              <LockScreenSection>
+                <LockScreenTextLink onPress={lockScreen}>
+                  Lock screen
+                </LockScreenTextLink>
+              </LockScreenSection>
               <LogoutSection>
                 <LogoutIcon name="signout" />
                 <LogoutTextLink onPress={this.deleteWallet}>
@@ -347,6 +365,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
 });
 
