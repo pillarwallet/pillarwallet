@@ -52,6 +52,10 @@ const supportedAddressPrefixes = new RegExp(
   `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
 );
 
+export const stringWithoutSpaces = (s: string): string => {
+  return s.replace(/\s/g, '');
+};
+
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
     const timeout = setTimeout(() => {
@@ -500,4 +504,8 @@ export const formatAmountDisplay = (value: number | string) => {
     return formatMoney(amount, 2);
   }
   return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
+};
+
+export const getDeviceHeight = () => {
+  return Dimensions.get('window').height;
 };
