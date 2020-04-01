@@ -692,7 +692,28 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        backgroundColor={null}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "transparent",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
     <View
       style={
         Object {
@@ -1490,7 +1511,29 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
     <View
       style={
         Object {
@@ -1734,7 +1777,29 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
     <View
       style={
         Object {
@@ -2915,7 +2980,7 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
               ]
             }
           >
-            Register ENS name
+            Register ENS label
           </Text>
         </View>
         <View
@@ -3424,14 +3489,16 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -3982,14 +4049,16 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -4277,14 +4346,16 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -4835,14 +4906,16 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -6163,7 +6236,9 @@ Array [
               Object {
                 "alignItems": "center",
                 "backgroundColor": "#eee",
+                "borderColor": "transparent",
                 "borderRadius": 24,
+                "borderWidth": 1,
                 "height": 48,
                 "justifyContent": "center",
                 "textAlign": "center",
@@ -6953,14 +7028,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -7511,14 +7588,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -7806,14 +7885,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -8364,14 +8445,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
       }
     >
       <View
-        backgroundColor="#eee"
+        backgroundColor="#ebf0f5"
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#eee",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
               "borderRadius": 24,
+              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -9622,6 +9705,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "control": "#FCFDFF",
                       "danger": "#ff0005",
                       "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
                       "inactiveTabBarIcon": "#D4D9DB",
                       "indicator": "#F8E71C",
                       "legacyWallet": "#FA574F",
@@ -9639,6 +9723,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
                     },
@@ -9853,6 +9938,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       "control": "#FCFDFF",
                       "danger": "#ff0005",
                       "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
                       "inactiveTabBarIcon": "#D4D9DB",
                       "indicator": "#F8E71C",
                       "legacyWallet": "#FA574F",
@@ -9870,6 +9956,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
                     },
@@ -10076,6 +10163,7 @@ Array [
                       "control": "#FCFDFF",
                       "danger": "#ff0005",
                       "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
                       "inactiveTabBarIcon": "#D4D9DB",
                       "indicator": "#F8E71C",
                       "legacyWallet": "#FA574F",
@@ -10093,6 +10181,7 @@ Array [
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
                     },
@@ -11013,6 +11102,7 @@ Array [
                             "control": "#FCFDFF",
                             "danger": "#ff0005",
                             "helpIcon": "#f7931a",
+                            "iconBackground": "#ebf0f5",
                             "inactiveTabBarIcon": "#D4D9DB",
                             "indicator": "#F8E71C",
                             "legacyWallet": "#FA574F",
@@ -11030,6 +11120,7 @@ Array [
                             "synthetic": "#2329d6",
                             "tertiary": "#EBF0F6",
                             "text": "#007AFF",
+                            "transactionReceivedIcon": "#497391",
                             "userAvatar": "#d1d9e4",
                             "warning": "#ECA93A",
                           },
