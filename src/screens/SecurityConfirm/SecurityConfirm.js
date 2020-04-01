@@ -73,6 +73,7 @@ export default class SecurityConfirm extends React.Component<Props, State> {
           <Checkbox
             text="I understand that my backup phrase is the only way I can restore my wallet if I lose access."
             onPress={() => this.setState({ confirmButtonDisabled: !confirmButtonDisabled })}
+            checked={confirmButtonDisabled}
           />
           <Button
             flexRight

@@ -106,6 +106,8 @@ class CheckAuth extends React.Component<Props, State> {
     } = this.props;
     const { lastAppState } = this.state;
 
+    this._isMounted = true;
+
     // do nothing if auth isn't supposed to be checked
     if (modalProps && !get(modalProps, 'isVisible')) return;
 
@@ -117,7 +119,6 @@ class CheckAuth extends React.Component<Props, State> {
     } else if (lastAppState !== BACKGROUND_APP_STATE && !enforcePin) {
       this.checkPrivateKey();
     }
-    this._isMounted = true;
   }
 
   componentWillUnmount() { this._isMounted = false; }

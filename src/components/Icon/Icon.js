@@ -66,6 +66,7 @@ const glyphMap = {
   delete: '\uE82A',
   'sound-off': '\uE82C',
   plus: '\uE82D',
+  'add-contact': '\uE82E',
   cube: '\uE831',
   paperPlane: '\uE803',
   cup: '\uE807',

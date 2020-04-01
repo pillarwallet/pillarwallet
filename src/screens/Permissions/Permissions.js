@@ -400,6 +400,7 @@ class Permissions extends React.Component<Props, State> {
               onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
               small
               lightText
+              checked={hasAgreedToTerms}
             >
               I have read, understand, and agree to these Terms of Use
             </Checkbox>

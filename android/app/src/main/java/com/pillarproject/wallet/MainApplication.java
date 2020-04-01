@@ -10,6 +10,10 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
+
+import io.branch.referral.Branch;
+import io.branch.rnbranch.RNBranchModule;
+import io.branch.rnbranch.RNBranchPackage;
 import io.expo.appearance.RNCAppearancePackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.mattblock.reactnative.inappbrowser.RNInAppBrowserPackage;
@@ -50,6 +54,7 @@ import io.sentry.RNSentryPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactlibrary.RNThreadPackage;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
 // react-native-splash-screen >= 0.3.1
 
@@ -63,6 +68,7 @@ public class MainApplication extends Application implements ShareApplication, Re
       return Arrays.<ReactPackage>asList(
         new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
+        new RNBranchPackage(),
         new RNCAppearancePackage(),
         new AsyncStoragePackage(),
         new RNInAppBrowserPackage(),
@@ -97,7 +103,8 @@ public class MainApplication extends Application implements ShareApplication, Re
         new PickerPackage(),
         new NativeShadowPackage(),
         new RNThreadPackage(mReactNativeHost),
-        new KeychainPackage()
+        new KeychainPackage(),
+        new ReactNativeContacts()
       );
     }
 
@@ -120,6 +127,7 @@ public class MainApplication extends Application implements ShareApplication, Re
   @Override
   public void onCreate() {
     super.onCreate();
+    RNBranchModule.getAutoInstance(this);
     final Fabric fabric = new Fabric.Builder(this)
             .kits(new Crashlytics(), new Answers())
             .build();
