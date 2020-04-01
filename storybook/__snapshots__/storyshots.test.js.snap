@@ -2753,7 +2753,7 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
                   style={
                     Object {
                       "color": "#8B939E",
-                      "fontSize": 18,
+                      "fontSize": 14,
                       "marginBottom": 0,
                       "marginLeft": 0,
                       "marginRight": 0,

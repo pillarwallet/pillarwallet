@@ -515,7 +515,7 @@ const Addon = (props: AddonProps) => {
           color={colors.secondaryText}
           margin={0}
           icon="close"
-          fontSize={fontSizes.big}
+          fontSize={fontSizes.regular}
           onPress={rejectInvitation}
         />
         <ActionCircleButton
