@@ -27,8 +27,7 @@ import { CachedImage } from 'react-native-cached-image';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import { BaseText } from 'components/Typography';
@@ -221,7 +220,7 @@ class AccountsScreen extends React.Component<Props, State> {
     }
   };
 
-  switchToSmartWalletAndGoToPPN = async (_: string, wallet: Object) => {
+  switchToSmartWalletAndGoToPPN = async (_: string, wallet: EthereumWallet) => {
     const {
       accounts,
       setActiveBlockchainNetwork,
@@ -260,7 +259,7 @@ class AccountsScreen extends React.Component<Props, State> {
     }
   };
 
-  switchToSmartWalletAccount = async (_: string, wallet: Object) => {
+  switchToSmartWalletAccount = async (_: string, wallet: EthereumWallet) => {
     this.setState({ showPinModal: false, changingAccount: true });
     const { navigation, switchAccount } = this.props;
     if (!this.switchToWallet) return;
@@ -545,21 +544,14 @@ class AccountsScreen extends React.Component<Props, State> {
           <Loader noMessages />
         </Wrapper>}
 
-        <SlideModal
-          isVisible={showPinModal}
-          onModalHide={this.handleCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <Wrapper>
-            <CheckPin
-              onPinValid={onPinValidAction}
-              revealMnemonic
-            />
-          </Wrapper>
-        </SlideModal>
+        <CheckAuth
+          onPinValid={onPinValidAction}
+          revealMnemonic
+          modalProps={{
+            isVisible: showPinModal,
+            onModalHide: this.handleCheckPinModalClose,
+          }}
+        />
       </ContainerWithHeader>
     );
   }

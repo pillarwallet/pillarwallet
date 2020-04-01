@@ -17,40 +17,26 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type ApiUser = {
-  id: string,
-  username: string,
-  profileImage?: string,
-  profileLargeImage?: string,
-  ethAddress: string,
-  lastUpdateTime?: number,
-  status?: ?string,
+
+import * as React from 'react';
+import OverlayModal from 'components/OverlayModal/OverlayModal';
+
+type Props = {
+  isVisible: boolean,
+  onButtonPress: () => void,
 };
 
-export type SearchResults = {
-  apiUsers: ApiUser[],
-  localContacts: Object[],
-};
+const content = `Pillar Exchange or Offers Engine, as we call it,\
+ aggregates offers from multiple providers vetted by Pillar. 
 
-export type ContactsSmartAddressesList = string[];
+Buy crypto with credit cards, Apple Pay or Google Pay. Exchange tokens in a few taps.`;
 
-export type ContactSmartAddressData = {
-  userId: string,
-  smartWallets: ContactsSmartAddressesList,
-};
-
-export type ApiContact = {
-  userId: string,
-  targetUserId: string,
-  status: string,
-  createdAt: string,
-  updatedAt: string,
-  direction: ?string,
-  targetUserInfo: {
-    userId: string,
-    username: string,
-    profileImage?: ?string,
-    profileLargeImage?: ?string,
-    ethAddress: string,
-  },
-};
+export default (props: Props) => (
+  <OverlayModal
+    isVisible={props.isVisible}
+    onButtonPress={props.onButtonPress}
+    title="Exchange."
+    content={content}
+    buttonText="Next"
+  />
+);

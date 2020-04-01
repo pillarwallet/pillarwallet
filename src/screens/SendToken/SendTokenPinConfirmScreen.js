@@ -21,10 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { Container } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
-import Header from 'components/Header';
-import ErrorMessage from 'components/ErrorMessage';
+import CheckAuth from 'components/CheckAuth';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -109,18 +106,13 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
     const { isChecking, errorMessage } = this.state;
 
     return (
-      <Container>
-        <Header
-          onBack={this.handleBack}
-          title="Enter pincode"
-        />
-        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        <CheckPin
-          onPinValid={this.handleTransaction}
-          isChecking={isChecking}
-          pinError={!!errorMessage}
-        />
-      </Container>
+      <CheckAuth
+        onPinValid={this.handleTransaction}
+        isChecking={isChecking}
+        pinError={!!errorMessage}
+        errorMessage={errorMessage}
+        headerProps={{ onBack: this.handleBack }}
+      />
     );
   }
 }
