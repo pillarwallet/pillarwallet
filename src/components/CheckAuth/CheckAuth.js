@@ -169,11 +169,14 @@ class CheckAuth extends React.Component<Props, State> {
     const { lastAppState } = this.state;
     if (nextAppState === ACTIVE_APP_STATE
       && lastAppState === BACKGROUND_APP_STATE
-      && useBiometrics
       && !revealMnemonic) {
-      this.showBiometricLogin();
+      if (useBiometrics) {
+        this.showBiometricLogin();
+      } else {
+        this.checkPrivateKey();
+      }
     }
-    this.setState({ lastAppState: nextAppState });
+    if (this._isMounted) this.setState({ lastAppState: nextAppState });
   };
 
   showBiometricLogin() {
