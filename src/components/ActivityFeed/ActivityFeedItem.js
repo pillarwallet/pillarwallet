@@ -96,23 +96,23 @@ type Props = {
 };
 
 type EventData = {
-  name?: string,
-  icon?: string,
-  status?: ?string,
-  statusColor?: string,
+  label?: string,
+  itemImageSource?: string,
+  actionLabel?: ?string,
+  actionLabelColor?: string,
   badge?: string,
-  information?: string,
-  statusAsButton?: boolean,
+  subtext?: string,
+  labelAsButton?: boolean,
   rejectInvitation?: Function,
   acceptInvitation?: Function,
   avatarUrl?: string,
-  imageUrl?: string,
+  itemImageUrl?: string,
   iconName?: ?string,
   iconColor?: string,
   itemValue?: string,
   valueColor?: string,
   customAddon?: React.Node,
-  statusIcon?: string,
+  itemStatusIcon?: string,
   eventData?: Object,
   eventType?: string,
   eventStatus?: string,
@@ -182,25 +182,25 @@ export class ActivityFeedItem extends React.Component<Props> {
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
-          name: NAMES.KEY_WALLET,
-          icon: keyWalletIcon,
-          status: STATUSES.CREATED,
-          statusColor: 'positive',
+          label: NAMES.KEY_WALLET,
+          itemImageSource: keyWalletIcon,
+          actionLabel: STATUSES.CREATED,
+          actionLabelColor: 'positive',
         };
       case 'Smart wallet created':
         return {
-          name: NAMES.SMART_WALLET,
-          icon: smartWalletIcon,
-          status: STATUSES.CREATED,
-          statusColor: 'positive',
+          label: NAMES.SMART_WALLET,
+          itemImageSource: smartWalletIcon,
+          actionLabel: STATUSES.CREATED,
+          actionLabelColor: 'positive',
           badge: this.needToActivateSW() ? 'Need to activate' : null,
         };
       case 'Wallet imported':
         return {
-          name: NAMES.KEY_WALLET,
-          icon: keyWalletIcon,
-          status: 'Imported',
-          statusColor: 'positive',
+          label: NAMES.KEY_WALLET,
+          itemImageSource: keyWalletIcon,
+          actionLabel: 'Imported',
+          actionLabelColor: 'positive',
         };
       default:
         return null;
@@ -213,18 +213,18 @@ export class ActivityFeedItem extends React.Component<Props> {
         return this.getWalletCreatedEventData(event);
       case PPN_INIT_EVENT:
         return {
-          name: NAMES.PPN_NETWORK,
-          icon: PPNIcon,
-          status: STATUSES.CREATED,
-          statusColor: 'positive',
+          label: NAMES.PPN_NETWORK,
+          itemImageSource: PPNIcon,
+          actionLabel: STATUSES.CREATED,
+          actionLabelColor: 'positive',
           badge: this.needToActivateSW() ? 'Need to activate' : null,
         };
       case WALLET_BACKUP_EVENT:
         return {
-          name: NAMES.KEY_WALLET,
-          icon: keyWalletIcon,
-          status: STATUSES.BACKUP,
-          statusColor: 'secondaryText',
+          label: NAMES.KEY_WALLET,
+          itemImageSource: keyWalletIcon,
+          actionLabel: STATUSES.BACKUP,
+          actionLabelColor: 'secondaryText',
         };
       default:
         return null;
@@ -255,9 +255,9 @@ export class ActivityFeedItem extends React.Component<Props> {
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
         data = {
-          name: NAMES.SMART_WALLET,
-          icon: smartWalletIcon,
-          information: 'Activation',
+          label: NAMES.SMART_WALLET,
+          itemImageSource: smartWalletIcon,
+          subtext: 'Activation',
           itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
@@ -267,9 +267,9 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         data = {
-          name: NAMES.PPN_NETWORK,
-          icon: PPNIcon,
-          information: 'Top Up',
+          label: NAMES.PPN_NETWORK,
+          itemImageSource: PPNIcon,
+          subtext: 'Top Up',
           itemValue: `+ ${formattedValue} ${event.asset}`,
           valueColor: 'positive',
         };
@@ -279,19 +279,19 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
         data = {
-          name: NAMES.SMART_WALLET,
-          icon: smartWalletIcon,
-          information: 'Register ENS name',
+          label: NAMES.SMART_WALLET,
+          itemImageSource: smartWalletIcon,
+          subtext: 'Register ENS label',
         };
         trxData.hideSender = true;
         trxData.hideAmount = true;
-        trxData.txType = 'Register ENS name';
+        trxData.txType = 'Register ENS label';
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
-          name: NAMES.PPN_NETWORK,
-          icon: PPNIcon,
-          information: 'Withdrawal',
+          label: NAMES.PPN_NETWORK,
+          itemImageSource: PPNIcon,
+          subtext: 'Withdrawal',
           itemValue: `- ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
@@ -305,10 +305,10 @@ export class ActivityFeedItem extends React.Component<Props> {
             || ensRegistry[address]
             || elipsizeAddress(address);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        const information = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        const subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
         if (isPPNTransaction) {
           data = {
-            name: usernameOrAddress,
+            label: usernameOrAddress,
             avatarUrl,
             customAddon: (
               <TankAssetBalance
@@ -318,8 +318,8 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         } else {
           data = {
-            name: usernameOrAddress,
-            information,
+            label: usernameOrAddress,
+            subtext,
             avatarUrl,
             iconName: !avatarUrl ? directionIcon : null,
             iconColor: isReceived ? 'transactionReceivedIcon' : 'negative',
@@ -329,10 +329,10 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         }
     }
-    data.statusIcon = event.status === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
+    data.itemStatusIcon = event.status === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
     data.fallbackToGenericToken = true;
     if (activeBlockchainNetwork === 'BITCOIN') {
-      data.information = 'Bitcoin wallet';
+      data.subtext = 'Bitcoin wallet';
     }
     data.eventData = {
       ...event,
@@ -347,15 +347,15 @@ export class ActivityFeedItem extends React.Component<Props> {
     const isReceived = this.isReceived(event);
     const { asset, icon } = event;
     const usernameOrAddress = this.usernameOrAddress(event);
-    const information = `Collectible ${isReceived ? 'from' : 'to'} ${usernameOrAddress}`;
+    const subtext = `Collectible ${isReceived ? 'from' : 'to'} ${usernameOrAddress}`;
     const contact = this.getContact(event);
 
     return {
-      name: asset,
-      imageUrl: icon,
-      information,
-      status: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
-      statusColor: isReceived ? 'positive' : 'text',
+      label: asset,
+      itemImageUrl: icon,
+      subtext,
+      actionLabel: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
+      actionLabelColor: isReceived ? 'positive' : 'text',
       eventData: { ...event, contact },
       iconBackgroundColor: 'card',
       iconBorder: true,
@@ -364,13 +364,13 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getBadgeRewardEventData = (event: Object): EventData => {
-    const { name, imageUrl } = event;
+    const { label, imageUrl } = event;
     return {
-      name,
-      imageUrl,
-      information: 'Badge',
-      status: STATUSES.RECEIVED,
-      statusColor: 'positive',
+      label,
+      itemImageUrl: imageUrl,
+      subtext: 'Badge',
+      actionLabel: STATUSES.RECEIVED,
+      actionLabelColor: 'positive',
       eventData: { ...event },
     };
   }
@@ -379,27 +379,27 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { rejectInvitation, acceptInvitation } = this.props;
     const { type, username, profileImage } = event;
 
-    let status;
+    let actionLabel;
     if (type === TYPE_ACCEPTED) {
-      status = STATUSES.CONNECTED;
+      actionLabel = STATUSES.CONNECTED;
     } else if (type === TYPE_SENT) {
-      status = STATUSES.REQUESTED;
+      actionLabel = STATUSES.REQUESTED;
     } else {
-      status = null;
+      actionLabel = null;
     }
 
     const data: EventData = {
-      name: username,
-      status,
+      label: username,
+      actionLabel,
       avatarUrl: profileImage,
       eventData: { ...event },
       eventType: CONNECTION_EVENT,
       eventStatus: event.type,
-      statusAsButton: type === TYPE_SENT,
+      labelAsButton: type === TYPE_SENT,
     };
 
     if (type === TYPE_RECEIVED) {
-      data.information = 'Connection request';
+      data.subtext = 'Connection request';
       data.rejectInvitation = () => createAlert(TYPE_REJECTED, event, () => rejectInvitation(event));
       data.acceptInvitation = () => acceptInvitation(event);
     }
@@ -479,55 +479,24 @@ export class ActivityFeedItem extends React.Component<Props> {
     if (!itemData) return null;
 
     const {
-      name,
-      icon,
-      status,
-      statusColor,
-      badge,
-      information,
-      statusAsButton,
-      rejectInvitation,
-      acceptInvitation,
-      avatarUrl,
-      imageUrl,
-      iconName,
+      actionLabelColor,
       iconColor,
-      itemValue,
       valueColor,
-      customAddon,
-      statusIcon,
       eventData,
       eventType,
       eventStatus,
       iconBackgroundColor,
-      iconBorder,
-      fallbackToGenericToken,
     } = itemData;
 
     return (
       <ListItemWithImage
-        label={name}
-        subtext={information}
+        {...itemData}
         onPress={eventData && (() => selectEvent(eventData, eventType || event.type, eventStatus || event.status))}
-        badge={badge}
-        actionLabel={status}
-        actionLabelColor={this.getColor(statusColor)}
-        labelAsButton={statusAsButton}
-        rejectInvitation={rejectInvitation}
-        acceptInvitation={acceptInvitation}
-        itemImageSource={icon}
-        avatarUrl={avatarUrl}
-        itemImageUrl={imageUrl}
-        iconName={iconName}
+        actionLabelColor={this.getColor(actionLabelColor)}
         iconColor={this.getColor(iconColor)}
         diameter={48}
         iconBackgroundColor={this.getColor(iconBackgroundColor)}
-        itemValue={itemValue}
         valueColor={this.getColor(valueColor)}
-        customAddon={customAddon}
-        itemStatusIcon={statusIcon}
-        iconBorder={iconBorder}
-        fallbackToGenericToken={fallbackToGenericToken}
       />
     );
   }
