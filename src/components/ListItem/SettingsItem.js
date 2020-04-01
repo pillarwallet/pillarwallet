@@ -52,12 +52,13 @@ type Props = {
 const MainWrapper = styled.View`
   flex: 1;
   padding: 22px ${spacing.large}px 24px;
+  min-height: 70px;
   ${({ bordered, theme }) => bordered
     ? `
-   border-bottom-width: ${StyleSheet.hairlineWidth}px;
-   border-top-width: ${StyleSheet.hairlineWidth}px;
-   border-color: ${theme.colors.border};
-   `
+    border-bottom-width: ${StyleSheet.hairlineWidth}px;
+    border-top-width: ${StyleSheet.hairlineWidth}px;
+    border-color: ${theme.colors.border};
+    `
     : ''}
 `;
 
