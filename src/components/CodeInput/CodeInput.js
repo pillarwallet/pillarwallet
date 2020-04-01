@@ -22,10 +22,11 @@ import React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
 
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 
 import { themedColors } from 'utils/themes';
-import { fontStyles } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
+import { responsiveSize } from 'utils/ui';
 
 import type { Event } from 'react-native';
 
@@ -49,7 +50,8 @@ type State = {
 };
 
 
-const INPUT_SIDE = 56;
+const INPUT_SIDE = responsiveSize(46);
+const FONT_SIZE = responsiveSize(36);
 
 const Wrapper = styled.View`
   flex: 1;
@@ -79,13 +81,19 @@ const FakeInput = styled.View`
 
 const InputValue = styled(MediumText)`
   color: ${themedColors.text};
-  ${fontStyles.giant};
+  font-size: ${FONT_SIZE}px;
+`;
+
+const ErrorMessage = styled(MediumText)`
+  color: ${themedColors.negative};
+  ${fontStyles.regular};
+  margin: ${spacing.small}px 0 ${spacing.medium}px;
 `;
 
 const StyledTextInput = styled.TextInput`
   position: absolute;
   color: ${themedColors.text};
-  ${fontStyles.giant};
+  font-size: ${FONT_SIZE}px;
   text-align: center;
   width: ${INPUT_SIDE}px;
   height: ${INPUT_SIDE}px;
@@ -177,6 +185,7 @@ export default class CodeInput extends React.Component<Props, State> {
                     });
                   }}
                   focus={focused && selected}
+                  key={index.toString()}
                 >
                   <InputValue>{values[index] || ''}</InputValue>
                 </FakeInput>
@@ -198,7 +207,7 @@ export default class CodeInput extends React.Component<Props, State> {
             />
           </Row>
         </TouchableWithoutFeedback>
-        {!!errorMessage && <BaseText regular negative>{errorMessage}</BaseText>}
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </Wrapper>
     );
   }
