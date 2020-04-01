@@ -46,6 +46,7 @@ import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 import { registerWalletAction } from './onboardingActions';
+import { addWalletBackupEventAction } from './userEventsActions';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -200,6 +201,7 @@ export const backupWalletAction = () => {
     }));
     dispatch({ type: BACKUP_WALLET });
     dispatch(selfAwardBadgeAction('wallet-backed-up'));
+    dispatch(addWalletBackupEventAction());
 
     dispatch(logEventAction('phrase_backed_up'));
   };
