@@ -37,12 +37,12 @@ import { spacing } from 'utils/variables';
 
 import type { NavigationScreenProp } from 'react-navigation';
 
-
 type Props = {
   isVisible: boolean,
   onModalHide: (callback: () => void) => void,
   navigation: NavigationScreenProp<*>,
 };
+
 const { width: screenWidth } = Dimensions.get('window');
 
 const StyledScrollView = styled.ScrollView`
@@ -75,6 +75,7 @@ const Confetti = styled(CachedImage)`
 const rewardBadge = require('assets/images/referralBadge.png');
 const confettiTop = require('assets/images/rewardBackgroundTop.png');
 const confettiBottom = require('assets/images/rewardBackgroundBottom.png');
+
 class ReferralModalReward extends React.Component<Props> {
   navigateToProfile = () => {
     const { navigation, onModalHide } = this.props;
