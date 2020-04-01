@@ -47,6 +47,18 @@ import { getAssetsAsList } from 'utils/assets';
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 
+// constants
+import {
+  TYPE_RECEIVED,
+  TYPE_ACCEPTED,
+  TYPE_SENT,
+} from 'constants/invitationsConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { USER_EVENT } from 'constants/userEventsConstants';
+import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
+
+
 const ActivityFeedList = styled.SectionList`
   width: 100%;
   flex: 1;
@@ -211,7 +223,9 @@ class ActivityFeed extends React.Component<Props, State> {
       if (activeTabInfo) ({ data: feedList, emptyState: emptyStateData = {} } = activeTabInfo);
     }
 
-    const dataSections = groupAndSortByDate(feedList);
+    const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
+
+    const dataSections = groupAndSortByDate(filteredFeedList);
 
     this.setState({ formattedFeedData: dataSections, emptyStateData });
   };
@@ -229,6 +243,14 @@ class ActivityFeed extends React.Component<Props, State> {
       showModal: true,
     });
   };
+
+  shouldRenderActivityItem = (item: Object) => {
+    const typesThatRender = [
+      USER_EVENT, TRANSACTION_EVENT, COLLECTIBLE_TRANSACTION, BADGE_REWARD_EVENT,
+      TYPE_SENT, TYPE_RECEIVED, TYPE_ACCEPTED,
+    ];
+    return typesThatRender.includes(item.type);
+  }
 
   renderActivityFeedItem = ({ item: notification }: Object) => {
     const { onRejectInvitation, onAcceptInvitation } = this.props;
