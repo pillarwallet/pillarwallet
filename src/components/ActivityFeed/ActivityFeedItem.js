@@ -338,7 +338,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         }
     }
     data.itemStatusIcon = event.status === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
-    data.fallbackToGenericToken = true;
     if (activeBlockchainNetwork === 'BITCOIN') {
       data.subtext = 'Bitcoin wallet';
     }
@@ -372,9 +371,9 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getBadgeRewardEventData = (event: Object): EventData => {
-    const { label, imageUrl } = event;
+    const { name, imageUrl } = event;
     return {
-      label,
+      label: name,
       itemImageUrl: imageUrl,
       subtext: 'Badge',
       actionLabel: STATUSES.RECEIVED,
