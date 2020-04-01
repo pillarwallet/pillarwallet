@@ -59,3 +59,6 @@ export const REMOVE_PRIVATE_KEY = 'REMOVE_PRIVATE_KEY';
 export const GENERATING_CONNECTIONS = 'GENERATING_CONNECTIONS';
 export const UPDATE_PIN_ATTEMPTS = 'UPDATE_PIN_ATTEMPTS';
 export const WALLET_STORAGE_BACKUP_KEY = 'walletBackup';
+export const RECEIVE = 'receive';
+export const SEND = 'send';
+

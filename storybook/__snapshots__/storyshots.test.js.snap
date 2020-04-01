@@ -253,9 +253,6 @@ exports[`Storyshots ActionModal default 1`] = `
                         onStartShouldSetResponder={[Function]}
                         style={
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
                             "opacity": 1,
                             "paddingBottom": 20,
                             "paddingLeft": 0,
@@ -264,45 +261,58 @@ exports[`Storyshots ActionModal default 1`] = `
                           }
                         }
                       >
-                        <Text
-                          big={true}
-                          style={
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "fontSize": 18,
-                                "lineHeight": 28,
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Medium",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlignVertical": "center",
-                                },
-                                undefined,
-                              ],
-                            ]
-                          }
-                        >
-                          First item
-                        </Text>
                         <View
-                          name="chevron-right"
                           style={
                             Array [
                               Object {
-                                "color": "#8B939E",
-                                "fontSize": 10,
-                                "lineHeight": 14,
+                                "alignItems": "center",
+                                "flexDirection": "row",
+                                "justifyContent": "space-between",
                               },
                               undefined,
                             ]
                           }
-                        />
+                        >
+                          <Text
+                            big={true}
+                            style={
+                              Array [
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Regular",
+                                  "fontSize": 18,
+                                  "lineHeight": 28,
+                                  "textAlignVertical": "center",
+                                },
+                                Array [
+                                  Object {
+                                    "color": "#0A1427",
+                                    "fontFamily": "EuclidCircularB-Medium",
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                    "textAlignVertical": "center",
+                                  },
+                                  undefined,
+                                ],
+                              ]
+                            }
+                          >
+                            First item
+                          </Text>
+                          <View
+                            name="chevron-right"
+                            style={
+                              Array [
+                                Object {
+                                  "color": "#8B939E",
+                                  "fontSize": 10,
+                                  "lineHeight": 14,
+                                },
+                                undefined,
+                              ]
+                            }
+                          />
+                        </View>
                       </View>
                     </View>
                     <View
@@ -320,9 +330,6 @@ exports[`Storyshots ActionModal default 1`] = `
                         onStartShouldSetResponder={[Function]}
                         style={
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
                             "opacity": 1,
                             "paddingBottom": 20,
                             "paddingLeft": 0,
@@ -331,32 +338,45 @@ exports[`Storyshots ActionModal default 1`] = `
                           }
                         }
                       >
-                        <Text
-                          big={true}
+                        <View
                           style={
                             Array [
                               Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "fontSize": 18,
-                                "lineHeight": 28,
-                                "textAlignVertical": "center",
+                                "alignItems": "center",
+                                "flexDirection": "row",
+                                "justifyContent": "space-between",
                               },
+                              undefined,
+                            ]
+                          }
+                        >
+                          <Text
+                            big={true}
+                            style={
                               Array [
                                 Object {
                                   "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "fontFamily": "EuclidCircularB-Regular",
                                   "fontSize": 18,
                                   "lineHeight": 28,
                                   "textAlignVertical": "center",
                                 },
-                                undefined,
-                              ],
-                            ]
-                          }
-                        >
-                          Second item
-                        </Text>
+                                Array [
+                                  Object {
+                                    "color": "#0A1427",
+                                    "fontFamily": "EuclidCircularB-Medium",
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                    "textAlignVertical": "center",
+                                  },
+                                  undefined,
+                                ],
+                              ]
+                            }
+                          >
+                            Second item
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
