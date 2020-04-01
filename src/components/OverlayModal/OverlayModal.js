@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import SlideModal from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
@@ -25,6 +26,7 @@ import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import type { ViewLayoutEvent } from 'react-native/Libraries/Components/View/ViewPropTypes';
 import { getDeviceHeight } from 'utils/common';
+
 
 type Props = {
   title: string,
@@ -73,12 +75,12 @@ const Spacer = styled.View`
 export default class OverlayModal extends React.Component<Props, State> {
   state: State = {
     bottomSpaceHeight: 0,
-  }
+  };
 
   handleTextLayout = (e: ViewLayoutEvent) => {
     const { y, height } = e.nativeEvent.layout;
     this.setState({ bottomSpaceHeight: getDeviceHeight() - y - height });
-  }
+  };
 
   render() {
     const {
