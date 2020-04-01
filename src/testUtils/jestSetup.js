@@ -415,5 +415,6 @@ jest.setMock('services/insight', {
     }),
 });
 
-jest.setMock('react-native-appearance', {});
+jest.mock('react-native-branch', () => jest.fn());
 
+jest.setMock('react-native-appearance', {});

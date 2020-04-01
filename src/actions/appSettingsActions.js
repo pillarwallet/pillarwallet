@@ -17,8 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import branchIo from 'react-native-branch';
+import set from 'lodash.set';
 import { Appearance } from 'react-native-appearance';
 
+// constants
 import {
   DARK_PREFERENCE,
   DARK_THEME,
@@ -29,29 +32,43 @@ import {
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import set from 'lodash.set';
-
+// components
 import Toast from 'components/Toast';
-import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
-import { setKeychainDataObject, type KeyChainData } from 'utils/keychain';
+// import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
+// import {
+//   setKeychainDataObject,
+//   resetKeychainDataObject,
+// } from 'utils/keychain';
+// import { setKeychainDataObject, type KeyChainData } from 'utils/keychain';
 
-import SDKWrapper from 'services/api';
+// utils
+import { setKeychainDataObject } from 'utils/keychain';
 
+// types
+import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { KeyChainData } from 'utils/keychain';
 
+// actions
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
+import { logUserPropertyAction, logEventAction } from './analyticsActions';
+
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
     const settings = { optOutTracking: status };
-
     if (status) {
       dispatch(logEventAction('tracking_opted_out'));
     } else {
       dispatch(logEventAction('tracking_opted_in'));
+    }
+    try {
+      await branchIo.disableTracking(status);
+    } catch (e) {
+      // catch exception if native module failed by any reason
     }
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });

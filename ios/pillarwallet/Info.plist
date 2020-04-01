@@ -82,7 +82,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Pillar Wallet to use your location</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Pillar Wallet to access your device's accelerometer</string>
+	<string>Allow Pillar Wallet to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -135,6 +135,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>branch_app_domain</key>
+	<string>$(BRANCH_IO_APP_DOMAIN)</string>
+	<key>branch_key</key>
+	<string>$(BRANCH_IO_KEY_LIVE)</string>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>
 </dict>

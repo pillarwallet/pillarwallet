@@ -6,6 +6,9 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.5):
     - BoringSSL-GRPC/Interface (= 0.0.5)
   - BoringSSL-GRPC/Interface (0.0.5)
+  - Branch (0.29.0):
+    - Branch/Core (= 0.29.0)
+  - Branch/Core (0.29.0)
   - BVLinearGradient (2.5.4):
     - React
   - Crashlytics (3.10.9):
@@ -154,6 +157,9 @@ PODS:
     - React
   - react-native-background-timer (2.1.1):
     - React
+  - react-native-branch (4.2.1):
+    - Branch (= 0.29.0)
+    - React
   - react-native-camera (2.6.0):
     - React
     - react-native-camera/RCT (= 2.6.0)
@@ -276,6 +282,7 @@ DEPENDENCIES:
   - Intercom (~> 5.2.1)
   - react-native-appearance (from `../node_modules/react-native-appearance`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
+  - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-intercom (from `../node_modules/react-native-intercom`)
@@ -311,6 +318,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - boost-for-react-native
     - BoringSSL-GRPC
+    - Branch
     - Crashlytics
     - Fabric
     - Firebase
@@ -354,6 +362,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-appearance"
   react-native-background-timer:
     :path: "../node_modules/react-native-background-timer"
+  react-native-branch:
+    :path: "../node_modules/react-native-branch"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
   react-native-fetch-blob:
@@ -392,6 +402,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BoringSSL-GRPC: 8f2c6b5fbae71d1f3aabb787a52fd4929d1eef33
+  Branch: 6e7421e1f3c0adebdf80008a40a74969b2603cf8
   BVLinearGradient: b0b70acf63ee888829b7c2ebbf6b50e227396e55
   Crashlytics: 55e24fc23989680285a21cb1146578d9d18e432c
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
@@ -424,6 +435,7 @@ SPEC CHECKSUMS:
   React: 1d605e098d69bdf08960787f3446f0a9dc2e2ccf
   react-native-appearance: 6f7d829e25310d7c45d4e8e75db3206315e39951
   react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
+  react-native-branch: 289495df034365ddf75e826f95bdd28b64dbb914
   react-native-camera: 9c50d7def800895e7991ccda6203929553ceec9c
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
@@ -444,6 +456,6 @@ SPEC CHECKSUMS:
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: 6902eae1bc76c86917ae6ee098e1e2ff7e4fde55
+PODFILE CHECKSUM: 2a1095932d0b73e5eccad20b276e3ea5dac522b6
 
 COCOAPODS: 1.5.3

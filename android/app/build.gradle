@@ -75,6 +75,10 @@ android {
     // Deprecated. Used by net.openid:appauth
     vectorDrawables.useSupportLibrary = true
     missingDimensionStrategy 'react-native-camera', 'general'
+    resValue "string", "branch_io_app_link", "abgsz.test-app.link"
+    resValue "string", "branch_io_app_link_alternate", "abgsz-alternate.test-app.link"
+    resValue "string", "branch_io_key_live", ""
+    resValue "string", "branch_io_key_test", "key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a"
   }
   dexOptions {
     javaMaxHeapSize "1G"
@@ -117,6 +121,12 @@ android {
     }
     release {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+
+      // set branch.io string values to prod
+      resValue "string", "branch_io_app_link", "plr.app.link"
+      resValue "string", "branch_io_app_link_alternate", "plr-alternate.app.link"
+      resValue "string", "branch_io_key_live", System.getenv("BRANCH_IO_KEY_LIVE") ? System.getenv("BRANCH_IO_KEY_LIVE") : ""
+
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
@@ -155,6 +165,7 @@ android {
 
 
 dependencies {
+    implementation project(':react-native-branch')
     implementation project(':react-native-appearance')
     implementation project(':@react-native-community_async-storage')
     implementation project(':@matt-block_react-native-in-app-browser')
@@ -204,7 +215,12 @@ dependencies {
   implementation 'com.google.android.gms:play-services-maps:15.0.0'
   implementation 'com.google.android.gms:play-services-auth:15.0.0'
   implementation 'com.google.android.gms:play-services-location:15.0.0'
-//  compile 'com.google.android.gms:play-services-ads:15.0.0'
+
+  // branch.io
+  implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching
+  implementation 'com.android.support:customtabs:28.0.0' // optional, Chrome Tab matching (enables 100% guaranteed matching based on cookies), androidx.browser:browser works just the same
+
+
   annotationProcessor 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
   implementation "com.raizlabs.android:DBFlow-Core:2.2.1"
   implementation "com.raizlabs.android:DBFlow:2.2.1"
@@ -251,6 +267,7 @@ dependencies {
   implementation "com.facebook.react:react-native:+"  // From node_modules
   implementation project(':react-native-cookies')
   implementation project(':react-native-keychain')
+  implementation project(':react-native-contacts')
 
   // Testing
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
