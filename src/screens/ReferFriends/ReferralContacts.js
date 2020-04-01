@@ -76,6 +76,7 @@ type State = {
   query: string,
   selectedContacts: ReferralContact[],
 };
+
 const EmptyStateWrapper = styled.View`
   width: 100%;
   align-items: center;
@@ -103,7 +104,7 @@ const getInfoTypes = (isPhoneVerified, isEmailVerified) => {
   return null;
 };
 
-const getFilteredContacts = (contacts, _query: string) => {
+const getFilteredContacts = (contacts: ReferralContact[], _query: string) => {
   if (!_query || _query.length < MIN_QUERY_LENGTH) return contacts;
   const query = _query.toUpperCase();
   return contacts.filter(({ name, email = '', phone = '' }) => {

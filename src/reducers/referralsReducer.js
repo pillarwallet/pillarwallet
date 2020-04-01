@@ -34,13 +34,13 @@ export type SentInvitationsCount = {
   date: string,
 };
 
-export type ReferralContact = {
+export type ReferralContact = {|
   id: string,
   name: string,
   email?: string,
   phone?: string,
   photo?: string,
-};
+|};
 
 export type InviteSentPayload = {
   alreadyInvitedContacts: ReferralContact[],

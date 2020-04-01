@@ -32,7 +32,7 @@ export type PhoneContactPhone = {|
 
 export type PhoneContact = {|
   recordID: string,
-  displayName: string,
+  displayName: ?string,
   givenName: string,
   middleName: string,
   familyName: string,
