@@ -290,7 +290,6 @@ const ActionCircleButton = styled(IconButton)`
   height: 24px;
   width: 24px;
   border-radius: 17px;
-  padding: ${Platform.OS === 'ios' ? 0 : 8}px;
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
