@@ -271,12 +271,7 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   renderReferral = (colors) => {
-    const { referralsFeatureEnabled } = this.props;
     const { isReferralBannerVisible } = this.state;
-
-    if (!referralsFeatureEnabled) {
-      return null;
-    }
 
     return (
       <Banner
@@ -322,6 +317,7 @@ class HomeScreen extends React.Component<Props, State> {
       theme,
       baseFiatCurrency,
       activeBlockchainNetwork,
+      referralsFeatureEnabled,
     } = this.props;
 
     const { activeTab, showRewardModal } = this.state;
@@ -437,7 +433,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={referralsFeatureEnabled ? [3] : [2]}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -465,7 +461,7 @@ class HomeScreen extends React.Component<Props, State> {
               )}
             />
           </BadgesWrapper>
-          {this.renderReferral(colors)}
+          {!!referralsFeatureEnabled && this.renderReferral(colors)}
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}

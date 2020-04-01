@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // components
-import TextInput from 'components/TextInput';
+import CodeInput from 'components/CodeInput';
 
 // utils
 import { spacing } from 'utils/variables';
@@ -29,37 +29,28 @@ import { spacing } from 'utils/variables';
 const FormWrapper = styled.View`
   padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
   display: flex;
-  width: 200px;
 `;
 
 type Props = {
   updateCode: (code: string) => void,
   errorMessage: ?string,
-  code: string,
 };
 
 const maxDigits = 5;
 
 const ConfirmCode = (props: Props) => {
   const {
-    code,
     updateCode,
     errorMessage,
   } = props;
 
   const inputProps = {
-    value: code,
-    onChange: updateCode,
     keyboardType: 'number-pad',
-    maxLength: maxDigits,
   };
 
   return (
     <FormWrapper>
-      <TextInput
-        inputProps={inputProps}
-        errorMessage={errorMessage}
-      />
+      <CodeInput codeLength={maxDigits} inputProps={inputProps} errorMessage={errorMessage} onFilled={updateCode} />
     </FormWrapper>
   );
 };
