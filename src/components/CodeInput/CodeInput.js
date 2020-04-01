@@ -165,9 +165,9 @@ export default class CodeInput extends React.Component<Props, State> {
     const { codeLength, inputProps = {}, errorMessage } = this.props;
     const codeArray = new Array(codeLength).fill(0);
     const values = value.replace(/\s/g, '').split('');
-
-    const selectedIndex = values.length < codeLength ? values.length : codeLength - 1;
-    const hideInput = !(values.length < codeLength);
+    const valueLength = values.length;
+    const selectedIndex = valueLength < codeLength ? valueLength : codeLength - 1;
+    const hideInput = valueLength > codeLength;
     const { x, y } = inputPositions[selectedIndex] || {};
 
     return (
@@ -175,7 +175,7 @@ export default class CodeInput extends React.Component<Props, State> {
         <TouchableWithoutFeedback onPress={this.handleClick}>
           <Row>
             {codeArray.map((val, index) => {
-              const selected = !focusLastOne ? values.length === index : values.length - 1 === index;
+              const selected = !focusLastOne ? valueLength === index : valueLength - 1 === index;
               return (
                 <FakeInput
                   onLayout={({ nativeEvent }) => {
@@ -204,6 +204,7 @@ export default class CodeInput extends React.Component<Props, State> {
                 top: y,
                 opacity: hideInput ? 0 : 1,
               }}
+              maxLength={1}
             />
           </Row>
         </TouchableWithoutFeedback>
