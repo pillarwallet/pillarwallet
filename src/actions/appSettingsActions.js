@@ -196,3 +196,10 @@ export const handleSystemDefaultThemeChangeAction = () => {
     dispatch(setAppThemeAction(themeToSet));
   };
 };
+
+export const hasSeenExchangeIntroAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { hasSeenExchangeIntro: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenExchangeIntro: true } });
+  };
+};
