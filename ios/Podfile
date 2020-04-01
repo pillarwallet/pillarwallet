@@ -77,6 +77,8 @@ target 'pillarwallet' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
+  pod 'react-native-branch', :path => '../node_modules/react-native-branch'
+
   pod 'react-native-appearance', :path => '../node_modules/react-native-appearance'
 
   post_install do |installer|

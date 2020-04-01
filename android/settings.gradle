@@ -1,4 +1,6 @@
 include ':app'
+include ':react-native-branch'
+project(':react-native-branch').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-branch/android')
 include ':react-native-appearance'
 project(':react-native-appearance').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-appearance/android')
 include ':@react-native-community_async-storage'
@@ -61,3 +63,5 @@ include ':react-native-randombytes'
 project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-randombytes/android')
 include ':react-native-threads'
 project(':react-native-threads').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-threads/android')
+include ':react-native-contacts'
+project(':react-native-contacts').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-contacts/android')

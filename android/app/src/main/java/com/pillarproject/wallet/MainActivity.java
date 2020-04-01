@@ -1,20 +1,18 @@
 package com.pillarproject.wallet;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
+import io.branch.rnbranch.RNBranchModule;
 import org.devio.rn.splashscreen.SplashScreen;
 
 import android.content.Intent;
@@ -50,6 +48,13 @@ public class MainActivity extends ReactActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (BuildConfig.DEBUG) RNBranchModule.setDebug();
+        RNBranchModule.initSession(getIntent().getData(), this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         ReactContext reactContext = getReactInstanceManager().getCurrentReactContext();
@@ -80,6 +85,13 @@ public class MainActivity extends ReactActivity {
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit("ActivityStateChange", "background");
         }
+    }
+
+    // Needed for Branch.io
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override

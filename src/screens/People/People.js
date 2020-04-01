@@ -28,6 +28,7 @@ import capitalize from 'lodash.capitalize';
 import styled, { withTheme } from 'styled-components/native';
 import { Icon as NIcon } from 'native-base';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import { CachedImage } from 'react-native-cached-image';
 
 // actions
 import {
@@ -46,7 +47,7 @@ import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
@@ -55,7 +56,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 // constants
-import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS, REFER_FLOW } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import {
   DISCONNECT,
@@ -69,11 +70,15 @@ import {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SearchResults } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
+import type { User } from 'models/User';
 
 // utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { sortLocalContacts } from 'utils/contacts';
+import { toastReferral } from 'utils/toasts';
+
+const referralImage = require('assets/images/referral_gift.png');
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -121,6 +126,39 @@ const InnerWrapper = styled.View`
   flex: 1;
 `;
 
+const ReferralCTAWrapper = styled.View`
+  padding: 38px 30px 0 30px;
+  border-radius: 6px;
+  border: 1px solid ${themedColors.border};
+  position: relative;
+  overflow: hidden;
+  align-self: flex-end;
+`;
+
+const ReferralCTATitle = styled(MediumText)`
+  ${fontStyles.large};
+  margin-bottom: 8px;
+`;
+
+const ReferralCTABody = styled(Paragraph)`
+  margin-right: 90px;
+`;
+
+const ReferralCTAImage = styled(CachedImage)`
+  width: 155px;
+  height: 105px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+`;
+
+const EmptyStateWrapper = styled.View`
+  flex: 1;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
 const MIN_QUERY_LENGTH = 2;
 
 type Props = {
@@ -139,6 +177,8 @@ type Props = {
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
   theme: Theme,
+  user: User,
+  referralsFeatureEnabled: boolean,
 }
 
 type ConnectionStatusProps = {
@@ -359,6 +399,16 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
+  handleReferralBannerPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
+
   renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
     const {
       searchResults,
@@ -368,6 +418,7 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       chats,
       theme,
+      referralsFeatureEnabled,
     } = this.props;
 
     const usersFound = (apiUsers.length + localContacts.length) > 0;
@@ -436,11 +487,28 @@ class PeopleScreen extends React.Component<Props, State> {
             }
 
             {!inSearchMode && !sortedLocalContacts.length &&
-            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-              <EmptyStateParagraph
-                title="Start making friends"
-                bodyText="Build your connection list by searching for someone"
-              />
+            <Wrapper fullScreen flex={1}>
+              <EmptyStateWrapper>
+                <EmptyStateParagraph
+                  title="Start making friends"
+                  bodyText="Build your connection list by searching for someone"
+                />
+              </EmptyStateWrapper>
+              {!!referralsFeatureEnabled &&
+              <ReferralCTAWrapper>
+                <ReferralCTAImage source={referralImage} />
+                <ReferralCTATitle>Pillar is social</ReferralCTATitle>
+                <ReferralCTABody>
+                  Refer friends and earn rewards, free PLR and more.
+                </ReferralCTABody>
+                <Button
+                  small
+                  height={32}
+                  title="Invite friends"
+                  onPress={this.handleReferralBannerPress}
+                  style={{ alignSelf: 'flex-start', marginTop: 14, marginBottom: 48 }}
+                />
+              </ReferralCTAWrapper>}
             </Wrapper>
             }
           </View>
@@ -515,12 +583,18 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
+  user: { data: user },
+  featureFlags: {
+    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
+  },
 }: RootReducerState): $Shape<Props> => ({
   searchResults,
   isSearching,
   localContacts,
   invitations,
   chats,
+  user,
+  referralsFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
