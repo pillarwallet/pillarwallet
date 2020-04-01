@@ -97,6 +97,8 @@ class CheckAuth extends React.Component<Props, State> {
     showPin: false,
   };
 
+  _isMounted: boolean = false;
+
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
     const {
@@ -115,7 +117,10 @@ class CheckAuth extends React.Component<Props, State> {
     } else if (lastAppState !== BACKGROUND_APP_STATE && !enforcePin) {
       this.checkPrivateKey();
     }
+    this._isMounted = true;
   }
+
+  componentWillUnmount() { this._isMounted = false; }
 
   // special case for modals
   componentDidUpdate(prevProps: Props) {
@@ -188,7 +193,7 @@ class CheckAuth extends React.Component<Props, State> {
   onPinValidSuccess = (pin: string, wallet: EthereumWallet) => {
     const { onPinValid } = this.props;
     onPinValid(pin, wallet);
-    this.setState({ showPin: false });
+    if (this._isMounted) this.setState({ showPin: false });
   };
 
   getPinError = (walletState: string) => {
