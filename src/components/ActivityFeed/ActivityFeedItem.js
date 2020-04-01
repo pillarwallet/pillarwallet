@@ -28,6 +28,7 @@ import { getThemeColors } from 'utils/themes';
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // components
 import {
@@ -59,8 +60,9 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
+
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
@@ -170,6 +172,12 @@ export class ActivityFeedItem extends React.Component<Props> {
     return elipsizeAddress(address);
   }
 
+  needToActivateSW = () => {
+    const { accounts, smartWalletState } = this.props;
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    return (smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
+  }
+
   getWalletCreatedEventData = (event: Object) => {
     switch (event.eventTitle) {
       case 'Wallet created':
@@ -185,7 +193,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           icon: smartWalletIcon,
           status: STATUSES.CREATED,
           statusColor: 'positive',
-          badge: 'Need to activate',
+          badge: this.needToActivateSW() ? 'Need to activate' : null,
         };
       case 'Wallet imported':
         return {
@@ -209,7 +217,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           icon: PPNIcon,
           status: STATUSES.CREATED,
           statusColor: 'positive',
-          badge: 'Need to activate',
+          badge: this.needToActivateSW() ? 'Need to activate' : null,
         };
       case WALLET_BACKUP_EVENT:
         return {
@@ -528,10 +536,14 @@ export class ActivityFeedItem extends React.Component<Props> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   ensRegistry: { data: ensRegistry },
+  smartWallet: smartWalletState,
+  accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
   ensRegistry,
+  smartWalletState,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({
