@@ -54,13 +54,11 @@ type Props = {
 };
 
 type State = {
-  code: string,
   isModalVisible: boolean,
 };
 
 class VerifyOTPModal extends React.PureComponent<Props, State> {
   state = {
-    code: '',
     isModalVisible: true,
   };
 
@@ -141,11 +139,9 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
       resetOneTimePassword();
     }
 
-    this.setState({ code }, () => {
-      if (code.length === 5) {
-        this.confirmOTP(code);
-      }
-    });
+    if (code.length === 5) {
+      this.confirmOTP(code);
+    }
   };
 
   hideModal = () => {
@@ -153,7 +149,7 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const { code, isModalVisible } = this.state;
+    const { isModalVisible } = this.state;
     const {
       sendingOneTimePassword,
       verificationFailed,
@@ -185,7 +181,6 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
         <BoxBody>
           {sendingOneTimePassword && <Spinner />}
           {enteringCode && <ConfirmCode
-            code={code}
             updateCode={this.updateCode}
             errorMessage={verificationFailed ?
               "That didn't work, please try again" : null}
