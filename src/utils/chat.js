@@ -24,28 +24,3 @@ export function generateChatPassword(privateKey: string): string {
   // NOTE: utils.id() computes the keccak256 cryptographic hash of a UTF-8 string, returns as a hex string.
   return utils.id(strToHash).slice(-10);
 }
-
-export function getConnectionStateCheckParamsByUserId(getState: Function, targetUserId: string) {
-  const {
-    connectionIdentityKeys: { data: connectionIdentityKeys },
-  } = getState();
-  const {
-    userId,
-    sourceIdentityKey,
-    targetIdentityKey,
-  } = connectionIdentityKeys.find(entry => entry.targetUserId === targetUserId) || {};
-  return {
-    userId,
-    targetUserId,
-    sourceIdentityKey,
-    targetIdentityKey,
-  };
-}
-
-export function getConnectionStateCheckParamsByUsername(getState: Function, username: string) {
-  const {
-    contacts: { data: contacts },
-  } = getState();
-  const { id: targetUserId } = contacts.find(contact => contact.username === username) || {};
-  return getConnectionStateCheckParamsByUserId(getState, targetUserId);
-}

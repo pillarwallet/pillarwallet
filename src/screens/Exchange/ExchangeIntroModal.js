@@ -18,4 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const UPDATE_ACCESS_TOKENS = 'UPDATE_ACCESS_TOKENS';
+import * as React from 'react';
+import OverlayModal from 'components/OverlayModal/OverlayModal';
+
+type Props = {
+  isVisible: boolean,
+  onButtonPress: () => void,
+};
+
+const content = `Pillar Exchange or Offers Engine, as we call it,\
+ aggregates offers from multiple providers vetted by Pillar. 
+
+Buy crypto with credit cards, Apple Pay or Google Pay. Exchange tokens in a few taps.`;
+
+export default (props: Props) => (
+  <OverlayModal
+    isVisible={props.isVisible}
+    onButtonPress={props.onButtonPress}
+    title="Exchange."
+    content={content}
+    buttonText="Next"
+  />
+);

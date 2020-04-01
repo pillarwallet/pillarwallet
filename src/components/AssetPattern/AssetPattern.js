@@ -21,13 +21,11 @@
 import * as React from 'react';
 import { Dimensions, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { getThemeType, themedColors } from 'utils/themes';
+import { ColorMatrix, saturate } from 'react-native-color-matrix-image-filters';
 import { CachedImage } from 'react-native-cached-image';
-import {
-  ColorMatrix,
-  saturate,
-} from 'react-native-color-matrix-image-filters';
 
+import { getThemeType, themedColors } from 'utils/themes';
+import { images } from 'utils/images';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
 
@@ -73,8 +71,6 @@ const NoIconWrapper = styled.View`
   justify-content: center;
   opacity: ${props => props.isUnlisted ? 0.7 : 1};
 `;
-
-const noIconImageSource = require('assets/images/no_logo.png');
 
 const IconWrapper = styled.View`
   height: ${props => props.diameter}px;
@@ -277,9 +273,11 @@ class AssetPattern extends React.Component<Props, State> {
       icon,
       isListed,
       iconSource,
+      theme,
     } = this.props;
     const { errorLoading } = this.state;
     const patternIcon = iconSource || { uri: icon };
+    const { towellie: noIconImageSource } = images(theme);
     return (
       <Wrapper>
         {(!isListed || !(icon || iconSource) || errorLoading) ?

@@ -43,12 +43,9 @@ import {
 import { APP_FLOW, NEW_WALLET, HOME } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { TYPE_ACCEPTED, TYPE_RECEIVED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { RESET_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
-import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
-import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
-import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -62,10 +59,10 @@ import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConsta
 
 // utils
 import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
-import { delay, uniqBy } from 'utils/common';
+import { delay } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
-import { mapInviteNotifications } from 'utils/notifications';
+import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -81,7 +78,6 @@ import {
 } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
-import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -92,12 +88,13 @@ import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
+import { updateConnectionsAction } from 'actions/connectionsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
-import type { ApiNotification } from 'models/Notification';
+import type { KeyChainData } from 'utils/keychain';
 
 const storage = Storage.getInstance('db');
 
@@ -168,15 +165,17 @@ const finishRegistration = async ({
   privateKey,
   address,
   isImported,
+  enableBiometrics,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
   getState: GetState,
-  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser)
-  mnemonic: ?string,
+  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
   address: string,
   isImported: boolean,
+  mnemonic?: string,
+  enableBiometrics?: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -218,21 +217,25 @@ const finishRegistration = async ({
   }
 
   await dispatch(fetchTransactionsHistoryAction());
+  dispatch(updateConnectionsAction());
   dispatch(labelUserAsLegacyAction());
 
   if (smartWalletFeatureEnabled) {
     dispatch(managePPNInitFlagAction());
   }
 
-  await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
-
-  // restore access tokens
-  await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
-
   await dispatch({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
   });
+
+  // save data to keychain
+  const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
+  if (enableBiometrics) {
+    await dispatch(changeUseBiometricsAction(true, keychainData, true));
+  } else {
+    await setKeychainDataObject(keychainData);
+  }
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
@@ -255,7 +258,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       importedWallet,
       apiUser,
     } = currentState.wallet.onboarding;
-
     const mnemonicPhrase = mnemonic.original;
     const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
@@ -275,7 +277,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     // manage theme as appSettings gets overwritten
     if (themeToStore) dispatch(setAppThemeAction(themeToStore));
 
-    dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
     dispatch({ type: SET_HISTORY, payload: {} });
     dispatch({ type: UPDATE_BALANCES, payload: {} });
     dispatch({ type: UPDATE_COLLECTIBLES, payload: {} });
@@ -283,8 +284,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch({ type: UPDATE_BADGES, payload: [] });
     dispatch({ type: RESET_SMART_WALLET });
     dispatch({ type: RESET_PAYMENT_NETWORK });
-    dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [] });
-    dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] });
     dispatch({ type: SET_USER_SETTINGS, payload: {} });
     dispatch({ type: SET_FEATURE_FLAGS, payload: {} });
     dispatch({ type: SET_USER_EVENTS, payload: [] });
@@ -363,33 +362,22 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     // re-init API with OAuth update callback
     const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
     api.init(updateOAuth, oAuthTokens);
-
     // STEP 5: finish registration
-    let finalMnemonic = mnemonicPhrase;
-    if (importedWallet) {
-      if (importedWallet.mnemonic) {
-        finalMnemonic = importedWallet.mnemonic;
-      } else {
-        finalMnemonic = '';
-      }
-    }
-
     await finishRegistration({
       api,
       dispatch,
       getState,
       userInfo,
       address: normalizeWalletAddress(wallet.address),
-      mnemonic: finalMnemonic,
       privateKey: wallet.privateKey,
       isImported,
+      enableBiometrics,
+      mnemonic: wallet.mnemonic,
     });
 
     // STEP 6: add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
-
-    if (enableBiometrics) await dispatch(changeUseBiometricsAction(true, wallet.privateKey, true));
 
     // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
@@ -417,10 +405,8 @@ export const registerOnBackendAction = () => {
         backupStatus: { isBackedUp, isImported },
       },
     } = getState();
-
     const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
-
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
@@ -487,51 +473,5 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       type: UPDATE_WALLET_STATE,
       payload: usernameStatus,
     });
-  };
-};
-
-export const restoreAccessTokensAction = (walletId: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const restoredAccessTokens = [];
-    const userAccessTokens = await api.fetchAccessTokens(walletId);
-
-    // get connectionRequestedEvent & connectionAcceptedEvent notifications
-    const types = [TYPE_RECEIVED, TYPE_ACCEPTED];
-    const inviteNotifications: ApiNotification[] = await api.fetchNotifications(walletId, types.join(' '));
-    if (isEmpty(inviteNotifications)) return;
-
-    const mappedInviteNotifications = mapInviteNotifications(inviteNotifications);
-
-    // split into groups
-    let receivedConnectionReq = mappedInviteNotifications.filter(notification => notification.type === TYPE_RECEIVED);
-    let sentConnectionReq = mappedInviteNotifications.filter(notification => notification.type === TYPE_ACCEPTED);
-
-    // remove duplicates
-    receivedConnectionReq = uniqBy(receivedConnectionReq, 'id');
-    sentConnectionReq = uniqBy(sentConnectionReq, 'id');
-
-    userAccessTokens.forEach(token => {
-      // check in received connection requests
-      let found = receivedConnectionReq.find(({ id }) => id === token.contactId);
-
-      // not found? check in sent connection requests
-      if (!found) {
-        found = sentConnectionReq.find(({ id }) => id === token.contactId);
-      }
-
-      // can't find again? then skip this connection
-      if (!found) return;
-
-      restoredAccessTokens.push({
-        myAccessToken: token.accessKey,
-        userId: token.contactId,
-        userAccessToken: found.connectionKey,
-      });
-    });
-    await dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: restoredAccessTokens,
-    });
-    await dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
   };
 };

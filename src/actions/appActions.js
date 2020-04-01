@@ -35,12 +35,9 @@ import {
 } from 'constants/assetsConstants';
 import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
-import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -128,20 +125,11 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { invitations = [] } = await storage.get('invitations');
       dispatch({ type: UPDATE_INVITATIONS, payload: invitations });
 
-      const { accessTokens = [] } = await storage.get('accessTokens');
-      dispatch({ type: UPDATE_ACCESS_TOKENS, payload: accessTokens });
-
       const { oAuthTokens = {} } = await storage.get('oAuthTokens');
       dispatch({ type: UPDATE_OAUTH_TOKENS, payload: oAuthTokens });
 
       const { txCount = {} } = await storage.get('txCount');
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
-
-      const { connectionKeyPairs = [] } = await storage.get('connectionKeyPairs');
-      dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: connectionKeyPairs });
-
-      const { connectionIdentityKeys = [] } = await storage.get('connectionIdentityKeys');
-      dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: connectionIdentityKeys });
 
       const collectibles = await loadAndMigrate('collectibles', dispatch, getState);
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });

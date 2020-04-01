@@ -501,3 +501,7 @@ export const formatAmountDisplay = (value: number | string) => {
   }
   return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
 };
+
+export const getDeviceHeight = () => {
+  return Dimensions.get('window').height;
+};

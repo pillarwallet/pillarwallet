@@ -19,6 +19,7 @@
 */
 
 import orderBy from 'lodash.orderby';
+import get from 'lodash.get';
 import { STATUS_BLOCKED } from 'constants/connectionsConstants';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import { addressesEqual } from './assets';
@@ -84,4 +85,9 @@ export const findMatchingContact = (
 export const isContactAvailable = (contact: ApiUser) => {
   // if no contact status at all then it means disconnected status
   return !!contact.status && contact.status !== STATUS_BLOCKED;
+};
+
+export const findContactIdByUsername = (contacts: ApiUser[], username: string): string => {
+  const foundContact = contacts.find(contact => isCaseInsensitiveMatch(contact.username, username));
+  return get(foundContact, 'id', '');
 };
