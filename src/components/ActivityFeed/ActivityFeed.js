@@ -231,7 +231,14 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   renderActivityFeedItem = ({ item: notification }: Object) => {
-    return <ActivityFeedItem event={notification} selectEvent={this.selectEvent} />;
+    const { onRejectInvitation, onAcceptInvitation } = this.props;
+    return (
+      <ActivityFeedItem
+        event={notification}
+        selectEvent={this.selectEvent}
+        rejectInvitation={onRejectInvitation}
+        acceptInvitation={onAcceptInvitation}
+      />);
   };
 
   handleRejectInvitation = () => {

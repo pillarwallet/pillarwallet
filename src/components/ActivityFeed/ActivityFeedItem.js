@@ -368,7 +368,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getSocialEventData = (event: Object): ?EventData => {
-    const { onRejectInvitation, onAcceptInvitation } = this.props;
+    const { rejectInvitation, acceptInvitation } = this.props;
     const { type, username, profileImage } = event;
 
     let status;
@@ -392,8 +392,8 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     if (type === TYPE_RECEIVED) {
       data.information = 'Connection request';
-      data.rejectInvitation = () => createAlert(TYPE_REJECTED, event, () => onRejectInvitation(event));
-      data.acceptInvitation = () => onAcceptInvitation(event);
+      data.rejectInvitation = () => createAlert(TYPE_REJECTED, event, () => rejectInvitation(event));
+      data.acceptInvitation = () => acceptInvitation(event);
     }
 
     return data;
