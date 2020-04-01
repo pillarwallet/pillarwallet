@@ -75,6 +75,9 @@ import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+
 
 type Props = {
   type?: string,
@@ -89,10 +92,12 @@ type Props = {
   event: Object,
   feedType?: string,
   assets: Asset[],
-  onAcceptInvitation: Function,
-  onRejectInvitation: Function,
+  acceptInvitation: Function,
+  rejectInvitation: Function,
   activeAccountAddress: string,
   activeBlockchainNetwork: string,
+  accounts: Accounts,
+  smartWalletState: Object,
 };
 
 type EventData = {
@@ -100,7 +105,7 @@ type EventData = {
   itemImageSource?: string,
   actionLabel?: ?string,
   actionLabelColor?: string,
-  badge?: string,
+  badge?: ?string,
   subtext?: string,
   labelAsButton?: boolean,
   rejectInvitation?: Function,
@@ -116,6 +121,9 @@ type EventData = {
   eventData?: Object,
   eventType?: string,
   eventStatus?: string,
+  iconBackgroundColor?: string,
+  iconBorder?: boolean,
+  fallbackToGenericToken?: boolean,
 };
 
 const PPNIcon = require('assets/icons/icon_PPN.png');

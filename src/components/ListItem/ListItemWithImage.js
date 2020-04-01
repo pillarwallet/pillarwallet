@@ -92,6 +92,7 @@ type Props = {
   fallbackToGenericToken?: boolean,
   badge?: string,
   iconBackgroundColor?: string,
+  iconBorder?: boolean,
 }
 
 type AddonProps = {

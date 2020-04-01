@@ -81,9 +81,11 @@ const reduxData = {
   },
   activeAccountAddress: '0x000000',
   selectEvent: () => {},
-  onAcceptInvitation: () => {},
-  onRejectInvitation: () => {},
+  acceptInvitation: () => {},
+  rejectInvitation: () => {},
   activeBlockchainNetwork: '',
+  smartWalletState: { upgrade: { status: '' } },
+  accounts: [],
 };
 
 const ActivityFeedItem = withTheme(ActivityFeedItemNoTheme);
