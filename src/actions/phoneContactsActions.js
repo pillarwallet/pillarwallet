@@ -86,34 +86,38 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
     const {
       recordID,
       displayName,
+      givenName,
       emailAddresses,
       phoneNumbers,
       thumbnailPath,
     } = contact;
-    const formattedContact = {
-      name: displayName,
-      photo: thumbnailPath,
-    };
+    const name = displayName || givenName;
     const arrayOfContacts = [];
 
     if (!isEmpty(emailAddresses)) {
       filterDuplicateEmails(emailAddresses)
-        .forEach((email) => {
+        .forEach((contactEmail, index) => {
+          const { email } = contactEmail;
+
           arrayOfContacts.push({
-            ...formattedContact,
-            id: `${recordID}-${email.id}`,
-            email: email.email,
+            name: name || email,
+            photo: thumbnailPath,
+            id: `${recordID}-email-${index}`,
+            email,
           });
         });
     }
 
     if (!isEmpty(phoneNumbers)) {
       filterDuplicatePhones(phoneNumbers)
-        .forEach((phone) => {
+        .forEach((contactPhone, index) => {
+          const { number: phone } = contactPhone;
+
           arrayOfContacts.push({
-            ...formattedContact,
-            id: `${recordID}-${phone.id}`,
-            phone: phone.number,
+            name: name || phone,
+            photo: thumbnailPath,
+            id: `${recordID}-phone-${index}`,
+            phone,
           });
         });
     }
