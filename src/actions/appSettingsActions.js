@@ -33,10 +33,7 @@ import set from 'lodash.set';
 
 import Toast from 'components/Toast';
 import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
-import {
-  setKeychainDataObject,
-  resetKeychainDataObject,
-} from 'utils/keychain';
+import { setKeychainDataObject, type KeyChainData } from 'utils/keychain';
 
 import SDKWrapper from 'services/api';
 
@@ -109,16 +106,10 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
   },
 });
 
-export const changeUseBiometricsAction = (value: boolean, privateKey?: string, noToast?: boolean) => {
+export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, noToast?: boolean) => {
   return async (dispatch: Dispatch) => {
-    let message;
-    if (value) {
-      await setKeychainDataObject({ privateKey });
-      message = 'Biometric login enabled';
-    } else {
-      await resetKeychainDataObject();
-      message = 'Biometric login disabled';
-    }
+    await setKeychainDataObject(data, value);
+    const message = `Biometric login ${value ? 'enabled' : 'disabled'}`;
     dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
