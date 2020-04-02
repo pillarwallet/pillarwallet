@@ -328,7 +328,7 @@ class Contact extends React.Component<Props, State> {
     );
   };
 
-  onSendPress(contact: Object): void {
+  onSendPress(contact: ?ApiUser): void {
     const { navigation } = this.props;
 
     navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
@@ -440,7 +440,7 @@ class Contact extends React.Component<Props, State> {
                     disabled={disableSend}
                     label="Send"
                     fontIcon="paperPlane"
-                    onPress={() => this.onSendPress(displayContact)}
+                    onPress={() => this.onSendPress(this.localContact)}
                   />
                   <CircleButton
                     disabled={!displayContact.status}

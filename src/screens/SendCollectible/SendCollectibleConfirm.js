@@ -150,13 +150,15 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const { note } = this.state;
+    const { note, gasLimit } = this.state;
     const {
       name,
       tokenType,
       id: tokenId,
       contractAddress,
     } = this.assetData;
+
+    const gasPrice = this.getGasPriceInWei().toNumber();
 
     const transactionPayload: CollectibleTransactionPayload = {
       to: this.receiver,
@@ -166,6 +168,8 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       tokenType,
       tokenId,
       note,
+      gasLimit,
+      gasPrice,
     };
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
@@ -178,11 +182,15 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.setState({ note: text });
   }
 
-  getTxFeeInWei = () => {
+  getGasPriceInWei = () => {
     const { gasInfo } = this.props;
-    const { gasLimit } = this.state;
     const gasPrice = gasInfo.gasPrice[NORMAL] || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return utils.parseUnits(gasPrice.toString(), 'gwei');
+  };
+
+  getTxFeeInWei = () => {
+    const { gasLimit } = this.state;
+    const gasPriceWei = this.getGasPriceInWei();
     return gasPriceWei.mul(gasLimit);
   };
 
