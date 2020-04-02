@@ -64,6 +64,7 @@ type Props = {
   transactions: BTCTransaction[],
   refreshBitcoinTransactions: () => void,
   refreshBitcoinUnspentTx: () => void,
+  onScroll: (event: Object) => void,
 };
 
 type State = {
@@ -135,6 +136,7 @@ class BTCView extends React.Component<Props, State> {
       transactions = [],
       baseFiatCurrency,
       rates,
+      onScroll,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -153,6 +155,8 @@ class BTCView extends React.Component<Props, State> {
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refreshBalance} />
           }
+          onScroll={onScroll}
+          scrollEventThrottle={16}
         >
           <AssetPattern
             token="BTC"
