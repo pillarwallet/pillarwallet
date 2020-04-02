@@ -17,12 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
+import * as React from 'react';
 import { TextInput as RNInput } from 'react-native';
 import { withTheme } from 'styled-components/native';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 
+// $FlowFixMe
 const Input = React.forwardRef(({ theme, ...props }, ref) => {
   const keyboardAppearance = theme.current === DARK_THEME ? 'dark' : 'light';
   return <RNInput ref={ref} keyboardAppearance={keyboardAppearance} {...props} />;

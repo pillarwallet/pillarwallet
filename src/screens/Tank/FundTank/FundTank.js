@@ -40,7 +40,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
