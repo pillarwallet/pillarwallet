@@ -82,11 +82,11 @@ import { firebaseMessaging } from 'services/firebase';
 
 // utils
 import { processNotification, resetAppNotificationsBadgeNumber } from 'utils/notifications';
+import { reportLog } from 'utils/common';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import { reportLog } from 'utils/common';
 
 
 const storage = Storage.getInstance('db');
@@ -176,7 +176,7 @@ export const subscribeToSocketEventsAction = () => {
         data = JSON.parse(response.data.msg);
       } catch (error) {
         // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
-        Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response, error } });
+        reportLog('Platform WebSocket notification parse failed', { response, error });
         return; // unable to parse data, do not proceed
       }
 

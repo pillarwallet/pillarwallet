@@ -20,8 +20,6 @@
 .*/node_modules/metro/.*
 
 ; ;;; custom ignores start ;;;
-<PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
-<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
 <PROJECT_ROOT>/node_modules/findup/.*
 ; ;;; custom ignores end ;;;
 
@@ -37,6 +35,8 @@
 <PROJECT_ROOT>/node_modules/react-native-device-info/.*
 <PROJECT_ROOT>/node_modules/react-native-keychain/.*
 <PROJECT_ROOT>/node_modules/@storybook/.*/polished
+<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
+<PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
 
 [include]
 

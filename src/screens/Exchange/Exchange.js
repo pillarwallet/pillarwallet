@@ -1288,7 +1288,7 @@ class ExchangeScreen extends React.Component<Props, State> {
                 <PopularSwapsGridWrapper>
                   <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
                     <MediumText medium style={{ marginBottom: spacing.medium }}>
-                        Try these popular swaps
+                      Try these popular swaps
                     </MediumText>
                     <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
                   </SafeAreaView>

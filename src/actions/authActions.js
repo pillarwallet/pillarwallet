@@ -89,7 +89,6 @@ import { labelUserAsLegacyAction } from './userActions';
 import { updateConnectionsAction } from './connectionsActions';
 
 
-
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
@@ -331,7 +330,7 @@ export const checkAuthAction = (
   pin: ?string,
   privateKey: ?string,
   onValidPin?: Function,
-  options?: DecryptionSettings = defaultDecryptionSettings,
+  options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
   return async (dispatch: Dispatch) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');

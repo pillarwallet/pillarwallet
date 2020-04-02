@@ -252,13 +252,12 @@ SDKWrapper.prototype.verifyEmail = function (params: VerifyEmail) {
       const status = get(error, 'response.status');
       const message = get(error, 'response.data.message');
 
-      Sentry.captureException({
-        error: 'Can\'t verify code',
+      reportLog('Can\'t verify code', {
         walletId: params.walletId,
         user: params,
         status,
         message,
-      });
+      }, Sentry.Severity.Error);
       return { responseStatus: status, message };
     });
 };
@@ -668,26 +667,6 @@ SDKWrapper.prototype.getContacts = function (walletId: string) {
       return data;
     })
     .catch(() => []);
-};
-
-SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
-    .catch(() => false);
-};
-
-SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => {
-      if (data && !Array.isArray(data)) {
-        reportLog('Wrong response from patchIdentityKeys', { data });
-        return false;
-      }
-      return data;
-    })
-    .catch(() => false);
 };
 
 SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, contacts: MapContactsAddresses) {

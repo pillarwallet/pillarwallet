@@ -10525,6 +10525,7 @@ Array [
                           align="xMidYMid"
                           bbHeight={21}
                           bbWidth={20}
+                          focusable={false}
                           height={21}
                           meetOrSlice={0}
                           minX={0}
@@ -10536,7 +10537,9 @@ Array [
                                 "borderWidth": 0,
                               },
                               undefined,
-                              null,
+                              Object {
+                                "opacity": 1,
+                              },
                               Object {
                                 "flex": 0,
                                 "height": 21,
@@ -10790,6 +10793,7 @@ Array [
                           align="xMidYMid"
                           bbHeight={21}
                           bbWidth={20}
+                          focusable={false}
                           height={21}
                           meetOrSlice={0}
                           minX={0}
@@ -10801,7 +10805,9 @@ Array [
                                 "borderWidth": 0,
                               },
                               undefined,
-                              null,
+                              Object {
+                                "opacity": 1,
+                              },
                               Object {
                                 "flex": 0,
                                 "height": 21,

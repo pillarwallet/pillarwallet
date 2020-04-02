@@ -21,7 +21,7 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Animated, TouchableWithoutFeedback, View } from 'react-native';
-import type { ViewLayoutEvent } from 'react-native/Libraries/Components/View/ViewPropTypes';
+import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import { Shadow } from 'components/Shadow';
 import { themedColors, getThemeType } from 'utils/themes';
 import { noop } from 'utils/common';
@@ -113,7 +113,7 @@ class ShadowedCard extends React.Component<Props, State> {
     });
   };
 
-  handleContentLayout = (e: ViewLayoutEvent) => {
+  handleContentLayout = (e: LayoutEvent) => {
     const { isAnimated } = this.props;
     const { cardHeight, cardWidth, allowRerenderShadow } = this.state;
     if ((!cardHeight && !cardWidth) || allowRerenderShadow) {
