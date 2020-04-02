@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { View, Image, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
@@ -28,7 +29,7 @@ import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
 import { LabelBadge } from 'components/LabelBadge';
 
-const ContentWrapper = styled.View`
+const ContentWrapper = styled(SafeAreaView)`
   padding: 0 ${spacing.layoutSides}px ${spacing.large}px;
   align-items: center;
 `;
@@ -77,7 +78,8 @@ const ButtonsRow = styled.View`
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const getButtonWidth = () => {
-  return (SCREEN_WIDTH / 2) - (spacing.layoutSides * 1.5);
+  const marginBetweenButtons = SCREEN_WIDTH > 360 ? 12 : 4;
+  return (SCREEN_WIDTH / 2) - spacing.layoutSides - (marginBetweenButtons / 2);
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -125,7 +127,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
           ),
         }]}
       >
-        <ContentWrapper>
+        <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
           <WarningBanner rounded small />
           <QRCodeWrapper>
             <WalletAddress>{address}</WalletAddress>
@@ -146,6 +148,8 @@ export default class ReceiveModal extends React.Component<Props, *> {
                 positive
                 width={buttonWidth}
                 small={needsSmallButtons}
+                regularText
+                textStyle={{ paddingTop: 4 }}
               />
             )}
             <Button
@@ -154,6 +158,8 @@ export default class ReceiveModal extends React.Component<Props, *> {
               width={buttonWidth}
               small={needsSmallButtons}
               block={!buttonWidth}
+              regularText
+              textStyle={{ paddingTop: 4 }}
             />
           </ButtonsRow>
           {showBuyTokensButton && (

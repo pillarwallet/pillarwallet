@@ -266,7 +266,7 @@ const getButtonPadding = (props) => {
   if (props.square) {
     return '4px';
   }
-  return '22px';
+  return '19px';
 };
 
 const getButtonFontSize = (props) => {
