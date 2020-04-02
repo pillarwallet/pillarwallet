@@ -141,9 +141,7 @@ class ActionButtons extends React.Component<Props, State> {
   handleAuthModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
-    this.setState({
-      showPinModal: false,
-    });
+    this.setState({ showPinModal: false });
   };
 
   getModalActions = () => {
@@ -278,7 +276,6 @@ class ActionButtons extends React.Component<Props, State> {
 
     this.setState({
       showPinModal: true,
-      isChangingAcc: false,
       onPinValidAction: async (_: string, wallet: Object) => {
         this.setState({ isChangingAcc: true });
         await switchAccount(smartAccount.id, wallet.privateKey);
@@ -335,16 +332,16 @@ class ActionButtons extends React.Component<Props, State> {
             isVisible: showPinModal,
             onModalHide: this.handleAuthModalClose,
           }}
-          isChecking={isChangingAcc}
+          onLoading={() => this.setState({ isChangingAcc: true })}
         />
         <SlideModal
           isVisible={isChangingAcc}
           onModalHide={() => this.setState({ isChangingAcc: false })}
           fullScreen
-          title="Changing to Smart wallet"
+          showHeader
         >
           <Wrapper flex={1} center>
-            <Loader messages={['']} />
+            <Loader messages={['Changing to Smart wallet']} />
           </Wrapper>
         </SlideModal>
       </React.Fragment>

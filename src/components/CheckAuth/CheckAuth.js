@@ -69,6 +69,7 @@ type Props = {
   modalProps?: ModalProps,
   headerProps?: HeaderProps,
   errorMessage?: string,
+  onLoading?: () => void,
 };
 
 type State = {
@@ -123,9 +124,23 @@ class CheckAuth extends React.Component<Props, State> {
 
   componentWillUnmount() { this._isMounted = false; }
 
-  // special case for modals
   componentDidUpdate(prevProps: Props) {
-    const { modalProps } = this.props;
+    const {
+      modalProps,
+      isChecking,
+      onLoading,
+      wallet,
+    } = this.props;
+    const { walletState } = wallet;
+    const { wallet: prevWallet } = prevProps;
+    const { walletState: prevWalletState } = prevWallet;
+
+    if (!!onLoading && ((prevWalletState !== walletState && walletState === DECRYPTING) ||
+      (!!isChecking && prevProps.isChecking !== isChecking))) {
+      onLoading();
+    }
+
+    // special case for modals
     if (!modalProps || !prevProps.modalProps) return;
     if (modalProps.isVisible && !prevProps.modalProps.isVisible) {
       this.checkPrivateKey();
