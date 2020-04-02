@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Item as NBItem, Input } from 'native-base';
+import { Item as NBItem } from 'native-base';
 import {
   View,
   Platform,
@@ -48,6 +48,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Input from 'components/Input';
 
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
