@@ -10,15 +10,12 @@ exports[`Asset renders the Asset correctly 1`] = `
 >
   <View
     style={
-      Array [
-        Object {
-          "backgroundColor": "#FFFFFF",
-          "borderBottomColor": "#EDEDED",
-          "borderBottomWidth": 1,
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "backgroundColor": "rgba(255, 255, 255, 1)",
+        "borderBottomWidth": 1,
+        "borderColor": "rgba(237, 237, 237, 1)",
+        "width": "100%",
+      }
     }
   >
     <View
@@ -1323,17 +1320,13 @@ exports[`Asset renders the Asset correctly 1`] = `
               }
             >
               <View
-                noBottomBorder={true}
                 style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#FAFAFA",
-                      "width": "100%",
-                    },
-                    Object {
-                      "backgroundColor": "transparent",
-                    },
-                  ]
+                  Object {
+                    "backgroundColor": "#FFFFFF",
+                    "borderBottomWidth": 1,
+                    "borderColor": "transparent",
+                    "width": "100%",
+                  }
                 }
               >
                 <View
@@ -1581,17 +1574,16 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <View
+                  onLayout={[Function]}
+                  pointerEvents="box-none"
                   style={
-                    Array [
-                      Object {
-                        "alignItems": "center",
-                        "paddingBottom": 20,
-                        "paddingLeft": 16,
-                        "paddingRight": 16,
-                        "paddingTop": 0,
-                      },
-                      undefined,
-                    ]
+                    Object {
+                      "alignItems": "center",
+                      "paddingBottom": 20,
+                      "paddingLeft": 16,
+                      "paddingRight": 16,
+                      "paddingTop": 0,
+                    }
                   }
                 >
                   <View
@@ -1939,10 +1931,10 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "marginTop": 0,
                           "opacity": 1,
                           "paddingBottom": 0,
-                          "paddingLeft": 22,
-                          "paddingRight": 22,
+                          "paddingLeft": 19,
+                          "paddingRight": 19,
                           "paddingTop": 0,
-                          "width": 351,
+                          "width": 353,
                         }
                       }
                     >
@@ -1964,20 +1956,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                             },
                             Array [
                               Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "fontSize": 12,
-                                "lineHeight": 18,
-                                "textAlignVertical": "center",
+                                "color": "#FCFDFF",
+                                "fontSize": 18,
+                                "marginBottom": 0,
                               },
-                              Array [
-                                Object {
-                                  "color": "#FCFDFF",
-                                  "fontSize": 18,
-                                  "marginBottom": 0,
-                                },
-                                undefined,
-                              ],
+                              Object {
+                                "paddingTop": 4,
+                              },
                             ],
                           ]
                         }
@@ -1999,6 +1984,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "inactiveTabBarIcon": "#D4D9DB",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
+                              "link": "#007aff",
                               "negative": "#BD573A",
                               "notice": "#ea480e",
                               "orange": "#f57c00",
@@ -2053,8 +2039,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "marginTop": 0,
                           "opacity": 1,
                           "paddingBottom": 0,
-                          "paddingLeft": 22,
-                          "paddingRight": 22,
+                          "paddingLeft": 19,
+                          "paddingRight": 19,
                           "paddingTop": 0,
                           "shadowColor": "rgba(0,0,0,.12)",
                           "shadowOffset": Object {
@@ -2063,7 +2049,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                           },
                           "shadowOpacity": 1,
                           "shadowRadius": 7,
-                          "width": 351,
+                          "width": 353,
                         }
                       }
                     >
@@ -2086,20 +2072,13 @@ exports[`Asset renders the Asset correctly 1`] = `
                             },
                             Array [
                               Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "fontSize": 12,
-                                "lineHeight": 18,
-                                "textAlignVertical": "center",
+                                "color": "#FCFDFF",
+                                "fontSize": 18,
+                                "marginBottom": 0,
                               },
-                              Array [
-                                Object {
-                                  "color": "#FCFDFF",
-                                  "fontSize": 18,
-                                  "marginBottom": 0,
-                                },
-                                undefined,
-                              ],
+                              Object {
+                                "paddingTop": 4,
+                              },
                             ],
                           ]
                         }
@@ -2121,6 +2100,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "inactiveTabBarIcon": "#D4D9DB",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
+                              "link": "#007aff",
                               "negative": "#BD573A",
                               "notice": "#ea480e",
                               "orange": "#f57c00",
@@ -2625,17 +2605,13 @@ exports[`Asset renders the Asset correctly 1`] = `
               }
             >
               <View
-                noBottomBorder={true}
                 style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#FAFAFA",
-                      "width": "100%",
-                    },
-                    Object {
-                      "backgroundColor": "transparent",
-                    },
-                  ]
+                  Object {
+                    "backgroundColor": "#FFFFFF",
+                    "borderBottomWidth": 1,
+                    "borderColor": "transparent",
+                    "width": "100%",
+                  }
                 }
               >
                 <View
