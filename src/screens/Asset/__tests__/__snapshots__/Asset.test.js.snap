@@ -1327,7 +1327,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "backgroundColor": "#FFFFFF",
+                      "backgroundColor": "#FAFAFA",
                       "width": "100%",
                     },
                     Object {
@@ -2226,10 +2226,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "control": "#FCFDFF",
                               "danger": "#ff0005",
                               "helpIcon": "#f7931a",
+                              "iconBackground": "#ebf0f5",
                               "inactiveTabBarIcon": "#D4D9DB",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
                               "negative": "#BD573A",
+                              "notice": "#ea480e",
                               "orange": "#f57c00",
                               "popularSwaps": "#d08cb1",
                               "positive": "#2AA057",
@@ -2240,8 +2242,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "smartWalletSurface": "#f3f7ff",
                               "smartWalletText": "#1D24D8",
                               "surface": "#2AA057",
+                              "synthetic": "#2329d6",
                               "tertiary": "#EBF0F6",
                               "text": "#FCFDFF",
+                              "transactionReceivedIcon": "#497391",
                               "userAvatar": "#d1d9e4",
                               "warning": "#ECA93A",
                             },
@@ -2344,10 +2348,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "control": "#FCFDFF",
                               "danger": "#ff0005",
                               "helpIcon": "#f7931a",
+                              "iconBackground": "#ebf0f5",
                               "inactiveTabBarIcon": "#D4D9DB",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
                               "negative": "#BD573A",
+                              "notice": "#ea480e",
                               "orange": "#f57c00",
                               "popularSwaps": "#d08cb1",
                               "positive": "#2AA057",
@@ -2358,8 +2364,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "smartWalletSurface": "#f3f7ff",
                               "smartWalletText": "#1D24D8",
                               "surface": "#007AFF",
+                              "synthetic": "#2329d6",
                               "tertiary": "#EBF0F6",
                               "text": "#FCFDFF",
+                              "transactionReceivedIcon": "#497391",
                               "userAvatar": "#d1d9e4",
                               "warning": "#ECA93A",
                             },
@@ -2852,7 +2860,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "backgroundColor": "#FFFFFF",
+                      "backgroundColor": "#FAFAFA",
                       "width": "100%",
                     },
                     Object {

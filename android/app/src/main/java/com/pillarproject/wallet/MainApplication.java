@@ -3,6 +3,9 @@ package com.pillarproject.wallet;
 import androidx.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
+
+import io.branch.rnbranch.RNBranchModule;
+import io.branch.rnbranch.RNBranchPackage;
 import me.jhen.react.BadgePackage;
 import io.sentry.RNSentryPackage;
 
@@ -13,6 +16,7 @@ import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
 import com.crypho.scrypt.RNScryptPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.rnscreens.RNScreensPackage;
 
@@ -102,7 +106,9 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
         new AsyncStoragePackage(),
         new RNInAppBrowserPackage(),
         new NativeShadowPackage(),
-        new RNNotificationsPackage(MainApplication.this)
+        new RNNotificationsPackage(MainApplication.this),
+        new RNBranchPackage(),
+        new ReactNativeContacts()
       );
     }
 
@@ -120,6 +126,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   @Override
   public void onCreate() {
     super.onCreate();
+    RNBranchModule.getAutoInstance(this);
     if (BuildConfig.DEBUG) {
       Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
     } else {

@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Animated, RefreshControl, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
@@ -30,21 +31,20 @@ import ActivityFeed from 'components/ActivityFeed';
 import styled, { withTheme } from 'styled-components/native';
 import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
-import QRCodeScanner from 'components/QRCodeScanner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Toast from 'components/Toast';
+import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
+import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
-  MANAGE_DETAILS_SESSIONS,
   BADGE,
+  REFER_FLOW,
   MENU,
   MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
@@ -67,12 +67,7 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
-import {
-  requestSessionAction,
-  cancelWaitingRequestAction,
-} from 'actions/walletConnectActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { executeDeepLinkAction } from 'actions/deepLinkActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -83,8 +78,8 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
-import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
+import { toastReferral } from 'utils/toasts';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -94,13 +89,13 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-
+import type { User } from 'models/User';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   invitations: Object[],
-  user: Object,
+  user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -113,9 +108,6 @@ type Props = {
   fetchAllCollectiblesData: Function,
   openSeaTxHistory: Object[],
   history: Object[],
-  requestWalletConnectSession: (uri: string) => void,
-  executeDeepLink: (uri: string) => void,
-  cancelWaitingRequest: () => void,
   badges: Badges,
   fetchBadges: Function,
   connectors: Connector[],
@@ -124,13 +116,13 @@ type Props = {
   activeAccount: ?Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
-  isOnline: boolean,
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
+  referralsFeatureEnabled: boolean,
 };
 
 type State = {
@@ -140,15 +132,11 @@ type State = {
   permissionsGranted: boolean,
   scrollY: Animated.Value,
   isScanning: boolean,
+  isReferralBannerVisible: boolean,
+  showRewardModal: boolean,
 };
 
 const profileImageWidth = 24;
-
-const WalletConnectWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
-  background-color: ${themedColors.surface};
-  width: 100%;
-`;
 
 const ListHeader = styled(MediumText)`
   color: ${themedColors.accent};
@@ -167,6 +155,8 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
+const referralImage = require('assets/images/referral_gift.png');
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
@@ -178,6 +168,8 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: ALL,
     usernameWidth: 0,
     isScanning: false,
+    isReferralBannerVisible: true,
+    showRewardModal: false,
   };
 
   componentDidMount() {
@@ -219,8 +211,6 @@ class HomeScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  closeCamera = () => this.setState({ showCamera: false });
-
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -242,48 +232,6 @@ class HomeScreen extends React.Component<Props, State> {
     logScreenView(`View tab Home.${activeTab}`, 'Home');
     this.setState({ activeTab });
   };
-
-  openQRScanner = () => {
-    const { isOnline } = this.props;
-    if (!isOnline) {
-      Toast.show({
-        message: 'Cannot use Connect while offline',
-        type: 'warning',
-        title: 'Warning',
-      });
-      return;
-    }
-    this.setState({ isScanning: true });
-  };
-
-  closeQRScanner = () => this.setState({
-    isScanning: false,
-  });
-
-  // START OF Wallet connect related methods
-  validateQRCode = (uri: string): boolean => {
-    return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
-  };
-
-  handleQRRead = (uri: string) => {
-    const {
-      requestWalletConnectSession,
-      executeDeepLink,
-    } = this.props;
-
-    this.closeQRScanner();
-
-    if (uri.startsWith('wc:')) {
-      requestWalletConnectSession(uri);
-    } else {
-      executeDeepLink(uri);
-    }
-  };
-
-  cancelWaiting = () => {
-    this.props.cancelWaitingRequest();
-  };
-  // END OF Wallet connect related methods
 
   renderBadge = ({ item }) => {
     const { navigation } = this.props;
@@ -310,6 +258,44 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  handleReferralBannerPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
+
+  renderReferral = (colors) => {
+    const { isReferralBannerVisible } = this.state;
+
+    return (
+      <Banner
+        isVisible={isReferralBannerVisible}
+        onPress={this.handleReferralBannerPress}
+        bannerText="Refer friends and earn rewards, free PLR and more."
+        imageProps={{
+          style: {
+            width: 96,
+            height: 60,
+            marginLeft: 4,
+          },
+          source: referralImage,
+        }}
+        wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+        onClose={() => this.setState({ isReferralBannerVisible: false })}
+      />
+    );
+  };
+
+  handleModalHide = (callback: () => void) => {
+    this.setState({ showRewardModal: false }, () => {
+      if (callback) callback();
+    });
+  }
+
   render() {
     const {
       cancelInvitation,
@@ -321,9 +307,7 @@ class HomeScreen extends React.Component<Props, State> {
       openSeaTxHistory,
       contacts,
       invitations,
-      pendingConnector,
       badges,
-      connectors,
       contactsSmartAddresses,
       accounts,
       userEvents,
@@ -331,10 +315,10 @@ class HomeScreen extends React.Component<Props, State> {
       theme,
       baseFiatCurrency,
       activeBlockchainNetwork,
+      referralsFeatureEnabled,
     } = this.props;
-    const colors = getThemeColors(theme);
 
-    const { activeTab, isScanning } = this.state;
+    const { activeTab, showRewardModal } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -402,16 +386,13 @@ class HomeScreen extends React.Component<Props, State> {
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
 
-    const sessionsCount = filterSessionsByUrl(connectors).length;
-    const sessionsLabelPart = sessionsCount < 2 ? 'session' : 'sessions';
-    const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
-
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
+    const colors = getThemeColors(theme);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
       <ContainerWithHeader
-        backgroundColor={colors.card}
+        backgroundColor={colors.card} // so tabs would have white background only when not sticky
         headerProps={{
           leftItems: [
             {
@@ -450,7 +431,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={[3]}
+          stickyHeaderIndices={referralsFeatureEnabled ? [3] : [2]}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -458,19 +439,6 @@ class HomeScreen extends React.Component<Props, State> {
             />}
         >
           <PortfolioBalance fiatCurrency={fiatCurrency} />
-          <WalletConnectWrapper>
-            <SettingsItemCarded
-              title="Manage Sessions"
-              subtitle={sessionsLabel}
-              onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
-              onSettingsPress={this.openQRScanner}
-              onSettingsLoadingPress={this.cancelWaiting}
-              isLoading={!!pendingConnector}
-              settingsIcon="qrDetailed"
-              settingsLabel="Connect"
-              iconStyle={{ fontSize: fontSizes.large }}
-            />
-          </WalletConnectWrapper>
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
@@ -491,6 +459,7 @@ class HomeScreen extends React.Component<Props, State> {
               )}
             />
           </BadgesWrapper>
+          {!!referralsFeatureEnabled && this.renderReferral(colors)}
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
@@ -509,11 +478,9 @@ class HomeScreen extends React.Component<Props, State> {
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
-        <QRCodeScanner
-          validator={this.validateQRCode}
-          isActive={isScanning}
-          onCancel={this.closeQRScanner}
-          onRead={this.handleQRRead}
+        <ReferralModalReward
+          isVisible={showRewardModal}
+          onModalHide={this.handleModalHide}
         />
       </ContainerWithHeader>
     );
@@ -526,11 +493,14 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
   badges: { data: badges, badgesEvents },
-  walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
-  session: { data: { isOnline } },
   userEvents: { data: userEvents },
   appSettings: { data: { baseFiatCurrency } },
+  featureFlags: {
+    data: {
+      REFERRALS_ENABLED: referralsFeatureEnabled,
+    },
+  },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -538,13 +508,11 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   badges,
   badgesEvents,
-  connectors,
-  pendingConnector,
   contactsSmartAddresses,
   accounts,
-  isOnline,
   userEvents,
   baseFiatCurrency,
+  referralsFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -567,9 +535,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  requestWalletConnectSession: uri => dispatch(requestSessionAction(uri)),
-  executeDeepLink: uri => dispatch(executeDeepLinkAction(uri)),
-  cancelWaitingRequest: () => dispatch(cancelWaitingRequestAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),

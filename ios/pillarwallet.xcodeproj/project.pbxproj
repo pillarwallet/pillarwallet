@@ -965,6 +965,9 @@
 							com.apple.Push = {
 								enabled = 1;
 							};
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
 						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -1692,6 +1695,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BRANCH_IO_APP_DOMAIN = "abgsz.test-app.link";
+				BRANCH_IO_KEY_LIVE = key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_STYLE = Manual;
@@ -1783,6 +1788,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BRANCH_IO_APP_DOMAIN = plr.app.link;
+				BRANCH_IO_KEY_LIVE = _branch_io_key_live_;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -2053,6 +2060,8 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconStaging;
+				BRANCH_IO_APP_DOMAIN = "abgsz.test-app.link";
+				BRANCH_IO_KEY_LIVE = key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";

@@ -25,3 +25,6 @@ export const STATUS_ACCEPTED = 'accepted';
 export const STATUS_MUTED = 'muted';
 export const STATUS_BLOCKED = 'blocked';
 export const STATUS_DISCONNECTED = 'disconnected';
+export const STATUS_REJECTED = 'rejected';
+export const STATUS_CANCELLED = 'cancelled';
+export const STATUS_PENDING = 'pending';

@@ -27,22 +27,14 @@ import { reportLog } from 'utils/common';
 import type { ApiUser } from 'models/Contacts';
 
 // actions
-import {
-  fetchOldInviteNotificationsAction,
-  acceptOldInvitationAction,
-  rejectOldInvitationAction,
-  cancelOldInvitationAction,
-} from 'actions/oldInvitationsActions';
-import { mapIdentityKeysAction, prependConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { getIdentityKeyPairs } from 'utils/connections';
 import { saveDbAction } from './dbActions';
 
 
 export const fetchInviteNotificationsAction = () => {
   return async (dispatch: Function) => {
-    await dispatch(fetchOldInviteNotificationsAction());
+    await dispatch(updateConnectionsAction());
   };
 };
 
@@ -51,7 +43,6 @@ export const sendInvitationAction = (user: ApiUser) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
 
     const index = invitations.findIndex(el => el.id === user.id);
@@ -63,30 +54,9 @@ export const sendInvitationAction = (user: ApiUser) => {
       return;
     }
 
-    const {
-      sourceIdentityKey,
-      targetIdentityKey,
-      connIdKeyResult,
-      connKeyPairReserved,
-    } = await getIdentityKeyPairs(user.id, connectionIdentityKeys, dispatch);
-
-    const sentInvitation = await api.sendInvitation(
-      user.id,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-    );
-
-    if (!connIdKeyResult) {
-      await dispatch(prependConnectionKeyPairs(connKeyPairReserved));
-    }
-
+    const sentInvitation = await api.sendInvitation(user.id, walletId);
     if (!sentInvitation) {
       return;
-    }
-
-    if (!connIdKeyResult) {
-      await dispatch(mapIdentityKeysAction(1));
     }
 
     dispatch(logEventAction('connection_requested'));
@@ -102,43 +72,12 @@ export const sendInvitationAction = (user: ApiUser) => {
 
 export const acceptInvitationAction = (invitation: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    if (!invitation.sourceIdentityKey) {
-      await dispatch(acceptOldInvitationAction(invitation));
-      return;
-    }
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
 
-    const {
-      sourceIdentityKey,
-      targetIdentityKey,
-      connIdKeyResult,
-      connKeyPairReserved,
-    } = await getIdentityKeyPairs(invitation.id, connectionIdentityKeys, dispatch);
-
-    const sourceUserIdentityKeys = {
-      sourceIdentityKey,
-      targetIdentityKey,
-    };
-
-    const targetUserIdentityKeys = {
-      sourceIdentityKey: invitation.sourceIdentityKey,
-      targetIdentityKey: invitation.targetIdentityKey,
-    };
-
-    const acceptedInvitation = await api.acceptInvitation(
-      invitation.id,
-      sourceUserIdentityKeys,
-      targetUserIdentityKeys,
-      walletId,
-    );
-
-    if (!connIdKeyResult) {
-      await dispatch(prependConnectionKeyPairs(connKeyPairReserved));
-    }
+    const acceptedInvitation = await api.acceptInvitation(invitation.id, walletId);
 
     if (!acceptedInvitation) {
       dispatch(({
@@ -146,17 +85,11 @@ export const acceptInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(updateConnectionsAction());
-      reportLog('Ghost invitation on acceptV2', {
+
+      reportLog('Unable to accept invitation', {
         invitationId: invitation.id,
-        sourceUserIdentityKeys,
-        targetUserIdentityKeys,
-        walletId,
       });
       return;
-    }
-
-    if (!connIdKeyResult) {
-      await dispatch(mapIdentityKeysAction(1));
     }
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
@@ -178,24 +111,12 @@ export const acceptInvitationAction = (invitation: Object) => {
 
 export const cancelInvitationAction = (invitation: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    if (!invitation.sourceIdentityKey) {
-      await dispatch(cancelOldInvitationAction(invitation));
-      return;
-    }
-
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
     } = getState();
 
-    const { sourceUserIdentityKeys: { sourceIdentityKey, targetIdentityKey } } = invitation;
-
-    const cancelledInvitation = await api.cancelInvitation(
-      invitation.id,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-    );
+    const cancelledInvitation = await api.cancelInvitation(invitation.id, walletId);
 
     if (!cancelledInvitation) {
       dispatch(({
@@ -227,22 +148,12 @@ export const cancelInvitationAction = (invitation: Object) => {
 
 export const rejectInvitationAction = (invitation: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    if (!invitation.sourceIdentityKey) {
-      await dispatch(rejectOldInvitationAction(invitation));
-      return;
-    }
-
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
     } = getState();
 
-    const rejectedInvitation = await api.rejectInvitation(
-      invitation.id,
-      invitation.sourceIdentityKey,
-      invitation.targetIdentityKey,
-      walletId,
-    );
+    const rejectedInvitation = await api.rejectInvitation(invitation.id, walletId);
 
     if (!rejectedInvitation) {
       dispatch(({
@@ -250,10 +161,8 @@ export const rejectInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(updateConnectionsAction());
-      reportLog('Ghost invitation on rejectV2', {
+      reportLog('Unable to reject invitation', {
         invitationId: invitation.id,
-        sourceIdentityKey: invitation.sourceIdentityKey,
-        targetIdentityKey: invitation.targetIdentityKey,
         walletId,
       });
       return;

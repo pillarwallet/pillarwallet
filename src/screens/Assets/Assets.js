@@ -23,7 +23,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
-import * as Keychain from 'react-native-keychain';
 import { withTheme } from 'styled-components/native';
 
 // components
@@ -62,6 +61,7 @@ import { ACCOUNTS, RECOVERY_SETTINGS, SECURITY_SETTINGS } from 'constants/naviga
 import { getAccountName } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getThemeColors } from 'utils/themes';
+import { getSupportedBiometryType } from 'utils/keychain';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -130,9 +130,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     fetchAllCollectiblesData();
 
-    Keychain.getSupportedBiometryType()
-      .then(supported => this.setState({ supportsBiometrics: !!supported }))
-      .catch(() => null);
+    getSupportedBiometryType(biometryType => this.setState({ supportsBiometrics: !!biometryType }));
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {

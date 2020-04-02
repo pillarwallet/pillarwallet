@@ -19,18 +19,20 @@
 */
 import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
+import get from 'lodash.get';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
 const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
 
-type KeyChainData = {
+export type KeyChainData = {
   privateKey?: string,
+  mnemonic?: string,
 };
 
-export const setKeychainDataObject = (data: KeyChainData) => Keychain
+export const setKeychainDataObject = (data: KeyChainData, biometry?: boolean) => Keychain
   .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
-    accessControl: Platform.select({
+    accessControl: biometry && Platform.select({
       ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
       android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
     }),
@@ -39,15 +41,29 @@ export const setKeychainDataObject = (data: KeyChainData) => Keychain
   })
   .catch(() => null);
 
-export const getKeychainDataObject = () => Keychain
+export const getKeychainDataObject = (errorHandler?: Function) => Keychain
   .getGenericPassword({
     service: KEYCHAIN_SERVICE,
     authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
   })
-  .then(({ password = '{}' }) => JSON.parse(password));
+  .then(({ password = '{}' }) => JSON.parse(password))
+  .catch(errorHandler || (() => null));
 
 export const resetKeychainDataObject = () => Keychain
   .resetGenericPassword({
     service: KEYCHAIN_SERVICE,
   })
   .catch(() => null);
+
+export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
+  Keychain.getSupportedBiometryType().then(resHandler).catch(errorHandler || (() => null));
+};
+
+export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
+  if (!data || !(Object.keys(data).length) || !data.privateKey) return null;
+  return get(data, 'privateKey', null);
+};
+
+export const shouldUpdateKeychainObject = (data: KeyChainData) => {
+  return (!data || !data.privateKey || !Object.keys(data).includes('mnemonic'));
+};

@@ -75,6 +75,9 @@ export const reportLog = (
   printLog(`${level}: ${message}`, extra);
 };
 
+export const stringWithoutSpaces = (s: string): string => {
+  return s.replace(/\s/g, '');
+};
 
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
@@ -476,9 +479,9 @@ type GroupedAndSortedData = {|
 // all default values makes common sense and usage
 export const groupAndSortByDate = (
   data: any[],
-  timestampMultiplier?: number = 1000,
-  dateField?: string = 'createdAt',
-  sortDirection?: string = 'desc',
+  timestampMultiplier: number = 1000,
+  dateField: string = 'createdAt',
+  sortDirection: string = 'desc',
 ): GroupedAndSortedData[] => {
   const grouped = [];
   orderBy(data, [dateField], [sortDirection]).forEach(listItem => {
@@ -527,4 +530,8 @@ export const formatAmountDisplay = (value: number | string) => {
     return formatMoney(amount, 2);
   }
   return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
+};
+
+export const getDeviceHeight = () => {
+  return Dimensions.get('window').height;
 };

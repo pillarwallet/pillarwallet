@@ -84,8 +84,11 @@ target 'pillarwallet' do
 
   pod 'RNSentry', :path => '../node_modules/@sentry/react-native'
 
-
   pod 'react-native-notifications', :path => '../node_modules/react-native-notifications'
+
+  pod 'react-native-branch', :path => '../node_modules/react-native-branch'
+
+  pod 'react-native-appearance', :path => '../node_modules/react-native-appearance'
 
   post_install do |installer|
     installer.pods_project.targets.each do |target|

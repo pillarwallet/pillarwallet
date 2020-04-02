@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
@@ -28,8 +27,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper, Container } from 'components/Layout';
 import { MediumText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 
 import { fontStyles } from 'utils/variables';
@@ -89,18 +87,6 @@ const FeatureIcon = styled(CachedImage)`
   height: 124px;
   width: 124px;
   margin-bottom: 24px;
-`;
-
-const ModalWrapper = styled.View`
-  flex: 1;
-  position: relative;
-  margin: 5px 20px 20px;
-  padding-top: ${Platform.select({
-    ios: '20px',
-    android: '14px',
-  })};
-  justify-content: center;
-  align-items: center;
 `;
 
 const smartWalletIcon = require('assets/images/logo_smart_wallet.png');
@@ -178,21 +164,14 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
             />
           </ButtonWrapper>
         </ScrollWrapper>
-        <SlideModal
-          isVisible={showPinModal}
-          onModalHide={() => this.setState({ showPinModal: false })}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <ModalWrapper>
-            <CheckPin
-              onPinValid={this.proceed}
-              revealMnemonic
-            />
-          </ModalWrapper>
-        </SlideModal>
+        <CheckAuth
+          onPinValid={this.proceed}
+          revealMnemonic
+          modalProps={{
+            isVisible: showPinModal,
+            onModalHide: () => this.setState({ showPinModal: false }),
+          }}
+        />
       </ContainerWithHeader>
     );
   }

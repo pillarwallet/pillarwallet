@@ -25,3 +25,7 @@
 -keep class * {
     public private *;
 }
+
+-dontwarn io.branch.**
+
+-keep class com.google.android.gms.ads.identifier.** { *; }

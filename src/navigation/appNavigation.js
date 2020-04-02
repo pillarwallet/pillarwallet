@@ -60,6 +60,7 @@ import LoginScreen from 'screens/Home/Login';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import WalletConnectScreen from 'screens/WalletConnect';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
@@ -94,6 +95,9 @@ import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfi
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
+import ReferFriendsScreen from 'screens/ReferFriends';
+import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
+import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
@@ -173,7 +177,9 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
+  SEND_COLLECTIBLE_CONTACTS,
   WALLETCONNECT_FLOW,
+  WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
@@ -219,6 +225,7 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
+  REFER_FLOW,
   SERVICES,
   STORYBOOK,
   SECURITY_SETTINGS,
@@ -226,6 +233,11 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
+  REFER_MAIN_SCREEN,
+  ADDRESS_BOOK_PERMISSION,
+  REFERRAL_CONTACTS,
+  CONNECT_TAB,
+  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -248,10 +260,12 @@ const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
+const iconConnect = require('assets/icons/icon_connect.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
 const iconServicesActive = require('assets/icons/icon_services_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
 const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
+const iconConnectActive = require('assets/icons/icon_connect_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
@@ -312,6 +326,15 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// REFER FLOW
+const referFlow = createStackNavigator({
+  [REFER_MAIN_SCREEN]: ReferFriendsScreen,
+  [ADDRESS_BOOK_PERMISSION]: AccessToAddressBookScreen,
+  [REFERRAL_CONTACTS]: ReferralContactsScreen,
+}, StackNavigatorConfig);
+
+referFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
@@ -320,6 +343,7 @@ const peopleFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
+  [REFER_FLOW]: referFlow,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -327,6 +351,7 @@ peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
+    [WALLETCONNECT]: WalletConnectScreen,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
@@ -346,8 +371,10 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
+  [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -432,6 +459,18 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel({ text: 'Assets', theme: screenProps.theme }),
       }),
     },
+    [CONNECT_TAB]: {
+      screen: walletConnectFlow,
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconConnectActive,
+          icon: iconConnect,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
+      }),
+    },
     [PEOPLE]: {
       screen: peopleFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
@@ -492,35 +531,28 @@ const sendTokenFromAssetFlow = createStackNavigator(
 );
 
 // SEND BITCOIN FROM ASSET FLOW
-const sendBitcoinFromAssetFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
-    [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
-    [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-// SEND ASSETS FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-  // tokens
+const sendBitcoinFromAssetFlow = createStackNavigator({
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  // collectibles
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
+  [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
+  [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
 }, StackNavigatorModalConfig);
 
 // SEND COLLECTIBLE FROM ASSET FLOW
 const sendCollectibleFromAssetFlow = createStackNavigator({
-  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONTACTS_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
+// SEND TOKEN FROM CONTACT FLOW
+const sendTokenFromContactFlow = createStackNavigator({
+  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
   [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);

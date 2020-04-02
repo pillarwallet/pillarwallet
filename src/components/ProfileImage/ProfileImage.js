@@ -82,6 +82,7 @@ type Props = {
   noShadow?: boolean,
   showProfileImage?: boolean,
   theme: Theme,
+  fallbackImage?: string,
 }
 
 const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
@@ -146,14 +147,18 @@ const ProfileImage = (props: Props) => {
     noShadow,
     showProfileImage = true,
     theme,
+    fallbackImage,
   } = props;
 
   const themeType = getThemeType(theme);
   const diameterWithBorder = diameter + (borderWidth * 2) + (borderSpacing * 2);
 
-  const renderDefaultImage = () => (
-    <DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />
-  );
+  const renderDefaultImage = () => {
+    if (fallbackImage) {
+      return (<CircleImage source={fallbackImage} />);
+    }
+    return (<DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />);
+  };
 
   const renderImage = (data: Object) => {
     if (data.source === IMAGE_LOAD_FAILED) {

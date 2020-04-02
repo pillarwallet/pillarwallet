@@ -301,11 +301,14 @@ jest.setMock('@smartwallet/sdk', {
 });
 
 jest.setMock('react-native-keychain', {
-  setGenericPassword: () => {},
-  getGenericPassword: () => {},
-  resetGenericPassword: () => {},
+  setGenericPassword: jest.fn().mockResolvedValue(),
+  getGenericPassword: jest.fn().mockResolvedValue(),
+  resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {
     BIOMETRY_ANY: 'BIOMETRY_ANY',
+  },
+  ACCESSIBLE: {
+    WHEN_UNLOCKED: 'WHEN_UNLOCKED',
   },
 });
 
@@ -423,9 +426,11 @@ jest.setMock('services/insight', {
     }),
 });
 
-jest.setMock('react-native-appearance', {});
+jest.mock('react-native-branch', () => jest.fn());
 
 jest.setMock('@sentry/react-native', {
   withScope: () => {},
   Severity: {},
 });
+
+jest.setMock('react-native-appearance', {});

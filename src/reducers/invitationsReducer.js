@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { ADD_INVITATION, UPDATE_INVITATIONS, UPDATE_INVITATIONS_STATE } from 'constants/invitationsConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 
 export type InvitationsReducerState = {|
   data: Object[],
@@ -39,12 +39,8 @@ const invitationsReducer = (
   action: InvitationsReducerAction,
 ): InvitationsReducerState => {
   switch (action.type) {
-    case UPDATE_INVITATIONS_STATE:
-      return { ...state, invitationState: action.payload };
     case UPDATE_INVITATIONS:
       return { ...state, data: action.payload };
-    case ADD_INVITATION:
-      return { ...state, data: [...state.data, action.payload] };
     default:
       return state;
   }

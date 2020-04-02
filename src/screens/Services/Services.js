@@ -19,10 +19,11 @@
 */
 
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import uniq from 'lodash.uniq';
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { EXCHANGE } from 'constants/navigationConstants';
@@ -33,6 +34,7 @@ import type { Offer } from 'models/Offer';
 import { withTheme } from 'styled-components/native';
 import type { RootReducerState } from 'reducers/rootReducer';
 import { spacing } from 'utils/variables';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   theme: Theme,
@@ -41,6 +43,9 @@ type Props = {
   baseFiatCurrency: ?string,
 };
 
+const visaIcon = require('assets/icons/visa.png');
+const mastercardIcon = require('assets/icons/mastercard.png');
+
 class ServicesScreen extends React.Component<Props> {
   getServices = () => {
     const {
@@ -48,8 +53,10 @@ class ServicesScreen extends React.Component<Props> {
     } = this.props;
     const colors = getThemeColors(theme);
 
-    const offersBadge = (offers && offers.length) ? {
-      label: `${offers.length} exchanges`,
+    const providersCount = uniq((offers || []).map(offer => offer.provider)).length;
+
+    const offersBadge = providersCount ? {
+      label: `${providersCount} exchanges`,
       color: colors.primary,
     } : null;
 
@@ -70,13 +77,20 @@ class ServicesScreen extends React.Component<Props> {
       },
       {
         key: 'buyCryptoWithFiat',
-        title: 'Buy crypto with fiat',
+        // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
+        title: [
+          'Buy crypto with ',
+          <Image source={mastercardIcon} style={{ marginBottom: 1 }} height={11} />,
+          ' & ',
+          <Image source={visaIcon} height={11} />,
+        ],
         body: 'USD, GBP, EUR supported',
         action: () => navigation.navigate(
           EXCHANGE,
           {
             fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
             toAssetCode: ETH,
+            displayFiatOptionsFirst: true,
           }),
       },
     ];
@@ -106,12 +120,15 @@ class ServicesScreen extends React.Component<Props> {
 
   render() {
     const services = this.getServices();
+    const { theme } = this.props;
+    const isLightTheme = theme.current === LIGHT_THEME;
     return (
       <ContainerWithHeader
         headerProps={{
           noBack: true,
           rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
           leftItems: [{ title: 'Services' }],
+          noBottomBorder: isLightTheme,
         }}
         inset={{ bottom: 'never' }}
       >

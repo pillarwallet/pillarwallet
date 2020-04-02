@@ -68,7 +68,7 @@ import {
   CONNECTION_DISCONNECTED_EVENT,
   CONNECTION_REJECTED_EVENT,
   CONNECTION_REQUESTED_EVENT,
-  CONNECTION_COLLECTIBLE_EVENT,
+  COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
 import { STATUS_MUTED } from 'constants/connectionsConstants';
 
@@ -165,73 +165,78 @@ export const fetchAllNotificationsAction = () => {
   };
 };
 
-export const startListeningNotificationsAction = () => {
+export const subscribeToSocketEventsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { invitations: { data: invitations } } = getState();
+    if (get(SOCKET, 'socket.readyState') !== 1) return;
+
+    SOCKET.onMessage((response) => {
+      let data;
+      try {
+        data = JSON.parse(response.data.msg);
+      } catch (error) {
+        // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
+        Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response, error } });
+        return; // unable to parse data, do not proceed
+      }
+
+      const senderUserId = get(data, 'senderUserData.id');
+
+      if (data.type === CONNECTION_REQUESTED_EVENT) {
+        dispatch(fetchInviteNotificationsAction());
+      }
+      if (
+        data.type === CONNECTION_CANCELLED_EVENT ||
+        data.type === CONNECTION_REJECTED_EVENT
+      ) {
+        const updatedInvitations = invitations.filter(({ id }) => id !== senderUserId);
+        dispatch({
+          type: UPDATE_INVITATIONS,
+          payload: updatedInvitations,
+        });
+      }
+      if (
+        data.type === CONNECTION_ACCEPTED_EVENT ||
+        data.type === CONNECTION_DISCONNECTED_EVENT
+      ) {
+        dispatch(updateConnectionsAction());
+      }
+      if (data.type === COLLECTIBLE_EVENT) {
+        dispatch(fetchAllCollectiblesDataAction());
+      }
+      if (data.type === BCX) {
+        dispatch(fetchTransactionsHistoryNotificationsAction());
+        dispatch(fetchSmartWalletTransactionsAction());
+        dispatch(fetchAssetTransactionsAction(data.asset));
+        dispatch(fetchAssetsBalancesAction());
+      }
+      if (data.type === BADGE) {
+        dispatch(fetchBadgesAction(false));
+      }
+      if (
+        data.type === CONNECTION_REQUESTED_EVENT ||
+        data.type === COLLECTIBLE_EVENT ||
+        data.type === BCX ||
+        data.type === BADGE
+      ) {
+        const payload = {
+          title: response.notification.title,
+          message: response.notification.body,
+        };
+        dispatch({ type: ADD_NOTIFICATION, payload });
+        dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
+      }
+    });
+  };
+};
+
+export const subscribeToPushNotificationsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { data: wallet },
-      invitations: { data: invitations },
       contacts: { data: contacts },
     } = getState();
-    if (SOCKET && SOCKET.socket && SOCKET.socket.readyState === 1) {
-      SOCKET.onMessage((response) => {
-        let data;
-        try {
-          data = JSON.parse(response.data.msg);
-        } catch (error) {
-          // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
-          reportLog('Platform WebSocket notification parse failed', { response, error });
-          return; // unable to parse data, do not proceed
-        }
 
-        const senderUserId = get(data, 'senderUserData.id');
-
-        if (data.type === CONNECTION_REQUESTED_EVENT) {
-          dispatch(fetchInviteNotificationsAction());
-        }
-        if (
-          data.type === CONNECTION_CANCELLED_EVENT ||
-          data.type === CONNECTION_REJECTED_EVENT
-        ) {
-          const updatedInvitations = invitations.filter(({ id }) => id !== senderUserId);
-          dispatch({
-            type: UPDATE_INVITATIONS,
-            payload: updatedInvitations,
-          });
-        }
-        if (
-          data.type === CONNECTION_ACCEPTED_EVENT ||
-          data.type === CONNECTION_DISCONNECTED_EVENT
-        ) {
-          dispatch(updateConnectionsAction(senderUserId));
-        }
-        if (data.type === CONNECTION_COLLECTIBLE_EVENT) {
-          dispatch(fetchAllCollectiblesDataAction());
-        }
-        if (data.type === BCX) {
-          dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchSmartWalletTransactionsAction());
-          dispatch(fetchAssetTransactionsAction(data.asset));
-          dispatch(fetchAssetsBalancesAction());
-        }
-        if (data.type === BADGE) {
-          dispatch(fetchBadgesAction(false));
-        }
-        if (
-          data.type === CONNECTION_REQUESTED_EVENT ||
-          data.type === CONNECTION_COLLECTIBLE_EVENT ||
-          data.type === BCX ||
-          data.type === BADGE
-        ) {
-          const payload = {
-            title: response.notification.title,
-            message: response.notification.body,
-          };
-          dispatch({ type: ADD_NOTIFICATION, payload });
-          dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
-        }
-      });
-      return;
-    }
     const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
     if (!firebaseNotificationsEnabled) {
       try {
@@ -300,6 +305,13 @@ export const startListeningNotificationsAction = () => {
         dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       }
     }, 500));
+  };
+};
+
+export const startListeningNotificationsAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(subscribeToSocketEventsAction());
+    dispatch(subscribeToPushNotificationsAction());
   };
 };
 

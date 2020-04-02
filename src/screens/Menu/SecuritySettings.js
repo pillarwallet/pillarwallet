@@ -19,16 +19,15 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as Keychain from 'react-native-keychain';
 import type { NavigationScreenProp } from 'react-navigation';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
-import SlideModal from 'components/Modals/SlideModal';
+import { ScrollWrapper } from 'components/Layout';
+import CheckAuth from 'components/CheckAuth';
 import { getBiometryType } from 'utils/settings';
 import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import { changeUseBiometricsAction } from 'actions/appSettingsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { getSupportedBiometryType, getKeychainDataObject, type KeyChainData } from 'utils/keychain';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -36,56 +35,36 @@ import { SettingsSection } from './SettingsSection';
 
 
 type State = {
-  visibleModal: ?string,
+  showPinModal: boolean,
   supportedBiometryType: string,
-  setBiometrics: ?{
-    enabled: boolean,
-    privateKey?: string,
-  },
 };
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
-  changeUseBiometrics: (enabled: boolean, privateKey?: string) => void,
+  changeUseBiometrics: (enabled: boolean, data: KeyChainData) => void,
   resetIncorrectPassword: () => void,
 }
 
 class SecuritySettings extends React.Component<Props, State> {
   state = {
-    visibleModal: null,
+    showPinModal: false,
     supportedBiometryType: '',
-    setBiometrics: null,
   }
 
   componentDidMount() {
-    Keychain.getSupportedBiometryType()
-      .then(biometryType => {
-        // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
-        // and getBiometryType has default string value
-        this.setState({ supportedBiometryType: biometryType ? getBiometryType(biometryType) : '' });
-      })
-      .catch(() => null);
+    getSupportedBiometryType(biometryType => {
+      // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
+      // and getBiometryType has default string value
+      this.setState({ supportedBiometryType: biometryType ? getBiometryType(biometryType) : '' });
+    });
   }
 
-  handleChangeUseBiometrics = (enabled: boolean, privateKey?: string) => {
-    this.setState({
-      visibleModal: null,
-      setBiometrics: {
-        enabled,
-        privateKey,
-      },
-    });
-  };
-
-  handleBiometricsCheckPinModalClose = () => {
+  handleChangeUseBiometrics = (enabled: boolean, data: KeyChainData) => {
     const { resetIncorrectPassword, changeUseBiometrics } = this.props;
-    const { setBiometrics } = this.state;
-    if (!setBiometrics) return;
-    const { enabled, privateKey } = setBiometrics;
-    this.setState({ setBiometrics: null });
+    this.setState({ showPinModal: false });
     resetIncorrectPassword();
-    changeUseBiometrics(enabled, privateKey);
+    changeUseBiometrics(enabled, data);
   };
 
   getGlobalSettings = () => {
@@ -101,13 +80,23 @@ class SecuritySettings extends React.Component<Props, State> {
       {
         key: 'biometricLogin',
         title: 'Biometric login',
-        onPress: () => this.setState({ visibleModal: 'checkPin' }),
+        onPress: this.handleBiometricPress,
         value: useBiometrics,
         toggle: true,
         hidden: !supportedBiometryType,
       },
     ];
   }
+
+  handleBiometricPress = async () => {
+    const { useBiometrics } = this.props;
+    const keychainData = await getKeychainDataObject();
+    if (keychainData) {
+      this.handleChangeUseBiometrics(!useBiometrics, keychainData);
+    } else {
+      this.setState({ showPinModal: true });
+    }
+  };
 
   getSmartWalletSettings = () => {
     return [
@@ -121,13 +110,13 @@ class SecuritySettings extends React.Component<Props, State> {
     ];
   }
 
-  onPinValid = (pin, { privateKey }) => {
+  onPinValid = (pin, { mnemonic, privateKey }) => {
     const { useBiometrics } = this.props;
-    this.handleChangeUseBiometrics(!useBiometrics, !useBiometrics ? privateKey : undefined);
+    this.handleChangeUseBiometrics(!useBiometrics, { mnemonic, privateKey });
   }
 
   render() {
-    const { visibleModal } = this.state;
+    const { showPinModal } = this.state;
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Security settings' }] }}
@@ -145,21 +134,15 @@ class SecuritySettings extends React.Component<Props, State> {
         </ScrollWrapper>
 
         {/* BIOMETRIC LOGIN */}
-        <SlideModal
-          isVisible={visibleModal === 'checkPin'}
-          onModalHidden={this.handleBiometricsCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-        >
-          <Wrapper flex={1}>
-            <CheckPin
-              onPinValid={this.onPinValid}
-            />
-          </Wrapper>
-        </SlideModal>
+        <CheckAuth
+          onPinValid={this.onPinValid}
+          revealMnemonic
+          enforcePin
+          modalProps={{
+            isVisible: showPinModal,
+            onModalHide: () => this.setState({ showPinModal: false }),
+          }}
+        />
       </ContainerWithHeader>
     );
   }
@@ -176,8 +159,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  changeUseBiometrics: (enabled: boolean, privateKey?: string) => dispatch(
-    changeUseBiometricsAction(enabled, privateKey),
+  changeUseBiometrics: (enabled: boolean, data: KeyChainData) => dispatch(
+    changeUseBiometricsAction(enabled, data),
   ),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });

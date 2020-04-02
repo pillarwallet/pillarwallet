@@ -20,10 +20,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { Container } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
-import Header from 'components/Header';
-import ErrorMessage from 'components/ErrorMessage';
+import CheckAuth from 'components/CheckAuth';
 import { sendTransactionAction } from 'actions/bitcoinActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -99,19 +96,14 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
   render() {
     const { isChecking, errorMessage } = this.state;
     return (
-      <Container>
-        <Header
-          onBack={this.handleBack}
-          title="Enter pincode"
-        />
-        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        <CheckPin
-          onPinValid={this.handleTransaction}
-          isChecking={isChecking}
-          pinError={!!errorMessage}
-          revealMnemonic
-        />
-      </Container>
+      <CheckAuth
+        onPinValid={this.handleTransaction}
+        isChecking={isChecking}
+        pinError={!!errorMessage}
+        revealMnemonic
+        errorMessage={errorMessage}
+        headerProps={{ onBack: this.handleBack }}
+      />
     );
   }
 }

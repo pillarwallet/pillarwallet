@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SectionList, ScrollView } from 'react-native';
@@ -88,6 +89,7 @@ type Props = {
   getAssetTransferGasLimits: Function,
 };
 
+
 const FooterInner = styled.View`
   flex-direction: column;
   justify-content: space-between;
@@ -113,13 +115,12 @@ const LabelWrapper = styled.View`
   justify-content: center;
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
-
 const WarningMessage = styled(Paragraph)`
   text-align: center;
   color: ${themedColors.negative};
   padding-bottom: ${spacing.rhythm}px;
 `;
+
 
 class UpgradeReviewScreen extends React.PureComponent<Props> {
   componentDidMount() {
@@ -159,8 +160,8 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       return (
         <ListItemWithImage
           label={item.name}
-          itemImageUrl={item.icon || genericToken}
-          fallbackSource={genericToken}
+          itemImageUrl={item.icon}
+          fallbackToGenericToken
           rightColumnInnerStyle={{
             flex: 1,
             alignItems: 'center',
@@ -185,9 +186,9 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     return (
       <ListItemWithImage
         label={item.name}
-        itemImageUrl={fullIconUrl || genericToken}
+        itemImageUrl={fullIconUrl}
         itemValue={`${formattedAmount} ${item.symbol}`}
-        fallbackSource={genericToken}
+        fallbackToGenericToken
         rightColumnInnerStyle={{
           flex: 1,
           alignItems: 'flex-end',

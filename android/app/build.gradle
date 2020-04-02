@@ -146,6 +146,12 @@ android {
         missingDimensionStrategy 'react-native-camera', 'general' // react-native-camera
         vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
         missingDimensionStrategy "RNNotifications.reactNativeVersion", "reactNative59" // react-native-notifications
+
+        // branch.io
+        resValue "string", "branch_io_app_link", "abgsz.test-app.link"
+        resValue "string", "branch_io_app_link_alternate", "abgsz-alternate.test-app.link"
+        resValue "string", "branch_io_key_live", ""
+        resValue "string", "branch_io_key_test", "key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a"
     }
 
     splits {
@@ -172,6 +178,12 @@ android {
         }
         release {
             buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+
+            // set branch.io string values to prod
+            resValue "string", "branch_io_app_link", "plr.app.link"
+            resValue "string", "branch_io_app_link_alternate", "plr-alternate.app.link"
+            resValue "string", "branch_io_key_live", System.getenv("BRANCH_IO_KEY_LIVE") ? System.getenv("BRANCH_IO_KEY_LIVE") : ""
+
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
@@ -232,9 +244,17 @@ dependencies {
     implementation project(':@react-native-community_async-storage')
     implementation project(':@matt-block_react-native-in-app-browser')
     implementation project(':react-native-notifications')
+    implementation project(':react-native-contacts')
+    implementation project(':react-native-branch')
+
     implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-push-notification
     implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-push-notification override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
+
+    // branch.io
+    implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching
+    implementation 'com.android.support:customtabs:28.0.0' // optional, Chrome Tab matching (enables 100% guaranteed matching based on cookies), androidx.browser:browser works just the same
+
     implementation "androidx.multidex:multidex:${rootProject.ext.multidex_version}" // custom: support multidex builds
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"

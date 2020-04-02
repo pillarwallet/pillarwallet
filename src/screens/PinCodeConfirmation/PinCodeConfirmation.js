@@ -20,7 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import * as Keychain from 'react-native-keychain';
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -32,6 +31,7 @@ import { confirmPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { BIOMETRICS_PROMPT, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import { fontStyles, spacing } from 'utils/variables';
+import { getSupportedBiometryType } from 'utils/keychain';
 
 type Props = {
   confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => void,
@@ -66,7 +66,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const { wallet: { onboarding: wallet }, confirmPinForNewWallet, navigation } = this.props;
+    const { wallet: { onboarding: wallet }, confirmPinForNewWallet } = this.props;
     const previousPin = wallet.pin;
     const validationError = validatePin(pin, previousPin);
 
@@ -77,17 +77,19 @@ class PinCodeConfirmation extends React.Component<Props, State> {
       return;
     }
 
-    Keychain.getSupportedBiometryType()
-      .then((biometryType) => {
-        if (biometryType) {
-          navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
-          confirmPinForNewWallet(pin);
-        } else {
-          confirmPinForNewWallet(pin, true);
-        }
-      })
-      .catch(() => { confirmPinForNewWallet(pin, true); });
-  };
+    getSupportedBiometryType(biometryType => this.handleBiometryType(pin, biometryType),
+      () => { confirmPinForNewWallet(pin, true); });
+  }
+
+  handleBiometryType = (pin: string, biometryType?: string) => {
+    const { confirmPinForNewWallet, navigation } = this.props;
+    if (biometryType) {
+      navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
+      confirmPinForNewWallet(pin);
+    } else {
+      confirmPinForNewWallet(pin, true);
+    }
+  }
 
   handlePinChange = () => {
     this.setState({

@@ -21,12 +21,20 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 // constants
-import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
+import {
+  STATUS_ACCEPTED,
+  STATUS_BLOCKED,
+  STATUS_MUTED,
+  STATUS_CANCELLED,
+  STATUS_DISCONNECTED,
+  STATUS_PENDING,
+  STATUS_REJECTED,
+} from 'constants/connectionsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { STATUS_ACCEPTED, STATUS_BLOCKED, STATUS_MUTED } from 'constants/connectionsConstants';
+import { TYPE_SENT, UPDATE_INVITATIONS, TYPE_RECEIVED } from 'constants/invitationsConstants';
 
 // utils
 import { uniqBy } from 'utils/common';
@@ -35,152 +43,85 @@ import { uniqBy } from 'utils/common';
 import type SDKWrapper from 'services/api';
 
 // models, types
-import type { ConnectionIdentityKey } from 'models/Connections';
+import type { ApiContact } from 'models/Contacts';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
 
 
-type GroupedConnectionIdentityKeys = { [string]: ConnectionIdentityKey };
-
 export const updateConnectionsAction = (theWalletId?: ?string = null) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId = theWalletId } },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
-      contacts: { data: allContacts },
-      invitations: { data: allInvitations },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      session: { data: { isOnline } },
     } = getState();
 
-    if (!walletId) {
+    if (!walletId || !isOnline) {
       return;
     }
 
-    const currentConnectionKeyPairList = connectionIdentityKeys.map((cik: ConnectionIdentityKey) => {
-      return {
-        sourceIdentityKey: cik.sourceIdentityKey,
-        targetIdentityKey: cik.targetIdentityKey,
-      };
-    });
-    const connectionIdentityKeyMap = {
-      walletId,
-      identityKeys: currentConnectionKeyPairList,
-    };
+    const connections: ApiContact[] = await api.getContacts(walletId);
 
-    const resultConnections: ConnectionIdentityKey[] = await api.mapIdentityKeys(connectionIdentityKeyMap);
+    if (isEmpty(connections)) {
+      return;
+    }
 
     const contacts = [];
     const invitations = [];
     const removeContacts = [];
     const removeInvitations = [];
 
-    // CIK – ConnectionIdentityKey
-    const groupedByUserWithLatestCIK: GroupedConnectionIdentityKeys = resultConnections
-      .reduce((groupedByUser: GroupedConnectionIdentityKeys, cik: ConnectionIdentityKey) => {
-        const { targetUserId, updatedAt } = cik;
-        if (isEmpty(groupedByUser[targetUserId])) {
-          return {
-            ...groupedByUser,
-            [targetUserId]: cik,
-          };
-        }
-        // by this point it means it's another event with same user
-        const { updatedAt: prevUpdatedAt } = groupedByUser[targetUserId];
-        // check if another event for the same user is newer and change if so
-        if (updatedAt > prevUpdatedAt) {
-          return {
-            ...groupedByUser,
-            [targetUserId]: cik,
-          };
-        }
-        return groupedByUser;
-      }, {});
-
-    const usersListWithTheirLatestCIK = (Object.values(groupedByUserWithLatestCIK): any);
-    usersListWithTheirLatestCIK.forEach((resConn: ConnectionIdentityKey) => {
-      if (resConn.status === STATUS_ACCEPTED || resConn.status === STATUS_MUTED || resConn.status === STATUS_BLOCKED) {
+    connections.forEach((connection: ApiContact) => {
+      if (!connection.targetUserInfo) return;
+      if ([STATUS_ACCEPTED, STATUS_MUTED, STATUS_BLOCKED].includes(connection.status)) {
         const contact = {
-          id: resConn.targetUserId,
-          ethAddress: resConn.targetUserInfo.ethAddress,
-          username: resConn.targetUserInfo.username,
-          profileImage: resConn.targetUserInfo.profileImage,
-          createdAt: resConn.createdAt ? Date.parse(resConn.createdAt) / 1000 : null,
-          updatedAt: resConn.updatedAt ? Date.parse(resConn.updatedAt) / 1000 : null,
-          status: resConn.status,
+          id: connection.targetUserId,
+          ethAddress: connection.targetUserInfo.ethAddress,
+          username: connection.targetUserInfo.username,
+          profileImage: connection.targetUserInfo.profileImage,
+          createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+          updatedAt: connection.updatedAt ? Date.parse(connection.updatedAt) / 1000 : null,
+          status: connection.status,
         };
         contacts.push(contact);
-        removeInvitations.push(resConn.targetUserId);
-      } else if (resConn.status === 'pending') {
-        const invitation = allInvitations.find((inv) => {
-          return inv.id === resConn.targetUserId;
-        });
-        let invi;
-        if (invitation) {
-          invi = {
-            ...invitation,
-            sourceUserIdentityKeys: {
-              sourceIdentityKey: resConn.sourceIdentityKey,
-              targetIdentityKey: resConn.targetIdentityKey,
-            },
-            targetUserIdentityKeys: {
-              sourceIdentityKey: invitation.sourceIdentityKey,
-              targetIdentityKey: invitation.targetIdentityKey,
-            },
-          };
-        } else {
-          invi = {
-            id: resConn.targetUserId,
-            username: resConn.targetUserInfo.username,
-            connectionKey: resConn.sourceUserAccessKey,
-            profileImage: resConn.targetUserInfo.profileImage,
-            type: TYPE_SENT,
-            sourceIdentityKey: resConn.sourceIdentityKey,
-            targetIdentityKey: resConn.targetIdentityKey,
-            createdAt: resConn.createdAt ? Date.parse(resConn.createdAt) / 1000 : null,
-            sourceUserIdentityKeys: {
-              sourceIdentityKey: resConn.sourceIdentityKey,
-              targetIdentityKey: resConn.targetIdentityKey,
-            },
-          };
-        }
-        invitations.push(invi);
-        removeContacts.push(resConn.targetUserId);
-      } else if (resConn.status === 'rejected' || resConn.status === 'cancelled' || resConn.status === 'disconnected') {
-        removeInvitations.push(resConn.targetUserId);
-        removeContacts.push(resConn.targetUserId);
+        removeInvitations.push(connection.targetUserId);
+      } else if (connection.status === STATUS_PENDING) {
+        const invitation = {
+          id: connection.targetUserId,
+          username: connection.targetUserInfo.username,
+          profileImage: connection.targetUserInfo.profileImage,
+          type: connection.direction && connection.direction === 'sent' ? TYPE_SENT : TYPE_RECEIVED,
+          createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+          updatedAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+        };
+        invitations.push(invitation);
+        removeContacts.push(connection.targetUserId);
+      } else if ([STATUS_REJECTED, STATUS_CANCELLED, STATUS_DISCONNECTED].includes(connection.status)) {
+        removeInvitations.push(connection.targetUserId);
+        removeContacts.push(connection.targetUserId);
       }
     });
 
-    const updatedContacts = uniqBy(contacts.concat(allContacts), 'id')
-      .filter(conn => !removeContacts.includes(conn.id));
-    const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id')
-      .filter(invi => !removeInvitations.includes(invi.id));
-    const updatedConnectionIdentityKeys = uniqBy(resultConnections.concat(connectionIdentityKeys), 'sourceIdentityKey');
+    const updatedContacts = uniqBy(contacts, 'id')
+      .filter(({ id }) => !removeContacts.includes(id));
+    const updatedInvitations = uniqBy(invitations, 'id')
+      .filter(({ id }) => !removeInvitations.includes(id));
+
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
     dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
     });
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
     dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
-    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
-    dispatch({
-      type: UPDATE_CONNECTION_IDENTITY_KEYS,
-      payload: updatedConnectionIdentityKeys,
-    });
-    dispatch(
-      saveDbAction(
-        'connectionIdentityKeys',
-        { connectionIdentityKeys: updatedConnectionIdentityKeys },
-        true),
-    );
-
+    dispatch(getExistingChatsAction());
     if (smartWalletFeatureEnabled) {
       dispatch(syncContactsSmartAddressesAction());
     }
