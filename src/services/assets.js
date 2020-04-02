@@ -131,7 +131,7 @@ export function getERC721ContractTransferMethod(code: any): string {
   return '';
 }
 
-const buildERC721TransactionData = async (transaction, wallet): any => {
+const buildERC721TransactionData = async (transaction, provider, wallet?): any => {
   const {
     from,
     to,
@@ -142,21 +142,22 @@ const buildERC721TransactionData = async (transaction, wallet): any => {
   let contract;
   let data;
 
-  const code = await wallet.provider.getCode(contractAddress);
+  const code = await provider.getCode(contractAddress);
   const contractTransferMethod = getERC721ContractTransferMethod(code);
+  const walletOrProvider = wallet || provider;
 
   try {
     switch (contractTransferMethod) {
       case 'safeTransferFrom':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, walletOrProvider);
         data = await contract.interface.functions.safeTransferFrom.encode([from, to, tokenId]);
         break;
       case 'transfer':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, walletOrProvider);
         data = await contract.interface.functions.transfer.encode([to, tokenId]);
         break;
       case 'transferFrom':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
+        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, walletOrProvider);
         data = await contract.interface.functions.transferFrom.encode([from, to, tokenId]);
         break;
       default:
@@ -180,7 +181,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   } = options;
 
   const wallet = walletInstance.connect(getEthereumProvider(COLLECTIBLES_NETWORK));
-  const data = await buildERC721TransactionData(options, wallet);
+  const data = await buildERC721TransactionData(options, wallet.provider, wallet);
 
   if (data) {
     const transaction = {
@@ -337,6 +338,7 @@ export async function calculateGasEstimate(transaction: Object) {
     if (tokenId) {
       data = await buildERC721TransactionData(transaction, provider);
       if (!data) return DEFAULT_GAS_LIMIT;
+      to = contractAddress;
     } else if (!data && contractAddress && symbol !== ETH) {
       /**
        * we check `symbol !== ETH` because our assets list also includes ETH contract address
