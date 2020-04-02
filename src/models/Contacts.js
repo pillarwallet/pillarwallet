@@ -45,6 +45,7 @@ export type ApiContact = {
   status: string,
   createdAt: string,
   updatedAt: string,
+  direction: ?string,
   targetUserInfo: {
     userId: string,
     username: string,

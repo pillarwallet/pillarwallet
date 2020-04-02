@@ -29,8 +29,9 @@ import { BaseText, MediumText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
-import { Wrapper } from 'components/Layout';
+import { Wrapper, Spacing } from 'components/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';
+import { LabelBadge } from 'components/LabelBadge/LabelBadge';
 
 import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
@@ -89,7 +90,10 @@ type Props = {
   imageWrapperStyle?: Object,
   theme: Theme,
   fallbackToGenericToken?: boolean,
-};
+  badge?: string,
+  iconBackgroundColor?: string,
+  iconBorder?: boolean,
+}
 
 type AddonProps = {
   unreadCount?: number | string,
@@ -126,7 +130,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
-  padding: ${spacing.medium}px ${spacing.layoutSides}px;
+  padding: 14px 20px;
   width: 100%;
 `;
 
@@ -174,18 +178,18 @@ const ItemParagraph = styled(BaseText)`
 const ItemSubText = styled(BaseText)`
   color: ${themedColors.secondaryText};
   font-size: ${fontSizes.regular}px;
-  line-height: 18px;
 `;
 
 const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${themedColors.card};
+  background-color: ${props => props.backgroundColor || themedColors.card};
   align-items: center;
   justify-content: center;
   text-align: center;
-  border: 1px solid ${themedColors.border};
+  border-color: ${props => props.border ? themedColors.border : 'transparent'};
+  border-width: 1px;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -252,7 +256,7 @@ const BalanceFiatValue = styled(BaseText)`
 `;
 
 const ItemValueStatus = styled(Icon)`
-  margin-left: 7px;
+  margin-left: 12px;
   color: ${themedColors.secondaryText};
   ${fontStyles.big};
 `;
@@ -271,7 +275,7 @@ const ActionLabel = styled.View`
 `;
 
 const ActionLabelText = styled(BaseText)`
-  ${fontStyles.medium};
+  ${fontStyles.regular};
   color: ${({ color, theme }) => color || theme.colors.secondaryText};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
@@ -284,10 +288,9 @@ const ButtonIconWrapper = styled.View`
 `;
 
 const ActionCircleButton = styled(IconButton)`
-  height: 34px;
-  width: 34px;
+  height: 24px;
+  width: 24px;
   border-radius: 17px;
-  padding: ${Platform.OS === 'ios' ? 0 : 8}px;
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
@@ -351,6 +354,8 @@ const ItemImage = (props: Props) => {
     iconColor,
     iconSource,
     theme,
+    iconBackgroundColor,
+    iconBorder,
   } = props;
 
   let { fallbackSource } = props;
@@ -358,15 +363,15 @@ const ItemImage = (props: Props) => {
 
   if (iconName) {
     return (
-      <IconCircle diameter={diameter}>
-        <ItemIcon name={iconName} color={iconColor} />
+      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+        <ItemIcon name={iconName} iconColor={iconColor} />
       </IconCircle>
     );
   }
 
   if (iconSource) {
     return (
-      <IconCircle diameter={diameter}>
+      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
         <IconImage source={iconSource} />
       </IconCircle>
     );
@@ -375,7 +380,11 @@ const ItemImage = (props: Props) => {
   if (customImage) return customImage;
 
   if (itemImageUrl) {
-    return (<TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />);
+    return (
+      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+        <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
+      </IconCircle>
+    );
   }
 
   if (itemImageSource) {
@@ -514,7 +523,7 @@ const Addon = (props: AddonProps) => {
           margin={0}
           accept
           icon="check"
-          fontSize={fontSizes.regular}
+          fontSize={fontSizes.small}
           onPress={acceptInvitation}
         />
       </ButtonIconWrapper>
@@ -591,6 +600,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       hasShadow,
       imageWrapperStyle,
       theme,
+      badge,
     } = this.props;
 
     const type = getType(this.props);
@@ -622,7 +632,16 @@ class ListItemWithImage extends React.Component<Props, {}> {
                 </Row>
                 }
                 {!!subtext &&
-                <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
+                <React.Fragment>
+                  <Spacing h={2} />
+                  <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
+                </React.Fragment>
+                }
+                {!!badge &&
+                <React.Fragment>
+                  <Spacing h={4} />
+                  <LabelBadge label={badge} primary labelStyle={fontStyles.tiny} />
+                </React.Fragment>
                 }
               </Column>
               <Column rightColumn type={type} style={{ maxWidth: '50%' }}>

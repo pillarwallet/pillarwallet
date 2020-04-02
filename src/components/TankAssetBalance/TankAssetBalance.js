@@ -40,7 +40,7 @@ const Wrapper = styled.View`
 `;
 
 const BalanceInTank = styled(BaseText)`
-  color: ${themedColors.primary};
+  color: ${themedColors.synthetic};
   font-size: ${fontSizes.big}px;
 `;
 
@@ -48,7 +48,7 @@ const Icon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   margin-right: 4px;
-  tint-color: ${themedColors.primary};
+  tint-color: ${themedColors.synthetic};
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');

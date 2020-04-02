@@ -28,9 +28,9 @@ import CircleButton from 'components/CircleButton';
 import ActionModal from 'components/ActionModal';
 import { LabelBadge } from 'components/LabelBadge';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
+import CheckAuth from 'components/CheckAuth';
 import SlideModal from 'components/Modals/SlideModal';
 import { Wrapper } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
 import Loader from 'components/Loader';
 
 // constants
@@ -138,7 +138,7 @@ class ActionButtons extends React.Component<Props, State> {
     this.setState({ receiveAddress: '' });
   };
 
-  handleCheckPinModalClose = () => {
+  handleAuthModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
     this.setState({
@@ -282,7 +282,7 @@ class ActionButtons extends React.Component<Props, State> {
       onPinValidAction: async (_: string, wallet: Object) => {
         this.setState({ isChangingAcc: true });
         await switchAccount(smartAccount.id, wallet.privateKey);
-        this.setState({ showPinModal: false });
+        this.setState({ showPinModal: false, isChangingAcc: false });
         navigation.navigate(navigateTo);
       },
     });
@@ -328,18 +328,23 @@ class ActionButtons extends React.Component<Props, State> {
           address={receiveAddress}
           onModalHide={this.closeReceiveModal}
         />
+        <CheckAuth
+          onPinValid={onPinValidAction}
+          revealMnemonic
+          modalProps={{
+            isVisible: showPinModal,
+            onModalHide: this.handleAuthModalClose,
+          }}
+          isChecking={isChangingAcc}
+        />
         <SlideModal
-          isVisible={showPinModal}
-          onModalHide={this.handleCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
+          isVisible={isChangingAcc}
+          onModalHide={() => this.setState({ isChangingAcc: false })}
           fullScreen
-          showHeader
+          title="Changing to Smart wallet"
         >
-          <Wrapper flex={1} style={{ justifyContent: 'center' }}>
-            {isChangingAcc
-              ? <Loader messages={['']} />
-              : <CheckPin onPinValid={onPinValidAction} revealMnemonic />}
+          <Wrapper flex={1} center>
+            <Loader messages={['']} />
           </Wrapper>
         </SlideModal>
       </React.Fragment>

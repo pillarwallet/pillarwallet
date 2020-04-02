@@ -1,4 +1,5 @@
 // Copyright 2015-present 650 Industries. All rights reserved.
+#import "RNBranch/RNBranch.h"
 #import "Firebase.h"
 #import "AppDelegate.h"
 #import "RNFirebaseNotifications.h"
@@ -16,6 +17,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    #ifdef DEBUG
+      [RNBranch useTestInstance];
+    #endif
+    [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];
     NSURL *jsCodeLocation;
     [FIRApp configure];
     [RNFirebaseNotifications configure];
@@ -69,11 +74,26 @@
   return [RCTLinkingManager application:application openURL:url
                       sourceApplication:sourceApplication annotation:annotation];
 }
+
+// Needed for Branch.io
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  if (![RNBranch.branch application:app openURL:url options:options]) {
+    // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+  }
+  return YES;
+}
+
 - (void)applicationDidBecomeActive:(UIApplication *)application {
   [application registerUserNotificationSettings:
    [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)
                                      categories:nil]];
   [application registerForRemoteNotifications];
 }
+
+// Needed for Branch.io
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+  return [RNBranch continueUserActivity:userActivity];
+}
+
 
 @end

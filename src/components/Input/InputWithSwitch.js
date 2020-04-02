@@ -78,7 +78,6 @@ const StyledItemView = styled.View`
   padding: 0 ${spacing.layoutSides}px 0;
   border-bottom-color: ${({ hasErrors }) => hasErrors ? themedColors.negative : themedColors.tertiary};
   border-bottom-width: 1px;
-  height: 60px;
 `;
 
 const Wrapper = styled.View`
@@ -102,12 +101,13 @@ const ItemValue = styled(Input)`
   font-family: ${appFont.medium};
 `;
 
-const SelectedOption = styled(BaseText)`
-  ${fontStyles.medium};
+const SelectedOption = styled(MediumText)`
+  ${fontStyles.big};
   flex-wrap: wrap;
   flex: 1;
   padding: 0 0 9px;
-  width:100%;
+  width: 100%;
+  min-height: 50px;
 `;
 
 const ItemAddon = styled.View`
@@ -245,6 +245,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
           showHeader
           onModalHide={this.toggleModal}
           avoidKeyboard
+          noSwipeToDismiss
         >
           <Wrapper flex={1}>
             {!!optionsTitle &&

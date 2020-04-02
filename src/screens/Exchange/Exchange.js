@@ -55,6 +55,7 @@ import {
   getMetaDataAction,
   getExchangeSupportedAssetsAction,
 } from 'actions/exchangeActions';
+import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
@@ -91,6 +92,7 @@ import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { HotSwapsHorizontalList, HotSwapsGridList } from './HotSwapsList';
+import ExchangeIntroModal from './ExchangeIntroModal';
 
 const ListHeader = styled.View`
   width: 100%;
@@ -165,6 +167,8 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   providersMeta: ProvidersMeta,
   theme: Theme,
+  hasSeenExchangeIntro: boolean,
+  updateHasSeenExchangeIntro: () => void,
   btcAddresses: BitcoinAddress[],
   btcBalances: BitcoinBalance,
 };
@@ -888,7 +892,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isTakeOfferPressed = pressedOfferId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getOfferProviderLogo(providersMeta, offerProvider);
-
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
     let shapeshiftAccessToken;
@@ -1158,6 +1161,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       theme,
+      hasSeenExchangeIntro,
+      updateHasSeenExchangeIntro,
     } = this.props;
 
     const {
@@ -1228,6 +1233,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           </PromoWrapper>
         )}
       >
+        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
         {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
         <ScrollView
@@ -1297,7 +1303,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   oAuthTokens: { data: { accessToken: oAuthAccessToken } },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, hasSeenExchangeIntro } },
   exchange: {
     data: {
       offers,
@@ -1339,6 +1345,7 @@ const mapStateToProps = ({
   providersMeta,
   exchangeSupportedAssets,
   fiatExchangeSupportedAssets,
+  hasSeenExchangeIntro,
   btcAddresses,
   btcBalances,
 });
@@ -1370,6 +1377,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
+  updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));

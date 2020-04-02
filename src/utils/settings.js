@@ -21,7 +21,7 @@
 import * as Keychain from 'react-native-keychain';
 
 
-export const getBiometryType = (biometryType: string) => {
+export const getBiometryType = (biometryType?: string) => {
   switch (biometryType) {
     case Keychain.BIOMETRY_TYPE.TOUCH_ID:
       return 'Touch ID';

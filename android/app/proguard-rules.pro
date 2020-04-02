@@ -78,3 +78,7 @@
 -keep class com.facebook.crypto.** {
    *;
 }
+
+-dontwarn io.branch.**
+
+-keep class com.google.android.gms.ads.identifier.** { *; }

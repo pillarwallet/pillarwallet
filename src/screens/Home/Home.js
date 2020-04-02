@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
@@ -35,13 +36,16 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
+import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   BADGE,
+  REFER_FLOW,
   MENU,
   MANAGE_USERS_FLOW,
 } from 'constants/navigationConstants';
@@ -75,6 +79,7 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { toastReferral } from 'utils/toasts';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -84,6 +89,7 @@ import type { Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { User } from 'models/User';
 
 // partials
 import ActionButtons from './ActionButtons';
@@ -93,7 +99,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   invitations: Object[],
-  user: Object,
+  user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -120,10 +126,13 @@ type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
+  referralsFeatureEnabled: boolean,
 };
 
 type State = {
   activeTab: string,
+  isReferralBannerVisible: boolean,
+  showRewardModal: boolean,
 };
 
 
@@ -147,12 +156,16 @@ const EmptyStateWrapper = styled.View`
 `;
 
 
+const referralImage = require('assets/images/referral_gift.png');
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
 
   state = {
     activeTab: ALL,
+    isReferralBannerVisible: true,
+    showRewardModal: false,
   };
 
   componentDidMount() {
@@ -243,6 +256,44 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
+  handleReferralBannerPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
+
+  renderReferral = (colors) => {
+    const { isReferralBannerVisible } = this.state;
+
+    return (
+      <Banner
+        isVisible={isReferralBannerVisible}
+        onPress={this.handleReferralBannerPress}
+        bannerText="Refer friends and earn rewards, free PLR and more."
+        imageProps={{
+          style: {
+            width: 96,
+            height: 60,
+            marginLeft: 4,
+          },
+          source: referralImage,
+        }}
+        wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+        onClose={() => this.setState({ isReferralBannerVisible: false })}
+      />
+    );
+  };
+
+  handleModalHide = (callback: () => void) => {
+    this.setState({ showRewardModal: false }, () => {
+      if (callback) callback();
+    });
+  }
+
   render() {
     const {
       cancelInvitation,
@@ -262,10 +313,10 @@ class HomeScreen extends React.Component<Props, State> {
       theme,
       baseFiatCurrency,
       activeBlockchainNetwork,
+      referralsFeatureEnabled,
     } = this.props;
-    const colors = getThemeColors(theme);
 
-    const { activeTab } = this.state;
+    const { activeTab, showRewardModal } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -334,12 +385,13 @@ class HomeScreen extends React.Component<Props, State> {
     const hasIntercomNotifications = !!intercomNotificationsCount;
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
+    const colors = getThemeColors(theme);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
 
     return (
       <ContainerWithHeader
-        backgroundColor={colors.card}
+        backgroundColor={colors.card} // so tabs would have white background only when not sticky
         headerProps={{
           leftItems: [
             {
@@ -378,7 +430,7 @@ class HomeScreen extends React.Component<Props, State> {
       >
         <ScrollView
           style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={[3]}
+          stickyHeaderIndices={referralsFeatureEnabled ? [4] : [3]}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -407,6 +459,7 @@ class HomeScreen extends React.Component<Props, State> {
               )}
             />
           </BadgesWrapper>
+          {!!referralsFeatureEnabled && this.renderReferral(colors)}
           <Tabs
             tabs={activityFeedTabs}
             wrapperStyle={{ paddingTop: 16 }}
@@ -425,6 +478,10 @@ class HomeScreen extends React.Component<Props, State> {
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </ScrollView>
+        <ReferralModalReward
+          isVisible={showRewardModal}
+          onModalHide={this.handleModalHide}
+        />
       </ContainerWithHeader>
     );
   }
@@ -439,6 +496,11 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   userEvents: { data: userEvents },
   appSettings: { data: { baseFiatCurrency } },
+  featureFlags: {
+    data: {
+      REFERRALS_ENABLED: referralsFeatureEnabled,
+    },
+  },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -450,6 +512,7 @@ const mapStateToProps = ({
   accounts,
   userEvents,
   baseFiatCurrency,
+  referralsFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
