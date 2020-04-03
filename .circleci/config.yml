@@ -1,9 +1,9 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.3.0
   aws-cli: circleci/aws-cli@0.1.17
   go: circleci/go@0.2.0
+  slack: circleci/slack@3.4.2
 
 executors:
   ios-executor:
@@ -176,6 +176,10 @@ jobs:
       - run:
           name: Run validation
           command: yarn validate
+      - slack/status:
+          fail_only: true
+          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_ios:
     executor: ios-executor
@@ -234,6 +238,10 @@ jobs:
       - store_artifacts:
           path: ./toArchive
           destination: app_build
+      - slack/status:
+          fail_only: true
+          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n We waited this long for the *$CIRCLE_JOB* job to fail?? :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
     executor: android-executor
@@ -252,8 +260,8 @@ jobs:
       - *restore_gems_cache_android
       - *install_gems_android
       - *save_gems_cache_android
+      - *gradle_restore_cache
 
-      - aws-cli/install
       - aws-cli/setup:
           aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
           aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
@@ -311,7 +319,11 @@ jobs:
             cd android && bundle exec fastlane deploy_android_appcenter
       - store_artifacts:
           path: android/app/build/outputs/apk
-          destination: apks
+          destination: apks   
+      - slack/status:
+          fail_only: true
+          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Are you guys surprised that *$CIRCLE_JOB* failed? :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
     executor: node10-executor
@@ -452,6 +464,10 @@ jobs:
           root: /tmp/workspace
           paths:
             - ios-release
+      - slack/status:
+          fail_only: true
+          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Oh man, *$CIRCLE_JOB* failed... :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   prod_android:
     executor: android-executor
@@ -594,6 +610,10 @@ jobs:
           root: /tmp/workspace
           paths:
             - android-release
+      - slack/status:
+          fail_only: true
+          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n *$CIRCLE_JOB* failed, ain't that a surprise? :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   publish_releases_to_github:
     docker:
