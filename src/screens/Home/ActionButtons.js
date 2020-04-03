@@ -29,9 +29,6 @@ import ActionModal from 'components/ActionModal';
 import { LabelBadge } from 'components/LabelBadge';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import CheckAuth from 'components/CheckAuth';
-import SlideModal from 'components/Modals/SlideModal';
-import { Wrapper } from 'components/Layout';
-import Loader from 'components/Loader';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -72,6 +69,7 @@ type Props = {
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string, privateKey?: string) => void,
   resetIncorrectPassword: () => void,
+  toggleLoading: (messages: string) => void,
 };
 
 type State = {
@@ -79,7 +77,6 @@ type State = {
   receiveAddress: string,
   showPinModal: boolean,
   onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
-  isChangingAcc: boolean,
 };
 
 
@@ -121,7 +118,6 @@ class ActionButtons extends React.Component<Props, State> {
     receiveAddress: '',
     showPinModal: false,
     onPinValidAction: null,
-    isChangingAcc: false,
   };
 
   openActionModal = (actionModalType: string) => {
@@ -269,15 +265,21 @@ class ActionButtons extends React.Component<Props, State> {
   };
 
   switchAccAndNavigate = (navigateTo: string) => {
-    const { navigation, accounts, switchAccount } = this.props;
+    const {
+      navigation,
+      accounts,
+      switchAccount,
+      toggleLoading,
+    } = this.props;
     const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
+    toggleLoading('Changing into Smart Wallet');
 
     this.setState({
       showPinModal: true,
       onPinValidAction: async (_: string, wallet: Object) => {
-        this.setState({ isChangingAcc: true });
         await switchAccount(smartAccount.id, wallet.privateKey);
-        this.setState({ showPinModal: false, isChangingAcc: false });
+        this.setState({ showPinModal: false });
+        toggleLoading('');
         navigation.navigate(navigateTo);
       },
     });
@@ -287,7 +289,6 @@ class ActionButtons extends React.Component<Props, State> {
     const {
       visibleActionModal,
       receiveAddress,
-      isChangingAcc,
       showPinModal,
       onPinValidAction,
     } = this.state;
@@ -339,18 +340,7 @@ class ActionButtons extends React.Component<Props, State> {
             isVisible: showPinModal,
             onModalHide: this.handleAuthModalClose,
           }}
-          onLoading={() => this.setState({ isChangingAcc: true })}
         />
-        <SlideModal
-          isVisible={isChangingAcc}
-          onModalHide={() => this.setState({ isChangingAcc: false })}
-          fullScreen
-          showHeader
-        >
-          <Wrapper flex={1} center>
-            <Loader messages={['Changing to Smart wallet']} />
-          </Wrapper>
-        </SlideModal>
       </React.Fragment>
     );
   }

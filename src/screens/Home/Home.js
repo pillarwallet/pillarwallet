@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
+import { RefreshControl, Platform, View, ScrollView, FlatList, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -40,6 +40,7 @@ import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
 import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
+import Loader from 'components/Loader';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -94,7 +95,6 @@ import type { User } from 'models/User';
 // partials
 import ActionButtons from './ActionButtons';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
@@ -133,9 +133,14 @@ type State = {
   activeTab: string,
   isReferralBannerVisible: boolean,
   showRewardModal: boolean,
+  loaderMessage: string,
 };
 
 
+const {
+  width: SCREEN_WIDTH,
+  height: SCREEN_HEIGHT,
+} = Dimensions.get('window');
 const profileImageWidth = 24;
 
 const ListHeader = styled(MediumText)`
@@ -155,6 +160,18 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
+const LoaderWrapper = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  height: ${SCREEN_HEIGHT}px;
+  width: ${SCREEN_WIDTH}px;
+  background-color: ${themedColors.surface};
+  z-index: 99999;
+`;
+
 
 const referralImage = require('assets/images/referral_gift.png');
 
@@ -166,6 +183,7 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: ALL,
     isReferralBannerVisible: true,
     showRewardModal: false,
+    loaderMessage: '',
   };
 
   componentDidMount() {
@@ -292,7 +310,7 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ showRewardModal: false }, () => {
       if (callback) callback();
     });
-  }
+  };
 
   render() {
     const {
@@ -316,7 +334,7 @@ class HomeScreen extends React.Component<Props, State> {
       referralsFeatureEnabled,
     } = this.props;
 
-    const { activeTab, showRewardModal } = this.state;
+    const { activeTab, showRewardModal, loaderMessage } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -388,101 +406,105 @@ class HomeScreen extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-
     return (
-      <ContainerWithHeader
-        backgroundColor={colors.card} // so tabs would have white background only when not sticky
-        headerProps={{
-          leftItems: [
-            {
-              custom: (
-                <IconButton
-                  icon="hamburger"
-                  onPress={() => navigation.navigate(MENU)}
-                  fontSize={fontSizes.large}
-                  secondary
-                />
-              ),
-            },
-          ],
-          centerItems: [{ custom: this.renderUser() }],
-          rightItems: [
-            {
-              link: 'Support',
-              onPress: () => Intercom.displayMessenger(),
-              addon: hasIntercomNotifications && (
-                <View
-                  style={{
-                    width: 8,
-                    height: 8,
-                    backgroundColor: colors.indicator,
-                    borderRadius: 4,
-                    marginLeft: 4,
-                    marginRight: -6,
-                  }}
-                />
-              ),
-            },
-          ],
-          sideFlex: 4,
-        }}
-        inset={{ bottom: 0 }}
-      >
-        <ScrollView
-          style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={referralsFeatureEnabled ? [4] : [3]}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={this.refreshScreenData}
-            />}
-        >
-          <PortfolioBalance fiatCurrency={fiatCurrency} />
-          <ActionButtons />
-          <BadgesWrapper>
-            <ListHeader>Game of badges</ListHeader>
-            <FlatList
-              data={badges}
-              horizontal
-              keyExtractor={(item) => (item.id.toString())}
-              renderItem={this.renderBadge}
-              style={{ width: '100%', paddingBottom: spacing.medium }}
-              contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
-              initialNumToRender={5}
-              ListEmptyComponent={(
-                <EmptyStateWrapper>
-                  <EmptyStateParagraph
-                    title="No badges"
-                    bodyText="You do not have badges yet"
+      <React.Fragment>
+        <ContainerWithHeader
+          backgroundColor={colors.card} // so tabs would have white background only when not sticky
+          headerProps={{
+            leftItems: [
+              {
+                custom: (
+                  <IconButton
+                    icon="hamburger"
+                    onPress={() => navigation.navigate(MENU)}
+                    fontSize={fontSizes.large}
+                    secondary
                   />
-                </EmptyStateWrapper>
-              )}
+                ),
+              },
+            ],
+            centerItems: [{ custom: this.renderUser() }],
+            rightItems: [
+              {
+                link: 'Support',
+                onPress: () => Intercom.displayMessenger(),
+                addon: hasIntercomNotifications && (
+                  <View
+                    style={{
+                      width: 8,
+                      height: 8,
+                      backgroundColor: colors.indicator,
+                      borderRadius: 4,
+                      marginLeft: 4,
+                      marginRight: -6,
+                    }}
+                  />
+                ),
+              },
+            ],
+            sideFlex: 4,
+          }}
+          inset={{ bottom: 0 }}
+        >
+          <ScrollView
+            style={{ width: '100%', flex: 1 }}
+            stickyHeaderIndices={referralsFeatureEnabled ? [4] : [3]}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={this.refreshScreenData}
+              />}
+          >
+            <PortfolioBalance fiatCurrency={fiatCurrency} />
+            <ActionButtons toggleLoading={(_loaderMessage) => this.setState({ loaderMessage: _loaderMessage })} />
+            <BadgesWrapper>
+              <ListHeader>Game of badges</ListHeader>
+              <FlatList
+                data={badges}
+                horizontal
+                keyExtractor={(item) => (item.id.toString())}
+                renderItem={this.renderBadge}
+                style={{ width: '100%', paddingBottom: spacing.medium }}
+                contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
+                initialNumToRender={5}
+                ListEmptyComponent={(
+                  <EmptyStateWrapper>
+                    <EmptyStateParagraph
+                      title="No badges"
+                      bodyText="You do not have badges yet"
+                    />
+                  </EmptyStateWrapper>
+                )}
+              />
+            </BadgesWrapper>
+            {!!referralsFeatureEnabled && this.renderReferral(colors)}
+            <Tabs
+              tabs={activityFeedTabs}
+              wrapperStyle={{ paddingTop: 16 }}
+              activeTab={activeTab}
             />
-          </BadgesWrapper>
-          {!!referralsFeatureEnabled && this.renderReferral(colors)}
-          <Tabs
-            tabs={activityFeedTabs}
-            wrapperStyle={{ paddingTop: 16 }}
-            activeTab={activeTab}
+            <ActivityFeed
+              onCancelInvitation={cancelInvitation}
+              onRejectInvitation={rejectInvitation}
+              onAcceptInvitation={acceptInvitation}
+              navigation={navigation}
+              tabs={activityFeedTabs}
+              activeTab={activeTab}
+              hideTabs
+              initialNumToRender={8}
+              wrapperStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}
+            />
+          </ScrollView>
+          <ReferralModalReward
+            isVisible={showRewardModal}
+            onModalHide={this.handleModalHide}
           />
-          <ActivityFeed
-            onCancelInvitation={cancelInvitation}
-            onRejectInvitation={rejectInvitation}
-            onAcceptInvitation={acceptInvitation}
-            navigation={navigation}
-            tabs={activityFeedTabs}
-            activeTab={activeTab}
-            hideTabs
-            initialNumToRender={8}
-            wrapperStyle={{ flexGrow: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
-          />
-        </ScrollView>
-        <ReferralModalReward
-          isVisible={showRewardModal}
-          onModalHide={this.handleModalHide}
-        />
-      </ContainerWithHeader>
+        </ContainerWithHeader>
+        {!!loaderMessage &&
+        <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
+        }
+      </React.Fragment>
     );
   }
 }
