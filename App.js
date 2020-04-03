@@ -104,7 +104,9 @@ class App extends React.Component<Props, *> {
     }
   }
 
-  componentWillMount() {
+  // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
   }
 
