@@ -129,7 +129,12 @@ class ActionButtons extends React.Component<Props, State> {
 
   closeActionModal = (callback: () => void) => {
     this.setState({ visibleActionModal: '' }, () => {
-      if (callback) callback();
+      if (callback) {
+        const timer = setTimeout(() => {
+          callback();
+          clearTimeout(timer);
+        }, 500);
+      }
     });
   };
 
@@ -329,7 +334,6 @@ class ActionButtons extends React.Component<Props, State> {
           onModalClose={this.closeActionModal}
           isVisible={!!visibleActionModal}
           items={modalActions}
-          doNotCloseOnPress={visibleActionModal === RECEIVE}
         />
         <ReceiveModal
           isVisible={!!receiveAddress}
