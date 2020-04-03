@@ -29,9 +29,10 @@ import ActionModal from 'components/ActionModal';
 import { LabelBadge } from 'components/LabelBadge';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import CheckAuth from 'components/CheckAuth';
+import Toast from 'components/Toast';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { SEND_BITCOIN_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 import { RECEIVE, SEND } from 'constants/walletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -52,7 +53,7 @@ import { themedColors } from 'utils/themes';
 // models, types
 import type { Accounts } from 'models/Account';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { BalancesStore, Rates } from 'models/Asset';
+import type { Asset, AssetData, BalancesStore, Rates } from 'models/Asset';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { EthereumWallet } from 'models/Wallet';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -71,6 +72,7 @@ type Props = {
   switchAccount: (accountId: string, privateKey?: string) => void,
   resetIncorrectPassword: () => void,
   toggleLoading: (messages: string) => void,
+  supportedAssets: Asset[],
 };
 
 type State = {
@@ -181,6 +183,7 @@ class ActionButtons extends React.Component<Props, State> {
       const accBalance = isBitcoin
         ? calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency)
         : calculateBalanceInFiat(rates, balances[id] || {}, fiatCurrency);
+
       return {
         type,
         balance: accBalance,
@@ -243,7 +246,12 @@ class ActionButtons extends React.Component<Props, State> {
   };
 
   navigateToAction = (type: string, navigateTo: string) => {
-    const { navigation, accounts, switchAccount } = this.props;
+    const {
+      navigation,
+      accounts,
+      switchAccount,
+      supportedAssets,
+    } = this.props;
     const { type: activeAccType } = getActiveAccount(accounts) || {};
     const keyBasedAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.KEY_BASED) || {};
 
@@ -264,7 +272,26 @@ class ActionButtons extends React.Component<Props, State> {
         break;
 
       case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        navigation.navigate(navigateTo);
+        if (navigateTo === SEND_BITCOIN_FLOW) {
+          const btcToken = supportedAssets.find(asset => asset.symbol === BTC);
+          if (!btcToken) {
+            Toast.show({
+              message: 'Bitcoin is not supported',
+              type: 'warning',
+              title: 'Can not send Bitcoin',
+              autoClose: false,
+            });
+            return;
+          }
+          const { symbol: token, decimals } = btcToken;
+          const assetData: AssetData = {
+            token,
+            decimals,
+          };
+          navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
+        } else {
+          navigation.navigate(navigateTo);
+        }
         break;
 
       default:
@@ -365,6 +392,9 @@ const mapStateToProps = ({
     },
   },
   bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
+  assets: {
+    supportedAssets,
+  },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
   baseFiatCurrency,
@@ -374,6 +404,7 @@ const mapStateToProps = ({
   bitcoinFeatureEnabled,
   bitcoinBalances,
   bitcoinAddresses,
+  supportedAssets,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
