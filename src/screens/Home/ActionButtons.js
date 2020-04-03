@@ -163,7 +163,7 @@ class ActionButtons extends React.Component<Props, State> {
 
     if (smartWalletFeatureEnabled) {
       const smartWallet = _accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
-      if (!!smartWallet) accountsToShow.unshift(smartWallet);
+      if (smartWallet) accountsToShow.unshift(smartWallet);
     }
 
     if (bitcoinFeatureEnabled && bitcoinAddresses.length > 0) {
@@ -176,7 +176,7 @@ class ActionButtons extends React.Component<Props, State> {
       const isBitcoin = type === BLOCKCHAIN_NETWORK_TYPES.BITCOIN;
       const accBalance = isBitcoin
         ? calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency)
-        : calculateBalanceInFiat(rates, balances[id], fiatCurrency);
+        : calculateBalanceInFiat(rates, balances[id] || {}, fiatCurrency);
       return {
         type,
         balance: accBalance,
@@ -223,7 +223,6 @@ class ActionButtons extends React.Component<Props, State> {
         return accountsInfo.filter(({ type }) => type !== BLOCKCHAIN_NETWORK_TYPES.BITCOIN).map(({
           type,
           formattedBalance,
-          balance,
           additionalInfo,
           exchangeFlow,
         }) => ({
@@ -232,7 +231,6 @@ class ActionButtons extends React.Component<Props, State> {
           ...additionalInfo,
           onPress: () => this.navigateToAction(type, exchangeFlow),
           label: `From ${additionalInfo.title}`,
-          isDisabled: balance <= 0,
         }),
         );
       default:
@@ -293,7 +291,15 @@ class ActionButtons extends React.Component<Props, State> {
       showPinModal,
       onPinValidAction,
     } = this.state;
+    const {
+      balances,
+      bitcoinBalances,
+      bitcoinFeatureEnabled,
+      bitcoinAddresses,
+    } = this.props;
     const modalActions = this.getModalActions();
+    const isSendButtonActive = !!Object.keys(balances).length ||
+      (bitcoinFeatureEnabled && bitcoinAddresses.length > 0 && !!Object.keys(bitcoinBalances).length);
 
     return (
       <React.Fragment>
@@ -307,6 +313,7 @@ class ActionButtons extends React.Component<Props, State> {
             label="Send"
             fontIcon="paperPlane"
             onPress={() => this.openActionModal(SEND)}
+            disabled={!isSendButtonActive}
           />
           <CircleButton
             label="Exchange"
