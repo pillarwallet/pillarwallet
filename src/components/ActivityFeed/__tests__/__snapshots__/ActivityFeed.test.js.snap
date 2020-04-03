@@ -165,10 +165,10 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                 "flexDirection": "row",
                 "justifyContent": "center",
                 "opacity": 1,
-                "paddingBottom": 12,
-                "paddingLeft": 16,
-                "paddingRight": 16,
-                "paddingTop": 12,
+                "paddingBottom": 14,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 14,
                 "width": "100%",
               }
             }
@@ -186,20 +186,20 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               }
             >
               <View
-                diameter={56}
+                backgroundColor="#ebf0f5"
+                diameter={48}
                 style={
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#FFFFFF",
-                      "borderColor": "#EDEDED",
-                      "borderRadius": 28,
-                      "borderStyle": "solid",
+                      "backgroundColor": "#ebf0f5",
+                      "borderColor": "transparent",
+                      "borderRadius": 24,
                       "borderWidth": 1,
-                      "height": 56,
+                      "height": 48,
                       "justifyContent": "center",
                       "textAlign": "center",
-                      "width": 56,
+                      "width": 48,
                     },
                     undefined,
                   ]
@@ -210,7 +210,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   style={
                     Array [
                       Object {
-                        "color": "#007AFF",
+                        "color": "#BD573A",
                         "fontSize": 48,
                       },
                       undefined,
@@ -305,6 +305,39 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       0x0000…000000
                     </Text>
                   </View>
+                  <View
+                    h={2}
+                    style={
+                      Array [
+                        Object {
+                          "height": 2,
+                          "width": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  />
+                  <Text
+                    numberOfLines={2}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 14,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    Smart wallet
+                  </Text>
                 </View>
                 <View
                   rightColumn={true}
@@ -328,7 +361,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   <View
                     style={
                       Array [
-                        Object {},
+                        undefined,
                         Object {
                           "flexWrap": "wrap",
                         },
@@ -567,10 +600,10 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                 "flexDirection": "row",
                 "justifyContent": "center",
                 "opacity": 1,
-                "paddingBottom": 12,
-                "paddingLeft": 16,
-                "paddingRight": 16,
-                "paddingTop": 12,
+                "paddingBottom": 14,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 14,
                 "width": "100%",
               }
             }
@@ -588,20 +621,20 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               }
             >
               <View
-                diameter={56}
+                backgroundColor="#ebf0f5"
+                diameter={48}
                 style={
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#FFFFFF",
-                      "borderColor": "#EDEDED",
-                      "borderRadius": 28,
-                      "borderStyle": "solid",
+                      "backgroundColor": "#ebf0f5",
+                      "borderColor": "transparent",
+                      "borderRadius": 24,
                       "borderWidth": 1,
-                      "height": 56,
+                      "height": 48,
                       "justifyContent": "center",
                       "textAlign": "center",
-                      "width": 56,
+                      "width": 48,
                     },
                     undefined,
                   ]
@@ -612,7 +645,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   style={
                     Array [
                       Object {
-                        "color": "#007AFF",
+                        "color": "#BD573A",
                         "fontSize": 48,
                       },
                       undefined,
@@ -707,6 +740,39 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       0x0000…000000
                     </Text>
                   </View>
+                  <View
+                    h={2}
+                    style={
+                      Array [
+                        Object {
+                          "height": 2,
+                          "width": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  />
+                  <Text
+                    numberOfLines={2}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 14,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    Smart wallet
+                  </Text>
                 </View>
                 <View
                   rightColumn={true}
@@ -730,7 +796,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   <View
                     style={
                       Array [
-                        Object {},
+                        undefined,
                         Object {
                           "flexWrap": "wrap",
                         },

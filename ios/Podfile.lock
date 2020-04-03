@@ -1,5 +1,8 @@
 PODS:
   - boost-for-react-native (1.63.0)
+  - Branch (0.31.3):
+    - Branch/Core (= 0.31.3)
+  - Branch/Core (0.31.3)
   - BVLinearGradient (2.5.4):
     - React
   - Crashlytics (3.14.0):
@@ -274,6 +277,9 @@ PODS:
     - React
   - react-native-background-timer (2.1.1):
     - React
+  - react-native-branch (4.4.0):
+    - Branch (= 0.31.3)
+    - React
   - react-native-camera (3.18.0):
     - React
     - react-native-camera/RCT (= 3.18.0)
@@ -281,6 +287,8 @@ PODS:
   - react-native-camera/RCT (3.18.0):
     - React
   - react-native-camera/RN (3.18.0):
+    - React
+  - react-native-contacts (5.0.7):
     - React
   - react-native-cookies (3.2.0):
     - React
@@ -423,7 +431,9 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-appearance (from `../node_modules/react-native-appearance`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
+  - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
   - "react-native-in-app-browser (from `../node_modules/@matt-block/react-native-in-app-browser/ios`)"
   - react-native-intercom (from `../node_modules/react-native-intercom`)
@@ -471,6 +481,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - boost-for-react-native
+    - Branch
     - Crashlytics
     - Fabric
     - Firebase
@@ -531,8 +542,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-appearance"
   react-native-background-timer:
     :path: "../node_modules/react-native-background-timer"
+  react-native-branch:
+    :path: "../node_modules/react-native-branch"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
+  react-native-contacts:
+    :path: "../node_modules/react-native-contacts"
   react-native-cookies:
     :path: "../node_modules/react-native-cookies/ios"
   react-native-in-app-browser:
@@ -620,6 +635,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  Branch: 9b299693ee54b308ff8c18146afe1f711c2069ec
   BVLinearGradient: 8cbc5155c978f2e43098818c91d206d07aae6d30
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
@@ -657,7 +673,9 @@ SPEC CHECKSUMS:
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-appearance: c2e0666225d999f7f0e7d9a9cb6c627c6e4c4b92
   react-native-background-timer: 1b6e6b4e10f1b74c367a1fdc3c72b67c619b222b
+  react-native-branch: a15b8ecb55c08139e06e7ea15bcadabc81a51e64
   react-native-camera: 3308898e1b09bf6211647c6e3e42d5f7aa02259e
+  react-native-contacts: a30bebe23ddeda7c34bf97cfa5f952201efc5329
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-in-app-browser: e144148387430ae08cbf6d130b6c86e1a6bfd461
   react-native-intercom: 25ceddd224fdf63be29d4e25e95a893e5befe18f

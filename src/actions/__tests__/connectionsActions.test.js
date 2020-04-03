@@ -17,13 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import Storage from 'services/storage';
 import PillarSdk from 'services/api';
-import type { ConnectionIdentityKeyMap } from 'models/Connections';
-import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { updateConnectionsAction } from 'actions/connectionsActions';
@@ -45,21 +43,16 @@ const mockInvitations = [
   {
     id: 4,
     username: 'user4',
-    connectionKey: '333',
     profileImage: 'profileImgUrl4',
     type: TYPE_SENT,
     createdAt: 4444444444,
   },
 ];
 
-const mockMapIdentityKeysResponse = [
+const mockGetContactsResponse = [
   {
     userId: 1,
     targetUserId: 2,
-    sourceUserAccessKey: '111',
-    targetUserAccessKey: '222',
-    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890111',
-    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890112',
     status: 'accepted',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
@@ -74,13 +67,10 @@ const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 4,
-    sourceUserAccessKey: '333',
-    targetUserAccessKey: '444',
-    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890222',
-    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890223',
     status: 'pending',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
+    direction: 'sent',
     targetUserInfo: {
       userId: 4,
       username: 'user4',
@@ -92,10 +82,6 @@ const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 3,
-    sourceUserAccessKey: '131',
-    targetUserAccessKey: '313',
-    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890333',
-    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890334',
     status: 'accepted',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
@@ -110,10 +96,6 @@ const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 5,
-    sourceUserAccessKey: '151',
-    targetUserAccessKey: '515',
-    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890444',
-    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890445',
     status: 'accepted',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
@@ -128,10 +110,6 @@ const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 6,
-    sourceUserAccessKey: '161',
-    targetUserAccessKey: '616',
-    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890555',
-    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890556',
     status: 'accepted',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
@@ -146,10 +124,6 @@ const mockMapIdentityKeysResponse = [
   {
     userId: 1,
     targetUserId: 7,
-    sourceUserAccessKey: '171',
-    targetUserAccessKey: '717',
-    sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890666',
-    targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890667',
     status: 'accepted',
     createdAt: '2019-04-17T08:57:54.547Z',
     updatedAt: '2019-04-17T08:57:54.547Z',
@@ -215,34 +189,15 @@ const mockInvitationsResult = [
   {
     id: 4,
     username: 'user4',
-    connectionKey: '333',
     profileImage: 'profileImgUrl4',
     type: TYPE_SENT,
-    createdAt: 4444444444,
-    sourceUserIdentityKeys: {
-      sourceIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890222',
-      targetIdentityKey: '0x0123456789012345678901234567890123456789012345678901234567890223',
-    },
-    targetUserIdentityKeys: {
-      sourceIdentityKey: undefined,
-      targetIdentityKey: undefined,
-    },
+    createdAt: 1555491474.547,
+    updatedAt: 1555491474.547,
   },
 ];
 
 jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
-  mapIdentityKeys: jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
-    if (connectionKeyIdentityMap) {
-      const { identityKeys } = connectionKeyIdentityMap;
-      return mockMapIdentityKeysResponse.filter(({
-        sourceIdentityKey: mapSourceIdentityKey,
-        targetIdentityKey: mapTargetIdentityKey,
-      }) => identityKeys.find(({ sourceIdentityKey, targetIdentityKey }) =>
-        sourceIdentityKey === mapSourceIdentityKey && targetIdentityKey === mapTargetIdentityKey,
-      ));
-    }
-    return null;
-  }),
+  getContacts: jest.fn(() => [...mockGetContactsResponse]),
 })));
 
 const pillarSdk = new PillarSdk();
@@ -252,19 +207,15 @@ const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxA
 describe('Connections Actions tests', () => {
   let store;
 
-  beforeAll(() => {
-    const storage = Storage.getInstance('db');
-    storage.save('connectionKeyPairs', { connectionKeyPairs: [] });
-  });
-
   beforeEach(() => {
-    const connectionKeyPairsStoreMock = {
+    const storeMock = {
       contacts: {
         data: [...mockContacts],
       },
       invitations: {
         data: [...mockInvitations],
       },
+      session: { data: { isOnline: true } },
       user: {
         data: { walletId },
       },
@@ -273,18 +224,14 @@ describe('Connections Actions tests', () => {
           SMART_WALLET_ENABLED: false,
         },
       },
-      connectionIdentityKeys: {
-        data: [...mockMapIdentityKeysResponse],
-      },
     };
-    store = mockStore({ ...connectionKeyPairsStoreMock });
+    store = mockStore({ ...storeMock });
   });
 
-  it('Should expect processed contacts and invitations by the mapIdentityKeys result from api', () => {
+  it('Should expect processed contacts and invitations by the getContacts result from api', () => {
     const expectedActions = [
       { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
       { type: UPDATE_CONTACTS, payload: mockContactsResult },
-      { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: [...mockMapIdentityKeysResponse] },
     ];
     return store.dispatch(updateConnectionsAction())
       .then(() => {

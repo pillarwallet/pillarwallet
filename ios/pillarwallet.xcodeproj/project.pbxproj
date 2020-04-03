@@ -272,6 +272,9 @@
 							com.apple.Push = {
 								enabled = 1;
 							};
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
 						};
 					};
 				};
@@ -511,6 +514,8 @@
 			baseConfigurationReference = 2EC0CEE1655E7E907B493644 /* Pods-pillarwallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BRANCH_IO_APP_DOMAIN = "abgsz.test-app.link";
+				BRANCH_IO_KEY_LIVE = key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_STYLE = Manual;
@@ -614,6 +619,8 @@
 			baseConfigurationReference = 7981F34B57593772B61C067A /* Pods-pillarwallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BRANCH_IO_APP_DOMAIN = plr.app.link;
+				BRANCH_IO_KEY_LIVE = _branch_io_key_live_;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -762,6 +769,8 @@
 			baseConfigurationReference = 60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconStaging;
+				BRANCH_IO_APP_DOMAIN = "abgsz.test-app.link";
+				BRANCH_IO_KEY_LIVE = key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";

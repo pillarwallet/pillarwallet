@@ -50,6 +50,7 @@ type Props = {
   fullScreen?: boolean,
   isVisible: boolean,
   showHeader?: boolean,
+  hideHeader?: boolean,
   centerTitle?: boolean,
   noWrapTitle?: boolean,
   backgroundColor?: string,
@@ -67,6 +68,8 @@ type Props = {
   theme: Theme,
   noPadding?: boolean,
   headerLeftItems?: Object[],
+  sideMargins?: number,
+  noTopPadding?: boolean
 };
 
 const themes = {
@@ -105,7 +108,7 @@ const getTheme = (props: Props) => {
 const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
-  ${props => props.fullScreen ? 'padding-top: 20px;' : ''}
+  ${props => props.fullScreen && !props.noTopPadding ? 'padding-top: 20px;' : ''}
   ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
 `;
 
@@ -126,6 +129,7 @@ const ModalBackground = styled.View`
   elevation: 1;
   margin-top: auto;
   background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.card};
+  margin-horizontal: ${({ sideMargins }) => sideMargins || 0}px;
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -194,6 +198,7 @@ class SlideModal extends React.Component<Props, *> {
       fullScreen,
       isVisible,
       showHeader,
+      hideHeader,
       centerTitle,
       backgroundColor: bgColor,
       avoidKeyboard,
@@ -204,13 +209,15 @@ class SlideModal extends React.Component<Props, *> {
       theme,
       noPadding,
       headerLeftItems,
+      sideMargins,
+      noTopPadding,
     } = this.props;
 
     const customTheme = getTheme(this.props);
     const colors = getThemeColors(theme);
     const backgroundColor = bgColor || colors.surface;
 
-    const showModalHeader = !fullScreen || showHeader;
+    const showModalHeader = (!fullScreen || showHeader) && !hideHeader;
     let leftItems = [];
     const centerItems = centerTitle ? [{ title }] : [];
     const rightItems = [{
@@ -262,14 +269,14 @@ class SlideModal extends React.Component<Props, *> {
 
       if (eventDetail) {
         return (
-          <ModalBackground customTheme={customTheme}>
+          <ModalBackground customTheme={customTheme} sideMargins={sideMargins}>
             { children }
           </ModalBackground>
         );
       }
 
       return (
-        <ModalBackground customTheme={customTheme}>
+        <ModalBackground customTheme={customTheme} sideMargins={sideMargins}>
           { modalInner }
         </ModalBackground>
       );
@@ -301,8 +308,9 @@ class SlideModal extends React.Component<Props, *> {
           zIndex: 10,
         }}
       >
+        {!fullScreenComponent &&
         <Root>
-          <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor}>
+          <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
             {!fullScreen &&
               <Backdrop onPress={this.hideModal}>
                 <ContentWrapper />
@@ -310,8 +318,11 @@ class SlideModal extends React.Component<Props, *> {
             }
             {modalContent()}
           </ContentWrapper>
-        </Root>
-        {isVisible && fullScreenComponent}
+        </Root>}
+        {!!fullScreenComponent &&
+        <Root>
+          {fullScreenComponent}
+        </Root>}
       </Modal>
     );
   }

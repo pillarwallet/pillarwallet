@@ -38,6 +38,8 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/react-native-keychain/.*
 <PROJECT_ROOT>/node_modules/@storybook/.*/polished
 <PROJECT_ROOT>/node_modules/redux-persist/.*
+<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
+<PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
 ; ;;; custom untyped end ;;;
 
 [include]

@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.multidex.MultiDexApplication;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import io.branch.rnbranch.RNBranchModule;
 import io.intercom.android.sdk.Intercom;
 import nativeShadow.NativeShadowPackage;
 import com.facebook.react.ReactNativeHost;
@@ -47,6 +48,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     @Override
     public void onCreate() {
         super.onCreate();
+        RNBranchModule.getAutoInstance(this);
         if (BuildConfig.DEBUG) {
             Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
         } else {

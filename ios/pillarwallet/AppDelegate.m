@@ -15,11 +15,16 @@
 #import "RCTLinkingManager.h"
 #import "Intercom/intercom.h"
 #import "RNNotifications.h"
+#import "RNBranch/RNBranch.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  #ifdef DEBUG
+    [RNBranch useTestInstance];
+  #endif
+  [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];
   [RNNotifications startMonitorNotifications];
   if ([FIRApp defaultApp] == nil) {
     [FIRApp configure];
@@ -70,6 +75,19 @@
    [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)
                                      categories:nil]];
   [application registerForRemoteNotifications];
+}
+
+// Needed for Branch.io
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  if (![RNBranch.branch application:app openURL:url options:options]) {
+    // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+  }
+  return YES;
+}
+
+// Needed for Branch.io
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+  return [RNBranch continueUserActivity:userActivity];
 }
 
 @end

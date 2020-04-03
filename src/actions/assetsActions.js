@@ -60,7 +60,7 @@ import type {
 import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { getAssetsAsList, transformAssetsToObject } from 'utils/assets';
+import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
 import {
   delay,
   noop,
@@ -91,7 +91,7 @@ import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } f
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
-import { fetchAccountAssetsRatesAction } from './ratesActions';
+import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
 type TransactionStatus = {
@@ -520,21 +520,28 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
   }
 }
 
-export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      accounts: { data: accounts },
-      balances: { data: balances },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
+export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const allBalances = getState().balances.data;
+    const updatedBalances = {
+      ...allBalances,
+      [accountId]: balances,
+    };
+    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+    dispatch({
+      type: UPDATE_BALANCES,
+      payload: updatedBalances,
+    });
+  };
+};
 
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
-    const walletAddress = getAccountAddress(activeAccount);
-    const accountId = getAccountId(activeAccount);
+export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIncreased?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const walletAddress = getAccountAddress(account);
+    const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
     const accountAssets = accountAssetsSelector(getState());
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
+    const isSmartWalletAccount = checkIfSmartWalletAccount(account);
 
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -547,24 +554,52 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
     });
 
     if (!isEmpty(newBalances)) {
-      const transformedBalances = transformAssetsToObject(newBalances);
-      const updatedBalances = {
-        ...balances,
-        [accountId]: transformedBalances,
-      };
+      await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
       if (showToastIfIncreased && !isSmartWalletAccount) {
         const currentBalances = accountBalancesSelector(getState());
         notifyAboutIncreasedBalance(newBalances, currentBalances);
       }
-      dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
-      dispatch({
-        type: UPDATE_BALANCES,
-        payload: updatedBalances,
-      });
     }
+  };
+};
 
+export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+    } = getState();
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
+
+    await dispatch(fetchAccountAssetsBalancesAction(activeAccount, showToastIfIncreased));
     dispatch(fetchAccountAssetsRatesAction());
 
+    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
+      dispatch(fetchVirtualAccountBalanceAction());
+    }
+  };
+};
+
+export const fetchAllAccountsBalancesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+    } = getState();
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+
+    const promises = accounts.map(async account => {
+      await dispatch(fetchAccountAssetsBalancesAction(account));
+    });
+    await Promise.all(promises).catch(_ => _);
+    dispatch(fetchAllAccountsAssetsRatesAction());
+
+    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
     if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());
     }

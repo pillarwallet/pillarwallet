@@ -160,6 +160,7 @@ class LegalTerms extends React.Component<Props, State> {
           <Checkbox
             onPress={() => this.toggleCheckbox('userCheck1')}
             wrapperStyle={{ marginBottom: 20 }}
+            checked={userCheck1}
           >
             <CheckboxText>
               {'I’m happy to know that Pillar does not have access to my '}
@@ -172,6 +173,7 @@ class LegalTerms extends React.Component<Props, State> {
           <Checkbox
             onPress={() => this.toggleCheckbox('userCheck2')}
             wrapperStyle={{ marginBottom: 20 }}
+            checked={userCheck2}
           >
             <CheckboxText>
               {'The only way to recover assets is to use the '}
@@ -186,6 +188,7 @@ class LegalTerms extends React.Component<Props, State> {
           <Checkbox
             onPress={() => this.toggleCheckbox('userCheck3')}
             wrapperStyle={{ marginBottom: 20 }}
+            checked={userCheck3}
           >
             <CheckboxText>
               {'I have read, understand, and agree to the '}
@@ -200,6 +203,7 @@ class LegalTerms extends React.Component<Props, State> {
           <Checkbox
             onPress={() => this.toggleCheckbox('userCheck4')}
             wrapperStyle={{ marginBottom: 20 }}
+            checked={userCheck4}
           >
             <CheckboxText>
               {'I have read, understand, and agree to the '}

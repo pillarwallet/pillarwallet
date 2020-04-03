@@ -355,7 +355,7 @@ class Chat extends React.Component<Props, State> {
       logEvent('first_chat_message_sent');
     }
 
-    sendMessageByContact(contact.username, messages[0]);
+    sendMessageByContact(contact.username, contact.id, messages[0]);
     clearChatDraftState();
     this.setState({ chatText: '' });
   };
@@ -657,8 +657,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     avatar,
     loadEarlier,
   ) => dispatch(getChatByContactAction(username, userId, avatar, loadEarlier)),
-  sendMessageByContact: (username: string, message: Object) => {
-    dispatch(sendMessageByContactAction(username, message));
+  sendMessageByContact: (username: string, contactId: string, message: Object) => {
+    dispatch(sendMessageByContactAction(username, contactId, message));
   },
   clearChatDraftState: () => dispatch(clearChatDraftStateAction()),
   getChatDraftByContact: (contactId: string) => dispatch(getChatDraftByContactAction(contactId)),

@@ -40,15 +40,11 @@ import notificationsReducer from './notificationsReducer';
 import contactsReducer from './contactsReducer';
 import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
-import accessTokensReducer from './accessTokensReducer';
 import sessionReducer from './sessionReducer';
-import icosReducer from './icosReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
-import connectionKeyPairsReducer from './connectionKeyPairsReducer';
 import collectiblesReducer from './collectiblesReducer';
-import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 import badgesReducer from './badgesReducer';
 import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
@@ -62,6 +58,9 @@ import userEventsReducer from './userEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
+import insightsReducer from './insightsReducer';
+import referralsReducer from './referralsReducer';
+import phoneContactsReducer from './phoneContactsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -81,15 +80,11 @@ import type { NotificationsReducerState } from './notificationsReducer';
 import type { ContactsReducerState } from './contactsReducer';
 import type { InvitationsReducerState } from './invitationsReducer';
 import type { ChatReducerState } from './chatReducer';
-import type { AccessTokensReducerState } from './accessTokensReducer';
 import type { SessionReducerState } from './sessionReducer';
-import type { ICOsReducerState } from './icosReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
 import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
-import type { ConnectionKeyPairsReducerState } from './connectionKeyPairsReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
-import type { ConnectionIdentityKeysReducerState } from './connectionIdentityKeysReducer';
 import type { BadgesReducerState, BadgesReducerAction } from './badgesReducer';
 import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
@@ -103,6 +98,9 @@ import type { UserEventsReducerAction, UserEventsReducerState } from './userEven
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
+import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
+import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
+import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -119,15 +117,11 @@ export type RootReducerState = {|
   contacts: ContactsReducerState,
   invitations: InvitationsReducerState,
   chat: ChatReducerState,
-  accessTokens: AccessTokensReducerState,
   session: SessionReducerState,
-  icos: ICOsReducerState,
   txNotes: TxNoteReducerState,
   oAuthTokens: OAuthReducerState,
   txCount: TxCountReducerState,
-  connectionKeyPairs: ConnectionKeyPairsReducerState,
   collectibles: CollectiblesReducerState,
-  connectionIdentityKeys: ConnectionIdentityKeysReducerState,
   badges: BadgesReducerState,
   exchange: ExchangeReducerState,
   accounts: AccountsReducerState,
@@ -141,6 +135,10 @@ export type RootReducerState = {|
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
+  referrals: ReferralsReducerState,
+  insights: InsightsReducerState,
+  referrals: ReferralsReducerState,
+  phoneContacts: PhoneContactsReducerState,
 |};
 
 type RootReducerAction =
@@ -164,7 +162,10 @@ type RootReducerAction =
   | WalkthroughsReducerAction
   | DbAction
   | SyntheticsReducerAction
-  | EnsRegistryReducerAction;
+  | EnsRegistryReducerAction
+  | InsightsReducerAction
+  | ReferralsReducerAction
+  | PhoneContactsReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -191,15 +192,11 @@ const appReducer = combineReducers({
   contacts: contactsReducer,
   invitations: invitationsReducer,
   chat: chatReducer,
-  accessTokens: accessTokensReducer,
   session: sessionReducer,
-  icos: icosReducer,
   txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
-  connectionKeyPairs: connectionKeyPairsReducer,
-  connectionIdentityKeys: connectionIdentityKeysReducer,
   badges: badgesReducer,
   exchange: exchangeReducer,
   accounts: accountsReducer,
@@ -213,6 +210,9 @@ const appReducer = combineReducers({
   walkthroughs: walkthroughsReducer,
   synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
+  insights: insightsReducer,
+  referrals: referralsReducer,
+  phoneContacts: phoneContactsReducer,
 });
 
 export const initialState = appReducer(undefined, {});

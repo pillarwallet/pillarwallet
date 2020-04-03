@@ -35,6 +35,7 @@ export type AppSettingsReducerState = {
     isManualThemeSelection: boolean,
     useBiometrics?: boolean,
     optOutTracking?: boolean,
+    hasSeenExchangeIntro?: boolean,
   },
   isFetched: boolean,
 };
@@ -56,6 +57,7 @@ export const initialState: AppSettingsReducerState = {
     transactionSpeed: null,
     themeType: '',
     isManualThemeSelection: false,
+    hasSeenExchangeIntro: false,
   },
   isFetched: false,
 };

@@ -23,17 +23,14 @@ import Intercom from 'react-native-intercom';
 import { StatusBar, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
-import RootNavigation from 'navigation/rootNavigation';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import styled from 'styled-components/native';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 
-import { setTopLevelNavigator } from 'services/navigation';
-
+// actions
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
@@ -42,19 +39,35 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+
+// constants
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+
+// components
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
+
+// utils
+import { getThemeByType, defaultTheme } from 'utils/themes';
+
+// services
+import { setTopLevelNavigator } from 'services/navigation';
+
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
-import { getThemeByType, defaultTheme } from 'utils/themes';
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import Storybook from 'screens/Storybook';
 
+// other
+import RootNavigation from 'navigation/rootNavigation';
+import Storybook from 'screens/Storybook';
 import configureStore from './src/configureStore';
+
+const { store, persistor } = configureStore();
 
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
@@ -62,20 +75,19 @@ export const LoadingSpinner = styled(Spinner)`
   justify-content: center;
 `;
 
-const { store, persistor } = configureStore();
-
 type Props = {
-  dispatch: Function,
-  navigation: Object,
+  dispatch: Dispatch,
   isFetched: boolean,
-  fetchAppSettingsAndRedirect: Function,
-  updateSessionNetworkStatus: Function,
-  updateOfflineQueueNetworkStatus: Function,
-  startListeningOnOpenNotification: Function,
-  stopListeningOnOpenNotification: Function,
-  executeDeepLink: Function,
+  fetchAppSettingsAndRedirect: (appState: string, platform: string) => void,
+  updateSessionNetworkStatus: (isOnline: boolean) => void,
+  updateOfflineQueueNetworkStatus: (isOnline: boolean) => void,
+  startListeningOnOpenNotification: () => void,
+  stopListeningOnOpenNotification: () => void,
+  executeDeepLink: (deepLinkUrl: string) => void,
   activeWalkthroughSteps: Steps,
   themeType: string,
+  startReferralsListener: () => void,
+  stopReferralsListener: () => void,
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
@@ -97,7 +109,8 @@ class App extends React.Component<Props, *> {
   }
 
   componentWillUnmount() {
-    const { stopListeningOnOpenNotification } = this.props;
+    const { stopListeningOnOpenNotification, stopReferralsListener } = this.props;
+    stopReferralsListener();
     stopListeningOnOpenNotification();
     if (this.removeNetInfoEventListener) {
       this.removeNetInfoEventListener();
@@ -111,11 +124,13 @@ class App extends React.Component<Props, *> {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       executeDeepLink,
+      startReferralsListener,
     } = this.props;
     NetInfo.fetch()
       .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
+    startReferralsListener();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
@@ -237,6 +252,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
+  startReferralsListener: () => dispatch(startReferralsListenerAction()),
+  stopReferralsListener: () => dispatch(stopReferralsListenerAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
@@ -244,17 +261,12 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
-const AppRoot = () => SHOW_ONLY_STORYBOOK
-  ? <Storybook />
-  : (
-    <Provider store={store}>
-      <PersistGate
-        loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
-        persistor={persistor}
-      >
-        <AppWithNavigationState />
-      </PersistGate>
-    </Provider>
-  );
+const AppRoot = () => (
+  <Provider store={store}>
+    <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
+      {SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+    </PersistGate>
+  </Provider>
+);
 
 export default AppRoot;

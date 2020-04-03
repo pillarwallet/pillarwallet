@@ -361,6 +361,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
+            sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -487,6 +488,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
+            sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" android/app/src/main/assets/branch.json
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "./yarn.lock" }}

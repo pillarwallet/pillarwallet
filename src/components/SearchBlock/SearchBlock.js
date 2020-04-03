@@ -30,7 +30,7 @@ type State = {
   query: string,
   searchIsFocused: boolean,
   fullScreenOverlayOpacity: Animated.Value,
-}
+};
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -43,7 +43,7 @@ type Props = {
   inputRef?: Function,
   wrapperStyle?: Object,
   onSearchBlur?: Function,
-}
+};
 
 const SearchBarWrapper = styled.View`
   width: 100%;
@@ -128,7 +128,7 @@ class SearchBlock extends React.Component<Props, State> {
     }
   };
 
-  handleSearchChange = (query: any) => {
+  handleSearchChange = (query: string) => {
     this.props.onSearchChange(query);
     this.setState({ query });
   };
@@ -172,7 +172,7 @@ class SearchBlock extends React.Component<Props, State> {
       fullScreenOverlayOpacity,
     } = this.state;
 
-    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && itemSearchState);
+    const inSearchMode = query.length >= MIN_QUERY_LENGTH && itemSearchState;
 
     return (
       <React.Fragment>

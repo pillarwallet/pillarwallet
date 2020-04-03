@@ -261,6 +261,7 @@ class AssetsList extends React.Component<Props, State> {
             value: formattedBalanceInFiat,
             token: symbol,
           }}
+          fallbackToGenericToken
         />
       </Swipeout>
     );

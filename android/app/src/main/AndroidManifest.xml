@@ -1,7 +1,7 @@
 <manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.pillarproject.wallet">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.pillarproject.wallet">
 
     <!-- network -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,30 +12,33 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!-- react-native-contacts -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
+            android:name="android.hardware.camera"
+            android:required="false" />
     <uses-feature
-        android:name="android.hardware.camera.front"
-        android:required="false" />
+            android:name="android.hardware.camera.front"
+            android:required="false" />
 
     <application
-        tools:replace="android:allowBackup"
-        android:name=".MainApplication"
-        android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/AppTheme">
+            tools:replace="android:allowBackup"
+            android:name=".MainApplication"
+            android:allowBackup="false"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize">
+                android:name=".MainActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+                android:label="@string/app_name"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme"
+                android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -53,6 +56,27 @@
                 <data android:host="shapeshift" android:scheme="pillarwallet" />
                 <!-- add more lines to support other hosts -->
             </intent-filter>
+            <!-- branch.io -->
+            <intent-filter>
+                <data android:scheme="pillarwallet" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+            <!-- branch.io -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="@string/branch_io_app_link" />
+            </intent-filter>
+            <!-- branch.io -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="@string/branch_io_app_link_alternate" />
+            </intent-filter>
         </activity>
 
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
@@ -64,18 +88,28 @@
             </intent-filter>
         </service>
 
-<!--        &lt;!&ndash; react-native-firebase trigger FCM instance ID event &ndash;&gt;-->
-<!--        <service android:name="io.invertase.firebase.messaging.RNFirebaseInstanceIdService">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
-<!--            </intent-filter>-->
-<!--        </service>-->
+        <!--        &lt;!&ndash; react-native-firebase trigger FCM instance ID event &ndash;&gt;-->
+        <!--        <service android:name="io.invertase.firebase.messaging.RNFirebaseInstanceIdService">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>-->
+        <!--            </intent-filter>-->
+        <!--        </service>-->
 
         <!-- react-native-notifications custom push notification icon -->
         <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_notification" />
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@mipmap/ic_notification" />
 
+        <!-- Branch init -->
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="@string/branch_io_key_live" />
+        <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="@string/branch_io_key_test" />
+
+        <!-- Branch install referrer tracking (optional) -->
+        <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

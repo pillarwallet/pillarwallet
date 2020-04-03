@@ -29,6 +29,8 @@ import { fontSizes, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import type { Theme } from 'models/Theme';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { DARK_THEME } from 'constants/appSettingsConstants';
+
 
 export type Props = {
   children?: React.Node,
@@ -41,6 +43,8 @@ export type Props = {
   danger?: boolean,
   primaryInverted?: boolean,
   dangerInverted?: boolean,
+  positive?: boolean,
+  secondaryLight?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,
@@ -64,6 +68,8 @@ export type Props = {
   leftIconStyle?: Object,
   rightIconName?: string,
   rightIconStyle?: Object,
+  horizontalPaddings?: number,
+  card?: boolean,
 };
 
 type State = {
@@ -127,10 +133,21 @@ const themes = {
   positive: {
     borderWidth: 0,
   },
+  secondaryLight: {
+    borderWidth: 0,
+    shadow: false,
+  },
+  secondaryLightDisabled: {
+    borderWidth: 0,
+    opacity: 0.5,
+    shadow: false,
+  },
 };
 
-const themeColors = (theme) => {
+const themeColors = (theme: Theme) => {
   const colors = getThemeColors(theme);
+  const isDarkTheme = theme.current === DARK_THEME;
+
   return ({
     primary: {
       surface: colors.primary,
@@ -139,7 +156,8 @@ const themeColors = (theme) => {
     },
     primaryInverted: {
       surface: 'transparent',
-      text: colors.primary,
+      text: isDarkTheme ? colors.text : colors.primary,
+      border: isDarkTheme ? colors.tertiary : colors.secondaryAccent,
     },
     dangerInverted: {
       surface: 'transparent',
@@ -165,7 +183,6 @@ const themeColors = (theme) => {
     },
     danger: {
       background: colors.negative,
-      surface: colors.danger,
       text: colors.control,
     },
     dark: {
@@ -197,13 +214,28 @@ const themeColors = (theme) => {
       surface: colors.positive,
       text: colors.control,
     },
+    card: {
+      surface: colors.card,
+      text: colors.primary,
+      border: colors.card,
+    },
+    secondaryLight: {
+      surface: colors.buttonSecondaryBackground,
+      text: colors.primary,
+    },
+    secondaryLightDisabled: {
+      surface: colors.buttonSecondaryBackground,
+      text: colors.primary,
+    },
   });
 };
 
 const getButtonHeight = (props) => {
   if (props.height) {
     return `${props.height}px`;
-  } else if (props.small) {
+  }
+
+  if (props.small) {
     return '34px';
   }
 
@@ -213,9 +245,13 @@ const getButtonHeight = (props) => {
 const getButtonWidth = (props) => {
   if (props.square) {
     return getButtonHeight(props);
-  } else if (props.block) {
+  }
+
+  if (props.block) {
     return '100%';
-  } else if (props.width) {
+  }
+
+  if (props.width) {
     return props.width;
   }
 
@@ -223,11 +259,19 @@ const getButtonWidth = (props) => {
 };
 
 const getButtonPadding = (props) => {
+  if (props.horizontalPaddings) {
+    return `${props.horizontalPaddings}px`;
+  }
+
   if (props.noPadding) {
     return '0';
-  } else if (props.small || props.block) {
+  }
+
+  if (props.small || props.block) {
     return `${spacing.rhythm}px`;
-  } else if (props.square) {
+  }
+
+  if (props.square) {
     return '4px';
   }
   return '22px';
@@ -236,9 +280,13 @@ const getButtonPadding = (props) => {
 const getButtonFontSize = (props) => {
   if (props.listItemButton) {
     return `${fontSizes.regular}px`;
-  } else if (props.small) {
+  }
+
+  if (props.small) {
     return `${fontSizes.regular}px`;
-  } else if (props.extraSmall) {
+  }
+
+  if (props.extraSmall) {
     return `${fontSizes.small}px`;
   }
   return `${fontSizes.big}px`;
@@ -267,7 +315,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
   border-color: ${({ theme }) => theme.colors.border};
-  border-width: ${props => props.customTheme.borderWidth};
+  border-width: ${props => props.customTheme.borderWidth || '0'};
   border-style: solid;
   flex-direction: ${props => props.customTheme.flexDirection ? props.customTheme.flexDirection : 'row'}
   ${props => props.customTheme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
@@ -318,13 +366,17 @@ const NextIcon = styled(Icon)`
   transform: rotate(180deg);
 `;
 
-const getThemeType = (props: Props, isForColors) => {
+const getThemeType = (props: Props, isForColors?: boolean) => {
   if (props.secondary && props.danger) {
     return 'secondaryDanger';
   }
 
   if (props.secondaryTransparent && props.disabled) {
     return 'secondaryTransparentDisabled';
+  }
+
+  if (props.secondaryLight && props.disabled) {
+    return 'secondaryLightDisabled';
   }
 
   const propsKeys = Object.keys(props);

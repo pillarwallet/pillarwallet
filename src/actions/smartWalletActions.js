@@ -36,7 +36,6 @@ import {
   SET_SMART_WALLET_ACCOUNT_ENS,
   ADD_SMART_WALLET_UPGRADE_ASSETS,
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
-  DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
@@ -283,11 +282,12 @@ export const deploySmartWalletAction = () => {
         },
         upgrade: {
           status: upgradeStatus,
+          deploymentStarted,
         },
       },
     } = getState();
 
-    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
+    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING || !deploymentStarted) {
       dispatch({ type: START_SMART_WALLET_DEPLOYMENT });
     }
 
@@ -360,13 +360,6 @@ export const addRecoveryAgentsToSmartWalletUpgradeAction = (recoveryAgents: Reco
   type: ADD_SMART_WALLET_RECOVERY_AGENTS,
   payload: recoveryAgents,
 });
-
-export const dismissSmartWalletUpgradeAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { smartWalletUpgradeDismissed: true } }));
-    dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
-  };
-};
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
   return async (dispatch: Dispatch) => {

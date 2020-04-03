@@ -31,7 +31,7 @@ import { LabelBadge } from 'components/LabelBadge';
 type Props = {
   iconSource?: string,
   fallbackIcon?: string,
-  title: string,
+  title: string | (string | React.Node)[],
   subtitle?: string,
   action?: Function,
   note?: Object,
@@ -61,14 +61,11 @@ const CardImage = styled(CachedImage)`
   margin-right: 20px;
 `;
 
-const ContentWrapper = styled.View`
-  flex: 1;
-`;
-
 const CardContent = styled.View`
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
+  flex: 1;
 `;
 
 const CardTitle = styled(MediumText)`
@@ -82,7 +79,20 @@ const CardSubtitleView = styled.View`
 
 const CardSubtitle = styled(BaseText)`
   color: ${themedColors.secondaryText};
-  ${fontStyles.medium};
+  ${fontStyles.regular};
+  padding-right: 25%;
+`;
+
+const TitleWithImagesWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  color: ${themedColors.text};
+  ${fontStyles.big};
+`;
+
+const ImageWrapper = styled.View`
+  height: 16;
+  justify-content: flex-end;
 `;
 
 const TitleWrapper = styled.View`
@@ -117,36 +127,48 @@ export const ListCard = (props: Props) => {
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
 
+  const getTitle = () => {
+    if (typeof title === 'string') return <CardTitle style={titleStyle}>{title}</CardTitle>;
+    // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
+    return (
+      <TitleWithImagesWrapper>
+        {title.map((item, idx) => {
+          if (typeof item === 'string') return <CardTitle key={idx}>{item}</CardTitle>;
+        return <ImageWrapper key={idx}>{item}</ImageWrapper>;
+        })}
+      </TitleWithImagesWrapper>
+    );
+  };
+
   return (
     <ShadowedCard
-      wrapperStyle={{ marginBottom: 10, width: '100%' }}
+      wrapperStyle={{ marginBottom: 16, width: '100%' }}
       contentWrapperStyle={{ ...wrapperStyle, ...contentWrapperStyle }}
       onPress={action}
       disabled={disabled}
+      noShadow
     >
       <CardRow>
         {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
         {customIcon}
-        <ContentWrapper>
-          <CardContent>
-            <TitleWrapper>
-              <CardTitle style={titleStyle}>{title}</CardTitle>
-              {!!label && <Label>{label}</Label>}
-              {!!labelBadge && (
-                <LabelBadge
-                  label={labelBadge.label}
-                  labelStyle={{ fontSize: fontSizes.regular }}
-                  color={labelBadge.color}
-                />
+        <CardContent>
+          <TitleWrapper>
+            {getTitle()}
+            {!!label && <Label>{label}</Label>}
+            {!!labelBadge && (
+            <LabelBadge
+              label={labelBadge.label}
+              labelStyle={{ fontSize: fontSizes.regular }}
+              color={labelBadge.color}
+            />
               )}
-            </TitleWrapper>
-            {!!subtitle && (
-              <CardSubtitleView>
-                <CardSubtitle>{subtitle}</CardSubtitle>
-              </CardSubtitleView>
-            )}
-          </CardContent>
-        </ContentWrapper>
+          </TitleWrapper>
+          {!!subtitle && (
+            <CardSubtitleView>
+              <CardSubtitle>{subtitle}</CardSubtitle>
+            </CardSubtitleView>
+          )}
+        </CardContent>
       </CardRow>
       {!!note &&
       <Note {...note} containerStyle={{ marginTop: 14 }} />

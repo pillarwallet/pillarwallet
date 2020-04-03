@@ -131,6 +131,7 @@ jest.setMock('ethers', {
     formatUnits: utils.formatUnits,
     parseUnits: utils.parseUnits,
     HDNode: utils.HDNode,
+    formatEther: utils.formatEther,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -227,7 +228,7 @@ jest.setMock('react-native-cached-image', {
   ImageCacheManager: () => ({
     clearCache: () => Promise.resolve(),
   }),
-  CachedImage: jest.fn(),
+  CachedImage: () => null,
 });
 
 const mockSmartWalletAccount = {
@@ -288,11 +289,14 @@ jest.setMock('@smartwallet/sdk', {
 });
 
 jest.setMock('react-native-keychain', {
-  setGenericPassword: () => {},
-  getGenericPassword: () => {},
-  resetGenericPassword: () => {},
+  setGenericPassword: jest.fn().mockResolvedValue(),
+  getGenericPassword: jest.fn().mockResolvedValue(),
+  resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {
     BIOMETRY_ANY: 'BIOMETRY_ANY',
+  },
+  ACCESSIBLE: {
+    WHEN_UNLOCKED: 'WHEN_UNLOCKED',
   },
 });
 
@@ -410,7 +414,7 @@ jest.setMock('services/insight', {
     }),
 });
 
-jest.setMock('react-native-appearance', {});
+jest.mock('react-native-branch', () => jest.fn());
 
 jest.setMock('@sentry/react-native', {
   withScope: () => {},
@@ -418,4 +422,7 @@ jest.setMock('@sentry/react-native', {
 });
 
 jest.setMock('react-native-notifications');
+
 jest.setMock('@react-native-community/netinfo');
+
+jest.setMock('react-native-appearance', {});

@@ -51,16 +51,8 @@ import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import type { ApiNotification } from 'models/Notification';
-import type {
-  ConnectionIdentityKeyMap,
-  ConnectionUpdateIdentityKeys,
-  ConnectionPatchIdentityKeys,
-} from 'models/Connections';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
-
-// other
-import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos'; // temporary here
 
 // services
 import {
@@ -90,12 +82,6 @@ type BalancePayload = {
   assets: Asset[],
 };
 
-type UserInfoByIdPayload = {
-  walletId: string,
-  userAccessKey: string,
-  targetUserAccessKey: string,
-};
-
 type RegisterSmartWalletPayload = {
   walletId: string,
   privateKey: string,
@@ -105,19 +91,19 @@ type RegisterSmartWalletPayload = {
 
 type MapContactsAddresses = Array<{
   contactId: string,
-  accessKeys?: {
-    userAccessKey: string,
-    contactAccessKey: string,
-  },
-  connectionKeys?: {
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-  },
 }>;
 
 type VerifyEmail = {|
   walletId: string,
   oneTimePassword: string,
+|};
+
+type SendReferralInvitationParams = {|
+  walletId: string,
+  token: string,
+  referralLink: string,
+  email?: string,
+  phone?: string,
 |};
 
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
@@ -185,7 +171,7 @@ class SDKWrapper {
       }));
   }
 
-  registerOnAuthServer(walletPrivateKey: string, fcmToken: string, username: string) {
+  registerOnAuthServer(walletPrivateKey: string, fcmToken: ?string, username: string) {
     const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
     return Promise.resolve()
       .then(() => {
@@ -265,13 +251,12 @@ class SDKWrapper {
         const status = get(error, 'response.status');
         const message = get(error, 'response.data.message');
 
-        Sentry.captureException({
-          error: 'Can\'t verify code',
+        reportLog('Can\'t verify code', {
           walletId: params.walletId,
           user: params,
           status,
           message,
-        });
+        }, Sentry.Severity.Error);
         return { responseStatus: status, message };
       });
   }
@@ -292,6 +277,22 @@ class SDKWrapper {
         }, Sentry.Severity.Error);
         return { responseStatus: status, message };
       });
+  }
+
+  generateReferralToken(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.generateToken({
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => ({ result: 'error' }));
+  }
+
+  sendReferralInvitation(params: SendReferralInvitationParams) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
+      .then(({ data }) => data)
+      .catch((error) => ({ result: 'error', error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {
@@ -334,9 +335,9 @@ class SDKWrapper {
       .catch(() => ({}));
   }
 
-  userInfoById(targetUserId: string, params: UserInfoByIdPayload) {
+  userInfoById(targetUserId: string, myWalletId: string) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.infoById(targetUserId, params))
+      .then(() => this.pillarWalletSdk.user.infoById(targetUserId, { walletId: myWalletId }))
       .then(({ data }) => ({ ...data }))
       .catch(() => ({}));
   }
@@ -467,21 +468,18 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  fetchICOs(userId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
-      .then(({ data }) => data.data)
-      .catch(() => []);
+  fetchGasInfo() {
+    return this.BCXSdk.gasStation()
+      .then(data => ({
+        min: data.safeLow,
+        avg: data.standard,
+        max: data.fast,
+      }))
+      .catch(() => ({}));
   }
 
-  fetchICOFundingInstructions(walletId: string, currency: string) {
-    const cryptos = ['ETH', 'BTC', 'LTC']; // mock purposes;
-    const fixtures = {
-      ...icoFundingInstructionsFixtures,
-      currency,
-      paymentType: cryptos.includes(currency) ? 'crypto_currency' : 'bank_transfer',
-    };
-    return Promise.resolve(fixtures);
+  fetchTxInfo(hash: string) {
+    return fetchTransactionInfo(hash);
   }
 
   fetchHistory(payload: HistoryPayload) {
@@ -503,20 +501,6 @@ class SDKWrapper {
         }));
       })
       .catch(() => []);
-  }
-
-  fetchGasInfo() {
-    return this.BCXSdk.gasStation()
-      .then(data => ({
-        min: data.safeLow,
-        avg: data.standard,
-        max: data.fast,
-      }))
-      .catch(() => ({}));
-  }
-
-  fetchTxInfo(hash: string) {
-    return fetchTransactionInfo(hash);
   }
 
   fetchTransactionReceipt(hash: string) {
@@ -561,198 +545,6 @@ class SDKWrapper {
       .catch(() => ({}));
   }
 
-  sendOldInvitation(targetUserId: string, accessKey: string, walletId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.invite({
-        accessKey,
-        targetUserId,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  cancelOldInvitation(targetUserId: string, accessKey: string, walletId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.cancel({
-        accessKey,
-        targetUserId,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  acceptOldInvitation(
-    targetUserId: string,
-    targetUserAccessKey: string,
-    accessKey: string,
-    sourceIdentityKey: ?string,
-    targetIdentityKey: ?string,
-    walletId: string,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.accept({
-        sourceUserAccessKey: accessKey,
-        targetUserId,
-        targetUserAccessKey,
-        sourceUserIdentityKeys: {
-          sourceIdentityKey,
-          targetIdentityKey,
-        },
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  rejectOldInvitation(targetUserId: string, accessKey: string, walletId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.reject({
-        accessKey,
-        targetUserId,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  sendInvitation(
-    targetUserId: string,
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-    walletId: string,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.invite({
-        targetUserId,
-        sourceIdentityKey,
-        targetIdentityKey,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  cancelInvitation(
-    targetUserId: string,
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-    walletId: string,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.cancel({
-        targetUserId,
-        sourceIdentityKey,
-        targetIdentityKey,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  acceptInvitation(
-    targetUserId: string,
-    sourceUserIdentityKeys: {
-      sourceIdentityKey: string;
-      targetIdentityKey: string;
-    },
-    targetUserIdentityKeys: {
-      sourceIdentityKey: string;
-      targetIdentityKey: string;
-    },
-    walletId: string,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.accept({
-        targetUserId,
-        sourceUserIdentityKeys,
-        targetUserIdentityKeys,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  rejectInvitation(
-    targetUserId: string,
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-    walletId: string,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.reject({
-        targetUserId,
-        sourceIdentityKey,
-        targetIdentityKey,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  disconnectUser(
-    targetUserId: string,
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-    walletId: string,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.disconnect({
-        targetUserId,
-        sourceIdentityKey,
-        targetIdentityKey,
-        walletId,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  muteUser(
-    targetUserId: string,
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-    walletId: string,
-    mute: boolean,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.mute({
-        targetUserId,
-        sourceIdentityKey,
-        targetIdentityKey,
-        walletId,
-        mute,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  blockUser(
-    targetUserId: string,
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-    walletId: string,
-    block: boolean,
-  ) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.block({
-        targetUserId,
-        sourceIdentityKey,
-        targetIdentityKey,
-        walletId,
-        block,
-      }))
-      .then(({ data }) => data)
-      .catch(() => null);
-  }
-
-  fetchAccessTokens(walletId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
-      .then(({ data }) => data)
-      .catch(() => []);
-  }
-
   setUsername(username: string) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.configuration.setUsername(username))
@@ -768,44 +560,99 @@ class SDKWrapper {
       });
   }
 
-  connectionsCount(walletId: string) {
+  sendInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.count({ walletId }))
+      .then(() => this.pillarWalletSdk.connectionV2.invite({
+        targetUserId,
+        walletId,
+      }))
       .then(({ data }) => data)
       .catch(() => null);
   }
 
-  mapIdentityKeys(connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
+  cancelInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
-      .then(({ data }) => {
-        if (!Array.isArray(data)) {
-          reportLog('Wrong Identity Keys received', { data });
-          return [];
-        }
-        return data;
-      })
-      .catch(() => []);
-  }
-
-  updateIdentityKeys(updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
+      .then(() => this.pillarWalletSdk.connectionV2.cancel({
+        targetUserId,
+        walletId,
+      }))
       .then(({ data }) => data)
-      .catch(() => false);
+      .catch(() => null);
   }
 
-  patchIdentityKeys(updatedIdentityKeys: ConnectionPatchIdentityKeys) {
+  acceptInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-      .then(({ data }) => {
-        if (data && !Array.isArray(data)) {
-          reportLog('Wrong response from patchIdentityKeys', { data });
-          return false;
-        }
-        return data;
-      })
-      .catch(() => false);
+      .then(() => this.pillarWalletSdk.connectionV2.accept({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  rejectInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.reject({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  disconnectUser(
+    targetUserId: string,
+    walletId: string,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.disconnect({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  muteUser(
+    targetUserId: string,
+    walletId: string,
+    mute: boolean,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.mute({
+        targetUserId,
+        walletId,
+        mute,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  blockUser(
+    targetUserId: string,
+    walletId: string,
+    block: boolean,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.block({
+        targetUserId,
+        walletId,
+        block,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
   }
 
   getContactsSmartAddresses(walletId: string, contacts: MapContactsAddresses) {
@@ -828,6 +675,19 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
       .then(data => get(data, 'operations', []))
+      .catch(() => []);
+  }
+
+  getContacts(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.list({ walletId }))
+      .then(({ data }) => {
+        if (!Array.isArray(data)) {
+          reportLog('Wrong connections received', { data });
+          return [];
+        }
+        return data;
+      })
       .catch(() => []);
   }
 

@@ -148,6 +148,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "borderTopLeftRadius": 30,
                 "borderTopRightRadius": 30,
                 "elevation": 1,
+                "marginHorizontal": 0,
                 "marginTop": "auto",
                 "overflow": "hidden",
                 "paddingBottom": 0,
@@ -171,7 +172,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "width": "100%",
                 },
                 Object {

@@ -43,7 +43,7 @@ import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import { ETH } from 'constants/assetsConstants';
 
-import { getActiveAccount } from './accounts';
+import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
 import { getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction } from './history';
@@ -61,7 +61,7 @@ const getMessage = (
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (!isSmartWalletActive) return {};
       return {
-        title: 'To send assets, deploy Smart Wallet first',
+        title: 'To send assets, activate Smart Wallet first',
         message: 'You will have to pay a small fee',
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
@@ -91,6 +91,15 @@ export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
   return accounts.some(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
 };
 
+export const getPreferredWalletId = (accounts: Accounts = []): string => {
+  const smartWallet = findFirstSmartAccount(accounts);
+  if (smartWallet) {
+    return smartWallet.walletId;
+  }
+  const legacyWallet = findKeyBasedAccount(accounts);
+  return legacyWallet ? legacyWallet.walletId : '';
+};
+
 export const getSmartWalletStatus = (
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
@@ -111,10 +120,10 @@ export const getSmartWalletStatus = (
 export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
 export const getDeployErrorMessage = (errorType: string) => ({
-  title: 'Smart Wallet deployment failed',
+  title: 'Smart Wallet activation failed',
   message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
     ? 'You need to top up your Smart Account first'
-    : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
+    : 'There was an error on our server. Please try to re-activate the account by clicking the button bellow',
 });
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');

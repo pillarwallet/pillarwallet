@@ -20,6 +20,7 @@
 import { Contract, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
+import abiHelper from 'ethjs-abi';
 
 import { BTC, ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { getEthereumProvider, parseTokenBigNumberAmount, reportLog } from 'utils/common';
@@ -113,14 +114,26 @@ export async function transferERC20(options: ERC20TransferOptions) {
   return { signedHash, value: contractAmount };
 }
 
-export function getERC721ContractTransferMethod(code: any): string {
+export function getERC721ContractTransferMethod(code: any, isReceiverContractAddress: boolean): string {
+  /**
+   * sending to contract with "safeTransferFrom" will fail if contract doesn't have
+   * "onERC721Received" event implemented, just to make everything more
+   * stable we can just disable safeTransferFrom if receiver
+   * address is contract and use other methods
+   * this can be improved by checking if contract byte code
+   * contains hash of "onERC721Received", but this might not be
+   * always true as "contract" might be a proxy and will return that
+   * it doesn't have it anyway
+   * (ref – https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md)
+   */
+
   // first 4 bytes of the encoded signature for a lookup in the contract code
   // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
   const transferHash = 'a9059cbb'; // transfer(address,uint256)
   const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
   const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
 
-  if (contractHasMethod(code, safeTransferFromHash)) {
+  if (!isReceiverContractAddress && contractHasMethod(code, safeTransferFromHash)) {
     return 'safeTransferFrom';
   } else if (contractHasMethod(code, transferHash)) {
     return 'transfer';
@@ -130,11 +143,54 @@ export function getERC721ContractTransferMethod(code: any): string {
   return '';
 }
 
+const getERC721MethodAbi = (
+  contractAbi: Object[],
+  methodName: string,
+): ?Object => contractAbi.find(item => item.name === methodName);
+
+export const buildERC721TransactionData = async (transaction: Object, provider: any): any => {
+  const {
+    from,
+    to,
+    tokenId,
+    contractAddress,
+  } = transaction;
+
+  let methodAbi;
+  let data;
+
+  const code = await provider.getCode(contractAddress);
+  const receiverCode = await provider.getCode(contractAddress);
+  // regular address will return exactly 0x while contract address will return 0x...0
+  const isReceiverContractAddress = receiverCode && receiverCode.length > 2;
+  const contractTransferMethod = getERC721ContractTransferMethod(code, isReceiverContractAddress);
+
+  try {
+    switch (contractTransferMethod) {
+      case 'safeTransferFrom':
+        methodAbi = getERC721MethodAbi(ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, contractTransferMethod);
+        data = abiHelper.encodeMethod(methodAbi, [from, to, tokenId]);
+        break;
+      case 'transfer':
+        methodAbi = getERC721MethodAbi(ERC721_CONTRACT_ABI, contractTransferMethod);
+        data = abiHelper.encodeMethod(methodAbi, [to, tokenId]);
+        break;
+      case 'transferFrom':
+        methodAbi = getERC721MethodAbi(ERC721_CONTRACT_ABI_TRANSFER_FROM, contractTransferMethod);
+        data = abiHelper.encodeMethod(methodAbi, [from, to, tokenId]);
+        break;
+      default:
+    }
+  } catch (e) {
+    // unable to transfer
+  }
+
+  return data;
+};
+
 export async function transferERC721(options: ERC721TransferOptions) {
   const {
     contractAddress,
-    from,
-    to,
     tokenId,
     wallet: walletInstance,
     nonce,
@@ -142,44 +198,22 @@ export async function transferERC721(options: ERC721TransferOptions) {
     gasPrice,
     signOnly = false,
   } = options;
-  const wallet = walletInstance.connect(getEthereumProvider(COLLECTIBLES_NETWORK));
-  let contract;
-  const code = await wallet.provider.getCode(contractAddress);
-  const contractTransferMethod = getERC721ContractTransferMethod(code);
 
-  // used if signOnly
-  let contractSignedTransaction;
-  let data;
-  if (signOnly) {
-    contractSignedTransaction = {
+  const wallet = walletInstance.connect(getEthereumProvider(COLLECTIBLES_NETWORK));
+  const data = await buildERC721TransactionData(options, wallet.provider);
+
+  if (data) {
+    const transaction = {
       gasLimit,
       gasPrice: utils.bigNumberify(gasPrice),
       to: contractAddress,
       nonce,
+      data,
     };
-  }
 
-  try {
-    switch (contractTransferMethod) {
-      case 'safeTransferFrom':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
-        if (!signOnly) return contract.safeTransferFrom(from, to, tokenId, { nonce });
-        data = await contract.interface.functions.safeTransferFrom.encode([from, to, tokenId]);
-        return wallet.sign({ ...contractSignedTransaction, data });
-      case 'transfer':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
-        if (!signOnly) return contract.transfer(to, tokenId, { nonce });
-        data = await contract.interface.functions.transfer.encode([to, tokenId]);
-        return wallet.sign({ ...contractSignedTransaction, data });
-      case 'transferFrom':
-        contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
-        if (!signOnly) return contract.transferFrom(from, to, tokenId, { nonce });
-        data = await contract.interface.functions.transferFrom.encode([from, to, tokenId]);
-        return wallet.sign({ ...contractSignedTransaction, data });
-      default:
-    }
-  } catch (e) {
-    // unable to transfer
+    if (signOnly) return wallet.sign({ ...transaction, data });
+
+    return wallet.sendTransaction(transaction);
   }
 
   reportLog('Could not transfer collectible', {
@@ -311,31 +345,15 @@ export async function calculateGasEstimate(transaction: Object) {
     tokenId,
   } = transaction;
   let { to, data } = transaction;
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(tokenId ? COLLECTIBLES_NETWORK : NETWORK_PROVIDER);
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
     : '0x';
   try {
     if (tokenId) {
-      let contract;
-      const code = await provider.getCode(contractAddress);
-      const contractTransferMethod = getERC721ContractTransferMethod(code);
-      switch (contractTransferMethod) {
-        case 'safeTransferFrom':
-          contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, provider);
-          data = await contract.interface.functions.safeTransferFrom.encode([from, to, tokenId]);
-          break;
-        case 'transfer':
-          contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, provider);
-          data = await contract.interface.functions.transfer.encode([to, tokenId]);
-          break;
-        case 'transferFrom':
-          contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, provider);
-          data = await contract.interface.functions.transferFrom.encode([from, to, tokenId]);
-          break;
-        default:
-          return DEFAULT_GAS_LIMIT;
-      }
+      data = await buildERC721TransactionData(transaction, provider);
+      if (!data) return DEFAULT_GAS_LIMIT;
+      to = contractAddress;
     } else if (!data && contractAddress && symbol !== ETH) {
       /**
        * we check `symbol !== ETH` because our assets list also includes ETH contract address
