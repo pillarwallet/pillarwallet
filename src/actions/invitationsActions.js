@@ -17,13 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+
+// utils
+import { reportLog } from 'utils/common';
+
+// models
 import type { ApiUser } from 'models/Contacts';
+
+// actions
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from './dbActions';
+
 
 export const fetchInviteNotificationsAction = () => {
   return async (dispatch: Function) => {
@@ -78,12 +85,9 @@ export const acceptInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(updateConnectionsAction());
-      Sentry.captureMessage('Unable to accept invitation', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          walletId,
-        },
+
+      reportLog('Unable to accept invitation', {
+        invitationId: invitation.id,
       });
       return;
     }
@@ -157,12 +161,9 @@ export const rejectInvitationAction = (invitation: Object) => {
         payload: { message: 'Invitation doesn\'t exist' },
       }));
       dispatch(updateConnectionsAction());
-      Sentry.captureMessage('Unable to reject invitation', {
-        level: 'info',
-        extra: {
-          invitationId: invitation.id,
-          walletId,
-        },
+      reportLog('Unable to reject invitation', {
+        invitationId: invitation.id,
+        walletId,
       });
       return;
     }

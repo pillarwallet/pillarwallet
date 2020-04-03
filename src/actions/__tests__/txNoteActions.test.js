@@ -35,8 +35,8 @@ describe('Transaction Notes Actions', () => {
   });
 
   afterEach(() => {
-    dispatchMock.mockClear();
-    getState.mockClear();
+    (dispatchMock: any).mockClear();
+    (getState: any).mockClear();
   });
 
   describe('sendTxNoteByContactAction()', () => {
@@ -49,7 +49,7 @@ describe('Transaction Notes Actions', () => {
           username: 'test-username',
           id: 'user-id',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           contacts: { data: [contact] },
           user: { data: { id: 'self-id' } },
         }));
@@ -100,7 +100,7 @@ describe('Transaction Notes Actions', () => {
           username: 'test-username',
           id: 'user-id',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           contacts: { data: [contact] },
           user: { data: { id: 'self-id' } },
         }));

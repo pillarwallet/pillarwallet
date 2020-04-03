@@ -17,34 +17,33 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Answers } from 'react-native-fabric';
+import { firebaseAnalytics } from 'services/firebase';
+import get from 'lodash.get';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-const isTrackingEnabled = (getState: Function): boolean => {
-  const { appSettings: { data: { optOutTracking } } } = getState();
-
-  return !optOutTracking;
-};
+const isTrackingEnabled = (
+  getState: GetState,
+): boolean => !get(getState(), 'appSettings.data.optOutTracking', false);
 
 export const logScreenViewAction = (contentName: string, contentType: string, contentId?: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     if (!isTrackingEnabled(getState)) return;
-
-    Answers.logContentView(contentName, contentType, contentId);
+    let params = { contentName, contentType };
+    if (contentId) params = { ...params, contentId };
+    firebaseAnalytics.logEvent('screen_view', params);
   };
 };
 
 export const logEventAction = (name: string, properties?: Object) => {
-  return async (dispatch: Function, getState: Function) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     if (!isTrackingEnabled(getState)) return;
-
-    Answers.logCustom(name, properties);
+    firebaseAnalytics.logEvent(name, properties);
   };
 };
 
 export const logUserPropertyAction = (name: string, value?: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     if (!isTrackingEnabled(getState) || !value) return;
-
-    Answers.logCustom('property_changed', { [name]: value });
+    firebaseAnalytics.logEvent('property_changed', { [name]: value });
   };
 };

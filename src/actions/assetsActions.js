@@ -20,7 +20,6 @@
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
-import { Sentry } from 'react-native-sentry';
 import { toChecksumAddress } from '@netgum/utils';
 
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -62,7 +61,14 @@ import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
-import { delay, noop, parseTokenAmount, uniqBy } from 'utils/common';
+import {
+  delay,
+  noop,
+  parseTokenAmount,
+  printLog,
+  reportLog,
+  uniqBy,
+} from 'utils/common';
 import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
@@ -78,7 +84,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
@@ -182,7 +188,7 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
     } catch (e) {
-      console.log({ e });
+      printLog({ e });
     }
 
     return transactionHash;
@@ -441,10 +447,7 @@ export const sendAssetAction = (
             // change history receiver address to actual receiver address rather than synthetics service address
             historyTx = { ...historyTx, to: toAddress };
           } else {
-            Sentry.captureMessage(
-              'Failed to get transactionId during synthetics exchange.',
-              { extra: { hash: historyTx.hash } },
-            );
+            reportLog('Failed to get transactionId during synthetics exchange.', { hash: historyTx.hash });
           }
         }
 

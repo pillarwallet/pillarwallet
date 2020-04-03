@@ -24,7 +24,7 @@ platform :android do
     )
     upload_to_play_store(
       track: 'internal',
-      apk: 'app/build/outputs/apk/prod/staging/app-prod-staging.apk',
+      apk: 'app/build/outputs/apk/staging/app-staging.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
       version_code: ENV['APP_BUILD_NUMBER'],
       package_name: 'com.pillarproject.wallet.staging',
@@ -42,7 +42,7 @@ platform :android do
     )
     upload_to_play_store(
       track: 'internal',
-      apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
+      apk: 'app/build/outputs/apk/release/app-release.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
       version_code: ENV['APP_BUILD_NUMBER'],
       package_name: 'com.pillarproject.wallet',
@@ -60,7 +60,7 @@ platform :android do
   )
 	upload_to_play_store(
 		track: "alpha",
-    apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
+    apk: 'app/build/outputs/apk/release/app-release.apk',
     json_key_data: ENV['GOOGLE_JSON_DATA'],
     version_code: ENV['APP_BUILD_NUMBER'],
     package_name: 'com.pillarproject.wallet',
@@ -78,7 +78,7 @@ platform :android do
   )
   upload_to_play_store(
     track: "beta",
-    apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
+    apk: 'app/build/outputs/apk/release/app-release.apk',
     json_key_data: ENV['GOOGLE_JSON_DATA'],
     version_code: ENV['APP_BUILD_NUMBER'],
     package_name: 'com.pillarproject.wallet',
@@ -92,9 +92,8 @@ platform :android do
   desc "Deploy staging development build to hockeyapp"
   lane :deploy_android_appcenter do
     buildApp(
-      flavorName: 'prod',
       hockeyAppToken: ENV["APPCENTER_ANDROID_TOKEN"],
-      apkName: 'app-prod-staging.apk'
+      apkName: 'app-staging.apk'
     )
   end
 
@@ -167,7 +166,7 @@ platform :android do
       owner_name: "antonioned",
       owner_type: "user",
       app_name: "Pillar-Wallet-Staging",
-      file: "app/build/outputs/apk/prod/staging/#{options[:apkName]}",
+      file: "app/build/outputs/apk/staging/#{options[:apkName]}",
       notify_testers: true,
       release_notes: changelog
     )

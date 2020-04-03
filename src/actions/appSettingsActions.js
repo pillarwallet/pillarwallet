@@ -34,12 +34,9 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
 import Toast from 'components/Toast';
-// import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
-// import {
-//   setKeychainDataObject,
-//   resetKeychainDataObject,
-// } from 'utils/keychain';
-// import { setKeychainDataObject, type KeyChainData } from 'utils/keychain';
+
+// services
+import { firebaseAnalytics } from 'services/firebase';
 
 // utils
 import { setKeychainDataObject } from 'utils/keychain';
@@ -65,6 +62,7 @@ export const saveOptOutTrackingAction = (status: boolean) => {
     } else {
       dispatch(logEventAction('tracking_opted_in'));
     }
+    await firebaseAnalytics.setAnalyticsCollectionEnabled(status);
     try {
       await branchIo.disableTracking(status);
     } catch (e) {

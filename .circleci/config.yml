@@ -50,7 +50,7 @@ aliases:
       name: Fetch CocoaPods
       command: |
         Y | sudo gem uninstall cocoapods
-        sudo gem install cocoapods -v 1.5.3
+        sudo gem install cocoapods -v 1.9.1
         curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
   - &install_pods
     run:
@@ -109,23 +109,23 @@ aliases:
       name: set Registry to use Artifactory
       command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
   - &android_latest_npm
-     run:
+    run:
       name: Install latest npm version
       command: sudo npm install -g npm@latest
   - &ios_latest_npm
-     run:
+    run:
       name: Install latest npm version
       command: npm install -g npm@latest
   - &ios_latest_yarn
-     run:
+    run:
       name: Install latest yarn version
       command: npm install -g yarn
   - &android_latest_yarn
-     run:
+    run:
       name: Install latest yarn version
       command: sudo npm install -g yarn
   - &yarn_install
-     run:
+    run:
       name: Install node dependencies
       command: yarn install
   - &node_save_cache
@@ -137,7 +137,7 @@ aliases:
   - &gradle_restore_cache
     restore_cache:
       key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
-  - &gradle_depencencies
+  - &gradle_dependencies
     run:
       name: Download Dependencies
       command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
@@ -169,7 +169,7 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-#      - *ios_latest_yarn
+      #      - *ios_latest_yarn
       - *android_latest_npm
       - *yarn_install
       - *node_save_cache
@@ -191,8 +191,8 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-#      - *ios_latest_yarn
-#      - *ios_latest_npm
+      #      - *ios_latest_yarn
+      #      - *ios_latest_npm
       - *yarn_install
       - *node_save_cache
 
@@ -252,7 +252,7 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-#      - *android_latest_yarn
+      #      - *android_latest_yarn
       - *android_latest_npm
       - *yarn_install
       - *node_save_cache
@@ -260,17 +260,16 @@ jobs:
       - *restore_gems_cache_android
       - *install_gems_android
       - *save_gems_cache_android
-
       - *gradle_restore_cache
 
       - aws-cli/setup:
-           aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
-           aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
-           aws-region: AWS_DEFAULT_REGION
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
+          aws-region: AWS_DEFAULT_REGION
       - run:
           name: Get keystore file
           command: |
-            cd /home/circleci/pillarwallet/android/
+            cd /home/circleci/pillarwallet/android/keystores/
             aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
       - run:
           name: Accept Android SDK licenses
@@ -281,8 +280,8 @@ jobs:
           command: |
             yes | sdkmanager --update || exit 0
 
-      - *gradle_depencencies
-      - *gradle_save_cache
+      - *gradle_restore_cache
+      - *gradle_dependencies
 
       - run:
           name: Set staging environment
@@ -307,7 +306,10 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+            cd android && ./gradlew clean assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+
+      - *gradle_save_cache
+
       - run:
           name: Upload to App Center
           command: |
@@ -353,9 +355,9 @@ jobs:
           at: /tmp/workspace
       - aws-cli/install
       - aws-cli/setup:
-           aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
-           aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
-           aws-region: AWS_DEFAULT_REGION
+          aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
       - run:
           name: Append circleCI build number to version
           command: |
@@ -376,11 +378,11 @@ jobs:
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
       - run:
-            name: Authenticate with Artifactory
-            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+          name: Authenticate with Artifactory
+          command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
-            name: set Registry to use Artifactory
-            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+          name: set Registry to use Artifactory
+          command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
       - run:
           name: Install node dependencies
           command: yarn install
@@ -394,7 +396,7 @@ jobs:
           name: Fetch CocoaPods Specs
           command: |
             Y | sudo gem uninstall cocoapods
-            sudo gem install cocoapods -v 1.5.3
+            sudo gem install cocoapods -v 1.9.1
             curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
       - run:
           name: Install CocoaPods
@@ -437,10 +439,10 @@ jobs:
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
       - run:
-           name: Announce Deployment
-           command: |
-             chmod +x .circleci/announceDeployment.sh
-             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
+          name: Announce Deployment
+          command: |
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
           name: Announce production iOS URL
           command: |
@@ -475,16 +477,16 @@ jobs:
           at: /tmp/workspace
       - aws-cli/install
       - aws-cli/setup:
-           aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
-           aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
-           aws-region: AWS_DEFAULT_REGION
+          aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
       - run:
           name: Install npm latest
           command: sudo npm install -g npm@latest
       - run:
           name: Get keystore file
           command: |
-            cd /home/circleci/pillarwallet/android/
+            cd /home/circleci/pillarwallet/android/keystores/
             aws s3 cp s3://pillar-prod-app-keystore-eu-west-2-304069782345/release.keystore .
       - run:
           name: Set production environment
@@ -507,14 +509,14 @@ jobs:
       - restore_cache:
           key: android-node-{{ checksum "./yarn.lock" }}
       - run:
-            name: Authenticate with Artifactory
-            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+          name: Authenticate with Artifactory
+          command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
-            name: set Registry to use Artifactory
-            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+          name: set Registry to use Artifactory
+          command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
       - run:
-            name: set Yarn to use Artifactory
-            command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+          name: set Yarn to use Artifactory
+          command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
       - run:
           name: Install node dependencies
           command: yarn install
@@ -562,7 +564,7 @@ jobs:
             cd android
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+            ./gradlew clean assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Fastlane deploy to Google Play
           command: |
@@ -578,29 +580,29 @@ jobs:
           command: |
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            cd ./android/app/build/outputs/apk/prod/release/
+            cd ./android/app/build/outputs/apk/release/
             touch android-s3-URL-prod.txt
-            aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --region eu-west-2
-            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$buildNumber.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
+            aws s3 cp app-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --region eu-west-2
+            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
       - run:
-           name: Announce Deployment
-           command: |
-             chmod +x .circleci/announceDeployment.sh
-             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* Android internal track - Tests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
+          name: Announce Deployment
+          command: |
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* Android internal track - Tests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
           name: Announce Prod Android URL
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
           name: prepare to archive apk file
           command: |
             APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
             mkdir -p ./toArchive
             mkdir -p /tmp/workspace/android-release
-            cp ./android/app/build/outputs/apk/prod/release/app-prod-release.apk ./toArchive
-            cp ./android/app/build/outputs/apk/prod/release/app-prod-release.apk /tmp/workspace/android-release/pillarwallet-prod-android-$APP_VERSION.apk
+            cp ./android/app/build/outputs/apk/release/app-release.apk ./toArchive
+            cp ./android/app/build/outputs/apk/release/app-release.apk /tmp/workspace/android-release/pillarwallet-android-$APP_VERSION.apk
       - store_artifacts:
           path: ./toArchive
           destination: apks
@@ -653,21 +655,21 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                - develop
       - appcenter_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+                - develop
       - get-latest-tag:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - master
+                - master
       - prod_ios:
           requires:
             - build-and-test
@@ -675,7 +677,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                - master
       - prod_android:
           requires:
             - build-and-test
@@ -683,7 +685,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                - master
       - publish_releases_to_github:
           requires:
             - prod_android

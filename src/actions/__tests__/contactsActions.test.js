@@ -111,19 +111,17 @@ describe('Contacts Actions', () => {
   });
 
   describe('Sync', () => {
-    const RealDate = Date;
-
     beforeEach(() => {
-      global.Date = class extends RealDate {
+      global.Date = class extends Date {
         constructor() {
-          return new RealDate('2017-11-25T12:34:56z');
+          super('2017-11-25T12:34:56z');
         }
       };
       jest.spyOn(dbActions, 'saveDbAction').mockImplementation(() => Promise.resolve());
     });
 
     afterEach(() => {
-      global.Date = RealDate;
+      global.Date = Date;
     });
 
     it('should sync contacts', async () => {
