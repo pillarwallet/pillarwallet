@@ -26,9 +26,6 @@ import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
 
-// services
-import { updateNavigationLastScreenState } from 'services/navigation';
-
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
@@ -170,7 +167,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
-  AUTH_FLOW,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -870,12 +866,6 @@ class AppFlow extends React.Component<Props, State> {
       // close walkthrough shade or tooltips
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
-        const { navigation } = this.props;
-        const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
-        const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
-        const lastActiveScreenParams = pathAndParams.params;
-        updateNavigationLastScreenState({ lastActiveScreen, lastActiveScreenParams });
-        navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
