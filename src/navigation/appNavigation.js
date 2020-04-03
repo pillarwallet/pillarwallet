@@ -21,13 +21,10 @@ import * as React from 'react';
 import { createStackNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import type { NavigationScreenProp } from 'react-navigation';
-// import BackgroundTimer from 'react-native-background-timer';
+import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
-
-// services
-import { updateNavigationLastScreenState } from 'services/navigation';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -170,7 +167,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
-  AUTH_FLOW,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -251,7 +247,7 @@ import { getThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
 
-// const SLEEP_TIMEOUT = 20000;
+const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
@@ -737,7 +733,7 @@ type State = {
   lastAppState: string,
 };
 
-// let lockTimer;
+let lockTimer;
 
 class AppFlow extends React.Component<Props, State> {
   state = {
@@ -843,7 +839,7 @@ class AppFlow extends React.Component<Props, State> {
       handleSystemDefaultThemeChange,
     } = this.props;
     const { lastAppState } = this.state;
-    // BackgroundTimer.clearTimeout(lockTimer);
+    BackgroundTimer.clearTimeout(lockTimer);
     if (isPickingImage || isBrowsingWebView) return;
     // only checking if background state for logout or websocket channel close
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
@@ -851,18 +847,12 @@ class AppFlow extends React.Component<Props, State> {
       stopListeningChatWebSocket();
       // close walkthrough shade or tooltips
       endWalkthrough();
-      // lockTimer = BackgroundTimer.setTimeout(() => {
-      const { navigation } = this.props;
-      const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
-      const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
-      const lastActiveScreenParams = pathAndParams.params;
-      updateNavigationLastScreenState({ lastActiveScreen, lastActiveScreenParams });
-      navigation.navigate(AUTH_FLOW);
-      stopListeningNotifications();
-      stopListeningIntercomNotifications();
-      updateSignalInitiatedState(false);
-      stopListeningForBalanceChange();
-      // }, SLEEP_TIMEOUT);
+      lockTimer = BackgroundTimer.setTimeout(() => {
+        stopListeningNotifications();
+        stopListeningIntercomNotifications();
+        updateSignalInitiatedState(false);
+        stopListeningForBalanceChange();
+      }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
       startListeningChatWebSocket();
