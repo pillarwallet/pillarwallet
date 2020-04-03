@@ -24,7 +24,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
 
 type Props = {
-  title: string,
+  title?: string,
   bodyText?: string,
   large?: boolean,
   wide?: boolean,
@@ -61,7 +61,7 @@ const EmptyStateParagraph = (props: Props) => {
 
   return (
     <EmptySectionTextWrapper wide={wide}>
-      <EmptySectionTitle large={large}>{title}</EmptySectionTitle>
+      {!!title && <EmptySectionTitle large={large}>{title}</EmptySectionTitle>}
       {!!bodyText && <EmptySectionText>{bodyText}</EmptySectionText>}
       {children}
     </EmptySectionTextWrapper>

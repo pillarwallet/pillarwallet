@@ -19,12 +19,12 @@
 */
 
 import * as React from 'react';
+import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import SlideModal from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import type { ViewLayoutEvent } from 'react-native/Libraries/Components/View/ViewPropTypes';
 import { getDeviceHeight } from 'utils/common';
 
 
@@ -77,7 +77,7 @@ export default class OverlayModal extends React.Component<Props, State> {
     bottomSpaceHeight: 0,
   };
 
-  handleTextLayout = (e: ViewLayoutEvent) => {
+  handleTextLayout = (e: LayoutEvent) => {
     const { y, height } = e.nativeEvent.layout;
     this.setState({ bottomSpaceHeight: getDeviceHeight() - y - height });
   };

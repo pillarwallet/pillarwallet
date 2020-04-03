@@ -28,7 +28,7 @@ import {
 } from 'constants/userEventsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';

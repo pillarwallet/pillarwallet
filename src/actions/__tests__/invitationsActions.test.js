@@ -32,7 +32,7 @@ import {
 
 const walletId = 'walletId';
 
-const contactsMock = [
+const mockContacts = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -43,14 +43,14 @@ const contactsMock = [
   },
 ];
 
-const apiUserMock = {
+const mockApiUser = {
   id: '22',
   ethAddress: '0x0022',
   username: 'targetUsername',
   profileImage: 'https://google.com/logo.png',
 };
 
-const invitationsMock = [
+const mockInvitations = [
   {
     id: 4,
     username: 'user4',
@@ -74,7 +74,7 @@ const invitationsMock = [
   },
 ];
 
-const getContactsResponseMock = [
+const mockGetContactsResponse = [
   {
     userId: 1,
     targetUserId: 2,
@@ -161,7 +161,7 @@ const getContactsResponseMock = [
   },
 ];
 
-const invitationsResultMock = [
+const mockInvitationsResult = [
   {
     id: 4,
     username: 'user4',
@@ -178,32 +178,28 @@ const invitationsResultMock = [
   },
 ];
 
-type SDK = {
-  getContacts: Function,
-  sendInvitation: Function,
-  cancelInvitation: Function,
-  rejectInvitation: Function,
-  acceptInvitation: Function,
-};
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  getContacts: jest.fn(() => [...mockGetContactsResponse]),
+  sendInvitation: jest.fn((id) => id),
+  acceptInvitation: jest.fn((id) => id),
+  cancelInvitation: jest.fn((id) => id),
+  rejectInvitation: jest.fn((id) => id),
+})));
 
-const pillarSdk: SDK = new PillarSdk();
-pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
-pillarSdk.sendInvitation = jest.fn((id) => id);
-pillarSdk.acceptInvitation = jest.fn((id) => id);
-pillarSdk.cancelInvitation = jest.fn((id) => id);
-pillarSdk.rejectInvitation = jest.fn((id) => id);
+const pillarSdk = new PillarSdk();
+
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('Invitations Actions tests', () => {
   let store;
 
   beforeEach(() => {
-    const storeMock = {
+    const mockStoreData = {
       contacts: {
-        data: [...contactsMock],
+        data: [...mockContacts],
       },
       invitations: {
-        data: [...invitationsMock],
+        data: [...mockInvitations],
       },
       user: {
         data: { walletId },
@@ -214,14 +210,14 @@ describe('Invitations Actions tests', () => {
         },
       },
     };
-    store = mockStore({ ...storeMock });
+    store = mockStore({ ...mockStoreData });
   });
 
   it('Should expect set of actions on sendInvitationAction.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation sent' } },
     ];
-    return store.dispatch(sendInvitationAction(apiUserMock))
+    return store.dispatch(sendInvitationAction(mockApiUser))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -230,10 +226,10 @@ describe('Invitations Actions tests', () => {
 
   it('Should expect set of actions on acceptInvitationAction.', () => {
     const expectedActions = [
-      { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
       { type: ADD_NOTIFICATION, payload: { message: 'Connection request accepted' } },
     ];
-    return store.dispatch(acceptInvitationAction(invitationsMock[2]))
+    return store.dispatch(acceptInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -243,9 +239,9 @@ describe('Invitations Actions tests', () => {
   it('Should expect set of actions on cancelInvitationAction.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation cancelled' } },
-      { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
     ];
-    return store.dispatch(cancelInvitationAction(invitationsMock[2]))
+    return store.dispatch(cancelInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -255,9 +251,9 @@ describe('Invitations Actions tests', () => {
   it('Should expect set of actions on rejectInvitationAction.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation rejected' } },
-      { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
     ];
-    return store.dispatch(rejectInvitationAction(invitationsMock[2]))
+    return store.dispatch(rejectInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

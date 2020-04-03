@@ -40,6 +40,7 @@ import { handleImagePickAction } from 'actions/appSettingsActions';
 
 import { fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { printLog } from 'utils/common';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme, ThemeColors } from 'models/Theme';
@@ -224,7 +225,7 @@ class Camera extends React.Component<Props, State> {
             imageUri: res.uri,
           });
         })
-        .catch((err) => console.log(err)); // eslint-disable-line
+        .catch((err) => printLog(err));
     }
     return false;
   };
@@ -249,7 +250,7 @@ class Camera extends React.Component<Props, State> {
       })
       .catch((err) => {
         handleImagePick(false);
-        console.log(err); // eslint-disable-line
+        printLog(err);
       });
   };
 

@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 
@@ -34,7 +33,7 @@ import {
 // utils, services
 import { getAssetData, getAssetsAsList } from 'utils/assets';
 import syntheticsService from 'services/synthetics';
-import { parseNumber } from 'utils/common';
+import { parseNumber, reportLog } from 'utils/common';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -66,7 +65,7 @@ export const commitSyntheticsTransaction = (transactionId: string, paymentHash: 
       .commitTransaction(transactionId, paymentHash)
       .catch(() => {
         const message = 'Failed to complete synthetic asset transaction';
-        Sentry.captureMessage(message, { extra: { transactionId, paymentHash } });
+        reportLog(message, { transactionId, paymentHash });
         Toast.show({
           message,
           type: 'warning',

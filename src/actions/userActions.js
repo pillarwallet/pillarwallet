@@ -31,7 +31,7 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { logEventAction } from 'actions/analyticsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 
 const sendingOneTimePasswordAction = () => ({
