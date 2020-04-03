@@ -162,8 +162,8 @@ class ActionButtons extends React.Component<Props, State> {
     const accountsToShow = [keyWallet];
 
     if (smartWalletFeatureEnabled) {
-      const smartWallet = _accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET) || {};
-      accountsToShow.unshift(smartWallet);
+      const smartWallet = _accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+      if (!!smartWallet) accountsToShow.unshift(smartWallet);
     }
 
     if (bitcoinFeatureEnabled && bitcoinAddresses.length > 0) {
