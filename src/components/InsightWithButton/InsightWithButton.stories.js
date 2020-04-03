@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import CenterView from 'storybook/CenterView';
+import CenterView from '../../../storybook/CenterView';
 import InsightWithButton from './InsightWithButton';
 
 const itemsList = [

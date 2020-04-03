@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList, Alert, View } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -121,10 +121,6 @@ const LogoutTextLink = styled(TextLink)`
 const LockScreenTextLink = styled(TextLink)`
   color: ${themedColors.orange};
   ${fontStyles.regular};
-`;
-
-const StyledEmoji = styled(Emoji)`
-  margin-right: 10px;
 `;
 
 class Menu extends React.Component<Props, State> {
@@ -247,7 +243,7 @@ class Menu extends React.Component<Props, State> {
           title={title}
           action={action}
           labelBadge={labelBadge}
-          customIcon={<StyledEmoji name={emoji} />}
+          customIcon={<View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
         />
       );
     }
@@ -314,11 +310,11 @@ class Menu extends React.Component<Props, State> {
             <Footer>
               <LinksSection>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('termsOfService')}>
-                 Terms of Use
+                  Terms of Use
                 </LegalTextLink>
                 <LegalTextLink>  •  </LegalTextLink>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('privacyPolicy')}>
-                 Privacy policy
+                  Privacy policy
                 </LegalTextLink>
               </LinksSection>
               <LockScreenSection>
