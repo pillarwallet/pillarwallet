@@ -26,6 +26,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -114,6 +116,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
       >
         <View
           accessible={true}
+          focusable={true}
+          onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
           onResponderRelease={[Function]}
@@ -304,7 +308,9 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     >
                       <View
                         accessible={true}
+                        focusable={true}
                         isTVSelectable={true}
+                        onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
                         onResponderRelease={[Function]}
@@ -505,7 +511,9 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             </View>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -560,7 +568,9 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
       >
         <View
           accessible={true}
+          focusable={true}
           isTVSelectable={true}
+          onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
           onResponderRelease={[Function]}
@@ -578,7 +588,9 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         >
           <View
             accessible={true}
+            focusable={false}
             isTVSelectable={true}
+            onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}

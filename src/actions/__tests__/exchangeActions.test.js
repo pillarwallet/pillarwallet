@@ -33,18 +33,20 @@ import { ETH } from 'constants/assetsConstants';
 import { searchOffersAction } from 'actions/exchangeActions';
 
 const walletId = 'walletId';
-const oAuthTokensMock = {
+
+const mockOAuthTokens = {
   refreshToken: 'refreshToken',
   accessToken: 'accessToken',
 };
-const connectedProvidersMock = [
+
+const mockConnectedProviders = [
   {
     extra: 'shapeshiftAccessToken',
     id: PROVIDER_SHAPESHIFT,
   },
 ];
 
-const exchangeSupportedAssetsMock = [
+const mockExchangeSupportedAssets = [
   {
     symbol: ETH,
     name: 'ethereum',
@@ -58,23 +60,26 @@ const exchangeSupportedAssetsMock = [
   },
 ];
 
-const moonPayOfferMock = {
+const mockMoonPayOffer = {
   provider: PROVIDER_MOONPAY,
   offerRestricted: null,
 };
-const sendWyreOfferMock = {
+
+const mockSendWyreOffer = {
   provider: PROVIDER_SENDWYRE,
   offerRestricted: null,
 };
 
-type SDK = {
-  fetchMoonPayOffers: Function,
-  fetchSendWyreOffers: Function,
-};
+const mockFetchMoonPayOffersResponse = Promise.resolve({ provider: PROVIDER_MOONPAY });
 
-const pillarSdk: SDK = new PillarSdk();
-pillarSdk.fetchMoonPayOffers = jest.fn(() => Promise.resolve({ provider: PROVIDER_MOONPAY }));
-pillarSdk.fetchSendWyreOffers = jest.fn(() => Promise.resolve({ provider: PROVIDER_SENDWYRE }));
+const mockFetchSendWyreOffersRespons = Promise.resolve({ provider: PROVIDER_SENDWYRE });
+
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  fetchMoonPayOffers: jest.fn(() => mockFetchMoonPayOffersResponse),
+  fetchSendWyreOffers: jest.fn(() => mockFetchSendWyreOffersRespons),
+})));
+
+const pillarSdk = new PillarSdk();
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
@@ -99,10 +104,10 @@ describe('Exchange Actions tests', () => {
     const exchangeStoreMock = {
       accounts: { data: [{ isActive: true, walletId }] },
       user: { data: { walletId } },
-      oAuthTokens: { data: { oAuthTokens: oAuthTokensMock } },
+      oAuthTokens: { data: { oAuthTokens: mockOAuthTokens } },
       exchange: {
-        data: { connectedProviders: connectedProvidersMock },
-        exchangeSupportedAssets: exchangeSupportedAssetsMock,
+        data: { connectedProviders: mockConnectedProviders },
+        exchangeSupportedAssets: mockExchangeSupportedAssets,
       },
     };
     store = mockStore({ ...exchangeStoreMock });
@@ -118,8 +123,8 @@ describe('Exchange Actions tests', () => {
           fromAmount: 20,
         },
       },
-      { type: ADD_OFFER, payload: moonPayOfferMock },
-      { type: ADD_OFFER, payload: sendWyreOfferMock },
+      { type: ADD_OFFER, payload: mockMoonPayOffer },
+      { type: ADD_OFFER, payload: mockSendWyreOffer },
     ];
 
     return store.dispatch(searchOffersAction('USD', 'ETH', 20))

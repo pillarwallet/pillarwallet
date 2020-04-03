@@ -19,6 +19,9 @@ import com.android.build.OutputFile
  *   // the entry file for bundle generation
  *   entryFile: "index.android.js",
  *
+ *   // https://facebook.github.io/react-native/docs/performance#enable-the-ram-format
+ *   bundleCommand: "ram-bundle",
+ *
  *   // whether to bundle JS and assets in debug mode
  *   bundleInDebug: false,
  *
@@ -75,6 +78,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "index.js",
+    enableHermes: true,  // clean and rebuild if changing
     // custom build params:
     bundleInDebug: false,
     bundleInRelease: true,
@@ -83,7 +87,6 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -99,6 +102,28 @@ def enableSeparateBuildPerCPUArchitecture = false
  * Run Proguard to shrink the Java bytecode in release builds.
  */
 def enableProguardInReleaseBuilds = false
+
+/**
+ * The preferred build flavor of JavaScriptCore.
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US.  Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = 'org.webkit:android-jsc:+'
+
+/**
+ * Whether to enable the Hermes VM.
+ *
+ * This should be set on project.ext.react and mirrored here.  If it is not set
+ * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
+ * and the benefits of using Hermes will therefore be sharply reduced.
+ */
+def enableHermes = project.ext.react.get("enableHermes", false);
 
 // custom keystore properties file load:
 def keystorePropertiesFile = rootProject.file("keystores/keystore.properties")
@@ -121,6 +146,9 @@ android {
     signingConfigs {
         debug {
             storeFile file('../keystores/debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
         }
         staging {
             keyAlias System.getenv('ANDROID_STAGING_KEY_ALIAS') ? System.getenv('ANDROID_STAGING_KEY_ALIAS').toString() : keystoreProperties['stagingKeyAlias']
@@ -145,7 +173,6 @@ android {
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general' // react-native-camera
         vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
-        missingDimensionStrategy "RNNotifications.reactNativeVersion", "reactNative59" // react-native-notifications
 
         // branch.io
         resValue "string", "branch_io_app_link", "abgsz.test-app.link"
@@ -166,6 +193,7 @@ android {
     buildTypes {
         debug {
             debuggable true
+            signingConfig signingConfigs.debug
         }
         staging {
             buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
@@ -195,8 +223,8 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
-            // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
+            // https://developer.android.com/studio/build/configure-apk-splits.html
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -207,49 +235,11 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-android-badge')
-    implementation project(':@sentry_react-native')
-    implementation project(':@react-native-firebase_messaging')
-    implementation project(':@react-native-firebase_iid')
-    implementation project(':@react-native-firebase_crashlytics')
-    implementation project(':@react-native-firebase_app')
-    implementation project(':@react-native-firebase_analytics')
-    implementation project(':react-native-scrypt')
-    implementation project(':react-native-fetch-blob')
-    implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-screens')
-    implementation project(':rn-signal-protocol-messaging')
-    implementation project(':react-native-webview')
-    implementation project(':react-native-vector-icons')
-    implementation project(':react-native-udp')
-    implementation project(':react-native-threads')
-    implementation project(':react-native-tcp')
-    implementation project(':react-native-svg')
-    implementation project(':react-native-splash-screen')
-    implementation project(':react-native-share')
-    implementation project(':react-native-randombytes')
-    implementation project(':react-native-os')
-    implementation project(':react-native-linear-gradient')
-    implementation project(':react-native-keychain')
-    implementation project(':react-native-intercom')
-    implementation project(':react-native-image-crop-picker')
-    implementation project(':react-native-extra-dimensions-android')
-    implementation project(':react-native-device-info')
-    implementation project(':react-native-cookies')
-    implementation project(':react-native-color-matrix-image-filters')
-    implementation project(':react-native-camera')
-    implementation project(':react-native-background-timer')
-    implementation project(':react-native-appearance')
-    implementation project(':lottie-react-native')
-    implementation project(':@react-native-community_async-storage')
-    implementation project(':@matt-block_react-native-in-app-browser')
     implementation project(':react-native-notifications')
-    implementation project(':react-native-contacts')
-    implementation project(':react-native-branch')
-
-    implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-push-notification
-    implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-push-notification override for Intercom PN handler implementation
+    implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-notifications
+    implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
+    implementation 'io.intercom.android:intercom-sdk-base:5.+' // react-native-intercom to override for Intercom PN handler implementation
 
     // branch.io
     implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching
@@ -259,6 +249,14 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"
+
+    if (enableHermes) {
+        def hermesPath = "../../node_modules/hermes-engine/android/";
+        debugImplementation files(hermesPath + "hermes-debug.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+        implementation jscFlavor
+    }
 }
 
 // Run this once to be able to run the application with BUCK
@@ -267,5 +265,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
 apply plugin: 'com.google.gms.google-services' // @react-native-firebase/app init, react-native-notification

@@ -1,0 +1,13 @@
+diff --git a/node_modules/@matt-block/react-native-in-app-browser/ios/react-native-in-app-browser.podspec b/node_modules/@matt-block/react-native-in-app-browser/ios/react-native-in-app-browser.podspec
+index 0a1a3b1..78f9f14 100644
+--- a/node_modules/@matt-block/react-native-in-app-browser/ios/react-native-in-app-browser.podspec
++++ b/node_modules/@matt-block/react-native-in-app-browser/ios/react-native-in-app-browser.podspec
+@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
+   s.source = { :git => 'https://github.com/matei-radu/react-native-in-app-browser' }
+   s.platform = :ios, '9.0'
+   s.dependency 'React'
+-  s.swift_versions = ['4.2', '5']
++  s.swift_version = '4.2'
+   s.source_files = '**/*.{h,m,swift}'
+   s.preserve_paths = '*.js'
+ end
