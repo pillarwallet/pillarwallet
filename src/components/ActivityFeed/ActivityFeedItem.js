@@ -475,6 +475,8 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   render() {
+    console.warn('RENDER ACT FEED ITEM');
+
     const { event, selectEvent } = this.props;
 
     if (event.type === TRANSACTION_EVENT && event.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {

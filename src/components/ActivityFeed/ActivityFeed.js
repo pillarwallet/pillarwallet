@@ -59,7 +59,7 @@ import { USER_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 
-const ActivityFeedList = styled.SectionList`
+const ActivityFeedList = styled.FlatList`
   width: 100%;
   flex: 1;
 `;
@@ -214,6 +214,8 @@ class ActivityFeed extends React.Component<Props, State> {
       activeTab,
       feedData = [],
       emptyState,
+      headerComponent,
+      tabsComponent,
     } = this.props;
     let feedList = feedData;
     let emptyStateData = emptyState || {};
@@ -227,7 +229,15 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const dataSections = groupAndSortByDate(filteredFeedList);
 
-    this.setState({ formattedFeedData: dataSections, emptyStateData });
+    const items = [];
+    items.push({ type: 'HEADER', component: headerComponent });
+    items.push({ type: 'TABS', component: tabsComponent });
+    dataSections.forEach(({ data, ...section }) => {
+      items.push({ type: 'SECTION', section });
+      data.forEach(item => items.push({ type: 'ITEM', item }));
+    });
+
+    this.setState({ formattedFeedData: items, emptyStateData });
   };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -252,15 +262,28 @@ class ActivityFeed extends React.Component<Props, State> {
     return typesThatRender.includes(item.type);
   }
 
-  renderActivityFeedItem = ({ item: notification }: Object) => {
-    const { onRejectInvitation, onAcceptInvitation } = this.props;
-    return (
-      <ActivityFeedItem
-        event={notification}
-        selectEvent={this.selectEvent}
-        rejectInvitation={onRejectInvitation}
-        acceptInvitation={onAcceptInvitation}
-      />);
+  renderActivityFeedItem = ({ item }) => {
+    switch (item.type) {
+      case 'HEADER':
+      case 'TABS':
+        return item.component;
+      case 'SECTION':
+        return (
+          <SectionHeaderWrapper>
+            <SectionHeader>{item.section.title}</SectionHeader>
+          </SectionHeaderWrapper>
+        );
+      default:
+        const { onRejectInvitation, onAcceptInvitation } = this.props;
+        return (
+          <ActivityFeedItem
+            event={item.item}
+            selectEvent={this.selectEvent}
+            rejectInvitation={onRejectInvitation}
+            acceptInvitation={onAcceptInvitation}
+          />
+        );
+    }
   };
 
   handleRejectInvitation = () => {
@@ -280,8 +303,16 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
-    const { createdAt = '' } = item;
-    return `${createdAt.toString()}${item.id || item._id || item.hash || ''}`;
+    switch (item.type) {
+      case 'HEADER':
+      case 'TABS':
+        return item.type;
+      case 'SECTION':
+        return item.section.title;
+      default:
+        const { createdAt = '' } = item.item;
+        return `${createdAt.toString()}${item.item.id || item.item._id || item.item.hash || ''}`;
+    }
   };
 
   onTabChange = (isChanging?: boolean) => {
@@ -289,6 +320,8 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   render() {
+    console.warn('RENDER LIST');
+
     const {
       feedTitle,
       navigation,
@@ -338,29 +371,24 @@ class ActivityFeed extends React.Component<Props, State> {
         }
         {!tabIsChanging &&
         <ActivityFeedList
-          sections={formattedFeedData}
+          data={formattedFeedData}
           initialNumToRender={initialNumToRender}
           extraData={extraFeedData}
-          renderSectionHeader={({ section }) => (
-            <SectionHeaderWrapper>
-              <SectionHeader>{section.title}</SectionHeader>
-            </SectionHeaderWrapper>
-          )}
           renderItem={this.renderActivityFeedItem}
-          getItemLayout={(data, index) => ({
-            length: 70,
-            offset: 70 * index,
-            index,
-          })}
+          // getItemLayout={(data, index) => ({
+          //   length: 70,
+          //   offset: 70 * index,
+          //   index,
+          // })}
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          stickySectionHeadersEnabled={false}
           ListEmptyComponent={(
             <EmptyStateWrapper>
               <EmptyStateParagraph {...emptyStateData} />
             </EmptyStateWrapper>
           )}
+          stickyHeaderIndices={[1]}
         />}
         {!!selectedEventData &&
         <SlideModal

@@ -429,7 +429,7 @@ class HomeScreen extends React.Component<Props, State> {
         }}
         inset={{ bottom: 0 }}
       >
-        <ScrollView
+        {/* <ScrollView
           style={{ width: '100%', flex: 1 }}
           stickyHeaderIndices={referralsFeatureEnabled ? [3] : [2]}
           refreshControl={
@@ -437,47 +437,53 @@ class HomeScreen extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={this.refreshScreenData}
             />}
-        >
-          <PortfolioBalance fiatCurrency={fiatCurrency} />
-          <BadgesWrapper>
-            <ListHeader>Game of badges</ListHeader>
-            <FlatList
-              data={badges}
-              horizontal
-              keyExtractor={(item) => (item.id.toString())}
-              renderItem={this.renderBadge}
-              style={{ width: '100%', paddingBottom: spacing.medium }}
-              contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
-              initialNumToRender={5}
-              ListEmptyComponent={(
-                <EmptyStateWrapper>
-                  <EmptyStateParagraph
-                    title="No badges"
-                    bodyText="You do not have badges yet"
-                  />
-                </EmptyStateWrapper>
-              )}
+        > */}
+        <ActivityFeed
+          headerComponent={(
+            <React.Fragment>
+              <PortfolioBalance fiatCurrency={fiatCurrency} />
+              <BadgesWrapper>
+                <ListHeader>Game of badges</ListHeader>
+                <FlatList
+                  data={badges}
+                  horizontal
+                  keyExtractor={(item) => (item.id.toString())}
+                  renderItem={this.renderBadge}
+                  style={{ width: '100%', paddingBottom: spacing.medium }}
+                  contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
+                  initialNumToRender={5}
+                  ListEmptyComponent={(
+                    <EmptyStateWrapper>
+                      <EmptyStateParagraph
+                        title="No badges"
+                        bodyText="You do not have badges yet"
+                      />
+                    </EmptyStateWrapper>
+                    )}
+                />
+              </BadgesWrapper>
+              {!!referralsFeatureEnabled && this.renderReferral(colors)}
+            </React.Fragment>
+            )}
+          tabsComponent={(
+            <Tabs
+              tabs={activityFeedTabs}
+              wrapperStyle={{ paddingTop: 16 }}
+              activeTab={activeTab}
             />
-          </BadgesWrapper>
-          {!!referralsFeatureEnabled && this.renderReferral(colors)}
-          <Tabs
-            tabs={activityFeedTabs}
-            wrapperStyle={{ paddingTop: 16 }}
-            activeTab={activeTab}
-          />
-          <ActivityFeed
-            onCancelInvitation={cancelInvitation}
-            onRejectInvitation={rejectInvitation}
-            onAcceptInvitation={acceptInvitation}
-            navigation={navigation}
-            tabs={activityFeedTabs}
-            activeTab={activeTab}
-            hideTabs
-            initialNumToRender={8}
-            wrapperStyle={{ flexGrow: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
-          />
-        </ScrollView>
+            )}
+          onCancelInvitation={cancelInvitation}
+          onRejectInvitation={rejectInvitation}
+          onAcceptInvitation={acceptInvitation}
+          navigation={navigation}
+          tabs={activityFeedTabs}
+          activeTab={activeTab}
+          hideTabs
+          initialNumToRender={8}
+          wrapperStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+        />
+        {/* </ScrollView> */}
         <ReferralModalReward
           isVisible={showRewardModal}
           onModalHide={this.handleModalHide}
