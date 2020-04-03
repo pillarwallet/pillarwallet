@@ -319,7 +319,7 @@ jobs:
             cd android && bundle exec fastlane deploy_android_appcenter
       - store_artifacts:
           path: android/app/build/outputs/apk
-          destination: apks   
+          destination: apks
       - slack/status:
           fail_only: true
           failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Are you guys surprised that *$CIRCLE_JOB* failed? :circleci-fail:"
@@ -663,6 +663,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/android-staging-build-crash
       - get-latest-tag:
           requires:
             - build-and-test
