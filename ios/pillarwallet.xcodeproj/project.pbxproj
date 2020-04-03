@@ -22,7 +22,6 @@
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
 		69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */; };
 		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
-		E8D6A657BFCADF2ACC09F4FE /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +93,7 @@
 		69D2EB03240865F60039EA75 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		69D38E4C24047B11003F1E10 /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sentry.xcodeproj; path = "../node_modules/@sentry/react-native/ios/Sentry/Sentry.xcodeproj"; sourceTree = "<group>"; };
+		69EA22F92437D9A300EDBA6D /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7981F34B57593772B61C067A /* Pods-pillarwallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.release.xcconfig"; sourceTree = "<group>"; };
 		7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SignalMessagingSwift.xcodeproj; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift.xcodeproj"; sourceTree = "<group>"; };
@@ -108,7 +108,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */,
-				E8D6A657BFCADF2ACC09F4FE /* libPods-pillarwallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +145,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				69EA22F92437D9A300EDBA6D /* libPods-pillarwallet.a */,
 				698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */,
 				69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */,
 				69D38E4C24047B11003F1E10 /* libSentry.a */,
