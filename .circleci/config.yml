@@ -656,6 +656,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/staging-build-fixes
       - appcenter_android:
           requires:
             - build-and-test

@@ -87,13 +87,10 @@
 		696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Regular.otf"; path = "../src/assets/fonts/EuclidCircularB-Regular.otf"; sourceTree = "<group>"; };
 		696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Bold.otf"; path = "../src/assets/fonts/EuclidCircularB-Bold.otf"; sourceTree = "<group>"; };
 		696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Medium.otf"; path = "../src/assets/fonts/EuclidCircularB-Medium.otf"; sourceTree = "<group>"; };
-		698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69D2EB02240865F50039EA75 /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		69D2EB03240865F60039EA75 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		69D38E4C24047B11003F1E10 /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sentry.xcodeproj; path = "../node_modules/@sentry/react-native/ios/Sentry/Sentry.xcodeproj"; sourceTree = "<group>"; };
-		69EA22F92437D9A300EDBA6D /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7981F34B57593772B61C067A /* Pods-pillarwallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.release.xcconfig"; sourceTree = "<group>"; };
 		7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SignalMessagingSwift.xcodeproj; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift.xcodeproj"; sourceTree = "<group>"; };
@@ -145,9 +142,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				69EA22F92437D9A300EDBA6D /* libPods-pillarwallet.a */,
-				698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */,
-				69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */,
 				69D38E4C24047B11003F1E10 /* libSentry.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
