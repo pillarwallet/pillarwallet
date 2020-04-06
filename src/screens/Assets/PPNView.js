@@ -347,7 +347,7 @@ class PPNView extends React.Component<Props, State> {
             color={colors.text}
             bordered
           />}
-          {!!this.props.PPNTransactions.length &&
+          {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
             tabs={historyTabs}
             wrapperStyle={{ paddingTop: 16 }}
