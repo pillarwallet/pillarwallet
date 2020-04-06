@@ -27,22 +27,15 @@ import { CachedImage } from 'react-native-cached-image';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import ButtonText from 'components/ButtonText';
 
 // utils
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
+import type { ExternalButtonProps } from 'components/Button';
+
 type ImageObject = {
   uri: string,
-};
-
-type ButtonProps = {
-  label?: string,
-  onPress?: () => void,
-  isDisabled?: boolean,
-  isLoading?: boolean,
-  isSecondary?: boolean,
 };
 
 type Props = {
@@ -51,11 +44,11 @@ type Props = {
   labelTop: string,
   valueTop: string | number,
   cardImageSource?: string | ImageObject,
-  cardTopButton?: ButtonProps,
+  cardButton: ExternalButtonProps,
   labelBottom: string,
   valueBottom: string | number,
-  cardMainButton?: ButtonProps,
   cardNote?: string,
+  additionalCardButton: ?ExternalButtonProps,
 };
 
 const CardWrapper = styled.TouchableOpacity`
@@ -118,34 +111,18 @@ const OfferCard = (props: Props) => {
     labelTop,
     valueTop,
     cardImageSource,
-    cardTopButton = {},
     labelBottom,
     valueBottom,
-    cardMainButton = {},
     cardNote,
+    cardButton,
+    additionalCardButton,
   } = props;
-
-  const {
-    label: topButtonLabel,
-    onPress: topButtonOnPress,
-    isDisabled: isTopButtonDisabled,
-    isLoading: isTopButtonLoading,
-    isSecondary: isTopButtonSecondary,
-  } = cardTopButton;
-
-  const {
-    label: mainButtonLabel,
-    onPress: mainButtonOnPress,
-    isDisabled: isMainButtonDisabled,
-    isLoading: isMainButtonLoading,
-  } = cardMainButton;
 
   return (
     <ShadowedCard
       contentWrapperStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
       isAnimated
       spacingAfterAnimation={10}
-      disabled={isDisabled}
     >
       <CardWrapper
         disabled={isDisabled}
@@ -158,34 +135,34 @@ const OfferCard = (props: Props) => {
           </CardColumn>
           <CardInnerRow style={{ flexShrink: 1 }}>
             {!!cardImageSource && <ProviderIcon source={cardImageSource} resizeMode="contain" />}
-            {!!Object.keys(cardTopButton).length &&
-            <ButtonText
-              onPress={topButtonOnPress}
-              buttonText={topButtonLabel}
-              secondary={isTopButtonSecondary}
-              disabled={isTopButtonDisabled}
-              isLoading={isTopButtonLoading}
-              wrapperStyle={{ paddingVertical: 4, marginLeft: 10 }}
-            />
-            }
             {!!cardNote && <CardNote>{cardNote}</CardNote>}
           </CardInnerRow>
         </CardRow>
 
         <CardRow>
           <CardColumn style={{ flex: 1 }}>
-            <CardText label>{labelBottom}</CardText>
-            <View style={{ flexDirection: 'row' }}>
-              <CardText>{valueBottom}</CardText>
-            </View>
+            {!additionalCardButton
+              ? (
+                <React.Fragment>
+                  <CardText label>{labelBottom}</CardText>
+                  <View style={{ flexDirection: 'row' }}>
+                    <CardText>{valueBottom}</CardText>
+                  </View>
+                </React.Fragment>)
+              :
+                <Button
+                  {...additionalCardButton}
+                  small
+                  positive
+                  horizontalPaddings={8}
+                />
+            }
           </CardColumn>
           <CardColumn>
             <Button
-              disabled={isMainButtonDisabled}
-              title={isMainButtonLoading ? '' : mainButtonLabel}
+              {...cardButton}
               small
-              onPress={mainButtonOnPress}
-              isLoading={isMainButtonLoading}
+              horizontalPaddings={8}
             />
           </CardColumn>
         </CardRow>

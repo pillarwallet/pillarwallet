@@ -383,7 +383,7 @@ function SelectorInputTemplate(locals) {
   );
 }
 
-function getCardTopButtonData(topButtonProps) {
+function getCardAdditionalButtonData(additionalData) {
   const {
     offer,
     minOrMaxNeeded,
@@ -395,7 +395,7 @@ function getCardTopButtonData(topButtonProps) {
     allowanceSet,
     shapeshiftAuthPressed,
     pressedTokenAllowanceId,
-  } = topButtonProps;
+  } = additionalData;
 
   const {
     _id: offerId,
@@ -410,25 +410,24 @@ function getCardTopButtonData(topButtonProps) {
 
   if (minOrMaxNeeded) {
     return {
-      label: `${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`,
+      title: `${isBelowMin ? 'Min' : 'Max'} ${minOrMaxAmount} ${fromAssetCode}`,
       onPress: () => thisComponent.setFromAmount(isBelowMin ? minQuantity : maxQuantity),
     };
   } else if (isShapeShift && !shapeshiftAccessToken) {
     return {
-      label: 'Connect',
+      title: 'Connect',
       onPress: thisComponent.onShapeshiftAuthPress,
-      isDisabled: shapeshiftAuthPressed,
+      disabled: shapeshiftAuthPressed,
     };
   } else if (!allowanceSet) {
     return {
-      label: storedAllowance ? 'Pending' : 'Enable',
+      title: storedAllowance ? 'Pending' : 'Allow this exchange',
       onPress: () => thisComponent.onSetTokenAllowancePress(offer),
-      isDisabled: isSetAllowancePressed,
-      isSecondary: !!storedAllowance,
+      disabled: isSetAllowancePressed,
       isLoading: isSetAllowancePressed,
     };
   }
-  return {};
+  return null;
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
@@ -841,8 +840,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         },
       },
     }), () => {
-      const errors = get(this.exchangeForm.validate(), 'errors', []);
-      if (!isEmpty(errors)) return;
+      // const errors = get(this.exchangeForm.validate(), 'errors', []);
+      // if (!isEmpty(errors)) return;
       this.triggerSearch();
     });
   };
@@ -914,7 +913,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const disableFiatExchange = isFiat && (minOrMaxNeeded || !!offerRestricted);
     const disableOffer = disableNonFiatExchange || disableFiatExchange;
 
-    const topButtonProps = {
+    const additionalData = {
       offer,
       minOrMaxNeeded,
       isBelowMin,
@@ -936,19 +935,20 @@ class ExchangeScreen extends React.Component<Props, State> {
             labelTop="Amount total"
             valueTop={`${askRate} ${fromAssetCode}`}
             cardImageSource={providerLogo}
-            cardTopButton={getCardTopButtonData(topButtonProps)}
             labelBottom="Fees total"
             valueBottom={feeAmount ?
               `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
               : 'Will be calculated'
             }
-            cardMainButton={{
-              label: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
+            cardButton={{
+              title: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
               onPress: () => this.onFiatOfferPress(offer),
-              isDisabled: disableFiatExchange,
+              disabled: disableFiatExchange,
               isLoading: isTakeOfferPressed,
             }}
+
             cardNote={offerRestricted}
+            additionalCardButton={getCardAdditionalButtonData(additionalData)}
           />
         </OfferCardWrapper>
       );
@@ -962,15 +962,15 @@ class ExchangeScreen extends React.Component<Props, State> {
           labelTop="Exchange rate"
           valueTop={formatAmountDisplay(askRate)}
           cardImageSource={providerLogo}
-          cardTopButton={getCardTopButtonData(topButtonProps)}
           labelBottom="Available"
           valueBottom={available}
-          cardMainButton={{
-          label: `${amountToBuyString} ${toAssetCode}`,
-          onPress: () => this.onOfferPress(offer),
-          isDisabled: isTakeButtonDisabled || disableNonFiatExchange,
-          isLoading: isTakeOfferPressed,
-        }}
+          cardButton={{
+            title: `${amountToBuyString} ${toAssetCode}`,
+            onPress: () => this.onOfferPress(offer),
+            disabled: isTakeButtonDisabled || disableNonFiatExchange,
+            isLoading: isTakeOfferPressed,
+          }}
+          additionalCardButton={getCardAdditionalButtonData(additionalData)}
         />
       </OfferCardWrapper>
     );
@@ -1079,7 +1079,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     this.setState({ value });
     this.updateOptions(value);
-    if (!this.exchangeForm.getValue()) return; // this validates form!
+    // if (!this.exchangeForm.getValue()) return; // this validates form!
     this.triggerSearch();
   };
 

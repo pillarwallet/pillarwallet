@@ -32,7 +32,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 
-export type Props = {
+export type ExternalButtonProps = {
   children?: React.Node,
   title: string,
   onPress?: Function,
@@ -63,13 +63,16 @@ export type Props = {
   style?: Object,
   isLoading?: boolean,
   regularText?: boolean,
-  theme: Theme,
   leftIconName?: string,
   leftIconStyle?: Object,
   rightIconName?: string,
   rightIconStyle?: Object,
   horizontalPaddings?: number,
   card?: boolean,
+};
+
+export type Props = ExternalButtonProps & {
+  theme: Theme,
 };
 
 type State = {
