@@ -110,7 +110,7 @@
     "react-native-image-view": "^2.1.6",
     "react-native-intercom": "^13.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
-    "react-native-keychain": "https://github.com/cladjules/react-native-keychain.git",
+    "react-native-keychain": "^5.0.1",
     "react-native-level-fs": "^3.0.0",
     "react-native-linear-gradient": "2.5.4",
     "react-native-modal": "^9.0.0",
