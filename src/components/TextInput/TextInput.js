@@ -684,6 +684,7 @@ class TextInput extends React.Component<Props, State> {
                   fontFamily: getFontFamily(this.props),
                   textAlignVertical: inputProps.multiline ? 'top' : 'center',
                   height: inputHeight,
+                  flex: 1,
                 }, customStyle,
                   additionalStyle,
                 ]}
