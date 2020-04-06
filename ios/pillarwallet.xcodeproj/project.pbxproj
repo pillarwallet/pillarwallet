@@ -10,8 +10,11 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		13FAE2EB91C1247DE731171C /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */; };
 		2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2862B28966EF4024B1921B80 /* Roboto_medium.ttf */; };
 		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
+		694B06AE243925A200ADCEE9 /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 694B06AD243925A200ADCEE9 /* SignalProtocol.framework */; };
+		694B06AF243925A200ADCEE9 /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 694B06AD243925A200ADCEE9 /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */; };
 		696ACF1224049931009B0BEC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF1124049931009B0BEC /* LaunchScreen.xib */; };
 		696ACF5524049EBC009B0BEC /* EuclidCircularB-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */; };
@@ -22,7 +25,6 @@
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
 		69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */; };
 		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
-		E8D6A657BFCADF2ACC09F4FE /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +65,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				694B06AF243925A200ADCEE9 /* SignalProtocol.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -81,6 +84,7 @@
 		2EC0CEE1655E7E907B493644 /* Pods-pillarwallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.debug.xcconfig"; sourceTree = "<group>"; };
 		60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.staging.release.xcconfig"; sourceTree = "<group>"; };
 		693DE4BC2405A31E00587060 /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
+		694B06AD243925A200ADCEE9 /* SignalProtocol.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SignalProtocol.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		696ACF1124049931009B0BEC /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Light.otf"; path = "../src/assets/fonts/EuclidCircularB-Light.otf"; sourceTree = "<group>"; };
@@ -88,8 +92,6 @@
 		696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Regular.otf"; path = "../src/assets/fonts/EuclidCircularB-Regular.otf"; sourceTree = "<group>"; };
 		696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Bold.otf"; path = "../src/assets/fonts/EuclidCircularB-Bold.otf"; sourceTree = "<group>"; };
 		696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Medium.otf"; path = "../src/assets/fonts/EuclidCircularB-Medium.otf"; sourceTree = "<group>"; };
-		698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69D2EB02240865F50039EA75 /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		69D2EB03240865F60039EA75 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		69D38E4C24047B11003F1E10 /* libSentry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSentry.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -98,6 +100,7 @@
 		7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SignalMessagingSwift.xcodeproj; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift.xcodeproj"; sourceTree = "<group>"; };
 		7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
+		AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -108,7 +111,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */,
-				E8D6A657BFCADF2ACC09F4FE /* libPods-pillarwallet.a in Frameworks */,
+				694B06AE243925A200ADCEE9 /* SignalProtocol.framework in Frameworks */,
+				13FAE2EB91C1247DE731171C /* libPods-pillarwallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,11 +150,11 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				698F9ED4241AC7C500DF7776 /* libPods-pillarwallet.a */,
-				69BA0CCC2409A6B100DD424D /* libPods-pillarwallet.a */,
+				694B06AD243925A200ADCEE9 /* SignalProtocol.framework */,
 				69D38E4C24047B11003F1E10 /* libSentry.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
+				AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -599,6 +603,10 @@
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}\"/**",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -704,6 +712,10 @@
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}\"/**",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -855,6 +867,10 @@
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}\"/**",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
