@@ -354,7 +354,7 @@ class PPNView extends React.Component<Props, State> {
             activeTab={activeTab}
           />
           }
-          {!!this.props.PPNTransactions.length &&
+          {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <ActivityFeed
             navigation={navigation}
             tabs={historyTabs}
