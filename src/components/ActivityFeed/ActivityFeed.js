@@ -23,6 +23,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import memoize from 'memoize-one';
 
 // types
 import type { Transaction } from 'models/Transaction';
@@ -171,7 +172,6 @@ type State = {|
   eventType: string,
   eventStatus: string,
   tabIsChanging: boolean,
-  formattedFeedData: FeedSection[],
   emptyStateData: EmptyState | {},
   scrollOffset: ?number,
   maxScrollOffset: ?number,
@@ -191,54 +191,50 @@ class ActivityFeed extends React.Component<Props, State> {
     eventStatus: '',
     tabIsChanging: false,
     formattedFeedData: [],
-    emptyStateData: {},
     scrollOffset: undefined,
     maxScrollOffset: undefined,
   };
 
-  componentDidMount() {
-    this.generateFeedSections();
-  }
+  generateFeedSections = memoize(
+    (tabs, activeTab, feedData, headerComponent, tabsComponent) => {
+      let feedList = feedData;
 
-  componentDidUpdate(prevProps: Props) {
-    const { tabs = [], feedData = [] } = this.props;
-    if ((tabs.length && !isEqual(tabs, prevProps.tabs))
-      || (feedData.length && !isEqual(feedData, prevProps.feedData))) {
-      this.generateFeedSections();
-    }
-  }
+      if (tabs.length) {
+        const activeTabInfo = tabs.find(({ id }) => id === activeTab);
+        if (activeTabInfo) ({ data: feedList } = activeTabInfo);
+      }
 
-  generateFeedSections = () => {
+      const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
+
+      const dataSections = groupAndSortByDate(filteredFeedList);
+
+      const items = [];
+      items.push({ type: 'HEADER', component: headerComponent });
+      items.push({ type: 'TABS', component: tabsComponent });
+      dataSections.forEach(({ data, ...section }) => {
+        items.push({ type: 'SECTION', section });
+        data.forEach(item => items.push({ type: 'ITEM', item }));
+      });
+
+      return items;
+    },
+    isEqual,
+  )
+
+  getEmptyStateData = () => {
     const {
       tabs = [],
       activeTab,
-      feedData = [],
       emptyState,
-      headerComponent,
-      tabsComponent,
     } = this.props;
-    let feedList = feedData;
-    let emptyStateData = emptyState || {};
 
+    let emptyStateData = emptyState || {};
     if (tabs.length) {
       const activeTabInfo = tabs.find(({ id }) => id === activeTab);
-      if (activeTabInfo) ({ data: feedList, emptyState: emptyStateData = {} } = activeTabInfo);
+      if (activeTabInfo) ({ emptyState: emptyStateData = {} } = activeTabInfo);
     }
-
-    const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
-
-    const dataSections = groupAndSortByDate(filteredFeedList);
-
-    const items = [];
-    items.push({ type: 'HEADER', component: headerComponent });
-    items.push({ type: 'TABS', component: tabsComponent });
-    dataSections.forEach(({ data, ...section }) => {
-      items.push({ type: 'SECTION', section });
-      data.forEach(item => items.push({ type: 'ITEM', item }));
-    });
-
-    this.setState({ formattedFeedData: items, emptyStateData });
-  };
+    return emptyStateData;
+  }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
@@ -333,6 +329,9 @@ class ActivityFeed extends React.Component<Props, State> {
       activeTab,
       extraFeedData,
       hideTabs,
+      feedData,
+      headerComponent,
+      tabsComponent,
     } = this.props;
 
     const {
@@ -341,11 +340,13 @@ class ActivityFeed extends React.Component<Props, State> {
       eventType,
       eventStatus,
       tabIsChanging,
-      formattedFeedData,
-      emptyStateData,
       scrollOffset,
       maxScrollOffset,
     } = this.state;
+
+    const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
+
+    const emptyStateData = this.getEmptyStateData();
 
     const firstTab = tabs.length ? tabs[0].id : '';
 
