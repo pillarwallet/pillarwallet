@@ -100,5 +100,19 @@
 	<string>$(BRANCH_IO_APP_DOMAIN)</string>
 	<key>branch_key</key>
 	<string>$(BRANCH_IO_KEY_LIVE)</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Allow Pillar Wallet to access your calendar</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Allow Pillar Wallet use your Bluetooth</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Allow Pillar Wallet to access Apple Music</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Allow Pillar Wallet to access your device&apos;s accelerometer</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Allow Pillar Wallet recognize speech</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Allow Pillar Wallet to always access the location of your device</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Allow Pillar Wallet to always access your Bluetooth</string>
 </dict>
 </plist>
