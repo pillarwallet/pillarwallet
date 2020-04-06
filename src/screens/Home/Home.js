@@ -16,11 +16,10 @@
 */
 
 import * as React from 'react';
-import { Animated, RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
+import { Animated, RefreshControl, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
-import firebase from 'react-native-firebase';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 
@@ -76,6 +75,7 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
+import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 import { toastReferral } from 'utils/toasts';
 
 // models, types
@@ -178,9 +178,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     logScreenView('View home', 'Home');
 
-    if (Platform.OS === 'ios') {
-      firebase.notifications().setBadge(0);
-    }
+    resetAppNotificationsBadgeNumber();
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);

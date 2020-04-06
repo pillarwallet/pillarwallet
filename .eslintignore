@@ -9,3 +9,9 @@ src/utils/shim.js
 reports
 patches
 storybook/storyLoader.js
+old.android/
+old.ios/
+
+# TODO: ignore is temporary, remove with next connections change
+src/actions/connectionKeyPairActions.js
+src/utils/keyPairGenerator.js

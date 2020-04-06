@@ -22,8 +22,7 @@ import { Vibration, Dimensions, Platform } from 'react-native';
 import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
 import Permissions from 'react-native-permissions';
-import { Sentry } from 'react-native-sentry';
-import { noop } from 'utils/common';
+import { noop, reportLog } from 'utils/common';
 import { CameraView } from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
 
@@ -160,7 +159,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     }
 
     if (typeof code !== 'string') {
-      Sentry.captureMessage('Wrong data from QR scanner received', { extra: { data: code } });
+      reportLog('Wrong data from QR scanner received', { data: code });
       return;
     }
 

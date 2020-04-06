@@ -71,7 +71,7 @@ export default class ShareSocial extends React.Component<Props> {
       });
   };
 
-  renderSharingButton() {
+  renderSharingButton(): TouchableNativeFeedback | TouchableOpacity {
     return SOCIAL_NETWORKS.map(social => {
       if (Platform.OS === 'ios') {
         return (

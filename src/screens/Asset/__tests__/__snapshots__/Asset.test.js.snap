@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Asset renders the Asset correctly 1`] = `
+exports[`Asset renders the Asset Screen correctly 1`] = `
 <View
   style={
     Object {
@@ -76,53 +76,46 @@ exports[`Asset renders the Asset correctly 1`] = `
             }
           >
             <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
               style={
                 Object {
-                  "marginBottom": -20,
-                  "marginTop": -20,
+                  "alignItems": "flex-start",
+                  "height": 34,
+                  "justifyContent": "center",
+                  "marginLeft": -12,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 10,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                  "position": "relative",
+                  "width": 44,
                 }
               }
             >
               <View
-                accessible={true}
-                isTVSelectable={true}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
+                name="back"
                 style={
                   Object {
-                    "alignItems": "flex-start",
-                    "height": 44,
-                    "justifyContent": "center",
-                    "marginLeft": -12,
-                    "opacity": 1,
-                    "paddingBottom": 0,
-                    "paddingLeft": 10,
-                    "paddingRight": 0,
+                    "color": "#0A1427",
+                    "fontSize": 24,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
                     "paddingTop": 0,
-                    "position": "relative",
-                    "width": 44,
                   }
                 }
-              >
-                <View
-                  name="back"
-                  style={
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 24,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    }
-                  }
-                />
-              </View>
+              />
             </View>
           </View>
           <View
@@ -172,7 +165,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -259,6 +254,7 @@ exports[`Asset renders the Asset correctly 1`] = `
       }
       resetKeyboardSpace={[Function]}
       scrollForExtraHeightOnAndroid={[Function]}
+      scrollIntoView={[Function]}
       scrollToEnd={[Function]}
       scrollToFocusedInput={[Function]}
       scrollToPosition={[Function]}
@@ -271,6 +267,7 @@ exports[`Asset renders the Asset correctly 1`] = `
           "paddingHorizontal": 0,
         }
       }
+      update={[Function]}
       viewIsInsideTabBar={false}
     >
       <RCTRefreshControl />
@@ -933,7 +930,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -962,7 +961,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -1044,7 +1047,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1073,7 +1078,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button_disabled.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -1182,6 +1191,8 @@ exports[`Asset renders the Asset correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -1270,6 +1281,8 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1521,7 +1534,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                         >
                           <View
                             accessible={true}
+                            focusable={true}
                             isTVSelectable={true}
+                            onClick={[Function]}
                             onResponderGrant={[Function]}
                             onResponderMove={[Function]}
                             onResponderRelease={[Function]}
@@ -1587,6 +1602,59 @@ exports[`Asset renders the Asset correctly 1`] = `
                   }
                 >
                   <View
+                    rounded={true}
+                    small={true}
+                    style={
+                      Array [
+                        Object {
+                          "backgroundColor": "#BD573A",
+                          "borderRadius": 8,
+                          "justifyContent": "center",
+                          "paddingBottom": 8,
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                          "paddingTop": 8,
+                          "width": "100%",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      small={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 12,
+                            "lineHeight": 18,
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 12,
+                              "lineHeight": 18,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#FCFDFF",
+                                "fontSize": 14,
+                                "lineHeight": 22,
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                    >
+                      Do not send real ETH or ERC20 tokens.
+                    </Text>
+                  </View>
+                  <View
                     style={
                       Array [
                         Object {
@@ -1630,7 +1698,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                       <RNSVGSvgView
                         bbHeight={160}
                         bbWidth={160}
+                        focusable={false}
                         height={160}
+                        id="rn-qr-svg-container"
                         style={
                           Array [
                             Object {
@@ -1638,7 +1708,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "borderWidth": 0,
                             },
                             undefined,
-                            null,
+                            Object {
+                              "opacity": 1,
+                            },
                             Object {
                               "flex": 0,
                               "height": 160,
@@ -1689,104 +1761,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                           x={0}
                           y={0}
                         >
-                          <RNSVGDefs>
-                            <RNSVGClipPath
-                              name="clip-wrapper"
-                            >
-                              <RNSVGRect
-                                fill={
-                                  Array [
-                                    0,
-                                    4278190080,
-                                  ]
-                                }
-                                fillOpacity={1}
-                                fillRule={1}
-                                height={24}
-                                matrix={
-                                  Array [
-                                    1,
-                                    0,
-                                    0,
-                                    1,
-                                    0,
-                                    0,
-                                  ]
-                                }
-                                opacity={1}
-                                originX={0}
-                                originY={0}
-                                propList={Array []}
-                                rotation={0}
-                                rx={0}
-                                ry={0}
-                                scaleX={1}
-                                scaleY={1}
-                                skewX={0}
-                                skewY={0}
-                                stroke={null}
-                                strokeDasharray={null}
-                                strokeDashoffset={null}
-                                strokeLinecap={0}
-                                strokeLinejoin={0}
-                                strokeMiterlimit={4}
-                                strokeOpacity={1}
-                                strokeWidth={1}
-                                vectorEffect={0}
-                                width={24}
-                                x={0}
-                                y={0}
-                              />
-                            </RNSVGClipPath>
-                            <RNSVGClipPath
-                              name="clip-logo"
-                            >
-                              <RNSVGRect
-                                fill={
-                                  Array [
-                                    0,
-                                    4278190080,
-                                  ]
-                                }
-                                fillOpacity={1}
-                                fillRule={1}
-                                height={20}
-                                matrix={
-                                  Array [
-                                    1,
-                                    0,
-                                    0,
-                                    1,
-                                    0,
-                                    0,
-                                  ]
-                                }
-                                opacity={1}
-                                originX={0}
-                                originY={0}
-                                propList={Array []}
-                                rotation={0}
-                                rx={0}
-                                ry={0}
-                                scaleX={1}
-                                scaleY={1}
-                                skewX={0}
-                                skewY={0}
-                                stroke={null}
-                                strokeDasharray={null}
-                                strokeDashoffset={null}
-                                strokeLinecap={0}
-                                strokeLinejoin={0}
-                                strokeMiterlimit={4}
-                                strokeOpacity={1}
-                                strokeWidth={1}
-                                vectorEffect={0}
-                                width={20}
-                                x={0}
-                                y={0}
-                              />
-                            </RNSVGClipPath>
-                          </RNSVGDefs>
                           <RNSVGRect
                             fill={
                               Array [
@@ -1816,8 +1790,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                               ]
                             }
                             rotation={0}
-                            rx={0}
-                            ry={0}
                             scaleX={1}
                             scaleY={1}
                             skewX={0}
@@ -1835,57 +1807,331 @@ exports[`Asset renders the Asset correctly 1`] = `
                             x={0}
                             y={0}
                           />
-                          <RNSVGPath
-                            d="M0 3.2 L44.800000000000004 3.2 M83.2 3.2 L108.80000000000001 3.2 M115.2 3.2 L160 3.2 M0 9.600000000000001 L6.4 9.600000000000001 M38.400000000000006 9.600000000000001 L44.800000000000004 9.600000000000001 M51.2 9.600000000000001 L57.6 9.600000000000001 M70.4 9.600000000000001 L76.80000000000001 9.600000000000001 M89.60000000000001 9.600000000000001 L108.80000000000001 9.600000000000001 M115.2 9.600000000000001 L121.60000000000001 9.600000000000001 M153.60000000000002 9.600000000000001 L160 9.600000000000001 M0 16 L6.4 16 M12.8 16 L32 16 M38.400000000000006 16 L44.800000000000004 16 M70.4 16 L83.2 16 M89.60000000000001 16 L96 16 M115.2 16 L121.60000000000001 16 M128 16 L147.20000000000002 16 M153.60000000000002 16 L160 16 M0 22.400000000000002 L6.4 22.400000000000002 M12.8 22.400000000000002 L32 22.400000000000002 M38.400000000000006 22.400000000000002 L44.800000000000004 22.400000000000002 M64 22.400000000000002 L76.80000000000001 22.400000000000002 M83.2 22.400000000000002 L89.60000000000001 22.400000000000002 M96 22.400000000000002 L102.4 22.400000000000002 M115.2 22.400000000000002 L121.60000000000001 22.400000000000002 M128 22.400000000000002 L147.20000000000002 22.400000000000002 M153.60000000000002 22.400000000000002 L160 22.400000000000002 M0 28.8 L6.4 28.8 M12.8 28.8 L32 28.8 M38.400000000000006 28.8 L44.800000000000004 28.8 M51.2 28.8 L57.6 28.8 M64 28.8 L102.4 28.8 M115.2 28.8 L121.60000000000001 28.8 M128 28.8 L147.20000000000002 28.8 M153.60000000000002 28.8 L160 28.8 M0 35.2 L6.4 35.2 M38.400000000000006 35.2 L44.800000000000004 35.2 M57.6 35.2 L70.4 35.2 M76.80000000000001 35.2 L83.2 35.2 M89.60000000000001 35.2 L102.4 35.2 M115.2 35.2 L121.60000000000001 35.2 M153.60000000000002 35.2 L160 35.2 M0 41.60000000000001 L44.800000000000004 41.60000000000001 M51.2 41.60000000000001 L57.6 41.60000000000001 M64 41.60000000000001 L70.4 41.60000000000001 M76.80000000000001 41.60000000000001 L83.2 41.60000000000001 M89.60000000000001 41.60000000000001 L96 41.60000000000001 M102.4 41.60000000000001 L108.80000000000001 41.60000000000001 M115.2 41.60000000000001 L160 41.60000000000001 M57.6 48.00000000000001 L76.80000000000001 48.00000000000001 M96 48.00000000000001 L108.80000000000001 48.00000000000001 M0 54.400000000000006 L6.4 54.400000000000006 M12.8 54.400000000000006 L19.200000000000003 54.400000000000006 M25.6 54.400000000000006 L32 54.400000000000006 M38.400000000000006 54.400000000000006 L44.800000000000004 54.400000000000006 M70.4 54.400000000000006 L76.80000000000001 54.400000000000006 M102.4 54.400000000000006 L108.80000000000001 54.400000000000006 M128 54.400000000000006 L134.4 54.400000000000006 M147.20000000000002 54.400000000000006 L153.60000000000002 54.400000000000006 M6.4 60.800000000000004 L19.200000000000003 60.800000000000004 M51.2 60.800000000000004 L89.60000000000001 60.800000000000004 M102.4 60.800000000000004 L128 60.800000000000004 M134.4 60.800000000000004 L160 60.800000000000004 M0 67.2 L12.8 67.2 M19.200000000000003 67.2 L25.6 67.2 M38.400000000000006 67.2 L57.6 67.2 M64 67.2 L70.4 67.2 M89.60000000000001 67.2 L96 67.2 M115.2 67.2 L160 67.2 M0 73.60000000000001 L6.4 73.60000000000001 M12.8 73.60000000000001 L25.6 73.60000000000001 M44.800000000000004 73.60000000000001 L57.6 73.60000000000001 M64 73.60000000000001 L70.4 73.60000000000001 M83.2 73.60000000000001 L96 73.60000000000001 M102.4 73.60000000000001 L115.2 73.60000000000001 M121.60000000000001 73.60000000000001 L128 73.60000000000001 M147.20000000000002 73.60000000000001 L153.60000000000002 73.60000000000001 M12.8 80.00000000000001 L25.6 80.00000000000001 M32 80.00000000000001 L51.2 80.00000000000001 M64 80.00000000000001 L76.80000000000001 80.00000000000001 M89.60000000000001 80.00000000000001 L121.60000000000001 80.00000000000001 M134.4 80.00000000000001 L140.8 80.00000000000001 M6.4 86.4 L32 86.4 M44.800000000000004 86.4 L51.2 86.4 M70.4 86.4 L76.80000000000001 86.4 M89.60000000000001 86.4 L96 86.4 M102.4 86.4 L108.80000000000001 86.4 M134.4 86.4 L140.8 86.4 M147.20000000000002 86.4 L160 86.4 M0 92.80000000000001 L6.4 92.80000000000001 M12.8 92.80000000000001 L25.6 92.80000000000001 M38.400000000000006 92.80000000000001 L44.800000000000004 92.80000000000001 M51.2 92.80000000000001 L70.4 92.80000000000001 M83.2 92.80000000000001 L89.60000000000001 92.80000000000001 M115.2 92.80000000000001 L121.60000000000001 92.80000000000001 M128 92.80000000000001 L140.8 92.80000000000001 M147.20000000000002 92.80000000000001 L160 92.80000000000001 M6.4 99.2 L12.8 99.2 M25.6 99.2 L38.400000000000006 99.2 M70.4 99.2 L76.80000000000001 99.2 M121.60000000000001 99.2 L128 99.2 M134.4 99.2 L140.8 99.2 M147.20000000000002 99.2 L153.60000000000002 99.2 M0 105.60000000000001 L6.4 105.60000000000001 M12.8 105.60000000000001 L64 105.60000000000001 M76.80000000000001 105.60000000000001 L83.2 105.60000000000001 M102.4 105.60000000000001 L134.4 105.60000000000001 M147.20000000000002 105.60000000000001 L160 105.60000000000001 M51.2 112.00000000000001 L57.6 112.00000000000001 M70.4 112.00000000000001 L89.60000000000001 112.00000000000001 M96 112.00000000000001 L108.80000000000001 112.00000000000001 M128 112.00000000000001 L140.8 112.00000000000001 M0 118.4 L44.800000000000004 118.4 M70.4 118.4 L83.2 118.4 M89.60000000000001 118.4 L96 118.4 M102.4 118.4 L108.80000000000001 118.4 M115.2 118.4 L121.60000000000001 118.4 M128 118.4 L134.4 118.4 M140.8 118.4 L160 118.4 M0 124.80000000000001 L6.4 124.80000000000001 M38.400000000000006 124.80000000000001 L44.800000000000004 124.80000000000001 M64 124.80000000000001 L70.4 124.80000000000001 M76.80000000000001 124.80000000000001 L96 124.80000000000001 M102.4 124.80000000000001 L108.80000000000001 124.80000000000001 M128 124.80000000000001 L134.4 124.80000000000001 M147.20000000000002 124.80000000000001 L160 124.80000000000001 M0 131.2 L6.4 131.2 M12.8 131.2 L32 131.2 M38.400000000000006 131.2 L44.800000000000004 131.2 M51.2 131.2 L57.6 131.2 M64 131.2 L76.80000000000001 131.2 M89.60000000000001 131.2 L96 131.2 M102.4 131.2 L134.4 131.2 M153.60000000000002 131.2 L160 131.2 M0 137.6 L6.4 137.6 M12.8 137.6 L32 137.6 M38.400000000000006 137.6 L44.800000000000004 137.6 M57.6 137.6 L64 137.6 M70.4 137.6 L76.80000000000001 137.6 M89.60000000000001 137.6 L102.4 137.6 M121.60000000000001 137.6 L147.20000000000002 137.6 M0 144 L6.4 144 M12.8 144 L32 144 M38.400000000000006 144 L44.800000000000004 144 M51.2 144 L64 144 M83.2 144 L89.60000000000001 144 M102.4 144 L121.60000000000001 144 M128 144 L147.20000000000002 144 M153.60000000000002 144 L160 144 M0 150.4 L6.4 150.4 M38.400000000000006 150.4 L44.800000000000004 150.4 M57.6 150.4 L76.80000000000001 150.4 M96 150.4 L115.2 150.4 M128 150.4 L134.4 150.4 M147.20000000000002 150.4 L153.60000000000002 150.4 M0 156.8 L44.800000000000004 156.8 M51.2 156.8 L57.6 156.8 M64 156.8 L70.4 156.8 M76.80000000000001 156.8 L83.2 156.8 M102.4 156.8 L108.80000000000001 156.8 M128 156.8 L140.8 156.8 M147.20000000000002 156.8 L160 156.8 "
-                            fill={
+                          <RNSVGSvgView
+                            align="xMidYMid"
+                            bbHeight={160}
+                            bbWidth={160}
+                            focusable={false}
+                            height={160}
+                            id="qr-container"
+                            meetOrSlice={0}
+                            minX={0}
+                            minY={0}
+                            style={
                               Array [
-                                0,
-                                4278190080,
+                                Object {
+                                  "backgroundColor": "transparent",
+                                  "borderWidth": 0,
+                                },
+                                undefined,
+                                Object {
+                                  "opacity": 1,
+                                },
+                                Object {
+                                  "flex": 0,
+                                  "height": 160,
+                                  "width": 160,
+                                },
                               ]
                             }
-                            fillOpacity={1}
-                            fillRule={1}
-                            matrix={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
-                            opacity={1}
-                            originX={0}
-                            originY={0}
-                            propList={
-                              Array [
-                                "stroke",
-                                "strokeWidth",
-                              ]
-                            }
-                            rotation={0}
-                            scaleX={1}
-                            scaleY={1}
-                            skewX={0}
-                            skewY={0}
-                            stroke={
-                              Array [
-                                0,
-                                4278850599,
-                              ]
-                            }
-                            strokeDasharray={null}
-                            strokeDashoffset={null}
-                            strokeLinecap={0}
-                            strokeLinejoin={0}
-                            strokeMiterlimit={4}
-                            strokeOpacity={1}
-                            strokeWidth={6.4}
-                            vectorEffect={0}
-                            x={0}
-                            y={0}
-                          />
+                            vbHeight={100}
+                            vbWidth={100}
+                            width={160}
+                          >
+                            <RNSVGGroup
+                              fill={
+                                Array [
+                                  0,
+                                  4278190080,
+                                ]
+                              }
+                              fillOpacity={1}
+                              fillRule={1}
+                              font={Object {}}
+                              matrix={
+                                Array [
+                                  1,
+                                  0,
+                                  0,
+                                  1,
+                                  0,
+                                  0,
+                                ]
+                              }
+                              opacity={1}
+                              originX={0}
+                              originY={0}
+                              propList={Array []}
+                              rotation={0}
+                              scaleX={1}
+                              scaleY={1}
+                              skewX={0}
+                              skewY={0}
+                              stroke={null}
+                              strokeDasharray={null}
+                              strokeDashoffset={null}
+                              strokeLinecap={0}
+                              strokeLinejoin={0}
+                              strokeMiterlimit={4}
+                              strokeOpacity={1}
+                              strokeWidth={1}
+                              vectorEffect={0}
+                              x={0}
+                              y={0}
+                            >
+                              <RNSVGDefs>
+                                <RNSVGClipPath
+                                  fill={
+                                    Array [
+                                      0,
+                                      4278190080,
+                                    ]
+                                  }
+                                  fillOpacity={1}
+                                  fillRule={1}
+                                  matrix={
+                                    Array [
+                                      1,
+                                      0,
+                                      0,
+                                      1,
+                                      0,
+                                      0,
+                                    ]
+                                  }
+                                  name="clip-wrapper"
+                                  opacity={1}
+                                  originX={0}
+                                  originY={0}
+                                  propList={Array []}
+                                  rotation={0}
+                                  scaleX={1}
+                                  scaleY={1}
+                                  skewX={0}
+                                  skewY={0}
+                                  stroke={null}
+                                  strokeDasharray={null}
+                                  strokeDashoffset={null}
+                                  strokeLinecap={0}
+                                  strokeLinejoin={0}
+                                  strokeMiterlimit={4}
+                                  strokeOpacity={1}
+                                  strokeWidth={1}
+                                  vectorEffect={0}
+                                  x={0}
+                                  y={0}
+                                >
+                                  <RNSVGRect
+                                    fill={
+                                      Array [
+                                        0,
+                                        4278190080,
+                                      ]
+                                    }
+                                    fillOpacity={1}
+                                    fillRule={1}
+                                    height={15}
+                                    matrix={
+                                      Array [
+                                        1,
+                                        0,
+                                        0,
+                                        1,
+                                        0,
+                                        0,
+                                      ]
+                                    }
+                                    opacity={1}
+                                    originX={0}
+                                    originY={0}
+                                    propList={Array []}
+                                    rotation={0}
+                                    rx={0}
+                                    ry={0}
+                                    scaleX={1}
+                                    scaleY={1}
+                                    skewX={0}
+                                    skewY={0}
+                                    stroke={null}
+                                    strokeDasharray={null}
+                                    strokeDashoffset={null}
+                                    strokeLinecap={0}
+                                    strokeLinejoin={0}
+                                    strokeMiterlimit={4}
+                                    strokeOpacity={1}
+                                    strokeWidth={1}
+                                    vectorEffect={0}
+                                    width={15}
+                                    x={0}
+                                    y={0}
+                                  />
+                                </RNSVGClipPath>
+                                <RNSVGClipPath
+                                  fill={
+                                    Array [
+                                      0,
+                                      4278190080,
+                                    ]
+                                  }
+                                  fillOpacity={1}
+                                  fillRule={1}
+                                  matrix={
+                                    Array [
+                                      1,
+                                      0,
+                                      0,
+                                      1,
+                                      0,
+                                      0,
+                                    ]
+                                  }
+                                  name="clip-logo"
+                                  opacity={1}
+                                  originX={0}
+                                  originY={0}
+                                  propList={Array []}
+                                  rotation={0}
+                                  scaleX={1}
+                                  scaleY={1}
+                                  skewX={0}
+                                  skewY={0}
+                                  stroke={null}
+                                  strokeDasharray={null}
+                                  strokeDashoffset={null}
+                                  strokeLinecap={0}
+                                  strokeLinejoin={0}
+                                  strokeMiterlimit={4}
+                                  strokeOpacity={1}
+                                  strokeWidth={1}
+                                  vectorEffect={0}
+                                  x={0}
+                                  y={0}
+                                >
+                                  <RNSVGRect
+                                    fill={
+                                      Array [
+                                        0,
+                                        4278190080,
+                                      ]
+                                    }
+                                    fillOpacity={1}
+                                    fillRule={1}
+                                    height={12.5}
+                                    matrix={
+                                      Array [
+                                        1,
+                                        0,
+                                        0,
+                                        1,
+                                        0,
+                                        0,
+                                      ]
+                                    }
+                                    opacity={1}
+                                    originX={0}
+                                    originY={0}
+                                    propList={Array []}
+                                    rotation={0}
+                                    rx={0}
+                                    ry={0}
+                                    scaleX={1}
+                                    scaleY={1}
+                                    skewX={0}
+                                    skewY={0}
+                                    stroke={null}
+                                    strokeDasharray={null}
+                                    strokeDashoffset={null}
+                                    strokeLinecap={0}
+                                    strokeLinejoin={0}
+                                    strokeMiterlimit={4}
+                                    strokeOpacity={1}
+                                    strokeWidth={1}
+                                    vectorEffect={0}
+                                    width={12.5}
+                                    x={0}
+                                    y={0}
+                                  />
+                                </RNSVGClipPath>
+                                <RNSVGLinearGradient
+                                  gradient={
+                                    Array [
+                                      0,
+                                      -65536,
+                                      1,
+                                      -16711681,
+                                    ]
+                                  }
+                                  gradientTransform={
+                                    Array [
+                                      1,
+                                      0,
+                                      0,
+                                      1,
+                                      0,
+                                      0,
+                                    ]
+                                  }
+                                  gradientUnits={0}
+                                  name="grad"
+                                  x1="0%"
+                                  x2="100%"
+                                  y1="0%"
+                                  y2="100%"
+                                />
+                              </RNSVGDefs>
+                              <RNSVGPath
+                                d="M0 2 L28 2 M52 2 L68 2 M72 2 L100 2 M0 6 L4 6 M24 6 L28 6 M32 6 L36 6 M44 6 L48 6 M56 6 L68 6 M72 6 L76 6 M96 6 L100 6 M0 10 L4 10 M8 10 L20 10 M24 10 L28 10 M44 10 L52 10 M56 10 L60 10 M72 10 L76 10 M80 10 L92 10 M96 10 L100 10 M0 14 L4 14 M8 14 L20 14 M24 14 L28 14 M40 14 L48 14 M52 14 L56 14 M60 14 L64 14 M72 14 L76 14 M80 14 L92 14 M96 14 L100 14 M0 18 L4 18 M8 18 L20 18 M24 18 L28 18 M32 18 L36 18 M40 18 L64 18 M72 18 L76 18 M80 18 L92 18 M96 18 L100 18 M0 22 L4 22 M24 22 L28 22 M36 22 L44 22 M48 22 L52 22 M56 22 L64 22 M72 22 L76 22 M96 22 L100 22 M0 26 L28 26 M32 26 L36 26 M40 26 L44 26 M48 26 L52 26 M56 26 L60 26 M64 26 L68 26 M72 26 L100 26 M36 30 L48 30 M60 30 L68 30 M0 34 L4 34 M8 34 L12 34 M16 34 L20 34 M24 34 L28 34 M44 34 L48 34 M64 34 L68 34 M80 34 L84 34 M92 34 L96 34 M4 38 L12 38 M32 38 L56 38 M64 38 L80 38 M84 38 L100 38 M0 42 L8 42 M12 42 L16 42 M24 42 L36 42 M40 42 L44 42 M56 42 L60 42 M72 42 L100 42 M0 46 L4 46 M8 46 L16 46 M28 46 L36 46 M40 46 L44 46 M52 46 L60 46 M64 46 L72 46 M76 46 L80 46 M92 46 L96 46 M8 50 L16 50 M20 50 L32 50 M40 50 L48 50 M56 50 L76 50 M84 50 L88 50 M4 54 L20 54 M28 54 L32 54 M44 54 L48 54 M56 54 L60 54 M64 54 L68 54 M84 54 L88 54 M92 54 L100 54 M0 58 L4 58 M8 58 L16 58 M24 58 L28 58 M32 58 L44 58 M52 58 L56 58 M72 58 L76 58 M80 58 L88 58 M92 58 L100 58 M4 62 L8 62 M16 62 L24 62 M44 62 L48 62 M76 62 L80 62 M84 62 L88 62 M92 62 L96 62 M0 66 L4 66 M8 66 L40 66 M48 66 L52 66 M64 66 L84 66 M92 66 L100 66 M32 70 L36 70 M44 70 L56 70 M60 70 L68 70 M80 70 L88 70 M0 74 L28 74 M44 74 L52 74 M56 74 L60 74 M64 74 L68 74 M72 74 L76 74 M80 74 L84 74 M88 74 L100 74 M0 78 L4 78 M24 78 L28 78 M40 78 L44 78 M48 78 L60 78 M64 78 L68 78 M80 78 L84 78 M92 78 L100 78 M0 82 L4 82 M8 82 L20 82 M24 82 L28 82 M32 82 L36 82 M40 82 L48 82 M56 82 L60 82 M64 82 L84 82 M96 82 L100 82 M0 86 L4 86 M8 86 L20 86 M24 86 L28 86 M36 86 L40 86 M44 86 L48 86 M56 86 L64 86 M76 86 L92 86 M0 90 L4 90 M8 90 L20 90 M24 90 L28 90 M32 90 L40 90 M52 90 L56 90 M64 90 L76 90 M80 90 L92 90 M96 90 L100 90 M0 94 L4 94 M24 94 L28 94 M36 94 L48 94 M60 94 L72 94 M80 94 L84 94 M92 94 L96 94 M0 98 L28 98 M32 98 L36 98 M40 98 L44 98 M48 98 L52 98 M64 98 L68 98 M80 98 L88 98 M92 98 L100 98 "
+                                fill={
+                                  Array [
+                                    0,
+                                    4278190080,
+                                  ]
+                                }
+                                fillOpacity={1}
+                                fillRule={1}
+                                matrix={
+                                  Array [
+                                    1,
+                                    0,
+                                    0,
+                                    1,
+                                    0,
+                                    0,
+                                  ]
+                                }
+                                opacity={1}
+                                originX={0}
+                                originY={0}
+                                propList={
+                                  Array [
+                                    "stroke",
+                                    "strokeWidth",
+                                  ]
+                                }
+                                rotation={0}
+                                scaleX={1}
+                                scaleY={1}
+                                skewX={0}
+                                skewY={0}
+                                stroke={
+                                  Array [
+                                    0,
+                                    4278850599,
+                                  ]
+                                }
+                                strokeDasharray={null}
+                                strokeDashoffset={null}
+                                strokeLinecap={0}
+                                strokeLinejoin={0}
+                                strokeMiterlimit={4}
+                                strokeOpacity={1}
+                                strokeWidth={4}
+                                vectorEffect={0}
+                                x={0}
+                                y={0}
+                              />
+                            </RNSVGGroup>
+                          </RNSVGSvgView>
                         </RNSVGGroup>
                       </RNSVGSvgView>
                     </View>
@@ -1906,7 +2152,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                   >
                     <View
                       accessible={true}
+                      focusable={true}
                       isTVSelectable={true}
+                      onClick={[Function]}
                       onResponderGrant={[Function]}
                       onResponderMove={[Function]}
                       onResponderRelease={[Function]}
@@ -2013,7 +2261,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                     </View>
                     <View
                       accessible={true}
+                      focusable={true}
                       isTVSelectable={true}
+                      onClick={[Function]}
                       onResponderGrant={[Function]}
                       onResponderMove={[Function]}
                       onResponderRelease={[Function]}
@@ -2144,7 +2394,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                     }
                   >
                     <Image
-                      source={1}
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/visa.png",
+                        }
+                      }
                     />
                     <View
                       style={
@@ -2157,7 +2411,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                       }
                     />
                     <Image
-                      source={1}
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/mastercard.png",
+                        }
+                      }
                     />
                   </View>
                 </View>
@@ -2311,7 +2569,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -2366,7 +2626,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2384,7 +2646,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -2467,6 +2731,8 @@ exports[`Asset renders the Asset correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -2555,6 +2821,8 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2701,7 +2969,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                         >
                           <View
                             accessible={true}
+                            focusable={true}
                             isTVSelectable={true}
+                            onClick={[Function]}
                             onResponderGrant={[Function]}
                             onResponderMove={[Function]}
                             onResponderRelease={[Function]}
@@ -2934,7 +3204,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -2989,7 +3261,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -3007,7 +3281,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}

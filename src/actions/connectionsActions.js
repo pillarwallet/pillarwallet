@@ -40,7 +40,7 @@ import { TYPE_SENT, UPDATE_INVITATIONS, TYPE_RECEIVED } from 'constants/invitati
 import { uniqBy } from 'utils/common';
 
 // services
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 
 // models, types
 import type { ApiContact } from 'models/Contacts';

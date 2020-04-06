@@ -84,7 +84,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics, navigation } = this.props;
+    const { navigation } = this.props;
     const { lastAppState } = this.state;
 
     if (navigation.getParam('forcePin')) return;
@@ -94,13 +94,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
 
     if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {
-      if (useBiometrics) {
-        this.showBiometricLogin();
-      } else {
-        getKeychainDataObject().then(data => {
-          this.loginWithPrivateKey(data);
-        }).catch(this.requirePinLogin);
-      }
+      this.triggerAuthentication();
     }
     this.handleLocking(true);
   }
@@ -109,6 +103,17 @@ class PinCodeUnlock extends React.Component<Props, State> {
     removeAppStateChangeListener(this.handleAppStateChange);
     if (this.interval) {
       clearInterval(this.interval);
+    }
+  }
+
+  triggerAuthentication = () => {
+    const { useBiometrics } = this.props;
+    if (useBiometrics) {
+      this.showBiometricLogin();
+    } else {
+      getKeychainDataObject().then(data => {
+        this.loginWithPrivateKey(data);
+      }).catch(this.requirePinLogin);
     }
   }
 
@@ -127,14 +132,12 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handleAppStateChange = (nextAppState: string) => {
-    const { useBiometrics } = this.props;
     const { lastAppState } = this.state;
     if (nextAppState === ACTIVE_APP_STATE
       && lastAppState === BACKGROUND_APP_STATE
-      && useBiometrics
       && !this.errorMessage
     ) {
-      this.showBiometricLogin();
+      this.triggerAuthentication();
     }
     this.setState({ lastAppState: nextAppState });
   };

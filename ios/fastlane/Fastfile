@@ -30,10 +30,10 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Release",
       scheme: "pillarwallet",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "BUNDLE_IDENTIFIER='com.pillarproject.wallet' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "app-store",
       export_options: {
-        provisioningProfiles: { 
+        provisioningProfiles: {
             MY_APP_ID => MY_PROFILE
         }
       },
@@ -89,10 +89,10 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Staging.Release",
       scheme: "Staging",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "xBUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "app-store",
       export_options: {
-        provisioningProfiles: { 
+        provisioningProfiles: {
             MY_APP_ID => MY_PROFILE
         }
       },
@@ -197,10 +197,10 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Staging.Release",
       scheme: "Staging",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "ad-hoc",
       export_options: {
-        provisioningProfiles: { 
+        provisioningProfiles: {
             MY_APP_ID => MY_PROFILE
         }
       },

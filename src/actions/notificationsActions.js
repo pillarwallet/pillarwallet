@@ -17,15 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
-import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
-import { Sentry } from 'react-native-sentry';
+import { Notifications } from 'react-native-notifications';
 
 // actions
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
@@ -80,13 +78,16 @@ import Storage from 'services/storage';
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
+import { firebaseMessaging } from 'services/firebase';
 
 // utils
-import { processNotification } from 'utils/notifications';
+import { processNotification, resetAppNotificationsBadgeNumber } from 'utils/notifications';
+import { reportLog } from 'utils/common';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+
 
 const storage = Storage.getInstance('db');
 
@@ -175,7 +176,7 @@ export const subscribeToSocketEventsAction = () => {
         data = JSON.parse(response.data.msg);
       } catch (error) {
         // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
-        Sentry.captureMessage('Platform WebSocket notification parse failed', { extra: { response, error } });
+        reportLog('Platform WebSocket notification parse failed', { response, error });
         return; // unable to parse data, do not proceed
       }
 
@@ -236,11 +237,11 @@ export const subscribeToPushNotificationsAction = () => {
       contacts: { data: contacts },
     } = getState();
 
-    const firebaseNotificationsEnabled = await firebase.messaging().hasPermission();
+    const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
     if (!firebaseNotificationsEnabled) {
       try {
-        await firebase.messaging().requestPermission();
-        await firebase.messaging().getToken();
+        await firebaseMessaging.requestPermission();
+        await firebaseMessaging.getToken();
         dispatch(fetchAllNotificationsAction());
         disabledPushNotificationsListener = setInterval(() => {
           dispatch(fetchAllNotificationsAction());
@@ -252,10 +253,10 @@ export const subscribeToPushNotificationsAction = () => {
     }
 
     if (notificationsListener) return;
-    notificationsListener = firebase.notifications().onNotification(debounce(message => {
-      if (isEmpty(message._data)) return;
-      if (checkForSupportAlert(message._data)) return;
-      const notification = processNotification(message._data, wallet.address.toUpperCase());
+    notificationsListener = firebaseMessaging.onMessage(debounce(message => {
+      const messageData = get(message, 'data');
+      if (isEmpty(messageData) || checkForSupportAlert(messageData)) return;
+      const notification = processNotification(messageData, wallet.address.toUpperCase());
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
@@ -326,10 +327,15 @@ export const stopListeningNotificationsAction = () => {
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Dispatch) => {
     await SOCKET.init();
-    const notificationOpen = await firebase.notifications().getInitialNotification();
-    if (notificationOpen) {
-      checkForSupportAlert(notificationOpen.notification._data);
-      const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
+    /*
+    * TODO: Android initial notification and onOpened event are not working
+    * seems like native lifecycle onIntent event is not fired
+    * this can be linked to 0.59 version support and we should check after upgrade to latest
+    */
+    const initialNotification = await Notifications.getInitialNotification();
+    if (!isEmpty(initialNotification)) {
+      checkForSupportAlert(initialNotification.payload);
+      const { type, navigationParams } = processNotification(initialNotification.payload) || {};
       if (type === SIGNAL) {
         dispatch(getExistingChatsAction());
       }
@@ -338,16 +344,19 @@ export const startListeningOnOpenNotificationAction = () => {
         lastActiveScreen: notificationRoute,
         lastActiveScreenParams: navigationParams,
       });
-      firebase.notifications().setBadge(0);
+      resetAppNotificationsBadgeNumber();
     }
     if (notificationsOpenerListener) return;
-    notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
-      checkForSupportAlert(message.notification._data);
-      firebase.notifications().setBadge(0);
+    notificationsOpenerListener = (openedNotification, completion) => {
+      completion({ alert: true, sound: true, badge: false });
+      if (isEmpty(openedNotification)) return;
+      const { payload: openedNotificationPayload } = openedNotification;
+      checkForSupportAlert(openedNotificationPayload);
+      resetAppNotificationsBadgeNumber();
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
-      const { type, asset, navigationParams = {} } = processNotification(message.notification._data) || {};
+      const { type, asset, navigationParams = {} } = processNotification(openedNotificationPayload) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
@@ -385,15 +394,16 @@ export const startListeningOnOpenNotificationAction = () => {
         });
         navigate(navigateToAppAction);
       }
-    });
+    };
+    Notifications.events().registerNotificationOpened(notificationsOpenerListener);
   };
 };
 
 export const stopListeningOnOpenNotificationAction = () => {
   return () => {
     if (!notificationsOpenerListener) return;
-    notificationsOpenerListener();
     notificationsOpenerListener = null;
+    Notifications.events().registerNotificationOpened(null);
   };
 };
 

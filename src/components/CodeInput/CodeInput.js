@@ -101,7 +101,7 @@ export default class CodeInput extends React.Component<Props, State> {
     codeLength: 1,
   };
 
-  input = React.createRef();
+  input: any = React.createRef();
 
   state = {
     value: '',

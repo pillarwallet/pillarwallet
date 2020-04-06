@@ -26,6 +26,8 @@ exports[`Storyshots ActionModal default 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -114,6 +116,8 @@ exports[`Storyshots ActionModal default 1`] = `
       >
         <View
           accessible={true}
+          focusable={true}
+          onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
           onResponderRelease={[Function]}
@@ -244,7 +248,9 @@ exports[`Storyshots ActionModal default 1`] = `
                     >
                       <View
                         accessible={true}
+                        focusable={true}
                         isTVSelectable={true}
+                        onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
                         onResponderRelease={[Function]}
@@ -311,7 +317,9 @@ exports[`Storyshots ActionModal default 1`] = `
                     >
                       <View
                         accessible={true}
+                        focusable={true}
                         isTVSelectable={true}
+                        onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
                         onResponderRelease={[Function]}
@@ -513,7 +521,9 @@ exports[`Storyshots ActionModal default 1`] = `
             </View>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -568,7 +578,9 @@ exports[`Storyshots ActionModal default 1`] = `
       >
         <View
           accessible={true}
+          focusable={true}
           isTVSelectable={true}
+          onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
           onResponderRelease={[Function]}
@@ -586,7 +598,9 @@ exports[`Storyshots ActionModal default 1`] = `
         >
           <View
             accessible={true}
+            focusable={false}
             isTVSelectable={true}
+            onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}
@@ -660,7 +674,9 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -925,7 +941,9 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -960,7 +978,9 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -1202,7 +1222,9 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -1237,7 +1259,9 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -1479,7 +1503,9 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -1745,7 +1771,9 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -2011,7 +2039,9 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -2046,7 +2076,9 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -2252,7 +2284,9 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -2287,7 +2321,9 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -2498,7 +2534,9 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -2533,7 +2571,9 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -2721,7 +2761,9 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
             >
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -2765,7 +2807,9 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
               </View>
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -2830,7 +2874,9 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -3033,7 +3079,9 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
 >
   <View
     accessible={true}
+    focusable={false}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -3244,7 +3292,9 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
 >
   <View
     accessible={true}
+    focusable={false}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -3455,7 +3505,9 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -3738,7 +3790,9 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -3773,7 +3827,9 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -4015,7 +4071,9 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -4312,7 +4370,9 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -4595,7 +4655,9 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -4630,7 +4692,9 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -4872,7 +4936,9 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -5169,7 +5235,9 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
 >
   <View
     accessible={true}
+    focusable={false}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -5447,7 +5515,9 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -5696,7 +5766,9 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -5945,7 +6017,9 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -6195,7 +6269,9 @@ Array [
   >
     <View
       accessible={true}
+      focusable={true}
       isTVSelectable={true}
+      onClick={[Function]}
       onResponderGrant={[Function]}
       onResponderMove={[Function]}
       onResponderRelease={[Function]}
@@ -6464,7 +6540,9 @@ Array [
   >
     <View
       accessible={true}
+      focusable={true}
       isTVSelectable={true}
+      onClick={[Function]}
       onResponderGrant={[Function]}
       onResponderMove={[Function]}
       onResponderRelease={[Function]}
@@ -6716,7 +6794,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
 >
   <View
     accessible={true}
+    focusable={false}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -6994,7 +7074,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -7277,7 +7359,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -7312,7 +7396,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -7554,7 +7640,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -7851,7 +7939,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -8134,7 +8224,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -8169,7 +8261,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -8411,7 +8505,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -8708,7 +8804,9 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -8743,7 +8841,9 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -8941,7 +9041,9 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
 >
   <View
     accessible={true}
+    focusable={true}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -8976,7 +9078,9 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
     >
       <View
         accessible={true}
+        focusable={false}
         isTVSelectable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -9174,7 +9278,9 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
 >
   <View
     accessible={true}
+    focusable={false}
     isTVSelectable={true}
+    onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -9423,6 +9529,8 @@ exports[`Storyshots InsightWithButton with list 1`] = `
       <View
         accessible={true}
         borderRadius={30}
+        focusable={false}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -9615,7 +9723,9 @@ exports[`Storyshots InsightWithButton with list 1`] = `
             </View>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -9796,6 +9906,8 @@ exports[`Storyshots InsightWithButton without list 1`] = `
       <View
         accessible={true}
         borderRadius={30}
+        focusable={false}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -9859,7 +9971,9 @@ exports[`Storyshots InsightWithButton without list 1`] = `
             </Text>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -10014,6 +10128,8 @@ Array [
       <View
         accessible={true}
         borderRadius={30}
+        focusable={false}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -10077,7 +10193,9 @@ Array [
             </Text>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -10228,6 +10346,8 @@ Array [
   >
     <View
       accessible={true}
+      focusable={true}
+      onClick={[Function]}
       onResponderGrant={[Function]}
       onResponderMove={[Function]}
       onResponderRelease={[Function]}
@@ -10316,6 +10436,8 @@ Array [
         >
           <View
             accessible={true}
+            focusable={true}
+            onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}
@@ -10511,7 +10633,9 @@ Array [
                     >
                       <View
                         accessible={true}
+                        focusable={true}
                         isTVSelectable={true}
+                        onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
                         onResponderRelease={[Function]}
@@ -10528,6 +10652,7 @@ Array [
                           align="xMidYMid"
                           bbHeight={21}
                           bbWidth={20}
+                          focusable={false}
                           height={21}
                           meetOrSlice={0}
                           minX={0}
@@ -10539,7 +10664,9 @@ Array [
                                 "borderWidth": 0,
                               },
                               undefined,
-                              null,
+                              Object {
+                                "opacity": 1,
+                              },
                               Object {
                                 "flex": 0,
                                 "height": 21,
@@ -10776,7 +10903,9 @@ Array [
                     >
                       <View
                         accessible={true}
+                        focusable={true}
                         isTVSelectable={true}
+                        onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
                         onResponderRelease={[Function]}
@@ -10793,6 +10922,7 @@ Array [
                           align="xMidYMid"
                           bbHeight={21}
                           bbWidth={20}
+                          focusable={false}
                           height={21}
                           meetOrSlice={0}
                           minX={0}
@@ -10804,7 +10934,9 @@ Array [
                                 "borderWidth": 0,
                               },
                               undefined,
-                              null,
+                              Object {
+                                "opacity": 1,
+                              },
                               Object {
                                 "flex": 0,
                                 "height": 21,
@@ -11026,7 +11158,9 @@ Array [
                   />
                   <View
                     accessible={true}
+                    focusable={true}
                     isTVSelectable={true}
+                    onClick={[Function]}
                     onResponderGrant={[Function]}
                     onResponderMove={[Function]}
                     onResponderRelease={[Function]}
@@ -11326,7 +11460,9 @@ Array [
               </View>
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -11381,7 +11517,9 @@ Array [
         >
           <View
             accessible={true}
+            focusable={true}
             isTVSelectable={true}
+            onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}
@@ -11399,7 +11537,9 @@ Array [
           >
             <View
               accessible={true}
+              focusable={false}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}

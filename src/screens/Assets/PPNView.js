@@ -351,11 +351,14 @@ class PPNView extends React.Component<Props, State> {
             color={colors.text}
             bordered
           />}
+          {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
             tabs={historyTabs}
             wrapperStyle={{ paddingTop: 16 }}
             activeTab={activeTab}
           />
+          }
+          {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <ActivityFeed
             navigation={navigation}
             tabs={historyTabs}
@@ -365,6 +368,7 @@ class PPNView extends React.Component<Props, State> {
             wrapperStyle={{ flexGrow: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
           />
+          }
         </ScrollView>
         {showSettleButton &&
           <FloatingButtonView>

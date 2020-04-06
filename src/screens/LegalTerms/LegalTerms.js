@@ -180,7 +180,7 @@ class LegalTerms extends React.Component<Props, State> {
               <TextLink
                 onPress={() => { this.setState({ visibleModal: BACKUP_PHRASE_MODAL }); }}
               >
-                 backup phrase
+                backup phrase
               </TextLink>
             </CheckboxText>
           </Checkbox>
@@ -195,7 +195,7 @@ class LegalTerms extends React.Component<Props, State> {
               <TextLink
                 onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
               >
-                 Terms of Use
+                Terms of Use
               </TextLink>
             </CheckboxText>
           </Checkbox>

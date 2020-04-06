@@ -20,7 +20,6 @@
 import { ethers } from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
-import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
@@ -68,6 +67,7 @@ import { setKeychainDataObject } from 'utils/keychain';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import { firebaseMessaging } from 'services/firebase';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
@@ -104,10 +104,12 @@ const getTokenWalletAndRegister = async (
   user: Object,
   dispatch: Dispatch,
 ) => {
-  await firebase.messaging().requestPermission().catch(() => { });
-  const fcmToken = await firebase.messaging().getToken().catch(() => { });
+  // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
+  await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
+  await firebaseMessaging.requestPermission().catch(() => {});
+  const fcmToken = await firebaseMessaging.getToken().catch(() => null);
 
-  await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+  if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
   const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
