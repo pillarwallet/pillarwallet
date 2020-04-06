@@ -1,9 +1,9 @@
 {
-    "flow.useNPMPackagedFlow": true,
-    "typescript.validate.enable": false,
-    "javascript.validate.enable": false,
-    "files.associations": {
-      "*.js" : "javascriptreact"
-    },
-    "eslint.enable": true
-  }
+  "flow.useNPMPackagedFlow": true,
+  "typescript.validate.enable": false,
+  "javascript.validate.enable": false,
+  "files.associations": {
+    "*.js" : "javascriptreact"
+  },
+  "eslint.enable": true
+}

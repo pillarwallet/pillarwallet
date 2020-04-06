@@ -212,7 +212,7 @@ export default class Tabs extends React.PureComponent<Props> {
     return null;
   };
 
-  renderTabItems = (tabs: Tab[]) => {
+  renderTabItems = (tabs: Tab[]): TabItem[] => {
     const { activeTab } = this.props;
 
     const tabItems = tabs.map(tab => {

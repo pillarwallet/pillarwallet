@@ -17,8 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Platform } from 'react-native';
 import { utils } from 'ethers';
-import { Sentry } from 'react-native-sentry';
+import { Notifications } from 'react-native-notifications';
+import isEmpty from 'lodash.isempty';
+// $FlowFixMe – throws "react-native-android-badge" not found
+import BadgeAndroid from 'react-native-android-badge';
 
 // constants
 import {
@@ -33,8 +37,12 @@ import {
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
+
+// utils
+import { reportLog } from 'utils/common';
+
+// models
 import type { ApiNotification } from 'models/Notification';
-import isEmpty from 'lodash.isempty';
 
 
 const parseNotification = (notificationBody: string): ?Object => {
@@ -51,7 +59,7 @@ const validBcxTransaction = (transaction: ?Object): boolean => {
   if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
   if (!transaction.status || !transaction.asset) return false;
   if (transaction.value === undefined) {
-    Sentry.captureMessage('Wrong BCX tx notification received', { extra: { transaction } });
+    reportLog('Wrong BCX tx notification received', { transaction });
     return false;
   }
   return true;
@@ -208,3 +216,11 @@ export const mapInviteNotifications = (notifications: ApiNotification[]): Object
   .filter(({ createdAt, ...rest }) => !isEmpty(rest)) // filter if notification empty after parsing
   .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
   .sort((a, b) => b.createdAt - a.createdAt);
+
+export const resetAppNotificationsBadgeNumber = () => {
+  if (Platform.OS === 'ios') {
+    Notifications.ios.setBadgeCount(0);
+    return;
+  }
+  BadgeAndroid.setBadge(0);
+};

@@ -28,7 +28,7 @@ import { updateConnectionsAction } from 'actions/connectionsActions';
 
 const walletId = 'walletId';
 
-const contactsMock = [
+const mockContacts = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -39,7 +39,7 @@ const contactsMock = [
   },
 ];
 
-const invitationsMock = [
+const mockInvitations = [
   {
     id: 4,
     username: 'user4',
@@ -49,7 +49,7 @@ const invitationsMock = [
   },
 ];
 
-const getContactsResponseMock = [
+const mockGetContactsResponse = [
   {
     userId: 1,
     targetUserId: 2,
@@ -137,7 +137,7 @@ const getContactsResponseMock = [
   },
 ];
 
-const contactsResultMock = [
+const mockContactsResult = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -185,7 +185,7 @@ const contactsResultMock = [
   },
 ];
 
-const invitationsResultMock = [
+const mockInvitationsResult = [
   {
     id: 4,
     username: 'user4',
@@ -196,13 +196,12 @@ const invitationsResultMock = [
   },
 ];
 
-type SDK = {
-  getContacts: Function,
-};
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  getContacts: jest.fn(() => [...mockGetContactsResponse]),
+})));
 
-const pillarSdk: SDK = new PillarSdk();
+const pillarSdk = new PillarSdk();
 
-pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('Connections Actions tests', () => {
@@ -211,10 +210,10 @@ describe('Connections Actions tests', () => {
   beforeEach(() => {
     const storeMock = {
       contacts: {
-        data: [...contactsMock],
+        data: [...mockContacts],
       },
       invitations: {
-        data: [...invitationsMock],
+        data: [...mockInvitations],
       },
       session: { data: { isOnline: true } },
       user: {
@@ -231,8 +230,8 @@ describe('Connections Actions tests', () => {
 
   it('Should expect processed contacts and invitations by the getContacts result from api', () => {
     const expectedActions = [
-      { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
+      { type: UPDATE_CONTACTS, payload: mockContactsResult },
     ];
     return store.dispatch(updateConnectionsAction())
       .then(() => {

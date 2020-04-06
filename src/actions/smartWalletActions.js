@@ -23,7 +23,6 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
-import { Sentry } from 'react-native-sentry';
 import { BigNumber } from 'bignumber.js';
 
 // components
@@ -148,6 +147,8 @@ import {
   formatUnits,
   isCaseInsensitiveMatch,
   parseTokenAmount,
+  printLog,
+  reportLog,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getWalletsCreationEventsAction } from './userEventsActions';
@@ -297,7 +298,7 @@ export const deploySmartWalletAction = () => {
       dispatch(setSmartWalletUpgradeStatusAction(
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
       ));
-      console.log('deploySmartWalletAction account is already deployed!');
+      printLog('deploySmartWalletAction account is already deployed!');
       return;
     }
 
@@ -474,7 +475,7 @@ export const checkAssetTransferTransactionsAction = () => {
         });
         return;
       }
-      console.log('sent new asset transfer transaction: ', transactionHash);
+      printLog('sent new asset transfer transaction: ', transactionHash);
       // $FlowFixMe
       const { signedTransaction: { signedHash } } = unsentTransaction;
       const assetTransferTransaction = {
@@ -698,10 +699,7 @@ export const syncVirtualAccountTransactionsAction = () => {
             additionalTransactionData = { extra: syntheticTransactionExtra };
           } else {
             // there shouldn't be any case where synthetic asset address is not supported by wallet
-            Sentry.captureMessage('Unable to get wallet supported asset from synthetic asset address', {
-              level: 'info',
-              extra: { syntheticAssetAddress },
-            });
+            reportLog('Unable to get wallet supported asset from synthetic asset address', { syntheticAssetAddress });
           }
 
           recipientAddress = syntheticRecipient;
@@ -765,7 +763,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
       if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
       if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
-      Sentry.captureMessage('Missing Smart Wallet SDK constant', { extra: { path } });
+      reportLog('Missing Smart Wallet SDK constant', { path });
     }
 
     // on wallet deployed
@@ -972,7 +970,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       });
     }
 
-    console.log(event);
+    printLog(event);
   };
 };
 

@@ -132,4 +132,5 @@ export type SmartWalletTransferTransaction = {
   value: Object,
   asset: string,
   status: string,
+  transactionHash?: string,
 };

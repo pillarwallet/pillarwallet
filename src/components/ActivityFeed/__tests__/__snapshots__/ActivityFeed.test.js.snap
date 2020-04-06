@@ -15,9 +15,9 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
 >
   <RCTScrollView
     ListEmptyComponent={
-      <Styled(View)>
+      <ActivityFeed__EmptyStateWrapper>
         <EmptyStateParagraph />
-      </Styled(View)>
+      </ActivityFeed__EmptyStateWrapper>
     }
     contentContainerStyle={
       Array [
@@ -150,7 +150,9 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         >
           <View
             accessible={true}
+            focusable={true}
             isTVSelectable={true}
+            onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}
@@ -448,9 +450,9 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
 >
   <RCTScrollView
     ListEmptyComponent={
-      <Styled(View)>
+      <ActivityFeed__EmptyStateWrapper>
         <EmptyStateParagraph />
-      </Styled(View)>
+      </ActivityFeed__EmptyStateWrapper>
     }
     contentContainerStyle={
       Array [
@@ -583,7 +585,9 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         >
           <View
             accessible={true}
+            focusable={true}
             isTVSelectable={true}
+            onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}

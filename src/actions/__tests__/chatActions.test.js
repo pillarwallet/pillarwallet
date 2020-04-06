@@ -35,8 +35,8 @@ describe('Chat Actions', () => {
   });
 
   afterEach(() => {
-    dispatchMock.mockClear();
-    getState.mockClear();
+    (dispatchMock: any).mockClear();
+    (getState: any).mockClear();
   });
 
   describe('sendMessageByContactAction()', () => {
@@ -50,7 +50,7 @@ describe('Chat Actions', () => {
           username: 'test-username',
           id: 'user-id',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           contacts: { data: [contact] },
           session: { data: { isOnline: true } },
           user: { data: { id: 'self-id' } },
@@ -69,7 +69,7 @@ describe('Chat Actions', () => {
 
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
-        getState.mockRestore();
+        (getState: any).mockRestore();
       });
 
       it('should call the chatService.client.sendMessageByContact function', () => {
@@ -107,7 +107,7 @@ describe('Chat Actions', () => {
           username: 'test-username',
           id: 'user-id',
         };
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           contacts: { data: [contact] },
           session: { data: { isOnline: true } },
           user: { data: { id: 'self-id' } },
@@ -121,7 +121,7 @@ describe('Chat Actions', () => {
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
         Toast.show.mockRestore();
-        getState.mockRestore();
+        (getState: any).mockRestore();
       });
 
       it('should call the Toast.show function', () => {
