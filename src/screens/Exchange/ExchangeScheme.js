@@ -26,6 +26,7 @@ import { AnimatedSVGPath } from 'react-native-svg-animations';
 
 // components
 import { MediumText } from 'components/Typography';
+import DynamicSizeImage from 'components/DynamicSizeImage';
 
 // utils
 import { fontSizes } from 'utils/variables';
@@ -172,7 +173,11 @@ class ExchangeScheme extends React.Component<Props, State> {
           </ValueText>
         </ValueWrapper>
         <LogoWrapper>
-          <ProviderIcon source={imageSource} resizeMode="contain" />
+          <DynamicSizeImage
+            imageSource={imageSource}
+            fallbackWidth={72}
+            fallbackHeight={50}
+          />
           {!!valueToWidth &&
           <ArrowHolder isLeft>
             <AnimatedSVGPath

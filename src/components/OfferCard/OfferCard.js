@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -27,6 +27,7 @@ import { CachedImage } from 'react-native-cached-image';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
+import DynamicSizeImage from 'components/DynamicSizeImage';
 
 // utils
 import { fontStyles } from 'utils/variables';
@@ -51,6 +52,13 @@ type Props = {
   additionalCardButton: ?ExternalButtonProps,
 };
 
+type LeftSideProps = {
+  label: string,
+  value: string | number,
+  buttonProps: ?ExternalButtonProps,
+  note?: string,
+}
+
 const CardWrapper = styled.TouchableOpacity`
   width: 100%;
 `;
@@ -59,13 +67,14 @@ const CardRow = styled.View`
   flex: 1;
   flex-direction: row;
   justify-content: space-between;
-  align-items: ${props => props.alignTop ? 'flex-start' : 'flex-end'};
+  align-items: ${props => props.alignTop ? 'flex-start' : 'center'};
   padding: 10px 0;
   ${({ withBorder, theme }) => withBorder
     ? `border-bottom-width: 1px;
        border-bottom-color: ${theme.colors.border};`
     : ''
-}
+  }
+  min-height: 68px;
 `;
 
 const CardInnerRow = styled.View`
@@ -83,26 +92,54 @@ const CardColumn = styled.View`
 `;
 
 const CardText = styled(BaseText)`
-  ${fontStyles.regular};
+  ${({ label }) => label ? fontStyles.regular : fontStyles.big};
   letter-spacing: 0.18px;
-  color: ${({ label, theme }) => label ? theme.colors.text : theme.colors.secondaryText};
+  color: ${({ label }) => label ? themedColors.secondaryText : themedColors.text};
   flex-wrap: wrap;
   width: 100%;
 `;
 
-const ProviderIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
-`;
-
 const CardNote = styled(BaseText)`
-  flex-direction: row;
-  align-items: center;
   padding: 4px 0;
-  margin-left: 10px;
   color: ${themedColors.primary};
   ${fontStyles.regular};
 `;
+
+const LeftSide = (props: LeftSideProps) => {
+  const {
+    label,
+    value,
+    buttonProps,
+    note,
+  } = props;
+
+
+  if (note) {
+    return (
+      <CardNote>{note}</CardNote>
+    )
+  }
+
+  if (buttonProps) {
+    return (
+      <Button
+        {...buttonProps}
+        small
+        positive
+        horizontalPaddings={8}
+      />
+    );
+  }
+
+  return (
+    <React.Fragment>
+      <CardText label>{label}</CardText>
+      <View style={{ flexDirection: 'row' }}>
+        <CardText>{value}</CardText>
+      </View>
+    </React.Fragment>
+  )
+};
 
 const OfferCard = (props: Props) => {
   const {
@@ -134,29 +171,23 @@ const OfferCard = (props: Props) => {
             <CardText>{valueTop}</CardText>
           </CardColumn>
           <CardInnerRow style={{ flexShrink: 1 }}>
-            {!!cardImageSource && <ProviderIcon source={cardImageSource} resizeMode="contain" />}
-            {!!cardNote && <CardNote>{cardNote}</CardNote>}
+            {!!cardImageSource &&
+            <DynamicSizeImage
+              imageSource={cardImageSource}
+              style={{ marginTop: 4 }}
+              fallbackWidth={130}
+              fallbackHeight={33}
+            />}
           </CardInnerRow>
         </CardRow>
-
         <CardRow>
           <CardColumn style={{ flex: 1 }}>
-            {!additionalCardButton
-              ? (
-                <React.Fragment>
-                  <CardText label>{labelBottom}</CardText>
-                  <View style={{ flexDirection: 'row' }}>
-                    <CardText>{valueBottom}</CardText>
-                  </View>
-                </React.Fragment>)
-              :
-                <Button
-                  {...additionalCardButton}
-                  small
-                  positive
-                  horizontalPaddings={8}
-                />
-            }
+            <LeftSide
+              label={labelBottom}
+              value={valueBottom}
+              buttonProps={additionalCardButton}
+              note={cardNote}
+            />
           </CardColumn>
           <CardColumn>
             <Button

@@ -18,9 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard, Image } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
@@ -70,7 +70,7 @@ import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from '
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
-import { themedColors } from 'utils/themes';
+import { getThemeName, themedColors } from 'utils/themes';
 import { satoshisToBtc } from 'utils/bitcoin';
 
 // selectors
@@ -85,6 +85,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
+import type { Theme } from 'models/Theme';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
@@ -167,6 +168,7 @@ type Props = {
   updateHasSeenExchangeIntro: () => void,
   btcAddresses: BitcoinAddress[],
   btcBalances: BitcoinBalance,
+  theme: Theme,
 };
 
 type State = {
@@ -355,7 +357,6 @@ function SelectorInputTemplate(locals) {
     selectorValue,
     label,
   };
-
 
   return (
     <TextInput
@@ -853,7 +854,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
-    const { exchangeAllowances, connectedProviders, providersMeta } = this.props;
+    const { exchangeAllowances, connectedProviders, providersMeta, theme } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
       _id: offerId,
@@ -886,7 +887,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
-    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider);
+    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider, theme, 'horizontal');
 
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
@@ -1369,4 +1370,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));
