@@ -76,7 +76,6 @@ type State = {
 }
 
 type NextScreenAssetData = {
-  ethAddress: string,
   token: string,
   contractAddress: string,
   decimals: number,
@@ -110,9 +109,14 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     activeTab: TOKENS,
   };
 
-  proceedSendingAsset(nextScreenAssetData: NextScreenAssetData) {
+  getReceiverAddress = () => {
+    const { navigation } = this.props;
+    const contact = navigation.getParam('contact', {});
+    return contact.ethAddress;
+  };
+
+  proceedSendingAsset = (nextScreenAssetData: NextScreenAssetData) => {
     const {
-      ethAddress,
       token,
       contractAddress,
       decimals,
@@ -128,26 +132,22 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
         icon,
         iconColor,
       },
-      receiver: ethAddress,
+      receiver: this.getReceiverAddress(),
       source: 'Assets',
     });
-  }
+  };
 
-  proceedSendingCollectible(assetData: NextScreenCollectibleData) {
-    const { navigation } = this.props;
-    const contact = navigation.getParam('contact', {});
-
+  proceedSendingCollectible = (assetData: NextScreenCollectibleData) => {
     this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
       assetData,
-      receiver: contact.ethAddress,
+      receiver: this.getReceiverAddress(),
       source: 'Assets',
       backTo: SEND_TOKEN_ASSETS,
     });
-  }
+  };
 
   renderAsset = ({ item }) => {
-    const { balances, navigation, paymentNetworkBalances } = this.props;
-    const contact = navigation.getParam('contact', {});
+    const { balances, paymentNetworkBalances } = this.props;
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const fullIconMonoUrl = `${SDK_PROVIDER}/${item.iconMonoUrl}?size=2`;
@@ -159,7 +159,6 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       token: item.symbol,
       contractAddress: item.address,
       decimals: item.decimals,
-      ethAddress: contact.ethAddress,
       icon: fullIconMonoUrl,
       iconColor: fullIconUrl,
     };

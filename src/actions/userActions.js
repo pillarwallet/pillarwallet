@@ -31,7 +31,7 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { logEventAction } from 'actions/analyticsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 
 const sendingOneTimePasswordAction = () => ({
@@ -53,29 +53,31 @@ export const resetOneTimePasswordAction = () => ({
 export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const response = await api.updateUser({ walletId, ...field });
-    const { responseStatus, ...user } = response;
+    const { responseStatus, message, ...user } = response;
 
-    if (responseStatus === 200) {
-      const updatedUser = { ...user, lastUpdateTime: +new Date() };
-
-      dispatch(saveDbAction('user', { user: updatedUser }, true));
-      dispatch({
-        type: UPDATE_USER,
-        payload: { user: updatedUser, state: REGISTERED },
-      });
-
-      dispatch(logEventAction('user_profile_updated'));
-      if (callback) callback();
-    } else {
+    if (responseStatus !== 200) {
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: 'Please try again later',
+          message: message || 'Please try again later',
           title: 'Changes have not been saved',
           messageType: 'warning',
         },
       });
+
+      return;
     }
+
+    const updatedUser = { ...user, lastUpdateTime: +new Date() };
+
+    dispatch(saveDbAction('user', { user: updatedUser }, true));
+    dispatch({
+      type: UPDATE_USER,
+      payload: { user: updatedUser, state: REGISTERED },
+    });
+
+    dispatch(logEventAction('user_profile_updated'));
+    if (callback) callback();
   };
 };
 

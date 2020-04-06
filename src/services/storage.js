@@ -19,7 +19,8 @@
 */
 import AsyncStorage from '@react-native-community/async-storage';
 import merge from 'lodash.merge';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
+import { printLog, reportLog } from 'utils/common';
 import PouchDBStorage from './pouchDBStorage';
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
@@ -51,16 +52,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
   const key = this.getKey(id);
 
   if (this.activeDocs[key]) {
-    const errorMessge = 'Race condition spotted';
-    const errorData = {
-      id,
-      data,
-      forceRewrite,
-    };
-    Sentry.captureMessage(errorMessge, { extra: errorData });
-    if (__DEV__) {
-      console.log(errorMessge, errorData); // eslint-disable-line
-    }
+    reportLog('Race condition spotted', { id, data, forceRewrite }, Sentry.Severity.Error);
   }
 
   this.activeDocs[key] = true;
@@ -71,14 +63,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
       this.activeDocs[key] = false;
     })
     .catch(err => {
-      Sentry.captureException({
-        id,
-        data,
-        err,
-      });
-      if (__DEV__) {
-        console.log(id, err); // eslint-disable-line
-      }
+      reportLog('AsyncStorage Exception', { id, data, err }, Sentry.Severity.Error);
       this.activeDocs[key] = false;
     });
 };
@@ -108,7 +93,7 @@ Storage.prototype.migrateFromPouchDB = async function () {
   if (storageSettings.pouchDBMigrated) return Promise.resolve();
 
   try {
-    console.log('Migrating data'); // eslint-disable-line
+    printLog('Migrating data');
     const pouchDBStorage = PouchDBStorage.getInstance('db');
     const pouchDocs = await pouchDBStorage.getAllDocs()
       .then(({ rows }) => rows.map(({ doc }) => doc));
@@ -130,13 +115,7 @@ Storage.prototype.migrateFromPouchDB = async function () {
       },
     }, true);
   } catch (e) {
-    Sentry.captureException({
-      text: 'DB migration to AsyncStorage failed',
-      e,
-    });
-    if (__DEV__) {
-      console.log(e); // eslint-disable-line
-    }
+    reportLog('DB migration to AsyncStorage failed', { error: e }, Sentry.Severity.Error);
   }
   return Promise.resolve();
 };

@@ -29,8 +29,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { BoldText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import { LabelBadge } from 'components/LabelBadge';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 
@@ -287,20 +286,13 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             />
           </ButtonWrapper>}
         </ScrollWrapper>
-        <SlideModal
-          isVisible={!!showPinScreenForAction}
-          onModalHide={this.handleCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <Wrapper flex={1}>
-            <CheckPin
-              onPinValid={this.goToPLRTank}
-            />
-          </Wrapper>
-        </SlideModal>
+        <CheckAuth
+          onPinValid={this.goToPLRTank}
+          modalProps={{
+            isVisible: !!showPinScreenForAction,
+            onModalHide: this.handleCheckPinModalClose,
+          }}
+        />
       </ContainerWithHeader>
     );
   }

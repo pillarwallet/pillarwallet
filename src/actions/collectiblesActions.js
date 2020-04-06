@@ -24,7 +24,7 @@ import {
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import type { Collectible } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';

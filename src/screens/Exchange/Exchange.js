@@ -19,9 +19,8 @@
 */
 import * as React from 'react';
 import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
@@ -37,7 +36,6 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SWActivationCard from 'components/SWActivationCard';
@@ -55,6 +53,7 @@ import {
   getMetaDataAction,
   getExchangeSupportedAssetsAction,
 } from 'actions/exchangeActions';
+import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { EXCHANGE_CONFIRM, EXCHANGE_INFO, FIAT_EXCHANGE } from 'constants/navigationConstants';
@@ -66,12 +65,12 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // utils, services
 import { wyreWidgetUrl } from 'services/sendwyre';
 import { fiatCurrencies, initialAssets } from 'fixtures/assets';
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 import { satoshisToBtc } from 'utils/bitcoin';
 
 // selectors
@@ -85,12 +84,12 @@ import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
-import { HotSwapsHorizontalList, HotSwapsGridList } from './HotSwapsList';
+import { HotSwapsHorizontalList } from './HotSwapsList';
+import ExchangeIntroModal from './ExchangeIntroModal';
 
 const ListHeader = styled.View`
   width: 100%;
@@ -110,26 +109,26 @@ const ESWrapper = styled.View`
   padding: 0 ${spacing.layoutSides}px;
 `;
 
-const PromoWrapper = styled.View`
-  width: 100%;
-  align-items: center;
-  padding: ${spacing.large}px ${spacing.layoutSides}px;
-  margin-bottom: 30px;
-`;
-
-const PromoText = styled(BaseText)`
-  ${fontStyles.medium};
-  color: ${themedColors.secondaryText};
-  text-align: center;
-`;
-
-const PopularSwapsGridWrapper = styled.View`
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.tertiary};
-  background-color: ${themedColors.card};
-  padding: ${spacing.large}px ${spacing.layoutSides}px 0;
-`;
+// const PromoWrapper = styled.View`
+//   width: 100%;
+//   align-items: center;
+//   padding: ${spacing.large}px ${spacing.layoutSides}px;
+//   margin-bottom: 30px;
+// `;
+//
+// const PromoText = styled(BaseText)`
+//   ${fontStyles.medium};
+//   color: ${themedColors.secondaryText};
+//   text-align: center;
+// `;
+//
+// const PopularSwapsGridWrapper = styled.View`
+//   border-top-width: 1px;
+//   border-bottom-width: 1px;
+//   border-color: ${themedColors.tertiary};
+//   background-color: ${themedColors.card};
+//   padding: ${spacing.large}px ${spacing.layoutSides}px 0;
+// `;
 
 const OfferCardWrapper = styled.View`
   padding: 0 ${spacing.layoutSides}px;
@@ -164,7 +163,8 @@ type Props = {
   fiatExchangeSupportedAssets: Asset[],
   getExchangeSupportedAssets: () => void,
   providersMeta: ProvidersMeta,
-  theme: Theme,
+  hasSeenExchangeIntro: boolean,
+  updateHasSeenExchangeIntro: () => void,
   btcAddresses: BitcoinAddress[],
   btcBalances: BitcoinBalance,
 };
@@ -1157,7 +1157,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       markNotificationAsSeen,
       accounts,
       smartWalletState,
-      theme,
+      hasSeenExchangeIntro,
+      updateHasSeenExchangeIntro,
     } = this.props;
 
     const {
@@ -1196,12 +1197,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isSelectedFiat = !isEmpty(selectedFromOption) &&
       fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
-    const colors = getThemeColors(theme);
-    const scrollContentStyle = {
-      backgroundColor: isSubmitted ? colors.surface : colors.card,
-      flex: 1,
-    };
-
     const flatListContentStyle = {
       width: '100%',
       paddingVertical: 10,
@@ -1220,18 +1215,18 @@ class ExchangeScreen extends React.Component<Props, State> {
           centerItems: [{ title: 'Exchange' }],
         }}
         inset={{ bottom: 'never' }}
-        footer={!blockView && !reorderedOffers.length && !isSubmitted && (
-          <PromoWrapper>
-            <PromoText>
-              Aggregated from many decentralized exchanges and token swap services
-            </PromoText>
-          </PromoWrapper>
-        )}
+        // footer={!blockView && !reorderedOffers.length && !isSubmitted && (
+        //   <PromoWrapper>
+        //     <PromoText>
+        //       Aggregated from many decentralized exchanges and token swap services
+        //     </PromoText>
+        //   </PromoWrapper>
+        // )}
       >
+        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
         {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
         <ScrollView
-          contentContainerStyle={scrollContentStyle}
           onScroll={() => Keyboard.dismiss()}
           keyboardShouldPersistTaps="handled"
           disableOnAndroid
@@ -1276,17 +1271,17 @@ class ExchangeScreen extends React.Component<Props, State> {
                   />
                 </ESWrapper>
               )}
-              ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }}
-              ListFooterComponent={
-                <PopularSwapsGridWrapper>
-                  <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
-                    <MediumText medium style={{ marginBottom: spacing.medium }}>
-                        Try these popular swaps
-                    </MediumText>
-                    <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
-                  </SafeAreaView>
-                </PopularSwapsGridWrapper>
-              }
+              // ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }}
+              // ListFooterComponent={
+              //   <PopularSwapsGridWrapper>
+              //     <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
+              //       <MediumText medium style={{ marginBottom: spacing.medium }}>
+              //           Try these popular swaps
+              //       </MediumText>
+              //       <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
+              //     </SafeAreaView>
+              //   </PopularSwapsGridWrapper>
+              // }
             />
           )}
         </ScrollView>}
@@ -1297,7 +1292,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   oAuthTokens: { data: { accessToken: oAuthAccessToken } },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, hasSeenExchangeIntro } },
   exchange: {
     data: {
       offers,
@@ -1339,6 +1334,7 @@ const mapStateToProps = ({
   providersMeta,
   exchangeSupportedAssets,
   fiatExchangeSupportedAssets,
+  hasSeenExchangeIntro,
   btcAddresses,
   btcBalances,
 });
@@ -1370,6 +1366,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
+  updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);

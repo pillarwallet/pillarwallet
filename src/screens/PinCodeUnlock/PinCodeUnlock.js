@@ -21,13 +21,11 @@ import * as React from 'react';
 import { AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
-import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
-import * as Keychain from 'react-native-keychain';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
-import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
+import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
@@ -35,17 +33,20 @@ import Loader from 'components/Loader';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
-import Toast from 'components/Toast';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getKeychainDataObject } from 'utils/keychain';
-import { getBiometryType } from 'utils/settings';
+import {
+  getKeychainDataObject,
+  getPrivateKeyFromKeychainData,
+  shouldUpdateKeychainObject,
+  type KeyChainData,
+} from 'utils/keychain';
 
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
 type Props = {
-  loginWithPin: (pin: string, callback: ?Function, updateKeychain: boolean) => void,
+  loginWithPin: (pin: string, callback: ?Function) => void,
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
@@ -55,9 +56,8 @@ type Props = {
 type State = {
   waitingTime: number,
   biometricsShown: boolean,
-  updateKeychain: boolean,
   lastAppState: string,
-  supportedBiometryType: string,
+  showPin: boolean,
 };
 
 class PinCodeUnlock extends React.Component<Props, State> {
@@ -67,9 +67,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
   state = {
     waitingTime: 0,
     biometricsShown: false,
-    updateKeychain: false,
     lastAppState: AppState.currentState,
-    supportedBiometryType: '',
+    showPin: false,
   };
 
   constructor(props) {
@@ -77,26 +76,25 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.errorMessage = navigation.getParam('errorMessage', '');
     this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
+
+    if (navigation.getParam('forcePin')) {
+      this.state.showPin = true;
+    }
   }
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics } = this.props;
+    const { navigation } = this.props;
     const { lastAppState } = this.state;
+
+    if (navigation.getParam('forcePin')) return;
 
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
 
-    if (useBiometrics
-      && !this.errorMessage
-      && lastAppState !== BACKGROUND_APP_STATE) {
-      Keychain.getSupportedBiometryType()
-        .then((biometryType) => {
-          this.setState({ supportedBiometryType: getBiometryType(biometryType) });
-          this.showBiometricLogin();
-        })
-        .catch(() => null);
+    if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {
+      this.triggerAuthentication();
     }
     this.handleLocking(true);
   }
@@ -108,29 +106,51 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
   }
 
-  handleAppStateChange = (nextAppState: string) => {
+  triggerAuthentication = () => {
     const { useBiometrics } = this.props;
+    if (useBiometrics) {
+      this.showBiometricLogin();
+    } else {
+      getKeychainDataObject().then(data => {
+        this.loginWithPrivateKey(data);
+      }).catch(this.requirePinLogin);
+    }
+  }
+
+  loginWithPrivateKey = (data: KeyChainData) => {
+    const { loginWithPrivateKey } = this.props;
+    // migrate older users
+    if (shouldUpdateKeychainObject(data)) {
+      this.requirePinLogin();
+      return;
+    }
+    const privateKey = getPrivateKeyFromKeychainData(data);
+    if (privateKey) {
+      removeAppStateChangeListener(this.handleAppStateChange);
+      loginWithPrivateKey(privateKey, this.onLoginSuccess);
+    }
+  };
+
+  handleAppStateChange = (nextAppState: string) => {
     const { lastAppState } = this.state;
     if (nextAppState === ACTIVE_APP_STATE
       && lastAppState === BACKGROUND_APP_STATE
-      && useBiometrics
-      && !this.errorMessage) {
-      this.showBiometricLogin();
+      && !this.errorMessage
+    ) {
+      this.triggerAuthentication();
     }
     this.setState({ lastAppState: nextAppState });
   };
 
+  requirePinLogin = () => {
+    this.setState({ showPin: true });
+  };
+
   showBiometricLogin() {
-    const { loginWithPrivateKey } = this.props;
-    const { biometricsShown, supportedBiometryType } = this.state;
+    const { biometricsShown } = this.state;
 
     if (biometricsShown) {
-      Toast.show({
-        message: 'Pin code is needed to finish setting up connections',
-        type: 'warning',
-        title: `${supportedBiometryType} could not be used`,
-        autoClose: false,
-      });
+      this.requirePinLogin();
       return;
     }
 
@@ -138,15 +158,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       getKeychainDataObject()
         .then(data => {
           this.setState({ biometricsShown: false });
-          if (!data || !Object.keys(data).length) {
-            this.setState({ updateKeychain: true });
-            return;
-          }
-          const privateKey = get(data, 'privateKey', null);
-          if (privateKey) {
-            removeAppStateChangeListener(this.handleAppStateChange);
-            loginWithPrivateKey(privateKey, this.onLoginSuccess);
-          }
+          this.loginWithPrivateKey(data);
         })
         .catch(() => this.setState({ biometricsShown: false }));
     });
@@ -188,8 +200,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handlePinSubmit = (pin: string) => {
     const { loginWithPin } = this.props;
-    const { updateKeychain } = this.state;
-    loginWithPin(pin, this.onLoginSuccess, updateKeychain);
+    loginWithPin(pin, this.onLoginSuccess);
     this.handleLocking(false);
   };
 
@@ -199,35 +210,38 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   render() {
     const { walletState } = this.props.wallet;
-    const { waitingTime } = this.state;
+    const { waitingTime, showPin } = this.state;
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
+    if (walletState === DECRYPTING) {
       return (
         <Container center>
           <Loader />
         </Container>
       );
     }
+    if (showPin) {
+      return (
+        <Container>
+          <Header centerTitle title="Enter pincode" />
+          {showError}
+          {waitingTime > 0 &&
+            <ErrorMessage>Too many attempts, please try again in {waitingTime.toFixed(0)} seconds.</ErrorMessage>
+          }
+          {waitingTime <= 0 &&
+            <PinCode
+              onPinEntered={this.handlePinSubmit}
+              pageInstructions=""
+              onForgotPin={this.handleForgotPasscode}
+              pinError={!!pinError}
+            />
+          }
+        </Container>
+      );
+    }
 
-    return (
-      <Container>
-        <Header centerTitle title="Enter pincode" />
-        {showError}
-        {waitingTime > 0 &&
-          <ErrorMessage>Too many attempts, please try again in {waitingTime.toFixed(0)} seconds.</ErrorMessage>
-        }
-        {waitingTime <= 0 &&
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            pageInstructions=""
-            onForgotPin={this.handleForgotPasscode}
-            pinError={!!pinError}
-          />
-        }
-      </Container>
-    );
+    return null;
   }
 }
 
@@ -240,8 +254,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loginWithPin: (pin: string, callback: ?Function, updateKeychain) => dispatch(
-    loginAction(pin, null, callback, updateKeychain),
+  loginWithPin: (pin: string, callback: ?Function) => dispatch(
+    loginAction(pin, null, callback),
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
 });

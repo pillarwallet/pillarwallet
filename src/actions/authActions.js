@@ -22,7 +22,6 @@ import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 
 // constants
@@ -61,13 +60,14 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
-import { setKeychainDataObject } from 'utils/keychain';
+import { setKeychainDataObject, resetKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
+import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -89,14 +89,13 @@ import { labelUserAsLegacyAction } from './userActions';
 import { updateConnectionsAction } from './connectionsActions';
 
 
-const Crashlytics = firebase.crashlytics();
-
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const fcmToken = await firebase.messaging().getToken().catch(() => null);
+    const fcmToken = await firebaseMessaging.getToken().catch(() => null);
+    if (!fcmToken) return;
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
     await api.updateFCMToken(walletId, fcmToken);
@@ -113,7 +112,6 @@ export const loginAction = (
   pin: ?string,
   privateKey: ?string,
   onLoginSuccess: ?Function,
-  updateKeychain?: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     let { accounts: { data: accounts } } = getState();
@@ -136,7 +134,10 @@ export const loginAction = (
 
       if (pin) {
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin);
+        wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
+        // no further code will be executed if pin is wrong
+        // migrate older users for keychain access
+        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' });
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -242,7 +243,7 @@ export const loginAction = (
       // re-fetch accounts as they might change at this point
       accounts = getState().accounts.data;
 
-      Crashlytics.setUserIdentifier(user.username);
+      firebaseCrashlytics.setUserId(user.username);
       dispatch({
         type: UPDATE_USER,
         payload: { user, state: userState },
@@ -261,11 +262,6 @@ export const loginAction = (
         },
       });
       dispatch(updatePinAttemptsAction(false));
-
-      // migrate older users for keychain access with biometrics
-      if (wallet.privateKey && updateKeychain) {
-        await setKeychainDataObject({ privateKey: wallet.privateKey });
-      }
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
@@ -334,7 +330,7 @@ export const checkAuthAction = (
   pin: ?string,
   privateKey: ?string,
   onValidPin?: Function,
-  options?: DecryptionSettings = defaultDecryptionSettings,
+  options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
   return async (dispatch: Dispatch) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -423,6 +419,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
         params: {
           onLoginSuccess,
           errorMessage,
+          forcePin: true,
         },
       }),
     }));
@@ -431,7 +428,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 
 export const resetAppState = async (dispatch: Dispatch, getState: GetState) => {
   Intercom.logout();
-  await firebase.iid().delete().catch(() => {});
+  await firebaseIid.delete().catch(() => {});
   await chat.client.resetAccount().catch(() => null);
   await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
   await storage.removeAll();
@@ -447,6 +444,7 @@ export const logoutAction = () => {
     await resetAppState(dispatch, getState);
     await dispatch({ type: LOG_OUT });
     await dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    await resetKeychainDataObject();
     if (themeType === DARK_THEME) await dispatch(setAppThemeAction(DARK_THEME)); // to persist dark theme after storage
     // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));

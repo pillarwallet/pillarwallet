@@ -59,25 +59,29 @@ import { WebSocket } from 'mock-socket';
 
 global.WebSocket = WebSocket;
 
-type SDK = {
-  registerOnAuthServer: Function,
-  fetchInitialAssets: Function,
-  updateUser: Function,
-  userInfo: Function,
-};
-
 const mockUser = { username: 'snow', walletId: 2 };
 
-const pillarSdk: SDK = new PillarSdk();
-pillarSdk.registerOnAuthServer = jest.fn(() => ({
-  userId: 1,
-  walletId: 2,
-  refreshToken: 'uniqueRefreshToken',
-  accessToken: 'uniqueAccessToken',
-}));
-pillarSdk.updateUser = jest.fn(() => mockUser);
-pillarSdk.userInfo = jest.fn(() => mockUser);
-pillarSdk.fetchInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
+const mockFetchInitialAssetsResponse = transformAssetsToObject(mockInitialAssets);
+
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  init: jest.fn(),
+  setUsername: jest.fn(),
+  fetchAccessTokens: jest.fn(),
+  fetchNotifications: jest.fn(),
+  listAccounts: jest.fn(),
+  registerOnAuthServer: jest.fn(() => ({
+    userId: 1,
+    walletId: 2,
+    refreshToken: 'uniqueRefreshToken',
+    accessToken: 'uniqueAccessToken',
+  })),
+  updateUser: jest.fn(() => mockUser),
+  userInfo: jest.fn(() => mockUser),
+  fetchInitialAssets: jest.fn(() => mockFetchInitialAssetsResponse),
+})));
+
+const pillarSdk = new PillarSdk();
+
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 const mockWallet: Object = {
@@ -156,7 +160,9 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
+      featureFlags: {
+        data: { SMART_WALLET_ENABLED: false, REFERRALS_ENABLED: false, BITCOIN_ENABLED: false },
+      },
       history: { data: {} },
       appSettings: {},
     });
@@ -193,7 +199,10 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
+      {
+        type: SET_FEATURE_FLAGS,
+        payload: { SMART_WALLET_ENABLED: false, REFERRALS_ENABLED: false, BITCOIN_ENABLED: false },
+      },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
@@ -216,7 +225,9 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: true, BITCOIN_ENABLED: false } },
+      featureFlags: {
+        data: { SMART_WALLET_ENABLED: true, REFERRALS_ENABLED: false, BITCOIN_ENABLED: false },
+      },
       smartWallet: { upgrade: { status: null } },
       assets: { data: {} },
       history: { data: {} },
@@ -255,7 +266,10 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
+      {
+        type: SET_FEATURE_FLAGS,
+        payload: { SMART_WALLET_ENABLED: false, REFERRALS_ENABLED: false, BITCOIN_ENABLED: false },
+      },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
@@ -292,7 +306,9 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: { data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
+      featureFlags: {
+        data: { SMART_WALLET_ENABLED: false, REFERRALS_ENABLED: false, BITCOIN_ENABLED: false },
+      },
       assets: { data: {} },
       history: { data: {} },
       appSettings: {},
@@ -329,7 +345,10 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: SET_FEATURE_FLAGS, payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false } },
+      {
+        type: SET_FEATURE_FLAGS,
+        payload: { SMART_WALLET_ENABLED: false, REFERRALS_ENABLED: false, BITCOIN_ENABLED: false },
+      },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 

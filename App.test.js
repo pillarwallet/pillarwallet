@@ -24,6 +24,6 @@ import App from './App';
 jest.useFakeTimers();
 
 it('renders without crashing', () => {
-  const rendered = renderer.create(<App isFetched />);
+  const rendered = renderer.create(<App />);
   expect(rendered.toJSON()).toBeTruthy();
 });

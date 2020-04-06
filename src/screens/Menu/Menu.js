@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { FlatList, Alert } from 'react-native';
+import { FlatList, Alert, View } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -36,8 +36,6 @@ import { ListCard } from 'components/ListItem/ListCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
-import SlideModal from 'components/Modals/SlideModal';
-import ReferralCodeModal from 'screens/Profile/ReferralCodeModal';
 
 import {
   SECURITY_SETTINGS,
@@ -47,27 +45,31 @@ import {
   ADD_EDIT_USER,
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
+  REFER_FLOW,
 } from 'constants/navigationConstants';
-import { logoutAction } from 'actions/authActions';
+import { lockScreenAction, logoutAction } from 'actions/authActions';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { BackupStatus } from 'reducers/walletReducer';
+import type { User } from 'models/User';
 
+import { toastReferral } from 'utils/toasts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
-  user: Object,
+  user: User,
   backupStatus: BackupStatus,
   logoutUser: () => void,
+  referralsFeatureEnabled: boolean,
+  lockScreen: () => void,
 };
 
 type State = {
   visibleModal: ?string,
 };
-
 
 const Footer = styled.View``;
 
@@ -85,6 +87,15 @@ const LogoutSection = styled.View`
   justify-content: center;
   align-items: center;
   padding: ${spacing.large}px;
+`;
+
+const LockScreenSection = styled.View`
+  border-top-color: ${themedColors.tertiary};
+  border-top-width: 1px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.mediumLarge}px;
 `;
 
 const HeaderLogo = styled(CachedImage)`
@@ -107,24 +118,40 @@ const LogoutTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
-const StyledEmoji = styled(Emoji)`
-  margin-right: 10px;
+const LockScreenTextLink = styled(TextLink)`
+  color: ${themedColors.orange};
+  ${fontStyles.regular};
 `;
-
 
 class Menu extends React.Component<Props, State> {
   state = {
     visibleModal: null,
   };
 
+  handleReferralItemPress = () => {
+    const { navigation, user } = this.props;
+    const { isEmailVerified, isPhoneVerified } = user;
+    if (isEmailVerified || isPhoneVerified) {
+      navigation.navigate(REFER_FLOW);
+    } else {
+      toastReferral(navigation);
+    }
+  };
+
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus,
+      theme, navigation, backupStatus, referralsFeatureEnabled,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-
-    return [
+    const referalItem = {
+      key: 'referFriends',
+      title: 'Refer friends',
+      icon: 'present',
+      iconColor: colors.accent,
+      action: this.handleReferralItemPress,
+    };
+    const menuItems = [
       {
         key: 'securitySettings',
         title: 'Security settings',
@@ -157,15 +184,6 @@ class Menu extends React.Component<Props, State> {
         card: true,
         action: () => navigation.navigate(APP_SETTINGS),
       },
-      /*
-      {
-        key: 'referFriends',
-        title: 'Refer friends',
-        icon: 'present',
-        iconColor: colors.accent,
-        action: () => this.toggleSlideModalOpen('referralCode'),
-      },
-      */
       {
         key: 'community',
         title: 'Community',
@@ -196,7 +214,12 @@ class Menu extends React.Component<Props, State> {
         hidden: !__DEV__,
       },
     ];
-  }
+
+    if (referralsFeatureEnabled) {
+      menuItems.splice(4, 0, referalItem);
+    }
+    return menuItems;
+  };
 
   renderMenuItem = ({ item }) => {
     const {
@@ -220,7 +243,7 @@ class Menu extends React.Component<Props, State> {
           title={title}
           action={action}
           labelBadge={labelBadge}
-          customIcon={<StyledEmoji name={emoji} />}
+          customIcon={<View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
         />
       );
     }
@@ -270,7 +293,7 @@ class Menu extends React.Component<Props, State> {
   render() {
     const items = this.getMenuItems();
     const { visibleModal } = this.state;
-    const { user, theme } = this.props;
+    const { theme, lockScreen } = this.props;
     const { pillarLogoSmall: logo } = images(theme);
 
     return (
@@ -287,13 +310,18 @@ class Menu extends React.Component<Props, State> {
             <Footer>
               <LinksSection>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('termsOfService')}>
-                 Terms of Use
+                  Terms of Use
                 </LegalTextLink>
                 <LegalTextLink>  •  </LegalTextLink>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('privacyPolicy')}>
-                 Privacy policy
+                  Privacy policy
                 </LegalTextLink>
               </LinksSection>
+              <LockScreenSection>
+                <LockScreenTextLink onPress={lockScreen}>
+                  Lock screen
+                </LockScreenTextLink>
+              </LockScreenSection>
               <LogoutSection>
                 <LogoutIcon name="signout" />
                 <LogoutTextLink onPress={this.deleteWallet}>
@@ -315,15 +343,6 @@ class Menu extends React.Component<Props, State> {
           modalHide={this.toggleSlideModalOpen}
           htmlEndpoint="privacy_policy"
         />
-
-        {/* REFERRAL */}
-        <SlideModal
-          isVisible={visibleModal === 'referralCode'}
-          title="Referral code"
-          onModalHide={this.toggleSlideModalOpen}
-        >
-          <ReferralCodeModal username={user.username} onModalClose={this.toggleSlideModalOpen} />
-        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -332,12 +351,17 @@ class Menu extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
+  featureFlags: {
+    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
+  },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
+  referralsFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
 });
 

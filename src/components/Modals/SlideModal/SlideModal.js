@@ -69,6 +69,7 @@ type Props = {
   noPadding?: boolean,
   headerLeftItems?: Object[],
   sideMargins?: number,
+  noTopPadding?: boolean
 };
 
 const themes = {
@@ -107,7 +108,7 @@ const getTheme = (props: Props) => {
 const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
-  ${props => props.fullScreen ? 'padding-top: 20px;' : ''}
+  ${props => props.fullScreen && !props.noTopPadding ? 'padding-top: 20px;' : ''}
   ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
 `;
 
@@ -209,6 +210,7 @@ class SlideModal extends React.Component<Props, *> {
       noPadding,
       headerLeftItems,
       sideMargins,
+      noTopPadding,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -306,8 +308,9 @@ class SlideModal extends React.Component<Props, *> {
           zIndex: 10,
         }}
       >
+        {!fullScreenComponent &&
         <Root>
-          <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor}>
+          <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
             {!fullScreen &&
               <Backdrop onPress={this.hideModal}>
                 <ContentWrapper />
@@ -315,8 +318,11 @@ class SlideModal extends React.Component<Props, *> {
             }
             {modalContent()}
           </ContentWrapper>
-        </Root>
-        {isVisible && fullScreenComponent}
+        </Root>}
+        {!!fullScreenComponent &&
+        <Root>
+          {fullScreenComponent}
+        </Root>}
       </Modal>
     );
   }

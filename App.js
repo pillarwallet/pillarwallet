@@ -20,17 +20,17 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
+import { StatusBar, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
-import RootNavigation from 'navigation/rootNavigation';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import styled from 'styled-components/native';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
-import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
+import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
+
+// actions
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
@@ -39,19 +39,35 @@ import {
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+
+// constants
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+
+// components
 import { Container } from 'components/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
+
+// utils
+import { getThemeByType, defaultTheme } from 'utils/themes';
+
+// services
+import { setTopLevelNavigator } from 'services/navigation';
+
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
-import { getThemeByType, defaultTheme } from 'utils/themes';
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import Storybook from 'screens/Storybook';
 
+// other
+import RootNavigation from 'navigation/rootNavigation';
+import Storybook from 'screens/Storybook';
 import configureStore from './src/configureStore';
+
+const { store, persistor } = configureStore();
 
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
@@ -59,62 +75,71 @@ export const LoadingSpinner = styled(Spinner)`
   justify-content: center;
 `;
 
-const { store, persistor } = configureStore();
-
 type Props = {
-  dispatch: Function,
-  navigation: Object,
+  dispatch: Dispatch,
   isFetched: boolean,
-  fetchAppSettingsAndRedirect: Function,
-  updateSessionNetworkStatus: Function,
-  updateOfflineQueueNetworkStatus: Function,
-  startListeningOnOpenNotification: Function,
-  stopListeningOnOpenNotification: Function,
-  executeDeepLink: Function,
+  fetchAppSettingsAndRedirect: (appState: string, platform: string) => void,
+  updateSessionNetworkStatus: (isOnline: boolean) => void,
+  updateOfflineQueueNetworkStatus: (isOnline: boolean) => void,
+  startListeningOnOpenNotification: () => void,
+  stopListeningOnOpenNotification: () => void,
+  executeDeepLink: (deepLinkUrl: string) => void,
   activeWalkthroughSteps: Steps,
   themeType: string,
+  startReferralsListener: () => void,
+  stopReferralsListener: () => void,
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
 }
 
 class App extends React.Component<Props, *> {
+  removeNetInfoEventListener: NetInfoSubscription;
+
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
-      Sentry.config(SENTRY_DSN).install();
-      Sentry.setTagsContext({
-        environment: BUILD_TYPE,
-      });
+      Sentry.init({ dsn: SENTRY_DSN });
+      Sentry.setTags({ environment: BUILD_TYPE });
     }
   }
 
-  componentWillMount() {
+  // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
   }
 
   componentWillUnmount() {
-    const { stopListeningOnOpenNotification } = this.props;
+    const { stopListeningOnOpenNotification, stopReferralsListener } = this.props;
+    stopReferralsListener();
     stopListeningOnOpenNotification();
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+    if (this.removeNetInfoEventListener) {
+      this.removeNetInfoEventListener();
+      delete this.removeNetInfoEventListener;
+    }
     Linking.removeEventListener('url', this.handleDeepLinkEvent);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       executeDeepLink,
+      startReferralsListener,
     } = this.props;
-    const isOnline = await NetInfo.isConnected.fetch();
-    this.setOnlineStatus(isOnline); // set initial online status
+    NetInfo.fetch()
+      .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
+      .catch(() => null);
+    this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
+    startReferralsListener();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');
     }
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+
     Linking.getInitialURL()
       .then(url => {
         if (url) executeDeepLink(url);
@@ -142,7 +167,8 @@ class App extends React.Component<Props, *> {
     updateOfflineQueueNetworkStatus(isOnline);
   };
 
-  handleConnectivityChange = isOnline => {
+  handleConnectivityChange = (state: NetInfoState) => {
+    const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
       Toast.show({
@@ -228,6 +254,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
+  startReferralsListener: () => dispatch(startReferralsListenerAction()),
+  stopReferralsListener: () => dispatch(stopReferralsListenerAction()),
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),

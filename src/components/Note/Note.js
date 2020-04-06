@@ -26,7 +26,7 @@ import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 type Props = {
-  note: string,
+  note: string | React.Node,
   emoji?: string,
   containerStyle?: Object,
 }

@@ -19,4 +19,6 @@
 */
 import initStoryshots from '@storybook/addon-storyshots';
 
+jest.mock('global', () => global);
+
 initStoryshots({ /* configuration options */ });

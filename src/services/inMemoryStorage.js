@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { isTest } from 'utils/environment';
+import { printLog } from 'utils/common';
 
 export default class InMemoryStorage {
   isDebug: boolean;
@@ -54,7 +55,7 @@ export default class InMemoryStorage {
 
   debug(...params: any) {
     if (this.isDebug && !isTest) {
-      console.log.apply(this, params);
+      printLog(params);
     }
   }
 }

@@ -20,7 +20,6 @@
 import { ethers } from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
-import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
@@ -62,11 +61,13 @@ import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'ut
 import { delay } from 'utils/common';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
+import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import { firebaseMessaging } from 'services/firebase';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
@@ -93,7 +94,7 @@ import { updateConnectionsAction } from 'actions/connectionsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
-
+import type { KeyChainData } from 'utils/keychain';
 
 const storage = Storage.getInstance('db');
 
@@ -103,10 +104,12 @@ const getTokenWalletAndRegister = async (
   user: Object,
   dispatch: Dispatch,
 ) => {
-  await firebase.messaging().requestPermission().catch(() => { });
-  const fcmToken = await firebase.messaging().getToken().catch(() => { });
+  // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
+  await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
+  await firebaseMessaging.requestPermission().catch(() => {});
+  const fcmToken = await firebaseMessaging.getToken().catch(() => null);
 
-  await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+  if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
   const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
@@ -160,17 +163,21 @@ const finishRegistration = async ({
   dispatch,
   getState,
   userInfo,
+  mnemonic,
   privateKey,
   address,
   isImported,
+  enableBiometrics,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
   getState: GetState,
-  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser)
+  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
   address: string,
   isImported: boolean,
+  mnemonic?: string,
+  enableBiometrics?: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -223,6 +230,14 @@ const finishRegistration = async ({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
   });
+
+  // save data to keychain
+  const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
+  if (enableBiometrics) {
+    await dispatch(changeUseBiometricsAction(true, keychainData, true));
+  } else {
+    await setKeychainDataObject(keychainData);
+  }
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
@@ -245,7 +260,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       importedWallet,
       apiUser,
     } = currentState.wallet.onboarding;
-
     const mnemonicPhrase = mnemonic.original;
     const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
@@ -350,7 +364,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     // re-init API with OAuth update callback
     const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
     api.init(updateOAuth, oAuthTokens);
-
     // STEP 5: finish registration
     await finishRegistration({
       api,
@@ -360,13 +373,13 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
       isImported,
+      enableBiometrics,
+      mnemonic: wallet.mnemonic,
     });
 
     // STEP 6: add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
-
-    if (enableBiometrics) await dispatch(changeUseBiometricsAction(true, wallet.privateKey, true));
 
     // STEP 7: all done, navigate to the home screen
     const isWalletBackedUp = isImported || isBackedUp;
@@ -387,15 +400,15 @@ export const registerOnBackendAction = () => {
         data: walletData,
         onboarding: {
           apiUser,
+          mnemonic,
           privateKey,
           importedWallet,
         },
         backupStatus: { isBackedUp, isImported },
       },
     } = getState();
-
+    const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
-
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
@@ -422,6 +435,7 @@ export const registerOnBackendAction = () => {
       getState,
       userInfo,
       address: normalizeWalletAddress(walletData.address),
+      mnemonic: walletMnemonic,
       privateKey: walletPrivateKey,
       isImported,
     });

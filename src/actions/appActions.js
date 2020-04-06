@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 
 // services
 import Storage from 'services/storage';
@@ -71,6 +71,7 @@ import {
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
+import { SET_REFERRALS_STATE } from 'constants/referralsConstants';
 
 import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
 
@@ -180,6 +181,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { insights = {} } = await storage.get('insights');
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
 
+      const { referrals = {} } = await storage.get('referralData');
+      dispatch({ type: SET_REFERRALS_STATE, payload: referrals });
+
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
@@ -229,8 +233,8 @@ export const setupSentryAction = (user: Object, wallet: Object) => {
   return async () => {
     const { id, username, walletId = '' } = user;
     const { address } = wallet;
-    Sentry.setUserContext({
-      userID: id,
+    Sentry.setUser({
+      id,
       username,
       extra: {
         walletId,

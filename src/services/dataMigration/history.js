@@ -1,5 +1,4 @@
 // @flow
-import { Sentry } from 'react-native-sentry';
 import isEmpty from 'lodash.isempty';
 import { saveDbAction } from 'actions/dbActions';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -15,6 +14,8 @@ import {
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
 import { updateAccountHistory } from 'utils/history';
+import { reportLog } from 'utils/common';
+
 
 const storage = Storage.getInstance('db');
 
@@ -41,7 +42,7 @@ export default async function (dispatch: Function, getState: Function) {
 
   // check if the data was migrated, but the current state is empty and history from storage is not empty
   if (migratedToReduxPersist.history && isEmpty(stateHistory) && !isEmpty(history)) {
-    Sentry.captureMessage('Possible redux-persist crash', { level: 'info' });
+    reportLog('Possible redux-persist crash');
   }
 
   if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {

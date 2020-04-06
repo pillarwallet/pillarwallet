@@ -26,9 +26,6 @@ import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
 
-// services
-import { updateNavigationLastScreenState } from 'services/navigation';
-
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
@@ -95,6 +92,9 @@ import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfi
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
+import ReferFriendsScreen from 'screens/ReferFriends';
+import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
+import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
@@ -167,7 +167,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
-  AUTH_FLOW,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -222,6 +221,7 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
+  REFER_FLOW,
   SERVICES,
   STORYBOOK,
   SECURITY_SETTINGS,
@@ -229,6 +229,9 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
+  REFER_MAIN_SCREEN,
+  ADDRESS_BOOK_PERMISSION,
+  REFERRAL_CONTACTS,
   CONNECT_TAB,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
 } from 'constants/navigationConstants';
@@ -319,6 +322,15 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// REFER FLOW
+const referFlow = createStackNavigator({
+  [REFER_MAIN_SCREEN]: ReferFriendsScreen,
+  [ADDRESS_BOOK_PERMISSION]: AccessToAddressBookScreen,
+  [REFERRAL_CONTACTS]: ReferralContactsScreen,
+}, StackNavigatorConfig);
+
+referFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
@@ -327,6 +339,7 @@ const peopleFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
+  [REFER_FLOW]: referFlow,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -354,8 +367,10 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
+  [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -833,12 +848,6 @@ class AppFlow extends React.Component<Props, State> {
       // close walkthrough shade or tooltips
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
-        const { navigation } = this.props;
-        const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
-        const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
-        const lastActiveScreenParams = pathAndParams.params;
-        updateNavigationLastScreenState({ lastActiveScreen, lastActiveScreenParams });
-        navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);

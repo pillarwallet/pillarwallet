@@ -25,12 +25,9 @@ import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova 
 import { View as mockView } from 'react-native';
 import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
-import FirebaseMock from './firebaseMock';
 import WalletConnectMock from './walletConnectMock';
 
 process.env.IS_TEST = 'TEST';
-
-jest.mock('NativeAnimatedHelper');
 
 /**
  * Set up DOM in node.js environment for Enzyme to mount to
@@ -62,11 +59,32 @@ Enzyme.configure({ adapter: new Adapter() });
 };
 
 const storageCache = {};
-const AsyncStorage = new StorageMock(storageCache);
+const MockAsyncStorage = new StorageMock(storageCache);
 
-jest.mock('@react-native-community/async-storage', () => AsyncStorage);
-jest.setMock('AsyncStorage', AsyncStorage);
-jest.setMock('react-native-firebase', FirebaseMock);
+jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
+
+jest.setMock('@react-native-firebase/crashlytics');
+jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
+
+jest.mock('@react-native-firebase/app', () => ({
+  firebase: {
+    iid: () => {},
+    analytics: () => ({
+      logEvent: () => {},
+    }),
+    crashlytics: () => ({
+      setUserId: () => {
+      },
+    }),
+    messaging: () => ({
+      registerForRemoteNotifications: () => Promise.resolve(),
+      requestPermission: () => Promise.resolve(),
+      hasPermission: () => Promise.resolve(1),
+      getToken: () => Promise.resolve('12x2342x212'),
+    }),
+  },
+}));
+
 jest.setMock('cryptocompare', {
   priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
     return Promise.resolve({});
@@ -130,7 +148,7 @@ jest.setMock('react-native-background-timer', {
 });
 
 jest.setMock('react-native-device-info', {
-  getUniqueID: () => '1x1x1x1x1x1x1',
+  getUniqueId: () => '1x1x1x1x1x1x1',
 });
 
 jest.setMock('react-native-intercom', {
@@ -213,25 +231,6 @@ jest.setMock('react-native-cached-image', {
   CachedImage: () => null,
 });
 
-jest.setMock('react-native-threads', {
-  Thread: () => ({
-    onmessage: () => Promise.resolve(),
-    postMessage: () => Promise.resolve(),
-  }),
-});
-
-jest.mock('react-native-fabric', () => {
-  return {
-    Crashlytics: {
-      crash: () => {},
-    },
-    Answers: {
-      logCustom: () => {},
-      logContentView: () => {},
-    },
-  };
-});
-
 const mockSmartWalletAccount = {
   id: 123,
   address: 'publicAddress',
@@ -290,11 +289,14 @@ jest.setMock('@smartwallet/sdk', {
 });
 
 jest.setMock('react-native-keychain', {
-  setGenericPassword: () => {},
-  getGenericPassword: () => {},
-  resetGenericPassword: () => {},
+  setGenericPassword: jest.fn().mockResolvedValue(),
+  getGenericPassword: jest.fn().mockResolvedValue(),
+  resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {
     BIOMETRY_ANY: 'BIOMETRY_ANY',
+  },
+  ACCESSIBLE: {
+    WHEN_UNLOCKED: 'WHEN_UNLOCKED',
   },
 });
 
@@ -412,5 +414,15 @@ jest.setMock('services/insight', {
     }),
 });
 
-jest.setMock('react-native-appearance', {});
+jest.mock('react-native-branch', () => jest.fn());
 
+jest.setMock('@sentry/react-native', {
+  withScope: () => {},
+  Severity: {},
+});
+
+jest.setMock('react-native-notifications');
+
+jest.setMock('@react-native-community/netinfo');
+
+jest.setMock('react-native-appearance', {});

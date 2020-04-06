@@ -22,7 +22,6 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
 import { TYPE_SENT, UPDATE_INVITATIONS, TYPE_RECEIVED } from 'constants/invitationsConstants';
-import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import {
   sendInvitationAction,
@@ -33,7 +32,7 @@ import {
 
 const walletId = 'walletId';
 
-const contactsMock = [
+const mockContacts = [
   {
     id: 2,
     ethAddress: '0x002',
@@ -44,14 +43,14 @@ const contactsMock = [
   },
 ];
 
-const apiUserMock = {
+const mockApiUser = {
   id: '22',
   ethAddress: '0x0022',
   username: 'targetUsername',
   profileImage: 'https://google.com/logo.png',
 };
 
-const invitationsMock = [
+const mockInvitations = [
   {
     id: 4,
     username: 'user4',
@@ -75,7 +74,7 @@ const invitationsMock = [
   },
 ];
 
-const getContactsResponseMock = [
+const mockGetContactsResponse = [
   {
     userId: 1,
     targetUserId: 2,
@@ -162,55 +161,7 @@ const getContactsResponseMock = [
   },
 ];
 
-const contactsResultMock = [
-  {
-    id: 2,
-    ethAddress: '0x002',
-    username: 'oldConnectionMigrated',
-    profileImage: 'profileImgUrl',
-    createdAt: 1555491474.547,
-    updatedAt: 1555491474.547,
-    status: 'accepted',
-  },
-  {
-    id: 3,
-    ethAddress: '0x003',
-    username: 'user3',
-    profileImage: 'profileImgUrl3',
-    createdAt: 1555491474.547,
-    updatedAt: 1555491474.547,
-    status: 'accepted',
-  },
-  {
-    id: 5,
-    ethAddress: '0x005',
-    username: 'user5',
-    profileImage: 'profileImgUrl5',
-    createdAt: 1555491474.547,
-    updatedAt: 1555491474.547,
-    status: 'accepted',
-  },
-  {
-    id: 6,
-    ethAddress: '0x006',
-    username: 'user6',
-    profileImage: 'profileImgUrl6',
-    createdAt: 1555491474.547,
-    updatedAt: 1555491474.547,
-    status: 'accepted',
-  },
-  {
-    id: 7,
-    ethAddress: '0x007',
-    username: 'user7',
-    profileImage: 'profileImgUrl7',
-    createdAt: 1555491474.547,
-    updatedAt: 1555491474.547,
-    status: 'accepted',
-  },
-];
-
-const invitationsResultMock = [
+const mockInvitationsResult = [
   {
     id: 4,
     username: 'user4',
@@ -227,32 +178,28 @@ const invitationsResultMock = [
   },
 ];
 
-type SDK = {
-  getContacts: Function,
-  sendInvitation: Function,
-  cancelInvitation: Function,
-  rejectInvitation: Function,
-  acceptInvitation: Function,
-};
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  getContacts: jest.fn(() => [...mockGetContactsResponse]),
+  sendInvitation: jest.fn((id) => id),
+  acceptInvitation: jest.fn((id) => id),
+  cancelInvitation: jest.fn((id) => id),
+  rejectInvitation: jest.fn((id) => id),
+})));
 
-const pillarSdk: SDK = new PillarSdk();
-pillarSdk.getContacts = jest.fn(() => [...getContactsResponseMock]);
-pillarSdk.sendInvitation = jest.fn((id) => id);
-pillarSdk.acceptInvitation = jest.fn((id) => id);
-pillarSdk.cancelInvitation = jest.fn((id) => id);
-pillarSdk.rejectInvitation = jest.fn((id) => id);
+const pillarSdk = new PillarSdk();
+
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('Invitations Actions tests', () => {
   let store;
 
   beforeEach(() => {
-    const storeMock = {
+    const mockStoreData = {
       contacts: {
-        data: [...contactsMock],
+        data: [...mockContacts],
       },
       invitations: {
-        data: [...invitationsMock],
+        data: [...mockInvitations],
       },
       user: {
         data: { walletId },
@@ -263,16 +210,14 @@ describe('Invitations Actions tests', () => {
         },
       },
     };
-    store = mockStore({ ...storeMock });
+    store = mockStore({ ...mockStoreData });
   });
 
   it('Should expect set of actions on sendInvitationAction.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation sent' } },
-      { type: UPDATE_INVITATIONS, payload: invitationsResultMock },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
     ];
-    return store.dispatch(sendInvitationAction(apiUserMock))
+    return store.dispatch(sendInvitationAction(mockApiUser))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -281,12 +226,10 @@ describe('Invitations Actions tests', () => {
 
   it('Should expect set of actions on acceptInvitationAction.', () => {
     const expectedActions = [
-      { type: UPDATE_INVITATIONS, payload: [invitationsMock[0], invitationsMock[2]] },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
       { type: ADD_NOTIFICATION, payload: { message: 'Connection request accepted' } },
-      { type: UPDATE_INVITATIONS, payload: [invitationsResultMock[0], invitationsResultMock[1]] },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
     ];
-    return store.dispatch(acceptInvitationAction(invitationsMock[1]))
+    return store.dispatch(acceptInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -296,11 +239,9 @@ describe('Invitations Actions tests', () => {
   it('Should expect set of actions on cancelInvitationAction.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation cancelled' } },
-      { type: UPDATE_INVITATIONS, payload: [invitationsMock[0], invitationsMock[1]] },
-      { type: UPDATE_INVITATIONS, payload: [...invitationsResultMock] },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
     ];
-    return store.dispatch(cancelInvitationAction(invitationsMock[2]))
+    return store.dispatch(cancelInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -310,11 +251,9 @@ describe('Invitations Actions tests', () => {
   it('Should expect set of actions on rejectInvitationAction.', () => {
     const expectedActions = [
       { type: ADD_NOTIFICATION, payload: { message: 'Invitation rejected' } },
-      { type: UPDATE_INVITATIONS, payload: [invitationsMock[0], invitationsMock[1]] },
-      { type: UPDATE_INVITATIONS, payload: [...invitationsResultMock] },
-      { type: UPDATE_CONTACTS, payload: contactsResultMock },
+      { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
     ];
-    return store.dispatch(rejectInvitationAction(invitationsMock[2]))
+    return store.dispatch(rejectInvitationAction(mockInvitations[2]))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

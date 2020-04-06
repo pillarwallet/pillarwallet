@@ -17,9 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
 
 // actions
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 // constants
 import {
@@ -32,13 +34,13 @@ import {
   STATUS_REJECTED,
 } from 'constants/connectionsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import { TYPE_SENT, UPDATE_INVITATIONS, TYPE_RECEIVED } from 'constants/invitationsConstants';
 
 // utils
 import { uniqBy } from 'utils/common';
 
 // services
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 
 // models, types
 import type { ApiContact } from 'models/Contacts';
@@ -51,23 +53,27 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId = theWalletId } },
-      contacts: { data: allContacts },
-      invitations: { data: allInvitations },
       featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+      session: { data: { isOnline } },
     } = getState();
 
-    if (!walletId) {
+    if (!walletId || !isOnline) {
       return;
     }
 
     const connections: ApiContact[] = await api.getContacts(walletId);
+
+    if (isEmpty(connections)) {
+      return;
+    }
 
     const contacts = [];
     const invitations = [];
     const removeContacts = [];
     const removeInvitations = [];
 
-    connections.forEach(connection => {
+    connections.forEach((connection: ApiContact) => {
+      if (!connection.targetUserInfo) return;
       if ([STATUS_ACCEPTED, STATUS_MUTED, STATUS_BLOCKED].includes(connection.status)) {
         const contact = {
           id: connection.targetUserId,
@@ -81,23 +87,14 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
         contacts.push(contact);
         removeInvitations.push(connection.targetUserId);
       } else if (connection.status === STATUS_PENDING) {
-        const existingInvitation = allInvitations.find(({ id }) => id === connection.targetUserId);
-        let invitation;
-        if (existingInvitation) {
-          // received
-          invitation = {
-            ...existingInvitation,
-          };
-        } else {
-          // sent
-          invitation = {
-            id: connection.targetUserId,
-            username: connection.targetUserInfo.username,
-            profileImage: connection.targetUserInfo.profileImage,
-            type: TYPE_SENT,
-            createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
-          };
-        }
+        const invitation = {
+          id: connection.targetUserId,
+          username: connection.targetUserInfo.username,
+          profileImage: connection.targetUserInfo.profileImage,
+          type: connection.direction && connection.direction === 'sent' ? TYPE_SENT : TYPE_RECEIVED,
+          createdAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+          updatedAt: connection.createdAt ? Date.parse(connection.createdAt) / 1000 : null,
+        };
         invitations.push(invitation);
         removeContacts.push(connection.targetUserId);
       } else if ([STATUS_REJECTED, STATUS_CANCELLED, STATUS_DISCONNECTED].includes(connection.status)) {
@@ -106,23 +103,25 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
       }
     });
 
-    const updatedContacts = uniqBy(contacts.concat(allContacts), 'id')
+    const updatedContacts = uniqBy(contacts, 'id')
       .filter(({ id }) => !removeContacts.includes(id));
-    const updatedInvitations = uniqBy(invitations.concat(allInvitations), 'id')
+    const updatedInvitations = uniqBy(invitations, 'id')
       .filter(({ id }) => !removeInvitations.includes(id));
+
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
     dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
     });
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
     dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
-    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
+    dispatch(getExistingChatsAction());
     if (smartWalletFeatureEnabled) {
       dispatch(syncContactsSmartAddressesAction());
     }
