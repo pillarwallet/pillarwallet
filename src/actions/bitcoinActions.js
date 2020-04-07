@@ -143,6 +143,7 @@ import {
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { ETHEREUM_PATH, NON_STANDARD_ETHEREUM_PATH } from 'constants/derivationPathConstants';
 import {
   keyPairAddress,
   getAddressUtxos,
@@ -232,27 +233,23 @@ const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
   type: BITCOIN_WALLET_CREATION_FAILED,
 });
 
+const getKeyPairFromWallet = async (wallet: EthereumWallet) => {
+  const { mnemonic, privateKey } = wallet;
+  let root;
+  let useStandardPath = true;
+  if (mnemonic && mnemonic !== 'ENCRYPTED') {
+    root = await rootFromMnemonic(mnemonic);
+  } else {
+    useStandardPath = false;
+    root = await rootFromPrivateKey(privateKey);
+  }
+  const finalPath = useStandardPath ? ETHEREUM_PATH : NON_STANDARD_ETHEREUM_PATH;
+  return root.derivePath(finalPath);
+};
+
 export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   return async (dispatch: Dispatch) => {
-    const { mnemonic, privateKey } = wallet;
-
-    if (!mnemonic && !privateKey) {
-      await dispatch(bitcoinWalletCreationFailed());
-      return;
-    }
-
-    let root;
-    let useStandardPath = true;
-    if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      root = await rootFromMnemonic(mnemonic);
-    } else {
-      useStandardPath = false;
-      root = await rootFromPrivateKey(privateKey);
-    }
-
-    const finalPath = useStandardPath ? 'm/44\'/60\'/0\'/0/0' : 'm/44\'/60\'/0\'/0';
-    const keyPair = root.derivePath(finalPath);
-
+    const keyPair = await getKeyPairFromWallet(wallet);
     const address = keyPairAddress(keyPair);
     if (!address) {
       Toast.show({
@@ -368,19 +365,7 @@ const transactionSent = () => {
 
 export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTransactionPlan, callback: Function) => {
   return async () => {
-    const { mnemonic, privateKey } = wallet;
-
-    let root;
-    let useStandardPath = true;
-    if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      root = await rootFromMnemonic(mnemonic);
-    } else {
-      useStandardPath = false;
-      root = await rootFromPrivateKey(privateKey);
-    }
-
-    const finalPath = useStandardPath ? 'm/44\'/60\'/0\'/0/0' : 'm/44\'/60\'/0\'/0';
-    const keyPair = root.derivePath(finalPath);
+    const keyPair = await getKeyPairFromWallet(wallet);
 
     // TODO: Multiple Paths support should map an address to a custom path
     const rawTransaction = transactionFromPlan(
