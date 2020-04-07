@@ -43,7 +43,7 @@ type Props = {
 };
 
 type State = {
-  authorizationState: string,
+  isAuthorized: ?boolean,
   isFinished: boolean,
   code: ?string,
 };

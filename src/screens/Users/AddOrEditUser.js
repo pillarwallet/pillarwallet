@@ -126,7 +126,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   openCamera = async () => {
-    let statusPhoto = true; // android doesn't need extra permission
+    let statusPhoto = RESULTS.GRANTED; // android doesn't need extra permission
     if (Platform.OS === 'ios') {
       statusPhoto = await requestPermission(PERMISSIONS.IOS.PHOTO_LIBRARY);
     }

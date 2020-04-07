@@ -49,7 +49,7 @@ import { SettingsSection } from './SettingsSection';
 
 type State = {
   showPinModal: boolean,
-  supportedBiometryType: string,
+  supportedBiometryType: ?string,
 };
 
 type Props = {
