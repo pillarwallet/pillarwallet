@@ -841,8 +841,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         },
       },
     }), () => {
-      // const errors = get(this.exchangeForm.validate(), 'errors', []);
-      // if (!isEmpty(errors)) return;
+      const errors = get(this.exchangeForm.validate(), 'errors', []);
+      if (!isEmpty(errors)) return;
       this.triggerSearch();
     });
   };
@@ -1085,7 +1085,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     this.setState({ value });
     this.updateOptions(value);
-    // if (!this.exchangeForm.getValue()) return; // this validates form!
+    if (!this.exchangeForm.getValue()) return; // this validates form!
     this.triggerSearch();
   };
 
