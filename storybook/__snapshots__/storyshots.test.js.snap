@@ -6091,7 +6091,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
             undefined,
           ]
         }
-        type="ACTION"
+        type="DEFAULT"
       >
         <View
           style={
@@ -6111,7 +6111,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={
@@ -6153,44 +6153,11 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                   ],
                 ]
               }
-              type="ACTION"
+              type="DEFAULT"
             >
               Smart wallet
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            Activation
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -6209,7 +6176,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={
@@ -6222,28 +6189,18 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
             }
           >
             <View
-              horizontal={true}
               style={
                 Array [
                   Object {
-                    "flexDirection": "row",
-                    "marginBottom": 0,
-                    "marginLeft": 0,
-                    "marginRight": 0,
-                    "marginTop": 0,
-                  },
-                  Object {
                     "alignItems": "center",
-                    "flexWrap": "wrap",
-                    "justifyContent": "flex-end",
+                    "justifyContent": "center",
                   },
+                  undefined,
                 ]
               }
             >
               <Text
-                color="#0A1427"
-                ellipsizeMode="tail"
-                numberOfLines={2}
+                color={null}
                 style={
                   Array [
                     Object {
@@ -6253,17 +6210,22 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "textAlign": "right",
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
                       },
                       undefined,
                     ],
                   ]
                 }
               >
-                - 1 ETH
+                Activated
               </Text>
             </View>
           </View>

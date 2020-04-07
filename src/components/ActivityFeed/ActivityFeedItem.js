@@ -144,6 +144,7 @@ const STATUSES = {
   CONNECTED: 'Connected',
   REQUESTED: 'Requested',
   BACKUP: 'Backup secured',
+  ACTIVATED: 'Activated',
 };
 
 const elipsizeAddress = (address: string) => {
@@ -265,9 +266,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         data = {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
-          subtext: 'Activation',
-          itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
-          valueColor: 'text',
+          actionLabel: STATUSES.ACTIVATED,
         };
         trxData.hideSender = true;
         trxData.hideAmount = true;
