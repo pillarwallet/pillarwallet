@@ -138,7 +138,6 @@ import {
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
   SET_BITCOIN_BALANCES,
-  BITCOIN_WALLET_CREATION_FAILED,
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
@@ -163,7 +162,6 @@ import type {
   SetBitcoinBalancesAction,
   UpdateBitcoinBalanceAction,
   UpdateUnspentTransactionsAction,
-  BitcoinWalletCreationFailedAction,
   UpdateBTCTransactionsAction,
 } from 'reducers/bitcoinReducer';
 import type { EthereumWallet } from 'models/Wallet';
