@@ -77,7 +77,7 @@ export const SettlementItem = (props: Props) => {
     const { symbol, value: rawValue } = trx;
     const value = new BigNumber(rawValue);
     if (!valueByAsset[symbol]) {
-      valueByAsset[symbol] = { ...trx, value, assetDecimals };
+      valueByAsset[symbol] = { ...trx, value, decimals: assetDecimals };
     } else {
       const { value: currentValue } = valueByAsset[symbol];
       valueByAsset[symbol].value = currentValue.plus(value);

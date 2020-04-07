@@ -18,16 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import { createStructuredSelector } from 'reselect';
 import memoize from 'memoize-one';
 
 // types
 import type { Transaction } from 'models/Transaction';
-import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // components
@@ -43,10 +40,6 @@ import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
 import { groupAndSortByDate } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { getAssetsAsList } from 'utils/assets';
-
-// selectors
-import { accountAssetsSelector } from 'selectors/assets';
 
 // constants
 import {
@@ -127,44 +120,10 @@ type Props = {
   hideTabs: boolean,
   emptyState?: EmptyState,
   ensRegistry: EnsRegistry,
+  tabsComponent?: React.Node,
+  headerComponent?: React.Node,
+  refreshControl?: React.Node,
 };
-
-type FeedItemTransaction = {|
-  username?: string,
-  to: string,
-  from: string,
-  hash: string,
-  createdAt: string,
-  pillarId: string,
-  protocol: string,
-  contractAddress: ?string,
-  blockNumber: number,
-  value: number,
-  status: string,
-  gasPrice: ?number,
-  gasUsed: number,
-  tranType: ?string,
-  tokenId?: string,
-  _id: string,
-  type: string,
-|};
-
-type FeedItemConnection = {|
-  id: string,
-  ethAddress: string,
-  username: string,
-  profileImage: ?string,
-  createdAt: string,
-  updatedAt: string,
-  status: string,
-  type: string,
-|};
-
-type FeedSection = {|
-  title: string,
-  date: string,
-  data: Array<FeedItemTransaction | FeedItemConnection>,
-|};
 
 type State = {|
   showModal: boolean,
@@ -172,10 +131,16 @@ type State = {|
   eventType: string,
   eventStatus: string,
   tabIsChanging: boolean,
-  emptyStateData: EmptyState | {},
   scrollOffset: ?number,
   maxScrollOffset: ?number,
 |};
+
+const ITEM_TYPE = {
+  HEADER: 'HEADER',
+  TABS: 'TABS',
+  SECTION: 'SECTION',
+  ITEM: 'ITEM',
+};
 
 class ActivityFeed extends React.Component<Props, State> {
   eventDetailScrollViewRef: ?Object;
@@ -190,14 +155,13 @@ class ActivityFeed extends React.Component<Props, State> {
     eventType: '',
     eventStatus: '',
     tabIsChanging: false,
-    formattedFeedData: [],
     scrollOffset: undefined,
     maxScrollOffset: undefined,
   };
 
   generateFeedSections = memoize(
     (tabs, activeTab, feedData, headerComponent, tabsComponent) => {
-      let feedList = feedData;
+      let feedList = feedData || [];
 
       if (tabs.length) {
         const activeTabInfo = tabs.find(({ id }) => id === activeTab);
@@ -209,17 +173,17 @@ class ActivityFeed extends React.Component<Props, State> {
       const dataSections = groupAndSortByDate(filteredFeedList);
 
       const items = [];
-      items.push({ type: 'HEADER', component: headerComponent });
-      items.push({ type: 'TABS', component: tabsComponent });
+      items.push({ type: ITEM_TYPE.HEADER, component: headerComponent });
+      items.push({ type: ITEM_TYPE.TABS, component: tabsComponent });
       dataSections.forEach(({ data, ...section }) => {
-        items.push({ type: 'SECTION', section });
-        data.forEach(item => items.push({ type: 'ITEM', item }));
+        items.push({ type: ITEM_TYPE.SECTION, section });
+        data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
       });
 
       return items;
     },
     isEqual,
-  )
+  );
 
   getEmptyStateData = () => {
     const {
@@ -260,10 +224,10 @@ class ActivityFeed extends React.Component<Props, State> {
 
   renderActivityFeedItem = ({ item }) => {
     switch (item.type) {
-      case 'HEADER':
-      case 'TABS':
+      case ITEM_TYPE.HEADER:
+      case ITEM_TYPE.TABS:
         return item.component;
-      case 'SECTION':
+      case ITEM_TYPE.SECTION:
         return (
           <SectionHeaderWrapper>
             <SectionHeader>{item.section.title}</SectionHeader>
@@ -300,10 +264,10 @@ class ActivityFeed extends React.Component<Props, State> {
 
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
     switch (item.type) {
-      case 'HEADER':
-      case 'TABS':
+      case ITEM_TYPE.HEADER:
+      case ITEM_TYPE.TABS:
         return item.type;
-      case 'SECTION':
+      case ITEM_TYPE.SECTION:
         return item.section.title;
       default:
         const { createdAt = '' } = item.item;
@@ -330,6 +294,7 @@ class ActivityFeed extends React.Component<Props, State> {
       feedData,
       headerComponent,
       tabsComponent,
+      refreshControl,
     } = this.props;
 
     const {
@@ -388,6 +353,7 @@ class ActivityFeed extends React.Component<Props, State> {
             </EmptyStateWrapper>
           )}
           stickyHeaderIndices={[1]}
+          refreshControl={refreshControl}
         />}
         {!!selectedEventData &&
         <SlideModal
@@ -424,12 +390,4 @@ class ActivityFeed extends React.Component<Props, State> {
   }
 }
 
-const structuredSelector = createStructuredSelector({
-  assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
-});
-
-const combinedMapStateToProps = (state: RootReducerState) => ({
-  ...structuredSelector(state),
-});
-
-export default withTheme(connect(combinedMapStateToProps)(ActivityFeed));
+export default withTheme(ActivityFeed);

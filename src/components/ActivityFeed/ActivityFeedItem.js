@@ -63,7 +63,6 @@ import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
 
-
 // selectors
 import {
   activeAccountAddressSelector,
@@ -74,7 +73,6 @@ import { assetDecimalsSelector } from 'selectors/assets';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // types
-import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -86,7 +84,6 @@ type Props = {
   type?: string,
   asset?: string,
   isPending?: boolean,
-  supportedAssets: Asset[],
   selectEvent: Function,
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
@@ -94,13 +91,13 @@ type Props = {
   theme: Theme,
   event: Object,
   feedType?: string,
-  assets: Asset[],
   acceptInvitation: Function,
   rejectInvitation: Function,
   activeAccountAddress: string,
   activeBlockchainNetwork: string,
   accounts: Accounts,
   isSmartWalletActivated: boolean,
+  assetDecimals: number,
 };
 
 type EventData = {
@@ -463,6 +460,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         type={feedType}
         asset={asset}
         isPending={event === TX_PENDING_STATUS}
+        assetDecimals={assetDecimals}
       />
     );
   }

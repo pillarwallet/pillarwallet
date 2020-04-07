@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Animated, RefreshControl, View, ScrollView, FlatList } from 'react-native';
+import { Animated, RefreshControl, View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -429,15 +429,6 @@ class HomeScreen extends React.Component<Props, State> {
         }}
         inset={{ bottom: 0 }}
       >
-        {/* <ScrollView
-          style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={referralsFeatureEnabled ? [3] : [2]}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={this.refreshScreenData}
-            />}
-        > */}
         <ActivityFeed
           headerComponent={(
             <React.Fragment>
@@ -472,6 +463,12 @@ class HomeScreen extends React.Component<Props, State> {
               activeTab={activeTab}
             />
             )}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={this.refreshScreenData}
+            />
+          }
           onCancelInvitation={cancelInvitation}
           onRejectInvitation={rejectInvitation}
           onAcceptInvitation={acceptInvitation}
@@ -483,7 +480,6 @@ class HomeScreen extends React.Component<Props, State> {
           wrapperStyle={{ flexGrow: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
         />
-        {/* </ScrollView> */}
         <ReferralModalReward
           isVisible={showRewardModal}
           onModalHide={this.handleModalHide}

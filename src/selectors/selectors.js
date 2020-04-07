@@ -6,6 +6,7 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
 //
 // Global selectors here
