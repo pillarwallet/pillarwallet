@@ -229,10 +229,6 @@ const updateBTCTransactions = (
   transactions: transactions.filter(tx => !!tx.details),
 });
 
-const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
-  type: BITCOIN_WALLET_CREATION_FAILED,
-});
-
 const getKeyPairFromWallet = async (wallet: EthereumWallet) => {
   const { mnemonic, privateKey } = wallet;
   let root;
