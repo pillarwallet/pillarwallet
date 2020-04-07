@@ -19,9 +19,8 @@
 */
 
 import * as React from 'react';
-import { View, Image } from 'react-native';
+import { View } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 // components
 import ShadowedCard from 'components/ShadowedCard';
@@ -44,7 +43,7 @@ type Props = {
   onPress: () => void,
   labelTop: string,
   valueTop: string | number,
-  cardImageSource?: string | ImageObject,
+  cardImageSource: string | ImageObject,
   cardButton: ExternalButtonProps,
   labelBottom: string,
   valueBottom: string | number,
@@ -72,8 +71,7 @@ const CardRow = styled.View`
   ${({ withBorder, theme }) => withBorder
     ? `border-bottom-width: 1px;
        border-bottom-color: ${theme.colors.border};`
-    : ''
-  }
+    : ''}
   min-height: 68px;
 `;
 
@@ -117,7 +115,7 @@ const LeftSide = (props: LeftSideProps) => {
   if (note) {
     return (
       <CardNote>{note}</CardNote>
-    )
+    );
   }
 
   if (buttonProps) {
@@ -138,7 +136,7 @@ const LeftSide = (props: LeftSideProps) => {
         <CardText>{value}</CardText>
       </View>
     </React.Fragment>
-  )
+  );
 };
 
 const OfferCard = (props: Props) => {

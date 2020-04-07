@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard, Image } from 'react-native';
+import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -70,7 +70,7 @@ import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from '
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
-import { getThemeName, themedColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 import { satoshisToBtc } from 'utils/bitcoin';
 
 // selectors
@@ -854,7 +854,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
-    const { exchangeAllowances, connectedProviders, providersMeta, theme } = this.props;
+    const {
+      exchangeAllowances,
+      connectedProviders,
+      providersMeta,
+      theme,
+    } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
       _id: offerId,

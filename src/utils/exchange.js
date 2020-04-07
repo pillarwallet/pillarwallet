@@ -52,15 +52,16 @@ export const getLocallyStoredProviderLogo = (provider?: string, theme: Theme) =>
   }
 };
 
-export const getOfferProviderLogo = (providersMeta: ProvidersMeta, offerProvider?: string, theme: Theme, type: string) => {
-  if (!offerProvider) return '';
-  const providerInfo = providersMeta.find(({ shim }) => shim === offerProvider);
+
+export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: string, theme: Theme, type: string) => {
+  if (!provider) return '';
+  const providerInfo = providersMeta.find(({ shim }) => shim === provider);
   const themeName = getThemeName(theme);
   if (providerInfo) {
     const providerIconPath = get(providerInfo, `img.${type}.${themeName}`, '');
     return { uri: `${EXCHANGE_URL}/v2.0${providerIconPath}` };
   }
-  return getLocallyStoredProviderLogo(offerProvider, theme);
+  return getLocallyStoredProviderLogo(provider, theme);
 };
 
 export const isFiatProvider = (provider: string) => {

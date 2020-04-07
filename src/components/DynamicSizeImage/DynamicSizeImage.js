@@ -19,12 +19,14 @@
 */
 
 import * as React from 'react';
-import { View, Image } from 'react-native';
+import { Image } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
 
+type ImageSource = ?string | { [uri: string]: string };
+
 type Props = {
-  imageSource: Image | string,
+  imageSource: ImageSource,
   fallbackWidth: number,
   fallbackHeight: number,
   style?: Object,
@@ -52,13 +54,13 @@ class DynamicSizeImage extends React.Component<Props, State> {
   getImageSize = () => {
     const { imageSource } = this.props;
 
-    if (typeof imageSource === 'object' && imageSource.uri) {
+    if (!!imageSource && typeof imageSource === 'object' && imageSource.uri) {
       Image.getSize(imageSource.uri, (width, height) => {
         if (width && height) {
           this.setState({
             width: width / 3,
-            height: height / 3
-          })
+            height: height / 3,
+          });
         }
       });
     } else {
@@ -66,8 +68,8 @@ class DynamicSizeImage extends React.Component<Props, State> {
       if (width && height) {
         this.setState({
           width: width / 3,
-          height: height / 3
-        })
+          height: height / 3,
+        });
       }
     }
   };
@@ -82,7 +84,7 @@ class DynamicSizeImage extends React.Component<Props, State> {
         resizeMode="contain"
         style={{ ...style, width, height }}
       />
-    )
+    );
   }
 }
 

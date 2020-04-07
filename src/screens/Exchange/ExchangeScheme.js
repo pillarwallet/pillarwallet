@@ -21,7 +21,6 @@
 import * as React from 'react';
 import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import { AnimatedSVGPath } from 'react-native-svg-animations';
 
 // components
@@ -52,13 +51,7 @@ type State = {
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const IMAGE_WIDTH = 55;
 const IMAGE_WIDTH_WITH_SPACING = 111;
-
-const ProviderIcon = styled(CachedImage)`
-  width: ${IMAGE_WIDTH}px;
-  height: 88px;
-`;
 
 const SchemeWrapper = styled.View`
   justify-content: flex-start;

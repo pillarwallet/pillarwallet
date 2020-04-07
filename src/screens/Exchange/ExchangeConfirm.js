@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled, {withTheme} from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
