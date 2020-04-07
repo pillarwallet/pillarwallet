@@ -1151,11 +1151,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.handleFormChange({ fromInput: { selector: fromAsset, input: '' }, toInput: { selector: toAsset, input: '' } });
   };
 
-  handleModalClose = () => {
-    const { updateHasSeenExchangeIntro } = this.props;
-    updateHasSeenExchangeIntro();
-  }
-
   render() {
     const {
       offers,
@@ -1168,6 +1163,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       hasSeenExchangeIntro,
+      updateHasSeenExchangeIntro,
     } = this.props;
 
     const {
@@ -1232,7 +1228,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         //   </PromoWrapper>
         // )}
       >
-        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={this.handleModalClose} />
+        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
         {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
         <ScrollView
