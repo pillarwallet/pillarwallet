@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
@@ -89,6 +89,18 @@ const CancelText = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
 `;
 
+const ButtonWrapper = styled.View`
+  width: 100%;
+  margin: 0px 15px 20px 15px;
+`;
+
+const FailureButtonsWrapper = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
 class SendTokenTransaction extends React.Component<Props> {
   handleDismissal = () => {
     const {
@@ -123,6 +135,32 @@ class SendTokenTransaction extends React.Component<Props> {
     navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 
+  renderSuccessButton = () => {
+    const { transactionType } = this.props.navigation.state.params;
+    const successButtonText = transactionType === EXCHANGE ? 'Finish' : 'Magic!';
+    return (
+      <ButtonWrapper>
+        <Button onPress={this.handleDismissal} title={successButtonText} />
+      </ButtonWrapper>
+    );
+  }
+
+  renderFailureButtons = () => {
+    const { noRetry } = this.props.navigation.state.params;
+    return (
+      <FailureButtonsWrapper>
+        {!noRetry && (
+          <ButtonWrapper>
+            <Button onPress={this.handleNavigationBack} title="Retry" />
+          </ButtonWrapper>
+        )}
+        <TouchableOpacity onPress={this.handleDismissal}>
+          <CancelText>Cancel</CancelText>
+        </TouchableOpacity>
+      </FailureButtonsWrapper>
+    );
+  }
+
   render() {
     const { navigation } = this.props;
     const {
@@ -134,7 +172,6 @@ class SendTokenTransaction extends React.Component<Props> {
           allowance = {},
         } = {},
       },
-      noRetry,
       transactionType,
     } = navigation.state.params;
 
@@ -146,23 +183,14 @@ class SendTokenTransaction extends React.Component<Props> {
     const transactionStatusTitle = isSuccess
       ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
       : 'Transaction failed';
-    const successButtonText = transactionType === EXCHANGE ? 'Finish' : 'Magic!';
 
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
           <Animation source={animationSource} />
           <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot />
-          <Paragraph small light center style={{ marginBottom: 40 }}>{transactionStatusText}</Paragraph>
-          {isSuccess ?
-            <Button marginBottom="20px" onPress={this.handleDismissal} title={successButtonText} /> :
-            <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-              {!noRetry && <Button marginBottom="20px" onPress={this.handleNavigationBack} title="Retry" />}
-              <TouchableOpacity onPress={this.handleDismissal}>
-                <CancelText>Cancel</CancelText>
-              </TouchableOpacity>
-            </View>
-          }
+          <Paragraph small light center style={{ marginBottom: 75 }}>{transactionStatusText}</Paragraph>
+          {isSuccess ? this.renderSuccessButton() : this.renderFailureButtons()}
         </Wrapper>
         {/*
         {isSuccess &&

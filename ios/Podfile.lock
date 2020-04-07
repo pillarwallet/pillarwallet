@@ -377,7 +377,7 @@ PODS:
     - Firebase/Messaging (~> 6.13.0)
     - React
     - RNFBApp
-  - RNGestureHandler (1.4.1):
+  - RNGestureHandler (1.6.1):
     - React
   - RNImageCropPicker (0.26.2):
     - QBImagePickerController
@@ -706,7 +706,7 @@ SPEC CHECKSUMS:
   RNFBCrashlytics: 93e1cc09a93aa4bb1e9b5a07af0efb2702db5a39
   RNFBIid: 4aa2f4fb218fd4effff8c6f947a6cfa44557d16f
   RNFBMessaging: 51cc7f6beaf4c4feac6f18ea941bba5854e3d9c6
-  RNGestureHandler: 4cb47a93019c1a201df2644413a0a1569a51c8aa
+  RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNKeychain: a5623de13ec5378bfb8035422e3dee4fa538660d
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
