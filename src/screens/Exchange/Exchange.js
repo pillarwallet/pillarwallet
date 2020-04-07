@@ -546,8 +546,9 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   focusInputWithKeyboard = () => {
+    const { hasSeenExchangeIntro } = this.props;
     setTimeout(() => {
-      if (!this.fromInputRef || !this._isMounted) return;
+      if (!this.fromInputRef || !this._isMounted || !hasSeenExchangeIntro) return;
       this.fromInputRef.focus();
     }, 200);
   };
@@ -574,6 +575,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       // access token has changed, init search again
       this.resetSearch();
       this.triggerSearch();
+    }
+
+    if (!prevProps.hasSeenExchangeIntro && this.props.hasSeenExchangeIntro) {
+      setTimeout(this.focusInputWithKeyboard, 300);
     }
   }
 
@@ -1146,6 +1151,11 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.handleFormChange({ fromInput: { selector: fromAsset, input: '' }, toInput: { selector: toAsset, input: '' } });
   };
 
+  handleModalClose = () => {
+    const { updateHasSeenExchangeIntro } = this.props;
+    updateHasSeenExchangeIntro();
+  }
+
   render() {
     const {
       offers,
@@ -1158,7 +1168,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       hasSeenExchangeIntro,
-      updateHasSeenExchangeIntro,
     } = this.props;
 
     const {
@@ -1223,7 +1232,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         //   </PromoWrapper>
         // )}
       >
-        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
+        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={this.handleModalClose} />
         {(blockView || !!deploymentData.error) && <SWActivationCard />}
         {!blockView &&
         <ScrollView
