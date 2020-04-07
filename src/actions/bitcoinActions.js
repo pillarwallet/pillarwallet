@@ -242,13 +242,15 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
     }
 
     let root;
+    let useStandardPath = true;
     if (mnemonic && mnemonic !== 'ENCRYPTED') {
       root = await rootFromMnemonic(mnemonic);
     } else {
+      useStandardPath = false;
       root = await rootFromPrivateKey(privateKey);
     }
 
-    const finalPath = 'm/44\'/60\'/0\'/0/0';
+    const finalPath = useStandardPath ? 'm/44\'/60\'/0\'/0/0' : 'm/44\'/60\'/0\'/0';
     const keyPair = root.derivePath(finalPath);
 
     const address = keyPairAddress(keyPair);
@@ -369,13 +371,15 @@ export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTrans
     const { mnemonic, privateKey } = wallet;
 
     let root;
+    let useStandardPath = true;
     if (mnemonic && mnemonic !== 'ENCRYPTED') {
       root = await rootFromMnemonic(mnemonic);
     } else {
+      useStandardPath = false;
       root = await rootFromPrivateKey(privateKey);
     }
 
-    const finalPath = 'm/44\'/60\'/0\'/0/0';
+    const finalPath = useStandardPath ? 'm/44\'/60\'/0\'/0/0' : 'm/44\'/60\'/0\'/0';
     const keyPair = root.derivePath(finalPath);
 
     // TODO: Multiple Paths support should map an address to a custom path
