@@ -18,9 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import Permissions from 'react-native-permissions';
+import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -125,10 +126,16 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   openCamera = async () => {
-    const statusPhoto = await Permissions.request('photo');
-    const statusCamera = await Permissions.request('camera');
+    let statusPhoto = true; // android doesn't need extra permission
+    if (Platform.OS === 'ios') {
+      statusPhoto = await requestPermission(PERMISSIONS.IOS.PHOTO_LIBRARY);
+    }
+    const statusCamera = await requestPermission(Platform.select({
+      android: PERMISSIONS.ANDROID.CAMERA,
+      ios: PERMISSIONS.IOS.CAMERA,
+    }));
     this.setState({
-      permissionsGranted: statusPhoto === 'authorized' && statusCamera === 'authorized',
+      permissionsGranted: statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED,
       visibleModal: 'camera',
     });
   };
