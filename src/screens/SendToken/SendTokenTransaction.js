@@ -33,7 +33,7 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { fontSizes } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // actions
@@ -91,7 +91,7 @@ const CancelText = styled(MediumText)`
 
 const ButtonWrapper = styled.View`
   width: 100%;
-  margin: 0px 15px 20px 15px;
+  margin: 0px ${spacing.layoutSides}px 20px;
 `;
 
 const FailureButtonsWrapper = styled.View`
