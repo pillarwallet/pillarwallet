@@ -45,6 +45,7 @@ type State = {
 
 const Container = styled.View`
   align-items: center;
+  margin-top: -15px;
 `;
 
 class QRCodeScanButton extends React.Component<Props, State> {
@@ -99,6 +100,7 @@ class QRCodeScanButton extends React.Component<Props, State> {
         <CircleButton
           fontIcon="connect-active"
           fontIconStyle={{ fontSize: fontSizes.large }}
+          label="Connect"
           onPress={this.openQRScanner}
         />
         <QRCodeScanner
