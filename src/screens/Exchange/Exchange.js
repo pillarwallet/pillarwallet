@@ -546,8 +546,9 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   focusInputWithKeyboard = () => {
+    const { hasSeenExchangeIntro } = this.props;
     setTimeout(() => {
-      if (!this.fromInputRef || !this._isMounted) return;
+      if (!this.fromInputRef || !this._isMounted || !hasSeenExchangeIntro) return;
       this.fromInputRef.focus();
     }, 200);
   };
@@ -574,6 +575,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       // access token has changed, init search again
       this.resetSearch();
       this.triggerSearch();
+    }
+
+    if (!prevProps.hasSeenExchangeIntro && this.props.hasSeenExchangeIntro) {
+      setTimeout(this.focusInputWithKeyboard, 300);
     }
   }
 
