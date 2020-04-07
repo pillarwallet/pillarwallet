@@ -2,6 +2,8 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getAccountAddress } from 'utils/accounts';
+import { getSmartWalletStatus } from 'utils/smartWallet';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 
@@ -49,3 +51,11 @@ export const bitcoinAddressSelector = ({ bitcoin }: RootReducerState) =>
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
+
+export const isSmartWalletActivatedSelector = ({
+  accounts: { data: accounts },
+  smartWallet,
+}: RootReducerState) => {
+  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWallet);
+  return (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
+};

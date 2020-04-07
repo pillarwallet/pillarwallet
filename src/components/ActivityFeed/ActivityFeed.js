@@ -316,8 +316,6 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   render() {
-    console.warn('RENDER LIST');
-
     const {
       feedTitle,
       navigation,
