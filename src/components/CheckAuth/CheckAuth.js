@@ -126,6 +126,7 @@ class CheckAuth extends React.Component<Props, State> {
   // special case for modals
   componentDidUpdate(prevProps: Props) {
     const { modalProps } = this.props;
+
     if (!modalProps || !prevProps.modalProps) return;
     if (modalProps.isVisible && !prevProps.modalProps.isVisible) {
       this.checkPrivateKey();
@@ -276,7 +277,7 @@ class CheckAuth extends React.Component<Props, State> {
 
     if (walletState === DECRYPTING || isChecking) {
       return (
-        <Container style={{ flex: 1, width: '100%' }} center >
+        <Container style={{ flex: 1, width: '100%' }} center>
           <Loader messages={['Checking']} />
         </Container>
       );
