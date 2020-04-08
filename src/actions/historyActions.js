@@ -20,7 +20,6 @@
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
 import isEmpty from 'lodash.isempty';
-import { Sentry } from 'react-native-sentry';
 import { sdkConstants } from '@smartwallet/sdk';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
@@ -57,7 +56,7 @@ import {
   getActiveAccountId,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
-import { getEthereumProvider, uniqBy } from 'utils/common';
+import { getEthereumProvider, reportLog, uniqBy } from 'utils/common';
 import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
 
@@ -365,14 +364,10 @@ export const updateTransactionStatusAction = (hash: string) => {
       // TODO: add support for failed transactions
       const sdkStatus = sdkRawStatus === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
       if (sdkStatus !== status) {
-        console.log('Wrong transaction status');
-        Sentry.captureMessage('Wrong transaction status', {
-          level: 'info',
-          extra: {
-            hash,
-            sdkStatus,
-            blockchainStatus: status,
-          },
+        reportLog('Wrong transaction status', {
+          hash,
+          sdkStatus,
+          blockchainStatus: status,
         });
       }
       return;
@@ -422,7 +417,7 @@ export const restoreTransactionHistoryAction = () => {
     if (!allAssets || !allAssets.length) return;
     if (!Array.isArray(allAssets)) {
       // sentry issue ID 1308336621
-      Sentry.captureMessage('Wrong allAssets type received from back-end', { extra: { allAssets } });
+      reportLog('Wrong allAssets type received from back-end', { allAssets });
       return;
     }
 

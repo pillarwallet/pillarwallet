@@ -18,13 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import OryginalStorybook from 'storybook';
 import { connect } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import { AppearanceProvider } from 'react-native-appearance';
 import { getThemeByType } from 'utils/themes';
-
 import type { RootReducerState } from 'reducers/rootReducer';
+import OriginalStorybook from '../../../storybook';
 
 type Props = {
   themeType: string,
@@ -38,7 +37,7 @@ const Storybook = (props) => {
   return (
     <AppearanceProvider>
       <ThemeProvider theme={theme}>
-        <OryginalStorybook />
+        <OriginalStorybook />
       </ThemeProvider>
     </AppearanceProvider>
   );

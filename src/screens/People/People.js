@@ -133,6 +133,7 @@ const ReferralCTAWrapper = styled.View`
   position: relative;
   overflow: hidden;
   align-self: flex-end;
+  width: 100%;
 `;
 
 const ReferralCTATitle = styled(MediumText)`

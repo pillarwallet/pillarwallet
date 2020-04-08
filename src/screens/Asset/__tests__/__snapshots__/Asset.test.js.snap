@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Asset renders the Asset correctly 1`] = `
+exports[`Asset renders the Asset Screen correctly 1`] = `
 <View
   style={
     Object {
@@ -79,53 +79,46 @@ exports[`Asset renders the Asset correctly 1`] = `
             }
           >
             <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
               style={
                 Object {
-                  "marginBottom": -20,
-                  "marginTop": -20,
+                  "alignItems": "flex-start",
+                  "height": 34,
+                  "justifyContent": "center",
+                  "marginLeft": -12,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 10,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                  "position": "relative",
+                  "width": 44,
                 }
               }
             >
               <View
-                accessible={true}
-                isTVSelectable={true}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
+                name="back"
                 style={
                   Object {
-                    "alignItems": "flex-start",
-                    "height": 44,
-                    "justifyContent": "center",
-                    "marginLeft": -12,
-                    "opacity": 1,
-                    "paddingBottom": 0,
-                    "paddingLeft": 10,
-                    "paddingRight": 0,
+                    "color": "#0A1427",
+                    "fontSize": 24,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
                     "paddingTop": 0,
-                    "position": "relative",
-                    "width": 44,
                   }
                 }
-              >
-                <View
-                  name="back"
-                  style={
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 24,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    }
-                  }
-                />
-              </View>
+              />
             </View>
           </View>
           <View
@@ -175,7 +168,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -262,6 +257,7 @@ exports[`Asset renders the Asset correctly 1`] = `
       }
       resetKeyboardSpace={[Function]}
       scrollForExtraHeightOnAndroid={[Function]}
+      scrollIntoView={[Function]}
       scrollToEnd={[Function]}
       scrollToFocusedInput={[Function]}
       scrollToPosition={[Function]}
@@ -274,6 +270,7 @@ exports[`Asset renders the Asset correctly 1`] = `
           "paddingHorizontal": 0,
         }
       }
+      update={[Function]}
       viewIsInsideTabBar={false}
     >
       <RCTRefreshControl />
@@ -936,7 +933,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -965,7 +964,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -1047,7 +1050,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1076,7 +1081,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button_disabled.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -1185,6 +1194,8 @@ exports[`Asset renders the Asset correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -1273,6 +1284,8 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1528,7 +1541,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                         >
                           <View
                             accessible={true}
+                            focusable={true}
                             isTVSelectable={true}
+                            onClick={[Function]}
                             onResponderGrant={[Function]}
                             onResponderMove={[Function]}
                             onResponderRelease={[Function]}
@@ -1595,6 +1610,59 @@ exports[`Asset renders the Asset correctly 1`] = `
                   }
                 >
                   <View
+                    rounded={true}
+                    small={true}
+                    style={
+                      Array [
+                        Object {
+                          "backgroundColor": "#BD573A",
+                          "borderRadius": 8,
+                          "justifyContent": "center",
+                          "paddingBottom": 8,
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                          "paddingTop": 8,
+                          "width": "100%",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      small={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 12,
+                            "lineHeight": 18,
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 12,
+                              "lineHeight": 18,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#FCFDFF",
+                                "fontSize": 14,
+                                "lineHeight": 22,
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                    >
+                      Do not send real ETH or ERC20 tokens.
+                    </Text>
+                  </View>
+                  <View
                     style={
                       Array [
                         Object {
@@ -1652,7 +1720,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                   >
                     <View
                       accessible={true}
+                      focusable={true}
                       isTVSelectable={true}
+                      onClick={[Function]}
                       onResponderGrant={[Function]}
                       onResponderMove={[Function]}
                       onResponderRelease={[Function]}
@@ -1765,7 +1835,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                     </View>
                     <View
                       accessible={true}
+                      focusable={true}
                       isTVSelectable={true}
+                      onClick={[Function]}
                       onResponderGrant={[Function]}
                       onResponderMove={[Function]}
                       onResponderRelease={[Function]}
@@ -1902,7 +1974,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                     }
                   >
                     <Image
-                      source={1}
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/visa.png",
+                        }
+                      }
                     />
                     <View
                       style={
@@ -1915,7 +1991,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                       }
                     />
                     <Image
-                      source={1}
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/mastercard.png",
+                        }
+                      }
                     />
                   </View>
                 </View>
@@ -2069,7 +2149,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -2124,7 +2206,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2142,7 +2226,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -2225,6 +2311,8 @@ exports[`Asset renders the Asset correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -2313,6 +2401,8 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2463,7 +2553,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                         >
                           <View
                             accessible={true}
+                            focusable={true}
                             isTVSelectable={true}
+                            onClick={[Function]}
                             onResponderGrant={[Function]}
                             onResponderMove={[Function]}
                             onResponderRelease={[Function]}
@@ -2696,7 +2788,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -2751,7 +2845,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2769,7 +2865,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}

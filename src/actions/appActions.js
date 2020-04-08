@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 
 // services
 import Storage from 'services/storage';
@@ -233,8 +233,8 @@ export const setupSentryAction = (user: Object, wallet: Object) => {
   return async () => {
     const { id, username, walletId = '' } = user;
     const { address } = wallet;
-    Sentry.setUserContext({
-      userID: id,
+    Sentry.setUser({
+      id,
       username,
       extra: {
         walletId,

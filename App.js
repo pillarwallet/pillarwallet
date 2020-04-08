@@ -20,14 +20,15 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
+import { StatusBar, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled, { ThemeProvider } from 'styled-components/native';
-import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
 import { AppearanceProvider } from 'react-native-appearance';
+import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
+import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -93,17 +94,19 @@ type Props = {
 }
 
 class App extends React.Component<Props, *> {
+  removeNetInfoEventListener: NetInfoSubscription;
+
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
-      Sentry.config(SENTRY_DSN).install();
-      Sentry.setTagsContext({
-        environment: BUILD_TYPE,
-      });
+      Sentry.init({ dsn: SENTRY_DSN });
+      Sentry.setTags({ environment: BUILD_TYPE });
     }
   }
 
-  componentWillMount() {
+  // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
   }
 
@@ -111,27 +114,32 @@ class App extends React.Component<Props, *> {
     const { stopListeningOnOpenNotification, stopReferralsListener } = this.props;
     stopReferralsListener();
     stopListeningOnOpenNotification();
-    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+    if (this.removeNetInfoEventListener) {
+      this.removeNetInfoEventListener();
+      delete this.removeNetInfoEventListener;
+    }
     Linking.removeEventListener('url', this.handleDeepLinkEvent);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       executeDeepLink,
       startReferralsListener,
     } = this.props;
+    NetInfo.fetch()
+      .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
+      .catch(() => null);
+    this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
     startReferralsListener();
-    const isOnline = await NetInfo.isConnected.fetch();
-    this.setOnlineStatus(isOnline); // set initial online status
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');
     }
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+
     Linking.getInitialURL()
       .then(url => {
         if (url) executeDeepLink(url);
@@ -159,7 +167,8 @@ class App extends React.Component<Props, *> {
     updateOfflineQueueNetworkStatus(isOnline);
   };
 
-  handleConnectivityChange = isOnline => {
+  handleConnectivityChange = (state: NetInfoState) => {
+    const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
       Toast.show({

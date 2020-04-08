@@ -28,6 +28,8 @@ YellowBox.ignoreWarnings([
   'Class EX',
   'Unrecognized WebSocket connection option(s)', // TODO: try removing after moving exchange to websocket transport
   'Setting a timer', // TODO: this is coming from ethers.js lib, periodically check whether we can already remove this
+  'Warning: componentWillReceiveProps has been renamed',
+  'Warning: componentWillMount has been renamed',
 ]);
 import 'utils/shim';
 import'crypto';

@@ -170,12 +170,12 @@ describe('History Actions', () => {
   const getState: GetState = jest.fn();
 
   afterEach(() => {
-    dispatchMock.mockClear();
+    (dispatchMock: any).mockClear();
   });
 
   describe('fetchAssetTransactionsAction()', () => {
     afterEach(() => {
-      getState.mockRestore();
+      (getState: any).mockRestore();
       api.fetchHistory.mockRestore();
     });
 
@@ -187,7 +187,7 @@ describe('History Actions', () => {
       };
 
       beforeEach(async () => {
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: {} },
           wallet: { data: mockWallet },
@@ -217,7 +217,7 @@ describe('History Actions', () => {
 
     describe('when transactions are NOT found', () => {
       beforeEach(async () => {
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: {} },
           wallet: { data: mockWallet },
@@ -236,7 +236,7 @@ describe('History Actions', () => {
 
   describe('restoreTransactionHistoryAction()', () => {
     beforeEach(() => {
-      getState.mockImplementation(() => ({
+      (getState: any).mockImplementation(() => ({
         accounts: { data: mockAccounts },
         history: { data: {} },
         user: { data: { walletId } },
@@ -246,7 +246,7 @@ describe('History Actions', () => {
     });
 
     afterEach(() => {
-      getState.mockRestore();
+      (getState: any).mockRestore();
       api.fetchSupportedAssets.mockRestore();
       api.importedEthTransactionHistory.mockRestore();
       api.importedErc20TransactionHistory.mockRestore();
@@ -291,7 +291,7 @@ describe('History Actions', () => {
       };
 
       beforeEach(async () => {
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
           user: { data: { walletId } },
@@ -324,7 +324,7 @@ describe('History Actions', () => {
       };
 
       beforeEach(async () => {
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
           user: { data: { walletId } },
@@ -377,7 +377,7 @@ describe('History Actions', () => {
       };
 
       beforeEach(async () => {
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
           user: { data: { walletId } },
@@ -410,7 +410,7 @@ describe('History Actions', () => {
       };
 
       beforeEach(async () => {
-        getState.mockImplementation(() => ({
+        (getState: any).mockImplementation(() => ({
           accounts: { data: mockAccounts },
           history: { data: accountTransactions },
           user: { data: { walletId } },
