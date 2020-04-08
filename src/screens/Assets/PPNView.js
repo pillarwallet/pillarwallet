@@ -99,6 +99,7 @@ type Props = {
   theme: Theme,
   dismissPPNInsight: () => void,
   PPNInsightDismissed: boolean,
+  onScroll: (event: Object) => void,
 }
 
 type State = {
@@ -212,6 +213,7 @@ class PPNView extends React.Component<Props, State> {
       history,
       fetchTransactionsHistory,
       theme,
+      onScroll,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -301,6 +303,8 @@ class PPNView extends React.Component<Props, State> {
               }}
             />
           }
+          onScroll={onScroll}
+          scrollEventThrottle={16}
         >
           {this.renderInsight(disableTopUpAndSettle)}
           <TopPartWrapper>

@@ -40,7 +40,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
@@ -72,13 +72,11 @@ const ActionsWrapper = styled.View`
 const SendTokenDetails = styled.View``;
 
 const SendTokenDetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.medium}px;
-  margin-bottom: 8px;
+  ${fontStyles.medium};
 `;
 
 const HelperText = styled(BaseText)`
   ${fontStyles.medium};
-  margin-bottom: ${spacing.rhythm / 2}px;
   color: ${themedColors.secondaryText};
   margin-left: 4px;
 `;

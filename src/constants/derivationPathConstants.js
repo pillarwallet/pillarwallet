@@ -17,30 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { ScrollView } from 'react-native';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import PromoCard from './PromoCard';
-import QRCodeScanButton from './QRCodeScanButton';
-import ActiveConnections from './ActiveConnections';
-import Requests from './Requests';
 
-
-const WalletConnectScreen = () => (
-  <ContainerWithHeader
-    headerProps={{ noBack: true, leftItems: [{ title: 'Connect' }] }}
-    inset={{ bottom: 0 }}
-    tab
-  >
-    {onScroll => (
-      <ScrollView onScroll={onScroll} scrollEventThrottle={16}>
-        <PromoCard />
-        <Requests />
-        <QRCodeScanButton />
-        <ActiveConnections />
-      </ScrollView>
-    )}
-  </ContainerWithHeader>
-);
-
-export default WalletConnectScreen;
+export const ETHEREUM_PATH = 'm/44\'/60\'/0\'/0/0';
+export const NON_STANDARD_ETHEREUM_PATH = 'm/44\'/60\'/0\'/0';

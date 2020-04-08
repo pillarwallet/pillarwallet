@@ -28,7 +28,11 @@ export const getBiometryType = (biometryType?: string) => {
     case Keychain.BIOMETRY_TYPE.FACE_ID:
       return 'Face ID';
     case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      return 'Android Fingerprint';
+      /**
+       * for Android it always return "fingerprint" even though face unlock is available (Android 10)
+       * TODO: check constantly for lib updates to update this
+       */
+      return 'Android Biometric Unlock';
     default:
       return 'Biometric Login';
   }
