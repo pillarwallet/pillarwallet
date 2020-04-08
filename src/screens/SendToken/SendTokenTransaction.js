@@ -33,7 +33,7 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // actions
@@ -183,13 +183,14 @@ class SendTokenTransaction extends React.Component<Props> {
     const transactionStatusTitle = isSuccess
       ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
       : 'Transaction failed';
-
+    const titleStyle = { ...fontStyles.large, marginTop: 38 };
+    const textStyle = { ...fontStyles.regular, marginBottom: 75 };
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
           <Animation source={animationSource} />
-          <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot />
-          <Paragraph small light center style={{ marginBottom: 75 }}>{transactionStatusText}</Paragraph>
+          <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot titleStyles={titleStyle} noMargin />
+          <Paragraph light center style={textStyle}>{transactionStatusText}</Paragraph>
           {isSuccess ? this.renderSuccessButton() : this.renderFailureButtons()}
         </Wrapper>
         {/*
