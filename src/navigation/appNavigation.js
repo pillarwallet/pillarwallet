@@ -234,6 +234,7 @@ import {
   REFERRAL_CONTACTS,
   CONNECT_TAB,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
+  SEND_TOKEN_FROM_HOME_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -370,6 +371,7 @@ const homeFlow = createStackNavigator({
   [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [EXCHANGE]: ExchangeScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
@@ -516,6 +518,21 @@ const tabNavigation = createBottomTabNavigator(
 const sendTokenFromAssetFlow = createStackNavigator(
   {
     [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [CHAT]: ChatScreen,
+    [CONTACT]: ContactScreen,
+  },
+  StackNavigatorModalConfig,
+);
+
+// SEND TOKEN FROM HOME FLOW
+const sendTokenFromHomeFlow = createStackNavigator(
+  {
+    [SEND_TOKEN_CONTACTS]: { screen: SendTokenContactsScreen, params: { sendFromHomeFlow: true } },
+    [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
@@ -688,6 +705,7 @@ const AppFlowNavigation = createStackNavigator(
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
+    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
   },
   modalTransition,
 );

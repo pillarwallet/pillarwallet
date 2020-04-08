@@ -29,6 +29,7 @@ type Props = {
   labelStyle?: Object,
   color?: string,
   primary?: boolean,
+  positive?: boolean,
 };
 
 type BadgeProps = Props & {
@@ -36,11 +37,19 @@ type BadgeProps = Props & {
 };
 
 const getBackgroundColor = (props: BadgeProps) => {
-  const { theme, color, primary } = props;
+  const {
+    theme,
+    color,
+    primary,
+    positive,
+  } = props;
+
   if (color) {
     return color;
   } else if (primary) {
     return theme.colors.primary;
+  } else if (positive) {
+    return theme.colors.positive;
   }
   return theme.colors.positive;
 };
