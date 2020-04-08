@@ -462,7 +462,7 @@ class HomeScreen extends React.Component<Props, State> {
             <PortfolioBalance
               fiatCurrency={fiatCurrency}
               showBalance={hideBalance}
-              toggleBalanceVisibility={() => toggleBalance()}
+              toggleBalanceVisibility={toggleBalance}
             />
             <ActionButtons toggleLoading={(_loaderMessage) => this.setState({ loaderMessage: _loaderMessage })} />
             <BadgesWrapper>
