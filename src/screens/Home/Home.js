@@ -2,17 +2,14 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -443,61 +440,68 @@ class HomeScreen extends React.Component<Props, State> {
             sideFlex: 4,
           }}
           inset={{ bottom: 0 }}
+          tab
         >
-          <ScrollView
-            style={{ width: '100%', flex: 1 }}
-            stickyHeaderIndices={referralsFeatureEnabled ? [4] : [3]}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={this.refreshScreenData}
-              />}
-          >
-            <PortfolioBalance fiatCurrency={fiatCurrency} />
-            <ActionButtons toggleLoading={(_loaderMessage) => this.setState({ loaderMessage: _loaderMessage })} />
-            <BadgesWrapper>
-              <ListHeader>Game of badges</ListHeader>
-              <FlatList
-                data={badges}
-                horizontal
-                keyExtractor={(item) => (item.id.toString())}
-                renderItem={this.renderBadge}
-                style={{ width: '100%', paddingBottom: spacing.medium }}
-                contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
-                initialNumToRender={5}
-                ListEmptyComponent={(
-                  <EmptyStateWrapper>
-                    <EmptyStateParagraph
-                      title="No badges"
-                      bodyText="You do not have badges yet"
-                    />
-                  </EmptyStateWrapper>
+          {onScroll => (
+            <React.Fragment>
+              <ScrollView
+                style={{ width: '100%', flex: 1 }}
+                stickyHeaderIndices={referralsFeatureEnabled ? [4] : [3]}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={this.refreshScreenData}
+                  />}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
+              >
+                <PortfolioBalance fiatCurrency={fiatCurrency} />
+                <ActionButtons toggleLoading={(_loaderMessage) => this.setState({ loaderMessage: _loaderMessage })} />
+                <BadgesWrapper>
+                  <ListHeader>Game of badges</ListHeader>
+                  <FlatList
+                    data={badges}
+                    horizontal
+                    keyExtractor={(item) => (item.id.toString())}
+                    renderItem={this.renderBadge}
+                    style={{ width: '100%', paddingBottom: spacing.medium }}
+                    contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
+                    initialNumToRender={5}
+                    ListEmptyComponent={(
+                      <EmptyStateWrapper>
+                        <EmptyStateParagraph
+                          title="No badges"
+                          bodyText="You do not have badges yet"
+                        />
+                      </EmptyStateWrapper>
                 )}
+                  />
+                </BadgesWrapper>
+                {!!referralsFeatureEnabled && this.renderReferral(colors)}
+                <Tabs
+                  tabs={activityFeedTabs}
+                  wrapperStyle={{ paddingTop: 16 }}
+                  activeTab={activeTab}
+                />
+                <ActivityFeed
+                  onCancelInvitation={cancelInvitation}
+                  onRejectInvitation={rejectInvitation}
+                  onAcceptInvitation={acceptInvitation}
+                  navigation={navigation}
+                  tabs={activityFeedTabs}
+                  activeTab={activeTab}
+                  hideTabs
+                  initialNumToRender={8}
+                  wrapperStyle={{ flexGrow: 1 }}
+                  contentContainerStyle={{ flexGrow: 1 }}
+                />
+              </ScrollView>
+              <ReferralModalReward
+                isVisible={showRewardModal}
+                onModalHide={this.handleModalHide}
               />
-            </BadgesWrapper>
-            {!!referralsFeatureEnabled && this.renderReferral(colors)}
-            <Tabs
-              tabs={activityFeedTabs}
-              wrapperStyle={{ paddingTop: 16 }}
-              activeTab={activeTab}
-            />
-            <ActivityFeed
-              onCancelInvitation={cancelInvitation}
-              onRejectInvitation={rejectInvitation}
-              onAcceptInvitation={acceptInvitation}
-              navigation={navigation}
-              tabs={activityFeedTabs}
-              activeTab={activeTab}
-              hideTabs
-              initialNumToRender={8}
-              wrapperStyle={{ flexGrow: 1 }}
-              contentContainerStyle={{ flexGrow: 1 }}
-            />
-          </ScrollView>
-          <ReferralModalReward
-            isVisible={showRewardModal}
-            onModalHide={this.handleModalHide}
-          />
+            </React.Fragment>
+          )}
         </ContainerWithHeader>
         {!!loaderMessage &&
         <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>

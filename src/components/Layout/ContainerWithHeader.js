@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, StatusBar, View, Dimensions, ScrollView } from 'react-native';
+import { Platform, StatusBar, View, Dimensions, ScrollView, Animated } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
@@ -43,6 +43,11 @@ type Props = {
   theme: Theme,
   putContentInScrollView?: boolean,
   shouldFooterAvoidKeyboard?: boolean,
+  tab?: boolean,
+};
+
+type State = {
+  scrollY: Animated.Value,
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
@@ -62,10 +67,17 @@ const Footer = styled.KeyboardAvoidingView`
 
 const { height: screenHeight } = Dimensions.get('window');
 
-class ContainerWithHeader extends React.Component<Props> {
+const animatedValueOne = new Animated.Value(1);
+
+class ContainerWithHeader extends React.Component<Props, State> {
   focusSubscriptions: NavigationEventSubscription[];
-  shouldComponentUpdate(nextProps: Props) {
-    const isEq = isEqual(this.props, nextProps);
+
+  state = {
+    scrollY: new Animated.Value(0),
+  };
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
 
@@ -100,6 +112,9 @@ class ContainerWithHeader extends React.Component<Props> {
     const { children, footer } = this.props;
     if (!shouldRenderFooter) {
       if (!shouldRenderChildrenInScrollView) {
+        if (typeof children === 'function') {
+          return children(this.onScroll());
+        }
         return children;
       }
 
@@ -119,6 +134,12 @@ class ContainerWithHeader extends React.Component<Props> {
     );
   };
 
+  onScroll = () => {
+    return Animated.event(
+      [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+    );
+  }
+
   render() {
     const {
       headerProps = {},
@@ -130,7 +151,9 @@ class ContainerWithHeader extends React.Component<Props> {
       theme,
       putContentInScrollView,
       shouldFooterAvoidKeyboard = true,
+      tab,
     } = this.props;
+
     const colors = getThemeColors(theme);
 
     const topInset = headerProps.floating ? 'always' : 'never';
@@ -139,9 +162,22 @@ class ContainerWithHeader extends React.Component<Props> {
     const isScreenBigEnoughToAvoidKeyboard = screenHeight > minAvoidHeight;
     const shouldRenderKbAvoidingFooter = isScreenBigEnoughToAvoidKeyboard && shouldFooterAvoidKeyboard;
 
+    let bottomBorderAnimationValue;
+
+    if (!tab) {
+      // if this is no tab, we don't animate anything and the border is all the time
+      bottomBorderAnimationValue = animatedValueOne;
+    } else {
+      bottomBorderAnimationValue = this.state.scrollY.interpolate({
+        inputRange: [0, 20],
+        outputRange: [0, 1],
+        extrapolate: 'clamp',
+      });
+    }
+
     return (
       <View style={{ flex: 1 }}>
-        <HeaderBlock {...headerProps} navigation={navigation} />
+        <HeaderBlock {...headerProps} navigation={navigation} bottomBorderAnimationValue={bottomBorderAnimationValue} />
         <StyledSafeAreaView
           forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
           androidStatusbarHeight={androidStatusBarSpacing}

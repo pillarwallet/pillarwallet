@@ -30,13 +30,16 @@ const WalletConnectScreen = () => (
   <ContainerWithHeader
     headerProps={{ noBack: true, leftItems: [{ title: 'Connect' }] }}
     inset={{ bottom: 0 }}
+    tab
   >
-    <ScrollView>
-      <PromoCard />
-      <Requests />
-      <QRCodeScanButton />
-      <ActiveConnections />
-    </ScrollView>
+    {onScroll => (
+      <ScrollView onScroll={onScroll} scrollEventThrottle={16}>
+        <PromoCard />
+        <Requests />
+        <QRCodeScanButton />
+        <ActiveConnections />
+      </ScrollView>
+    )}
   </ContainerWithHeader>
 );
 
