@@ -373,7 +373,7 @@ class AccountsScreen extends React.Component<Props, State> {
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
     refreshBitcoinBalance();
     navigation.navigate(ASSETS);
-  }
+  };
 
   startBTCInit = () => {
     this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC });
