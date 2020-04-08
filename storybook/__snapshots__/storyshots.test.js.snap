@@ -911,17 +911,17 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -1741,17 +1741,17 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
               }
             >
               <Text
-                color="#0A1427"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -2009,17 +2009,17 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -2254,11 +2254,11 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
             >
               <Text
                 button={false}
-                color={null}
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
@@ -3262,17 +3262,17 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -3475,17 +3475,17 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -5485,17 +5485,17 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -6234,11 +6234,11 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
               }
             >
               <Text
-                color={null}
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
@@ -6787,17 +6787,17 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,

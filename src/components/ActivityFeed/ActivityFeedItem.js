@@ -105,7 +105,6 @@ type EventData = {
   label?: string,
   itemImageSource?: string,
   actionLabel?: ?string,
-  actionLabelColor?: string,
   badge?: ?string,
   subtext?: string,
   labelAsButton?: boolean,
@@ -255,14 +254,12 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.KEY_WALLET,
           itemImageSource: keyWalletIcon,
           actionLabel: STATUSES.CREATED,
-          actionLabelColor: 'positive',
         };
       case 'Smart wallet created':
         return {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: STATUSES.CREATED,
-          actionLabelColor: 'positive',
           badge: this.needToActivateSW() ? 'Need to activate' : null,
         };
       case 'Wallet imported':
@@ -270,7 +267,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.KEY_WALLET,
           itemImageSource: keyWalletIcon,
           actionLabel: 'Imported',
-          actionLabelColor: 'positive',
         };
       default:
         return null;
@@ -286,7 +282,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: STATUSES.CREATED,
-          actionLabelColor: 'positive',
           badge: this.needToActivateSW() ? 'Need to activate' : null,
         };
       case WALLET_BACKUP_EVENT:
@@ -294,7 +289,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.KEY_WALLET,
           itemImageSource: keyWalletIcon,
           actionLabel: STATUSES.BACKUP,
-          actionLabelColor: 'secondaryText',
         };
       default:
         return null;
@@ -465,7 +459,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       itemImageUrl: icon,
       subtext,
       actionLabel: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
-      actionLabelColor: isReceived ? 'positive' : 'text',
       eventData: { ...event, contact },
       iconBackgroundColor: 'card',
       iconBorder: true,
@@ -480,7 +473,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       itemImageUrl: imageUrl,
       subtext: 'Badge',
       actionLabel: STATUSES.RECEIVED,
-      actionLabelColor: 'positive',
       eventData: { ...event },
     };
   }
@@ -549,7 +541,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     if (!itemData) return null;
 
     const {
-      actionLabelColor,
       iconColor,
       valueColor,
       eventData,
@@ -562,7 +553,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       <ListItemWithImage
         {...itemData}
         onPress={eventData && (() => selectEvent(eventData, eventType || event.type, eventStatus || event.status))}
-        actionLabelColor={this.getColor(actionLabelColor)}
+        actionLabelColor={this.getColor('secondaryText')}
         iconColor={this.getColor(iconColor)}
         diameter={48}
         iconBackgroundColor={this.getColor(iconBackgroundColor)}
