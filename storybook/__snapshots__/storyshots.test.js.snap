@@ -6237,40 +6237,58 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
 `;
 
 exports[`Storyshots ActivityFeedItem Settlement 1`] = `
-Array [
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
   <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "flexDirection": "column",
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
     }
   >
     <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
       style={
         Object {
-          "alignItems": "flex-start",
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 14,
-          "paddingLeft": 20,
-          "paddingRight": 20,
-          "paddingTop": 14,
-          "width": "100%",
+          "flex": 1,
         }
       }
     >
@@ -6279,65 +6297,129 @@ Array [
           Array [
             Object {
               "alignItems": "center",
-              "justifyContent": "center",
-              "paddingRight": 12,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
             },
             undefined,
           ]
         }
+        type="ACTION"
       >
         <View
-          backgroundColor="#eee"
-          diameter={48}
           style={
             Array [
               Object {
-                "alignItems": "center",
-                "backgroundColor": "#eee",
-                "borderColor": "transparent",
-                "borderRadius": 24,
-                "borderWidth": 1,
-                "height": 48,
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
                 "justifyContent": "center",
-                "textAlign": "center",
-                "width": 48,
+                "marginTop": 0,
+                "minHeight": 54,
               },
-              undefined,
+              Object {
+                "flexGrow": 1,
+              },
             ]
           }
+          type="ACTION"
         >
           <View
-            name="received"
             style={
               Array [
                 Object {
-                  "color": "#497391",
-                  "fontSize": 48,
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              Settle
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
                 },
                 undefined,
               ]
             }
           />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            to Smart Wallet
+          </Text>
         </View>
-      </View>
-      <View
-        style={
-          Object {
-            "flex": 1,
-          }
-        }
-      >
         <View
-          horizontalAlign="flex-start"
+          rightColumn={true}
           style={
             Array [
               Object {
-                "alignItems": "flex-start",
-                "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
               },
-              undefined,
+              Object {
+                "maxWidth": "50%",
+              },
             ]
           }
           type="ACTION"
@@ -6345,275 +6427,59 @@ Array [
           <View
             style={
               Array [
+                undefined,
                 Object {
-                  "alignItems": "flex-start",
-                  "flexBasis": 0,
-                  "flexDirection": "column",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "justifyContent": "center",
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "flexGrow": 1,
+                  "flexWrap": "wrap",
                 },
               ]
             }
-            type="ACTION"
           >
             <View
               style={
                 Array [
                   Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "justifyContent": "space-between",
+                    "alignItems": "flex-end",
+                    "paddingLeft": 16,
                   },
                   undefined,
                 ]
               }
             >
-              <Text
-                ellipsizeMode="tail"
-                numberOfLines={2}
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "width": "100%",
-                        },
-                        undefined,
-                      ],
-                    ],
-                  ]
-                }
-                type="ACTION"
-              >
-                Deposit
-              </Text>
-            </View>
-            <View
-              h={2}
-              style={
-                Array [
-                  Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  undefined,
-                ]
-              }
-            />
-            <Text
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 14,
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              to Smart Wallet
-            </Text>
-          </View>
-          <View
-            rightColumn={true}
-            style={
-              Array [
-                Object {
-                  "alignItems": "flex-end",
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                  "marginLeft": 10,
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "maxWidth": "50%",
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {},
-                  Object {
-                    "flexWrap": "wrap",
-                  },
-                ]
-              }
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "flex-end",
-                      "paddingLeft": 16,
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <Text
+              <View>
+                <View
                   style={
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "textAlignVertical": "center",
+                        "alignItems": "center",
+                        "flexDirection": "row",
                       },
-                      Array [
-                        Object {
-                          "color": "#2AA057",
-                          "fontSize": 18,
-                          "textAlign": "right",
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ]
                   }
                 >
-                  + 3 PLR
-                </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2329d6",
+                            "fontSize": 18,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    - 3 PLR
+                  </Text>
+                </View>
               </View>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>,
-  <View
-    style={
-      Array [
-        Object {
-          "flexDirection": "column",
-          "width": "100%",
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "flex-start",
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 14,
-          "paddingLeft": 20,
-          "paddingRight": 20,
-          "paddingTop": 14,
-          "width": "100%",
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "justifyContent": "center",
-              "paddingRight": 12,
-            },
-            undefined,
-          ]
-        }
-      />
-      <View
-        style={
-          Object {
-            "flex": 1,
-          }
-        }
-      >
-        <View
-          horizontalAlign="flex-start"
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
-              },
-              undefined,
-            ]
-          }
-          type="ACTION"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "flex-start",
-                  "flexBasis": 0,
-                  "flexDirection": "column",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "justifyContent": "center",
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "flexGrow": 1,
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "justifyContent": "space-between",
-                  },
-                  undefined,
-                ]
-              }
-            >
               <Text
-                ellipsizeMode="tail"
-                numberOfLines={2}
                 style={
                   Array [
                     Object {
@@ -6623,143 +6489,24 @@ Array [
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "textAlignVertical": "center",
+                        "color": "#2AA057",
+                        "fontSize": 18,
+                        "textAlign": "right",
                       },
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "width": "100%",
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ],
                   ]
                 }
-                type="ACTION"
               >
-                Settle
+                + 3 PLR
               </Text>
-            </View>
-            <View
-              h={2}
-              style={
-                Array [
-                  Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  undefined,
-                ]
-              }
-            />
-            <Text
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 14,
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              to Smart Wallet
-            </Text>
-          </View>
-          <View
-            rightColumn={true}
-            style={
-              Array [
-                Object {
-                  "alignItems": "flex-end",
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                  "marginLeft": 10,
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "maxWidth": "50%",
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {},
-                  Object {
-                    "flexWrap": "wrap",
-                  },
-                ]
-              }
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "flex-end",
-                      "paddingLeft": 16,
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <View>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "alignItems": "center",
-                          "flexDirection": "row",
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <Text
-                      style={
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Regular",
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "color": "#2329d6",
-                              "fontSize": 18,
-                            },
-                            undefined,
-                          ],
-                        ]
-                      }
-                    >
-                      - 3 PLR
-                    </Text>
-                  </View>
-                </View>
-              </View>
             </View>
           </View>
         </View>
       </View>
     </View>
-  </View>,
-]
+  </View>
+</View>
 `;
 
 exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `

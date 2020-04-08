@@ -21,14 +21,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import { withTheme } from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
+import BigNumber from 'bignumber.js';
 
 // utils
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { fontSizes, spacing } from 'utils/variables';
 
 // components
 import {
@@ -37,6 +39,7 @@ import {
 } from 'utils/common';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
+import { BaseText } from 'components/Typography';
 
 // constants
 import {
@@ -61,8 +64,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
-
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
@@ -147,6 +148,17 @@ const STATUSES = {
   ACTIVATED: 'Activated',
 };
 
+const ListWrapper = styled.View`
+  align-items: flex-end;
+  padding-left: ${spacing.mediumLarge}px;
+`;
+
+const ItemValue = styled(BaseText)`
+  font-size: ${fontSizes.big}px;
+  color: ${themedColors.positive};
+  text-align: right;
+`;
+
 const elipsizeAddress = (address: string) => {
   return `${address.slice(0, 6)}…${address.slice(-6)}`;
 };
@@ -185,6 +197,40 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { accounts, smartWalletState } = this.props;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     return (smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
+  }
+
+  getFormattedSettleValues = () => {
+    const {
+      event,
+      asset,
+      assets,
+      supportedAssets,
+    } = this.props;
+    const settleData = event.extra;
+    const ppnTransactions = asset
+      ? settleData.filter(({ symbol }) => symbol === asset)
+      : settleData;
+
+    const valueByAsset: Object = {};
+
+    ppnTransactions.forEach((trx) => {
+      const { symbol, value: rawValue } = trx;
+      const { decimals = 18 } = getAssetData(assets, supportedAssets, symbol);
+      const value = new BigNumber(rawValue);
+      if (!valueByAsset[symbol]) {
+        valueByAsset[symbol] = { ...trx, value, decimals };
+      } else {
+        const { value: currentValue } = valueByAsset[symbol];
+        valueByAsset[symbol].value = currentValue.plus(value);
+      }
+    });
+
+    const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
+    const formattedValuesArray = valuesArray.map(({ symbol, value, decimals }) => ({
+      formatted: formatAmount(formatUnits(value.toString(), decimals)),
+      symbol,
+    }));
+    return formattedValuesArray;
   }
 
   getWalletCreatedEventData = (event: Object) => {
@@ -305,6 +351,27 @@ export class ActivityFeedItem extends React.Component<Props> {
         trxData.txType = 'Withdrawal';
         trxData.hideAmount = true;
         trxData.hideSender = true;
+        break;
+      case PAYMENT_NETWORK_TX_SETTLEMENT:
+        const formattedValuesArray = this.getFormattedSettleValues();
+        data = {
+          label: 'Settle',
+          itemImageSource: PPNIcon,
+          subtext: 'to Smart Wallet',
+          customAddon: (
+            <ListWrapper>
+              {formattedValuesArray.map(({ formatted, symbol }) =>
+                  (<TankAssetBalance
+                    key={symbol}
+                    amount={`- ${formatted} ${symbol}`}
+                    monoColor
+                  />),
+                )}
+              {formattedValuesArray.map(({ formatted, symbol }) =>
+                <ItemValue key={symbol}>{`+ ${formatted} ${symbol}`}</ItemValue>,
+                )}
+            </ListWrapper>),
+        };
         break;
       default:
         const address = isReceived ? event.from : event.to;
@@ -432,40 +499,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
   }
 
-  renderSettlement = (event: Object) => {
-    const {
-      assets, supportedAssets, asset, feedType, contacts, contactsSmartAddresses, selectEvent,
-    } = this.props;
-    const { type } = event;
-    const trxData = {
-      hideAmount: true,
-      hideSender: true,
-      txType: 'PLR Network settle',
-    };
-
-    const address = this.isReceived(event) ? event.from : event.to;
-    const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
-    const { decimals = 18 } = getAssetData(assets, supportedAssets, event.asset);
-    const value = formatUnits(event.value, decimals);
-
-    return (
-      <SettlementItem
-        settleData={event.extra}
-        onPress={() => selectEvent({
-          ...event,
-          value,
-          contact,
-          ...trxData,
-        }, type, event)}
-        type={feedType}
-        asset={asset}
-        isPending={event === TX_PENDING_STATUS}
-        supportedAssets={supportedAssets}
-        accountAssets={assets}
-      />
-    );
-  }
-
   getColor = (color: ?string): ?string => {
     if (!color) return null;
     const { theme } = this.props;
@@ -475,13 +508,7 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   render() {
     const { event, selectEvent } = this.props;
-
-    if (event.type === TRANSACTION_EVENT && event.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
-      return this.renderSettlement(event);
-    }
-
     const itemData = this.getEventData(event);
-
     if (!itemData) return null;
 
     const {
