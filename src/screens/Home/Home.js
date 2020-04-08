@@ -68,6 +68,7 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { toggleBalanceAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -90,6 +91,7 @@ import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -123,6 +125,8 @@ type Props = {
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
   referralsFeatureEnabled: boolean,
+  toggleBalance: () => void,
+  hideBalance: boolean,
 };
 
 type State = {
@@ -135,6 +139,7 @@ type State = {
   isReferralBannerVisible: boolean,
   showRewardModal: boolean,
 };
+
 
 const profileImageWidth = 24;
 
@@ -316,6 +321,8 @@ class HomeScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       activeBlockchainNetwork,
       referralsFeatureEnabled,
+      hideBalance,
+      toggleBalance,
     } = this.props;
 
     const { activeTab, showRewardModal } = this.state;
@@ -438,7 +445,11 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />}
         >
-          <PortfolioBalance fiatCurrency={fiatCurrency} />
+          <PortfolioBalance
+            fiatCurrency={fiatCurrency}
+            showBalance={hideBalance}
+            toggleBalanceVisibility={() => toggleBalance()}
+          />
           <BadgesWrapper>
             <ListHeader>Game of badges</ListHeader>
             <FlatList
@@ -495,7 +506,7 @@ const mapStateToProps = ({
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, hideBalance } },
   featureFlags: {
     data: {
       REFERRALS_ENABLED: referralsFeatureEnabled,
@@ -513,6 +524,7 @@ const mapStateToProps = ({
   userEvents,
   baseFiatCurrency,
   referralsFeatureEnabled,
+  hideBalance,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -538,6 +550,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
+  toggleBalance: () => dispatch(toggleBalanceAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
