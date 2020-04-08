@@ -15030,10 +15030,10 @@ react-native-keyboard-aware-scroll-view@^0.9.1:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
-react-native-keychain@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-5.0.1.tgz#2751de436f017c87b8aabb32533bee88657d643e"
-  integrity sha512-CLIPNexPBufPpNqgF7/smZNAiv6x0SCsztfEi/hWPCQ7yHxNwdRUyUzOLGrw1lPe/6fQE+TC3iS1+cbDTaRJag==
+react-native-keychain@^6.0.0:
+  version "6.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-keychain/-/react-native-keychain-6.0.0.tgz#687379dd8468e8c37caa3c4d1c91393c6e04cb1d"
+  integrity sha1-aHN53YRo6MN8qjxNHJE5PG4Eyx0=
 
 react-native-level-fs@^3.0.0:
   version "3.0.1"
@@ -15088,10 +15088,10 @@ react-native-parsed-text@^0.0.21:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-permissions@^1.2.1:
-  version "1.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-permissions/-/react-native-permissions-1.2.1.tgz#cb1f6e53b8992b3912de5a4cfc1553ac2e82d0f6"
-  integrity sha1-yx9uU7iZKzkS3lpM/BVTrC6C0PY=
+react-native-permissions@^2.0.10:
+  version "2.0.10"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-permissions/-/react-native-permissions-2.0.10.tgz#d01f5ce7cc48f99d33f2f7ed32bb70abe5ea03dd"
+  integrity sha1-0B9c58xI+Z0z8vftMrtwq+XqA90=
 
 react-native-qrcode-svg@^5.1.2:
   version "5.3.2"
