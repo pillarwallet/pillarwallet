@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Keyboard, TextInput, View, ScrollView } from 'react-native';
+import { FlatList, Keyboard, View, ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -31,6 +31,7 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { BaseText } from 'components/Typography';
+import TextInput from 'components/Input';
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';

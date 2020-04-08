@@ -123,6 +123,7 @@ type Props = {
   theme: Theme,
   dismissSmartWalletInsight: () => void,
   SWInsightDismissed: boolean,
+  onScroll: (event: Object) => void,
 }
 
 type State = {
@@ -173,11 +174,15 @@ const CustomKAWrapper = (props) => {
     hasStickyTabs,
     getRef,
     stickyHeaderIndices,
+    onScroll,
   } = props;
   const scrollWrapperProps = {
     stickyHeaderIndices: hasStickyTabs ? stickyHeaderIndices : [0],
     refreshControl,
-    onScroll: () => Keyboard.dismiss(),
+    onScroll: (ev) => {
+      onScroll(ev);
+      Keyboard.dismiss();
+    },
   };
 
   if (Platform.OS === 'ios') {
@@ -380,6 +385,7 @@ class WalletView extends React.Component<Props, State> {
       dismissSmartWalletInsight,
       SWInsightDismissed,
       smartWalletFeatureEnabled,
+      onScroll,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -438,6 +444,7 @@ class WalletView extends React.Component<Props, State> {
           />
         }
         getRef={(ref) => { this.scrollViewRef = ref; }}
+        onScroll={onScroll}
       >
         <Insight
           isVisible={isInsightVisible}
