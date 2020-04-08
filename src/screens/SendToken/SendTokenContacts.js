@@ -45,6 +45,7 @@ import {
   ACCOUNTS,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_COLLECTIBLE_CONTACTS,
+  SEND_TOKEN_ASSETS,
 } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -72,6 +73,7 @@ import type { SendNavigateOptions } from 'models/Navigation';
 import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import { findMatchingContact } from 'utils/contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -179,11 +181,14 @@ class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
   assetData: AssetData;
   isPPNTransaction: boolean;
+  isSendingFromHomeFlow: boolean;
 
   constructor(props: Props) {
     super(props);
-    const { blockchainNetworks } = this.props;
+    const { blockchainNetworks, navigation } = this.props;
     this.isPPNTransaction = isPillarPaymentNetworkActive(blockchainNetworks);
+    this.isSendingFromHomeFlow = navigation.getParam('sendFromHomeFlow');
+
     this.updateAssetData();
     this.state = {
       isScanning: false,
@@ -337,7 +342,13 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   navigateToNextScreen(receiverAddress: string, receiverEnsName?: string) {
-    const { navigation, navigateToSendTokenAmount } = this.props;
+    const {
+      navigation,
+      navigateToSendTokenAmount,
+      localContacts,
+      contactsSmartAddresses,
+      accounts,
+    } = this.props;
 
     if (this.assetData.tokenType === COLLECTIBLES) {
       navigation.navigate(SEND_COLLECTIBLE_CONTACTS_CONFIRM, {
@@ -346,6 +357,18 @@ class SendTokenContacts extends React.Component<Props, State> {
         source: 'Contact',
         receiverEnsName,
         backTo: SEND_COLLECTIBLE_CONTACTS,
+      });
+      return;
+    }
+    if (this.isSendingFromHomeFlow) {
+      const { username } = findMatchingContact(receiverAddress, localContacts, contactsSmartAddresses) || {};
+      const userWallet = accounts.find(({ id }) => id === receiverAddress) || {};
+      const userWalletName = getAccountName(userWallet.type, accounts);
+      navigation.navigate(SEND_TOKEN_ASSETS, {
+        contact: {
+          ethAddress: receiverAddress,
+          username: username || userWalletName || receiverAddress,
+        },
       });
       return;
     }
@@ -426,13 +449,27 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
   }
 
+  getHeaderItems = () => {
+    const { theme } = this.props;
+    const { tokenType, name, token } = this.assetData;
+    const colors = getThemeColors(theme);
+
+    const tokenName = (tokenType === COLLECTIBLES ? (name || token) : token) || 'asset';
+
+    if (this.isPPNTransaction) {
+      return [
+        { title: 'Send' },
+        { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
+        { title: tokenName, color: colors.primary },
+      ];
+    } else if (this.isSendingFromHomeFlow) {
+      return [{ title: 'Select contact' }];
+    }
+    return [{ title: `Send ${tokenName}` }];
+  };
+
   render() {
-    const {
-      localContacts = [],
-      contactsSmartAddressesSynced,
-      isOnline,
-      theme,
-    } = this.props;
+    const { localContacts = [], contactsSmartAddressesSynced, isOnline } = this.props;
     const {
       isScanning,
       isValidatingEns,
@@ -441,22 +478,12 @@ class SendTokenContacts extends React.Component<Props, State> {
       value,
     } = this.state;
 
-    const { tokenType, name, token } = this.assetData;
+    const { tokenType, token } = this.assetData;
     const isCollectible = tokenType === COLLECTIBLES;
     const isSearchQueryProvided = !!(value && value.address.length);
 
     const showContacts = isCollectible || token !== BTC;
-    const tokenName = (isCollectible ? (name || token) : token) || 'asset';
-
-    const colors = getThemeColors(theme);
-
-    const headerTitleItems = this.isPPNTransaction
-      ? [
-        { title: 'Send' },
-        { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
-        { title: tokenName, color: colors.primary },
-      ]
-      : [{ title: `Send ${tokenName}` }];
+    const headerTitleItems = this.getHeaderItems();
 
     const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
     const submitDisabled = !value.address.length || isValidatingEns;
