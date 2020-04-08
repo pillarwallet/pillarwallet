@@ -224,20 +224,20 @@ describe('bitcoin service', () => {
       );
 
       // First address
-      expect(keyPairAddress(root.derivePath("m/0'/0/0")))
-        .toEqual('mmCjN6Fp4mePFfijx2sBnMngbbibQbj1u5');
-
-      // First address change
-      expect(keyPairAddress(root.derivePath("m/0'/1/0")))
-        .toEqual('mkAD75HkxS2VJn1gQGiyRGYMrG1RVVLnCk');
+      expect(keyPairAddress(root.derivePath("m/44'/0'/0'/0")))
+        .toEqual('mjDhVnAPZoBCtfw2dMnN691kuJxXXj2dRn');
 
       // Second address
-      expect(keyPairAddress(root.derivePath("m/0'/0/1")))
-        .toEqual('n1NW6wZGtsWgB2439fSjozy4K9h1PrfZEV');
+      expect(keyPairAddress(root.derivePath("m/44'/0'/0'/0/1")))
+        .toEqual('my9Q51F7WAEukyn4HMKDc2UZ8D8SkiPVdU');
 
-      // Second address change
-      expect(keyPairAddress(root.derivePath("m/0'/1/1")))
-        .toEqual('mqi8WbJCVFfLiCY2emuXh5K7CHnLuudH6Z');
+      // First change address
+      expect(keyPairAddress(root.derivePath("m/44'/0'/0'/1/0")))
+        .toEqual('mraHVKSGgkoKx1xCQnnca4skToALVCsFeu');
+
+      // Second change address
+      expect(keyPairAddress(root.derivePath("m/44'/0'/0'/1/1")))
+        .toEqual('mrKZLUvTBnZFwY3gXJW8AGrotcPvJPnYYL');
     });
 
     it('has consistent address derivation', async () => {
