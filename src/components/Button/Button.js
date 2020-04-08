@@ -44,7 +44,6 @@ export type Props = {
   primaryInverted?: boolean,
   dangerInverted?: boolean,
   positive?: boolean,
-  secondaryLight?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,
@@ -92,9 +91,6 @@ const themes = {
   dangerInverted: {
     borderWidth: '1px',
   },
-  secondary: {
-    borderWidth: '1px',
-  },
   secondaryTransparent: {
     borderWidth: '1px',
   },
@@ -133,11 +129,11 @@ const themes = {
   positive: {
     borderWidth: 0,
   },
-  secondaryLight: {
+  secondary: {
     borderWidth: 0,
     shadow: false,
   },
-  secondaryLightDisabled: {
+  secondaryDisabled: {
     borderWidth: 0,
     opacity: 0.5,
     shadow: false,
@@ -163,10 +159,6 @@ const themeColors = (theme: Theme) => {
       surface: 'transparent',
       text: colors.negative,
       border: colors.negative,
-    },
-    secondary: {
-      surface: 'transparent',
-      text: colors.primary,
     },
     secondaryTransparent: {
       background: 'transparent',
@@ -219,13 +211,13 @@ const themeColors = (theme: Theme) => {
       text: colors.primary,
       border: colors.card,
     },
-    secondaryLight: {
+    secondary: {
       surface: colors.buttonSecondaryBackground,
-      text: colors.primary,
+      text: isDarkTheme ? colors.text : colors.primary,
     },
-    secondaryLightDisabled: {
+    secondaryDisabled: {
       surface: colors.buttonSecondaryBackground,
-      text: colors.primary,
+      text: isDarkTheme ? colors.text : colors.primary,
     },
   });
 };
@@ -274,7 +266,7 @@ const getButtonPadding = (props) => {
   if (props.square) {
     return '4px';
   }
-  return '22px';
+  return '19px';
 };
 
 const getButtonFontSize = (props) => {
@@ -375,8 +367,8 @@ const getThemeType = (props: Props, isForColors?: boolean) => {
     return 'secondaryTransparentDisabled';
   }
 
-  if (props.secondaryLight && props.disabled) {
-    return 'secondaryLightDisabled';
+  if (props.secondary && props.disabled) {
+    return 'secondaryDisabled';
   }
 
   const propsKeys = Object.keys(props);
