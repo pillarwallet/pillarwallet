@@ -79,7 +79,6 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
-
 type Props = {
   type?: string,
   asset?: string,
@@ -197,6 +196,21 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { accounts, smartWalletState } = this.props;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     return (smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
+  }
+
+  findAccount = (address: string) => {
+    const { accounts } = this.props;
+    return accounts.find(account => addressesEqual(account.id, address));
+  }
+
+  isSWAddress = (address: string) => {
+    const account = this.findAccount(address);
+    return (account && account.type === ACCOUNT_TYPES.SMART_WALLET);
+  }
+
+  isKWAddress = (address: string) => {
+    const account = this.findAccount(address);
+    return (account && account.type === ACCOUNT_TYPES.KEY_BASED);
   }
 
   getFormattedSettleValues = () => {
@@ -379,7 +393,17 @@ export class ActivityFeedItem extends React.Component<Props> {
             || ensRegistry[address]
             || elipsizeAddress(address);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        const subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        let subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        if (isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
+          subtext = 'to Key Wallet';
+        } else if (isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
+          subtext = 'to Smart Wallet';
+        } else if (!isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
+          subtext = 'from Smart Wallet';
+        } else if (!isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
+          subtext = 'from Key Wallet';
+        }
+
         if (isPPNTransaction) {
           data = {
             label: usernameOrAddress,
