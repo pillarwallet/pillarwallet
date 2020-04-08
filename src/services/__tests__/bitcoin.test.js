@@ -223,6 +223,39 @@ describe('bitcoin service', () => {
         'LzD6fzxFtqYai64eCh1UDFRBbp2e47n5JMnHy5NFYpSMvFt2dEGmp586',
       );
 
+      // First address
+      expect(keyPairAddress(root.derivePath("m/0'/0/0")))
+        .toEqual('mmCjN6Fp4mePFfijx2sBnMngbbibQbj1u5');
+
+      // First address change
+      expect(keyPairAddress(root.derivePath("m/0'/1/0")))
+        .toEqual('mkAD75HkxS2VJn1gQGiyRGYMrG1RVVLnCk');
+
+      // Second address
+      expect(keyPairAddress(root.derivePath("m/0'/0/1")))
+        .toEqual('n1NW6wZGtsWgB2439fSjozy4K9h1PrfZEV');
+
+      // Second address change
+      expect(keyPairAddress(root.derivePath("m/0'/1/1")))
+        .toEqual('mqi8WbJCVFfLiCY2emuXh5K7CHnLuudH6Z');
+    });
+
+    it('has consistent address derivation', async () => {
+      const root = await rootFromMnemonic(mnemonic, 'testnet');
+
+      expect(root.toWIF())
+        .toEqual('cVA5PZZkVcgdDAEmWuiBXiLh7abCyq6amQ3gT3avwj6wtMtV3VDK');
+
+      expect(root.toBase58()).toEqual(
+        'tprv8ZgxMBicQKsPdN5wuuQH5xExXChNkkyV4HLSQeHaX2ceNcUg5o8' +
+        'koiUopqC8zS4znezXLP6d8rauuHZ5S72RBLGxpZWVFmvWsPXovD9W3vA',
+      );
+
+      expect(root.neutered().toBase58()).toEqual(
+        'tpubD6NzVbkrYhZ4Wq7joZ4sVMu56EDJv6APdawDhAKswJR3D6jSiBx' +
+        'LzD6fzxFtqYai64eCh1UDFRBbp2e47n5JMnHy5NFYpSMvFt2dEGmp586',
+      );
+
       expect(keyPairAddress(root.derivePath('m/44\'/60\'/0\'/0')))
         .toEqual('miVfBxLzerTXpaFcQwFaPcGACzRCFBp1zb');
 
