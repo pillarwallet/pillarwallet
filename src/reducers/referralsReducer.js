@@ -27,6 +27,8 @@ import {
   SET_ALREADY_INVITED_CONTACTS,
   SET_REFERRALS_STATE,
   ALLOW_ACCESS_PHONE_CONTACTS,
+  RECEIVED_REFERRAL_TOKEN,
+  DELETE_REFERRAL_TOKEN,
 } from 'constants/referralsConstants';
 
 export type SentInvitationsCount = {
@@ -46,6 +48,10 @@ export type InviteSentPayload = {
   alreadyInvitedContacts: ReferralContact[],
   sentInvitationsCount: SentInvitationsCount,
 };
+
+type ReferralsAllowPhoneContactsAccess = {|
+  type: 'ALLOW_ACCESS_PHONE_CONTACTS',
+|};
 
 export type ReferralsSendingInviteAction = {|
   type: 'SENDING_INVITE',
@@ -84,6 +90,15 @@ export type ReferralsStateAction = {|
   },
 |};
 
+export type ReferralsTokenReceived = {|
+  type: 'RECEIVED_REFERRAL_TOKEN',
+  payload: string,
+|};
+
+type ReferralsDeleteToken = {|
+  type: 'DELETE_REFERRAL_TOKEN',
+|};
+
 export type ReferralsReducerAction =
   | ReferralsSendingInviteAction
   | ReferralsInviteSentAction
@@ -91,7 +106,10 @@ export type ReferralsReducerAction =
   | ReferralsRemoveContactAction
   | ReferralsErrorErrorAction
   | ReferralsInviteAlreadySentAction
-  | ReferralsStateAction;
+  | ReferralsStateAction
+  | ReferralsTokenReceived
+  | ReferralsDeleteToken
+  | ReferralsAllowPhoneContactsAccess;
 
 export type ReferralsReducerState = {
   isSendingInvite: boolean,
@@ -99,9 +117,10 @@ export type ReferralsReducerState = {
   alreadyInvitedContacts: ReferralContact[],
   hasAllowedToAccessContacts: boolean,
   sentInvitationsCount: SentInvitationsCount,
+  referralToken: ?string,
 };
 
-export const initialState = {
+export const initialState: ReferralsReducerState = {
   addedContactsToInvite: [],
   alreadyInvitedContacts: [],
   isSendingInvite: false,
@@ -110,6 +129,7 @@ export const initialState = {
     count: 0,
     date: '',
   },
+  referralToken: null,
 };
 
 
@@ -200,6 +220,12 @@ export default function referralsReducer(
 
     case ALLOW_ACCESS_PHONE_CONTACTS:
       return { ...state, hasAllowedToAccessContacts: true };
+
+    case RECEIVED_REFERRAL_TOKEN:
+      return { ...state, referralToken: action.payload };
+
+    case DELETE_REFERRAL_TOKEN:
+      return { ...state, referralToken: null };
 
     default:
       return state;
