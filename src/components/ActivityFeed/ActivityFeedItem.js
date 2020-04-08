@@ -240,7 +240,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     });
 
     const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
-    const formattedValuesArray = valuesArray.map(({ symbol, value, decimals }) => ({
+    const formattedValuesArray: Object[] = valuesArray.map(({ symbol, value, decimals }): Object => ({
       formatted: formatAmount(formatUnits(value.toString(), decimals)),
       symbol,
     }));
