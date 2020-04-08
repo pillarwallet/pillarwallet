@@ -83,6 +83,7 @@ const glyphMap = {
   exchange: '\uE86F',
   'rounded-close': '\uE879',
   'connect-active': '\uE87A',
+  hidden: '\uE83E',
 };
 
 export type IconProps = {

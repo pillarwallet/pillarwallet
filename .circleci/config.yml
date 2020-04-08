@@ -140,7 +140,7 @@ aliases:
   - &gradle_dependencies
     run:
       name: Download Dependencies
-      command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+      command: cd android && ./gradlew app:androidDependencies --no-daemon --stacktrace --max-workers=2
   - &gradle_save_cache
     save_cache:
       key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
@@ -306,7 +306,7 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd android && ./gradlew clean assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+            cd android && ./gradlew clean app:assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
 
       - *gradle_save_cache
 
@@ -552,7 +552,7 @@ jobs:
             yes | sdkmanager --update || exit 0
       - run:
           name: Download Dependencies
-          command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+          command: cd android && ./gradlew app:androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
           key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
           paths:
@@ -564,7 +564,7 @@ jobs:
             cd android
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            ./gradlew clean assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+            ./gradlew clean app:assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Fastlane deploy to Google Play
           command: |
@@ -616,6 +616,7 @@ jobs:
           webhook: "${SLACK_WEBHOOK_URL}"
 
   publish_releases_to_github:
+    working_directory: ~/pillarwallet
     docker:
       - image: circleci/golang:1.8
     steps:

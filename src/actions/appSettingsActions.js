@@ -218,3 +218,16 @@ export const hasSeenExchangeIntroAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenExchangeIntro: true } });
   };
 };
+
+export const toggleBalanceAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideBalance } },
+    } = getState();
+
+    const newBalanceVisibilityState = !hideBalance;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideBalance: newBalanceVisibilityState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideBalance: newBalanceVisibilityState } });
+  };
+};

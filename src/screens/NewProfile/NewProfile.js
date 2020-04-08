@@ -87,7 +87,6 @@ const CheckboxText = styled(BaseText)`
 
 const StyledTextLink = styled(TextLink)`
   ${fontStyles.regular};
-  color: ${themedColors.primary};
 `;
 
 const Label = styled(MediumText)`

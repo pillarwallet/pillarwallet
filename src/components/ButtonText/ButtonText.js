@@ -61,7 +61,7 @@ const Wrapper = styled.View`
 
 const ButtonLabel = styled(MediumText)`
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.regular}px;
-  color: ${({ secondary, theme }) => secondary ? theme.colors.secondaryText : theme.colors.primary};
+  color: ${({ secondary, theme }) => secondary ? theme.colors.secondaryText : theme.colors.link};
 `;
 
 const StyledIcon = styled(Icon)`

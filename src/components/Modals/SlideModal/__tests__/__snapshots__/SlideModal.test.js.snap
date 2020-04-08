@@ -168,17 +168,13 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           }
         >
           <View
-            noBottomBorder={true}
             style={
-              Array [
-                Object {
-                  "backgroundColor": "#FAFAFA",
-                  "width": "100%",
-                },
-                Object {
-                  "backgroundColor": "transparent",
-                },
-              ]
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderBottomWidth": 1,
+                "borderColor": "transparent",
+                "width": "100%",
+              }
             }
           >
             <View

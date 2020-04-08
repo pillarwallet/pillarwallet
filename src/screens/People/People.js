@@ -540,37 +540,42 @@ class PeopleScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{ noBack: true, leftItems: [{ title: 'People' }] }}
         inset={{ bottom: 0 }}
+        tab
       >
-        <ScrollView
-          keyboardShouldPersistTaps="always"
-          contentContainerStyle={{ flexGrow: 1 }}
-          ref={(ref) => { this.scrollViewRef = ref; }}
-          onScroll={() => {
-            if (inSearchMode) {
-              Keyboard.dismiss();
-            }
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => { fetchInviteNotifications(); }}
-            />
+        {onScroll => (
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            contentContainerStyle={{ flexGrow: 1 }}
+            ref={(ref) => { this.scrollViewRef = ref; }}
+            onScroll={(ev) => {
+              if (inSearchMode) {
+                Keyboard.dismiss();
+              }
+              onScroll(ev);
+            }}
+            scrollEventThrottle={16}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => { fetchInviteNotifications(); }}
+              />
           }
-        >
-          {this.renderContent(sortedLocalContacts, inSearchMode)}
-          {contact && <ConnectionConfirmationModal
-            showConfirmationModal={showConfirmationModal}
-            manageContactType={manageContactType}
-            contact={contact}
-            onConfirm={this.confirmManageAction}
-            onModalHide={() => {
+          >
+            {this.renderContent(sortedLocalContacts, inSearchMode)}
+            {contact && <ConnectionConfirmationModal
+              showConfirmationModal={showConfirmationModal}
+              manageContactType={manageContactType}
+              contact={contact}
+              onConfirm={this.confirmManageAction}
+              onModalHide={() => {
               this.setState({
                 showConfirmationModal: false,
                 forceHideRemoval: true,
               });
             }}
-          />}
-        </ScrollView>
+            />}
+          </ScrollView>
+        )}
       </ContainerWithHeader>
     );
   }

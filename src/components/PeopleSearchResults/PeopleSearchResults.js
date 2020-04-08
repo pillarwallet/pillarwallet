@@ -183,6 +183,7 @@ class PeopleSearchResults extends React.Component<Props> {
             diameter={itemSizes.avatarCircleMedium}
             textStyle={{ fontSize: fontSizes.big }}
             noShadow
+            borderWidth={0}
           />
           <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
         </LocalContactsItem>

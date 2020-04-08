@@ -28,12 +28,14 @@ import Icon from 'components/Icon';
 import { spacing, fontStyles } from 'utils/variables';
 import type { Theme } from 'models/Theme';
 
+
 type ItemType = {
   label: string,
   key: string,
   onPress: () => void,
   value?: string,
   chevron?: boolean,
+  isDisabled?: boolean,
 }
 
 type Props = {
@@ -41,15 +43,21 @@ type Props = {
   onModalClose: (?() => void) => void,
   isVisible: boolean,
   items: ItemType[],
+  doNotCloseOnPress?: boolean,
 };
+
 
 const MainContainer = styled.View`
   padding: 20px ${spacing.layoutSides}px 30px;
 `;
 
 const ItemContainer = styled.TouchableOpacity`
-  flex-direction: row;
   padding: 20px 0;
+  opacity: ${({ disabled }) => disabled ? 0.5 : 1};
+`;
+
+const Row = styled.View`
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
 `;
@@ -59,26 +67,38 @@ const ChevronIcon = styled(Icon)`
   ${fontStyles.tiny};
 `;
 
+const Paragraph = styled(BaseText)`
+  color: ${themedColors.secondaryText};
+  ${fontStyles.medium};
+  margin-top: 8px;
+`;
+
+
 const Item = ({
-  label, onPress, value, chevron,
+  label, onPress, value, chevron, isDisabled, paragraph, children,
 }) => (
-  <ItemContainer onPress={onPress}>
-    <MediumText big>{label}</MediumText>
-    {!!value && <BaseText medium secondary>{value}</BaseText>}
-    {chevron && <ChevronIcon name="chevron-right" />}
+  <ItemContainer onPress={onPress} disabled={isDisabled}>
+    <Row>
+      <MediumText big>{label}</MediumText>
+      {!!value && <BaseText medium secondary>{value}</BaseText>}
+      {chevron && <ChevronIcon name="chevron-right" />}
+    </Row>
+    {!!paragraph && <Paragraph>{paragraph}</Paragraph>}
+    {children}
   </ItemContainer>
 );
 
 class ActionModal extends React.Component<Props> {
   renderItem = ({ item }) => {
-    const { onModalClose } = this.props;
+    const { onModalClose, doNotCloseOnPress } = this.props;
+    const { onPress } = item;
     return (
       <Item
         {...item}
-        onPress={() => onModalClose(item.onPress)}
+        onPress={() => doNotCloseOnPress ? onPress() : onModalClose(onPress)}
       />
     );
-  }
+  };
 
   render() {
     const {

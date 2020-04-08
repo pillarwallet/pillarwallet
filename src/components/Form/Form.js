@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { Form, Input } from 'native-base';
+import { Form } from 'native-base';
+import Input from 'components/Input';
 
 export const LoginForm = styled(Form)`
   margin: 10px 0 40px;

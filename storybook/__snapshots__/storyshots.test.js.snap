@@ -259,9 +259,6 @@ exports[`Storyshots ActionModal default 1`] = `
                         onStartShouldSetResponder={[Function]}
                         style={
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
                             "opacity": 1,
                             "paddingBottom": 20,
                             "paddingLeft": 0,
@@ -270,45 +267,58 @@ exports[`Storyshots ActionModal default 1`] = `
                           }
                         }
                       >
-                        <Text
-                          big={true}
-                          style={
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "fontSize": 18,
-                                "lineHeight": 28,
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Medium",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlignVertical": "center",
-                                },
-                                undefined,
-                              ],
-                            ]
-                          }
-                        >
-                          First item
-                        </Text>
                         <View
-                          name="chevron-right"
                           style={
                             Array [
                               Object {
-                                "color": "#8B939E",
-                                "fontSize": 10,
-                                "lineHeight": 14,
+                                "alignItems": "center",
+                                "flexDirection": "row",
+                                "justifyContent": "space-between",
                               },
                               undefined,
                             ]
                           }
-                        />
+                        >
+                          <Text
+                            big={true}
+                            style={
+                              Array [
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Regular",
+                                  "fontSize": 18,
+                                  "lineHeight": 28,
+                                  "textAlignVertical": "center",
+                                },
+                                Array [
+                                  Object {
+                                    "color": "#0A1427",
+                                    "fontFamily": "EuclidCircularB-Medium",
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                    "textAlignVertical": "center",
+                                  },
+                                  undefined,
+                                ],
+                              ]
+                            }
+                          >
+                            First item
+                          </Text>
+                          <View
+                            name="chevron-right"
+                            style={
+                              Array [
+                                Object {
+                                  "color": "#8B939E",
+                                  "fontSize": 10,
+                                  "lineHeight": 14,
+                                },
+                                undefined,
+                              ]
+                            }
+                          />
+                        </View>
                       </View>
                     </View>
                     <View
@@ -328,9 +338,6 @@ exports[`Storyshots ActionModal default 1`] = `
                         onStartShouldSetResponder={[Function]}
                         style={
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
                             "opacity": 1,
                             "paddingBottom": 20,
                             "paddingLeft": 0,
@@ -339,32 +346,45 @@ exports[`Storyshots ActionModal default 1`] = `
                           }
                         }
                       >
-                        <Text
-                          big={true}
+                        <View
                           style={
                             Array [
                               Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "fontSize": 18,
-                                "lineHeight": 28,
-                                "textAlignVertical": "center",
+                                "alignItems": "center",
+                                "flexDirection": "row",
+                                "justifyContent": "space-between",
                               },
+                              undefined,
+                            ]
+                          }
+                        >
+                          <Text
+                            big={true}
+                            style={
                               Array [
                                 Object {
                                   "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "fontFamily": "EuclidCircularB-Regular",
                                   "fontSize": 18,
                                   "lineHeight": 28,
                                   "textAlignVertical": "center",
                                 },
-                                undefined,
-                              ],
-                            ]
-                          }
-                        >
-                          Second item
-                        </Text>
+                                Array [
+                                  Object {
+                                    "color": "#0A1427",
+                                    "fontFamily": "EuclidCircularB-Medium",
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                    "textAlignVertical": "center",
+                                  },
+                                  undefined,
+                                ],
+                              ]
+                            }
+                          >
+                            Second item
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
@@ -992,16 +1012,16 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -1273,16 +1293,16 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -2090,16 +2110,16 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -2335,16 +2355,16 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -2585,16 +2605,16 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -3841,16 +3861,16 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -4706,16 +4726,16 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -7410,16 +7430,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -8275,16 +8295,16 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -8855,16 +8875,16 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -9092,16 +9112,16 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
             "alignItems": "center",
             "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
-            "borderRadius": 26,
+            "borderRadius": 24,
             "borderStyle": "solid",
-            "borderWidth": 2,
+            "borderWidth": 0,
             "display": "flex",
-            "height": 52,
+            "height": 48,
             "justifyContent": "center",
             "opacity": 1,
             "overflow": "hidden",
             "position": "relative",
-            "width": 52,
+            "width": 48,
           }
         }
       />
@@ -9819,6 +9839,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "inactiveTabBarIcon": "#D4D9DB",
                       "indicator": "#F8E71C",
                       "legacyWallet": "#FA574F",
+                      "link": "#007aff",
                       "negative": "#BD573A",
                       "notice": "#ea480e",
                       "orange": "#f57c00",
@@ -10057,6 +10078,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       "inactiveTabBarIcon": "#D4D9DB",
                       "indicator": "#F8E71C",
                       "legacyWallet": "#FA574F",
+                      "link": "#007aff",
                       "negative": "#BD573A",
                       "notice": "#ea480e",
                       "orange": "#f57c00",
@@ -10287,6 +10309,7 @@ Array [
                       "inactiveTabBarIcon": "#D4D9DB",
                       "indicator": "#F8E71C",
                       "legacyWallet": "#FA574F",
+                      "link": "#007aff",
                       "negative": "#BD573A",
                       "notice": "#ea480e",
                       "orange": "#f57c00",
@@ -11182,8 +11205,8 @@ Array [
                         "marginTop": 0,
                         "opacity": 0.5,
                         "paddingBottom": 0,
-                        "paddingLeft": 22,
-                        "paddingRight": 22,
+                        "paddingLeft": 19,
+                        "paddingRight": 19,
                         "paddingTop": 0,
                         "width": "auto",
                       }
@@ -11243,6 +11266,7 @@ Array [
                             "inactiveTabBarIcon": "#D4D9DB",
                             "indicator": "#F8E71C",
                             "legacyWallet": "#FA574F",
+                            "link": "#007aff",
                             "negative": "#BD573A",
                             "notice": "#ea480e",
                             "orange": "#f57c00",
