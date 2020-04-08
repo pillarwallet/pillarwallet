@@ -48,7 +48,6 @@ import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 import { getActiveAccount } from 'utils/accounts';
-import { themedColors } from 'utils/themes';
 
 // models, types
 import type { Accounts } from 'models/Account';
@@ -84,11 +83,9 @@ type State = {
 
 
 const ActionButtonsWrapper = styled.View`
-  padding: 36px 26px;
+  padding: 14px 26px 36px;
   flex-direction: row;
   justify-content: space-between;
-  border-top-color: ${themedColors.border};
-  border-top-width: 1px;
 `;
 
 

@@ -57,7 +57,7 @@ const BalanceWrapper = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
-  padding: ${spacing.large}px 0;
+  padding-top: ${spacing.large}px;
 `;
 
 const BalanceButton = styled.TouchableOpacity`
