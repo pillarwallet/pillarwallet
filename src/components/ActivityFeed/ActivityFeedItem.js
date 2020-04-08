@@ -64,6 +64,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
@@ -333,13 +334,25 @@ export class ActivityFeedItem extends React.Component<Props> {
         trxData.txType = 'Deployment';
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
-        data = {
-          label: NAMES.PPN_NETWORK,
-          itemImageSource: PPNIcon,
-          subtext: 'Top Up',
-          itemValue: `+ ${formattedValue} ${event.asset}`,
-          valueColor: 'positive',
-        };
+        if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+          data = {
+            label: NAMES.PPN_NETWORK,
+            itemImageSource: PPNIcon,
+            subtext: 'Top Up',
+            itemValue: `+ ${formattedValue} ${event.asset}`,
+            valueColor: 'positive',
+          };
+        } else {
+          data = {
+            label: NAMES.PPN_NETWORK,
+            subtext: 'from Smart Wallet',
+            iconName: 'sent',
+            iconColor: 'negative',
+            iconBackgroundColor: 'iconBackground',
+            itemValue: `- ${formattedValue} ${event.asset}`,
+            valueColor: 'text',
+          };
+        }
         trxData.hideSender = true;
         trxData.hideAmount = true;
         trxData.txType = 'PLR Tank Top Up';
@@ -374,16 +387,16 @@ export class ActivityFeedItem extends React.Component<Props> {
           subtext: 'to Smart Wallet',
           customAddon: (
             <ListWrapper>
-              {formattedValuesArray.map(({ formatted, symbol }) =>
-                  (<TankAssetBalance
-                    key={symbol}
-                    amount={`- ${formatted} ${symbol}`}
-                    monoColor
-                  />),
-                )}
+              {formattedValuesArray.map(({ formatted, symbol }) => (
+                <TankAssetBalance
+                  key={symbol}
+                  amount={`- ${formatted} ${symbol}`}
+                  monoColor
+                />
+              ))}
               {formattedValuesArray.map(({ formatted, symbol }) =>
                 <ItemValue key={symbol}>{`+ ${formatted} ${symbol}`}</ItemValue>,
-                )}
+              )}
             </ListWrapper>),
         };
         break;

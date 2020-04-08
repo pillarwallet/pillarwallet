@@ -5569,7 +5569,41 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        backgroundColor="#ebf0f5"
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          name="sent"
+          style={
+            Array [
+              Object {
+                "color": "#BD573A",
+                "fontSize": 48,
+              },
+              undefined,
+            ]
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -5687,7 +5721,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               ]
             }
           >
-            Top Up
+            from Smart Wallet
           </Text>
         </View>
         <View
@@ -5739,19 +5773,19 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#0A1427"
                 ellipsizeMode="tail"
                 numberOfLines={2}
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#0A1427",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#0A1427",
                         "fontSize": 18,
                         "lineHeight": 28,
                         "textAlign": "right",
@@ -5761,7 +5795,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
                   ]
                 }
               >
-                + 1 PLR
+                - 1 PLR
               </Text>
             </View>
           </View>
