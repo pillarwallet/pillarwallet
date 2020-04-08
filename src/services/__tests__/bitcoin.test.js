@@ -207,7 +207,7 @@ describe('bitcoin service', () => {
       expect(address1).toEqual(address2);
     });
 
-    it('has consistent address derivation', async () => {
+    it('has consistent address derivation for BIP44', async () => {
       const root = await rootFromMnemonic(mnemonic, 'testnet');
 
       expect(root.toWIF())
@@ -224,8 +224,8 @@ describe('bitcoin service', () => {
       );
 
       // First address
-      expect(keyPairAddress(root.derivePath("m/44'/0'/0'/0")))
-        .toEqual('mjDhVnAPZoBCtfw2dMnN691kuJxXXj2dRn');
+      expect(keyPairAddress(root.derivePath("m/44'/0'/0'/0/0")))
+        .toEqual('mrheHgyAsL496PvTWVs62zCHCbJCE6bwBU');
 
       // Second address
       expect(keyPairAddress(root.derivePath("m/44'/0'/0'/0/1")))
