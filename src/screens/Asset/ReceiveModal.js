@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Image, Dimensions } from 'react-native';
+import { View, Image, Dimensions, Share } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -36,10 +36,7 @@ const ContentWrapper = styled(SafeAreaView)`
 
 type Props = {
   address: string,
-  onModalHide: Function,
-  handleOpenShareDialog: Function,
-  token: string,
-  tokenName: string,
+  onModalHide: () => void,
   isVisible: boolean,
   handleBuyTokens?: Function,
   onModalHidden?: Function,
@@ -87,12 +84,9 @@ const mastercardIcon = require('assets/icons/mastercard.png');
 
 export default class ReceiveModal extends React.Component<Props, *> {
   handleAddressShare = () => {
-    const {
-      handleOpenShareDialog,
-      address,
-    } = this.props;
+    const { address } = this.props;
 
-    handleOpenShareDialog(address);
+    Share.share({ title: 'Public address', message: address });
   };
 
   render() {
@@ -137,7 +131,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
                 padding: 10,
               }}
             >
-              <QRCodeWithTheme value={address} size={160} />
+              {!!address && <QRCodeWithTheme value={address} size={160} />}
             </View>
           </QRCodeWrapper>
           <ButtonsRow>

@@ -32,6 +32,7 @@ public class MainActivity extends ReactActivity {
         return "pillarwallet";
     }
 
+    // react-native-gesture-handler
     @Override
     protected ReactActivityDelegate createReactActivityDelegate() {
         return new ReactActivityDelegate(this, getMainComponentName()) {

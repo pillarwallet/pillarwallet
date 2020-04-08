@@ -997,6 +997,13 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ctrl/tinycolor/-/tinycolor-2.6.1.tgz#0e78cc836a1fd997a9a22fa1c26c555411882160"
   integrity sha1-DnjMg2of2Zepoi+hwmxVVBGIIWA=
 
+"@egjs/hammerjs@^2.0.17":
+  version "2.0.17"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
+  integrity sha1-XcAq91pqBuTC2wICyuOMkmOJUSQ=
+  dependencies:
+    "@types/hammerjs" "^2.0.36"
+
 "@emotion/cache@^10.0.27":
   version "10.0.27"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@emotion/cache/-/cache-10.0.27.tgz#7895db204e2c1a991ae33d51262a3a44f6737303"
@@ -1515,10 +1522,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha1-K1o6s/kYzKSKjHVMCBaOPwPrphs=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.45.1793":
-  version "1.45.1793"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.45.1793.tgz#198fec6131d1f8ce535e99879a089b4591c95a22"
-  integrity sha1-GY/sYTHR+M5TXpmHmgibRZHJWiI=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.45.1811":
+  version "1.45.1811"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.45.1811.tgz#cb09096b1064911e8f03b5225fc345c344e2cc47"
+  integrity sha1-ywkJaxBkkR6PA7UiX8NFw0TizEc=
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
@@ -2398,6 +2405,11 @@
     "@types/events" "*"
     "@types/minimatch" "*"
     "@types/node" "*"
+
+"@types/hammerjs@^2.0.36":
+  version "2.0.36"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/hammerjs/-/hammerjs-2.0.36.tgz#17ce0a235e9ffbcdcdf5095646b374c2bf615a4c"
+  integrity sha1-F84KI16f+83N9QlWRrN0wr9hWkw=
 
 "@types/history@*":
   version "4.7.5"
@@ -8727,11 +8739,6 @@ gzip-size@5.1.1:
     duplexer "^0.1.1"
     pify "^4.0.1"
 
-hammerjs@^2.0.8:
-  version "2.0.8"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
-  integrity sha1-BO93hiz/K7edMPdpIJWTAiK/YPE=
-
 handlebars@^4.0.3:
   version "4.7.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/handlebars/-/handlebars-4.7.3.tgz#8ece2797826886cf8082d1726ff21d2a022550ee"
@@ -14957,12 +14964,12 @@ react-native-extra-dimensions-android@^1.2.5:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-1.2.5.tgz#8ade91029aaac7519bf305116d39019e618a60f0"
   integrity sha1-it6RApqqx1Gb8wURbTkBnmGKYPA=
 
-react-native-gesture-handler@1.4.1:
-  version "1.4.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-gesture-handler/-/react-native-gesture-handler-1.4.1.tgz#c38d9e57637b95e221722a79f2bafac62e3aeb21"
-  integrity sha1-w42eV2N7leIhcip58rr6xi466yE=
+react-native-gesture-handler@1.6.1:
+  version "1.6.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-gesture-handler/-/react-native-gesture-handler-1.6.1.tgz#678e2dce250ed66e93af409759be22cd6375dd17"
+  integrity sha1-Z44tziUO1m6Tr0CXWb4izWN13Rc=
   dependencies:
-    hammerjs "^2.0.8"
+    "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
@@ -15023,9 +15030,10 @@ react-native-keyboard-aware-scroll-view@^0.9.1:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
-"react-native-keychain@https://github.com/cladjules/react-native-keychain.git":
-  version "4.0.5"
-  resolved "https://github.com/cladjules/react-native-keychain.git#4beddc67541c2d1e8c1641f54714a0ebb1676556"
+react-native-keychain@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-5.0.1.tgz#2751de436f017c87b8aabb32533bee88657d643e"
+  integrity sha512-CLIPNexPBufPpNqgF7/smZNAiv6x0SCsztfEi/hWPCQ7yHxNwdRUyUzOLGrw1lPe/6fQE+TC3iS1+cbDTaRJag==
 
 react-native-level-fs@^3.0.0:
   version "3.0.1"
