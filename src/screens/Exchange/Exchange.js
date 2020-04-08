@@ -893,7 +893,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const isTakeOfferPressed = pressedOfferId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getOfferProviderLogo(providersMeta, offerProvider);
-
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
     let shapeshiftAccessToken;
