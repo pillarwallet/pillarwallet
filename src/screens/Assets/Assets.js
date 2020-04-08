@@ -246,7 +246,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return keyWalletInsights;
   };
 
-  renderView = (viewType: string) => {
+  renderView = (viewType: string, onScroll: Object => void) => {
     const {
       assets,
       assetsState,
@@ -274,15 +274,16 @@ class AssetsScreen extends React.Component<Props, State> {
 
     switch (viewType) {
       case VIEWS.BTC_VIEW:
-        return <BTCView />;
+        return <BTCView onScroll={onScroll} />;
       case VIEWS.PPN_VIEW:
-        return <PPNView />;
+        return <PPNView onScroll={onScroll} />;
       case VIEWS.SMART_WALLET_VIEW:
         return (
           <WalletView
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
+            onScroll={onScroll}
           />);
       case VIEWS.KEY_WALLET_VIEW:
         return (
@@ -291,6 +292,7 @@ class AssetsScreen extends React.Component<Props, State> {
             hideInsight={() => this.hideWalletInsight('KEY')}
             insightList={this.getInsightsList()}
             insightsTitle="Never lose your funds"
+            onScroll={onScroll}
           />);
       default:
         return null;
@@ -327,8 +329,9 @@ class AssetsScreen extends React.Component<Props, State> {
           noBack: true,
         }}
         inset={{ bottom: 0 }}
+        tab
       >
-        {this.renderView(screenView)}
+        {onScroll => this.renderView(screenView, onScroll)}
       </ContainerWithHeader>
     );
   }

@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TextInput } from 'react-native';
 import styled from 'styled-components/native';
+import TextInput from 'components/Input';
 import { fontSizes } from 'utils/variables';
 
 
