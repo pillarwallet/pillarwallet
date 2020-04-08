@@ -23,6 +23,7 @@ import { TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
 
 import { MediumText } from 'components/Typography';
+import TextInput from 'components/Input';
 
 import { themedColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
@@ -85,7 +86,7 @@ const ErrorMessage = styled(MediumText)`
   margin: ${spacing.small}px 0 ${spacing.medium}px;
 `;
 
-const StyledTextInput = styled.TextInput`
+const StyledTextInput = styled(TextInput)`
   position: absolute;
   opacity: 0;
   top: 0;
