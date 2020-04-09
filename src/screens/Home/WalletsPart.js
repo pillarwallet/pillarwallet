@@ -176,7 +176,7 @@ class WalletsPart extends React.Component<Props, State> {
         />
         <PortfolioBalance
           fiatCurrency={fiatCurrency}
-          showBalance={hideBalance}
+          showBalance={!hideBalance}
           toggleBalanceVisibility={toggleBalance}
         />
         <ActionButtons
