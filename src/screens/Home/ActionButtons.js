@@ -77,7 +77,7 @@ type State = {
 
 
 const ActionButtonsWrapper = styled.View`
-  padding: 14px 26px 36px;
+  padding: 14px 10px 36px;
   flex-direction: row;
   justify-content: space-between;
 `;
