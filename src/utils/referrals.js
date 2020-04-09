@@ -37,15 +37,17 @@ export const filterAllowedContacts = (
   isPhoneVerified: boolean,
   isEmailVerified: boolean,
 ): ReferralContact[] => {
-  if (!isPhoneVerified) {
-    return contacts.filter((contact) => !contact.phone);
-  }
+  return contacts.filter((contact) => {
+    if (!isPhoneVerified) {
+      return !contact.phone;
+    }
 
-  if (!isEmailVerified) {
-    return contacts.filter((contact) => !contact.email);
-  }
+    if (!isEmailVerified) {
+      return !contact.email;
+    }
 
-  return contacts;
+    return true;
+  });
 };
 
 export const isSameContactData = (
