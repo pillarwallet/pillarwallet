@@ -37,6 +37,7 @@ import Icon from 'components/Icon';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 
@@ -73,6 +74,7 @@ const ContentWrapper = styled.View`
 
 const ToggleIcon = styled(Icon)`
   font-size: ${fontSizes.medium}px;
+  color: ${themedColors.accent};
   margin-left: 6px;
 `;
 
