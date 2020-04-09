@@ -19,10 +19,10 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components/native';
 
 // components
 import CheckAuth from 'components/CheckAuth';
@@ -76,6 +76,13 @@ type State = {
   onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
   changingAccount: boolean,
 };
+
+
+const Wrapper = styled.View`
+  width: 100%;
+  margin-top: 40px;
+`;
+
 
 class WalletsPart extends React.Component<Props, State> {
   state = {
@@ -168,7 +175,7 @@ class WalletsPart extends React.Component<Props, State> {
     const nextWallet = this.getNextWalletInLine();
 
     return (
-      <View>
+      <Wrapper>
         <SimpleSwitcher
           title={activeWalletTitle}
           onPress={() => this.changeAcc(nextWallet)}
@@ -192,7 +199,7 @@ class WalletsPart extends React.Component<Props, State> {
             onModalHide: this.handleAuthModalClose,
           }}
         />
-      </View>
+      </Wrapper>
     );
   }
 }
