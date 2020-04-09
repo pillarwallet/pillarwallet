@@ -418,6 +418,12 @@ class HomeScreen extends React.Component<Props, State> {
                     onPress={() => navigation.navigate(MENU)}
                     fontSize={fontSizes.large}
                     secondary
+                    style={{
+                      width: 40,
+                      height: 40,
+                      marginLeft: -10,
+                      marginTop: -6,
+                    }}
                   />
                 ),
               },
