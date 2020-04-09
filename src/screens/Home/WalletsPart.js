@@ -69,32 +69,43 @@ type Props = {
   refreshBitcoinBalance: () => void,
   hideBalance: boolean,
   toggleBalance: () => void,
+  isChanging: boolean,
+  handleWalletChange: (message: string) => void,
 };
 
 type State = {
   showPinModal: boolean,
   onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
-  changingAccount: boolean,
 };
-
 
 const Wrapper = styled.View`
   width: 100%;
-  margin-top: 40px;
+  padding-top: 40px;
 `;
-
 
 class WalletsPart extends React.Component<Props, State> {
   state = {
     showPinModal: false,
     onPinValidAction: null,
-    changingAccount: false,
+  };
+
+  componentDidUpdate(prevProps: Props) {
+    const { activeWallet, isChanging } = this.props;
+    if (isChanging && prevProps.activeWallet !== activeWallet) {
+      this.endChanging();
+    }
+  }
+
+  endChanging = () => {
+    const { handleWalletChange } = this.props;
+    handleWalletChange('');
   };
 
   handleAuthModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
     this.setState({ showPinModal: false });
+    this.endChanging();
   };
 
   getWalletTitle = () => {
@@ -114,9 +125,8 @@ class WalletsPart extends React.Component<Props, State> {
 
   switchToSW = async (_: string, wallet: EthereumWallet, walletIdToChangeInto: string, callback?: () => void) => {
     const { switchAccount } = this.props;
-    this.setState({ showPinModal: false, changingAccount: true });
+    this.setState({ showPinModal: false });
     await switchAccount(walletIdToChangeInto, wallet.privateKey);
-    this.setState({ changingAccount: false });
     if (callback) callback();
   };
 
@@ -136,7 +146,9 @@ class WalletsPart extends React.Component<Props, State> {
       switchAccount,
       setActiveBlockchainNetwork,
       refreshBitcoinBalance,
+      handleWalletChange,
     } = this.props;
+    handleWalletChange('Changing wallet');
     const { type: newWalletType, id } = nextWallet;
 
     switch (newWalletType) {
@@ -161,7 +173,7 @@ class WalletsPart extends React.Component<Props, State> {
   };
 
   render() {
-    const { showPinModal, onPinValidAction, changingAccount } = this.state;
+    const { showPinModal, onPinValidAction } = this.state;
     const {
       availableWallets,
       baseFiatCurrency,
@@ -179,7 +191,6 @@ class WalletsPart extends React.Component<Props, State> {
         <SimpleSwitcher
           title={activeWalletTitle}
           onPress={() => this.changeAcc(nextWallet)}
-          isLoading={changingAccount}
         />
         <PortfolioBalance
           fiatCurrency={fiatCurrency}

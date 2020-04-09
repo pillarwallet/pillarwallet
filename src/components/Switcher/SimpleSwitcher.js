@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 
 import Icon from 'components/Icon';
@@ -33,7 +33,7 @@ import { themedColors } from 'utils/themes';
 type Props = {
   title: string,
   onPress: () => void,
-  isLoading: boolean,
+  isLoading?: boolean,
 };
 
 const WalletTogleWrapper = styled.View`
@@ -62,15 +62,14 @@ const ToggleIcon = styled(Icon)`
 
 const SimpleSwitcher = (props: Props) => {
   const { title, onPress, isLoading } = props;
-
   return (
     <WalletTogleWrapper>
-      <TouchableWithoutFeedback onPress={onPress} disabled={isLoading}>
+      <TouchableOpacity onPress={onPress} disabled={isLoading}>
         <Row>
           {!isLoading ? <ToggleText>{title}</ToggleText> : <Spinner width={14} height={14} />}
           <ToggleIcon name="selector" />
         </Row>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
     </WalletTogleWrapper>
   );
 };

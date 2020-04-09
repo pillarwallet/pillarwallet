@@ -16,7 +16,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, View, ScrollView, FlatList } from 'react-native';
+import { RefreshControl, View, ScrollView, FlatList, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -35,6 +35,7 @@ import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
 import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
+import Loader from 'components/Loader';
 
 // constants
 import {
@@ -127,8 +128,14 @@ type State = {
   activeTab: string,
   isReferralBannerVisible: boolean,
   showRewardModal: boolean,
+  loaderMessage: string,
 };
 
+
+const {
+  width: SCREEN_WIDTH,
+  height: SCREEN_HEIGHT,
+} = Dimensions.get('window');
 const profileImageWidth = 24;
 
 const ListHeader = styled(MediumText)`
@@ -148,6 +155,18 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
+const LoaderWrapper = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  height: ${SCREEN_HEIGHT}px;
+  width: ${SCREEN_WIDTH}px;
+  background-color: ${themedColors.surface};
+  z-index: 99999;
+`;
+
 const referralImage = require('assets/images/referral_gift.png');
 
 class HomeScreen extends React.Component<Props, State> {
@@ -158,6 +177,7 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: ALL,
     isReferralBannerVisible: true,
     showRewardModal: false,
+    loaderMessage: '',
   };
 
   componentDidMount() {
@@ -284,6 +304,10 @@ class HomeScreen extends React.Component<Props, State> {
     });
   };
 
+  handleWalletChange = (loaderMessage: string) => {
+    this.setState({ loaderMessage });
+  };
+
   render() {
     const {
       cancelInvitation,
@@ -305,7 +329,7 @@ class HomeScreen extends React.Component<Props, State> {
       referralsFeatureEnabled,
     } = this.props;
 
-    const { activeTab, showRewardModal } = this.state;
+    const { activeTab, showRewardModal, loaderMessage } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -429,7 +453,7 @@ class HomeScreen extends React.Component<Props, State> {
                 onScroll={onScroll}
                 scrollEventThrottle={16}
               >
-                <WalletsPart />
+                <WalletsPart handleWalletChange={this.handleWalletChange} isChanging={!!loaderMessage} />
                 <BadgesWrapper>
                   <ListHeader>Game of badges</ListHeader>
                   <FlatList
@@ -476,6 +500,9 @@ class HomeScreen extends React.Component<Props, State> {
             </React.Fragment>
           )}
         </ContainerWithHeader>
+        {!!loaderMessage &&
+        <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
+        }
       </React.Fragment>
     );
   }
