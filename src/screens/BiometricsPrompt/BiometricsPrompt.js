@@ -19,19 +19,30 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
+import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import type { NavigationScreenProp } from 'react-navigation';
 
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// actions
+import { registerWalletAction } from 'actions/onboardingActions';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
+import Toast from 'components/Toast';
+
+// utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getBiometryType } from 'utils/settings';
-import { registerWalletAction } from 'actions/onboardingActions';
+
+// types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -78,21 +89,49 @@ const getBiometryImage = (biometryType: string) => {
   }
 };
 
+const showFaceIDFailed = () => {
+  Toast.show({
+    message: 'Failed to get FaceID permission!',
+    type: 'warning',
+    title: 'Warning',
+    autoClose: true,
+  });
+};
+
 class BiometricsPrompt extends React.Component<Props> {
   proceedToRegisterWallet = (setBiometrics: boolean) => {
-    const { registerWallet, themeType } = this.props;
+    const { registerWallet, themeType, navigation } = this.props;
+
+    /**
+     * as for permission if it's iOS FaceID, otherwise – no permission needed,
+     * if permission is rejected – go with PIN flow (by Dmitry) as lib is unable
+     * to ask for permission again unless user changes that in device
+     * settings for the app
+     * P. S. granted status will be returned even after user logs out because the permission
+     * is given to the app and not the user (obvious, but just making a note if questions rise)
+     */
+    const biometryType = navigation.getParam('biometryType');
+    if (setBiometrics
+      && Platform.OS === 'ios'
+      && biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
+      requestPermission(PERMISSIONS.IOS.FACE_ID)
+        .then((status) => registerWallet(status === RESULTS.GRANTED, themeType))
+        .catch(showFaceIDFailed);
+      return;
+    }
+
     registerWallet(setBiometrics, themeType);
   };
 
   render() {
     const { navigation } = this.props;
-    const _biometryType = navigation.getParam('biometryType');
-    const biometryType = getBiometryType(_biometryType);
-    const imageSource = getBiometryImage(_biometryType);
+    const biometryType = navigation.getParam('biometryType');
+    const biometryTypeTitle = getBiometryType(biometryType);
+    const imageSource = getBiometryImage(biometryType);
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Make crypto easy' }] }}>
         <ContentWrapper contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30, flexGrow: 1 }}>
-          <HeaderText>{`Would you like to use\n${biometryType} with your\nwallet?`}</HeaderText>
+          <HeaderText>{`Would you like to use\n${biometryTypeTitle} with your\nwallet?`}</HeaderText>
           <ContentInnerWrapper>
             <TouchIdImage source={imageSource} />
             <ButtonsWrapper>

@@ -20,23 +20,36 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import { Platform } from 'react-native';
+import * as Keychain from 'react-native-keychain';
+import { PERMISSIONS, request as requestPermission, RESULTS } from 'react-native-permissions';
+
+// actions
+import { changeUseBiometricsAction } from 'actions/appSettingsActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
+
+// constants
+import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import CheckAuth from 'components/CheckAuth';
-import { getBiometryType } from 'utils/settings';
-import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
-import { changeUseBiometricsAction } from 'actions/appSettingsActions';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
+import Toast from 'components/Toast';
+
+// utils
 import { getSupportedBiometryType, getKeychainDataObject, type KeyChainData } from 'utils/keychain';
 
+// types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
+// relative
 import { SettingsSection } from './SettingsSection';
 
 
 type State = {
   showPinModal: boolean,
-  supportedBiometryType: string,
+  supportedBiometryType: ?string,
 };
 
 type Props = {
@@ -44,26 +57,55 @@ type Props = {
   useBiometrics: ?boolean,
   changeUseBiometrics: (enabled: boolean, data: KeyChainData) => void,
   resetIncorrectPassword: () => void,
-}
+};
+
+const showFaceIDFailedMessage = (message) => {
+  Toast.show({
+    message,
+    type: 'warning',
+    title: 'Warning',
+    autoClose: true,
+  });
+};
 
 class SecuritySettings extends React.Component<Props, State> {
   state = {
     showPinModal: false,
-    supportedBiometryType: '',
-  }
+    supportedBiometryType: null,
+  };
 
   componentDidMount() {
-    getSupportedBiometryType(biometryType => {
+    getSupportedBiometryType((supportedBiometryType) => {
       // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
       // and getBiometryType has default string value
-      this.setState({ supportedBiometryType: biometryType ? getBiometryType(biometryType) : '' });
+      this.setState({ supportedBiometryType });
     });
   }
 
   handleChangeUseBiometrics = (enabled: boolean, data: KeyChainData) => {
+    const { showPinModal, supportedBiometryType } = this.state;
     const { resetIncorrectPassword, changeUseBiometrics } = this.props;
-    this.setState({ showPinModal: false });
+
+    if (showPinModal) this.setState({ showPinModal: false });
+
     resetIncorrectPassword();
+
+    // as for permission if it's iOS FaceID, otherwise – no permission needed
+    if (enabled
+      && Platform.OS === 'ios'
+      && supportedBiometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
+      requestPermission(PERMISSIONS.IOS.FACE_ID)
+        .then((status) => {
+          if (status === RESULTS.GRANTED) {
+            changeUseBiometrics(enabled, data);
+            return;
+          }
+          showFaceIDFailedMessage('FaceID permission is denied.');
+        })
+        .catch(() => showFaceIDFailedMessage('Failed to get FaceID permission!'));
+      return;
+    }
+
     changeUseBiometrics(enabled, data);
   };
 
@@ -86,7 +128,7 @@ class SecuritySettings extends React.Component<Props, State> {
         hidden: !supportedBiometryType,
       },
     ];
-  }
+  };
 
   handleBiometricPress = async () => {
     const { useBiometrics } = this.props;
@@ -108,12 +150,12 @@ class SecuritySettings extends React.Component<Props, State> {
         label: 'soon',
       },
     ];
-  }
+  };
 
   onPinValid = (pin, { mnemonic, privateKey }) => {
     const { useBiometrics } = this.props;
     this.handleChangeUseBiometrics(!useBiometrics, { mnemonic, privateKey });
-  }
+  };
 
   render() {
     const { showPinModal } = this.state;

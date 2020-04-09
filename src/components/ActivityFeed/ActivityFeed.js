@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { FlatList } from 'react-native';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
@@ -122,7 +123,7 @@ type Props = {
   ensRegistry: EnsRegistry,
   tabsComponent?: React.Node,
   headerComponent?: React.Node,
-  refreshControl?: React.Node,
+  flatListProps?: FlatList,
 };
 
 type State = {|
@@ -294,7 +295,7 @@ class ActivityFeed extends React.Component<Props, State> {
       feedData,
       headerComponent,
       tabsComponent,
-      refreshControl,
+      flatListProps,
     } = this.props;
 
     const {
@@ -339,11 +340,6 @@ class ActivityFeed extends React.Component<Props, State> {
           initialNumToRender={initialNumToRender}
           extraData={extraFeedData}
           renderItem={this.renderActivityFeedItem}
-          // getItemLayout={(data, index) => ({
-          //   length: 70,
-          //   offset: 70 * index,
-          //   index,
-          // })}
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
@@ -353,7 +349,7 @@ class ActivityFeed extends React.Component<Props, State> {
             </EmptyStateWrapper>
           )}
           stickyHeaderIndices={[1]}
-          refreshControl={refreshControl}
+          {...flatListProps}
         />}
         {!!selectedEventData &&
         <SlideModal
