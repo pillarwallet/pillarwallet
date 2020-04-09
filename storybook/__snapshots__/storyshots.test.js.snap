@@ -249,7 +249,6 @@ exports[`Storyshots ActionModal default 1`] = `
                       <View
                         accessible={true}
                         focusable={true}
-                        isTVSelectable={true}
                         onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
@@ -258,13 +257,16 @@ exports[`Storyshots ActionModal default 1`] = `
                         onResponderTerminationRequest={[Function]}
                         onStartShouldSetResponder={[Function]}
                         style={
-                          Object {
-                            "opacity": 1,
-                            "paddingBottom": 20,
-                            "paddingLeft": 0,
-                            "paddingRight": 0,
-                            "paddingTop": 20,
-                          }
+                          Array [
+                            Object {
+                              "opacity": 1,
+                              "paddingBottom": 20,
+                              "paddingLeft": 0,
+                              "paddingRight": 0,
+                              "paddingTop": 20,
+                            },
+                            undefined,
+                          ]
                         }
                       >
                         <View
@@ -328,7 +330,6 @@ exports[`Storyshots ActionModal default 1`] = `
                       <View
                         accessible={true}
                         focusable={true}
-                        isTVSelectable={true}
                         onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
@@ -337,13 +338,16 @@ exports[`Storyshots ActionModal default 1`] = `
                         onResponderTerminationRequest={[Function]}
                         onStartShouldSetResponder={[Function]}
                         style={
-                          Object {
-                            "opacity": 1,
-                            "paddingBottom": 20,
-                            "paddingLeft": 0,
-                            "paddingRight": 0,
-                            "paddingTop": 20,
-                          }
+                          Array [
+                            Object {
+                              "opacity": 1,
+                              "paddingBottom": 20,
+                              "paddingLeft": 0,
+                              "paddingRight": 0,
+                              "paddingTop": 20,
+                            },
+                            undefined,
+                          ]
                         }
                       >
                         <View

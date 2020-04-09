@@ -76,7 +76,14 @@ type State = {
 };
 
 
+const Sizer = styled.View`
+  max-width: 350px;
+  align-items: center;
+  align-self: center;
+`;
+
 const ActionButtonsWrapper = styled.View`
+  width: 100%;
   padding: 14px 10px 36px;
   flex-direction: row;
   justify-content: space-between;
@@ -296,24 +303,26 @@ class ActionButtons extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <ActionButtonsWrapper>
-          <CircleButton
-            label="Receive"
-            fontIcon="qrDetailed"
-            onPress={() => this.openActionModal(RECEIVE)}
-          />
-          <CircleButton
-            label="Send"
-            fontIcon="paperPlane"
-            onPress={() => this.openActionModal(SEND)}
-            disabled={!isSendButtonActive}
-          />
-          <CircleButton
-            label="Exchange"
-            fontIcon="exchange"
-            onPress={() => this.openActionModal(EXCHANGE)}
-          />
-        </ActionButtonsWrapper>
+        <Sizer>
+          <ActionButtonsWrapper>
+            <CircleButton
+              label="Receive"
+              fontIcon="qrDetailed"
+              onPress={() => this.openActionModal(RECEIVE)}
+            />
+            <CircleButton
+              label="Send"
+              fontIcon="paperPlane"
+              onPress={() => this.openActionModal(SEND)}
+              disabled={!isSendButtonActive}
+            />
+            <CircleButton
+              label="Exchange"
+              fontIcon="exchange"
+              onPress={() => this.openActionModal(EXCHANGE)}
+            />
+          </ActionButtonsWrapper>
+        </Sizer>
         <ActionModal
           onModalClose={this.closeActionModal}
           isVisible={!!visibleActionModal}
