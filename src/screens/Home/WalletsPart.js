@@ -63,7 +63,6 @@ type Props = {
   switchAccount: (accountId: string, privateKey?: string) => void,
   resetIncorrectPassword: () => void,
   activeWallet: Account,
-  blockchainNetwork: ?string,
   availableWallets: Account[],
   setActiveBlockchainNetwork: (id: string) => void,
   refreshBitcoinBalance: () => void,
@@ -131,10 +130,8 @@ class WalletsPart extends React.Component<Props, State> {
   };
 
   getNextWalletInLine = () => {
-    const { blockchainNetwork, availableWallets } = this.props;
-    const currentActiveType = blockchainNetwork !== BLOCKCHAIN_NETWORK_TYPES.BITCOIN
-      ? getActiveAccountType(availableWallets)
-      : blockchainNetwork;
+    const { availableWallets } = this.props;
+    const currentActiveType = getActiveAccountType(availableWallets);
     const currentWalletIndex = availableWallets.findIndex(({ type }) => type === currentActiveType);
     const nextIndex = (currentWalletIndex + 1) % availableWallets.length;
 
@@ -216,10 +213,9 @@ class WalletsPart extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency, blockchainNetwork, hideBalance } },
+  appSettings: { data: { baseFiatCurrency, hideBalance } },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
-  blockchainNetwork,
   hideBalance,
 });
 
