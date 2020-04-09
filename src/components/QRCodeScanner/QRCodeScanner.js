@@ -21,16 +21,12 @@ import * as React from 'react';
 import { Vibration, Dimensions, Platform } from 'react-native';
 import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
-import Permissions from 'react-native-permissions';
+import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import { noop, reportLog } from 'utils/common';
 import { CameraView } from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
-
 import type { Barcode, Point, Size } from 'react-native-camera';
 
-const AUTHORIZED = 'AUTHORIZED';
-const PENDING = 'PENDING';
-const DENIED = 'DENIED';
 
 type BarcodeBounds = {
   size: Size,
@@ -47,7 +43,7 @@ type Props = {
 };
 
 type State = {
-  authorizationState: string,
+  isAuthorized: ?boolean,
   isFinished: boolean,
   code: ?string,
 };
@@ -69,7 +65,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   };
 
   state = {
-    authorizationState: PENDING,
+    isAuthorized: null, // pending
     isFinished: false,
     code: null,
   };
@@ -111,7 +107,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   componentDidUpdate() {
     const { isActive } = this.props;
 
-    if (isActive && this.state.authorizationState === PENDING) {
+    if (isActive && this.state.isAuthorized === null) {
       this.askPermissions();
     }
   }
@@ -122,14 +118,14 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     }
   }
 
-  async askPermissions() {
-    const status = await Permissions.request('camera');
-    const isAuthorized = status.toUpperCase() === AUTHORIZED;
-
-    this.setState({
-      authorizationState: isAuthorized ? AUTHORIZED : DENIED,
-    });
-  }
+  askPermissions = () => {
+    requestPermission(Platform.select({
+      android: PERMISSIONS.ANDROID.CAMERA,
+      ios: PERMISSIONS.IOS.CAMERA,
+    }))
+      .then((status) => this.setState({ isAuthorized: status === RESULTS.GRANTED }))
+      .catch(() => this.setState({ isAuthorized: false }));
+  };
 
   getIOSCoordinates = (bounds: BarcodeBounds) => {
     const { origin: { x, y } = {} } = bounds;
@@ -144,7 +140,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       x > viewMinScanX + 20 && y > viewMinScanY && x < viewMinScanX + 100 && y < viewMinScanY + 100;
 
     return isInRecognitionArea;
-  }
+  };
 
   handleQRRead = (barcode: Barcode): void => {
     if (this.state.isFinished) {
@@ -179,7 +175,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     if (code) {
       this.props.onRead(this.props.dataFormatter(code));
     }
-  }
+  };
 
   render() {
     const {
@@ -187,13 +183,11 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       rectangleColor,
       onCancel,
     } = this.props;
-    const { authorizationState, isFinished } = this.state;
+    const { isAuthorized, isFinished } = this.state;
 
-    if (authorizationState === PENDING) {
-      return null;
-    }
+    if (isAuthorized === null) return null; // permission request pending
 
-    const isDenied = authorizationState === DENIED;
+    const isDenied = isAuthorized === false; // null is pending, boolean value is actual status
     const animationInTiming = 300;
     const animationOutTiming = isFinished ? 1 : 300;
 

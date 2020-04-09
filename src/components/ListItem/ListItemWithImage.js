@@ -402,6 +402,7 @@ const ItemImage = (props: Props) => {
       textStyle={{ fontSize: fontSizes.big }}
       noShadow
       fallbackImage={fallbackSource}
+      borderWidth={0}
     />
   );
 };

@@ -39,6 +39,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { toggleBalanceAction } from 'actions/appSettingsActions';
 
 // utils
 import { getAccountName, getActiveAccountType } from 'utils/accounts';
@@ -66,6 +67,8 @@ type Props = {
   availableWallets: Account[],
   setActiveBlockchainNetwork: (id: string) => void,
   refreshBitcoinBalance: () => void,
+  hideBalance: boolean,
+  toggleBalance: () => void,
 };
 
 type State = {
@@ -152,7 +155,13 @@ class WalletsPart extends React.Component<Props, State> {
 
   render() {
     const { showPinModal, onPinValidAction, changingAccount } = this.state;
-    const { availableWallets, baseFiatCurrency, activeWallet } = this.props;
+    const {
+      availableWallets,
+      baseFiatCurrency,
+      activeWallet,
+      toggleBalance,
+      hideBalance,
+    } = this.props;
 
     const activeWalletTitle = this.getWalletTitle();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -165,7 +174,11 @@ class WalletsPart extends React.Component<Props, State> {
           onPress={() => this.changeAcc(nextWallet)}
           isLoading={changingAccount}
         />
-        <PortfolioBalance fiatCurrency={fiatCurrency} />
+        <PortfolioBalance
+          fiatCurrency={fiatCurrency}
+          showBalance={hideBalance}
+          toggleBalanceVisibility={toggleBalance}
+        />
         <ActionButtons
           wallets={availableWallets}
           changeWalletAction={this.changeAcc}
@@ -185,10 +198,11 @@ class WalletsPart extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency, blockchainNetwork } },
+  appSettings: { data: { baseFiatCurrency, blockchainNetwork, hideBalance } },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   blockchainNetwork,
+  hideBalance,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -207,6 +221,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
+  toggleBalance: () => dispatch(toggleBalanceAction()),
 });
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletsPart));

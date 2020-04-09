@@ -16,7 +16,6 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Input } from 'native-base';
 
 // utils
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
@@ -31,6 +30,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Switcher from 'components/Switcher';
 import LabeledWrapper from 'components/Input/LabeledWrapper';
 import VerifyView from 'components/Input/VerifyView';
+import Input from 'components/Input';
 
 // partials
 import SelectList from './SelectList';
