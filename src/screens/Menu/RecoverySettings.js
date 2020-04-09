@@ -82,7 +82,7 @@ class RecoverySettings extends React.Component<Props, State> {
         key: 'viewPrivateKey',
         title: 'View private key',
         onPress: () => navigation.navigate(REVEAL_BACKUP_PHRASE, { showPrivateKey: true, wallet }),
-        hidden: !isBackedUp,
+        hidden: !isBackedUp || !!wallet.mnemonic,
       },
       {
         key: 'backupNotFinished',
@@ -95,7 +95,7 @@ class RecoverySettings extends React.Component<Props, State> {
         hidden: isBackedUp,
       },
     ];
-  }
+  };
 
   onPinValid = (pin: string, wallet: EthereumWallet) => {
     this.setState({ pinIsValid: true, wallet });
