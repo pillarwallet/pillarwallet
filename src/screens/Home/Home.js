@@ -379,7 +379,6 @@ class HomeScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <ContainerWithHeader
-          backgroundColor={colors.card} // so tabs would have white background only when not sticky
           headerProps={{
             leftItems: [
               {
