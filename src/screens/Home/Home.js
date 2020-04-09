@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, View, ScrollView, FlatList, Dimensions } from 'react-native';
+import { RefreshControl, View, ScrollView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -33,16 +33,13 @@ import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
 import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
-import Loader from 'components/Loader';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   BADGE,
   REFER_FLOW,
@@ -93,7 +90,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 
 // partials
-import ActionButtons from './ActionButtons';
+import WalletsPart from './WalletsPart';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -133,14 +130,9 @@ type State = {
   activeTab: string,
   isReferralBannerVisible: boolean,
   showRewardModal: boolean,
-  loaderMessage: string,
 };
 
 
-const {
-  width: SCREEN_WIDTH,
-  height: SCREEN_HEIGHT,
-} = Dimensions.get('window');
 const profileImageWidth = 24;
 
 const ListHeader = styled(MediumText)`
@@ -160,19 +152,6 @@ const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
-const LoaderWrapper = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
-  align-items: center;
-  justify-content: center;
-  height: ${SCREEN_HEIGHT}px;
-  width: ${SCREEN_WIDTH}px;
-  background-color: ${themedColors.surface};
-  z-index: 99999;
-`;
-
-
 const referralImage = require('assets/images/referral_gift.png');
 
 class HomeScreen extends React.Component<Props, State> {
@@ -183,7 +162,6 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: ALL,
     isReferralBannerVisible: true,
     showRewardModal: false,
-    loaderMessage: '',
   };
 
   componentDidMount() {
@@ -327,12 +305,11 @@ class HomeScreen extends React.Component<Props, State> {
       userEvents,
       badgesEvents,
       theme,
-      baseFiatCurrency,
       activeBlockchainNetwork,
       referralsFeatureEnabled,
     } = this.props;
 
-    const { activeTab, showRewardModal, loaderMessage } = this.state;
+    const { activeTab, showRewardModal } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -402,7 +379,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
     const colors = getThemeColors(theme);
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
       <React.Fragment>
@@ -446,15 +422,14 @@ class HomeScreen extends React.Component<Props, State> {
         >
           <ScrollView
             style={{ width: '100%', flex: 1 }}
-            stickyHeaderIndices={referralsFeatureEnabled ? [4] : [3]}
+            stickyHeaderIndices={referralsFeatureEnabled ? [3] : [2]}
             refreshControl={
               <RefreshControl
                 refreshing={false}
                 onRefresh={this.refreshScreenData}
               />}
           >
-            <PortfolioBalance fiatCurrency={fiatCurrency} />
-            <ActionButtons toggleLoading={(_loaderMessage) => this.setState({ loaderMessage: _loaderMessage })} />
+            <WalletsPart />
             <BadgesWrapper>
               <ListHeader>Game of badges</ListHeader>
               <FlatList
@@ -499,9 +474,6 @@ class HomeScreen extends React.Component<Props, State> {
             onModalHide={this.handleModalHide}
           />
         </ContainerWithHeader>
-        {!!loaderMessage &&
-        <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
-        }
       </React.Fragment>
     );
   }
