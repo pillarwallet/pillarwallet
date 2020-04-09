@@ -205,6 +205,11 @@ jobs:
       - *install_pods
       - *save_pod_cache
 
+      - aws-cli/setup:
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
+          aws-region: AWS_DEFAULT_REGION
+
       - run:
           name: Set staging environment
           command: |
@@ -238,9 +243,14 @@ jobs:
       - store_artifacts:
           path: ./toArchive
           destination: app_build
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
+            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_appcenter.txt) 
       - slack/status:
           fail_only: true
-          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n We waited this long for the *$CIRCLE_JOB* job to fail?? :circleci-fail:"
+          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
@@ -270,7 +280,7 @@ jobs:
           name: Get keystore file
           command: |
             cd /home/circleci/pillarwallet/android/keystores/
-            aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/staging-key.keystore .
       - run:
           name: Accept Android SDK licenses
           command: |
@@ -320,9 +330,14 @@ jobs:
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
+            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_appcenter.txt) 
       - slack/status:
           fail_only: true
-          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Are you guys surprised that *$CIRCLE_JOB* failed? :circleci-fail:"
+          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
@@ -353,7 +368,6 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
-      - aws-cli/install
       - aws-cli/setup:
           aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
           aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
@@ -436,8 +450,8 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ./ios/output/gym/
             touch ios-s3-URL-prod.txt
-            aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --region eu-west-2
-            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
+            aws --region $AWS_DEFAULT_REGION s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa
+            aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --expires-in 604800 > ios-s3-URL-prod.txt
       - run:
           name: Announce Deployment
           command: |
@@ -464,9 +478,14 @@ jobs:
           root: /tmp/workspace
           paths:
             - ios-release
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
+            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_prod.txt) 
       - slack/status:
           fail_only: true
-          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Oh man, *$CIRCLE_JOB* failed... :circleci-fail:"
+          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   prod_android:
@@ -475,7 +494,6 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
-      - aws-cli/install
       - aws-cli/setup:
           aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
           aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
@@ -487,7 +505,7 @@ jobs:
           name: Get keystore file
           command: |
             cd /home/circleci/pillarwallet/android/keystores/
-            aws s3 cp s3://pillar-prod-app-keystore-eu-west-2-304069782345/release.keystore .
+            aws s3 cp $PROD_KEYSTORE_S3_BUCKET/release.keystore .
       - run:
           name: Set production environment
           command: |
@@ -525,14 +543,15 @@ jobs:
           paths:
             - ~/pillarwallet/nodes_modules
       - restore_cache:
-          key: /home/circleci/pillarwallet/android/android-gems-{{ checksum "Gemfile" }}
+          keys:
+            - android-gems-{{ checksum "./android/Gemfile" }}
       - run:
           name: Bundle install
           command: |
             cd android
             bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: /home/circleci/pillarwallet/android/android-gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "./android/Gemfile" }}
           paths:
             - vendor/bundle
       - restore_cache:
@@ -582,8 +601,8 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ./android/app/build/outputs/apk/release/
             touch android-s3-URL-prod.txt
-            aws s3 cp app-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --region eu-west-2
-            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
+            aws --region $AWS_DEFAULT_REGION s3 cp app-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk
+            aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --expires-in 604800 > android-s3-URL-prod.txt
       - run:
           name: Announce Deployment
           command: |
@@ -610,9 +629,14 @@ jobs:
           root: /tmp/workspace
           paths:
             - android-release
+      - run:
+          name: Set slack message
+          command: |
+            aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
+            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_prod.txt) 
       - slack/status:
           fail_only: true
-          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n *$CIRCLE_JOB* failed, ain't that a surprise? :circleci-fail:"
+          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   publish_releases_to_github:
@@ -634,7 +658,7 @@ jobs:
             . ./setReleaseInfo.sh
             TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
             APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
-            echo $RELEASE_DESCRIPTION > pr_description.txt
+            echo $SUPPORT_DESCRIPTION > support_description.txt
             github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n "$RELEASE_TITLE" --description "$RELEASE_DESCRIPTION"
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$APP_VERSION.apk" -f /tmp/workspace/android-release/*.apk
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$APP_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
@@ -642,8 +666,8 @@ jobs:
           name: Announce new RC to support channel
           command: |
             chmod +x .circleci/announceProdBuilds.sh
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/pr_description.txt)"
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/pr_description.txt)"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)"
 
 workflows:
   version: 2.1
