@@ -48,6 +48,7 @@ import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import {
@@ -334,21 +335,26 @@ class HomeScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = activeBlockchainNetwork === 'BITCOIN' ? history : mapTransactionsHistory(
-      tokenTxHistory,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      TRANSACTION_EVENT,
-    );
+    const transactionsOnMainnet = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? history
+      : mapTransactionsHistory(
+        tokenTxHistory,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        TRANSACTION_EVENT,
+      );
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(
-      collectiblesTransactions,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      COLLECTIBLE_TRANSACTION,
-    );
+
+    const mappedCTransactions = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? []
+      : mapTransactionsHistory(
+        collectiblesTransactions,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        COLLECTIBLE_TRANSACTION,
+      );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 
