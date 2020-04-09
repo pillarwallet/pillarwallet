@@ -31,6 +31,7 @@ import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { fontSizes, spacing } from 'utils/variables';
+import { findAccountByAddress, checkIfSmartWalletAccount, checkIfKeyBasedAccount } from 'utils/accounts';
 
 // components
 import {
@@ -79,6 +80,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+
 
 type Props = {
   type?: string,
@@ -198,19 +200,14 @@ export class ActivityFeedItem extends React.Component<Props> {
     return (smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
   }
 
-  findAccount = (address: string) => {
-    const { accounts } = this.props;
-    return accounts.find(account => addressesEqual(account.id, address));
-  }
-
   isSWAddress = (address: string) => {
-    const account = this.findAccount(address);
-    return (account && account.type === ACCOUNT_TYPES.SMART_WALLET);
+    const account = findAccountByAddress(address, this.props.accounts);
+    return (account && checkIfSmartWalletAccount(account));
   }
 
   isKWAddress = (address: string) => {
-    const account = this.findAccount(address);
-    return (account && account.type === ACCOUNT_TYPES.KEY_BASED);
+    const account = findAccountByAddress(address, this.props.accounts);
+    return (account && checkIfKeyBasedAccount(account));
   }
 
   getFormattedSettleValues = () => {
@@ -239,7 +236,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       }
     });
 
-    const valuesArray = Object.keys(valueByAsset).map((key) => valueByAsset[key]);
+    const valuesArray = (Object.values(valueByAsset): any);
     const formattedValuesArray: Object[] = valuesArray.map(({ symbol, value, decimals }): Object => ({
       formatted: formatAmount(formatUnits(value.toString(), decimals)),
       symbol,
