@@ -50,6 +50,7 @@ const Row = styled.View`
 const ToggleText = styled(BaseText)`
   color: ${themedColors.secondaryText};
   font-size: ${fontSizes.regular}px;
+  margin-left: 5px;
 `;
 
 const ToggleIcon = styled(Icon)`
