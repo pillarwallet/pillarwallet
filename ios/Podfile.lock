@@ -388,7 +388,7 @@ PODS:
     - React-Core
     - React-RCTImage
     - RSKImageCropper
-  - RNKeychain (5.0.1):
+  - RNKeychain (6.0.0):
     - React
   - RNOS (1.2.6):
     - React
@@ -725,7 +725,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: 51cc7f6beaf4c4feac6f18ea941bba5854e3d9c6
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
-  RNKeychain: a5623de13ec5378bfb8035422e3dee4fa538660d
+  RNKeychain: bf2d7e9a0ae7a073c07770dd2aa6d11c67581733
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNPermissions: 1008d3511fee0e25739cf81c4af0d1b2248f1053
   RNScreens: f28b48b8345f2f5f39ed6195518291515032a788

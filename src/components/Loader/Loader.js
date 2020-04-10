@@ -40,7 +40,7 @@ type State = {
 
 const defaultMessages = [
   'It might take a bit.',
-  'Decentralization isn’t easy.',
+  'Loading...',
 ];
 
 const ContentHolder = styled.View`

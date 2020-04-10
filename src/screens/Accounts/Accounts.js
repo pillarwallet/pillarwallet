@@ -335,7 +335,7 @@ class AccountsScreen extends React.Component<Props, State> {
       return {
         id: `ACCOUNT_${id}`,
         type: 'ACCOUNT',
-        title: isSmartWallet ? 'Smart wallet' : getAccountName(ACCOUNT_TYPES.KEY_BASED, accounts),
+        title: getAccountName(type),
         balance: walletBalance,
         isInitialised: true,
         mainAction: () => this.switchWallet(account),
@@ -350,7 +350,7 @@ class AccountsScreen extends React.Component<Props, State> {
       wallets.push({
         id: NEW_SMART_WALLET,
         type: NEW_SMART_WALLET,
-        title: 'Smart Wallet',
+        title: getAccountName(ACCOUNT_TYPES.SMART_WALLET),
         balance: null,
         isInitialised: false,
         mainAction: null,

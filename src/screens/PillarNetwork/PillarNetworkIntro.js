@@ -264,7 +264,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               marginBottom: 70,
               borderColor: colors.PPNText,
             }}
-            label="Enable Smart wallet to create Tank"
+            label="Enable Smart Wallet to create Tank"
             onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
             color={colors.PPNText}
             bordered

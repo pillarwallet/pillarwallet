@@ -23,7 +23,6 @@ import omit from 'lodash.omit';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
 import type { Assets } from 'models/Asset';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { userHasSmartWallet } from 'utils/smartWallet';
 import { addressesEqual } from './assets';
 
 export const getActiveAccount = (accounts: Accounts): ?Account => {
@@ -94,13 +93,13 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.KEY_BASED;
 };
 
-export const getAccountName = (accountType: AccountTypes, accounts: Accounts): string => {
+export const getAccountName = (accountType: AccountTypes): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
       return 'Smart Wallet';
 
     case ACCOUNT_TYPES.KEY_BASED:
-      return userHasSmartWallet(accounts) ? 'Legacy wallet' : 'Key Based wallet';
+      return 'Key wallet';
 
     default:
       return '';
