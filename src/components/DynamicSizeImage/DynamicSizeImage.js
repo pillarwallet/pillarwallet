@@ -51,26 +51,23 @@ class DynamicSizeImage extends React.Component<Props, State> {
     this.getImageSize();
   }
 
+  setImageSize = (width: number, height: number) => {
+    this.setState({
+      width: width / 3,
+      height: height / 3,
+    });
+  };
+
   getImageSize = () => {
     const { imageSource } = this.props;
 
     if (!!imageSource && typeof imageSource === 'object' && imageSource.uri) {
       Image.getSize(imageSource.uri, (width, height) => {
-        if (width && height) {
-          this.setState({
-            width: width / 3,
-            height: height / 3,
-          });
-        }
+        if (width && height) this.setImageSize(width, height);
       });
     } else {
       const { width, height } = Image.resolveAssetSource(imageSource) || {};
-      if (width && height) {
-        this.setState({
-          width: width / 3,
-          height: height / 3,
-        });
-      }
+      if (width && height) this.setImageSize(width, height);
     }
   };
 
