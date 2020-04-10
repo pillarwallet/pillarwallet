@@ -3012,7 +3012,7 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
               }
               type="ACTION"
             >
-              Smart wallet
+              Smart Wallet
             </Text>
           </View>
           <View
@@ -6189,7 +6189,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
               }
               type="DEFAULT"
             >
-              Smart wallet
+              Smart Wallet
             </Text>
           </View>
         </View>
@@ -6543,285 +6543,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
 </View>
 `;
 
-exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
-<View
-  style={
-    Array [
-      Object {
-        "flexDirection": "column",
-        "width": "100%",
-      },
-      undefined,
-    ]
-  }
->
-  <View
-    accessible={true}
-    focusable={false}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "flexDirection": "row",
-        "justifyContent": "center",
-        "opacity": 1,
-        "paddingBottom": 14,
-        "paddingLeft": 20,
-        "paddingRight": 20,
-        "paddingTop": 14,
-        "width": "100%",
-      }
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "justifyContent": "center",
-            "paddingRight": 12,
-          },
-          undefined,
-        ]
-      }
-    />
-    <View
-      style={
-        Object {
-          "flex": 1,
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            },
-            undefined,
-          ]
-        }
-        type="DEFAULT"
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexBasis": 0,
-                "flexDirection": "column",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "flexGrow": 1,
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "space-between",
-                },
-                undefined,
-              ]
-            }
-          >
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "width": "100%",
-                      },
-                      undefined,
-                    ],
-                  ],
-                ]
-              }
-              type="DEFAULT"
-            >
-              Smart wallet
-            </Text>
-          </View>
-          <View
-            h={4}
-            style={
-              Array [
-                Object {
-                  "height": 4,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <View
-            label="Need to activate"
-            labelStyle={
-              Object {
-                "fontSize": 10,
-                "lineHeight": 14,
-              }
-            }
-            primary={true}
-            style={
-              Array [
-                Object {
-                  "alignSelf": "flex-start",
-                  "backgroundColor": "#007AFF",
-                  "borderRadius": 12,
-                  "paddingBottom": 3,
-                  "paddingLeft": 8,
-                  "paddingRight": 8,
-                  "paddingTop": 3,
-                },
-                undefined,
-              ]
-            }
-          >
-            <Text
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#FCFDFF",
-                        "fontSize": 8,
-                      },
-                      Object {
-                        "fontSize": 10,
-                        "lineHeight": 14,
-                      },
-                    ],
-                  ],
-                ]
-              }
-            >
-              Need to activate
-            </Text>
-          </View>
-        </View>
-        <View
-          rightColumn={true}
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-end",
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "marginLeft": 10,
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "maxWidth": "50%",
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                undefined,
-                Object {
-                  "flexWrap": "wrap",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "justifyContent": "center",
-                  },
-                  undefined,
-                ]
-              }
-            >
-              <Text
-                color="#8B939E"
-                style={
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 14,
-                        "lineHeight": 22,
-                        "marginBottom": 0,
-                        "marginLeft": "auto",
-                        "paddingBottom": 6,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
-                        "paddingTop": 6,
-                      },
-                      undefined,
-                    ],
-                  ]
-                }
-              >
-                Created
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>
-</View>
-`;
+exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `null`;
 
 exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
 <View
@@ -7023,7 +6745,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               ]
             }
           >
-            Smart wallet
+            Smart Wallet
           </Text>
         </View>
         <View
@@ -7304,7 +7026,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
               ]
             }
           >
-            Smart wallet
+            Smart Wallet
           </Text>
         </View>
         <View
@@ -7589,7 +7311,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               ]
             }
           >
-            Smart wallet
+            Smart Wallet
           </Text>
         </View>
         <View
@@ -7888,7 +7610,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               ]
             }
           >
-            Smart wallet
+            Smart Wallet
           </Text>
         </View>
         <View
@@ -8169,7 +7891,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
               ]
             }
           >
-            Smart wallet
+            Smart Wallet
           </Text>
         </View>
         <View
@@ -8454,7 +8176,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               ]
             }
           >
-            Smart wallet
+            Smart Wallet
           </Text>
         </View>
         <View
