@@ -35,11 +35,11 @@ import {
 } from 'react-native';
 import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
-// import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import type { GasInfo } from 'models/GasInfo';
+import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
+
+// constants
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
@@ -47,6 +47,11 @@ import {
   BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+
+// types
+import type { GasInfo } from 'models/GasInfo';
+
+// local
 import { isProdEnv, isTest } from './environment';
 
 

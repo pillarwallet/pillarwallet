@@ -7,16 +7,25 @@ import abi from 'ethjs-abi';
 import { sdkConstants } from '@smartwallet/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
-
-import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
-import type { Account } from 'models/Account';
-import type { CollectibleTransactionPayload, SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+// services
 import { buildERC721TransactionData } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
+
+// constants
+import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
+
+// utils
 import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
+
+// assets
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
+// types
+import type { Account } from 'models/Account';
+import type { CollectibleTransactionPayload, SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+
 
 const {
   GasPriceStrategies: {
