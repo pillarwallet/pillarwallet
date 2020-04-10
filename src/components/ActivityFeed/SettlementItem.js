@@ -28,9 +28,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import { fontSizes, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
-import { getAssetData } from 'utils/assets';
 import { formatAmount, formatUnits } from 'utils/common';
-import type { Asset } from 'models/Asset';
 
 const ppnIcon = require('assets/icons/icon_PPN.png');
 
@@ -46,8 +44,7 @@ type Props = {
   asset?: string,
   onPress: Function,
   isPending?: boolean,
-  accountAssets: Asset[],
-  supportedAssets: Asset[],
+  assetDecimals: number,
 }
 
 const ListWrapper = styled.View`
@@ -68,8 +65,7 @@ export const SettlementItem = (props: Props) => {
     asset,
     onPress,
     isPending,
-    accountAssets,
-    supportedAssets,
+    assetDecimals,
   } = props;
   const ppnTransactions = asset
     ? settleData.filter(({ symbol }) => symbol === asset)
@@ -79,10 +75,9 @@ export const SettlementItem = (props: Props) => {
 
   ppnTransactions.forEach((trx) => {
     const { symbol, value: rawValue } = trx;
-    const { decimals = 18 } = getAssetData(accountAssets, supportedAssets, symbol);
     const value = new BigNumber(rawValue);
     if (!valueByAsset[symbol]) {
-      valueByAsset[symbol] = { ...trx, value, decimals };
+      valueByAsset[symbol] = { ...trx, value, decimals: assetDecimals };
     } else {
       const { value: currentValue } = valueByAsset[symbol];
       valueByAsset[symbol].value = currentValue.plus(value);
