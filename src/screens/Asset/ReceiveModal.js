@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Image, Dimensions } from 'react-native';
+import { View, Image, Dimensions, Share } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
@@ -28,17 +29,14 @@ import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
 import { LabelBadge } from 'components/LabelBadge';
 
-const ContentWrapper = styled.View`
+const ContentWrapper = styled(SafeAreaView)`
   padding: 0 ${spacing.layoutSides}px ${spacing.large}px;
   align-items: center;
 `;
 
 type Props = {
   address: string,
-  onModalHide: Function,
-  handleOpenShareDialog: Function,
-  token: string,
-  tokenName: string,
+  onModalHide: () => void,
   isVisible: boolean,
   handleBuyTokens?: Function,
   onModalHidden?: Function,
@@ -77,7 +75,8 @@ const ButtonsRow = styled.View`
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const getButtonWidth = () => {
-  return (SCREEN_WIDTH / 2) - (spacing.layoutSides * 1.5);
+  const marginBetweenButtons = SCREEN_WIDTH > 360 ? 12 : 4;
+  return (SCREEN_WIDTH / 2) - spacing.layoutSides - (marginBetweenButtons / 2);
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -85,12 +84,9 @@ const mastercardIcon = require('assets/icons/mastercard.png');
 
 export default class ReceiveModal extends React.Component<Props, *> {
   handleAddressShare = () => {
-    const {
-      handleOpenShareDialog,
-      address,
-    } = this.props;
+    const { address } = this.props;
 
-    handleOpenShareDialog(address);
+    Share.share({ title: 'Public address', message: address });
   };
 
   render() {
@@ -125,7 +121,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
           ),
         }]}
       >
-        <ContentWrapper>
+        <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
           <WarningBanner rounded small />
           <QRCodeWrapper>
             <WalletAddress>{address}</WalletAddress>
@@ -135,7 +131,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
                 padding: 10,
               }}
             >
-              <QRCodeWithTheme value={address} size={160} />
+              {!!address && <QRCodeWithTheme value={address} size={160} />}
             </View>
           </QRCodeWrapper>
           <ButtonsRow>
@@ -146,6 +142,8 @@ export default class ReceiveModal extends React.Component<Props, *> {
                 positive
                 width={buttonWidth}
                 small={needsSmallButtons}
+                regularText
+                textStyle={{ paddingTop: 4 }}
               />
             )}
             <Button
@@ -154,6 +152,8 @@ export default class ReceiveModal extends React.Component<Props, *> {
               width={buttonWidth}
               small={needsSmallButtons}
               block={!buttonWidth}
+              regularText
+              textStyle={{ paddingTop: 4 }}
             />
           </ButtonsRow>
           {showBuyTokensButton && (

@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Item as NBItem, Input } from 'native-base';
+import { Item as NBItem } from 'native-base';
 import {
   View,
   Platform,
@@ -34,6 +34,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 
 import { ETH } from 'constants/assetsConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
@@ -47,6 +48,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Input from 'components/Input';
 
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -254,7 +256,9 @@ const Selector = styled.TouchableOpacity`
   background-color: ${themedColors.card};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  border: 1px solid ${themedColors.secondaryAccent};
+  border: 1px solid ${({ theme: { current, colors } }) => {
+    return current === DARK_THEME ? colors.tertiary : colors.secondaryAccent;
+  }};
   ${({ fullWidth }) => fullWidth && `
     flex: 1;
     border-radius: 4px;
@@ -680,6 +684,7 @@ class TextInput extends React.Component<Props, State> {
                   fontFamily: getFontFamily(this.props),
                   textAlignVertical: inputProps.multiline ? 'top' : 'center',
                   height: inputHeight,
+                  flex: 1,
                 }, customStyle,
                   additionalStyle,
                 ]}

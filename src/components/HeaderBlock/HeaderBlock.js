@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, View, TouchableOpacity } from 'react-native';
+import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -60,16 +60,12 @@ type Props = {
   wrapperStyle?: Object,
   noHorizonatalPadding?: boolean,
   forceInsetTop?: string,
+  bottomBorderAnimationValue?: Animated.Value,
 };
 
-const Wrapper = styled.View`
+const Wrapper = styled(Animated.View)`
   width: 100%;
-  background-color: ${({ noBottomBorder, theme }) =>
-    noBottomBorder ? theme.colors.surface : theme.colors.card};
-  ${({ noBottomBorder, theme }) => !noBottomBorder && `
-    border-bottom-width: 1;
-    border-bottom-color: ${theme.colors.border};
-  `}
+  border-bottom-width: 1;
   ${({ floating }) => floating && `
     position: absolute;
     top: 0;
@@ -162,7 +158,7 @@ const TextButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   ${fontStyles.regular}px;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.link};
 `;
 
 const Indicator = styled.View`
@@ -183,6 +179,7 @@ const IconImage = styled(CachedImage)`
 const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
+const animatedValueZero = new Animated.Value(0);
 
 const getCloseAction = (props, navigation) => {
   if (props.onClose) return () => props.onClose();
@@ -351,10 +348,11 @@ class HeaderBlock extends React.Component<Props> {
       theme,
       light,
       noPaddingTop,
-      noBottomBorder,
       wrapperStyle,
       noHorizonatalPadding,
       forceInsetTop = 'always',
+      bottomBorderAnimationValue = animatedValueZero,
+      noBottomBorder,
     } = this.props;
     const updatedColors = {};
     if (floating) {
@@ -367,12 +365,32 @@ class HeaderBlock extends React.Component<Props> {
     }
     const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
 
+    let backgroundColor;
+    let borderColor;
+
+    if (noBottomBorder) {
+      backgroundColor = theme.colors.card;
+      borderColor = 'transparent';
+    } else {
+      backgroundColor = bottomBorderAnimationValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [theme.colors.surface, theme.colors.card],
+        extrapolate: 'clamp',
+      });
+
+      borderColor = bottomBorderAnimationValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [`${theme.colors.border}00`, theme.colors.border],
+        extrapolate: 'clamp',
+      });
+    }
+
+
     return (
       <ThemeProvider theme={updatedTheme}>
         <Wrapper
           floating={floating}
-          noBottomBorder={noBottomBorder}
-          style={wrapperStyle}
+          style={{ ...wrapperStyle, backgroundColor, borderColor }}
         >
           <SafeArea
             forceInset={{ bottom: 'never', top: forceInsetTop }}

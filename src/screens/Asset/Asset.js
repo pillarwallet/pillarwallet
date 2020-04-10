@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Share, RefreshControl } from 'react-native';
+import { RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -230,10 +230,6 @@ class AssetScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  handleOpenShareDialog = (address: string) => {
-    Share.share({ title: 'Public address', message: address });
-  };
-
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
@@ -430,7 +426,6 @@ class AssetScreen extends React.Component<Props, State> {
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
-          handleOpenShareDialog={this.handleOpenShareDialog}
           showBuyTokensButton
           handleBuyTokens={this.handleBuyTokens}
           onModalHidden={this.handleModalHidden}

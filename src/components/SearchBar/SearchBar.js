@@ -19,9 +19,10 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Animated, Dimensions, Keyboard, TextInput } from 'react-native';
+import { Animated, Dimensions, Keyboard, TextInput as RNTextInput } from 'react-native';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+import TextInput from 'components/Input';
 
 import { fontSizes, appFont, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -49,7 +50,7 @@ const CancelButton = styled.TouchableOpacity`
   margin-right: -${spacing.large}px;
 `;
 
-const InputField = styled.TextInput`
+const InputField = styled(TextInput)`
   flex: 1;
   height: 42px;
   padding-left: 14px;
@@ -89,7 +90,7 @@ type CommonComponentsProps = {
   inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
-  inputRef?: TextInput,
+  inputRef?: RNTextInput,
 };
 
 type Props = CommonComponentsProps & {
