@@ -247,7 +247,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
-            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_appcenter.txt) 
+            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_appcenter.txt)
       - slack/status:
           fail_only: true
           failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
@@ -334,7 +334,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_appcenter.txt) 
+            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_appcenter.txt)
       - slack/status:
           fail_only: true
           failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
@@ -482,7 +482,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
-            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_prod.txt) 
+            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_prod.txt)
       - slack/status:
           fail_only: true
           failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
@@ -633,7 +633,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_prod.txt) 
+            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_prod.txt)
       - slack/status:
           fail_only: true
           failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
@@ -674,6 +674,10 @@ workflows:
   build_and_deploy:
     jobs:
       - build-and-test
+          filters:
+            branches:
+              ignore:
+                - feature/relayer
       - appcenter_ios:
           requires:
             - build-and-test
