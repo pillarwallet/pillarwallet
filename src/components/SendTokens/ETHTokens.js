@@ -27,7 +27,7 @@ import styled from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { ethToWei } from '@netgum/utils';
+import type { IGasToken } from '@smartwallet/sdk/build/interfaces';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -39,7 +39,7 @@ import SendTokenDetails from 'components/SendTokenDetails';
 import Spinner from 'components/Spinner';
 
 // utils
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat, formatUnits } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -62,6 +62,7 @@ import { ETH, SPEED_TYPES, SPEED_TYPE_LABELS } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
+
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -125,6 +126,7 @@ type State = {
   inputHasError: boolean,
   txFeeInWei: BigNumber,
   submitPressed: boolean,
+  gasToken: ?IGasToken,
 };
 
 const { Form } = t.form;
@@ -143,6 +145,7 @@ class SendETHTokens extends React.Component<Props, State> {
     inputHasError: false,
     txFeeInWei: 0,
     submitPressed: false,
+    gasToken: {},
   };
 
   constructor(props: Props) {
@@ -187,7 +190,7 @@ class SendETHTokens extends React.Component<Props, State> {
   };
 
   handleFormSubmit = async () => {
-    const { submitPressed } = this.state;
+    const { submitPressed, gasToken } = this.state;
     if (submitPressed) return;
 
     this.formSubmitted = true;
@@ -215,6 +218,7 @@ class SendETHTokens extends React.Component<Props, State> {
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
       decimals: assetData.decimals,
+      gasToken,
     };
 
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
@@ -241,7 +245,7 @@ class SendETHTokens extends React.Component<Props, State> {
 
   useMaxValue = async () => {
     const { balances, activeAccount, assetData } = this.props;
-    const { calculatingMaxValue } = this.state;
+    const { calculatingMaxValue, gasToken } = this.state;
     if (calculatingMaxValue) return;
     this.setState({ calculatingMaxValue: true, gettingFee: true });
     const { token } = assetData;
@@ -255,7 +259,7 @@ class SendETHTokens extends React.Component<Props, State> {
       const transactionSpeed = this.getTxSpeed();
       txFeeInWei = this.getTxFeeInWei(transactionSpeed, updatedState.gasLimit);
     }
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
     const amount = formatAmount(maxAmount);
     this.setState({
       ...updatedState,
@@ -292,7 +296,7 @@ class SendETHTokens extends React.Component<Props, State> {
     });
   };
 
-  getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
+  getTxFeeInWei = async (txSpeed?: string, gasLimit?: number): BigNumber => {
     const { gasInfo, activeAccount } = this.props;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();
@@ -318,13 +322,35 @@ class SendETHTokens extends React.Component<Props, State> {
       .catch(() => null);
   };
 
-  getSmartWalletTxFeeInWei = (amount?: number): BigNumber => {
-    const { gasInfo, receiver } = this.props;
-    const value = amount || get(this.state, 'value.amount', 0);
-    return smartWalletService.estimateAccountTransaction({
-      recipient: receiver,
-      value: ethToWei(value),
-    }, gasInfo).catch(() => 0);
+  getSmartWalletTxFeeInWei = async (amount?: number): BigNumber => {
+    const { gasInfo, receiver, assetData } = this.props;
+    const { gasToken: currentGasToken } = this.state;
+    const value = Number(amount || get(this.state, 'value.amount', 0));
+
+    if (!value) return new BigNumber(0);
+
+    const {
+      gasTokenCost,
+      gasToken,
+      cost: defaultCost,
+    } = await smartWalletService
+      .estimateAccountTransaction(
+        { recipient: receiver, value },
+        gasInfo,
+        assetData,
+      )
+      .catch(() => ({}));
+
+    // check if gas token estimation was successful, otherwise fallback to ETH
+    if (!isEmpty(gasToken) && gasTokenCost && gasTokenCost !== 0) {
+      this.setState({ gasToken });
+      return gasTokenCost;
+    }
+
+    // reset if previous estimation was provided by gas token
+    if (!isEmpty(currentGasToken)) this.setState({ gasToken: {} });
+
+    return defaultCost;
   };
 
   renderTxSpeedButtons = () => {
@@ -367,6 +393,7 @@ class SendETHTokens extends React.Component<Props, State> {
       inputHasError,
       txFeeInWei,
       submitPressed,
+      gasToken,
     } = this.state;
     const {
       session,
@@ -380,16 +407,17 @@ class SendETHTokens extends React.Component<Props, State> {
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount;
     const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
+    const showGasTokenFee = !gettingFee && txFeeInWei && txFeeInWei.gt(0) && isSmartAccount && !isEmpty(gasToken);
     const { token, iconColor, decimals } = assetData;
 
     // balance
     const balance = getBalance(balances, token);
 
     // fee
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
+    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei, gasToken);
 
     // max amount
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
 
     // value
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
@@ -425,6 +453,11 @@ class SendETHTokens extends React.Component<Props, State> {
                 <TextLink>{SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
             </TouchableOpacity>
+            }
+            {!!showGasTokenFee &&
+            <SendTokenDetailsValue>
+              <Label small>Fee: {formatAmount(formatUnits(txFeeInWei, gasToken.decimals), 2)} {gasToken.symbol}</Label>
+            </SendTokenDetailsValue>
             }
             {!showTransactionSpeeds && <Label>&nbsp;</Label>}
             {showNextButton &&

@@ -23,18 +23,29 @@ import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
+import isEmpty from 'lodash.isempty';
+
+// constants
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
+
+// components
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
+
+// utils
 import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+
+// types
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -103,9 +114,13 @@ class SendTokenConfirm extends React.Component<Props, State> {
       receiverEnsName,
       txFeeInWei,
       symbol,
+      gasToken,
     } = navigation.getParam('transactionPayload', {});
 
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
+    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
+    const fee = txFeeInWei === 0 ? 'free' : utils.formatUnits(txFeeInWei.toString(), feeDecimals);
 
     const recipientUsername = getUserName(contact);
     const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
@@ -150,7 +165,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Est. Network Fee</Label>
-            <Value>{txFeeInWei === 0 ? 'free' : `${utils.formatEther(txFeeInWei.toString())} ETH`}</Value>
+            <Value>{`${fee} ${feeSymbol}`}</Value>
           </LabeledRow>
           {session.isOnline && !!recipientUsername &&
             <TextInput

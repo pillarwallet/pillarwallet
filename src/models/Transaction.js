@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import type { IGasToken } from '@smartwallet/sdk/build/interfaces';
+
 export type TxSettlementItem = {
   symbol: string,
   value: string | number,
@@ -90,6 +92,7 @@ export type TokenTransactionPayload = {
   data?: string,
   extra?: Object,
   usePPN?: boolean,
+  gasToken: ?IGasToken,
 }
 
 export type CollectibleTransactionPayload = {

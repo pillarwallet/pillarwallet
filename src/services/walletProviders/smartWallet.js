@@ -47,7 +47,12 @@ export default class SmartWalletProvider {
       return Promise.reject(new Error('SDK is not initialized'));
     }
 
-    const { to, amount, data: transactionData } = transaction;
+    const {
+      to,
+      amount,
+      gasToken,
+      data: transactionData,
+    } = transaction;
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);
     const value = ethToWei(amount);
@@ -58,6 +63,7 @@ export default class SmartWalletProvider {
         value,
         data: transactionData || '',
         transactionSpeed,
+        gasToken,
       })
       .then(hash => ({
         from,
@@ -83,6 +89,7 @@ export default class SmartWalletProvider {
       decimals = 18,
       usePPN,
       extra,
+      gasToken,
     } = transaction;
     let { data, to: recipient } = transaction;
     const from = getAccountAddress(account);
@@ -130,9 +137,10 @@ export default class SmartWalletProvider {
       .transferAsset({
         // $FlowFixMe
         recipient,
-        value,
+        value: 0, // value is in encoded transfer method as data
         data,
         transactionSpeed,
+        gasToken,
       })
       .then(hash => ({
         from,

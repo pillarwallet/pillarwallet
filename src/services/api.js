@@ -386,7 +386,9 @@ class SDKWrapper {
           reportLog('Wrong supported assets received', { data });
           return [];
         }
-        return data;
+        // TODO: restore back before merge
+        return data.map((token) => token.symbol === 'PLR' ? { ...token, address: '0xb3d7f61dc4E50EfDa35d9A1B8C0eA889f410473e' } : token);
+        // return data;
       })
       .catch(() => []);
   }

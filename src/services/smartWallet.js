@@ -24,21 +24,40 @@ import {
   createSdk,
   Sdk,
   sdkConstants,
+  createLocalSdkEnvironment,
 } from '@smartwallet/sdk';
-import { toChecksumAddress } from '@netgum/utils';
+import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
+import isEmpty from 'lodash.isempty';
+import abi from 'ethjs-abi';
+import type { IGasToken } from '@smartwallet/sdk/build/interfaces';
+
+// actions
 import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
+
+// constants
+import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
+
+// utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
+import { printLog, reportLog } from 'utils/common';
+
+// services
+import { DEFAULT_GAS_LIMIT } from 'services/assets';
+
+// types
 import type { GasInfo } from 'models/GasInfo';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
-import { DEFAULT_GAS_LIMIT } from 'services/assets';
-import { SPEED_TYPES } from 'constants/assetsConstants';
-import { printLog, reportLog } from 'utils/common';
+import type { AssetData } from 'models/Asset';
+
+// assets
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
 
 const {
   GasPriceStrategies: {
@@ -61,6 +80,7 @@ export type AccountTransaction = {
   value: number | string | BigNumber,
   data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
+  gasToken: ?IGasToken,
 };
 
 type EstimatePayload = {
@@ -74,27 +94,34 @@ type ParsedEstimate = {
   gasAmount: ?BigNumber,
   gasPrice: ?BigNumber,
   totalCost: ?BigNumber,
+  gasToken: ?IGasToken,
+  gasTokenCost: ?BigNumber,
 };
 
 let subscribedToEvents = false;
 
 export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEstimate => {
   const gasAmount = get(estimatePayload, 'gasFee');
+  const gasToken = get(estimatePayload, 'gasToken');
   const gasPrice = get(estimatePayload, 'signedGasPrice.gasPrice');
+  const gasTokenCost = get(estimatePayload, 'signedGasTokenCost.gasTokenCost');
   return {
     gasAmount,
     gasPrice,
     totalCost: gasAmount && gasPrice && gasPrice.mul(gasAmount),
+    gasToken,
+    gasTokenCost,
   };
 };
 
 const calculateEstimate = (
   estimate,
   gasInfo?: GasInfo,
-  speed?: string = SPEED_TYPES.NORMAL,
-  defaultGasAmount?: number = DEFAULT_GAS_LIMIT,
-): BigNumber => {
-  let { gasAmount, gasPrice } = parseEstimatePayload(estimate);
+  speed: string = SPEED_TYPES.NORMAL,
+  defaultGasAmount: number = DEFAULT_GAS_LIMIT,
+): { gasToken: GasToken, gasTokenCost: BigNumber, cost: BigNumber } => {
+  const parsedPayload = parseEstimatePayload(estimate);
+  let { gasAmount, gasPrice, gasTokenCost } = parsedPayload;
 
   // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
 
@@ -103,12 +130,21 @@ const calculateEstimate = (
     : defaultGasAmount,
   );
 
+  gasTokenCost = new BigNumber(gasTokenCost
+    ? gasTokenCost.toString()
+    : 0,
+  );
+
   if (!gasPrice) {
     const defaultGasPrice = get(gasInfo, `gasPrice.${speed}`, 0);
     gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
   }
 
-  return new BigNumber(gasPrice.toString()).multipliedBy(gasAmount);
+  return {
+    cost: new BigNumber(gasPrice.toString()).multipliedBy(gasAmount),
+    gasToken: parsedPayload.gasToken,
+    gasTokenCost,
+  };
 };
 
 class SmartWallet {
@@ -116,8 +152,13 @@ class SmartWallet {
   sdkInitialized: boolean = false;
 
   constructor() {
-    const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const sdkOptions = getSdkEnvironment(environmentNetwork);
+    // TODO: restore back before merge
+    // const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
+    // const sdkOptions = getSdkEnvironment(environmentNetwork);
+    const sdkOptions = createLocalSdkEnvironment({
+      host: '192.168.0.17',
+      port: 8880,
+    });
 
     try {
       this.sdk = createSdk(sdkOptions);
@@ -285,6 +326,7 @@ class SmartWallet {
       value,
       data,
       transactionSpeed = TransactionSpeeds[AVG],
+      gasToken,
     } = transaction;
     const estimatedTransaction = await this.sdk.estimateAccountTransaction(
       recipient,
@@ -297,7 +339,9 @@ class SmartWallet {
       return Promise.reject(new Error(estimateError));
     }
 
-    return this.sdk.submitAccountTransaction(estimatedTransaction);
+    const payWithToken = !isEmpty(gasToken);
+
+    return this.sdk.submitAccountTransaction(estimatedTransaction, payWithToken);
   }
 
   createAccountPayment(recipient: string, token: ?string, value: BigNumber, paymentType?: string, reference?: string) {
@@ -400,16 +444,30 @@ class SmartWallet {
 
   async estimateAccountDeployment(gasInfo: GasInfo) {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
-    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
+    const calculated = calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
+    return calculated.cost;
   }
 
-  async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo) {
-    const {
-      recipient,
-      value,
-      data,
-      transactionSpeed = TransactionSpeeds[AVG],
-    } = transaction;
+  async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo, assetData: AssetData) {
+    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
+    let { data, recipient } = transaction;
+    const { decimals, contractAddress, token: assetSymbol } = assetData;
+
+    let value;
+
+    // eth or token transfer
+    if (assetSymbol === ETH) {
+      value = ethToWei(rawValue);
+    } else if (!data) {
+      const tokenTransferValue = decimals > 0
+        ? utils.parseUnits(rawValue.toString(), decimals)
+        : utils.bigNumberify(rawValue.toString());
+      const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
+      data = abi.encodeMethod(transferMethod, [recipient, tokenTransferValue]);
+      recipient = contractAddress;
+      value = 0; // value is in encoded token transfer
+    }
+
     const estimatedTransaction = await this.sdk.estimateAccountTransaction(
       recipient,
       value,
