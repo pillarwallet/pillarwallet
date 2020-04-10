@@ -235,6 +235,7 @@ import {
   CONNECT_TAB,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_TOKEN_FROM_HOME_FLOW,
+  EXPLORE_APPS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -247,6 +248,7 @@ import { modalTransition, addAppStateChangeListener, removeAppStateChangeListene
 import { getThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
+import ExploreApps from '../screens/ExploreApps/ExploreApps';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -352,6 +354,7 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+    [EXPLORE_APPS]: ExploreApps,
   },
   StackNavigatorModalConfig,
 );
