@@ -35,7 +35,8 @@ import {
 } from 'react-native';
 import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
-import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
+// import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { GasInfo } from 'models/GasInfo';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
@@ -47,7 +48,6 @@ import {
 } from 'constants/assetsConstants';
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { isProdEnv, isTest } from './environment';
-import { IGasToken } from '@smartwallet/sdk/build/interfaces';
 
 
 const WWW_URL_PATTERN = /^www\./i;

@@ -20,7 +20,7 @@
 import get from 'lodash.get';
 import {
   SdkEnvironmentNames,
-  getSdkEnvironment,
+  // getSdkEnvironment,
   createSdk,
   Sdk,
   sdkConstants,
@@ -29,7 +29,7 @@ import {
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+// import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
 import abi from 'ethjs-abi';
