@@ -16,7 +16,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, View, ScrollView, FlatList, Dimensions } from 'react-native';
+import { RefreshControl, View, FlatList, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -289,7 +289,7 @@ class HomeScreen extends React.Component<Props, State> {
           style: {
             width: 96,
             height: 60,
-            marginLeft: 4,
+            marginRight: -4,
           },
           source: referralImage,
         }}
@@ -453,68 +453,70 @@ class HomeScreen extends React.Component<Props, State> {
           tab
         >
           {onScroll => (
-            <React.Fragment>
-              <ScrollView
-                style={{ width: '100%', flex: 1 }}
-                stickyHeaderIndices={referralsFeatureEnabled ? [3] : [2]}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={false}
-                    onRefresh={this.refreshScreenData}
-                  />}
-                onScroll={onScroll}
-                scrollEventThrottle={16}
-              >
-                <WalletsPart handleWalletChange={this.handleWalletChange} isChanging={!!loaderMessage} />
-                <BadgesWrapper>
-                  <ListHeader>Game of badges</ListHeader>
-                  <FlatList
-                    data={badges}
-                    horizontal
-                    keyExtractor={(item) => (item.id.toString())}
-                    renderItem={this.renderBadge}
-                    style={{ width: '100%', paddingBottom: spacing.medium }}
-                    contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
-                    initialNumToRender={5}
-                    ListEmptyComponent={(
-                      <EmptyStateWrapper>
-                        <EmptyStateParagraph
-                          title="No badges"
-                          bodyText="You do not have badges yet"
-                        />
-                      </EmptyStateWrapper>
+            <ActivityFeed
+              onCancelInvitation={cancelInvitation}
+              onRejectInvitation={rejectInvitation}
+              onAcceptInvitation={acceptInvitation}
+              navigation={navigation}
+              tabs={activityFeedTabs}
+              activeTab={activeTab}
+              hideTabs
+              initialNumToRender={8}
+              wrapperStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}
+              headerComponent={(
+                <React.Fragment>
+                  <WalletsPart handleWalletChange={this.handleWalletChange} isChanging={!!loaderMessage} />
+                  <BadgesWrapper>
+                    <ListHeader>Game of badges</ListHeader>
+                    <FlatList
+                      data={badges}
+                      horizontal
+                      keyExtractor={(item) => (item.id.toString())}
+                      renderItem={this.renderBadge}
+                      style={{ width: '100%', paddingBottom: spacing.medium }}
+                      contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
+                      initialNumToRender={5}
+                      ListEmptyComponent={(
+                        <EmptyStateWrapper>
+                          <EmptyStateParagraph
+                            title="No badges"
+                            bodyText="You do not have badges yet"
+                          />
+                        </EmptyStateWrapper>
                     )}
-                  />
-                </BadgesWrapper>
-                {!!referralsFeatureEnabled && this.renderReferral(colors)}
+                    />
+                  </BadgesWrapper>
+                  {!!referralsFeatureEnabled && this.renderReferral(colors)}
+                </React.Fragment>
+              )}
+              tabsComponent={(
                 <Tabs
                   tabs={activityFeedTabs}
                   wrapperStyle={{ paddingTop: 16 }}
                   activeTab={activeTab}
                 />
-                <ActivityFeed
-                  onCancelInvitation={cancelInvitation}
-                  onRejectInvitation={rejectInvitation}
-                  onAcceptInvitation={acceptInvitation}
-                  navigation={navigation}
-                  tabs={activityFeedTabs}
-                  activeTab={activeTab}
-                  hideTabs
-                  initialNumToRender={8}
-                  wrapperStyle={{ flexGrow: 1 }}
-                  contentContainerStyle={{ flexGrow: 1 }}
-                />
-              </ScrollView>
-              <ReferralModalReward
-                isVisible={showRewardModal}
-                onModalHide={this.handleModalHide}
-              />
-            </React.Fragment>
+              )}
+              flatListProps={{
+                refreshControl: (
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={this.refreshScreenData}
+                  />
+                ),
+                onScroll,
+                scrollEventThrottle: 16,
+              }}
+            />
           )}
         </ContainerWithHeader>
         {!!loaderMessage &&
-        <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
+          <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
         }
+        <ReferralModalReward
+          isVisible={showRewardModal}
+          onModalHide={this.handleModalHide}
+        />
       </React.Fragment>
     );
   }

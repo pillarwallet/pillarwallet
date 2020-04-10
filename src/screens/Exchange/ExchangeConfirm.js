@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
@@ -39,6 +39,7 @@ import TitleWithIcon from 'components/Title/TitleWithIcon';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -52,6 +53,7 @@ import { getBalance, getRate } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getOfferProviderLogo } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
+import { getAccountName } from 'utils/accounts';
 
 // models, types
 import type { GasInfo } from 'models/GasInfo';
@@ -61,10 +63,11 @@ import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Accounts } from 'models/Account';
-
+import type { Theme } from 'models/Theme';
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -79,13 +82,15 @@ type Props = {
   setDismissTransaction: () => void,
   providersMeta: ProvidersMeta,
   accounts: Accounts,
+  theme: Theme,
 };
 
 type State = {
   showFeeModal: boolean,
   transactionSpeed: string,
   gasLimit: number,
-}
+};
+
 
 const MainWrapper = styled.View`
   background-color: ${themedColors.card};
@@ -291,6 +296,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       accounts,
+      theme,
     } = this.props;
 
     const hasSmartWallet = userHasSmartWallet(accounts);
@@ -319,7 +325,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       : balanceInWei.gte(txFeeInWei);
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
-    const providerLogo = getOfferProviderLogo(providersMeta, provider);
+    const providerLogo = getOfferProviderLogo(providersMeta, provider, theme, 'vertical');
 
     return (
       <ContainerWithHeader
@@ -352,7 +358,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               </AllowanceWrapper>
             }
             {!hasSmartWallet && <ButtonText
-              buttonText="Legacy Wallet"
+              buttonText={getAccountName(ACCOUNT_TYPES.KEY_BASED)}
               rightIconProps={{ name: 'selector', style: { fontSize: 16 } }}
               onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}
               wrapperStyle={{ marginTop: 0 }}
@@ -448,4 +454,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

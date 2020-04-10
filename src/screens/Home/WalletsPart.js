@@ -108,7 +108,7 @@ class WalletsPart extends React.Component<Props, State> {
   };
 
   getWalletTitle = () => {
-    const { activeWallet, availableWallets } = this.props;
+    const { activeWallet } = this.props;
     const { type: activeWalletType } = activeWallet;
 
     switch (activeWalletType) {
@@ -116,7 +116,7 @@ class WalletsPart extends React.Component<Props, State> {
         return 'Bitcoin Wallet';
       case ACCOUNT_TYPES.SMART_WALLET:
       case ACCOUNT_TYPES.KEY_BASED:
-        return getAccountName(activeWalletType, availableWallets);
+        return getAccountName(activeWalletType);
       default:
         return '';
     }
