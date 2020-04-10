@@ -305,39 +305,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       0x0000…000000
                     </Text>
                   </View>
-                  <View
-                    h={2}
-                    style={
-                      Array [
-                        Object {
-                          "height": 2,
-                          "width": 0,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                  <Text
-                    numberOfLines={2}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#8B939E",
-                            "fontSize": 14,
-                          },
-                          undefined,
-                        ],
-                      ]
-                    }
-                  >
-                    Smart wallet
-                  </Text>
                 </View>
                 <View
                   rightColumn={true}
@@ -740,39 +707,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       0x0000…000000
                     </Text>
                   </View>
-                  <View
-                    h={2}
-                    style={
-                      Array [
-                        Object {
-                          "height": 2,
-                          "width": 0,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                  <Text
-                    numberOfLines={2}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#8B939E",
-                            "fontSize": 14,
-                          },
-                          undefined,
-                        ],
-                      ]
-                    }
-                  >
-                    Smart wallet
-                  </Text>
                 </View>
                 <View
                   rightColumn={true}

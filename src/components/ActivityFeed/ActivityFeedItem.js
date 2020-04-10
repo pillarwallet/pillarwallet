@@ -29,6 +29,7 @@ import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getAccountName } from 'utils/accounts';
 
 // components
 import {
@@ -62,7 +63,6 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } 
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
-
 
 // selectors
 import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
@@ -131,7 +131,7 @@ const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 const NAMES = {
-  SMART_WALLET: 'Smart wallet',
+  SMART_WALLET: 'Smart Wallet',
   KEY_WALLET: 'Key wallet',
   PPN_NETWORK: 'Pillar Network',
 };
@@ -195,7 +195,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           actionLabel: STATUSES.CREATED,
           actionLabelColor: 'positive',
         };
-      case 'Smart wallet created':
+      case 'Smart Wallet created':
         return {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
@@ -313,7 +313,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             || ensRegistry[address]
             || elipsizeAddress(address);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        const subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        const subtext = getAccountName(event.accountType);
         if (isPPNTransaction) {
           data = {
             label: usernameOrAddress,

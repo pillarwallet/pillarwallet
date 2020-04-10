@@ -764,7 +764,7 @@ class Profile extends React.Component<Props, State> {
             {smartWalletFeatureEnabled && (
               <React.Fragment>
                 <ListSeparator>
-                  <SubHeading>Smart wallet</SubHeading>
+                  <SubHeading>Smart Wallet</SubHeading>
                 </ListSeparator>
                 <ProfileSettingsItem
                   key="clearSmartAccounts"

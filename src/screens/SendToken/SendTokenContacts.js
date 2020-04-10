@@ -363,7 +363,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     if (this.isSendingFromHomeFlow) {
       const { username } = findMatchingContact(receiverAddress, localContacts, contactsSmartAddresses) || {};
       const userWallet = accounts.find(({ id }) => id === receiverAddress) || {};
-      const userWalletName = getAccountName(userWallet.type, accounts);
+      const userWalletName = getAccountName(userWallet.type);
       navigation.navigate(SEND_TOKEN_ASSETS, {
         contact: {
           ethAddress: receiverAddress,
@@ -392,7 +392,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
       ...account,
       ethAddress: getAccountAddress(account),
-      username: getAccountName(account.type, accounts),
+      username: getAccountName(account.type),
       sortToTop: true,
       isUserAccount: true,
     }));
