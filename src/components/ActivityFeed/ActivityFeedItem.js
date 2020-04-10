@@ -21,14 +21,17 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import isEqual from 'lodash.isequal';
-import { withTheme } from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
+import BigNumber from 'bignumber.js';
 
 // utils
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { addressesEqual } from 'utils/assets';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
+import { fontSizes, spacing } from 'utils/variables';
+import { findAccountByAddress, checkIfSmartWalletAccount, checkIfKeyBasedAccount } from 'utils/accounts';
+import isEqual from 'lodash.isequal';
 
 // components
 import {
@@ -37,6 +40,7 @@ import {
 } from 'utils/common';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
+import { BaseText } from 'components/Typography';
 
 // constants
 import {
@@ -61,7 +65,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
-import { SettlementItem } from 'components/ActivityFeed/SettlementItem';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // selectors
 import {
@@ -104,7 +108,6 @@ type EventData = {
   label?: string,
   itemImageSource?: string,
   actionLabel?: ?string,
-  actionLabelColor?: string,
   badge?: ?string,
   subtext?: string,
   labelAsButton?: boolean,
@@ -144,7 +147,19 @@ const STATUSES = {
   CONNECTED: 'Connected',
   REQUESTED: 'Requested',
   BACKUP: 'Backup secured',
+  ACTIVATED: 'Activated',
 };
+
+const ListWrapper = styled.View`
+  align-items: flex-end;
+  padding-left: ${spacing.mediumLarge}px;
+`;
+
+const ItemValue = styled(BaseText)`
+  font-size: ${fontSizes.big}px;
+  color: ${themedColors.positive};
+  text-align: right;
+`;
 
 const elipsizeAddress = (address: string) => {
   return `${address.slice(0, 6)}…${address.slice(-6)}`;
@@ -185,6 +200,48 @@ export class ActivityFeedItem extends React.Component<Props> {
     return elipsizeAddress(address);
   }
 
+  isSWAddress = (address: string) => {
+    const account = findAccountByAddress(address, this.props.accounts);
+    return (account && checkIfSmartWalletAccount(account));
+  }
+
+  isKWAddress = (address: string) => {
+    const account = findAccountByAddress(address, this.props.accounts);
+    return (account && checkIfKeyBasedAccount(account));
+  }
+
+  getFormattedSettleValues = () => {
+    const {
+      event,
+      asset,
+      assetDecimals,
+    } = this.props;
+    const settleData = event.extra;
+    const ppnTransactions = asset
+      ? settleData.filter(({ symbol }) => symbol === asset)
+      : settleData;
+
+    const valueByAsset: Object = {};
+
+    ppnTransactions.forEach((trx) => {
+      const { symbol, value: rawValue } = trx;
+      const value = new BigNumber(rawValue);
+      if (!valueByAsset[symbol]) {
+        valueByAsset[symbol] = { ...trx, value, decimals: assetDecimals };
+      } else {
+        const { value: currentValue } = valueByAsset[symbol];
+        valueByAsset[symbol].value = currentValue.plus(value);
+      }
+    });
+
+    const valuesArray = (Object.values(valueByAsset): any);
+    const formattedValuesArray: Object[] = valuesArray.map(({ symbol, value, decimals }): Object => ({
+      formatted: formatAmount(formatUnits(value.toString(), decimals)),
+      symbol,
+    }));
+    return formattedValuesArray;
+  }
+
   getWalletCreatedEventData = (event: Object) => {
     const { isSmartWalletActivated } = this.props;
     switch (event.eventTitle) {
@@ -193,14 +250,12 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.KEY_WALLET,
           itemImageSource: keyWalletIcon,
           actionLabel: STATUSES.CREATED,
-          actionLabelColor: 'positive',
         };
       case 'Smart wallet created':
         return {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: STATUSES.CREATED,
-          actionLabelColor: 'positive',
           badge: isSmartWalletActivated ? null : 'Need to activate',
         };
       case 'Wallet imported':
@@ -208,7 +263,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.KEY_WALLET,
           itemImageSource: keyWalletIcon,
           actionLabel: 'Imported',
-          actionLabelColor: 'positive',
         };
       default:
         return null;
@@ -225,7 +279,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: STATUSES.CREATED,
-          actionLabelColor: 'positive',
           badge: isSmartWalletActivated ? null : 'Need to activate',
         };
       case WALLET_BACKUP_EVENT:
@@ -233,7 +286,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.KEY_WALLET,
           itemImageSource: keyWalletIcon,
           actionLabel: STATUSES.BACKUP,
-          actionLabelColor: 'secondaryText',
         };
       default:
         return null;
@@ -265,22 +317,32 @@ export class ActivityFeedItem extends React.Component<Props> {
         data = {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
-          subtext: 'Activation',
-          itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
-          valueColor: 'text',
+          actionLabel: STATUSES.ACTIVATED,
         };
         trxData.hideSender = true;
         trxData.hideAmount = true;
         trxData.txType = 'Deployment';
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
-        data = {
-          label: NAMES.PPN_NETWORK,
-          itemImageSource: PPNIcon,
-          subtext: 'Top Up',
-          itemValue: `+ ${formattedValue} ${event.asset}`,
-          valueColor: 'positive',
-        };
+        if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+          data = {
+            label: NAMES.PPN_NETWORK,
+            itemImageSource: PPNIcon,
+            subtext: 'Top Up',
+            itemValue: `+ ${formattedValue} ${event.asset}`,
+            valueColor: 'positive',
+          };
+        } else {
+          data = {
+            label: NAMES.PPN_NETWORK,
+            subtext: 'from Smart Wallet',
+            iconName: 'sent',
+            iconColor: 'negative',
+            iconBackgroundColor: 'iconBackground',
+            itemValue: `- ${formattedValue} ${event.asset}`,
+            valueColor: 'text',
+          };
+        }
         trxData.hideSender = true;
         trxData.hideAmount = true;
         trxData.txType = 'PLR Tank Top Up';
@@ -307,13 +369,44 @@ export class ActivityFeedItem extends React.Component<Props> {
         trxData.hideAmount = true;
         trxData.hideSender = true;
         break;
+      case PAYMENT_NETWORK_TX_SETTLEMENT:
+        const formattedValuesArray = this.getFormattedSettleValues();
+        data = {
+          label: 'Settle',
+          itemImageSource: PPNIcon,
+          subtext: 'to Smart Wallet',
+          customAddon: (
+            <ListWrapper>
+              {formattedValuesArray.map(({ formatted, symbol }) => (
+                <TankAssetBalance
+                  key={symbol}
+                  amount={`- ${formatted} ${symbol}`}
+                  monoColor
+                />
+              ))}
+              {formattedValuesArray.map(({ formatted, symbol }) =>
+                <ItemValue key={symbol}>{`+ ${formatted} ${symbol}`}</ItemValue>,
+              )}
+            </ListWrapper>),
+        };
+        break;
       default:
         const address = isReceived ? event.from : event.to;
         const usernameOrAddress = event.username
             || ensRegistry[address]
             || elipsizeAddress(address);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        const subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        let subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        if (isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
+          subtext = 'to Key Wallet';
+        } else if (isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
+          subtext = 'to Smart Wallet';
+        } else if (!isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
+          subtext = 'from Smart Wallet';
+        } else if (!isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
+          subtext = 'from Key Wallet';
+        }
+
         if (isPPNTransaction) {
           data = {
             label: usernameOrAddress,
@@ -362,7 +455,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       itemImageUrl: icon,
       subtext,
       actionLabel: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
-      actionLabelColor: isReceived ? 'positive' : 'text',
       eventData: { ...event, contact },
       iconBackgroundColor: 'card',
       iconBorder: true,
@@ -377,7 +469,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       itemImageUrl: imageUrl,
       subtext: 'Badge',
       actionLabel: STATUSES.RECEIVED,
-      actionLabelColor: 'positive',
       eventData: { ...event },
     };
   }
@@ -433,38 +524,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
   }
 
-  renderSettlement = (event: Object) => {
-    const {
-      asset, feedType, contacts, contactsSmartAddresses, selectEvent, assetDecimals,
-    } = this.props;
-    const { type } = event;
-    const trxData = {
-      hideAmount: true,
-      hideSender: true,
-      txType: 'PLR Network settle',
-    };
-
-    const address = this.isReceived(event) ? event.from : event.to;
-    const contact = findMatchingContact(address, contacts, contactsSmartAddresses) || {};
-    const value = formatUnits(event.value, assetDecimals);
-
-    return (
-      <SettlementItem
-        settleData={event.extra}
-        onPress={() => selectEvent({
-          ...event,
-          value,
-          contact,
-          ...trxData,
-        }, type, event)}
-        type={feedType}
-        asset={asset}
-        isPending={event === TX_PENDING_STATUS}
-        assetDecimals={assetDecimals}
-      />
-    );
-  }
-
   getColor = (color: ?string): ?string => {
     if (!color) return null;
     const { theme } = this.props;
@@ -474,17 +533,10 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   render() {
     const { event, selectEvent } = this.props;
-
-    if (event.type === TRANSACTION_EVENT && event.tag === PAYMENT_NETWORK_TX_SETTLEMENT) {
-      return this.renderSettlement(event);
-    }
-
     const itemData = this.getEventData(event);
-
     if (!itemData) return null;
 
     const {
-      actionLabelColor,
       iconColor,
       valueColor,
       eventData,
@@ -497,7 +549,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       <ListItemWithImage
         {...itemData}
         onPress={eventData && (() => selectEvent(eventData, eventType || event.type, eventStatus || event.status))}
-        actionLabelColor={this.getColor(actionLabelColor)}
+        actionLabelColor={this.getColor('secondaryText')}
         iconColor={this.getColor(iconColor)}
         diameter={48}
         iconBackgroundColor={this.getColor(iconBackgroundColor)}
