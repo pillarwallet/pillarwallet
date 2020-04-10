@@ -911,17 +911,17 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -1741,17 +1741,17 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
               }
             >
               <Text
-                color="#0A1427"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -2009,17 +2009,17 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -2254,11 +2254,11 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
             >
               <Text
                 button={false}
-                color={null}
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
@@ -3262,17 +3262,17 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -3475,17 +3475,17 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -5485,17 +5485,17 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#8B939E"
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#8B939E",
                         "fontSize": 14,
                         "lineHeight": 22,
                         "marginBottom": 0,
@@ -5569,7 +5569,41 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        backgroundColor="#ebf0f5"
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#ebf0f5",
+              "borderColor": "transparent",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          name="sent"
+          style={
+            Array [
+              Object {
+                "color": "#BD573A",
+                "fontSize": 48,
+              },
+              undefined,
+            ]
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -5687,7 +5721,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               ]
             }
           >
-            Top Up
+            from Smart Wallet
           </Text>
         </View>
         <View
@@ -5739,19 +5773,19 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               }
             >
               <Text
-                color="#2AA057"
+                color="#0A1427"
                 ellipsizeMode="tail"
                 numberOfLines={2}
                 style={
                   Array [
                     Object {
-                      "color": "#2AA057",
+                      "color": "#0A1427",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#2AA057",
+                        "color": "#0A1427",
                         "fontSize": 18,
                         "lineHeight": 28,
                         "textAlign": "right",
@@ -5761,7 +5795,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
                   ]
                 }
               >
-                + 1 PLR
+                - 1 PLR
               </Text>
             </View>
           </View>
@@ -6091,6 +6125,219 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
             undefined,
           ]
         }
+        type="DEFAULT"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="DEFAULT"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="DEFAULT"
+            >
+              Smart Wallet
+            </Text>
+          </View>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="DEFAULT"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Activated
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Settlement 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
         type="ACTION"
       >
         <View
@@ -6155,7 +6402,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
               }
               type="ACTION"
             >
-              Smart Wallet
+              Settle
             </Text>
           </View>
           <View
@@ -6189,7 +6436,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
               ]
             }
           >
-            Activation
+            to Smart Wallet
           </Text>
         </View>
         <View
@@ -6222,28 +6469,51 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
             }
           >
             <View
-              horizontal={true}
               style={
                 Array [
                   Object {
-                    "flexDirection": "row",
-                    "marginBottom": 0,
-                    "marginLeft": 0,
-                    "marginRight": 0,
-                    "marginTop": 0,
+                    "alignItems": "flex-end",
+                    "paddingLeft": 16,
                   },
-                  Object {
-                    "alignItems": "center",
-                    "flexWrap": "wrap",
-                    "justifyContent": "flex-end",
-                  },
+                  undefined,
                 ]
               }
             >
+              <View>
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2329d6",
+                            "fontSize": 18,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    - 3 PLR
+                  </Text>
+                </View>
+              </View>
               <Text
-                color="#0A1427"
-                ellipsizeMode="tail"
-                numberOfLines={2}
                 style={
                   Array [
                     Object {
@@ -6253,9 +6523,8 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
+                        "color": "#2AA057",
                         "fontSize": 18,
-                        "lineHeight": 28,
                         "textAlign": "right",
                       },
                       undefined,
@@ -6263,7 +6532,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                   ]
                 }
               >
-                - 1 ETH
+                + 3 PLR
               </Text>
             </View>
           </View>
@@ -6272,532 +6541,6 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
     </View>
   </View>
 </View>
-`;
-
-exports[`Storyshots ActivityFeedItem Settlement 1`] = `
-Array [
-  <View
-    style={
-      Array [
-        Object {
-          "flexDirection": "column",
-          "width": "100%",
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "flex-start",
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 14,
-          "paddingLeft": 20,
-          "paddingRight": 20,
-          "paddingTop": 14,
-          "width": "100%",
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "justifyContent": "center",
-              "paddingRight": 12,
-            },
-            undefined,
-          ]
-        }
-      >
-        <View
-          backgroundColor="#eee"
-          diameter={48}
-          style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "backgroundColor": "#eee",
-                "borderColor": "transparent",
-                "borderRadius": 24,
-                "borderWidth": 1,
-                "height": 48,
-                "justifyContent": "center",
-                "textAlign": "center",
-                "width": 48,
-              },
-              undefined,
-            ]
-          }
-        >
-          <View
-            name="received"
-            style={
-              Array [
-                Object {
-                  "color": "#497391",
-                  "fontSize": 48,
-                },
-                undefined,
-              ]
-            }
-          />
-        </View>
-      </View>
-      <View
-        style={
-          Object {
-            "flex": 1,
-          }
-        }
-      >
-        <View
-          horizontalAlign="flex-start"
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
-              },
-              undefined,
-            ]
-          }
-          type="ACTION"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "flex-start",
-                  "flexBasis": 0,
-                  "flexDirection": "column",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "justifyContent": "center",
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "flexGrow": 1,
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "justifyContent": "space-between",
-                  },
-                  undefined,
-                ]
-              }
-            >
-              <Text
-                ellipsizeMode="tail"
-                numberOfLines={2}
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "width": "100%",
-                        },
-                        undefined,
-                      ],
-                    ],
-                  ]
-                }
-                type="ACTION"
-              >
-                Deposit
-              </Text>
-            </View>
-            <View
-              h={2}
-              style={
-                Array [
-                  Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  undefined,
-                ]
-              }
-            />
-            <Text
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 14,
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              to Smart Wallet
-            </Text>
-          </View>
-          <View
-            rightColumn={true}
-            style={
-              Array [
-                Object {
-                  "alignItems": "flex-end",
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                  "marginLeft": 10,
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "maxWidth": "50%",
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {},
-                  Object {
-                    "flexWrap": "wrap",
-                  },
-                ]
-              }
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "flex-end",
-                      "paddingLeft": 16,
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#2AA057",
-                          "fontSize": 18,
-                          "textAlign": "right",
-                        },
-                        undefined,
-                      ],
-                    ]
-                  }
-                >
-                  + 3 PLR
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>,
-  <View
-    style={
-      Array [
-        Object {
-          "flexDirection": "column",
-          "width": "100%",
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "flex-start",
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 14,
-          "paddingLeft": 20,
-          "paddingRight": 20,
-          "paddingTop": 14,
-          "width": "100%",
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "justifyContent": "center",
-              "paddingRight": 12,
-            },
-            undefined,
-          ]
-        }
-      />
-      <View
-        style={
-          Object {
-            "flex": 1,
-          }
-        }
-      >
-        <View
-          horizontalAlign="flex-start"
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
-              },
-              undefined,
-            ]
-          }
-          type="ACTION"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "flex-start",
-                  "flexBasis": 0,
-                  "flexDirection": "column",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "justifyContent": "center",
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "flexGrow": 1,
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "justifyContent": "space-between",
-                  },
-                  undefined,
-                ]
-              }
-            >
-              <Text
-                ellipsizeMode="tail"
-                numberOfLines={2}
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "width": "100%",
-                        },
-                        undefined,
-                      ],
-                    ],
-                  ]
-                }
-                type="ACTION"
-              >
-                Settle
-              </Text>
-            </View>
-            <View
-              h={2}
-              style={
-                Array [
-                  Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  undefined,
-                ]
-              }
-            />
-            <Text
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 14,
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              to Smart Wallet
-            </Text>
-          </View>
-          <View
-            rightColumn={true}
-            style={
-              Array [
-                Object {
-                  "alignItems": "flex-end",
-                  "flexDirection": "column",
-                  "justifyContent": "center",
-                  "marginLeft": 10,
-                  "marginTop": 0,
-                  "minHeight": 54,
-                },
-                Object {
-                  "maxWidth": "50%",
-                },
-              ]
-            }
-            type="ACTION"
-          >
-            <View
-              style={
-                Array [
-                  Object {},
-                  Object {
-                    "flexWrap": "wrap",
-                  },
-                ]
-              }
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "flex-end",
-                      "paddingLeft": 16,
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <View>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "alignItems": "center",
-                          "flexDirection": "row",
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <Text
-                      style={
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Regular",
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "color": "#2329d6",
-                              "fontSize": 18,
-                            },
-                            undefined,
-                          ],
-                        ]
-                      }
-                    >
-                      - 3 PLR
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>,
-]
 `;
 
 exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `null`;
