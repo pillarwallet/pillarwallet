@@ -26,7 +26,6 @@ import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled, { withTheme } from 'styled-components/native';
-import { Icon as NIcon } from 'native-base';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -94,8 +93,8 @@ const ConnectionRequestBannerText = styled(BaseText)`
   ${fontStyles.big};
 `;
 
-const ConnectionRequestBannerIcon = styled(NIcon)`
-  font-size: ${fontSizes.big}px;
+const ConnectionRequestBannerIcon = styled(Icon)`
+  font-size: ${fontSizes.small}px;
   color: ${themedColors.secondaryText};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
@@ -447,7 +446,7 @@ class PeopleScreen extends React.Component<Props, State> {
             <ConnectionRequestNotificationCircle>
               {pendingConnectionRequests}
             </ConnectionRequestNotificationCircle>
-            <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
+            <ConnectionRequestBannerIcon name="chevron-right" />
           </React.Fragment>
         </ConnectionRequestBanner>
         }
