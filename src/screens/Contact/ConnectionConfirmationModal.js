@@ -42,13 +42,16 @@ import ButtonText from 'components/ButtonText';
 import { fontSizes, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
+// types
+import type { ApiUser } from 'models/Contacts';
+
 
 type Props = {
   onModalHide: () => void,
-  onConfirm: (status: string) => void,
+  onConfirm: (status: ?string) => void,
   showConfirmationModal: boolean,
   manageContactType: string,
-  contact: Object, // todo: type
+  contact: ApiUser,
 };
 
 
