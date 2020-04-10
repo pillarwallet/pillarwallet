@@ -26,12 +26,12 @@ import BigNumber from 'bignumber.js';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
-import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 import { fontSizes, spacing } from 'utils/variables';
 import { findAccountByAddress, checkIfSmartWalletAccount, checkIfKeyBasedAccount } from 'utils/accounts';
+import isEqual from 'lodash.isequal';
 
 // components
 import {
@@ -64,21 +64,23 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // selectors
-import { activeAccountAddressSelector, supportedAssetsSelector, bitcoinAddressSelector } from 'selectors';
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  activeAccountAddressSelector,
+  bitcoinAddressSelector,
+  isSmartWalletActivatedSelector,
+} from 'selectors';
+import { assetDecimalsSelector } from 'selectors/assets';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // types
-import type { Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 
 
@@ -86,7 +88,6 @@ type Props = {
   type?: string,
   asset?: string,
   isPending?: boolean,
-  supportedAssets: Asset[],
   selectEvent: Function,
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
@@ -94,13 +95,13 @@ type Props = {
   theme: Theme,
   event: Object,
   feedType?: string,
-  assets: Asset[],
   acceptInvitation: Function,
   rejectInvitation: Function,
   activeAccountAddress: string,
   activeBlockchainNetwork: string,
   accounts: Accounts,
-  smartWalletState: Object,
+  isSmartWalletActivated: boolean,
+  assetDecimals: number,
 };
 
 type EventData = {
@@ -165,6 +166,11 @@ const elipsizeAddress = (address: string) => {
 };
 
 export class ActivityFeedItem extends React.Component<Props> {
+  shouldComponentUpdate(nextProps: Props) {
+    const isEq = isEqual(this.props, nextProps);
+    return !isEq;
+  }
+
   isReceived = ({ to: address }: Object) => {
     const { activeAccountAddress } = this.props;
     return addressesEqual(address, activeAccountAddress);
@@ -194,12 +200,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     return elipsizeAddress(address);
   }
 
-  needToActivateSW = () => {
-    const { accounts, smartWalletState } = this.props;
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    return (smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
-  }
-
   isSWAddress = (address: string) => {
     const account = findAccountByAddress(address, this.props.accounts);
     return (account && checkIfSmartWalletAccount(account));
@@ -214,8 +214,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const {
       event,
       asset,
-      assets,
-      supportedAssets,
+      assetDecimals,
     } = this.props;
     const settleData = event.extra;
     const ppnTransactions = asset
@@ -226,10 +225,9 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     ppnTransactions.forEach((trx) => {
       const { symbol, value: rawValue } = trx;
-      const { decimals = 18 } = getAssetData(assets, supportedAssets, symbol);
       const value = new BigNumber(rawValue);
       if (!valueByAsset[symbol]) {
-        valueByAsset[symbol] = { ...trx, value, decimals };
+        valueByAsset[symbol] = { ...trx, value, decimals: assetDecimals };
       } else {
         const { value: currentValue } = valueByAsset[symbol];
         valueByAsset[symbol].value = currentValue.plus(value);
@@ -245,6 +243,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getWalletCreatedEventData = (event: Object) => {
+    const { isSmartWalletActivated } = this.props;
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
@@ -257,7 +256,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: STATUSES.CREATED,
-          badge: this.needToActivateSW() ? 'Need to activate' : null,
+          badge: isSmartWalletActivated ? null : 'Need to activate',
         };
       case 'Wallet imported':
         return {
@@ -271,6 +270,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getUserEventData = (event: Object) => {
+    const { isSmartWalletActivated } = this.props;
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
         return this.getWalletCreatedEventData(event);
@@ -279,7 +279,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: STATUSES.CREATED,
-          badge: this.needToActivateSW() ? 'Need to activate' : null,
+          badge: isSmartWalletActivated ? null : 'Need to activate',
         };
       case WALLET_BACKUP_EVENT:
         return {
@@ -294,11 +294,10 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   getTransactionEventData = (event: Object) => {
     const {
-      assets, supportedAssets, ensRegistry, activeBlockchainNetwork,
+      ensRegistry, activeBlockchainNetwork, assetDecimals,
     } = this.props;
     const isReceived = this.isReceived(event);
-    const { decimals = 18 } = getAssetData(assets, supportedAssets, event.asset);
-    const value = formatUnits(event.value, decimals);
+    const value = formatUnits(event.value, assetDecimals);
     const contact = this.getMatchingContact(event);
     const avatarUrl = contact && contact.profileImage;
 
@@ -563,26 +562,24 @@ export class ActivityFeedItem extends React.Component<Props> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   ensRegistry: { data: ensRegistry },
-  smartWallet: smartWalletState,
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
   ensRegistry,
-  smartWalletState,
   accounts,
 });
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
-  supportedAssets: supportedAssetsSelector,
   bitcoinAddresses: bitcoinAddressSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
+  isSmartWalletActivated: isSmartWalletActivatedSelector,
+  assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
 });
 
-const combinedMapStateToProps = (state: RootReducerState) => ({
-  ...structuredSelector(state),
+const combinedMapStateToProps = (state: RootReducerState, props) => ({
+  ...structuredSelector(state, props),
   ...mapStateToProps(state),
 });
 
