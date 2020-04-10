@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { FlatList, TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatMoney, formatFiat, isValidNumber, formatAmountDisplay } from 'utils/common';
@@ -85,6 +85,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
+import type { Theme } from 'models/Theme';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
@@ -167,6 +168,7 @@ type Props = {
   updateHasSeenExchangeIntro: () => void,
   btcAddresses: BitcoinAddress[],
   btcBalances: BitcoinBalance,
+  theme: Theme,
 };
 
 type State = {
@@ -356,7 +358,6 @@ function SelectorInputTemplate(locals) {
     label,
   };
 
-
   return (
     <TextInput
       errorMessage={errorMessage}
@@ -383,7 +384,7 @@ function SelectorInputTemplate(locals) {
   );
 }
 
-function getCardTopButtonData(topButtonProps) {
+function getCardAdditionalButtonData(additionalData) {
   const {
     offer,
     minOrMaxNeeded,
@@ -395,7 +396,7 @@ function getCardTopButtonData(topButtonProps) {
     allowanceSet,
     shapeshiftAuthPressed,
     pressedTokenAllowanceId,
-  } = topButtonProps;
+  } = additionalData;
 
   const {
     _id: offerId,
@@ -410,25 +411,24 @@ function getCardTopButtonData(topButtonProps) {
 
   if (minOrMaxNeeded) {
     return {
-      label: `${minOrMaxAmount} ${fromAssetCode} ${isBelowMin ? 'min' : 'max'}`,
+      title: `${isBelowMin ? 'Min' : 'Max'} ${minOrMaxAmount} ${fromAssetCode}`,
       onPress: () => thisComponent.setFromAmount(isBelowMin ? minQuantity : maxQuantity),
     };
   } else if (isShapeShift && !shapeshiftAccessToken) {
     return {
-      label: 'Connect',
+      title: 'Connect',
       onPress: thisComponent.onShapeshiftAuthPress,
-      isDisabled: shapeshiftAuthPressed,
+      disabled: shapeshiftAuthPressed,
     };
   } else if (!allowanceSet) {
     return {
-      label: storedAllowance ? 'Pending' : 'Enable',
+      title: storedAllowance ? 'Pending' : 'Allow this exchange',
       onPress: () => thisComponent.onSetTokenAllowancePress(offer),
-      isDisabled: isSetAllowancePressed,
-      isSecondary: !!storedAllowance,
+      disabled: isSetAllowancePressed,
       isLoading: isSetAllowancePressed,
     };
   }
-  return {};
+  return null;
 }
 
 class ExchangeScreen extends React.Component<Props, State> {
@@ -859,7 +859,12 @@ class ExchangeScreen extends React.Component<Props, State> {
       shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
-    const { exchangeAllowances, connectedProviders, providersMeta } = this.props;
+    const {
+      exchangeAllowances,
+      connectedProviders,
+      providersMeta,
+      theme,
+    } = this.props;
     const { input: selectedSellAmount } = fromInput;
     const {
       _id: offerId,
@@ -892,7 +897,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
     const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
-    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider);
+    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider, theme, 'horizontal');
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
     let shapeshiftAccessToken;
@@ -918,7 +923,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const disableFiatExchange = isFiat && (minOrMaxNeeded || !!offerRestricted);
     const disableOffer = disableNonFiatExchange || disableFiatExchange;
 
-    const topButtonProps = {
+    const additionalData = {
       offer,
       minOrMaxNeeded,
       isBelowMin,
@@ -940,19 +945,20 @@ class ExchangeScreen extends React.Component<Props, State> {
             labelTop="Amount total"
             valueTop={`${askRate} ${fromAssetCode}`}
             cardImageSource={providerLogo}
-            cardTopButton={getCardTopButtonData(topButtonProps)}
             labelBottom="Fees total"
             valueBottom={feeAmount ?
               `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
               : 'Will be calculated'
             }
-            cardMainButton={{
-              label: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
+            cardButton={{
+              title: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
               onPress: () => this.onFiatOfferPress(offer),
-              isDisabled: disableFiatExchange,
+              disabled: disableFiatExchange,
               isLoading: isTakeOfferPressed,
             }}
+
             cardNote={offerRestricted}
+            additionalCardButton={getCardAdditionalButtonData(additionalData)}
           />
         </OfferCardWrapper>
       );
@@ -966,15 +972,15 @@ class ExchangeScreen extends React.Component<Props, State> {
           labelTop="Exchange rate"
           valueTop={formatAmountDisplay(askRate)}
           cardImageSource={providerLogo}
-          cardTopButton={getCardTopButtonData(topButtonProps)}
           labelBottom="Available"
           valueBottom={available}
-          cardMainButton={{
-          label: `${amountToBuyString} ${toAssetCode}`,
-          onPress: () => this.onOfferPress(offer),
-          isDisabled: isTakeButtonDisabled || disableNonFiatExchange,
-          isLoading: isTakeOfferPressed,
-        }}
+          cardButton={{
+            title: `${amountToBuyString} ${toAssetCode}`,
+            onPress: () => this.onOfferPress(offer),
+            disabled: isTakeButtonDisabled || disableNonFiatExchange,
+            isLoading: isTakeOfferPressed,
+          }}
+          additionalCardButton={getCardAdditionalButtonData(additionalData)}
         />
       </OfferCardWrapper>
     );
@@ -1373,4 +1379,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));

@@ -260,3 +260,7 @@ export function getThemeColors(currentTheme: Theme = defaultTheme) {
 export function getThemeType(currentTheme: Theme = defaultTheme) {
   return currentTheme.current;
 }
+
+export function getThemeName(currentTheme: Theme = defaultTheme) {
+  return currentTheme.current.replace('Theme', '');
+}

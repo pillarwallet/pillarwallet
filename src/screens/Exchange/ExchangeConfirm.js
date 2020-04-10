@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
@@ -63,6 +63,7 @@ import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Accounts } from 'models/Account';
+import type { Theme } from 'models/Theme';
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
@@ -81,6 +82,7 @@ type Props = {
   setDismissTransaction: () => void,
   providersMeta: ProvidersMeta,
   accounts: Accounts,
+  theme: Theme,
 };
 
 type State = {
@@ -294,6 +296,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       accounts,
+      theme,
     } = this.props;
 
     const hasSmartWallet = userHasSmartWallet(accounts);
@@ -322,7 +325,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       : balanceInWei.gte(txFeeInWei);
     const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
-    const providerLogo = getOfferProviderLogo(providersMeta, provider);
+    const providerLogo = getOfferProviderLogo(providersMeta, provider, theme, 'vertical');
 
     return (
       <ContainerWithHeader
@@ -451,4 +454,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));
