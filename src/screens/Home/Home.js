@@ -295,7 +295,7 @@ class HomeScreen extends React.Component<Props, State> {
           style: {
             width: 96,
             height: 60,
-            marginLeft: 4,
+            marginRight: -4,
           },
           source: referralImage,
         }}
