@@ -150,7 +150,6 @@ const ConnectionConfirmationModal = (props: Props) => {
           borderWidth={0}
           noShadow
         />
-
         <Paragraph small style={{ marginTop: 20, marginBottom: 34 }}>
           {subtitle}
         </Paragraph>
