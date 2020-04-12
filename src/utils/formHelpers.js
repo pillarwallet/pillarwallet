@@ -19,8 +19,16 @@
 */
 import * as React from 'react';
 import t from 'tcomb-form-native';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
+
+// components
 import TextInput from 'components/TextInput';
+
+// utils
 import { isValidNumber, parseNumber } from './common';
+
 
 export function makeAmountForm(
   maxAmount: number,
@@ -28,6 +36,7 @@ export function makeAmountForm(
   enoughForFee: boolean,
   formSubmitted: boolean,
   decimals: number,
+  feeSymbol?: string,
 ) {
   const Amount = t.refinement(t.String, (amount): boolean => {
     if (!isValidNumber(amount.toString())) return false;
@@ -51,7 +60,7 @@ export function makeAmountForm(
 
     amount = parseNumber(amount.toString());
     if (!enoughForFee) {
-      return 'Not enough ETH to process the transaction fee';
+      return `Not enough ${feeSymbol || ETH} to process the transaction fee`;
     } else if (amount >= maxAmount) {
       return 'Amount should not exceed the sum of total balance and est. network fee';
     } else if (amount === 0) {
@@ -63,7 +72,7 @@ export function makeAmountForm(
        */
       return null;
     } else if (amount < minAmount) {
-      return `Amount should be greater than ${minAmount} ETH)`;
+      return `Amount should be greater than ${minAmount} ${feeSymbol || ETH})`;
     } else if (decimals === 0 && amount.toString().includes('.')) {
       return 'Amount should not contain decimal places';
     }

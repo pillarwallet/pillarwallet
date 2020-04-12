@@ -17,9 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import type { IGasToken } from '@smartwallet/sdk/build/interfaces';
-
 export type TxSettlementItem = {
   symbol: string,
   value: string | number,
@@ -73,6 +70,12 @@ export type TransactionsStore = {
   [accountId: string]: Transaction[],
 };
 
+export type GasToken = {
+  address: string,
+  decimals: number,
+  symbol: string,
+};
+
 export type TokenTransactionPayload = {
   gasLimit: number,
   amount: number | string,
@@ -92,7 +95,7 @@ export type TokenTransactionPayload = {
   data?: string,
   extra?: Object,
   usePPN?: boolean,
-  gasToken: ?IGasToken,
+  gasToken: ?GasToken,
 }
 
 export type CollectibleTransactionPayload = {

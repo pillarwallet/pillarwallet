@@ -54,6 +54,7 @@ import type { GasInfo } from 'models/GasInfo';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
+import type { GasToken } from 'models/Transaction';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -80,7 +81,7 @@ export type AccountTransaction = {
   value: number | string | BigNumber,
   data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
-  gasToken: ?IGasToken,
+  gasToken: ?GasToken,
 };
 
 type EstimatePayload = {
@@ -119,7 +120,8 @@ const calculateEstimate = (
   gasInfo?: GasInfo,
   speed: string = SPEED_TYPES.NORMAL,
   defaultGasAmount: number = DEFAULT_GAS_LIMIT,
-): { gasToken: GasToken, gasTokenCost: BigNumber, cost: BigNumber } => {
+  gasToken: ?GasToken,
+): { gasTokenCost: BigNumber, cost: BigNumber } => {
   const parsedPayload = parseEstimatePayload(estimate);
   let { gasAmount, gasPrice, gasTokenCost } = parsedPayload;
 
@@ -130,7 +132,12 @@ const calculateEstimate = (
     : defaultGasAmount,
   );
 
-  gasTokenCost = new BigNumber(gasTokenCost
+  const isGasTokenAvailable = !isEmpty(gasToken)
+    && !isEmpty(parsedPayload.gasToken)
+    && addressesEqual(parsedPayload.gasToken.address, gasToken.address)
+    && gasTokenCost;
+
+  gasTokenCost = new BigNumber(isGasTokenAvailable
     ? gasTokenCost.toString()
     : 0,
   );
@@ -142,7 +149,6 @@ const calculateEstimate = (
 
   return {
     cost: new BigNumber(gasPrice.toString()).multipliedBy(gasAmount),
-    gasToken: parsedPayload.gasToken,
     gasTokenCost,
   };
 };
@@ -448,7 +454,12 @@ class SmartWallet {
     return calculated.cost;
   }
 
-  async estimateAccountTransaction(transaction: AccountTransaction, gasInfo: GasInfo, assetData: AssetData) {
+  async estimateAccountTransaction(
+    transaction: AccountTransaction,
+    gasInfo: GasInfo,
+    assetData: AssetData,
+    gasToken: ?GasToken,
+  ) {
     const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
     let { data, recipient } = transaction;
     const { decimals, contractAddress, token: assetSymbol } = assetData;
@@ -474,10 +485,12 @@ class SmartWallet {
       data,
       transactionSpeed,
     ).catch(() => {});
+
     const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
       ? SPEED_TYPES.FAST
       : SPEED_TYPES.NORMAL;
-    return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed);
+
+    return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed, DEFAULT_GAS_LIMIT, gasToken);
   }
 
   getTransactionStatus(hash: string) {
