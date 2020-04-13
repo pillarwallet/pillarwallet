@@ -22,12 +22,9 @@ import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
-import isEmpty from 'lodash.isempty';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -41,7 +38,7 @@ import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
-import { formatAmount } from 'utils/common';
+import { formatTransactionFee } from 'utils/common';
 
 // types
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -119,11 +116,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
     } = navigation.getParam('transactionPayload', {});
 
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
-    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
-    const feeDisplayValue = txFeeInWei === 0
-      ? 'free'
-      : `${formatAmount(utils.formatUnits(txFeeInWei.toString(), feeDecimals))} ${feeSymbol}`;
+    const feeDisplayValue = txFeeInWei === 0 ? 'free' : formatTransactionFee(txFeeInWei, gasToken);
 
     const recipientUsername = getUserName(contact);
     const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;

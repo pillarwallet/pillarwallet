@@ -39,7 +39,7 @@ import Spinner from 'components/Spinner';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, formatFiat, formatUnits } from 'utils/common';
+import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
 import { spacing, fontStyles } from 'utils/variables';
 import { getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -52,10 +52,7 @@ import type { Assets, Balances, Rates } from 'models/Asset';
 
 // constants
 import { TANK_WITHDRAWAL_CONFIRM } from 'constants/navigationConstants';
-import {
-  defaultFiatCurrency,
-  ETH,
-} from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // actions
 import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletActions';
@@ -211,10 +208,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei, gasToken);
     const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
-    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
-    const feeFormattedDecimals = !isEmpty(gasToken) ? 2 : 6;
-    const parsedFee = txFeeInWei.toString();
-    const feeDisplayValue = `${formatAmount(formatUnits(parsedFee, feeDecimals), feeFormattedDecimals)} ${feeSymbol}`;
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
     const maxAmount = calculateMaxAmount(token, availableStake, txFeeInWei);

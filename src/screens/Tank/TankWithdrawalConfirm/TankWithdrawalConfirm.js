@@ -22,9 +22,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
-import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import isEmpty from 'lodash.isempty';
 
 // actions
 import {
@@ -33,7 +31,6 @@ import {
 } from 'actions/smartWalletActions';
 
 // constants
-import { ETH } from 'constants/assetsConstants';
 import { ASSETS } from 'constants/navigationConstants';
 
 // components
@@ -45,7 +42,7 @@ import Spinner from 'components/Spinner';
 
 // utils
 import { fontSizes, spacing } from 'utils/variables';
-import { formatAmount } from 'utils/common';
+import { formatTransactionFee } from 'utils/common';
 
 // types
 import type { WithdrawalFee } from 'models/PaymentNetwork';
@@ -123,11 +120,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const amount = navigation.getParam('amount', '0');
 
     const gasToken = get(this.props, 'withdrawalFee.feeInfo.gasToken');
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
-    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
-    const txFeeInWei = this.getTxFeeInWei();
-    const feeFormattedDecimals = isEmpty(gasToken) ? 6 : 2;
-    const feeDisplayValue = formatAmount(utils.formatUnits(txFeeInWei.toString(), feeDecimals), feeFormattedDecimals);
+    const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     const submitButtonTitle = buttonSubmitted
       ? 'Processing...'
@@ -161,7 +154,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
           <LabeledRow>
             <Label>Transaction fee</Label>
             {!withdrawalFee.isFetched && <Spinner width={20} height={20} />}
-            {withdrawalFee.isFetched && <Value>{`${feeDisplayValue} ${feeSymbol}`}</Value>}
+            {withdrawalFee.isFetched && <Value>{feeDisplayValue}</Value>}
           </LabeledRow>
         </ScrollWrapper>
       </ContainerWithHeader>

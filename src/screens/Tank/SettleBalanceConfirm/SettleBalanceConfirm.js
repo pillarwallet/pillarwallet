@@ -23,7 +23,6 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
-import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -51,7 +50,7 @@ import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 // utils
 import { checkIfEnoughForFee } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
-import { formatAmount } from 'utils/common';
+import { formatAmount, formatTransactionFee } from 'utils/common';
 
 
 type Props = {
@@ -162,11 +161,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       || settleButtonSubmitted;
 
     const gasToken = get(this.props, 'settleTxFee.feeInfo.gasToken');
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
-    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
-    const txFeeInWei = this.getTxFeeInWei();
-    const feeFormattedDecimals = isEmpty(gasToken) ? 6 : 2;
-    const feeDisplayValue = formatAmount(utils.formatUnits(txFeeInWei.toString(), feeDecimals), feeFormattedDecimals);
+    const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     return (
       <ContainerWithHeader
@@ -196,7 +191,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Transaction fee</Label>
-            {settleTxFee.isFetched && <Value>{`${feeDisplayValue} ${feeSymbol}`}</Value>}
+            {settleTxFee.isFetched && <Value>{feeDisplayValue}</Value>}
             {!settleTxFee.isFetched && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           </LabeledRow>
         </ScrollWrapper>

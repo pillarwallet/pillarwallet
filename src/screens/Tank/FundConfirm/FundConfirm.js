@@ -21,9 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
-import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
@@ -31,7 +29,6 @@ import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'ac
 
 // constants
 import { ASSETS } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -42,7 +39,7 @@ import Spinner from 'components/Spinner';
 
 // utils
 import { fontSizes, spacing } from 'utils/variables';
-import { formatAmount } from 'utils/common';
+import { formatTransactionFee } from 'utils/common';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -122,11 +119,7 @@ class FundConfirm extends React.Component<Props, State> {
     const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
 
     const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
-    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
-    const txFeeInWei = this.getTxFeeInWei();
-    const feeFormattedDecimals = isEmpty(gasToken) ? 6 : 2;
-    const feeDisplayValue = formatAmount(utils.formatUnits(txFeeInWei.toString(), feeDecimals), feeFormattedDecimals);
+    const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     return (
       <ContainerWithHeader
@@ -156,7 +149,7 @@ class FundConfirm extends React.Component<Props, State> {
           <LabeledRow>
             <Label>Transaction fee</Label>
             {!topUpFee.isFetched && <Spinner width={20} height={20} />}
-            {topUpFee.isFetched && <Value>{`${feeDisplayValue} ${feeSymbol}`}</Value>}
+            {topUpFee.isFetched && <Value>{feeDisplayValue}</Value>}
           </LabeledRow>
         </ScrollWrapper>
       </ContainerWithHeader>

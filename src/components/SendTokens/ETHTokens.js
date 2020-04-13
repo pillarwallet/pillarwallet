@@ -38,7 +38,7 @@ import SendTokenDetails from 'components/SendTokenDetails';
 import Spinner from 'components/Spinner';
 
 // utils
-import { formatAmount, formatFiat, formatUnits } from 'utils/common';
+import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -428,9 +428,7 @@ class SendETHTokens extends React.Component<Props, State> {
     // fee
     const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei, feeByGasToken && gasToken);
     const feeSymbol = feeByGasToken ? gasToken.symbol : ETH;
-    const feeDecimals = feeByGasToken ? gasToken.decimals : 'ether';
-    const feeFormattedDecimals = feeByGasToken ? 2 : 6;
-    const feeDisplayValue = `${formatAmount(formatUnits(txFeeInWei, feeDecimals), feeFormattedDecimals)} ${feeSymbol}`;
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, feeByGasToken && gasToken);
