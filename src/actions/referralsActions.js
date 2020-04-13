@@ -41,7 +41,7 @@ import {
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
   RECEIVED_REFERRAL_TOKEN,
-  DELETE_REFERRAL_TOKEN,
+  CLAIM_REWARD,
 } from 'constants/referralsConstants';
 
 // components
@@ -50,8 +50,6 @@ import Toast from 'components/Toast';
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { saveDbAction } from 'actions/dbActions';
-
-const REDEEM_AMOUNT = 25;
 
 
 export type ClaimTokenAction = {
@@ -102,9 +100,10 @@ export const completeReferralsEventAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       user: { data: { walletId } },
-      referrals: { referralToken },
+      referrals: { referralToken, isRewardClaimed },
     } = getState();
-    if (!referralToken) {
+
+    if (!referralToken || isRewardClaimed) {
       return;
     }
 
@@ -113,12 +112,13 @@ export const completeReferralsEventAction = () => {
       securityToken: referralToken,
     });
 
-    branch.redeemRewards(REDEEM_AMOUNT);
-
-    dispatch({ type: DELETE_REFERRAL_TOKEN });
+    dispatch({
+      type: CLAIM_REWARD,
+    });
     dispatch(saveDbAction('referralData', {
-      referrals: { referralToken: null },
+      referrals: { isRewardClaimed: true },
     }));
+
     Toast.show({
       message: 'You are gonna receive your rewards soon!',
       type: 'info',
