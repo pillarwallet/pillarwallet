@@ -1151,20 +1151,45 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
       });
     if (isEmpty(response)) return;
 
-    const { gasAmount, gasPrice, totalCost } = parseEstimatePayload(response);
+    const {
+      gasAmount,
+      gasPrice,
+      totalCost,
+      gasTokenCost,
+      gasToken: parsedGasToken,
+    } = parseEstimatePayload(response);
+
+    let estimate = {
+      gasAmount,
+      gasPrice,
+      totalCost,
+    };
+
+    // check if fee by gas token available
+    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
+    const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
+    const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
+
+    if (!isEmpty(gasToken)
+      && !isEmpty(parsedGasToken)
+      && addressesEqual(parsedGasToken.address, gasToken.address)
+      && gasTokenCost
+      && gasTokenCost.gt(0)) {
+      estimate = {
+        ...estimate,
+        gasToken,
+        gasTokenCost: parsedGasTokenCost,
+      };
+    }
 
     dispatch({
       type: SET_ESTIMATED_WITHDRAWAL_FEE,
-      payload: {
-        gasAmount,
-        gasPrice,
-        totalCost,
-      },
+      payload: estimate,
     });
   };
 };
 
-export const withdrawFromVirtualAccountAction = (amount: string) => {
+export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithToken: boolean = false) => {
   return async (dispatch: Function, getState: Function) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
@@ -1191,7 +1216,7 @@ export const withdrawFromVirtualAccountAction = (amount: string) => {
 
     if (isEmpty(estimated)) return;
 
-    const txHash = await smartWalletService.withdrawFromVirtualAccount(estimated)
+    const txHash = await smartWalletService.withdrawFromVirtualAccount(estimated, payForGasWithToken)
       .catch((e) => {
         Toast.show({
           message: e.toString() || 'Failed to withdraw from the account',

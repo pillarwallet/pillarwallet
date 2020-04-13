@@ -117,7 +117,6 @@ const MIN_TX_AMOUNT = 0.000000000000000001;
 class FundTank extends React.Component<Props, State> {
   _form: t.form;
   formSubmitted: boolean = false;
-  enoughForFee: boolean = false;
   state = {
     value: null,
     inputHasError: false,
@@ -134,8 +133,7 @@ class FundTank extends React.Component<Props, State> {
   }
 
   handleChange = (value: Object) => {
-    this.setState({ value });
-    this.checkFormInputErrors();
+    this.setState({ value }, () => this.checkFormInputErrors());
   };
 
   handleFormSubmit = (isInitFlow: boolean) => {
@@ -156,7 +154,6 @@ class FundTank extends React.Component<Props, State> {
     const balance = getBalance(balances, token);
     const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
-    this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei, gasToken);
     this.setState({
       value: {
         amount: formatAmount(maxAmount),
