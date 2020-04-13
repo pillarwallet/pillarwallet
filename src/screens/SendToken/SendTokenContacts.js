@@ -463,7 +463,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         { title: tokenName, color: colors.primary },
       ];
     } else if (this.isSendingFromHomeFlow) {
-      return [{ title: 'Select contact' }];
+      return [{ title: 'Choose recipient' }];
     }
     return [{ title: `Send ${tokenName}` }];
   };
