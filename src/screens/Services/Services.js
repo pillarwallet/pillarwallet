@@ -71,7 +71,7 @@ class ServicesScreen extends React.Component<Props> {
       {
         key: 'peerToPeerTrading',
         title: 'Peer-to-peer trading',
-        body: 'Swap tokens directly with others. safe, secure, anonymous',
+        body: 'Swap tokens directly with others. Safe, secure, anonymous',
         disabled: true,
         label: 'soon',
       },

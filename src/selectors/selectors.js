@@ -21,6 +21,8 @@ export const historySelector = ({ history }: RootReducerState) => history.data;
 export const paymentNetworkBalancesSelector =
   ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 
+export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;
+
 export const activeAccountSelector =
   ({ accounts }: RootReducerState) => accounts.data.find(({ isActive }) => isActive);
 
@@ -52,6 +54,8 @@ export const bitcoinAddressSelector = ({ bitcoin }: RootReducerState) =>
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
+
+export const featureFlagsSelector = ({ featureFlags }: RootReducerState) => featureFlags.data;
 
 export const isSmartWalletActivatedSelector = ({
   accounts: { data: accounts },
