@@ -23,12 +23,11 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
 // components
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import CircleButton from 'components/CircleButton';
 import ActionModal from 'components/ActionModal';
 import { LabelBadge } from 'components/LabelBadge';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import CheckAuth from 'components/CheckAuth';
 import Toast from 'components/Toast';
 
 // constants
@@ -40,50 +39,52 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 
 // actions
-import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { switchAccountAction } from 'actions/accountsActions';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
-import { getActiveAccount } from 'utils/accounts';
 
 // models, types
-import type { Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Asset, AssetData, BalancesStore, Rates } from 'models/Asset';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
-import type { EthereumWallet } from 'models/Wallet';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  accounts: Accounts,
   baseFiatCurrency: ?string,
   rates: Rates,
   balances: BalancesStore,
-  smartWalletFeatureEnabled: boolean,
   bitcoinFeatureEnabled: boolean,
   bitcoinBalances: BitcoinBalance,
   bitcoinAddresses: BitcoinAddress[],
-  switchAccount: (accountId: string, privateKey?: string) => void,
-  resetIncorrectPassword: () => void,
-  toggleLoading: (messages: string) => void,
   supportedAssets: Asset[],
+  wallets: Account[],
+  activeWallet: Account,
+  changeWalletAction: (acc: Account, callback: () => void) => void,
+  blockchainNetwork: ?string,
+  setActiveBlockchainNetwork: (id: string) => void,
 };
 
 type State = {
   visibleActionModal: string,
   receiveAddress: string,
-  showPinModal: boolean,
-  onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
 };
 
 
+const Sizer = styled.View`
+  max-width: 350px;
+  align-items: center;
+  align-self: center;
+`;
+
 const ActionButtonsWrapper = styled.View`
-  padding: 14px 26px 36px;
+  width: 100%;
+  padding: 14px 10px 36px;
   flex-direction: row;
   justify-content: space-between;
 `;
@@ -118,8 +119,6 @@ class ActionButtons extends React.Component<Props, State> {
   state = {
     visibleActionModal: '',
     receiveAddress: '',
-    showPinModal: false,
-    onPinValidAction: null,
   };
 
   openActionModal = (actionModalType: string) => {
@@ -141,40 +140,18 @@ class ActionButtons extends React.Component<Props, State> {
     this.setState({ receiveAddress: '' });
   };
 
-  handleAuthModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
-    resetIncorrectPassword();
-    this.setState({ showPinModal: false });
-  };
-
   getModalActions = () => {
     const { visibleActionModal } = this.state;
     const {
       rates,
-      accounts: _accounts,
       balances,
       baseFiatCurrency,
-      smartWalletFeatureEnabled,
-      bitcoinFeatureEnabled,
       bitcoinBalances,
-      bitcoinAddresses,
+      wallets,
     } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-    const keyWallet = _accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
-    const accountsToShow = [keyWallet];
-
-    if (smartWalletFeatureEnabled) {
-      const smartWallet = _accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
-      if (smartWallet) accountsToShow.unshift(smartWallet);
-    }
-
-    if (bitcoinFeatureEnabled && bitcoinAddresses.length > 0) {
-      const bitcoinAcc = { type: BLOCKCHAIN_NETWORK_TYPES.BITCOIN, id: bitcoinAddresses[0].address };
-      accountsToShow.push(bitcoinAcc);
-    }
-
-    const accountsInfo = accountsToShow.map((account) => {
+    const accountsInfo = wallets.map((account) => {
       const { type, id } = account;
       const isBitcoin = type === BLOCKCHAIN_NETWORK_TYPES.BITCOIN;
       const accBalance = isBitcoin
@@ -182,7 +159,7 @@ class ActionButtons extends React.Component<Props, State> {
         : calculateBalanceInFiat(rates, balances[id] || {}, fiatCurrency);
 
       return {
-        type,
+        ...account,
         balance: accBalance,
         formattedBalance: formatFiat(accBalance, fiatCurrency),
         address: id,
@@ -208,87 +185,103 @@ class ActionButtons extends React.Component<Props, State> {
         }),
         );
       case SEND:
-        return accountsInfo.map(({
-          type,
-          formattedBalance,
-          balance,
-          additionalInfo,
-          sendFlow,
-        }) => ({
-          key: type,
-          value: formattedBalance,
-          ...additionalInfo,
-          onPress: () => this.navigateToAction(type, sendFlow),
-          label: `From ${additionalInfo.title}`,
-          isDisabled: balance <= 0,
-        }),
-        );
+        return accountsInfo.map((acc) => {
+          const {
+            type,
+            formattedBalance,
+            balance,
+            additionalInfo,
+            sendFlow,
+          } = acc;
+
+          return {
+            key: type,
+            value: formattedBalance,
+            ...additionalInfo,
+            onPress: () => this.navigateToAction(acc, sendFlow),
+            label: `From ${additionalInfo.title}`,
+            isDisabled: balance <= 0,
+          };
+        });
       case EXCHANGE:
-        return accountsInfo.filter(({ type }) => type !== BLOCKCHAIN_NETWORK_TYPES.BITCOIN).map(({
-          type,
-          formattedBalance,
-          additionalInfo,
-          exchangeFlow,
-        }) => ({
-          key: type,
-          value: formattedBalance,
-          ...additionalInfo,
-          onPress: () => this.navigateToAction(type, exchangeFlow),
-          label: `From ${additionalInfo.title}`,
-        }),
-        );
+        return accountsInfo.filter(({ type }) => type !== BLOCKCHAIN_NETWORK_TYPES.BITCOIN).map((acc) => {
+          const {
+            type,
+            formattedBalance,
+            additionalInfo,
+            exchangeFlow,
+          } = acc;
+          return {
+            key: type,
+            value: formattedBalance,
+            ...additionalInfo,
+            onPress: () => this.navigateToAction(acc, exchangeFlow),
+            label: `From ${additionalInfo.title}`,
+          };
+        });
       default:
         return [];
     }
   };
 
-  navigateToAction = (type: string, navigateTo: string) => {
+  navigateToAction = (acc: Account, navigateTo: string) => {
     const {
       navigation,
-      accounts,
-      switchAccount,
+      activeWallet,
       supportedAssets,
+      changeWalletAction,
+      blockchainNetwork,
+      setActiveBlockchainNetwork,
     } = this.props;
-    const { type: activeAccType } = getActiveAccount(accounts) || {};
-    const keyBasedAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.KEY_BASED) || {};
+    const { type: walletType } = acc;
+    const { type: activeAccType } = activeWallet;
 
-    switch (type) {
+    switch (walletType) {
       case ACCOUNT_TYPES.SMART_WALLET:
-        if (activeAccType === ACCOUNT_TYPES.SMART_WALLET) {
-          navigation.navigate(navigateTo);
+        if (blockchainNetwork !== BLOCKCHAIN_NETWORK_TYPES.ETHEREUM) {
+          setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
+        }
+        if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
+          changeWalletAction(acc, () => navigation.navigate(navigateTo));
         } else {
-          this.switchAccAndNavigate(navigateTo);
+          navigation.navigate(navigateTo);
         }
         break;
 
       case ACCOUNT_TYPES.KEY_BASED:
-        if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
-          switchAccount(keyBasedAccount.id);
+        if (blockchainNetwork !== BLOCKCHAIN_NETWORK_TYPES.ETHEREUM) {
+          setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
         }
-        navigation.navigate(navigateTo);
-        break;
-
-      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        if (navigateTo === SEND_BITCOIN_FLOW) {
-          const btcToken = supportedAssets.find(asset => asset.symbol === BTC);
-          if (!btcToken) {
-            Toast.show({
-              message: 'Bitcoin is not supported',
-              type: 'warning',
-              title: 'Can not send Bitcoin',
-              autoClose: false,
-            });
-            return;
-          }
-          const { symbol: token, decimals } = btcToken;
-          const assetData: AssetData = {
-            token,
-            decimals,
-          };
-          navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
+        if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
+          changeWalletAction(acc, () => navigation.navigate(navigateTo));
         } else {
           navigation.navigate(navigateTo);
         }
+        break;
+
+      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
+        changeWalletAction(acc, () => {
+          if (navigateTo === SEND_BITCOIN_FLOW) {
+            const btcToken = supportedAssets.find(asset => asset.symbol === BTC);
+            if (!btcToken) {
+              Toast.show({
+                message: 'Bitcoin is not supported',
+                type: 'warning',
+                title: 'Can not send Bitcoin',
+                autoClose: false,
+              });
+              return;
+            }
+            const { symbol: token, decimals } = btcToken;
+            const assetData: AssetData = {
+              token,
+              decimals,
+            };
+            navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
+          } else {
+            navigation.navigate(navigateTo);
+          }
+        });
         break;
 
       default:
@@ -296,34 +289,8 @@ class ActionButtons extends React.Component<Props, State> {
     }
   };
 
-  switchAccAndNavigate = (navigateTo: string) => {
-    const {
-      navigation,
-      accounts,
-      switchAccount,
-      toggleLoading,
-    } = this.props;
-    const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-    toggleLoading('Changing into Smart Wallet');
-
-    this.setState({
-      showPinModal: true,
-      onPinValidAction: async (_: string, wallet: Object) => {
-        await switchAccount(smartAccount.id, wallet.privateKey);
-        this.setState({ showPinModal: false });
-        toggleLoading('');
-        navigation.navigate(navigateTo);
-      },
-    });
-  };
-
   render() {
-    const {
-      visibleActionModal,
-      receiveAddress,
-      showPinModal,
-      onPinValidAction,
-    } = this.state;
+    const { visibleActionModal, receiveAddress } = this.state;
     const {
       balances,
       bitcoinBalances,
@@ -336,24 +303,26 @@ class ActionButtons extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <ActionButtonsWrapper>
-          <CircleButton
-            label="Receive"
-            fontIcon="qrDetailed"
-            onPress={() => this.openActionModal(RECEIVE)}
-          />
-          <CircleButton
-            label="Send"
-            fontIcon="paperPlane"
-            onPress={() => this.openActionModal(SEND)}
-            disabled={!isSendButtonActive}
-          />
-          <CircleButton
-            label="Exchange"
-            fontIcon="exchange"
-            onPress={() => this.openActionModal(EXCHANGE)}
-          />
-        </ActionButtonsWrapper>
+        <Sizer>
+          <ActionButtonsWrapper>
+            <CircleButton
+              label="Receive"
+              fontIcon="qrDetailed"
+              onPress={() => this.openActionModal(RECEIVE)}
+            />
+            <CircleButton
+              label="Send"
+              fontIcon="paperPlane"
+              onPress={() => this.openActionModal(SEND)}
+              disabled={!isSendButtonActive}
+            />
+            <CircleButton
+              label="Exchange"
+              fontIcon="exchange"
+              onPress={() => this.openActionModal(EXCHANGE)}
+            />
+          </ActionButtonsWrapper>
+        </Sizer>
         <ActionModal
           onModalClose={this.closeActionModal}
           isVisible={!!visibleActionModal}
@@ -364,27 +333,17 @@ class ActionButtons extends React.Component<Props, State> {
           address={receiveAddress}
           onModalHide={this.closeReceiveModal}
         />
-        <CheckAuth
-          onPinValid={onPinValidAction}
-          revealMnemonic
-          modalProps={{
-            isVisible: showPinModal,
-            onModalHide: this.handleAuthModalClose,
-          }}
-        />
       </React.Fragment>
     );
   }
 }
 
 const mapStateToProps = ({
-  accounts: { data: accounts },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, blockchainNetwork } },
   rates: { data: rates },
   balances: { data: balances },
   featureFlags: {
     data: {
-      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
       BITCOIN_ENABLED: bitcoinFeatureEnabled,
     },
   },
@@ -393,11 +352,10 @@ const mapStateToProps = ({
     supportedAssets,
   },
 }: RootReducerState): $Shape<Props> => ({
-  accounts,
   baseFiatCurrency,
+  blockchainNetwork,
   rates,
   balances,
-  smartWalletFeatureEnabled,
   bitcoinFeatureEnabled,
   bitcoinBalances,
   bitcoinAddresses,
@@ -405,8 +363,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
 });
 
-export default withNavigation(withTheme(connect(mapStateToProps, mapDispatchToProps)(ActionButtons)));
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(ActionButtons));

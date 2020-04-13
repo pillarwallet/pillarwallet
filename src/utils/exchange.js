@@ -20,9 +20,13 @@
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
 import { EXCHANGE_URL } from 'react-native-dotenv';
+import get from 'lodash.get';
 import { PROVIDER_MOONPAY, PROVIDER_SENDWYRE } from 'constants/exchangeConstants';
 import type { ProvidersMeta } from 'models/Offer';
 import { fiatCurrencies } from 'fixtures/assets';
+import type { Theme } from 'models/Theme';
+import { getThemeName } from './themes';
+import { images } from './images';
 
 export const getProviderDisplayName = (provider?: string) => {
   switch (provider) {
@@ -35,28 +39,29 @@ export const getProviderDisplayName = (provider?: string) => {
   }
 };
 
-const sendWyreLogo = require('assets/images/exchangeProviders/logo_sendwyre.png');
-const moonPayLogo = require('assets/images/exchangeProviders/logo_moonpay.png');
-
-export const getLocallyStoredProviderLogo = (provider?: string) => {
+export const getLocallyStoredProviderLogo = (provider?: string, theme: Theme) => {
   switch (provider) {
     case PROVIDER_MOONPAY:
-      return moonPayLogo;
+      const { moonPayLogoHorizontal } = images(theme);
+      return moonPayLogoHorizontal;
     case PROVIDER_SENDWYRE:
-      return sendWyreLogo;
+      const { sendWyreLogoHorizontal } = images(theme);
+      return sendWyreLogoHorizontal;
     default:
       return '';
   }
 };
 
-export const getOfferProviderLogo = (providersMeta: ProvidersMeta, offerProvider?: string) => {
-  if (!offerProvider) return '';
-  const providerInfo = providersMeta.find(({ shim }) => shim === offerProvider);
+
+export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: string, theme: Theme, type: string) => {
+  if (!provider) return '';
+  const providerInfo = providersMeta.find(({ shim }) => shim === provider);
+  const themeName = getThemeName(theme);
   if (providerInfo) {
-    const { icon_large: providerIconPath } = providerInfo;
+    const providerIconPath = get(providerInfo, `img.${type}.${themeName}`, '');
     return { uri: `${EXCHANGE_URL}/v2.0${providerIconPath}` };
   }
-  return getLocallyStoredProviderLogo(offerProvider);
+  return getLocallyStoredProviderLogo(provider, theme);
 };
 
 export const isFiatProvider = (provider: string) => {

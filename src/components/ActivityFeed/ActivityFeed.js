@@ -18,15 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { FlatList } from 'react-native';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import { createStructuredSelector } from 'reselect';
+import memoize from 'memoize-one';
 
 // types
 import type { Transaction } from 'models/Transaction';
-import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // components
@@ -42,10 +41,6 @@ import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
 import { groupAndSortByDate } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { getAssetsAsList } from 'utils/assets';
-
-// selectors
-import { accountAssetsSelector } from 'selectors/assets';
 
 // constants
 import {
@@ -59,7 +54,7 @@ import { USER_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 
-const ActivityFeedList = styled.SectionList`
+const ActivityFeedList = styled.FlatList`
   width: 100%;
   flex: 1;
 `;
@@ -126,44 +121,10 @@ type Props = {
   hideTabs: boolean,
   emptyState?: EmptyState,
   ensRegistry: EnsRegistry,
+  tabsComponent?: React.Node,
+  headerComponent?: React.Node,
+  flatListProps?: FlatList,
 };
-
-type FeedItemTransaction = {|
-  username?: string,
-  to: string,
-  from: string,
-  hash: string,
-  createdAt: string,
-  pillarId: string,
-  protocol: string,
-  contractAddress: ?string,
-  blockNumber: number,
-  value: number,
-  status: string,
-  gasPrice: ?number,
-  gasUsed: number,
-  tranType: ?string,
-  tokenId?: string,
-  _id: string,
-  type: string,
-|};
-
-type FeedItemConnection = {|
-  id: string,
-  ethAddress: string,
-  username: string,
-  profileImage: ?string,
-  createdAt: string,
-  updatedAt: string,
-  status: string,
-  type: string,
-|};
-
-type FeedSection = {|
-  title: string,
-  date: string,
-  data: Array<FeedItemTransaction | FeedItemConnection>,
-|};
 
 type State = {|
   showModal: boolean,
@@ -171,11 +132,16 @@ type State = {|
   eventType: string,
   eventStatus: string,
   tabIsChanging: boolean,
-  formattedFeedData: FeedSection[],
-  emptyStateData: EmptyState | {},
   scrollOffset: ?number,
   maxScrollOffset: ?number,
 |};
+
+const ITEM_TYPE = {
+  HEADER: 'HEADER',
+  TABS: 'TABS',
+  SECTION: 'SECTION',
+  ITEM: 'ITEM',
+};
 
 class ActivityFeed extends React.Component<Props, State> {
   eventDetailScrollViewRef: ?Object;
@@ -190,45 +156,50 @@ class ActivityFeed extends React.Component<Props, State> {
     eventType: '',
     eventStatus: '',
     tabIsChanging: false,
-    formattedFeedData: [],
-    emptyStateData: {},
     scrollOffset: undefined,
     maxScrollOffset: undefined,
   };
 
-  componentDidMount() {
-    this.generateFeedSections();
-  }
+  generateFeedSections = memoize(
+    (tabs, activeTab, feedData, headerComponent, tabsComponent) => {
+      let feedList = feedData || [];
 
-  componentDidUpdate(prevProps: Props) {
-    const { tabs = [], feedData = [] } = this.props;
-    if ((tabs.length && !isEqual(tabs, prevProps.tabs))
-      || (feedData.length && !isEqual(feedData, prevProps.feedData))) {
-      this.generateFeedSections();
-    }
-  }
+      if (tabs.length) {
+        const activeTabInfo = tabs.find(({ id }) => id === activeTab);
+        if (activeTabInfo) ({ data: feedList } = activeTabInfo);
+      }
 
-  generateFeedSections = () => {
+      const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
+
+      const dataSections = groupAndSortByDate(filteredFeedList);
+
+      const items = [];
+      items.push({ type: ITEM_TYPE.HEADER, component: headerComponent });
+      items.push({ type: ITEM_TYPE.TABS, component: tabsComponent });
+      dataSections.forEach(({ data, ...section }) => {
+        items.push({ type: ITEM_TYPE.SECTION, section });
+        data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
+      });
+
+      return items;
+    },
+    isEqual,
+  );
+
+  getEmptyStateData = () => {
     const {
       tabs = [],
       activeTab,
-      feedData = [],
       emptyState,
     } = this.props;
-    let feedList = feedData;
-    let emptyStateData = emptyState || {};
 
+    let emptyStateData = emptyState || {};
     if (tabs.length) {
       const activeTabInfo = tabs.find(({ id }) => id === activeTab);
-      if (activeTabInfo) ({ data: feedList, emptyState: emptyStateData = {} } = activeTabInfo);
+      if (activeTabInfo) ({ emptyState: emptyStateData = {} } = activeTabInfo);
     }
-
-    const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
-
-    const dataSections = groupAndSortByDate(filteredFeedList);
-
-    this.setState({ formattedFeedData: dataSections, emptyStateData });
-  };
+    return emptyStateData;
+  }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
@@ -252,15 +223,28 @@ class ActivityFeed extends React.Component<Props, State> {
     return typesThatRender.includes(item.type);
   }
 
-  renderActivityFeedItem = ({ item: notification }: Object) => {
-    const { onRejectInvitation, onAcceptInvitation } = this.props;
-    return (
-      <ActivityFeedItem
-        event={notification}
-        selectEvent={this.selectEvent}
-        rejectInvitation={onRejectInvitation}
-        acceptInvitation={onAcceptInvitation}
-      />);
+  renderActivityFeedItem = ({ item }) => {
+    switch (item.type) {
+      case ITEM_TYPE.HEADER:
+      case ITEM_TYPE.TABS:
+        return item.component;
+      case ITEM_TYPE.SECTION:
+        return (
+          <SectionHeaderWrapper>
+            <SectionHeader>{item.section.title}</SectionHeader>
+          </SectionHeaderWrapper>
+        );
+      default:
+        const { onRejectInvitation, onAcceptInvitation } = this.props;
+        return (
+          <ActivityFeedItem
+            event={item.item}
+            selectEvent={this.selectEvent}
+            rejectInvitation={onRejectInvitation}
+            acceptInvitation={onAcceptInvitation}
+          />
+        );
+    }
   };
 
   handleRejectInvitation = () => {
@@ -280,8 +264,16 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
-    const { createdAt = '' } = item;
-    return `${createdAt.toString()}${item.id || item._id || item.hash || ''}`;
+    switch (item.type) {
+      case ITEM_TYPE.HEADER:
+      case ITEM_TYPE.TABS:
+        return item.type;
+      case ITEM_TYPE.SECTION:
+        return item.section.title;
+      default:
+        const { createdAt = '' } = item.item;
+        return `${createdAt.toString()}${item.item.id || item.item._id || item.item.hash || ''}`;
+    }
   };
 
   onTabChange = (isChanging?: boolean) => {
@@ -300,6 +292,10 @@ class ActivityFeed extends React.Component<Props, State> {
       activeTab,
       extraFeedData,
       hideTabs,
+      feedData,
+      headerComponent,
+      tabsComponent,
+      flatListProps,
     } = this.props;
 
     const {
@@ -308,11 +304,13 @@ class ActivityFeed extends React.Component<Props, State> {
       eventType,
       eventStatus,
       tabIsChanging,
-      formattedFeedData,
-      emptyStateData,
       scrollOffset,
       maxScrollOffset,
     } = this.state;
+
+    const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
+
+    const emptyStateData = this.getEmptyStateData();
 
     const firstTab = tabs.length ? tabs[0].id : '';
 
@@ -338,29 +336,20 @@ class ActivityFeed extends React.Component<Props, State> {
         }
         {!tabIsChanging &&
         <ActivityFeedList
-          sections={formattedFeedData}
+          data={formattedFeedData}
           initialNumToRender={initialNumToRender}
           extraData={extraFeedData}
-          renderSectionHeader={({ section }) => (
-            <SectionHeaderWrapper>
-              <SectionHeader>{section.title}</SectionHeader>
-            </SectionHeaderWrapper>
-          )}
           renderItem={this.renderActivityFeedItem}
-          getItemLayout={(data, index) => ({
-            length: 70,
-            offset: 70 * index,
-            index,
-          })}
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          stickySectionHeadersEnabled={false}
           ListEmptyComponent={(
             <EmptyStateWrapper>
               <EmptyStateParagraph {...emptyStateData} />
             </EmptyStateWrapper>
           )}
+          stickyHeaderIndices={[1]}
+          {...flatListProps}
         />}
         {!!selectedEventData &&
         <SlideModal
@@ -397,12 +386,4 @@ class ActivityFeed extends React.Component<Props, State> {
   }
 }
 
-const structuredSelector = createStructuredSelector({
-  assets: (state) => getAssetsAsList(accountAssetsSelector(state)),
-});
-
-const combinedMapStateToProps = (state: RootReducerState) => ({
-  ...structuredSelector(state),
-});
-
-export default withTheme(connect(combinedMapStateToProps)(ActivityFeed));
+export default withTheme(ActivityFeed);

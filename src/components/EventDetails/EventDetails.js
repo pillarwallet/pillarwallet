@@ -125,7 +125,6 @@ type Props = {
   getRef?: () => Object,
   getScrollOffset?: (number) => ScrollToProps,
   getMaxScrollOffset?: (number) => number,
-  accounts: Accounts,
   bitcoinAddresses: BitcoinAddress[],
   ensRegistry: EnsRegistry,
   lookupAddress: (address: string) => void,
@@ -354,7 +353,6 @@ class EventDetails extends React.Component<Props, State> {
       txNotes,
       assets,
       supportedAssets,
-      accounts,
       ensRegistry,
     } = this.props;
     const {
@@ -410,7 +408,7 @@ class EventDetails extends React.Component<Props, State> {
       const relatedUser = isReceived ? senderContact : recipientContact;
       let relatedUserTitle = relatedUser.username
         // $FlowFixMe
-        || getAccountName(relatedUser.type, accounts)
+        || getAccountName(relatedUser.type)
         || ensRegistry[relatedAddress]
         || relatedAddress;
       if (addressesEqual(to, from)) {
@@ -532,7 +530,7 @@ class EventDetails extends React.Component<Props, State> {
       const relatedAddress = isReceived ? from : to;
       const relatedUserTitle = relatedUser.username
         // $FlowFixMe
-        || getAccountName(relatedUser.type, accounts)
+        || getAccountName(relatedUser.type)
         || ensRegistry[relatedAddress]
         || relatedAddress;
       const relatedUserProfileImage = relatedUser.profileImage || null;
@@ -856,7 +854,6 @@ const mapStateToProps = ({
   txNotes,
   contactsSmartAddresses,
   inactiveAccounts: getInactiveUserAccounts(accounts),
-  accounts,
   ensRegistry,
 });
 

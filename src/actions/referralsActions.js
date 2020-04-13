@@ -40,6 +40,8 @@ import {
   REMOVE_CONTACT_FOR_REFERRAL,
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
+  RECEIVED_REFERRAL_TOKEN,
+  DELETE_REFERRAL_TOKEN,
 } from 'constants/referralsConstants';
 
 // services
@@ -91,10 +93,22 @@ const inviteErrorAction = (dispatch: Dispatch, errorMessage?: string) => {
   });
 };
 
-export const completeRefferalsEventAction = () => {
+export const completeReferralsEventAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const walletId = get(getState(), 'user.data.walletId');
-    await logEvent(BranchEvent.CompleteRegistration, { walletId });
+    const {
+      user: { data: { walletId } },
+      referrals: { referralToken },
+    } = getState();
+
+    await logEvent(BranchEvent.CompleteRegistration, {
+      walletId,
+      token: referralToken,
+    });
+
+    dispatch({ type: DELETE_REFERRAL_TOKEN });
+    dispatch(saveDbAction('referralData', {
+      referrals: { referralToken: null },
+    }));
   };
 };
 
@@ -154,12 +168,21 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
 };
 
 export const startReferralsListenerAction = () => {
-  return () => {
+  return (dispatch: Dispatch) => {
     if (branchIoSubscription) return;
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) return;
       console.log('params: ', params);
-      // TODO: check if referred install and show appropriate front-end flow
+      if (!params['+clicked_branch_link']) return;
+
+      const { token } = params;
+      dispatch({
+        type: RECEIVED_REFERRAL_TOKEN,
+        payload: token,
+      });
+      dispatch(saveDbAction('referralData', {
+        referrals: { referralToken: token },
+      }));
     });
   };
 };

@@ -28,28 +28,40 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
     data={
       Array [
         Object {
-          "data": Array [
-            Object {
-              "createdAt": "2019-09-09 12:00",
-              "from": "0x0000000000000000000000000000000000000000",
-              "to": "0x0000000000000000000000000000000000000000",
-              "type": "transactionEvent",
-              "value": undefined,
-            },
-          ],
-          "date": "Invalid Date",
-          "title": "Invalid Date",
+          "component": undefined,
+          "type": "HEADER",
+        },
+        Object {
+          "component": undefined,
+          "type": "TABS",
+        },
+        Object {
+          "section": Object {
+            "date": "Invalid Date",
+            "title": "Invalid Date",
+          },
+          "type": "SECTION",
+        },
+        Object {
+          "item": Object {
+            "createdAt": "2019-09-09 12:00",
+            "from": "0x0000000000000000000000000000000000000000",
+            "to": "0x0000000000000000000000000000000000000000",
+            "type": "transactionEvent",
+            "value": undefined,
+          },
+          "type": "ITEM",
         },
       ]
     }
     disableVirtualization={false}
     getItem={[Function]}
     getItemCount={[Function]}
-    getItemLayout={[Function]}
     horizontal={false}
     initialNumToRender={7}
     keyExtractor={[Function]}
     maxToRenderPerBatch={10}
+    numColumns={1}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
@@ -57,28 +69,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
     onScroll={[Function]}
     onScrollBeginDrag={[Function]}
     onScrollEndDrag={[Function]}
+    removeClippedSubviews={false}
     renderItem={[Function]}
-    renderSectionHeader={[Function]}
     scrollEventThrottle={50}
-    sections={
+    stickyHeaderIndices={
       Array [
-        Object {
-          "data": Array [
-            Object {
-              "createdAt": "2019-09-09 12:00",
-              "from": "0x0000000000000000000000000000000000000000",
-              "to": "0x0000000000000000000000000000000000000000",
-              "type": "transactionEvent",
-              "value": undefined,
-            },
-          ],
-          "date": "Invalid Date",
-          "title": "Invalid Date",
-        },
+        1,
       ]
     }
-    stickyHeaderIndices={Array []}
-    stickySectionHeadersEnabled={false}
     style={
       Array [
         Object {
@@ -91,10 +89,20 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
       ]
     }
     updateCellsBatchingPeriod={50}
+    viewabilityConfigCallbackPairs={Array []}
     windowSize={21}
   >
     <View>
       <View
+        onLayout={[Function]}
+        style={null}
+      />
+      <View
+        onLayout={[Function]}
+        style={null}
+      />
+      <View
+        onLayout={[Function]}
         style={null}
       >
         <View
@@ -135,6 +143,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         </View>
       </View>
       <View
+        onLayout={[Function]}
         style={null}
       >
         <View
@@ -305,39 +314,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       0x0000…000000
                     </Text>
                   </View>
-                  <View
-                    h={2}
-                    style={
-                      Array [
-                        Object {
-                          "height": 2,
-                          "width": 0,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                  <Text
-                    numberOfLines={2}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#8B939E",
-                            "fontSize": 14,
-                          },
-                          undefined,
-                        ],
-                      ]
-                    }
-                  >
-                    Smart wallet
-                  </Text>
                 </View>
                 <View
                   rightColumn={true}
@@ -420,16 +396,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
           </View>
         </View>
       </View>
-      <View
-        style={null}
-      />
-      <View
-        style={
-          Object {
-            "height": 140,
-          }
-        }
-      />
     </View>
   </RCTScrollView>
 </View>
@@ -463,28 +429,40 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
     data={
       Array [
         Object {
-          "data": Array [
-            Object {
-              "createdAt": "2019-09-09 12:00",
-              "from": "0x0000000000000000000000000000000000000000",
-              "to": "0x0000000000000000000000000000000000000000",
-              "type": "transactionEvent",
-              "value": "0",
-            },
-          ],
-          "date": "Invalid Date",
-          "title": "Invalid Date",
+          "component": undefined,
+          "type": "HEADER",
+        },
+        Object {
+          "component": undefined,
+          "type": "TABS",
+        },
+        Object {
+          "section": Object {
+            "date": "Invalid Date",
+            "title": "Invalid Date",
+          },
+          "type": "SECTION",
+        },
+        Object {
+          "item": Object {
+            "createdAt": "2019-09-09 12:00",
+            "from": "0x0000000000000000000000000000000000000000",
+            "to": "0x0000000000000000000000000000000000000000",
+            "type": "transactionEvent",
+            "value": "0",
+          },
+          "type": "ITEM",
         },
       ]
     }
     disableVirtualization={false}
     getItem={[Function]}
     getItemCount={[Function]}
-    getItemLayout={[Function]}
     horizontal={false}
     initialNumToRender={7}
     keyExtractor={[Function]}
     maxToRenderPerBatch={10}
+    numColumns={1}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
@@ -492,28 +470,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
     onScroll={[Function]}
     onScrollBeginDrag={[Function]}
     onScrollEndDrag={[Function]}
+    removeClippedSubviews={false}
     renderItem={[Function]}
-    renderSectionHeader={[Function]}
     scrollEventThrottle={50}
-    sections={
+    stickyHeaderIndices={
       Array [
-        Object {
-          "data": Array [
-            Object {
-              "createdAt": "2019-09-09 12:00",
-              "from": "0x0000000000000000000000000000000000000000",
-              "to": "0x0000000000000000000000000000000000000000",
-              "type": "transactionEvent",
-              "value": "0",
-            },
-          ],
-          "date": "Invalid Date",
-          "title": "Invalid Date",
-        },
+        1,
       ]
     }
-    stickyHeaderIndices={Array []}
-    stickySectionHeadersEnabled={false}
     style={
       Array [
         Object {
@@ -526,10 +490,20 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
       ]
     }
     updateCellsBatchingPeriod={50}
+    viewabilityConfigCallbackPairs={Array []}
     windowSize={21}
   >
     <View>
       <View
+        onLayout={[Function]}
+        style={null}
+      />
+      <View
+        onLayout={[Function]}
+        style={null}
+      />
+      <View
+        onLayout={[Function]}
         style={null}
       >
         <View
@@ -570,6 +544,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         </View>
       </View>
       <View
+        onLayout={[Function]}
         style={null}
       >
         <View
@@ -740,39 +715,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       0x0000…000000
                     </Text>
                   </View>
-                  <View
-                    h={2}
-                    style={
-                      Array [
-                        Object {
-                          "height": 2,
-                          "width": 0,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                  <Text
-                    numberOfLines={2}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#8B939E",
-                            "fontSize": 14,
-                          },
-                          undefined,
-                        ],
-                      ]
-                    }
-                  >
-                    Smart wallet
-                  </Text>
                 </View>
                 <View
                   rightColumn={true}
@@ -855,16 +797,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
           </View>
         </View>
       </View>
-      <View
-        style={null}
-      />
-      <View
-        style={
-          Object {
-            "height": 140,
-          }
-        }
-      />
     </View>
   </RCTScrollView>
 </View>

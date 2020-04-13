@@ -83,7 +83,7 @@ export const Banner = (props: Props) => {
     <Wrapper style={{ padding: spacing.mediumLarge, ...wrapperStyle }}>
       <BannerContentWrapper onPress={onPress} disabled={!onPress}>
         <BannerTextWrapper>
-          <BannerParagraph>
+          <BannerParagraph small>
             {bannerText}
           </BannerParagraph>
         </BannerTextWrapper>

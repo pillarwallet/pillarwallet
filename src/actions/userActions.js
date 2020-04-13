@@ -30,6 +30,7 @@ import {
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { logEventAction } from 'actions/analyticsActions';
+import { completeReferralsEventAction } from 'actions/referralsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
@@ -127,6 +128,10 @@ export const verifyEmailAction = (walletId: string, code: string) => {
       dispatch(verificationFailedAction());
       return;
     }
+    const { referrals: { referralToken } } = getState();
+    if (referralToken) {
+      dispatch(completeReferralsEventAction());
+    }
 
     dispatch(logEventAction('email_verified'));
     dispatch({ type: USER_EMAIL_VERIFIED });
@@ -153,21 +158,7 @@ export const verifyPhoneAction = (
     });
     const { responseStatus } = response;
 
-    if (responseStatus === 200) {
-      dispatch(logEventAction('phone_verified'));
-
-      dispatch({ type: USER_PHONE_VERIFIED });
-      dispatch({
-        type: ADD_NOTIFICATION,
-        payload: {
-          message: 'Phone verification was successful',
-          title: 'Validation successful',
-          messageType: 'success',
-        },
-      });
-
-      if (callback) callback();
-    } else {
+    if (responseStatus !== 200) {
       dispatch(verificationFailedAction());
       dispatch({
         type: ADD_NOTIFICATION,
@@ -177,7 +168,28 @@ export const verifyPhoneAction = (
           messageType: 'warning',
         },
       });
+
+      return;
     }
+
+    dispatch(logEventAction('phone_verified'));
+
+    const { referrals: { referralToken } } = getState();
+    if (referralToken) {
+      dispatch(completeReferralsEventAction());
+    }
+
+    dispatch({ type: USER_PHONE_VERIFIED });
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: 'Phone verification was successful',
+        title: 'Validation successful',
+        messageType: 'success',
+      },
+    });
+
+    if (callback) callback();
   };
 };
 

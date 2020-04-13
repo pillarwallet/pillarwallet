@@ -56,26 +56,7 @@ const reduxData = {
       '0x8Cc0Ff0F2c2466735C4E4c71A7EA7B94b6900BF5',
     ],
   }],
-  assets: [{
-    address: '0x0000000000000000000000000000000000000000',
-    decimals: 18,
-    name: 'Ethereum',
-    symbol: 'ETH',
-    description: '',
-    iconUrl: placeholderImage,
-    iconMonoUrl: placeholderImage,
-    wallpaperUrl: placeholderImage,
-  }],
-  supportedAssets: [{
-    address: '0x0000000000000000000000000000000000000000',
-    decimals: 18,
-    name: 'Ethereum',
-    symbol: 'ETH',
-    description: '',
-    iconUrl: placeholderImage,
-    iconMonoUrl: placeholderImage,
-    wallpaperUrl: placeholderImage,
-  }],
+  assetDecimals: 18,
   ensRegistry: {
     '0x111111': 'john',
   },
@@ -84,7 +65,7 @@ const reduxData = {
   acceptInvitation: () => {},
   rejectInvitation: () => {},
   activeBlockchainNetwork: '',
-  smartWalletState: { upgrade: { status: '' } },
+  isSmartWalletActivated: false,
   accounts: [],
 };
 
