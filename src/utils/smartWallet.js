@@ -49,7 +49,7 @@ import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
 import { getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
-import { buildHistoryTransaction } from './history';
+import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
@@ -258,15 +258,11 @@ export const parseSmartWalletTransactions = (
       const gasToken = getAssetDataByAddress(assets, supportedAssets, gasTokenAddress);
       if (!isEmpty(gasToken)) {
         const { decimals: gasTokenDecimals, symbol: gasTokenSymbol } = gasToken;
-        const feeInWei = new BigNumber(transactionFee.toString());
-        transaction.feeWithGasToken = {
-          feeInWei,
-          gasToken: {
-            decimals: gasTokenDecimals,
-            symbol: gasTokenSymbol,
-            address: gasTokenAddress,
-          },
-        };
+        transaction.feeWithGasToken = parseFeeWithGasToken(transactionFee, {
+          decimals: gasTokenDecimals,
+          symbol: gasTokenSymbol,
+          address: gasTokenAddress,
+        });
       }
     }
 
