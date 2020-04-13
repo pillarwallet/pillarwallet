@@ -2,7 +2,9 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnabledAssets } from 'utils/accounts';
-import { assetsSelector, activeAccountIdSelector, hiddenAssetsSelector } from './selectors';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
+import { assetsSelector, activeAccountIdSelector, hiddenAssetsSelector, supportedAssetsSelector } from './selectors';
+
 
 export const accountAssetsSelector = createSelector(
   assetsSelector,
@@ -35,5 +37,15 @@ export const allAccountsAssetsSelector = createSelector(
     });
 
     return uniqueAssets;
+  },
+);
+
+export const assetDecimalsSelector = (assetSelector: (state: Object, props: Object) => number) => createSelector(
+  assetsSelector,
+  supportedAssetsSelector,
+  assetSelector,
+  (assets, supportedAssets, asset) => {
+    const { decimals = 18 } = getAssetData(getAssetsAsList(assets), supportedAssets, asset);
+    return decimals;
   },
 );
