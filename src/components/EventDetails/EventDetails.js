@@ -24,13 +24,13 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { SafeAreaView } from 'react-navigation';
 import { Linking, Dimensions, ScrollView, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
-import { utils } from 'ethers';
 import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 import { CachedImage } from 'react-native-cached-image';
+import get from 'lodash.get';
 
 // types
 import type { Transaction } from 'models/Transaction';
@@ -56,6 +56,7 @@ import {
   noop,
   formatUnits,
   formatAmount,
+  formatTransactionFee,
 } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
@@ -386,6 +387,7 @@ class EventDetails extends React.Component<Props, State> {
         tag,
         extra,
         btcFee,
+        feeWithGasToken,
       } = txInfo;
 
       const isReceived = this.wasTransactionReceived(to, tag);
@@ -418,10 +420,19 @@ class EventDetails extends React.Component<Props, State> {
       // $FlowFixMe
       const showProfileImage = !relatedUser.type;
 
-      const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const freeTx = isPPNTransaction || tag === SET_SMART_WALLET_ACCOUNT_ENS;
 
-      const showFeeBlock = (toMyself || !isReceived) && !isPending && (freeTx || !!fee);
+      let feeDisplayValue;
+      if (freeTx) {
+        feeDisplayValue = 'free';
+      } else {
+        const fee = isEmpty(feeWithGasToken)
+          ? gasUsed && gasPrice && Math.round(gasUsed * gasPrice)
+          : feeWithGasToken.feeInWei;
+        feeDisplayValue = formatTransactionFee(fee, get(feeWithGasToken, 'gasToken'));
+      }
+
+      const showFeeBlock = (toMyself || !isReceived) && !isPending && !!feeDisplayValue;
       let showNote = true;
       const listSettledAssets = (tag === PAYMENT_NETWORK_TX_SETTLEMENT && !isEmpty(extra));
 
@@ -484,7 +495,7 @@ class EventDetails extends React.Component<Props, State> {
           {showFeeBlock &&
           <ListItemUnderlined
             label="TRANSACTION FEE"
-            value={freeTx ? 'free' : `${utils.formatEther(fee.toString())} ETH`}
+            value={feeDisplayValue}
           />
           }
           {!!btcFee &&
@@ -510,11 +521,17 @@ class EventDetails extends React.Component<Props, State> {
         note,
         gasUsed,
         gasPrice,
+        feeWithGasToken,
       } = eventData;
 
       const isReceived = this.wasTransactionReceived(to);
       const toMyself = isReceived && addressesEqual(from, to);
-      const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
+
+      const fee = isEmpty(feeWithGasToken)
+        ? gasUsed && gasPrice && Math.round(gasUsed * gasPrice)
+        : feeWithGasToken.feeInWei;
+      const feeDisplayValue = formatTransactionFee(fee, get(feeWithGasToken, 'gasToken'));
+
       let transactionNote = note;
 
       if (txNotes && txNotes.length > 0) {
@@ -554,10 +571,10 @@ class EventDetails extends React.Component<Props, State> {
               borderWidth={0}
             />)}
           />
-          {(toMyself || !isReceived) && !!fee &&
+          {(toMyself || !isReceived) && !!feeDisplayValue &&
           <ListItemUnderlined
             label="TRANSACTION FEE"
-            value={`${utils.formatEther(fee.toString())} ETH`}
+            value={feeDisplayValue}
           />
           }
           {!!hasNote &&

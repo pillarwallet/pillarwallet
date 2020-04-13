@@ -22,6 +22,7 @@ import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
 
+// constants
 import {
   SET_SMART_WALLET_ACCOUNT_ENS,
   SMART_WALLET_DEPLOYMENT_ERRORS,
@@ -35,16 +36,18 @@ import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { ETH } from 'constants/assetsConstants';
 
+// types
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction, TransactionExtra } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import { ETH } from 'constants/assetsConstants';
 
+// local utils
 import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
-import { getAssetSymbolByAddress } from './assets';
+import { getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction } from './history';
 
@@ -151,6 +154,8 @@ export const parseSmartWalletTransactions = (
         used: gasUsed,
         price: gasPrice,
       },
+      gasToken: gasTokenAddress,
+      fee: transactionFee,
     } = smartWalletTransaction;
 
     // NOTE: same transaction could have multiple records, those are different by index
@@ -247,6 +252,22 @@ export const parseSmartWalletTransactions = (
           ensName: get(fromDetails, 'account.ensName'),
         },
       };
+    }
+
+    if (!isEmpty(gasTokenAddress)) {
+      const gasToken = getAssetDataByAddress(assets, supportedAssets, gasTokenAddress);
+      if (!isEmpty(gasToken)) {
+        const { decimals: gasTokenDecimals, symbol: gasTokenSymbol } = gasToken;
+        const feeInWei = new BigNumber(transactionFee.toString());
+        transaction.feeWithGasToken = {
+          feeInWei,
+          gasToken: {
+            decimals: gasTokenDecimals,
+            symbol: gasTokenSymbol,
+            address: gasTokenAddress,
+          },
+        };
+      }
     }
 
     const mappedTransaction = buildHistoryTransaction(transaction);

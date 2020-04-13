@@ -50,6 +50,7 @@ import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
 // types
 import type { GasInfo } from 'models/GasInfo';
+import type { GasToken } from 'models/Transaction';
 
 // local
 import { isProdEnv, isTest } from './environment';
@@ -543,4 +544,15 @@ export const formatAmountDisplay = (value: number | string) => {
 
 export const getDeviceHeight = () => {
   return Dimensions.get('window').height;
+};
+
+export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken) => {
+  if (!feeInWei) return '';
+
+  if (gasToken && !isEmpty(gasToken)) {
+    const { symbol, decimals } = gasToken;
+    return `${formatAmount(utils.formatUnits(feeInWei.toString(), decimals), 2)} ${symbol}`;
+  }
+
+  return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
 };

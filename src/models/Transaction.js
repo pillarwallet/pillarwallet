@@ -46,6 +46,17 @@ export type SyntheticTransactionExtra = {
 
 export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra | EnsTransactionExtra;
 
+export type GasToken = {
+  address: string,
+  decimals: number,
+  symbol: string,
+};
+
+export type FeeWithGasToken = {
+  feeInWei: number,
+  gasToken: GasToken,
+};
+
 export type Transaction = {
   _id: string,
   hash: string,
@@ -64,16 +75,11 @@ export type Transaction = {
   tag?: string,
   extra?: TransactionExtra,
   stateInPPN?: string,
+  feeWithGasToken: ?FeeWithGasToken,
 }
 
 export type TransactionsStore = {
   [accountId: string]: Transaction[],
-};
-
-export type GasToken = {
-  address: string,
-  decimals: number,
-  symbol: string,
 };
 
 export type TokenTransactionPayload = {
