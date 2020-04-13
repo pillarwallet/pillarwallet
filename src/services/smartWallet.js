@@ -380,8 +380,8 @@ class SmartWallet {
     return this.sdk.withdrawFromAccountVirtualBalance(estimated);
   }
 
-  withdrawAccountPayment(estimated: Object) {
-    return this.sdk.submitAccountTransaction(estimated);
+  withdrawAccountPayment(estimated: Object, payForGasWithToken: boolean = false) {
+    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
   }
 
   searchAccount(address: string) {

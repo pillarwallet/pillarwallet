@@ -24,7 +24,11 @@ import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
 import { utils } from 'ethers';
+import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
 
 // actions
 import { settleTransactionsAction, estimateSettleBalanceAction } from 'actions/smartWalletActions';
@@ -35,6 +39,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
+import Spinner from 'components/Spinner';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -47,7 +52,6 @@ import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 import { checkIfEnoughForFee } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount } from 'utils/common';
-import Spinner from 'components/Spinner';
 
 
 type Props = {
@@ -119,10 +123,12 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const { navigation, settleTransactions, balances } = this.props;
     const txFeeInWei = this.getTxFeeInWei();
 
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei.toString());
+    const gasToken = get(this.props, 'settleTxFee.feeInfo.gasToken');
+    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei.toString(), gasToken);
     if (!isEnoughForFee) {
       Toast.show({
-        message: 'You need to deposit ETH to cover the withdrawal',
+        message: `Not enough ${feeSymbol} to cover the withdrawal transaction fee`,
         type: 'warning',
         title: 'Balance Issue',
         autoClose: true,
@@ -136,14 +142,14 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'settleTxFee.feeInfo.totalCost', 0);
+    return get(this.props, 'settleTxFee.feeInfo.gasTokenCost')
+      || get(this.props, 'settleTxFee.feeInfo.totalCost', 0);
   };
 
   render() {
     const { settleButtonSubmitted } = this.state;
     const { session, settleTxFee } = this.props;
 
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
     let submitButtonTitle = 'Release Funds';
     if (!settleTxFee.isFetched) {
       submitButtonTitle = 'Getting the fee..';
@@ -154,6 +160,13 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const submitButtonDisabled = !session.isOnline
       || !settleTxFee.isFetched
       || settleButtonSubmitted;
+
+    const gasToken = get(this.props, 'settleTxFee.feeInfo.gasToken');
+    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
+    const txFeeInWei = this.getTxFeeInWei();
+    const feeFormattedDecimals = isEmpty(gasToken) ? 6 : 2;
+    const feeDisplayValue = formatAmount(utils.formatUnits(txFeeInWei.toString(), feeDecimals), feeFormattedDecimals);
 
     return (
       <ContainerWithHeader
@@ -183,7 +196,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Transaction fee</Label>
-            {settleTxFee.isFetched && <Value>{`${feeInEth} ETH`}</Value>}
+            {settleTxFee.isFetched && <Value>{`${feeDisplayValue} ${feeSymbol}`}</Value>}
             {!settleTxFee.isFetched && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           </LabeledRow>
         </ScrollWrapper>
@@ -210,7 +223,10 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  settleTransactions: (transactions) => dispatch(settleTransactionsAction(transactions)),
+  settleTransactions: (
+    transactions,
+    payForGasWithToken,
+  ) => dispatch(settleTransactionsAction(transactions, payForGasWithToken)),
   estimateSettleBalance: (transactions) => dispatch(estimateSettleBalanceAction(transactions)),
 });
 
