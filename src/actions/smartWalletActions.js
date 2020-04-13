@@ -105,6 +105,7 @@ import {
   addAccountAction,
   setActiveAccountAction,
   switchAccountAction,
+  getPkAndInitSWSdkAction,
 } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 import {
@@ -974,7 +975,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   };
 };
 
-export const ensureSmartAccountConnectedAction = (privateKey: string) => {
+export const ensureSmartAccountConnectedAction = (privateKey?: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -984,7 +985,11 @@ export const ensureSmartAccountConnectedAction = (privateKey: string) => {
     const accountId = getActiveAccountId(accounts);
 
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
-      await dispatch(initSmartWalletSdkAction(privateKey));
+      if (privateKey) {
+        await dispatch(initSmartWalletSdkAction(privateKey));
+      } else {
+        await dispatch(getPkAndInitSWSdkAction());
+      }
     }
 
     if (!isConnectedToSmartAccount(connectedAccount)) {

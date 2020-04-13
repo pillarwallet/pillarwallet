@@ -102,6 +102,7 @@ import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
 import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
 import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
+import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -235,6 +236,7 @@ import {
   CONNECT_TAB,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_TOKEN_FROM_HOME_FLOW,
+  PIN_CODE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -706,6 +708,7 @@ const AppFlowNavigation = createStackNavigator(
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
+    [PIN_CODE]: PinCodeUnlockScreen,
   },
   modalTransition,
 );

@@ -27,7 +27,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
-import { loginAction } from 'actions/authActions';
+import { loginAction, proceedWithPkAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
 import Header from 'components/Header';
@@ -45,12 +45,19 @@ import {
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
+type HandleUnlockActionProps = {
+  pin?: string,
+  privateKey?: string,
+  defaultAction: () => void,
+}
+
 type Props = {
   loginWithPin: (pin: string, callback: ?Function) => void,
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
+  proceedWithPk: (pin: string, action: (pk: string) => void) => void,
 };
 
 type State = {
@@ -115,7 +122,21 @@ class PinCodeUnlock extends React.Component<Props, State> {
         this.loginWithPrivateKey(data);
       }).catch(this.requirePinLogin);
     }
-  }
+  };
+
+  handleUnlockAction = ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
+    const { navigation, proceedWithPk } = this.props;
+    const customUnlockAction = navigation.getParam('customUnlockAction');
+    if (customUnlockAction && typeof customUnlockAction === 'function') {
+      if (privateKey) {
+        customUnlockAction(privateKey);
+      } else if (pin) {
+        proceedWithPk(pin, customUnlockAction);
+      }
+    } else {
+      defaultAction();
+    }
+  };
 
   loginWithPrivateKey = (data: KeyChainData) => {
     const { loginWithPrivateKey } = this.props;
@@ -127,7 +148,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const privateKey = getPrivateKeyFromKeychainData(data);
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
-      loginWithPrivateKey(privateKey, this.onLoginSuccess);
+      this.handleUnlockAction({
+        privateKey,
+        defaultAction: () => loginWithPrivateKey(privateKey, this.onLoginSuccess),
+      });
     }
   };
 
@@ -198,9 +222,12 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
   };
 
-  handlePinSubmit = (pin: string) => {
+  handlePinSubmit = async (pin: string) => {
     const { loginWithPin } = this.props;
-    loginWithPin(pin, this.onLoginSuccess);
+    this.handleUnlockAction({
+      pin,
+      defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
+    });
     this.handleLocking(false);
   };
 
@@ -258,6 +285,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     loginAction(pin, null, callback),
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
+  proceedWithPk: (pin: string, action: (pk: string) => void) => dispatch(proceedWithPkAction(pin, action)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

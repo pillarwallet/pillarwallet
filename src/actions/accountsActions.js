@@ -23,6 +23,7 @@ import {
   ADD_ACCOUNT,
   UPDATE_ACCOUNTS,
   ACCOUNT_TYPES,
+  CHANGING_ACCOUNT,
 } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -38,15 +39,17 @@ import {
 import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
+import { PIN_CODE } from 'constants/navigationConstants';
 import Storage from 'services/storage';
 import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances';
 import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
-import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { printLog } from 'utils/common';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { getActionForPathAndParams, getNavigationPathAndParamsState, navigate } from 'services/navigation';
 
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -207,6 +210,8 @@ export const setActiveAccountAction = (accountId: string) => {
         },
       },
     } = getState();
+
+
     const account = accounts.find(acc => acc.id === accountId);
     if (!account) {
       // TODO: account not found in storage
@@ -238,20 +243,45 @@ export const setActiveAccountAction = (accountId: string) => {
   };
 };
 
-export const switchAccountAction = (accountId: string, privateKey?: string) => {
+/* eslint-disable */
+export const getPkAndInitSWSdkAction = (switchToAcc?: string) => {
+  return async (dispatch: Dispatch) => {
+    const currentScreenAndProps = getNavigationPathAndParamsState();
+    if (!currentScreenAndProps) return;
+    const { path, params } = currentScreenAndProps;
+    const returnToCurrentScreenAction = getActionForPathAndParams(path, params);
+    navigate(PIN_CODE, {
+      customUnlockAction: async (privateKey: string) => {
+        await dispatch(initSmartWalletSdkAction(privateKey));
+        if (switchToAcc) await dispatch(switchAccountAction(switchToAcc));
+        navigate(returnToCurrentScreenAction);
+      }
+    });
+  }
+};
+/* eslint-enable */
+
+export const switchAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
+      smartWallet: { sdkInitialized },
     } = getState();
     const account = accounts.find(_acc => _acc.id === accountId) || {};
 
+    dispatch({ type: CHANGING_ACCOUNT, payload: true });
+
     if (account.type === ACCOUNT_TYPES.KEY_BASED) {
       await dispatch(setActiveAccountAction(accountId));
-    } else if (account.type === ACCOUNT_TYPES.SMART_WALLET && privateKey) {
-      await dispatch(initSmartWalletSdkAction(privateKey));
-      await dispatch(connectSmartWalletAccountAction(accountId));
-      await dispatch(setActiveAccountAction(accountId));
-      dispatch(setUserEnsIfEmptyAction());
+    } else if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
+      if (sdkInitialized) {
+        await dispatch(connectSmartWalletAccountAction(accountId));
+        await dispatch(setActiveAccountAction(accountId));
+        dispatch(setUserEnsIfEmptyAction());
+      } else {
+        dispatch(getPkAndInitSWSdkAction(accountId));
+        return;
+      }
     }
 
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
@@ -259,6 +289,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
     dispatch(fetchCollectiblesAction());
     dispatch(fetchTransactionsHistoryAction());
     dispatch(checkForMissedAssetsAction());
+    dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };
 
@@ -269,23 +300,13 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
       accounts: {
         data: accounts,
       },
-      smartWallet: {
-        upgrade: {
-          status: upgradeStatus,
-        },
-      },
     } = getState();
 
     const activeAccountId = getActiveAccountId(accounts);
     const activeAccountType = getActiveAccountType(accounts);
 
     if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
-      if ([
-        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      ].includes(upgradeStatus)) {
-        await dispatch(initSmartWalletSdkAction(privateKey));
-      }
+      await dispatch(initSmartWalletSdkAction(privateKey));
       return;
     }
 
