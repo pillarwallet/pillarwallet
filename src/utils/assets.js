@@ -37,7 +37,7 @@ import type {
   Balances,
   Rates,
 } from 'models/Asset';
-import type { IGasToken } from '@smartwallet/sdk/build/interfaces';
+import type { GasToken } from 'models/Transaction';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -135,7 +135,7 @@ export const calculateMaxAmount = (
   token: string,
   balance: number | string,
   txFeeInWei: BigNumber,
-  gasToken: IGasToken = {},
+  gasToken: ?GasToken = {},
 ): number => {
   const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
 
@@ -155,7 +155,11 @@ export const calculateMaxAmount = (
   return new BigNumber(utils.formatUnits(maxAmount, decimals)).toNumber();
 };
 
-export const checkIfEnoughForFee = (balances: Balances, txFeeInWei: BigNumber, gasToken: IGasToken = {}): boolean => {
+export const checkIfEnoughForFee = (
+  balances: Balances,
+  txFeeInWei: BigNumber,
+  gasToken: ?GasToken = {},
+): boolean => {
   const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
 
   if (!balances[feeSymbol]) return false;

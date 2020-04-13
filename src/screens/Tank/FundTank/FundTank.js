@@ -21,12 +21,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
-import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import isEmpty from 'lodash.isempty';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -39,7 +39,7 @@ import Spinner from 'components/Spinner';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat, formatUnits } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -53,7 +53,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // constants
 import { FUND_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // actions
 import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
@@ -108,6 +108,7 @@ type State = {
   value: ?{
     amount: ?string,
   },
+  inputHasError: boolean,
 };
 
 const { Form } = t.form;
@@ -119,6 +120,7 @@ class FundTank extends React.Component<Props, State> {
   enoughForFee: boolean = false;
   state = {
     value: null,
+    inputHasError: false,
   };
 
   componentDidMount() {
@@ -133,6 +135,7 @@ class FundTank extends React.Component<Props, State> {
 
   handleChange = (value: Object) => {
     this.setState({ value });
+    this.checkFormInputErrors();
   };
 
   handleFormSubmit = (isInitFlow: boolean) => {
@@ -151,21 +154,33 @@ class FundTank extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const token = PPN_TOKEN;
     const balance = getBalance(balances, token);
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
-    this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
+    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
+    this.enoughForFee = checkIfEnoughForFee(balances, txFeeInWei, gasToken);
     this.setState({
       value: {
         amount: formatAmount(maxAmount),
       },
-    });
+    }, () => this.checkFormInputErrors);
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+    return get(this.props, 'topUpFee.feeInfo.gasTokenCost')
+      || get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+  };
+
+  checkFormInputErrors = () => {
+    const { inputHasError } = this.state;
+    if (!this._form) return;
+    if (!isEmpty(get(this._form.validate(), 'errors'))) {
+      this.setState({ inputHasError: true });
+    } else if (inputHasError) {
+      this.setState({ inputHasError: false });
+    }
   };
 
   render() {
-    const { value } = this.state;
+    const { value, inputHasError } = this.state;
     const {
       assets,
       session,
@@ -190,12 +205,17 @@ class FundTank extends React.Component<Props, State> {
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // fee
+    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
     const txFeeInWei = this.getTxFeeInWei();
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei);
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
+    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei, gasToken);
+    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
+    const feeFormattedDecimals = !isEmpty(gasToken) ? 2 : 6;
+    const parsedFee = txFeeInWei.toString();
+    const feeDisplayValue = `${formatAmount(formatUnits(parsedFee, feeDecimals), feeFormattedDecimals)} ${feeSymbol}`;
 
     // max amount
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei);
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
 
     // value
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
@@ -205,7 +225,14 @@ class FundTank extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
-    const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
+    const formStructure = makeAmountForm(
+      maxAmount,
+      MIN_TX_AMOUNT,
+      isEnoughForFee,
+      this.formSubmitted,
+      decimals,
+      feeSymbol,
+    );
     const formFields = getAmountFormFields({
       icon,
       currency: token,
@@ -219,8 +246,8 @@ class FundTank extends React.Component<Props, State> {
         footer={(
           <FooterInner>
             {!topUpFee.isFetched && <Spinner width={20} height={20} />}
-            {topUpFee.isFetched && <Label>Estimated fee {feeInEth} ETH</Label>}
-            {!!value && !!parseFloat(value.amount) &&
+            {topUpFee.isFetched && <Label>Estimated fee: {feeDisplayValue}</Label>}
+            {!!value && !!parseFloat(value.amount) && !inputHasError &&
             <Button
               disabled={!session.isOnline || !topUpFee.isFetched}
               small
@@ -251,9 +278,11 @@ class FundTank extends React.Component<Props, State> {
                 <HelperText>{formattedBalanceInFiat}</HelperText>
               </TextRow>
             </SendTokenDetails>
+            {topUpFee.isFetched &&
             <TouchableOpacity onPress={this.useMaxValue}>
               <TextLink>Send all</TextLink>
             </TouchableOpacity>
+            }
           </ActionsWrapper>
         </Wrapper>
       </ContainerWithHeader>

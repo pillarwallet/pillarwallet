@@ -41,6 +41,7 @@ import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
+import { formatAmount } from 'utils/common';
 
 // types
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -120,7 +121,9 @@ class SendTokenConfirm extends React.Component<Props, State> {
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
     const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
     const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
-    const fee = txFeeInWei === 0 ? 'free' : utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+    const feeDisplayValue = txFeeInWei === 0
+      ? 'free'
+      : `${formatAmount(utils.formatUnits(txFeeInWei.toString(), feeDecimals))} ${feeSymbol}`;
 
     const recipientUsername = getUserName(contact);
     const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
@@ -165,7 +168,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Est. Network Fee</Label>
-            <Value>{`${fee} ${feeSymbol}`}</Value>
+            <Value>{feeDisplayValue}</Value>
           </LabeledRow>
           {session.isOnline && !!recipientUsername &&
             <TextInput

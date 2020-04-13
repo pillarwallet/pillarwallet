@@ -192,7 +192,7 @@ class SendETHTokens extends React.Component<Props, State> {
 
   handleFormSubmit = async () => {
     const { gasToken } = this.props;
-    const { submitPressed, feeByGasToken } = this.state;
+    const { submitPressed, feeByGasToken, txFeeInWei } = this.state;
     if (submitPressed) return;
 
     this.formSubmitted = true;
@@ -209,9 +209,7 @@ class SendETHTokens extends React.Component<Props, State> {
       navigation,
       activeAccount,
     } = this.props;
-    const txFeeInWei = await this.getTxFeeInWei();
 
-    // $FlowFixMe
     let transactionPayload: TokenTransactionPayload = {
       to: receiver,
       receiverEnsName,
@@ -429,6 +427,10 @@ class SendETHTokens extends React.Component<Props, State> {
 
     // fee
     const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei, feeByGasToken && gasToken);
+    const feeSymbol = feeByGasToken ? gasToken.symbol : ETH;
+    const feeDecimals = feeByGasToken ? gasToken.decimals : 'ether';
+    const feeFormattedDecimals = feeByGasToken ? 2 : 6;
+    const feeDisplayValue = `${formatAmount(formatUnits(txFeeInWei, feeDecimals), feeFormattedDecimals)} ${feeSymbol}`;
 
     // max amount
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, feeByGasToken && gasToken);
@@ -441,7 +443,6 @@ class SendETHTokens extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, fiatCurrency);
 
     // form
-    const feeSymbol = feeByGasToken ? gasToken.symbol : ETH;
     const formStructure = makeAmountForm(
       maxAmount,
       MIN_TX_AMOUNT,
@@ -458,7 +459,7 @@ class SendETHTokens extends React.Component<Props, State> {
     });
 
     const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
-    const showGasTokenFee = feeByGasToken && !gettingFee;
+    const showFee = !gettingFee && !!txFeeInWei && txFeeInWei.gt(0);
     const isNextButtonDisabled = gettingFee || !session.isOnline;
     const nextButtonTitle = gettingFee
       ? 'Getting the fee..'
@@ -477,14 +478,12 @@ class SendETHTokens extends React.Component<Props, State> {
               </SendTokenDetailsValue>
             </TouchableOpacity>
             }
-            {!!showGasTokenFee &&
+            {!transactionSpeed && showFee &&
             <SendTokenDetailsValue>
-              <Label small>
-                Fee: {formatAmount(formatUnits(txFeeInWei, gasToken.decimals), 2)} {gasToken.symbol}
-              </Label>
+              <Label small>Estimated fee: {feeDisplayValue}</Label>
             </SendTokenDetailsValue>
             }
-            {!showTransactionSpeeds && <Label>&nbsp;</Label>}
+            {!showTransactionSpeeds && !showFee && <Label>&nbsp;</Label>}
             {showNextButton &&
               <Button
                 disabled={isNextButtonDisabled}

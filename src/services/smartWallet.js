@@ -345,9 +345,9 @@ class SmartWallet {
       return Promise.reject(new Error(estimateError));
     }
 
-    const payWithToken = !isEmpty(gasToken);
+    const payForGasWithToken = !isEmpty(gasToken);
 
-    return this.sdk.submitAccountTransaction(estimatedTransaction, payWithToken);
+    return this.sdk.submitAccountTransaction(estimatedTransaction, payForGasWithToken);
   }
 
   createAccountPayment(recipient: string, token: ?string, value: BigNumber, paymentType?: string, reference?: string) {
@@ -372,8 +372,8 @@ class SmartWallet {
     return this.sdk.estimateWithdrawAccountPayment(items);
   }
 
-  topUpAccountVirtualBalance(estimated: Object) {
-    return this.sdk.submitAccountTransaction(estimated);
+  topUpAccountVirtualBalance(estimated: Object, payForGasWithToken: boolean = false) {
+    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
   }
 
   withdrawFromVirtualAccount(estimated: Object) {

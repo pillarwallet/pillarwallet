@@ -21,28 +21,43 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
-import type { NavigationScreenProp } from 'react-navigation';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import isEmpty from 'lodash.isempty';
+import type { NavigationScreenProp } from 'react-navigation';
 
+// actions
+import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
+
+// constants
+import { ASSETS } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import Spinner from 'components/Spinner';
+
+// utils
 import { fontSizes, spacing } from 'utils/variables';
-import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
 import { formatAmount } from 'utils/common';
+
+// types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { TopUpFee } from 'models/PaymentNetwork';
+
+// other
 import { PPN_TOKEN } from 'configs/assetsConfig';
-import { ASSETS } from 'constants/navigationConstants';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   topUpFee: TopUpFee,
   estimateTopUpVirtualAccount: (amount: string) => void,
-  topUpVirtualAccount: (amount: string) => void,
+  topUpVirtualAccount: (amount: string, payForGasWithToken: boolean) => void,
 };
 
 type State = {
@@ -90,20 +105,28 @@ class FundConfirm extends React.Component<Props, State> {
     const { navigation, topUpVirtualAccount } = this.props;
     this.setState({ topUpButtonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
-    await topUpVirtualAccount(amount);
+    const payForGasWithToken = !!get(this.props, 'topUpFee.feeInfo.gasTokenCost');
+    await topUpVirtualAccount(amount, payForGasWithToken);
     this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+    return get(this.props, 'topUpFee.feeInfo.gasTokenCost')
+      || get(this.props, 'topUpFee.feeInfo.totalCost', 0);
   };
 
   render() {
     const { session, navigation, topUpFee } = this.props;
     const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
     const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
+
+    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeDecimals = isEmpty(gasToken) ? 'ether' : gasToken.decimals;
+    const txFeeInWei = this.getTxFeeInWei();
+    const feeFormattedDecimals = isEmpty(gasToken) ? 6 : 2;
+    const feeDisplayValue = formatAmount(utils.formatUnits(txFeeInWei.toString(), feeDecimals), feeFormattedDecimals);
 
     return (
       <ContainerWithHeader
@@ -127,12 +150,13 @@ class FundConfirm extends React.Component<Props, State> {
             <Value>{amount} {PPN_TOKEN}</Value>
           </LabeledRow>
           <LabeledRow>
-            <Label>Recipient username</Label>
+            <Label>Recipient</Label>
             <Value>Pillar Tank</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Transaction fee</Label>
-            <Value>{feeInEth} ETH</Value>
+            {!topUpFee.isFetched && <Spinner width={20} height={20} />}
+            {topUpFee.isFetched && <Value>{`${feeDisplayValue} ${feeSymbol}`}</Value>}
           </LabeledRow>
         </ScrollWrapper>
       </ContainerWithHeader>
@@ -149,7 +173,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  topUpVirtualAccount: (amount: string) => dispatch(topUpVirtualAccountAction(amount)),
+  topUpVirtualAccount: (
+    amount: string,
+    payForGasWithToken: boolean,
+  ) => dispatch(topUpVirtualAccountAction(amount, payForGasWithToken)),
   estimateTopUpVirtualAccount: (amount: string) => dispatch(estimateTopUpVirtualAccountAction(amount)),
 });
 
