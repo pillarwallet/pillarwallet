@@ -21,6 +21,7 @@ import branch, { BranchEvent } from 'react-native-branch';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { format as formatDate } from 'date-fns';
+import { NavigationActions } from 'react-navigation';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -43,12 +44,14 @@ import {
   RECEIVED_REFERRAL_TOKEN,
   CLAIM_REWARD,
 } from 'constants/referralsConstants';
+import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW } from 'constants/navigationConstants';
 
 // components
 import Toast from 'components/Toast';
 
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
+import { navigate } from 'services/navigation';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
@@ -252,5 +255,36 @@ export const allowToAccessPhoneContactsAction = () => {
     dispatch({
       type: ALLOW_ACCESS_PHONE_CONTACTS,
     });
+  };
+};
+
+export const goToInvitationFlowAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      user: { data: { isEmailVerified, isPhoneVerified } },
+    } = getState();
+
+    if (isEmailVerified || isPhoneVerified) {
+      const navigateToReferFlow = NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: REFER_FLOW }),
+      });
+      navigate(navigateToReferFlow);
+    } else {
+      const navigateToUserSettings = NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: ADD_EDIT_USER }),
+      });
+
+      Toast.show({
+        message: 'Please add and verify your email address or phone number to proceed',
+        type: 'warning',
+        title: 'Phone or Email verification needed',
+        autoClose: false,
+        onPress: () => navigate(navigateToUserSettings),
+      });
+    }
   };
 };

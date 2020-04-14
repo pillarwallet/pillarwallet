@@ -27,7 +27,6 @@ import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 
 // actions
 import {
@@ -39,6 +38,7 @@ import {
 } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // components
 import Icon from 'components/Icon';
@@ -46,7 +46,7 @@ import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
-import { BaseText, MediumText, Paragraph } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
@@ -55,7 +55,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 // constants
-import { CONTACT, CONNECTION_REQUESTS, REFER_FLOW } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import {
   DISCONNECT,
@@ -69,15 +69,15 @@ import {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SearchResults } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
-import type { User } from 'models/User';
 
 // utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { sortLocalContacts } from 'utils/contacts';
-import { toastReferral } from 'utils/toasts';
 
-const referralImage = require('assets/images/referral_gift.png');
+// partials
+import InviteBanner from './InviteBanner';
+
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -125,33 +125,6 @@ const InnerWrapper = styled.View`
   flex: 1;
 `;
 
-const ReferralCTAWrapper = styled.View`
-  padding: 38px 30px 0 30px;
-  border-radius: 6px;
-  border: 1px solid ${themedColors.border};
-  position: relative;
-  overflow: hidden;
-  align-self: flex-end;
-  width: 100%;
-`;
-
-const ReferralCTATitle = styled(MediumText)`
-  ${fontStyles.large};
-  margin-bottom: 8px;
-`;
-
-const ReferralCTABody = styled(Paragraph)`
-  margin-right: 90px;
-`;
-
-const ReferralCTAImage = styled(CachedImage)`
-  width: 155px;
-  height: 105px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-`;
-
 const EmptyStateWrapper = styled.View`
   flex: 1;
   flex-grow: 1;
@@ -166,7 +139,6 @@ type Props = {
   searchContacts: (query: string) => void,
   searchResults: SearchResults,
   isSearching: boolean,
-  user: Object,
   fetchInviteNotifications: () => void,
   disconnectContact: (contactId: string) => void,
   muteContact: (contactId: string, mute: boolean) => void,
@@ -177,8 +149,8 @@ type Props = {
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
   theme: Theme,
-  user: User,
   referralsFeatureEnabled: boolean,
+  goToInvitationFlow: () => void,
 }
 
 type ConnectionStatusProps = {
@@ -399,14 +371,29 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
-  handleReferralBannerPress = () => {
-    const { navigation, user } = this.props;
-    const { isEmailVerified, isPhoneVerified } = user;
-    if (isEmailVerified || isPhoneVerified) {
-      navigation.navigate(REFER_FLOW);
-    } else {
-      toastReferral(navigation);
-    }
+  renderEmptyState = ({ inviteTitle, esTitle, esBody }) => {
+    const { referralsFeatureEnabled, goToInvitationFlow } = this.props;
+
+    return (
+      <Wrapper fullScreen style={{ marginTop: 8, marginBottom: spacing.large }}>
+        {!referralsFeatureEnabled
+          ? (
+            <EmptyStateWrapper>
+              <EmptyStateParagraph
+                title={esTitle}
+                bodyText={esBody}
+              />
+            </EmptyStateWrapper>
+          )
+          : (
+            <InviteBanner
+              title={inviteTitle}
+              onInvitePress={goToInvitationFlow}
+            />
+          )
+        }
+      </Wrapper>
+    );
   };
 
   renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
@@ -418,7 +405,6 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       chats,
       theme,
-      referralsFeatureEnabled,
     } = this.props;
 
     const usersFound = (apiUsers.length + localContacts.length) > 0;
@@ -480,37 +466,16 @@ class PeopleScreen extends React.Component<Props, State> {
           >
             {isSearching && <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>}
 
-            {inSearchMode && !isSearching && !usersFound &&
-            <Wrapper center fullScreen>
-              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-            </Wrapper>
-            }
-
-            {!inSearchMode && !sortedLocalContacts.length &&
-            <Wrapper fullScreen flex={1}>
-              <EmptyStateWrapper>
-                <EmptyStateParagraph
-                  title="Start making friends"
-                  bodyText="Build your connection list by searching for someone"
-                />
-              </EmptyStateWrapper>
-              {!!referralsFeatureEnabled &&
-              <ReferralCTAWrapper>
-                <ReferralCTAImage source={referralImage} />
-                <ReferralCTATitle>Pillar is social</ReferralCTATitle>
-                <ReferralCTABody>
-                  Refer friends and earn rewards, free PLR and more.
-                </ReferralCTABody>
-                <Button
-                  small
-                  height={32}
-                  title="Invite friends"
-                  onPress={this.handleReferralBannerPress}
-                  style={{ alignSelf: 'flex-start', marginTop: 14, marginBottom: 48 }}
-                />
-              </ReferralCTAWrapper>}
-            </Wrapper>
-            }
+            {inSearchMode && !isSearching && !usersFound && this.renderEmptyState({
+              inviteTitle: 'Pillar is social',
+              esTitle: 'Nobody found',
+              esBody: 'Make sure you entered the name correctly',
+            })}
+            {!inSearchMode && !sortedLocalContacts.length && this.renderEmptyState({
+              inviteTitle: 'Invite friends',
+              esTitle: 'Start making friends',
+              esBody: 'Build your connection list by searching for someone',
+            })}
           </View>
           }
         </InnerWrapper>
@@ -588,7 +553,6 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
-  user: { data: user },
   featureFlags: {
     data: { REFERRALS_ENABLED: referralsFeatureEnabled },
   },
@@ -598,7 +562,6 @@ const mapStateToProps = ({
   localContacts,
   invitations,
   chats,
-  user,
   referralsFeatureEnabled,
 });
 
@@ -610,6 +573,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PeopleScreen));
