@@ -26,6 +26,7 @@ import { MediumText, BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 import Button from 'components/Button';
 import { themedColors } from 'utils/themes';
+import { APPS } from 'utils/exploreApps';
 import ExploreAppsInfoCard from './ExploreAppsInfoCard';
 
 interface Props {
@@ -66,17 +67,6 @@ const ButtonWrapper = styled.View`
 const CardWrapper = styled.View`
   margin-bottom: 20px;
 `;
-
-const zerionLogo = require('assets/images/apps/zerion.png');
-
-const APPS: AppItem[] = [
-  {
-    name: 'Zerion',
-    logo: zerionLogo,
-    text: 'A simple interface to access decentralized finance to invest, earn interest and borrow crypto assets.',
-    url: '',
-  },
-];
 
 class ExploreApps extends React.PureComponent<Props> {
     handleCardButton = () => {
