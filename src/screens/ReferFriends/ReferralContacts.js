@@ -233,7 +233,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
     const showConfirmButton = !!(selectedContacts.length || addedContactsToInvite.length);
     const allowedContacts = filterAllowedContacts(phoneContacts, isPhoneVerified, isEmailVerified);
-    const isSearching = query && query.length > MIN_QUERY_LENGTH;
+    const isSearching = query && query.length >= MIN_QUERY_LENGTH;
     const filteredContacts = isSearching ? searchContacts(allowedContacts, query) : allowedContacts;
 
     if (isSearching && isEmpty(filteredContacts)) {
