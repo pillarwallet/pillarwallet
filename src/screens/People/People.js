@@ -27,7 +27,6 @@ import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 
 // actions
 import {
@@ -46,7 +45,7 @@ import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
-import { BaseText, MediumText, Paragraph } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
@@ -77,7 +76,9 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { sortLocalContacts } from 'utils/contacts';
 import { toastReferral } from 'utils/toasts';
 
-const referralImage = require('assets/images/referral_gift.png');
+// partials
+import InviteBanner from './InviteBanner';
+
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -123,33 +124,6 @@ const BadgeIcon = styled(Icon)`
 
 const InnerWrapper = styled.View`
   flex: 1;
-`;
-
-const ReferralCTAWrapper = styled.View`
-  padding: 38px 30px 0 30px;
-  border-radius: 6px;
-  border: 1px solid ${themedColors.border};
-  position: relative;
-  overflow: hidden;
-  align-self: flex-end;
-  width: 100%;
-`;
-
-const ReferralCTATitle = styled(MediumText)`
-  ${fontStyles.large};
-  margin-bottom: 8px;
-`;
-
-const ReferralCTABody = styled(Paragraph)`
-  margin-right: 90px;
-`;
-
-const ReferralCTAImage = styled(CachedImage)`
-  width: 155px;
-  height: 105px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -399,7 +373,7 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
-  handleReferralBannerPress = () => {
+  handleInvitePress = () => {
     const { navigation, user } = this.props;
     const { isEmailVerified, isPhoneVerified } = user;
     if (isEmailVerified || isPhoneVerified) {
@@ -407,6 +381,31 @@ class PeopleScreen extends React.Component<Props, State> {
     } else {
       toastReferral(navigation);
     }
+  };
+
+  renderEmptyState = ({ inviteTitle, esTitle, esBody }) => {
+    const { referralsFeatureEnabled } = this.props;
+
+    return (
+      <Wrapper fullScreen style={{ marginTop: 8, marginBottom: spacing.large }}>
+        {!referralsFeatureEnabled
+          ? (
+            <EmptyStateWrapper>
+              <EmptyStateParagraph
+                title={esTitle}
+                bodyText={esBody}
+              />
+            </EmptyStateWrapper>
+          )
+          : (
+            <InviteBanner
+              title={inviteTitle}
+              onInvitePress={this.handleInvitePress}
+            />
+          )
+        }
+      </Wrapper>
+    );
   };
 
   renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
@@ -418,7 +417,6 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       chats,
       theme,
-      referralsFeatureEnabled,
     } = this.props;
 
     const usersFound = (apiUsers.length + localContacts.length) > 0;
@@ -480,37 +478,16 @@ class PeopleScreen extends React.Component<Props, State> {
           >
             {isSearching && <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>}
 
-            {inSearchMode && !isSearching && !usersFound &&
-            <Wrapper center fullScreen>
-              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-            </Wrapper>
-            }
-
-            {!inSearchMode && !sortedLocalContacts.length &&
-            <Wrapper fullScreen flex={1}>
-              <EmptyStateWrapper>
-                <EmptyStateParagraph
-                  title="Start making friends"
-                  bodyText="Build your connection list by searching for someone"
-                />
-              </EmptyStateWrapper>
-              {!!referralsFeatureEnabled &&
-              <ReferralCTAWrapper>
-                <ReferralCTAImage source={referralImage} />
-                <ReferralCTATitle>Pillar is social</ReferralCTATitle>
-                <ReferralCTABody>
-                  Refer friends and earn rewards, free PLR and more.
-                </ReferralCTABody>
-                <Button
-                  small
-                  height={32}
-                  title="Invite friends"
-                  onPress={this.handleReferralBannerPress}
-                  style={{ alignSelf: 'flex-start', marginTop: 14, marginBottom: 48 }}
-                />
-              </ReferralCTAWrapper>}
-            </Wrapper>
-            }
+            {inSearchMode && !isSearching && !usersFound && this.renderEmptyState({
+              inviteTitle: 'Pillar is social',
+              esTitle: 'Nobody found',
+              esBody: 'Make sure you entered the name correctly',
+            })}
+            {!inSearchMode && !sortedLocalContacts.length && this.renderEmptyState({
+              inviteTitle: 'Invite friends',
+              esTitle: 'Start making friends',
+              esBody: 'Build your connection list by searching for someone',
+            })}
           </View>
           }
         </InnerWrapper>
