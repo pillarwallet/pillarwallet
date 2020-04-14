@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Image } from 'react-native';
+import { Image, Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
@@ -27,7 +27,7 @@ import Button from 'components/Button';
 import { themedColors } from 'utils/themes';
 
 interface Props {
-    item: AppItem
+  item: AppItem
 }
 
 const AppItemWrapper = styled.View`
@@ -57,24 +57,15 @@ const ButtonWrapper = styled.View`
 const ExploreAppsItem = (props: Props) => {
   const { item } = props;
 
-  const handleAppUrl = () => {
-    // open url
-  };
+  const handleAppUrl = () => { Linking.openURL(`https://${item.url}`); };
 
   return (
     <AppItemWrapper >
       <AppItemRowWrapper>
-
         <Image source={item.logo} style={{ height: 48, width: 48, marginRight: 15 }} />
         <AppName>{item.name}</AppName>
         <ButtonWrapper>
-          <Button
-            title="View"
-            onPress={handleAppUrl}
-            small
-            height={32}
-            horizontalPaddings={9}
-          />
+          <Button title="View" onPress={handleAppUrl} small height={32} horizontalPaddings={9} />
         </ButtonWrapper>
       </AppItemRowWrapper>
       <AppText>{item.text}</AppText>
