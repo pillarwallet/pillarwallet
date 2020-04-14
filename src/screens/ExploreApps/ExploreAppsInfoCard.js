@@ -54,7 +54,7 @@ const content = `A curated collection of web3 apps available to use with Pillar.
 
 
 const ExploreAppsInfoCard = (props: Props) => (
-  <ShadowedCard borderRadius={30}>
+  <ShadowedCard borderRadius={30} wrapperStyle={{ marginBottom: 20 }}>
     <Wrapper>
       <Title>{title}</Title>
       <Text>{content}</Text>
