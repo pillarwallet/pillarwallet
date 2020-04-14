@@ -102,6 +102,7 @@ import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
 import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
 import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
+import ExploreAppsScreen from 'screens/ExploreApps';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -248,7 +249,6 @@ import { modalTransition, addAppStateChangeListener, removeAppStateChangeListene
 import { getThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
-import ExploreApps from '../screens/ExploreApps/ExploreApps';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -354,7 +354,7 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
-    [EXPLORE_APPS]: ExploreApps,
+    [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorModalConfig,
 );
