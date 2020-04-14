@@ -37,6 +37,7 @@ const AppItemWrapper = styled.View`
 const AppItemRowWrapper = styled.View`
   flex-direction: row;
   align-items: center;
+  margin-bottom: 4px;
 `;
 
 const AppName = styled(MediumText)`

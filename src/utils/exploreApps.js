@@ -47,8 +47,8 @@ export const APPS: AppItem[] = [
   {
     name: 'Pool Together',
     logo: poolTogetherLogo,
-    text: `No-loss, audited savings game. Deposit Dai into the pool to get tickets.\
-      Each ticket is a chance to win weekly prizes!`,
+    text: `No-loss, audited savings game. Deposit Dai into the pool to get tickets. \
+Each ticket is a chance to win weekly prizes!`,
     url: 'pooltogether.com',
   },
   {
@@ -79,7 +79,7 @@ export const APPS: AppItem[] = [
     name: 'Local Cryptos',
     logo: localCryptosLogo,
     text: `The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with \
-      each other. Buy and sell crypto on your own terms, using any payment method.`,
+each other. Buy and sell crypto on your own terms, using any payment method.`,
     url: 'localcryptos.com',
   },
   {
