@@ -44,7 +44,7 @@ export const setKeychainDataObject = (data: KeyChainData, biometry?: boolean) =>
 export const getKeychainDataObject = (errorHandler?: Function) => Keychain
   .getGenericPassword({
     service: KEYCHAIN_SERVICE,
-    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
+    authenticationPrompt: { title: BIOMETRICS_PROMPT_MESSAGE },
   })
   .then(({ password = '{}' }) => JSON.parse(password))
   .catch(errorHandler || (() => null));

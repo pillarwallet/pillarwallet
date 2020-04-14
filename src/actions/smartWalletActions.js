@@ -774,7 +774,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       if (newAccountState === deployedAccountState && accountState !== deployedAccountState) {
         dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
         Toast.show({
-          message: 'Your Smart wallet has been deployed',
+          message: 'Your Smart Wallet has been deployed',
           type: 'success',
           title: 'Success',
           autoClose: true,

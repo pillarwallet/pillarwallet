@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
@@ -51,7 +51,7 @@ const MainContainer = styled.View`
   padding: 20px ${spacing.layoutSides}px 30px;
 `;
 
-const ItemContainer = styled.TouchableOpacity`
+const ItemContainer = styled.View`
   padding: 20px 0;
   opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
@@ -77,15 +77,17 @@ const Paragraph = styled(BaseText)`
 const Item = ({
   label, onPress, value, chevron, isDisabled, paragraph, children,
 }) => (
-  <ItemContainer onPress={onPress} disabled={isDisabled}>
-    <Row>
-      <MediumText big>{label}</MediumText>
-      {!!value && <BaseText medium secondary>{value}</BaseText>}
-      {chevron && <ChevronIcon name="chevron-right" />}
-    </Row>
-    {!!paragraph && <Paragraph>{paragraph}</Paragraph>}
-    {children}
-  </ItemContainer>
+  <TouchableWithoutFeedback onPress={onPress} disabled={isDisabled}>
+    <ItemContainer disabled={isDisabled}>
+      <Row>
+        <MediumText big>{label}</MediumText>
+        {!!value && <BaseText medium secondary>{value}</BaseText>}
+        {chevron && <ChevronIcon name="chevron-right" />}
+      </Row>
+      {!!paragraph && <Paragraph>{paragraph}</Paragraph>}
+      {children}
+    </ItemContainer>
+  </TouchableWithoutFeedback>
 );
 
 class ActionModal extends React.Component<Props> {

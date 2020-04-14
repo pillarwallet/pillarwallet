@@ -250,7 +250,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           {!!userAccount &&
           <LabeledRow>
             <Label>Recipient</Label>
-            <Value>{getAccountName(userAccount.type, accounts)}</Value>
+            <Value>{getAccountName(userAccount.type)}</Value>
           </LabeledRow>
           }
           <LabeledRow>

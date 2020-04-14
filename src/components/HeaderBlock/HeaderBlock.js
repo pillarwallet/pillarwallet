@@ -40,7 +40,7 @@ type NavItem = {
   [string]: any,
 };
 
-type Props = {
+export type Props = {
   rightItems?: NavItem[],
   leftItems?: NavItem[],
   centerItems?: NavItem[],
