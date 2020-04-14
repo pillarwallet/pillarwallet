@@ -60,6 +60,7 @@ type Props = {
   hasAllowedToAccessContacts: boolean,
   sentInvitationsCount: SentInvitationsCount,
 };
+
 const INSIGHT_ITEMS = [
   {
     title: 'Share your link',
@@ -103,6 +104,7 @@ class ReferFriends extends React.PureComponent<Props> {
       isSendingInvite,
       sentInvitationsCount,
     } = this.props;
+
     const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
     const hasAddedContacts = !!mappedContactsToInvite.length;
     const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - mappedContactsToInvite.length;
