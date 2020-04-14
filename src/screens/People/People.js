@@ -38,6 +38,7 @@ import {
 } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // components
 import Icon from 'components/Icon';
@@ -54,7 +55,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 // constants
-import { CONTACT, CONNECTION_REQUESTS, REFER_FLOW } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import {
   DISCONNECT,
@@ -68,13 +69,11 @@ import {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SearchResults } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
-import type { User } from 'models/User';
 
 // utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { sortLocalContacts } from 'utils/contacts';
-import { toastReferral } from 'utils/toasts';
 
 // partials
 import InviteBanner from './InviteBanner';
@@ -140,7 +139,6 @@ type Props = {
   searchContacts: (query: string) => void,
   searchResults: SearchResults,
   isSearching: boolean,
-  user: Object,
   fetchInviteNotifications: () => void,
   disconnectContact: (contactId: string) => void,
   muteContact: (contactId: string, mute: boolean) => void,
@@ -151,8 +149,8 @@ type Props = {
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
   theme: Theme,
-  user: User,
   referralsFeatureEnabled: boolean,
+  goToInvitationFlow: () => void,
 }
 
 type ConnectionStatusProps = {
@@ -373,18 +371,8 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
-  handleInvitePress = () => {
-    const { navigation, user } = this.props;
-    const { isEmailVerified, isPhoneVerified } = user;
-    if (isEmailVerified || isPhoneVerified) {
-      navigation.navigate(REFER_FLOW);
-    } else {
-      toastReferral(navigation);
-    }
-  };
-
   renderEmptyState = ({ inviteTitle, esTitle, esBody }) => {
-    const { referralsFeatureEnabled } = this.props;
+    const { referralsFeatureEnabled, goToInvitationFlow } = this.props;
 
     return (
       <Wrapper fullScreen style={{ marginTop: 8, marginBottom: spacing.large }}>
@@ -400,7 +388,7 @@ class PeopleScreen extends React.Component<Props, State> {
           : (
             <InviteBanner
               title={inviteTitle}
-              onInvitePress={this.handleInvitePress}
+              onInvitePress={goToInvitationFlow}
             />
           )
         }
@@ -565,7 +553,6 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
-  user: { data: user },
   featureFlags: {
     data: { REFERRALS_ENABLED: referralsFeatureEnabled },
   },
@@ -575,7 +562,6 @@ const mapStateToProps = ({
   localContacts,
   invitations,
   chats,
-  user,
   referralsFeatureEnabled,
 });
 
@@ -587,6 +573,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PeopleScreen));
