@@ -43,7 +43,6 @@ import {
   TimeProps,
   DayProps,
 } from 'react-native-gifted-chat';
-import isEqual from 'lodash.isequal';
 
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -283,8 +282,13 @@ class Chat extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    const { isFetching, draft, isOnline, themeType } = this.props;
+  componentDidUpdate(prevProps: Props) {
+    const {
+      isFetching,
+      draft,
+      isOnline,
+      themeType,
+    } = this.props;
     const { forceRerender } = this.state;
     const { draft: prevDraft } = prevProps;
 
