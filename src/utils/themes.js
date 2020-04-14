@@ -55,6 +55,7 @@ export const lightThemeColors = {
   synthetic: '#2329d6',
   transactionReceivedIcon: '#497391',
   iconBackground: '#ebf0f5',
+  link: '#007aff',
 };
 
 export const darkThemeColors = {
@@ -91,6 +92,7 @@ export const darkThemeColors = {
   synthetic: '#9396ff',
   transactionReceivedIcon: '#00E097',
   iconBackground: '#222c46',
+  link: '#fcfdff',
 };
 
 export const themedColors = {
@@ -226,6 +228,10 @@ export const themedColors = {
     lightTheme: lightThemeColors.iconBackground,
     darkTheme: darkThemeColors.iconBackground,
   }),
+  link: theme('current', {
+    lightTheme: lightThemeColors.link,
+    darkTheme: darkThemeColors.link,
+  }),
 };
 
 export const defaultTheme = {
@@ -253,4 +259,8 @@ export function getThemeColors(currentTheme: Theme = defaultTheme) {
 
 export function getThemeType(currentTheme: Theme = defaultTheme) {
   return currentTheme.current;
+}
+
+export function getThemeName(currentTheme: Theme = defaultTheme) {
+  return currentTheme.current.replace('Theme', '');
 }

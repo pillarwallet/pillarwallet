@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components/native';
 
 import type { BitcoinBalance } from 'models/Bitcoin';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -31,20 +32,55 @@ import type {
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 import BalanceView from 'components/PortfolioBalance/BalanceView';
+import { MediumText } from 'components/Typography';
+import Icon from 'components/Icon';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+
 
 type Props = {
   rates: Rates,
   balances: Balances,
   bitcoinBalances: BitcoinBalance,
   fiatCurrency: string,
-  label?: string,
   style: Object,
   blockchainNetwork: ?string,
+  showBalance: boolean,
+  toggleBalanceVisibility: () => void,
 };
+
+
+const BalanceWrapper = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const BalanceButton = styled.TouchableOpacity`
+  padding: 8px ${spacing.large}px;
+`;
+
+const ContentWrapper = styled.View`
+  flex-direction: row;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ToggleIcon = styled(Icon)`
+  font-size: ${fontSizes.medium}px;
+  color: ${themedColors.accent};
+  margin-left: 6px;
+`;
+
+const BalanceText = styled(MediumText)`
+  ${fontStyles.big};
+`;
+
 
 const networkBalance = (props: Props): number => {
   const {
@@ -69,19 +105,31 @@ class PortfolioBalance extends React.PureComponent<Props> {
   render() {
     const {
       style,
-      label,
       fiatCurrency,
+      showBalance,
+      toggleBalanceVisibility,
     } = this.props;
 
     const balance = networkBalance(this.props);
 
     return (
-      <BalanceView
-        style={style}
-        label={label}
-        fiatCurrency={fiatCurrency}
-        balance={balance}
-      />
+      <BalanceWrapper>
+        <BalanceButton onPress={toggleBalanceVisibility}>
+          <ContentWrapper>
+            {!showBalance
+              ? <BalanceText>View balance</BalanceText>
+              : (
+                <BalanceView
+                  style={style}
+                  fiatCurrency={fiatCurrency}
+                  balance={balance}
+                />)
+            }
+            {showBalance && <ToggleIcon name="hidden" /> // different icon name will be passed when !showBalance
+            }
+          </ContentWrapper>
+        </BalanceButton>
+      </BalanceWrapper>
     );
   }
 }

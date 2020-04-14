@@ -26,7 +26,6 @@ import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled, { withTheme } from 'styled-components/native';
-import { Icon as NIcon } from 'native-base';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -94,8 +93,8 @@ const ConnectionRequestBannerText = styled(BaseText)`
   ${fontStyles.big};
 `;
 
-const ConnectionRequestBannerIcon = styled(NIcon)`
-  font-size: ${fontSizes.big}px;
+const ConnectionRequestBannerIcon = styled(Icon)`
+  font-size: ${fontSizes.small}px;
   color: ${themedColors.secondaryText};
   margin-left: auto;
   margin-right: ${spacing.rhythm}px;
@@ -447,7 +446,7 @@ class PeopleScreen extends React.Component<Props, State> {
             <ConnectionRequestNotificationCircle>
               {pendingConnectionRequests}
             </ConnectionRequestNotificationCircle>
-            <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
+            <ConnectionRequestBannerIcon name="chevron-right" />
           </React.Fragment>
         </ConnectionRequestBanner>
         }
@@ -540,37 +539,42 @@ class PeopleScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{ noBack: true, leftItems: [{ title: 'People' }] }}
         inset={{ bottom: 0 }}
+        tab
       >
-        <ScrollView
-          keyboardShouldPersistTaps="always"
-          contentContainerStyle={{ flexGrow: 1 }}
-          ref={(ref) => { this.scrollViewRef = ref; }}
-          onScroll={() => {
-            if (inSearchMode) {
-              Keyboard.dismiss();
-            }
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => { fetchInviteNotifications(); }}
-            />
+        {onScroll => (
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            contentContainerStyle={{ flexGrow: 1 }}
+            ref={(ref) => { this.scrollViewRef = ref; }}
+            onScroll={(ev) => {
+              if (inSearchMode) {
+                Keyboard.dismiss();
+              }
+              onScroll(ev);
+            }}
+            scrollEventThrottle={16}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => { fetchInviteNotifications(); }}
+              />
           }
-        >
-          {this.renderContent(sortedLocalContacts, inSearchMode)}
-          {contact && <ConnectionConfirmationModal
-            showConfirmationModal={showConfirmationModal}
-            manageContactType={manageContactType}
-            contact={contact}
-            onConfirm={this.confirmManageAction}
-            onModalHide={() => {
+          >
+            {this.renderContent(sortedLocalContacts, inSearchMode)}
+            {contact && <ConnectionConfirmationModal
+              showConfirmationModal={showConfirmationModal}
+              manageContactType={manageContactType}
+              contact={contact}
+              onConfirm={this.confirmManageAction}
+              onModalHide={() => {
               this.setState({
                 showConfirmationModal: false,
                 forceHideRemoval: true,
               });
             }}
-          />}
-        </ScrollView>
+            />}
+          </ScrollView>
+        )}
       </ContainerWithHeader>
     );
   }

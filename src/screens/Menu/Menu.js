@@ -243,6 +243,7 @@ class Menu extends React.Component<Props, State> {
           title={title}
           action={action}
           labelBadge={labelBadge}
+          contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
           customIcon={<View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
         />
       );

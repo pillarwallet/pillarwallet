@@ -143,7 +143,7 @@ export const Paragraph = styled(BaseText)`
 
 export const TextLink = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${themedColors.primary};
+  color: ${themedColors.link};
 `;
 
 export const Label = styled(MediumText)`

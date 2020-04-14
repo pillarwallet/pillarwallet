@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import type { IconProps } from 'components/Icon';
@@ -59,9 +59,9 @@ const Wrapper = styled.View`
   align-items: center;
 `;
 
-const ButtonLabel = styled(MediumText)`
+const ButtonLabel = styled(BaseText)`
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.regular}px;
-  color: ${({ secondary, theme }) => secondary ? theme.colors.secondaryText : theme.colors.primary};
+  color: ${({ secondary, theme }) => secondary ? theme.colors.secondaryText : theme.colors.link};
 `;
 
 const StyledIcon = styled(Icon)`

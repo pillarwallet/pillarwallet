@@ -34,7 +34,7 @@ import type { Offer } from 'models/Offer';
 import { withTheme } from 'styled-components/native';
 import type { RootReducerState } from 'reducers/rootReducer';
 import { spacing } from 'utils/variables';
-import { LIGHT_THEME } from 'constants/appSettingsConstants';
+
 
 type Props = {
   theme: Theme,
@@ -71,7 +71,7 @@ class ServicesScreen extends React.Component<Props> {
       {
         key: 'peerToPeerTrading',
         title: 'Peer-to-peer trading',
-        body: 'Swap tokens directly with others. safe, secure, anonymous',
+        body: 'Swap tokens directly with others. Safe, secure, anonymous',
         disabled: true,
         label: 'soon',
       },
@@ -120,24 +120,26 @@ class ServicesScreen extends React.Component<Props> {
 
   render() {
     const services = this.getServices();
-    const { theme } = this.props;
-    const isLightTheme = theme.current === LIGHT_THEME;
     return (
       <ContainerWithHeader
         headerProps={{
           noBack: true,
           rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
           leftItems: [{ title: 'Services' }],
-          noBottomBorder: isLightTheme,
         }}
         inset={{ bottom: 'never' }}
+        tab
       >
-        <FlatList
-          data={services}
-          keyExtractor={(item) => item.key}
-          renderItem={this.renderServicesItem}
-          contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
-        />
+        {onScroll => (
+          <FlatList
+            data={services}
+            keyExtractor={(item) => item.key}
+            renderItem={this.renderServicesItem}
+            contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+          />
+        )}
       </ContainerWithHeader>
     );
   }

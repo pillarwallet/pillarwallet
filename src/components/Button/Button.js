@@ -32,7 +32,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 
-export type Props = {
+export type ExternalButtonProps = {
   children?: React.Node,
   title: string,
   onPress?: Function,
@@ -44,7 +44,6 @@ export type Props = {
   primaryInverted?: boolean,
   dangerInverted?: boolean,
   positive?: boolean,
-  secondaryLight?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,
@@ -63,13 +62,16 @@ export type Props = {
   style?: Object,
   isLoading?: boolean,
   regularText?: boolean,
-  theme: Theme,
   leftIconName?: string,
   leftIconStyle?: Object,
   rightIconName?: string,
   rightIconStyle?: Object,
   horizontalPaddings?: number,
   card?: boolean,
+};
+
+export type Props = ExternalButtonProps & {
+  theme: Theme,
 };
 
 type State = {
@@ -90,9 +92,6 @@ const themes = {
     borderWidth: '1px',
   },
   dangerInverted: {
-    borderWidth: '1px',
-  },
-  secondary: {
     borderWidth: '1px',
   },
   secondaryTransparent: {
@@ -133,11 +132,11 @@ const themes = {
   positive: {
     borderWidth: 0,
   },
-  secondaryLight: {
+  secondary: {
     borderWidth: 0,
     shadow: false,
   },
-  secondaryLightDisabled: {
+  secondaryDisabled: {
     borderWidth: 0,
     opacity: 0.5,
     shadow: false,
@@ -163,10 +162,6 @@ const themeColors = (theme: Theme) => {
       surface: 'transparent',
       text: colors.negative,
       border: colors.negative,
-    },
-    secondary: {
-      surface: 'transparent',
-      text: colors.primary,
     },
     secondaryTransparent: {
       background: 'transparent',
@@ -219,13 +214,13 @@ const themeColors = (theme: Theme) => {
       text: colors.primary,
       border: colors.card,
     },
-    secondaryLight: {
+    secondary: {
       surface: colors.buttonSecondaryBackground,
-      text: colors.primary,
+      text: isDarkTheme ? colors.text : colors.primary,
     },
-    secondaryLightDisabled: {
+    secondaryDisabled: {
       surface: colors.buttonSecondaryBackground,
-      text: colors.primary,
+      text: isDarkTheme ? colors.text : colors.primary,
     },
   });
 };
@@ -274,7 +269,7 @@ const getButtonPadding = (props) => {
   if (props.square) {
     return '4px';
   }
-  return '22px';
+  return '19px';
 };
 
 const getButtonFontSize = (props) => {
@@ -375,8 +370,8 @@ const getThemeType = (props: Props, isForColors?: boolean) => {
     return 'secondaryTransparentDisabled';
   }
 
-  if (props.secondaryLight && props.disabled) {
-    return 'secondaryLightDisabled';
+  if (props.secondary && props.disabled) {
+    return 'secondaryDisabled';
   }
 
   const propsKeys = Object.keys(props);

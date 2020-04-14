@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import capitalize from 'lodash.capitalize';
+import { SafeAreaView } from 'react-navigation';
 
 // constants
 import {
@@ -29,18 +30,52 @@ import {
   STATUS_BLOCKED,
   STATUS_MUTED,
 } from 'constants/connectionsConstants';
+import styled from 'styled-components/native';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { Paragraph } from 'components/Typography';
+import Icon from 'components/Icon';
+import ProfileImage from 'components/ProfileImage';
+import ButtonText from 'components/ButtonText';
+import { fontSizes, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
+
+// types
+import type { ApiUser } from 'models/Contacts';
+
+
+type Props = {
+  onModalHide: () => void,
+  onConfirm: (status: ?string) => void,
+  showConfirmationModal: boolean,
+  manageContactType: string,
+  contact: ApiUser,
+};
+
+
+const ContentWrapper = styled(SafeAreaView)`
+  width: 100%;
+  padding-bottom: 40px;
+  align-items: center;
+`;
+
+const HeaderIcon = styled(Icon)`
+  font-size: ${fontSizes.medium}px;
+  margin-right: 7px;
+  color: ${({ notice }) => notice ? themedColors.notice : themedColors.primary};
+`;
+
+const StyledProfileImage = styled(ProfileImage)`
+  margin-top: 4px;
+`;
+
 
 /* eslint max-len:0 */
 const subtitleDescription = {
-  block: 'You will no longer be able to find this user, chat, and make any transactions.\n' +
-"Your chat history will be erased on your device. No notifications on this user's actions will be received.\n" +
-'This user will not be able to see any of your activity. \nYou can unblock the user from your blocked list.',
-  disconnect: 'After disconnecting you will no longer be able to chat and send assets. You can re-establish connection later.',
+  block: 'If you block the user, you will not longer be able to receive notifications for chat or transactions. You can unblock later.',
+  disconnect: 'If you disconnect the user, you will not longer be able to receive notifications for chat or transactions. You can connect later.',
   mute: 'If you mute the user, you will not longer be able to receive notifications for chat or transactions. You can unmute later.',
   unmute: 'If you unmute the user, you will be able to receive notifications for chat and transactions.',
   unblock: 'If you unblock the user, your connection will return all functionality to normal.',
@@ -49,16 +84,22 @@ const subtitleDescription = {
 const titleConfirmation = (manageContactType: string, username: string) => {
   const contactType = manageContactType;
   const usernameToConfirm = username;
-  return `${capitalize(contactType)} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}`;
+  return `${capitalize(contactType)}${contactType === DISCONNECT ? ' from ' : ' '}${usernameToConfirm}`;
 };
 
-type Props = {
-  onModalHide: Function,
-  onConfirm: Function,
-  showConfirmationModal: boolean,
-  manageContactType: string,
-  contact: Object,
+const getIconName = (contactType) => {
+  switch (contactType) {
+    case MUTE:
+      return 'mute';
+    case DISCONNECT:
+      return 'remove';
+    case BLOCK:
+      return 'warning';
+    default:
+      return null;
+  }
 };
+
 
 const ConnectionConfirmationModal = (props: Props) => {
   const {
@@ -69,7 +110,12 @@ const ConnectionConfirmationModal = (props: Props) => {
     contact,
   } = props;
 
-  const { username, status } = contact;
+  const {
+    username,
+    status,
+    profileImage,
+    lastUpdateTime,
+  } = contact;
   let contactType = manageContactType;
   if ((contactType === MUTE || contactType === '') && status === STATUS_MUTED) {
     contactType = 'unmute';
@@ -79,32 +125,50 @@ const ConnectionConfirmationModal = (props: Props) => {
   const subtitle = contactType !== '' ?
     subtitleDescription[contactType] : '';
 
+  const iconName = getIconName(contactType);
+  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+
   return (
     <SlideModal
       isVisible={showConfirmationModal}
       onModalHide={onModalHide}
-      title={titleConfirmation(contactType, username)}
       noClose
+      headerProps={{
+        centerItems: [
+          { custom: !!iconName && <HeaderIcon name={iconName} notice={contactType === BLOCK} /> },
+          { title: titleConfirmation(contactType, username) },
+        ],
+        sideFlex: '0',
+        wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
+      }}
     >
-      <Paragraph small light style={{ marginTop: 7, marginBottom: 22 }}>
-        {subtitle}
-      </Paragraph>
-      <Button
-        dangerInverted
-        title={`Confirm ${contactType}`}
-        onPress={() => { onConfirm(status); }}
-        style={{
-          marginBottom: 13,
-        }}
-      />
-      <Button
-        primaryInverted
-        title="Cancel"
-        onPress={onModalHide}
-        style={{
-          marginBottom: 58,
-        }}
-      />
+      <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
+        <StyledProfileImage
+          uri={userImageUri}
+          userName={username}
+          diameter={64}
+          borderWidth={0}
+          noShadow
+        />
+        <Paragraph small style={{ marginTop: 20, marginBottom: 34 }}>
+          {subtitle}
+        </Paragraph>
+        <Button
+          secondary
+          title={`Confirm ${contactType}`}
+          onPress={() => { onConfirm(status); }}
+          regularText
+          style={{ marginBottom: 13 }}
+          textStyle={{ fontSize: fontSizes.medium }}
+          block
+        />
+        <ButtonText
+          buttonText="Cancel"
+          onPress={onModalHide}
+          fontSize={fontSizes.medium}
+          wrapperStyle={{ marginTop: spacing.medium }}
+        />
+      </ContentWrapper>
     </SlideModal>
   );
 };

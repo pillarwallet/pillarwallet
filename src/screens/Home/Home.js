@@ -2,24 +2,21 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 import * as React from 'react';
-import { RefreshControl, View, ScrollView, FlatList, Dimensions } from 'react-native';
+import { RefreshControl, View, FlatList, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -33,7 +30,6 @@ import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
@@ -42,7 +38,6 @@ import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalRew
 import Loader from 'components/Loader';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   BADGE,
   REFER_FLOW,
@@ -53,6 +48,7 @@ import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import {
@@ -93,7 +89,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 
 // partials
-import ActionButtons from './ActionButtons';
+import WalletsPart from './WalletsPart';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -171,7 +167,6 @@ const LoaderWrapper = styled.View`
   background-color: ${themedColors.surface};
   z-index: 99999;
 `;
-
 
 const referralImage = require('assets/images/referral_gift.png');
 
@@ -294,7 +289,7 @@ class HomeScreen extends React.Component<Props, State> {
           style: {
             width: 96,
             height: 60,
-            marginLeft: 4,
+            marginRight: -4,
           },
           source: referralImage,
         }}
@@ -308,6 +303,10 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ showRewardModal: false }, () => {
       if (callback) callback();
     });
+  };
+
+  handleWalletChange = (loaderMessage: string) => {
+    this.setState({ loaderMessage });
   };
 
   render() {
@@ -327,7 +326,6 @@ class HomeScreen extends React.Component<Props, State> {
       userEvents,
       badgesEvents,
       theme,
-      baseFiatCurrency,
       activeBlockchainNetwork,
       referralsFeatureEnabled,
     } = this.props;
@@ -337,21 +335,26 @@ class HomeScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = activeBlockchainNetwork === 'BITCOIN' ? history : mapTransactionsHistory(
-      tokenTxHistory,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      TRANSACTION_EVENT,
-    );
+    const transactionsOnMainnet = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? history
+      : mapTransactionsHistory(
+        tokenTxHistory,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        TRANSACTION_EVENT,
+      );
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(
-      collectiblesTransactions,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      COLLECTIBLE_TRANSACTION,
-    );
+
+    const mappedCTransactions = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? []
+      : mapTransactionsHistory(
+        collectiblesTransactions,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        COLLECTIBLE_TRANSACTION,
+      );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 
@@ -402,12 +405,10 @@ class HomeScreen extends React.Component<Props, State> {
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
     const colors = getThemeColors(theme);
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
       <React.Fragment>
         <ContainerWithHeader
-          backgroundColor={colors.card} // so tabs would have white background only when not sticky
           headerProps={{
             leftItems: [
               {
@@ -417,6 +418,12 @@ class HomeScreen extends React.Component<Props, State> {
                     onPress={() => navigation.navigate(MENU)}
                     fontSize={fontSizes.large}
                     secondary
+                    style={{
+                      width: 40,
+                      height: 40,
+                      marginLeft: -10,
+                      marginTop: -6,
+                    }}
                   />
                 ),
               },
@@ -443,44 +450,9 @@ class HomeScreen extends React.Component<Props, State> {
             sideFlex: 4,
           }}
           inset={{ bottom: 0 }}
+          tab
         >
-          <ScrollView
-            style={{ width: '100%', flex: 1 }}
-            stickyHeaderIndices={referralsFeatureEnabled ? [4] : [3]}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={this.refreshScreenData}
-              />}
-          >
-            <PortfolioBalance fiatCurrency={fiatCurrency} />
-            <ActionButtons toggleLoading={(_loaderMessage) => this.setState({ loaderMessage: _loaderMessage })} />
-            <BadgesWrapper>
-              <ListHeader>Game of badges</ListHeader>
-              <FlatList
-                data={badges}
-                horizontal
-                keyExtractor={(item) => (item.id.toString())}
-                renderItem={this.renderBadge}
-                style={{ width: '100%', paddingBottom: spacing.medium }}
-                contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
-                initialNumToRender={5}
-                ListEmptyComponent={(
-                  <EmptyStateWrapper>
-                    <EmptyStateParagraph
-                      title="No badges"
-                      bodyText="You do not have badges yet"
-                    />
-                  </EmptyStateWrapper>
-                )}
-              />
-            </BadgesWrapper>
-            {!!referralsFeatureEnabled && this.renderReferral(colors)}
-            <Tabs
-              tabs={activityFeedTabs}
-              wrapperStyle={{ paddingTop: 16 }}
-              activeTab={activeTab}
-            />
+          {onScroll => (
             <ActivityFeed
               onCancelInvitation={cancelInvitation}
               onRejectInvitation={rejectInvitation}
@@ -492,16 +464,59 @@ class HomeScreen extends React.Component<Props, State> {
               initialNumToRender={8}
               wrapperStyle={{ flexGrow: 1 }}
               contentContainerStyle={{ flexGrow: 1 }}
+              headerComponent={(
+                <React.Fragment>
+                  <WalletsPart handleWalletChange={this.handleWalletChange} isChanging={!!loaderMessage} />
+                  <BadgesWrapper>
+                    <ListHeader>Game of badges</ListHeader>
+                    <FlatList
+                      data={badges}
+                      horizontal
+                      keyExtractor={(item) => (item.id.toString())}
+                      renderItem={this.renderBadge}
+                      style={{ width: '100%', paddingBottom: spacing.medium }}
+                      contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
+                      initialNumToRender={5}
+                      ListEmptyComponent={(
+                        <EmptyStateWrapper>
+                          <EmptyStateParagraph
+                            title="No badges"
+                            bodyText="You do not have badges yet"
+                          />
+                        </EmptyStateWrapper>
+                    )}
+                    />
+                  </BadgesWrapper>
+                  {!!referralsFeatureEnabled && this.renderReferral(colors)}
+                </React.Fragment>
+              )}
+              tabsComponent={(
+                <Tabs
+                  tabs={activityFeedTabs}
+                  wrapperStyle={{ paddingTop: 16 }}
+                  activeTab={activeTab}
+                />
+              )}
+              flatListProps={{
+                refreshControl: (
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={this.refreshScreenData}
+                  />
+                ),
+                onScroll,
+                scrollEventThrottle: 16,
+              }}
             />
-          </ScrollView>
-          <ReferralModalReward
-            isVisible={showRewardModal}
-            onModalHide={this.handleModalHide}
-          />
+          )}
         </ContainerWithHeader>
         {!!loaderMessage &&
-        <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
+          <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
         }
+        <ReferralModalReward
+          isVisible={showRewardModal}
+          onModalHide={this.handleModalHide}
+        />
       </React.Fragment>
     );
   }
