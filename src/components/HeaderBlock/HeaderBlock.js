@@ -368,8 +368,8 @@ class HeaderBlock extends React.Component<Props> {
     let backgroundColor;
     let borderColor;
 
-    if (noBottomBorder) {
-      backgroundColor = theme.colors.card;
+    if (noBottomBorder || floating) {
+      backgroundColor = floating ? 'transparent' : updatedTheme.colors.card;
       borderColor = 'transparent';
     } else {
       backgroundColor = bottomBorderAnimationValue.interpolate({
