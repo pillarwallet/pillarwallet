@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -30,7 +31,12 @@ import { addressesEqual } from 'utils/assets';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { fontSizes, spacing } from 'utils/variables';
-import { findAccountByAddress, checkIfSmartWalletAccount, checkIfKeyBasedAccount } from 'utils/accounts';
+import {
+  findAccountByAddress,
+  checkIfSmartWalletAccount,
+  checkIfKeyBasedAccount,
+  getAccountName,
+} from 'utils/accounts';
 import isEqual from 'lodash.isequal';
 
 // components
@@ -61,11 +67,11 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // selectors
 import {
@@ -134,7 +140,7 @@ const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 const NAMES = {
-  SMART_WALLET: 'Smart wallet',
+  SMART_WALLET: 'Smart Wallet',
   KEY_WALLET: 'Key wallet',
   PPN_NETWORK: 'Pillar Network',
 };
@@ -251,7 +257,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemImageSource: keyWalletIcon,
           actionLabel: STATUSES.CREATED,
         };
-      case 'Smart wallet created':
+      case 'Smart Wallet created':
         return {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
@@ -396,15 +402,17 @@ export class ActivityFeedItem extends React.Component<Props> {
             || ensRegistry[address]
             || elipsizeAddress(address);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        let subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        let subtext = getAccountName(event.accountType);
+        const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
+        const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
         if (isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
-          subtext = 'to Key Wallet';
+          subtext = `to ${keyWallet}`;
         } else if (isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
-          subtext = 'to Smart Wallet';
+          subtext = `to ${smartWallet}`;
         } else if (!isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
-          subtext = 'from Smart Wallet';
+          subtext = `from ${smartWallet}`;
         } else if (!isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
-          subtext = 'from Key Wallet';
+          subtext = `from ${keyWallet}`;
         }
 
         if (isPPNTransaction) {

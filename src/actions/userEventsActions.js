@@ -46,7 +46,7 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
         eventTitle = 'Wallet created';
         break;
       case ACCOUNT_TYPES.SMART_WALLET:
-        eventTitle = 'Smart wallet created';
+        eventTitle = 'Smart Wallet created';
         break;
       case WALLET_IMPORT_EVENT:
         eventTitle = 'Wallet imported';

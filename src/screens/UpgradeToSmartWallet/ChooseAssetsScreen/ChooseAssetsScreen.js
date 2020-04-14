@@ -300,7 +300,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       // mock
       navigation.goBack(null);
       Toast.show({
-        message: 'Your Smart wallet has been funded',
+        message: 'Your Smart Wallet has been funded',
         type: 'success',
         title: 'Success',
         autoClose: true,

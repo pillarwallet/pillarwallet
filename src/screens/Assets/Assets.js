@@ -166,7 +166,6 @@ class AssetsScreen extends React.Component<Props, State> {
       activeAccount,
       availableStake,
       PPNTransactions,
-      accounts,
       theme,
     } = this.props;
     const colors = getThemeColors(theme);
@@ -178,7 +177,7 @@ class AssetsScreen extends React.Component<Props, State> {
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: getAccountName(walletType, accounts),
+          label: getAccountName(walletType),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderButtonProps: {

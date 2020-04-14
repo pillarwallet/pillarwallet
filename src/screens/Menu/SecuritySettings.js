@@ -170,7 +170,7 @@ class SecuritySettings extends React.Component<Props, State> {
             sectionItems={this.getGlobalSettings()}
           />
           <SettingsSection
-            sectionTitle="Smart wallet"
+            sectionTitle="Smart Wallet"
             sectionItems={this.getSmartWalletSettings()}
           />
         </ScrollWrapper>
