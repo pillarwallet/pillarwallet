@@ -26,9 +26,9 @@ import type { AppItem } from 'utils/exploreApps';
 import Button from 'components/Button';
 import { themedColors } from 'utils/themes';
 
-interface Props {
-  item: AppItem
-}
+type Props = {
+  item: AppItem,
+};
 
 const AppItemWrapper = styled.View`
   padding: 20px 0px;
