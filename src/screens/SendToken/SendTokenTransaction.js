@@ -183,7 +183,7 @@ class SendTokenTransaction extends React.Component<Props> {
     const transactionStatusTitle = isSuccess
       ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
       : 'Transaction failed';
-    const titleStyle = { ...fontStyles.large, marginTop: 16 };
+    const titleStyle = { ...fontStyles.large, marginTop: 16, marginBottom: 7 };
     const textStyle = { ...fontStyles.regular, marginBottom: 75 };
     return (
       <Container>
