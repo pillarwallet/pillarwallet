@@ -20,6 +20,7 @@
 import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled, { withTheme } from 'styled-components/native';
+import isEmpty from 'lodash.isempty';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
@@ -220,7 +221,7 @@ class SlideModal extends React.Component<Props, *> {
     const colors = getThemeColors(theme);
     const backgroundColor = bgColor || colors.surface;
 
-    const showModalHeader = ((!fullScreen || showHeader) && !hideHeader) || !!Object.keys(headerProps).length;
+    const showModalHeader = ((!fullScreen || showHeader) && !hideHeader) || !isEmpty(headerProps);
     let leftItems = [];
     const centerItems = centerTitle ? [{ title }] : [];
     const rightItems = [{
