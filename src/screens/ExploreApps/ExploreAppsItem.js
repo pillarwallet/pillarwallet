@@ -22,16 +22,9 @@ import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
+import type { AppItem } from 'utils/exploreApps';
 import Button from 'components/Button';
 import { themedColors } from 'utils/themes';
-
-
-export type AppItem = {
-  name: string,
-  logo: number,
-  text: string,
-  url: string,
-}
 
 interface Props {
     item: AppItem
@@ -65,7 +58,7 @@ const ExploreAppsItem = (props: Props) => {
   const { item } = props;
 
   const handleAppUrl = () => {
-    // const { url } = item;
+    // open url
   };
 
   return (
@@ -77,7 +70,7 @@ const ExploreAppsItem = (props: Props) => {
         <ButtonWrapper>
           <Button
             title="View"
-            onPress={() => handleAppUrl(item.url)}
+            onPress={handleAppUrl}
             small
             height={32}
             horizontalPaddings={9}

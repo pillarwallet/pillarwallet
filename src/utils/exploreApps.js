@@ -19,6 +19,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type AppItem = {
+  name: string,
+  logo: number,
+  text: string,
+  url: string,
+}
+
 const zerionLogo = require('assets/images/apps/zerion.png');
 const poolTogetherLogo = require('assets/images/apps/pool_together.png');
 const mooniLogo = require('assets/images/apps/mooni.png');

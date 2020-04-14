@@ -20,33 +20,39 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { type NavigationScreenProp, withNavigation } from 'react-navigation';
+import { connect } from 'react-redux';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { APPS } from 'utils/exploreApps';
+import { APPS, type AppItem } from 'utils/exploreApps';
+import { dismissConnectAppsIntroAction } from 'actions/appSettingsActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import ExploreAppsInfoCard from './ExploreAppsInfoCard';
-import ExploreAppsItem, { type AppItem } from './ExploreAppsItem';
+import ExploreAppsItem from './ExploreAppsItem';
 
 interface Props {
-  navigation: NavigationScreenProp<*>
+  navigation: NavigationScreenProp<*>,
+  dismissConnectAppsIntro: () => void,
+  hasDismissedConnectAppsIntro: boolean,
 }
 
 class ExploreApps extends React.PureComponent<Props> {
-    handleCardButton = () => {
-      //
-    }
+    handleCardButton = () => { this.props.dismissConnectAppsIntro(); }
 
     renderItem = ({ item }: { item: AppItem }) => <ExploreAppsItem item={item} />
+
+    renderListHeader = () => {
+      if (this.props.hasDismissedConnectAppsIntro) return null;
+      return <ExploreAppsInfoCard onButtonPress={this.handleCardButton} />;
+    }
 
     render() {
       return (
         <ContainerWithHeader
           navigation={this.props.navigation}
-          headerProps={{
-            centerItems: [{ title: 'Explore apps' }],
-          }}
+          headerProps={{ centerItems: [{ title: 'Explore apps' }] }}
         >
           <FlatList
             contentContainerStyle={{ padding: 20 }}
-            ListHeaderComponent={<ExploreAppsInfoCard onButtonPress={this.handleCardButton} />}
+            ListHeaderComponent={this.renderListHeader()}
             data={APPS}
             renderItem={this.renderItem}
             showsHorizontalScrollIndicator={false}
@@ -57,5 +63,14 @@ class ExploreApps extends React.PureComponent<Props> {
     }
 }
 
+const mapStateToProps = ({
+  appSettings: { data: { hasDismissedConnectAppsIntro = false } },
+}: RootReducerState): $Shape<Props> => ({
+  hasDismissedConnectAppsIntro,
+});
 
-export default withNavigation(ExploreApps);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  dismissConnectAppsIntro: () => dispatch(dismissConnectAppsIntroAction()),
+});
+
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(ExploreApps));
