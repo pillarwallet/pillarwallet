@@ -28,11 +28,11 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import ExploreAppsInfoCard from './ExploreAppsInfoCard';
 import ExploreAppsItem from './ExploreAppsItem';
 
-interface Props {
+type Props = {
   navigation: NavigationScreenProp<*>,
   dismissConnectAppsIntro: () => void,
   hasDismissedConnectAppsIntro: boolean,
-}
+};
 
 class ExploreApps extends React.PureComponent<Props> {
   handleCardButton = () => { this.props.dismissConnectAppsIntro(); }
