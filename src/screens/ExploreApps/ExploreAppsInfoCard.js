@@ -24,9 +24,9 @@ import { MediumText, BaseText } from 'components/Typography';
 import ShadowedCard from 'components/ShadowedCard';
 import Button from 'components/Button';
 
-interface Props {
-  onButtonPress: () => void
-}
+type Props = {
+  onButtonPress: () => void,
+};
 
 const Wrapper = styled.View`
   padding: 22px 30px 30px;
