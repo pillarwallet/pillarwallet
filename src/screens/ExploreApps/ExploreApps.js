@@ -35,32 +35,32 @@ interface Props {
 }
 
 class ExploreApps extends React.PureComponent<Props> {
-    handleCardButton = () => { this.props.dismissConnectAppsIntro(); }
+  handleCardButton = () => { this.props.dismissConnectAppsIntro(); }
 
-    renderItem = ({ item }: { item: AppItem }) => <ExploreAppsItem item={item} />
+  renderItem = ({ item }: { item: AppItem }) => <ExploreAppsItem item={item} />
 
-    renderListHeader = () => {
-      if (this.props.hasDismissedConnectAppsIntro) return null;
-      return <ExploreAppsInfoCard onButtonPress={this.handleCardButton} />;
-    }
+  renderListHeader = () => {
+    if (this.props.hasDismissedConnectAppsIntro) return null;
+    return <ExploreAppsInfoCard onButtonPress={this.handleCardButton} />;
+  }
 
-    render() {
-      return (
-        <ContainerWithHeader
-          navigation={this.props.navigation}
-          headerProps={{ centerItems: [{ title: 'Explore apps' }] }}
-        >
-          <FlatList
-            contentContainerStyle={{ padding: 20 }}
-            ListHeaderComponent={this.renderListHeader()}
-            data={APPS}
-            renderItem={this.renderItem}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={item => item.name}
-          />
-        </ContainerWithHeader>
-      );
-    }
+  render() {
+    return (
+      <ContainerWithHeader
+        navigation={this.props.navigation}
+        headerProps={{ centerItems: [{ title: 'Explore apps' }] }}
+      >
+        <FlatList
+          contentContainerStyle={{ padding: 20 }}
+          ListHeaderComponent={this.renderListHeader()}
+          data={APPS}
+          renderItem={this.renderItem}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={item => item.name}
+        />
+      </ContainerWithHeader>
+    );
+  }
 }
 
 const mapStateToProps = ({
