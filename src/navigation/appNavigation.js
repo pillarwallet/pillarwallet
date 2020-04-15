@@ -343,6 +343,7 @@ const peopleFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
   [REFER_FLOW]: referFlow,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;

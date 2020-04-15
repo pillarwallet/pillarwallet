@@ -28,7 +28,7 @@ import {
   SET_REFERRALS_STATE,
   ALLOW_ACCESS_PHONE_CONTACTS,
   RECEIVED_REFERRAL_TOKEN,
-  DELETE_REFERRAL_TOKEN,
+  CLAIM_REWARD,
 } from 'constants/referralsConstants';
 
 export type SentInvitationsCount = {
@@ -95,8 +95,8 @@ export type ReferralsTokenReceived = {|
   payload: string,
 |};
 
-type ReferralsDeleteToken = {|
-  type: 'DELETE_REFERRAL_TOKEN',
+type ReferralsClaimReward = {|
+  type: 'CLAIM_REWARD',
 |};
 
 export type ReferralsReducerAction =
@@ -108,7 +108,7 @@ export type ReferralsReducerAction =
   | ReferralsInviteAlreadySentAction
   | ReferralsStateAction
   | ReferralsTokenReceived
-  | ReferralsDeleteToken
+  | ReferralsClaimReward
   | ReferralsAllowPhoneContactsAccess;
 
 export type ReferralsReducerState = {
@@ -118,6 +118,7 @@ export type ReferralsReducerState = {
   hasAllowedToAccessContacts: boolean,
   sentInvitationsCount: SentInvitationsCount,
   referralToken: ?string,
+  isRewardClaimed: boolean,
 };
 
 export const initialState: ReferralsReducerState = {
@@ -130,6 +131,7 @@ export const initialState: ReferralsReducerState = {
     date: '',
   },
   referralToken: null,
+  isRewardClaimed: false,
 };
 
 
@@ -224,8 +226,8 @@ export default function referralsReducer(
     case RECEIVED_REFERRAL_TOKEN:
       return { ...state, referralToken: action.payload };
 
-    case DELETE_REFERRAL_TOKEN:
-      return { ...state, referralToken: null };
+    case CLAIM_REWARD:
+      return { ...state, isRewardClaimed: true };
 
     default:
       return state;

@@ -38,12 +38,7 @@ import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalRew
 import Loader from 'components/Loader';
 
 // constants
-import {
-  BADGE,
-  REFER_FLOW,
-  MENU,
-  MANAGE_USERS_FLOW,
-} from 'constants/navigationConstants';
+import { BADGE, MENU, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -65,6 +60,7 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -76,7 +72,6 @@ import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
-import { toastReferral } from 'utils/toasts';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -123,6 +118,7 @@ type Props = {
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
   referralsFeatureEnabled: boolean,
+  goToInvitationFlow: () => void,
 };
 
 type State = {
@@ -267,23 +263,14 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  handleReferralBannerPress = () => {
-    const { navigation, user } = this.props;
-    const { isEmailVerified, isPhoneVerified } = user;
-    if (isEmailVerified || isPhoneVerified) {
-      navigation.navigate(REFER_FLOW);
-    } else {
-      toastReferral(navigation);
-    }
-  };
-
   renderReferral = (colors) => {
     const { isReferralBannerVisible } = this.state;
+    const { goToInvitationFlow } = this.props;
 
     return (
       <Banner
         isVisible={isReferralBannerVisible}
-        onPress={this.handleReferralBannerPress}
+        onPress={goToInvitationFlow}
         bannerText="Refer friends and earn rewards, free PLR and more."
         imageProps={{
           style: {
@@ -573,6 +560,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

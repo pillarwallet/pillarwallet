@@ -19,9 +19,8 @@
 */
 import { NavigationActions } from 'react-navigation';
 import Toast from 'components/Toast';
-import { ADD_EDIT_USER, RECOVERY_SETTINGS } from 'constants/navigationConstants';
+import { RECOVERY_SETTINGS } from 'constants/navigationConstants';
 import { navigate } from 'services/navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 
 const BACKUP_MESSAGE =
   'Go to wallet settings on the assets screen and complete the wallet backup. ' +
@@ -43,15 +42,5 @@ export const toastWalletBackup = (isWalletBackedUp: boolean) => {
       });
       navigate(action);
     },
-  });
-};
-
-export const toastReferral = (navigation: NavigationScreenProp<*>) => {
-  Toast.show({
-    message: 'Please add and verify your email address or phone number to proceed',
-    type: 'warning',
-    title: 'Phone or Email verification needed',
-    autoClose: false,
-    onPress: () => navigation.navigate(ADD_EDIT_USER),
   });
 };

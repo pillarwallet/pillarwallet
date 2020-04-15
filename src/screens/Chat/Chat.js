@@ -96,6 +96,7 @@ type Props = {
   logEvent: Function,
   isOnline: boolean,
   theme: Theme,
+  themeType: string,
 }
 
 type State = {
@@ -104,6 +105,7 @@ type State = {
   isFetching: boolean,
   chatText: string,
   firstChatLoaded: boolean,
+  forceRerender: boolean,
 }
 
 const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
@@ -263,6 +265,7 @@ class Chat extends React.Component<Props, State> {
       isFetching: true,
       chatText: '',
       firstChatLoaded: true, // check this issue https://github.com/FaridSafi/react-native-gifted-chat/issues/638
+      forceRerender: false,
     };
     this.composer = React.createRef();
   }
@@ -280,7 +283,13 @@ class Chat extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetching, draft, isOnline } = this.props;
+    const {
+      isFetching,
+      draft,
+      isOnline,
+      themeType,
+    } = this.props;
+    const { forceRerender } = this.state;
     const { draft: prevDraft } = prevProps;
 
     if (this.state.isFetching && !isFetching) {
@@ -293,6 +302,14 @@ class Chat extends React.Component<Props, State> {
 
     if (prevProps.isOnline !== isOnline && isOnline) {
       this.updateChat();
+    }
+
+    if (prevProps.themeType !== themeType && !forceRerender) {
+      this.manageRerender(true);
+    }
+
+    if (forceRerender) {
+      this.manageRerender(false);
     }
   }
 
@@ -311,6 +328,10 @@ class Chat extends React.Component<Props, State> {
     }
     clearChatDraftState();
   }
+
+  manageRerender = (shouldRerender: boolean) => {
+    this.setState({ forceRerender: shouldRerender });
+  };
 
   updateChat = () => {
     const { getChatByContact } = this.props;
@@ -416,11 +437,13 @@ class Chat extends React.Component<Props, State> {
 
   renderBubble = (props: BubbleProps, colors: ThemeColors) => {
     const isWarning = isWarningMessage(props.currentMessage.type);
+    const leftTextColor = isWarning ? colors.control : colors.text;
+    const leftBubbleColor = isWarning ? colors.primary : colors.tertiary;
     return (<Bubble
       {...props}
       textStyle={{
         left: {
-          color: isWarning ? colors.control : colors.text,
+          color: leftTextColor,
           fontSize: fontSizes.regular,
           lineHeight: lineHeights.regular,
           fontFamily: appFont.regular,
@@ -434,10 +457,10 @@ class Chat extends React.Component<Props, State> {
       }}
       wrapperStyle={{
         left: {
-          backgroundColor: isWarning ? colors.primary : colors.tertiary,
+          backgroundColor: leftBubbleColor,
           borderRadius: 5,
           borderWidth: 1,
-          borderColor: isWarning ? colors.primary : colors.tertiary,
+          borderColor: leftBubbleColor,
           maxWidth: 262,
           marginTop: 4,
           paddingHorizontal: 2,
@@ -551,9 +574,11 @@ class Chat extends React.Component<Props, State> {
       showLoadEarlierButton,
       chatText,
       isFetching,
+      forceRerender,
     } = this.state;
     const { profileImage, username } = contact;
 
+    const renderChat = !isFetching && !forceRerender;
     const colors = getThemeColors(theme);
     const title = getUserName(contact);
 
@@ -596,16 +621,17 @@ class Chat extends React.Component<Props, State> {
         customOnBack={this.handleChatDismissal}
       >
         <Wrapper fullScreen flex={1}>
-          {!!isFetching &&
+          {!renderChat &&
             <View style={{ flex: 1, paddingTop: spacing.rhythm, alignItems: 'center' }}>
               <Spinner />
             </View>
           }
-          {!isFetching &&
+          {renderChat &&
             <GiftedChat
               text={chatText}
               onInputTextChanged={this.updateChatInput}
               messages={messagesToShow}
+              extraData={{ themeType: theme.current }}
               onSend={msgs => this.onSend(msgs)}
               user={{ _id: this.props.user.username }}
               renderBubble={(props) => this.renderBubble(props, colors)}
@@ -640,6 +666,7 @@ const mapStateToProps = ({
   chat: { data: { messages, isFetching, chats }, draft },
   contacts: { data: contacts },
   session: { data: { isOnline } },
+  appSettings: { data: { themeType } },
 }: RootReducerState): $Shape<Props> => ({
   user,
   messages,
@@ -648,6 +675,7 @@ const mapStateToProps = ({
   contacts,
   draft,
   isOnline,
+  themeType,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
