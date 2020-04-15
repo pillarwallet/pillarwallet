@@ -253,7 +253,7 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  renderReferral = (colors) => {
+  renderReferral = () => {
     const { isReferralBannerVisible } = this.state;
     const { goToInvitationFlow } = this.props;
 
@@ -270,7 +270,6 @@ class HomeScreen extends React.Component<Props, State> {
           },
           source: referralImage,
         }}
-        wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         onClose={() => this.setState({ isReferralBannerVisible: false })}
       />
     );
@@ -449,7 +448,7 @@ class HomeScreen extends React.Component<Props, State> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} isChanging={!!loaderMessage} />
-                  {!!referralsFeatureEnabled && this.renderReferral(colors)}
+                  {!!referralsFeatureEnabled && this.renderReferral()}
                   <CollapsibleSection
                     label="Game of badges"
                     collapseContent={

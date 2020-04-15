@@ -43,6 +43,7 @@ import { toggleBalanceAction } from 'actions/appSettingsActions';
 
 // utils
 import { getAccountName, getActiveAccountType } from 'utils/accounts';
+import { themedColors } from 'utils/themes';
 
 // models, types
 import type { Account } from 'models/Account';
@@ -80,6 +81,8 @@ type State = {
 const Wrapper = styled.View`
   width: 100%;
   padding-top: 40px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${themedColors.border};
 `;
 
 class WalletsPart extends React.Component<Props, State> {
