@@ -89,7 +89,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.focusSubscription.remove();
+    if (this.focusSubscription) this.focusSubscription.remove();
   }
 
   getStatusBarColor = (themeType) => {
