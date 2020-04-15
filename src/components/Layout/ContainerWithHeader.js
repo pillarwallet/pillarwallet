@@ -27,8 +27,10 @@ import isEqual from 'lodash.isequal';
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { isIphoneX } from 'utils/common';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
+
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import { ScrollWrapper } from './Layout';
 
@@ -70,7 +72,7 @@ const { height: screenHeight } = Dimensions.get('window');
 const animatedValueOne = new Animated.Value(1);
 
 class ContainerWithHeader extends React.Component<Props, State> {
-  focusSubscriptions: NavigationEventSubscription[];
+  focusSubscription: NavigationEventSubscription;
 
   state = {
     scrollY: new Animated.Value(0),
@@ -83,29 +85,30 @@ class ContainerWithHeader extends React.Component<Props, State> {
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.focusSubscriptions = [
-      navigation.addListener('didFocus', this.setStatusBarStyleForView),
-      navigation.addListener('willBlur', this.resetStatusBarStyle),
-    ];
+    this.focusSubscription = navigation.addListener('didFocus', this.setStatusBarStyleForView);
   }
 
   componentWillUnmount() {
-    this.resetStatusBarStyle();
-    this.focusSubscriptions.forEach(sub => sub.remove());
+    if (this.focusSubscription) this.focusSubscription.remove();
   }
 
-  setStatusBarStyleForView = () => {
-    const { headerProps = {} } = this.props;
-    const { color } = headerProps;
-    let statusBarStyle = 'dark-content';
-    if (color && isColorDark(color)) {
-      statusBarStyle = 'light-content';
-    }
-    StatusBar.setBarStyle(statusBarStyle);
+  getStatusBarColor = (themeType) => {
+    if (themeType === DARK_THEME) return 'light-content';
+    return 'dark-content';
   };
 
-  resetStatusBarStyle = () => {
-    StatusBar.setBarStyle('dark-content');
+  setStatusBarStyleForView = () => {
+    const { headerProps = {}, theme, backgroundColor } = this.props;
+    const { transparent, floating } = headerProps;
+    const themeType = getThemeType(theme);
+    let statusBarStyle = this.getStatusBarColor(themeType);
+
+    if ((!!transparent || !!floating) && backgroundColor) {
+      statusBarStyle = isColorDark(backgroundColor)
+        ? this.getStatusBarColor(DARK_THEME)
+        : this.getStatusBarColor(LIGHT_THEME);
+    }
+    StatusBar.setBarStyle(statusBarStyle);
   };
 
   renderContent = (shouldRenderFooter, shouldRenderChildrenInScrollView) => {
