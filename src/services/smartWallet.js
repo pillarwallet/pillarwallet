@@ -458,9 +458,8 @@ class SmartWallet {
     transaction: AccountTransaction,
     gasInfo: GasInfo,
     assetData: AssetData,
-    gasToken: ?GasToken,
   ) {
-    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
+    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG], gasToken } = transaction;
     let { data, recipient } = transaction;
     const { decimals, contractAddress, token: assetSymbol } = assetData;
 

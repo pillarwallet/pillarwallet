@@ -258,11 +258,11 @@ export const parseSmartWalletTransactions = (
       const gasToken = getAssetDataByAddress(assets, supportedAssets, gasTokenAddress);
       if (!isEmpty(gasToken)) {
         const { decimals: gasTokenDecimals, symbol: gasTokenSymbol } = gasToken;
-        transaction.feeWithGasToken = parseFeeWithGasToken(transactionFee, {
+        transaction.feeWithGasToken = parseFeeWithGasToken({
           decimals: gasTokenDecimals,
           symbol: gasTokenSymbol,
           address: gasTokenAddress,
-        });
+        }, transactionFee);
       }
     }
 

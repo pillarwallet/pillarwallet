@@ -340,16 +340,9 @@ class SendETHTokens extends React.Component<Props, State> {
 
     if (!value) return new BigNumber(0);
 
-    const {
-      gasTokenCost,
-      cost: defaultCost,
-    } = await smartWalletService
-      .estimateAccountTransaction(
-        { recipient: receiver, value },
-        gasInfo,
-        assetData,
-        gasToken,
-      )
+    const transaction = { recipient: receiver, value, gasToken };
+    const { gasTokenCost, cost: defaultCost } = await smartWalletService
+      .estimateAccountTransaction(transaction, gasInfo, assetData)
       .catch(() => ({}));
 
     // check gas token used for estimation is present, otherwise fallback to ETH
