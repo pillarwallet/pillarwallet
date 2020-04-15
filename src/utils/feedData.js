@@ -18,11 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import BigNumber from 'bignumber.js';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
+import type { Transaction } from 'models/Transaction';
+import {
+  TX_PENDING_STATUS,
+} from 'constants/historyConstants';
+import {
+  findAccountByAddress, checkIfSmartWalletAccount, checkIfKeyBasedAccount, getAccountName, getInactiveUserAccounts,
+} from 'utils/accounts';
+import { addressesEqual } from 'utils/assets';
 import { findMatchingContact, getUserName } from './contacts';
 import { uniqBy } from './common';
-import { findAccountByAddress, getAccountName, getInactiveUserAccounts } from './accounts';
+
 
 export function mapTransactionsHistory(
   history: Object[],
@@ -77,3 +86,62 @@ export function mapOpenSeaAndBCXTransactionsHistory(openSeaHistory: Object[], BC
   return uniqBy(concatedCollectiblesHistory, 'hash');
 }
 
+export type TransactionsGroup = {
+  transactions: Transaction[],
+  symbol: string,
+  value: BigNumber,
+};
+
+export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGroup[] {
+  const transactionsByAsset: {[string]: TransactionsGroup} = {};
+
+  ppnTransactions.forEach((trx) => {
+    const { symbol: _symbol, asset, value: rawValue } = trx;
+    const symbol = _symbol || asset;
+
+
+    const value = new BigNumber(rawValue);
+    if (!transactionsByAsset[symbol]) {
+      transactionsByAsset[symbol] = { transactions: [trx], value, symbol };
+    } else {
+      transactionsByAsset[symbol].transactions.push(trx);
+      const currentValue = transactionsByAsset[symbol].value;
+      transactionsByAsset[symbol].value = currentValue.plus(value);
+    }
+  });
+
+  return (Object.values(transactionsByAsset): any);
+}
+
+export const elipsizeAddress = (address: string) => {
+  return `${address.slice(0, 6)}…${address.slice(-6)}`;
+};
+
+export const isPendingTransaction = ({ status }: Object) => {
+  return status === TX_PENDING_STATUS;
+};
+
+export const isSWAddress = (address: string, accounts: Accounts) => {
+  const account = findAccountByAddress(address, accounts);
+  return (account && checkIfSmartWalletAccount(account));
+};
+
+export const isKWAddress = (address: string, accounts: Accounts) => {
+  const account = findAccountByAddress(address, accounts);
+  return (account && checkIfKeyBasedAccount(account));
+};
+
+export const getContactWithAddress = (contacts: ApiUser[], address: string) => {
+  return contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress));
+};
+
+export const getUsernameOrAddress = (event: Object, address: string, contacts: ApiUser[]) => {
+  if (event.username) {
+    return event.username;
+  }
+  const contact = getContactWithAddress(contacts, address);
+  if (contact) {
+    return contact.username;
+  }
+  return elipsizeAddress(address);
+};
