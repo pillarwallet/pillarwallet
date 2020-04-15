@@ -36,7 +36,7 @@ export const resetKeychainDataObject = () => Keychain
   })
   .catch(() => null);
 
-export const setKeychainDataObject = async (data: KeyChainData, biometry?: boolean) => {
+export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?boolean) => {
   await resetKeychainDataObject();
 
   const basicOptions = {
