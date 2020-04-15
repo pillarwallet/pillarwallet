@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
+import { withNavigation, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import ShadowedCard from 'components/ShadowedCard';
@@ -30,12 +31,14 @@ import { spacing, fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { toggleWCPromoCardAction } from 'actions/walletConnectActions';
 import { DARK_THEME } from 'constants/appSettingsConstants';
+import { EXPLORE_APPS } from 'constants/navigationConstants';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
   promoCardCollapsed: boolean,
   toggleWCPromoCard: (collapsed: boolean) => void,
+  navigation: NavigationScreenProp<*>,
 };
 
 const promoImage = require('assets/images/logo_pattern.png');
@@ -81,13 +84,21 @@ const CloseIcon = styled(Icon)`
   color: ${({ theme }) => theme.current === DARK_THEME ? theme.colors.tertiary : theme.colors.text};
 `;
 
-const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard }: Props) => {
+const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props) => {
+  const handleExplorePress = () => {
+    navigation.navigate(EXPLORE_APPS);
+  };
+
+  const renderExploreButton = () => (
+    <Button small positive title="Explore" leftIconName="search" onPress={handleExplorePress} />
+  );
+
   if (promoCardCollapsed) {
     return (
       <CollapsedWrapper onPress={() => toggleWCPromoCard(false)}>
         <CollapsedPromoText small secondary>A collection of dapps to use with Pillar</CollapsedPromoText>
         <Spacing w={70} />
-        <Button small positive title="Explore" leftIconName="search" />
+        {renderExploreButton()}
       </CollapsedWrapper>
     );
   }
@@ -104,9 +115,9 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard }: Props) => {
             Swap tokens on decentralized exchanges, lend &amp; borrow crypto, play games and more
           </BaseText>
           <ButtonsContainer>
-            <Button small secondary title="Learn more" />
-            <Spacing w={15} />
-            <Button small positive title="Explore" leftIconName="search" />
+            {/* <Button small secondary title="Learn more" />
+            <Spacing w={15} /> */}
+            {renderExploreButton()}
           </ButtonsContainer>
         </ContentContainer>
         <CloseIconContainer onPress={() => toggleWCPromoCard(true)}>
@@ -127,4 +138,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   toggleWCPromoCard: (collapsed) => dispatch(toggleWCPromoCardAction(collapsed)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PromoCard);
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(PromoCard));

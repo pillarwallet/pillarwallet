@@ -102,6 +102,7 @@ import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
 import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
 import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
+import ExploreAppsScreen from 'screens/ExploreApps';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -235,6 +236,7 @@ import {
   CONNECT_TAB,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_TOKEN_FROM_HOME_FLOW,
+  EXPLORE_APPS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -353,6 +355,7 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+    [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorModalConfig,
 );
