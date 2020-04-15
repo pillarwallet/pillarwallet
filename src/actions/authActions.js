@@ -102,16 +102,6 @@ export const updateFcmTokenAction = (walletId: string) => {
   };
 };
 
-export const proceedWithPkAction = (pin: string, action: (pk: string) => void) => {
-  return async (dispatch: Dispatch) => {
-    const { wallet: encryptedWallet } = await storage.get('wallet');
-    const saltedPin = await getSaltedPin(pin, dispatch);
-    const wallet = await decryptWallet(encryptedWallet, saltedPin);
-    const pk = get(wallet, 'signingKey.privateKey');
-    action(pk);
-  };
-};
-
 /**
  * ### IMPORTANT ###
  * If you plan to use any method within loginAction that calls

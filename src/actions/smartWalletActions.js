@@ -53,7 +53,6 @@ import {
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
-
 import {
   TX_PENDING_STATUS,
   TX_CONFIRMED_STATUS,
@@ -84,6 +83,7 @@ import {
   SEND_TOKEN_AMOUNT,
   ACCOUNTS,
   SEND_SYNTHETIC_AMOUNT,
+  PIN_CODE,
 } from 'constants/navigationConstants';
 
 // configs
@@ -101,12 +101,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
 // actions
-import {
-  addAccountAction,
-  setActiveAccountAction,
-  switchAccountAction,
-  getPkAndInitSWSdkAction,
-} from 'actions/accountsActions';
+import { addAccountAction, setActiveAccountAction, switchAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 import {
   signAssetTransactionAction,
@@ -126,7 +121,7 @@ import {
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
-import type { SmartWalletDeploymentError } from 'models/SmartWalletAccount';
+import type { SmartWalletDeploymentError, InitSmartWalletProps } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
@@ -152,6 +147,7 @@ import {
   reportLog,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
+import { getPrivateKeyFromPin } from 'utils/wallet';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
@@ -988,7 +984,7 @@ export const ensureSmartAccountConnectedAction = (privateKey?: string) => {
       if (privateKey) {
         await dispatch(initSmartWalletSdkAction(privateKey));
       } else {
-        await dispatch(getPkAndInitSWSdkAction());
+        navigate(PIN_CODE, { initSmartWalletSdk: true });
       }
     }
 
@@ -1681,5 +1677,17 @@ export const setSmartWalletEnsNameAction = (username: string) => {
       },
     });
     dispatch(insertTransactionAction(historyTx, accountId));
+  };
+};
+
+export const initSmartWalletSdkWithPrivateKeyOrPinAction = ({ privateKey: _privateKey, pin }: InitSmartWalletProps) => {
+  return async (dispatch: Dispatch) => {
+    let privateKey = _privateKey;
+    if (!_privateKey && pin) {
+      privateKey = await getPrivateKeyFromPin(pin, dispatch);
+    } else {
+      return;
+    }
+    await dispatch(initSmartWalletSdkAction(privateKey));
   };
 };

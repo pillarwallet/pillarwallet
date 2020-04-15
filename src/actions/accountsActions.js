@@ -49,7 +49,7 @@ import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigrati
 import { getActiveAccountId, getActiveAccountType } from 'utils/accounts';
 import { printLog } from 'utils/common';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
-import { getActionForPathAndParams, getNavigationPathAndParamsState, navigate } from 'services/navigation';
+import { navigate } from 'services/navigation';
 
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -243,24 +243,6 @@ export const setActiveAccountAction = (accountId: string) => {
   };
 };
 
-/* eslint-disable */
-export const getPkAndInitSWSdkAction = (switchToAcc?: string) => {
-  return async (dispatch: Dispatch) => {
-    const currentScreenAndProps = getNavigationPathAndParamsState();
-    if (!currentScreenAndProps) return;
-    const { path, params } = currentScreenAndProps;
-    const returnToCurrentScreenAction = getActionForPathAndParams(path, params);
-    navigate(PIN_CODE, {
-      customUnlockAction: async (privateKey: string) => {
-        await dispatch(initSmartWalletSdkAction(privateKey));
-        if (switchToAcc) await dispatch(switchAccountAction(switchToAcc));
-        navigate(returnToCurrentScreenAction);
-      }
-    });
-  }
-};
-/* eslint-enable */
-
 export const switchAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -279,7 +261,7 @@ export const switchAccountAction = (accountId: string) => {
         await dispatch(setActiveAccountAction(accountId));
         dispatch(setUserEnsIfEmptyAction());
       } else {
-        dispatch(getPkAndInitSWSdkAction(accountId));
+        navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
         return;
       }
     }

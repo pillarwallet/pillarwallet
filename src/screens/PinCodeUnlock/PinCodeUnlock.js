@@ -27,7 +27,9 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
-import { loginAction, proceedWithPkAction } from 'actions/authActions';
+import { loginAction } from 'actions/authActions';
+import { initSmartWalletSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
+import { switchAccountAction } from 'actions/accountsActions';
 import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
 import Header from 'components/Header';
@@ -40,6 +42,8 @@ import {
   shouldUpdateKeychainObject,
   type KeyChainData,
 } from 'utils/keychain';
+
+import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
 
 
 const ACTIVE_APP_STATE = 'active';
@@ -57,7 +61,8 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
-  proceedWithPk: (pin: string, action: (pk: string) => void) => void,
+  initSmartWalletSdkWithPrivateKeyOrPin: (InitSmartWalletProps) => void,
+  switchAccount: (accountId: string) => void,
 };
 
 type State = {
@@ -124,15 +129,15 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
   };
 
-  handleUnlockAction = ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
-    const { navigation, proceedWithPk } = this.props;
-    const customUnlockAction = navigation.getParam('customUnlockAction');
-    if (customUnlockAction && typeof customUnlockAction === 'function') {
-      if (privateKey) {
-        customUnlockAction(privateKey);
-      } else if (pin) {
-        proceedWithPk(pin, customUnlockAction);
-      }
+  handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
+    const { navigation, switchAccount, initSmartWalletSdkWithPrivateKeyOrPin } = this.props;
+    const shouldInitSmartWalletSdk = navigation.getParam('initSmartWalletSdk');
+    const accountIdToSwitchTo = navigation.getParam('switchToAcc');
+
+    if (shouldInitSmartWalletSdk) {
+      await initSmartWalletSdkWithPrivateKeyOrPin({ privateKey, pin });
+      if (accountIdToSwitchTo) switchAccount(accountIdToSwitchTo);
+      navigation.goBack();
     } else {
       defaultAction();
     }
@@ -285,7 +290,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     loginAction(pin, null, callback),
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
-  proceedWithPk: (pin: string, action: (pk: string) => void) => dispatch(proceedWithPkAction(pin, action)),
+  initSmartWalletSdkWithPrivateKeyOrPin: ({ privateKey, pin }: InitSmartWalletProps) =>
+    dispatch(initSmartWalletSdkWithPrivateKeyOrPinAction({ privateKey, pin })),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
