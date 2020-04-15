@@ -197,7 +197,7 @@ const themeColors = (theme: Theme) => {
     },
     squarePrimary: {
       surface: 'transparent',
-      text: colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
       border: 'transparent',
     },
     squareDanger: {
@@ -216,11 +216,11 @@ const themeColors = (theme: Theme) => {
     },
     secondary: {
       surface: colors.buttonSecondaryBackground,
-      text: isDarkTheme ? colors.text : colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
     },
     secondaryDisabled: {
       surface: colors.buttonSecondaryBackground,
-      text: isDarkTheme ? colors.text : colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
     },
   });
 };

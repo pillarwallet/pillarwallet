@@ -1042,7 +1042,7 @@ class EventDetail extends React.Component<Props, State> {
             <ButtonsContainer>
               {buttons.map(buttonProps => (
                 <React.Fragment key={buttonProps.title} >
-                  <Button {...buttonProps} />
+                  <Button regularText {...buttonProps} />
                   <Spacing h={4} />
                 </React.Fragment>
               ))}
