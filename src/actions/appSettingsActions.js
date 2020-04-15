@@ -231,3 +231,10 @@ export const toggleBalanceAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideBalance: newBalanceVisibilityState } });
   };
 };
+
+export const dismissConnectAppsIntroAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { hasDismissedConnectAppsIntro: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasDismissedConnectAppsIntro: true } });
+  };
+};

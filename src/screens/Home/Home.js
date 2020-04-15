@@ -30,7 +30,6 @@ import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
@@ -39,17 +38,12 @@ import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalRew
 import Loader from 'components/Loader';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-import {
-  BADGE,
-  REFER_FLOW,
-  MENU,
-  MANAGE_USERS_FLOW,
-} from 'constants/navigationConstants';
+import { BADGE, MENU, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import {
@@ -66,7 +60,7 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { toggleBalanceAction } from 'actions/appSettingsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -78,7 +72,6 @@ import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
-import { toastReferral } from 'utils/toasts';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -91,7 +84,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 
 // partials
-import ActionButtons from './ActionButtons';
+import WalletsPart from './WalletsPart';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -125,8 +118,7 @@ type Props = {
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
   referralsFeatureEnabled: boolean,
-  toggleBalance: () => void,
-  hideBalance: boolean,
+  goToInvitationFlow: () => void,
 };
 
 type State = {
@@ -141,7 +133,6 @@ const {
   width: SCREEN_WIDTH,
   height: SCREEN_HEIGHT,
 } = Dimensions.get('window');
-
 const profileImageWidth = 24;
 
 const ListHeader = styled(MediumText)`
@@ -172,7 +163,6 @@ const LoaderWrapper = styled.View`
   background-color: ${themedColors.surface};
   z-index: 99999;
 `;
-
 
 const referralImage = require('assets/images/referral_gift.png');
 
@@ -273,29 +263,20 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  handleReferralBannerPress = () => {
-    const { navigation, user } = this.props;
-    const { isEmailVerified, isPhoneVerified } = user;
-    if (isEmailVerified || isPhoneVerified) {
-      navigation.navigate(REFER_FLOW);
-    } else {
-      toastReferral(navigation);
-    }
-  };
-
   renderReferral = (colors) => {
     const { isReferralBannerVisible } = this.state;
+    const { goToInvitationFlow } = this.props;
 
     return (
       <Banner
         isVisible={isReferralBannerVisible}
-        onPress={this.handleReferralBannerPress}
+        onPress={goToInvitationFlow}
         bannerText="Refer friends and earn rewards, free PLR and more."
         imageProps={{
           style: {
             width: 96,
             height: 60,
-            marginLeft: 4,
+            marginRight: -4,
           },
           source: referralImage,
         }}
@@ -309,6 +290,10 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ showRewardModal: false }, () => {
       if (callback) callback();
     });
+  };
+
+  handleWalletChange = (loaderMessage: string) => {
+    this.setState({ loaderMessage });
   };
 
   render() {
@@ -328,11 +313,8 @@ class HomeScreen extends React.Component<Props, State> {
       userEvents,
       badgesEvents,
       theme,
-      baseFiatCurrency,
       activeBlockchainNetwork,
       referralsFeatureEnabled,
-      hideBalance,
-      toggleBalance,
     } = this.props;
 
     const { activeTab, showRewardModal, loaderMessage } = this.state;
@@ -340,21 +322,26 @@ class HomeScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = activeBlockchainNetwork === 'BITCOIN' ? history : mapTransactionsHistory(
-      tokenTxHistory,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      TRANSACTION_EVENT,
-    );
+    const transactionsOnMainnet = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? history
+      : mapTransactionsHistory(
+        tokenTxHistory,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        TRANSACTION_EVENT,
+      );
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(
-      collectiblesTransactions,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      COLLECTIBLE_TRANSACTION,
-    );
+
+    const mappedCTransactions = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? []
+      : mapTransactionsHistory(
+        collectiblesTransactions,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        COLLECTIBLE_TRANSACTION,
+      );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 
@@ -405,12 +392,10 @@ class HomeScreen extends React.Component<Props, State> {
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
     const colors = getThemeColors(theme);
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
       <React.Fragment>
         <ContainerWithHeader
-          backgroundColor={colors.card} // so tabs would have white background only when not sticky
           headerProps={{
             leftItems: [
               {
@@ -420,6 +405,12 @@ class HomeScreen extends React.Component<Props, State> {
                     onPress={() => navigation.navigate(MENU)}
                     fontSize={fontSizes.large}
                     secondary
+                    style={{
+                      width: 40,
+                      height: 40,
+                      marginLeft: -10,
+                      marginTop: -6,
+                    }}
                   />
                 ),
               },
@@ -462,12 +453,7 @@ class HomeScreen extends React.Component<Props, State> {
               contentContainerStyle={{ flexGrow: 1 }}
               headerComponent={(
                 <React.Fragment>
-                  <PortfolioBalance
-                    fiatCurrency={fiatCurrency}
-                    showBalance={hideBalance}
-                    toggleBalanceVisibility={toggleBalance}
-                  />
-                  <ActionButtons toggleLoading={(_loaderMessage) => this.setState({ loaderMessage: _loaderMessage })} />
+                  <WalletsPart handleWalletChange={this.handleWalletChange} isChanging={!!loaderMessage} />
                   <BadgesWrapper>
                     <ListHeader>Game of badges</ListHeader>
                     <FlatList
@@ -531,7 +517,7 @@ const mapStateToProps = ({
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency, hideBalance } },
+  appSettings: { data: { baseFiatCurrency } },
   featureFlags: {
     data: {
       REFERRALS_ENABLED: referralsFeatureEnabled,
@@ -549,7 +535,6 @@ const mapStateToProps = ({
   userEvents,
   baseFiatCurrency,
   referralsFeatureEnabled,
-  hideBalance,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -575,7 +560,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
-  toggleBalance: () => dispatch(toggleBalanceAction()),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

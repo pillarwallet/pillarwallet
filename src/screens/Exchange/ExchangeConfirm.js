@@ -39,6 +39,7 @@ import TitleWithIcon from 'components/Title/TitleWithIcon';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -52,6 +53,7 @@ import { getBalance, getRate } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { getOfferProviderLogo } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
+import { getAccountName } from 'utils/accounts';
 
 // models, types
 import type { GasInfo } from 'models/GasInfo';
@@ -63,9 +65,9 @@ import type { SessionData } from 'models/Session';
 import type { Accounts } from 'models/Account';
 import type { Theme } from 'models/Theme';
 
-
 // partials
 import ExchangeScheme from './ExchangeScheme';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -87,7 +89,8 @@ type State = {
   showFeeModal: boolean,
   transactionSpeed: string,
   gasLimit: number,
-}
+};
+
 
 const MainWrapper = styled.View`
   background-color: ${themedColors.card};
@@ -355,7 +358,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               </AllowanceWrapper>
             }
             {!hasSmartWallet && <ButtonText
-              buttonText="Legacy Wallet"
+              buttonText={getAccountName(ACCOUNT_TYPES.KEY_BASED)}
               rightIconProps={{ name: 'selector', style: { fontSize: 16 } }}
               onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}
               wrapperStyle={{ marginTop: 0 }}

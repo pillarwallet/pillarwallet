@@ -50,9 +50,8 @@ import {
   groupPPNTransactions, elipsizeAddress, isPendingTransaction, isSWAddress, isKWAddress, getUsernameOrAddress,
 } from 'utils/feedData';
 import { createAlert } from 'utils/alerts';
-import { toastReferral } from 'utils/toasts';
 import { findMatchingContact } from 'utils/contacts';
-import { getActiveAccount } from 'utils/accounts';
+import { getActiveAccount, getAccountName } from 'utils/accounts';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -79,7 +78,6 @@ import {
   BADGE,
   CHAT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
-  REFER_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_FROM_HOME_FLOW,
@@ -101,6 +99,7 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -111,7 +110,6 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
-
 import type { TransactionsGroup } from 'utils/feedData';
 
 
@@ -139,6 +137,7 @@ type Props = {
   activeBlockchainNetwork: string,
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string, privateKey?: string) => void,
+  goToInvitationFlow: () => void,
 };
 
 type State = {
@@ -327,14 +326,7 @@ class EventDetail extends React.Component<Props, State> {
   }
 
   referFriends = () => {
-    const { navigation, user, onClose } = this.props;
-    const { isEmailVerified, isPhoneVerified } = user;
-    if (isEmailVerified || isPhoneVerified) {
-      onClose();
-      navigation.navigate(REFER_FLOW);
-    } else {
-      toastReferral(navigation);
-    }
+    this.props.goToInvitationFlow();
   }
 
   activateSW = () => {
@@ -591,15 +583,17 @@ class EventDetail extends React.Component<Props, State> {
             || ensRegistry[relevantAddress]
             || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        let subtext = event.accountType === ACCOUNT_TYPES.KEY_BASED ? 'Key wallet' : 'Smart wallet';
+        let subtext = getAccountName(event.accountType);
+        const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
+        const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
         if (isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
-          subtext = 'to Key Wallet';
+          subtext = `to ${keyWallet}`;
         } else if (isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
-          subtext = 'to Smart Wallet';
+          subtext = `to ${smartWallet}`;
         } else if (!isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
-          subtext = 'from Smart Wallet';
+          subtext = `from ${smartWallet}`;
         } else if (!isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
-          subtext = 'from Key Wallet';
+          subtext = `from ${keyWallet}`;
         }
 
         if (isPPNTransaction) {
@@ -984,7 +978,7 @@ class EventDetail extends React.Component<Props, State> {
         </Row>
       </SettleWrapper>
     );
-  }
+  };
 
   render() {
     const {
@@ -1106,6 +1100,7 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));
