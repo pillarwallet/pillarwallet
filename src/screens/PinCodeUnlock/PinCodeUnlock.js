@@ -229,7 +229,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handlePinSubmit = async (pin: string) => {
     const { loginWithPin } = this.props;
-    this.handleUnlockAction({
+    await this.handleUnlockAction({
       pin,
       defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
     });
