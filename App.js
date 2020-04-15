@@ -139,7 +139,6 @@ class App extends React.Component<Props, *> {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');
     }
-
     Linking.getInitialURL()
       .then(url => {
         if (url) executeDeepLink(url);
@@ -150,11 +149,19 @@ class App extends React.Component<Props, *> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetched, handleSystemDefaultThemeChange } = this.props;
-    const { isFetched: prevIsFetched } = prevProps;
+    const { isFetched, handleSystemDefaultThemeChange, themeType } = this.props;
+    const { isFetched: prevIsFetched, themeType: prevThemeType } = prevProps;
     if (isFetched && !prevIsFetched) {
       SplashScreen.hide();
       handleSystemDefaultThemeChange();
+    }
+
+    if (themeType !== prevThemeType) {
+      if (themeType === DARK_THEME) {
+        StatusBar.setBarStyle('light-content');
+      } else {
+        StatusBar.setBarStyle('dark-content');
+      }
     }
   }
 
