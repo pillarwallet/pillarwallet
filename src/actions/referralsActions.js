@@ -201,7 +201,6 @@ export const startReferralsListenerAction = () => {
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) return;
 
-      console.log('params: ', params);
 
       if (!params['+clicked_branch_link']) return;
 
