@@ -188,10 +188,9 @@ const IconCircle = styled.View`
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border
-    ? `border-color: ${theme.colors.border};
-      border-width: 1px;`
-    : ''};
+  ${({ border, theme }) => border &&
+    `border-color: ${theme.colors.border};
+    border-width: 1px;`};
 `;
 
 const ItemIcon = styled(Icon)`

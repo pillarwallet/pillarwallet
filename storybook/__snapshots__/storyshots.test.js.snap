@@ -1012,7 +1012,6 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -1293,7 +1292,6 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -2110,7 +2108,6 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -2355,7 +2352,6 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -2605,7 +2601,6 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -3859,7 +3854,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -4720,7 +4714,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -6883,7 +6876,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -7744,7 +7736,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -8322,7 +8313,6 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -8559,7 +8549,6 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
