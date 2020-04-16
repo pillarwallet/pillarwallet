@@ -59,6 +59,11 @@ export function getNavigationPathAndParamsState() {
   return _navigator._navigation.router.getPathAndParamsForState(_navigator._navigation.state);
 }
 
+export function getActionForPathAndParams(path: string, params: Object) {
+  if (!_navigator) return null;
+  return _navigator._navigation.router.getActionForPathAndParams(path, params);
+}
+
 export function updateNavigationLastScreenState({
   lastActiveScreen,
   lastActiveScreenParams = {},
