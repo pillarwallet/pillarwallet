@@ -88,6 +88,7 @@ type Props = {
   blockchainNetworks: BlockchainNetwork[],
   activeAccount: ?Account,
   theme: Theme,
+  isChanging: boolean
 };
 
 type State = {
@@ -381,11 +382,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   renderContacts() {
-    const {
-      localContacts = [],
-      contactsSmartAddresses,
-      accounts,
-    } = this.props;
+    const { localContacts = [], contactsSmartAddresses, accounts } = this.props;
     const { value } = this.state;
 
     const isSearchQueryProvided = !!(value && value.address.length);
@@ -469,7 +466,12 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   render() {
-    const { localContacts = [], contactsSmartAddressesSynced, isOnline } = this.props;
+    const {
+      localContacts = [],
+      contactsSmartAddressesSynced,
+      isOnline,
+      isChanging,
+    } = this.props;
     const {
       isScanning,
       isValidatingEns,
@@ -482,10 +484,10 @@ class SendTokenContacts extends React.Component<Props, State> {
     const isCollectible = tokenType === COLLECTIBLES;
     const isSearchQueryProvided = !!(value && value.address.length);
 
-    const showContacts = isCollectible || token !== BTC;
+    const showContacts = !isChanging && (isCollectible || token !== BTC);
     const headerTitleItems = this.getHeaderItems();
 
-    const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
+    const showSpinner = isOnline && ((!contactsSmartAddressesSynced && !isEmpty(localContacts)) || isChanging);
     const submitDisabled = !value.address.length || isValidatingEns;
 
     return (
@@ -493,6 +495,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         headerProps={{ centerItems: headerTitleItems }}
         inset={{ bottom: 0 }}
       >
+        {!isChanging &&
         <FormWrapper>
           <Form
             ref={node => {
@@ -504,7 +507,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBlur={this.handleChange}
             value={value}
           />
-        </FormWrapper>
+        </FormWrapper>}
         {showSpinner && <Container center><Spinner /></Container>}
         {showContacts && this.renderContacts()}
         <AddressScanner
@@ -523,7 +526,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  accounts: { data: accounts },
+  accounts: { data: accounts, isChanging },
   contacts: { data: localContacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   wallet: { data: wallet },
   session: { data: { contactsSmartAddressesSynced, isOnline } },
@@ -536,6 +539,7 @@ const mapStateToProps = ({
   contactsSmartAddressesSynced,
   isOnline,
   blockchainNetworks,
+  isChanging,
 });
 
 const structuredSelector = createStructuredSelector({

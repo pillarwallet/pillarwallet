@@ -43,6 +43,7 @@ export const MENU = 'MENU';
 export const LOGOUT_PENDING = 'LOGOUT_PENDING';
 export const STORYBOOK = 'STORYBOOK';
 export const CONNECT_TAB = 'CONNECT_TAB';
+export const PIN_CODE = 'PIN_CODE';
 
 // ASSETS FLOW
 export const ACCOUNTS = 'ACCOUNTS';

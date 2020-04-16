@@ -82,7 +82,7 @@ type commonItemsParams = {|
   title: string,
   balance: ?string,
   isInitialised: boolean,
-  mainAction: ?() => void,
+  mainAction: ?() => Promise<void> | ?() => void,
   initialiseAction: ?() => void,
   isActive: boolean,
   iconSource: string,
@@ -122,7 +122,7 @@ type Props = {|
   isTankInitialised: boolean,
   accounts: Accounts,
   resetIncorrectPassword: () => void,
-  switchAccount: (accountId: string, privateKey?: string) => void,
+  switchAccount: (accountId: string) => void,
   balances: BalancesStore,
   rates: Rates,
   user: Object,
@@ -130,6 +130,7 @@ type Props = {|
   bitcoinBalances: BitcoinBalance,
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
+  isChanging: boolean,
 |};
 
 type State = {|
@@ -208,64 +209,26 @@ class AccountsScreen extends React.Component<Props, State> {
     });
   };
 
-  setPPNAsActiveNetwork = () => {
-    const { setActiveBlockchainNetwork, navigation, accounts } = this.props;
+  setPPNAsActiveNetwork = async () => {
+    const {
+      setActiveBlockchainNetwork,
+      navigation,
+      accounts,
+      switchAccount,
+    } = this.props;
     const activeAccount = getActiveAccount(accounts) || { type: '' };
 
-    if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
-      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
-      navigation.navigate(ASSETS);
-    } else {
-      this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAndGoToPPN });
+    if (activeAccount.type !== ACCOUNT_TYPES.SMART_WALLET) {
+      const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
+      await switchAccount(smartAccount.id);
     }
-  };
-
-  switchToSmartWalletAndGoToPPN = async (_: string, wallet: EthereumWallet) => {
-    const {
-      accounts,
-      setActiveBlockchainNetwork,
-      switchAccount,
-      navigation,
-    } = this.props;
-    this.setState({ showPinModal: false, changingAccount: true });
-    const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
-    await switchAccount(smartAccount.id, wallet.privateKey);
-
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
-    this.setState({ changingAccount: false });
     navigation.navigate(ASSETS);
   };
 
-  switchWallet = (wallet: Account) => {
-    const {
-      switchAccount,
-      navigation,
-      accounts,
-      setActiveBlockchainNetwork,
-    } = this.props;
-    const activeAccount = getActiveAccount(accounts) || { type: '' };
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
-
-    if (wallet.type === ACCOUNT_TYPES.SMART_WALLET) {
-      if (activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
-        navigation.navigate(ASSETS);
-      } else {
-        this.switchToWallet = wallet;
-        this.setState({ showPinModal: true, onPinValidAction: this.switchToSmartWalletAccount });
-      }
-    } else if (wallet.type === ACCOUNT_TYPES.KEY_BASED) {
-      switchAccount(wallet.id);
-      navigation.navigate(ASSETS);
-    }
-  };
-
-  switchToSmartWalletAccount = async (_: string, wallet: EthereumWallet) => {
-    this.setState({ showPinModal: false, changingAccount: true });
-    const { navigation, switchAccount } = this.props;
-    if (!this.switchToWallet) return;
-    await switchAccount(this.switchToWallet.id, wallet.privateKey);
-    this.switchToWallet = null;
-    this.setState({ changingAccount: false });
+  switchWallet = async (wallet: Account) => {
+    const { switchAccount, navigation } = this.props;
+    await switchAccount(wallet.id);
     navigation.navigate(ASSETS);
   };
 
@@ -503,7 +466,7 @@ class AccountsScreen extends React.Component<Props, State> {
       isLegacyWalletVisible,
       onPinValidAction,
     } = this.state;
-    const { blockchainNetworks, user } = this.props;
+    const { blockchainNetworks, user, isChanging } = this.props;
     const { isLegacyUser } = user;
 
     const activeNetwork = blockchainNetworks.find((net) => net.isActive);
@@ -518,6 +481,8 @@ class AccountsScreen extends React.Component<Props, State> {
 
     const accountsList = [...walletsInList, ...networksToShow];
 
+    const showLoader = changingAccount || isChanging;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -525,7 +490,7 @@ class AccountsScreen extends React.Component<Props, State> {
           leftItems: [{ close: true, dismiss: true }],
         }}
       >
-        {!changingAccount &&
+        {!showLoader &&
         <ScrollWrapper
           contentContainerStyle={{ flexGrow: 1 }}
         >
@@ -539,7 +504,7 @@ class AccountsScreen extends React.Component<Props, State> {
           {!isLegacyUser && legacyAccountCard && this.renderKeyWallet(legacyAccountCard, isLegacyWalletVisible)}
         </ScrollWrapper>}
 
-        {changingAccount &&
+        {showLoader &&
         <Wrapper>
           <Loader noMessages />
         </Wrapper>}
@@ -558,7 +523,7 @@ class AccountsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  accounts: { data: accounts },
+  accounts: { data: accounts, isChanging },
   blockchainNetwork: { data: blockchainNetworks },
   paymentNetwork: { isTankInitialised },
   featureFlags: {
@@ -574,6 +539,7 @@ const mapStateToProps = ({
   bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
+  isChanging,
   blockchainNetworks,
   isTankInitialised,
   smartWalletFeatureEnabled,
@@ -599,7 +565,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
 });
