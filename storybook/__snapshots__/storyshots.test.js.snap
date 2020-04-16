@@ -740,10 +740,8 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#FFFFFF",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -3565,16 +3563,14 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -4131,16 +4127,14 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -4430,16 +4424,14 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -4996,16 +4988,14 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -5575,16 +5565,14 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -6599,16 +6587,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -7165,16 +7151,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -7464,16 +7448,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -8030,16 +8012,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
