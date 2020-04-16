@@ -41,7 +41,7 @@ import {
   checkIfKeyBasedAccount,
   getAccountName,
 } from 'utils/accounts';
-
+import { images } from 'utils/images';
 
 // components
 import {
@@ -137,10 +137,6 @@ type EventData = {
   iconBorder?: boolean,
   fallbackToGenericToken?: boolean,
 };
-
-const PPNIcon = require('assets/icons/icon_PPN.png');
-const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 const NAMES = {
   SMART_WALLET: 'Smart Wallet',
@@ -249,7 +245,8 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getWalletCreatedEventData = (event: Object) => {
-    const { isSmartWalletActivated } = this.props;
+    const { isSmartWalletActivated, theme } = this.props;
+    const { keyWalletIcon, smartWalletIcon } = images(theme);
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
@@ -276,7 +273,8 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getUserEventData = (event: Object) => {
-    const { isSmartWalletActivated } = this.props;
+    const { isSmartWalletActivated, theme } = this.props;
+    const { keyWalletIcon, PPNIcon } = images(theme);
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
         return this.getWalletCreatedEventData(event);
@@ -300,7 +298,7 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   getTransactionEventData = (event: Object) => {
     const {
-      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses,
+      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses, theme,
     } = this.props;
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
@@ -319,6 +317,8 @@ export class ActivityFeedItem extends React.Component<Props> {
     const isPending = isPendingTransaction(event);
 
     let data: EventData = {};
+
+    const { smartWalletIcon, PPNIcon } = images(theme);
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:

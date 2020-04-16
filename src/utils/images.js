@@ -38,6 +38,11 @@ const sendWyreLogoLight = require('assets/images/exchangeProviders/wyre.png');
 const moonPayLogoLight = require('assets/images/exchangeProviders/moon_pay.png');
 const sendWyreLogoDark = require('assets/images/exchangeProviders/wyre_dark.png');
 const moonPayLogoDark = require('assets/images/exchangeProviders/moon_pay_dark.png');
+const keyWalletIcon = require('assets/icons/icon_key_wallet.png');
+const keyWalletIconDark = require('assets/icons/key_wallet_dark.png');
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+const smartWalletIconDark = require('assets/icons/icon_smart_wallet_dark.png');
+const PPNIcon = require('assets/icons/icon_PPN.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -77,6 +82,18 @@ export const images = (theme: Theme) => {
     moonPayLogoHorizontal: getImageByTheme(currentTheme, {
       lightTheme: moonPayLogoLight,
       darkTheme: moonPayLogoDark,
+    }),
+    keyWalletIcon: getImageByTheme(currentTheme, {
+      lightTheme: keyWalletIcon,
+      darkTheme: keyWalletIconDark,
+    }),
+    smartWalletIcon: getImageByTheme(currentTheme, {
+      lightTheme: smartWalletIcon,
+      darkTheme: smartWalletIconDark,
+    }),
+    PPNIcon: getImageByTheme(currentTheme, {
+      lightTheme: PPNIcon,
+      darkTheme: PPNIcon,
     }),
   };
 };
