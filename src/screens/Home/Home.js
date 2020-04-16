@@ -453,7 +453,7 @@ class HomeScreen extends React.Component<Props, State> {
               contentContainerStyle={{ flexGrow: 1 }}
               headerComponent={(
                 <React.Fragment>
-                  <WalletsPart handleWalletChange={this.handleWalletChange} isChanging={!!loaderMessage} />
+                  <WalletsPart handleWalletChange={this.handleWalletChange} />
                   <BadgesWrapper>
                     <ListHeader>Game of badges</ListHeader>
                     <FlatList

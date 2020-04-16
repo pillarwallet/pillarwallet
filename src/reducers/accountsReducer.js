@@ -1,9 +1,10 @@
 // @flow
-import { ADD_ACCOUNT, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { ADD_ACCOUNT, UPDATE_ACCOUNTS, CHANGING_ACCOUNT } from 'constants/accountsConstants';
 import type { Accounts } from 'models/Account';
 
 export type AccountsReducerState = {
   data: Accounts,
+  isChanging: boolean,
 };
 
 export type AccountsAction = {
@@ -13,6 +14,7 @@ export type AccountsAction = {
 
 export const initialState = {
   data: [],
+  isChanging: false,
 };
 
 export default function accountsReducer(
@@ -20,6 +22,8 @@ export default function accountsReducer(
   action: AccountsAction,
 ): AccountsReducerState {
   switch (action.type) {
+    case CHANGING_ACCOUNT:
+      return { ...state, isChanging: action.payload };
     case UPDATE_ACCOUNTS:
       return { ...state, data: action.payload };
     case ADD_ACCOUNT:

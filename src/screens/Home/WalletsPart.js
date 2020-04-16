@@ -43,6 +43,7 @@ import { toggleBalanceAction } from 'actions/appSettingsActions';
 
 // utils
 import { getAccountName, getActiveAccountType } from 'utils/accounts';
+import { noop } from 'utils/common';
 
 // models, types
 import type { Account } from 'models/Account';
@@ -60,7 +61,7 @@ import ActionButtons from './ActionButtons';
 type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
-  switchAccount: (accountId: string, privateKey?: string) => void,
+  switchAccount: (accountId: string) => void,
   resetIncorrectPassword: () => void,
   activeWallet: Account,
   availableWallets: Account[],
@@ -68,13 +69,14 @@ type Props = {
   refreshBitcoinBalance: () => void,
   hideBalance: boolean,
   toggleBalance: () => void,
-  isChanging: boolean,
   handleWalletChange: (message: string) => void,
+  isChangingAccount: boolean,
 };
 
 type State = {
   showPinModal: boolean,
   onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
+  isChangingAccount: boolean,
 };
 
 const Wrapper = styled.View`
@@ -86,11 +88,13 @@ class WalletsPart extends React.Component<Props, State> {
   state = {
     showPinModal: false,
     onPinValidAction: null,
+    isChangingAccount: false,
   };
 
   componentDidUpdate(prevProps: Props) {
-    const { activeWallet, isChanging } = this.props;
-    if (isChanging && prevProps.activeWallet !== activeWallet) {
+    const { activeWallet } = this.props;
+    const { isChangingAccount } = this.state;
+    if (isChangingAccount && prevProps.activeWallet !== activeWallet) {
       this.endChanging();
     }
   }
@@ -98,6 +102,7 @@ class WalletsPart extends React.Component<Props, State> {
   endChanging = () => {
     const { handleWalletChange } = this.props;
     handleWalletChange('');
+    this.setState({ isChangingAccount: false });
   };
 
   handleAuthModalClose = () => {
@@ -122,13 +127,6 @@ class WalletsPart extends React.Component<Props, State> {
     }
   };
 
-  switchToSW = async (_: string, wallet: EthereumWallet, walletIdToChangeInto: string, callback?: () => void) => {
-    const { switchAccount } = this.props;
-    this.setState({ showPinModal: false });
-    await switchAccount(walletIdToChangeInto, wallet.privateKey);
-    if (callback) callback();
-  };
-
   getNextWalletInLine = () => {
     const { availableWallets } = this.props;
     const currentActiveType = getActiveAccountType(availableWallets);
@@ -138,23 +136,23 @@ class WalletsPart extends React.Component<Props, State> {
     return availableWallets[nextIndex] || {};
   };
 
-  changeAcc = (nextWallet: Account, callback?: () => void) => {
+  changeAcc = (nextWallet: Account, callback?: () => void, noFullScreenLoader?: boolean) => {
     const {
       switchAccount,
       setActiveBlockchainNetwork,
       refreshBitcoinBalance,
       handleWalletChange,
     } = this.props;
-    handleWalletChange('Changing wallet');
+
+    this.setState({ isChangingAccount: true });
+    if (!noFullScreenLoader) {
+      handleWalletChange('Changing wallet');
+    }
+
     const { type: newWalletType, id } = nextWallet;
 
     switch (newWalletType) {
       case ACCOUNT_TYPES.SMART_WALLET:
-        this.setState({
-          showPinModal: true,
-          onPinValidAction: (_: string, wallet: EthereumWallet) => this.switchToSW(_, wallet, id, callback),
-        });
-        break;
       case ACCOUNT_TYPES.KEY_BASED:
         switchAccount(id);
         if (callback) callback();
@@ -170,7 +168,7 @@ class WalletsPart extends React.Component<Props, State> {
   };
 
   render() {
-    const { showPinModal, onPinValidAction } = this.state;
+    const { showPinModal, onPinValidAction, isChangingAccount } = this.state;
     const {
       availableWallets,
       baseFiatCurrency,
@@ -187,7 +185,8 @@ class WalletsPart extends React.Component<Props, State> {
       <Wrapper>
         <SimpleSwitcher
           title={activeWalletTitle}
-          onPress={() => this.changeAcc(nextWallet)}
+          onPress={() => this.changeAcc(nextWallet, noop, true)}
+          isLoading={isChangingAccount}
         />
         <PortfolioBalance
           fiatCurrency={fiatCurrency}
@@ -232,7 +231,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   toggleBalance: () => dispatch(toggleBalanceAction()),
