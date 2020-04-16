@@ -228,7 +228,7 @@ class AccountsScreen extends React.Component<Props, State> {
 
   switchWallet = async (wallet: Account) => {
     const { switchAccount, navigation } = this.props;
-    await switchAccount(wallet.id);
+    switchAccount(wallet.id);
     navigation.navigate(ASSETS);
   };
 
@@ -245,12 +245,17 @@ class AccountsScreen extends React.Component<Props, State> {
       initialiseAction,
       isActive,
       iconSource,
+      id,
     } = item;
     return (
       <SettingsItemCarded
+        isSwitching={id === this.state.switchingToWalletId}
         title={title}
         subtitle={balance}
-        onMainPress={isInitialised ? mainAction : initialiseAction}
+        onMainPress={() => {
+          this.setState({ switchingToWalletId: id })
+          isInitialised ? mainAction() : initialiseAction()
+        }}
         isActive={isActive}
         customIcon={<IconImage source={iconSource} />}
       />
@@ -449,7 +454,8 @@ class AccountsScreen extends React.Component<Props, State> {
           <SettingsItemCarded
             title={title}
             subtitle={balance}
-            onMainPress={mainAction}
+            isSwitching={this.state.switchingToWalletId === item.id}
+            onMainPress={() => { this.setState({ switchingToWalletId: item.id }, mainAction); }}
             isActive={isActive}
             sidePaddingsForWidth={40}
             customIcon={<IconImage source={iconSource} />}
@@ -481,7 +487,8 @@ class AccountsScreen extends React.Component<Props, State> {
 
     const accountsList = [...walletsInList, ...networksToShow];
 
-    const showLoader = changingAccount || isChanging;
+    // const showLoader = changingAccount || isChanging;
+    const showLoader = false
 
     return (
       <ContainerWithHeader
