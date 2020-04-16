@@ -48,7 +48,7 @@ import type { Balances } from 'models/Asset';
 import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 
 // utils
-import { checkIfEnoughForFee } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount, formatTransactionFee } from 'utils/common';
 
@@ -124,7 +124,10 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
     const gasToken = get(this.props, 'settleTxFee.feeInfo.gasToken');
     const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei.toString(), gasToken);
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei,
+      gasToken,
+    });
     if (!isEnoughForFee) {
       Toast.show({
         message: `Not enough ${feeSymbol} to cover the withdrawal transaction fee`,

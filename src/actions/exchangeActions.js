@@ -146,7 +146,7 @@ export const takeOfferAction = (
     const transactionDataString = get(offerOrderData, 'transactionObj.data');
 
     const from = getActiveAccountAddress(accounts);
-    const gasLimit = await calculateGasEstimate({
+    const transactionPayload = {
       from,
       to: payToAddress,
       data: transactionDataString,
@@ -154,10 +154,10 @@ export const takeOfferAction = (
       symbol: fromAssetCode,
       contractAddress: fromAssetAddress || '',
       decimals: parseInt(fromAssetDecimals, 10) || 18,
-    });
+    };
     callback({
       ...offerOrderData,
-      gasLimit,
+      transactionPayload,
     });
   };
 };
@@ -403,21 +403,22 @@ export const setTokenAllowanceAction = (
     const { data: { to: payToAddress, data } } = response;
     const asset = supportedAssets.find(a => a.symbol === formAssetCode);
     const from = getActiveAccountAddress(accounts);
-    const gasLimit = await calculateGasEstimate({
+    const transactionPayload = {
       from,
       to: payToAddress,
       data,
       symbol: formAssetCode,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
-    });
+      amount: 0,
+    };
     callback({
       data,
       payToAddress,
       transactionObj: {
         data,
       },
-      gasLimit,
+      transactionPayload,
     });
   };
 };

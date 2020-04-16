@@ -40,7 +40,7 @@ import Spinner from 'components/Spinner';
 // utils
 import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
+import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { checkIfSmartWalletAccount } from 'utils/accounts';
 import { calculateGasEstimate } from 'services/assets';
@@ -414,20 +414,28 @@ class SendETHTokens extends React.Component<Props, State> {
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount;
     const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
     const { token, iconColor, decimals } = assetData;
+    const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
+    const feeSymbol = parsedGasToken ? gasToken.symbol : ETH;
 
     // balance
     const balance = getBalance(balances, token);
 
-    // fee
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei, feeByGasToken && gasToken);
-    const feeSymbol = feeByGasToken ? gasToken.symbol : ETH;
-    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-
-    // max amount
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, feeByGasToken && gasToken);
-
     // value
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+
+    // fee
+    const balanceCheckTransaction = {
+      txFeeInWei,
+      amount: currentValue,
+      decimals,
+      symbol: token,
+      gasToken: parsedGasToken,
+    };
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);
+
+    // max amount
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, parsedGasToken);
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);

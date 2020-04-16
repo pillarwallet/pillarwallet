@@ -37,7 +37,7 @@ import type {
   Balances,
   Rates,
 } from 'models/Asset';
-import type { GasToken } from 'models/Transaction';
+import type { GasToken, TransactionPayload } from 'models/Transaction';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -155,20 +155,32 @@ export const calculateMaxAmount = (
   return new BigNumber(utils.formatUnits(maxAmount, decimals)).toNumber();
 };
 
-export const checkIfEnoughForFee = (
+export const isEnoughBalanceForTransactionFee = (
   balances: Balances,
-  txFeeInWei: BigNumber,
-  gasToken: ?GasToken = {},
+  transaction: ?TransactionPayload,
 ): boolean => {
-  const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+  const {
+    txFeeInWei,
+    gasToken,
+    amount: transactionAmount,
+    decimals: transactionDecimals,
+    symbol: transactionSymbol,
+  } = transaction;
+
+  const feeSymbol = !gasToken || isEmpty(gasToken) ? ETH : gasToken.symbol;
+  const feeDecimals = feeSymbol === ETH ? 'ether' : gasToken.decimals;
 
   if (!balances[feeSymbol]) return false;
 
   const balance = getBalance(balances, feeSymbol);
 
   // we need to convert balanceInWei to BigNumber as ethers.js utils use different library for Big Numbers
-  const decimals = feeSymbol === ETH ? 'ether' : gasToken.decimals;
-  const balanceInWei = new BigNumber(utils.parseUnits(balance.toString(), decimals));
+  let balanceInWei = new BigNumber(utils.parseUnits(balance.toString(), feeDecimals));
+
+  // subtract from balance if transaction asset matches fee asset
+  if (transactionAmount && feeSymbol === transactionSymbol) {
+    balanceInWei = balanceInWei.sub(new BigNumber(utils.parseUnits(transactionAmount.toString(), transactionDecimals)));
+  }
 
   return balanceInWei.gte(txFeeInWei);
 };

@@ -41,7 +41,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 // utils
 import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { getBalance, getRate, calculateMaxAmount, checkIfEnoughForFee } from 'utils/assets';
+import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
 
@@ -201,18 +201,24 @@ class FundTank extends React.Component<Props, State> {
     const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
+    // value
+    const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+
     // fee
     const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
     const txFeeInWei = this.getTxFeeInWei();
-    const isEnoughForFee = checkIfEnoughForFee(balances, txFeeInWei, gasToken);
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
+      amount: currentValue,
+      decimals,
+      symbol: token,
+      txFeeInWei,
+      gasToken,
+    });
     const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
     const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
-
-    // value
-    const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);

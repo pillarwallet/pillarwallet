@@ -46,7 +46,7 @@ import Spinner from 'components/Spinner';
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { getUserName } from 'utils/contacts';
-import { checkIfEnoughForFee, getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee, getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { images } from 'utils/images';
 import { checkIfSmartWalletAccount } from 'utils/accounts';
 import { formatTransactionFee } from 'utils/common';
@@ -252,7 +252,15 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     } = this.transactionDetails;
     const value = Number(amount || 0);
 
-    const assetData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddress);
+    const {
+      symbol,
+      decimals,
+    } = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddress);
+    const assetData = {
+      contractAddress,
+      token: symbol,
+      decimals,
+    };
 
     const transaction = {
       recipient,
@@ -311,6 +319,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       gasLimit,
       gasPrice,
       gettingFee,
+      feeByGasToken,
     } = this.state;
 
     const colors = getThemeColors(theme);
@@ -339,9 +348,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
           txFeeInWei,
           gasLimit,
           gasPrice,
-          gasToken: this.gasToken,
         };
-
+        if (feeByGasToken) estimatePart.gasToken = this.gasToken;
         transactionPayload = getTransactionPayload(estimatePart, request);
 
         const {
@@ -349,14 +357,23 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
           data = '',
           amount,
           symbol,
+          decimals,
         } = transactionPayload;
+
+        const parsedGasToken = feeByGasToken && !isEmpty(this.gasToken) ? this.gasToken : null;
 
         if (this.unsupportedTransaction) {
           errorMessage = 'This data transaction or token is not supported in Pillar Wallet yet';
         } else {
           const txFeeInWeiBN = utils.bigNumberify(txFeeInWei.toString()); // BN compatibility
-          if (!checkIfEnoughForFee(balances, txFeeInWeiBN, this.gasToken)) {
-            const feeSymbol = isEmpty(this.gasToken) ? ETH : this.gasToken.symbol;
+          if (!isEnoughBalanceForTransactionFee(balances, {
+            amount,
+            symbol,
+            decimals,
+            txFeeInWei,
+            gasToken: parsedGasToken,
+          })) {
+            const feeSymbol = parsedGasToken ? this.gasToken.symbol : ETH;
             errorMessage = `Not enough ${feeSymbol} for transaction fee`;
           }
           if (!gettingFee && txFeeInWeiBN.eq(0)) {
@@ -364,7 +381,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
           }
         }
 
-        const feeDisplayValue = formatTransactionFee(txFeeInWei, this.gasToken);
+        const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);
 
         const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
         const recipientUsername = getUserName(contact);
