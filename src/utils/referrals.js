@@ -21,6 +21,35 @@
 import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 import type { SentInvitationsCount, ReferralContact } from 'reducers/referralsReducer';
 
+
+export const searchContacts = (contacts: ReferralContact[], _query: string): ReferralContact[] => {
+  const query = _query.toUpperCase();
+
+  return contacts.filter(({ name, email = '', phone = '' }) => {
+    return phone.includes(query)
+      || name.toUpperCase().includes(query)
+      || email.toUpperCase().includes(query);
+  });
+};
+
+export const filterAllowedContacts = (
+  contacts: ReferralContact[],
+  isPhoneVerified: boolean,
+  isEmailVerified: boolean,
+): ReferralContact[] => {
+  return contacts.filter((contact) => {
+    if (!isPhoneVerified) {
+      return !contact.phone;
+    }
+
+    if (!isEmailVerified) {
+      return !contact.email;
+    }
+
+    return true;
+  });
+};
+
 export const isSameContactData = (
   base: ReferralContact,
   otherEmail: ?string,
