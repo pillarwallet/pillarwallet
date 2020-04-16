@@ -1685,9 +1685,8 @@ export const initSmartWalletSdkWithPrivateKeyOrPinAction = ({ privateKey: _priva
     let privateKey = _privateKey;
     if (!_privateKey && pin) {
       privateKey = await getPrivateKeyFromPin(pin, dispatch);
-    } else {
-      return;
     }
+    if (!privateKey) return;
     await dispatch(initSmartWalletSdkAction(privateKey));
   };
 };
