@@ -43,6 +43,16 @@ const verificationFailedAction = () => ({
   type: VERIFICATION_FAILED,
 });
 
+const verificationSucceededAction = (message: string) => ({
+  type: ADD_NOTIFICATION,
+  payload: {
+    message,
+    title: 'Validation successful',
+    messageType: 'success',
+    autoClose: false,
+  },
+});
+
 const oneTimePasswordSentAction = () => ({
   type: OTP_SENT,
 });
@@ -128,66 +138,78 @@ export const verifyEmailAction = (walletId: string, code: string) => {
       dispatch(verificationFailedAction());
       return;
     }
-    const { referrals: { referralToken } } = getState();
-    if (referralToken) {
-      dispatch(completeReferralsEventAction());
-    }
 
     dispatch(logEventAction('email_verified'));
     dispatch({ type: USER_EMAIL_VERIFIED });
-    dispatch({
-      type: ADD_NOTIFICATION,
-      payload: {
-        message: 'Email verification was successful',
-        title: 'Validation successful',
-        messageType: 'success',
+
+    const {
+      referrals: {
+        referralToken,
+        isRewardClaimed,
+        referredEmail,
       },
-    });
+      user: {
+        data: { email },
+      },
+    } = getState();
+
+    let message = 'Email verification was successful';
+
+    if (referralToken && !isRewardClaimed && referredEmail === email) {
+      dispatch(completeReferralsEventAction());
+      message = 'Thank you for verifying your information, ' +
+                'we are currently processing your reward tokens.';
+    }
+
+    dispatch(verificationSucceededAction(message));
   };
 };
 
 export const verifyPhoneAction = (
   walletId: string,
   code: string,
-  callback?: () => void, // TODO: remove callback
+  // FIXME: remove callback.
+  // Callback is being used on screens/OTP/OTP
+  callback?: () => void,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch(sendingOneTimePasswordAction());
+
     const response = await api.verifyPhone({
       walletId,
       oneTimePassword: code,
     });
+
     const { responseStatus } = response;
 
     if (responseStatus !== 200) {
       dispatch(verificationFailedAction());
-      dispatch({
-        type: ADD_NOTIFICATION,
-        payload: {
-          message: 'Please try again later',
-          title: 'We can\'t verify your phone at this time',
-          messageType: 'warning',
-        },
-      });
-
       return;
     }
 
     dispatch(logEventAction('phone_verified'));
+    dispatch({ type: USER_PHONE_VERIFIED });
 
-    const { referrals: { referralToken } } = getState();
-    if (referralToken) {
+    const {
+      referrals: {
+        referralToken,
+        isRewardClaimed,
+        referredPhone,
+      },
+      user: {
+        data: { phone },
+      },
+    } = getState();
+
+    let message = 'Phone verification was successful';
+
+    if (referralToken && !isRewardClaimed && referredPhone === phone) {
       dispatch(completeReferralsEventAction());
+      message = 'Thank you for verifying your information, ' +
+                'we are currently processing your reward tokens.';
     }
 
-    dispatch({ type: USER_PHONE_VERIFIED });
-    dispatch({
-      type: ADD_NOTIFICATION,
-      payload: {
-        message: 'Phone verification was successful',
-        title: 'Validation successful',
-        messageType: 'success',
-      },
-    });
+    dispatch(verificationSucceededAction(message));
 
     if (callback) callback();
   };
