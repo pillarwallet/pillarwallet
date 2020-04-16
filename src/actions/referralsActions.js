@@ -200,8 +200,6 @@ export const startReferralsListenerAction = () => {
 
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) return;
-
-
       if (!params['+clicked_branch_link']) return;
 
       const { token, phone, email } = params;
