@@ -82,32 +82,36 @@ const sendingInviteAction = (): ReferralsSendingInviteAction => ({
   type: SENDING_INVITE,
 });
 
-const inviteSentAction = (dispatch: Dispatch, payload: InviteSentPayload) => {
-  dispatch({
-    type: INVITE_SENT,
-    payload,
-  });
-  dispatch({
-    type: ADD_NOTIFICATION,
-    payload: {
-      message: 'Invitations sent',
-      messageType: 'success',
-    },
-  });
+const inviteSentAction = (payload: InviteSentPayload) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: INVITE_SENT,
+      payload,
+    });
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: 'Invitations sent',
+        messageType: 'success',
+      },
+    });
+  };
 };
 
-const inviteErrorAction = (dispatch: Dispatch, errorMessage?: string) => {
-  dispatch({
-    type: ADD_NOTIFICATION,
-    payload: {
-      message: errorMessage || 'Please try again later',
-      title: 'Invites have not been sent',
-      messageType: 'warning',
-    },
-  });
-  dispatch({
-    type: REFERRAL_INVITE_ERROR,
-  });
+const inviteErrorAction = (errorMessage?: string) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: errorMessage || 'Please try again later',
+        title: 'Invites have not been sent',
+        messageType: 'warning',
+      },
+    });
+    dispatch({
+      type: REFERRAL_INVITE_ERROR,
+    });
+  };
 };
 
 export const completeReferralsEventAction = () => {
@@ -153,7 +157,7 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
       const token = await api.generateReferralToken(walletId);
 
       if (token.result !== 'success') {
-        inviteErrorAction(dispatch);
+        dispatch(inviteErrorAction());
         return;
       }
 
@@ -173,7 +177,7 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
 
       if (error) {
         const errorMessage = get(error, 'response.data.message');
-        inviteErrorAction(dispatch, errorMessage);
+        dispatch(inviteErrorAction(errorMessage));
         return;
       }
 
@@ -182,10 +186,10 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
       if (date !== currentDate) {
         updatedInvitationCount = invitationContacts.length;
       }
-      inviteSentAction(dispatch, {
+      dispatch(inviteSentAction({
         alreadyInvitedContacts: invitationContacts,
         sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
-      });
+      }));
     }));
   };
 };
