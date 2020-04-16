@@ -71,7 +71,6 @@ import {
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
-import { SET_REFERRALS_STATE } from 'constants/referralsConstants';
 
 import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
 
@@ -180,9 +179,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { insights = {} } = await storage.get('insights');
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
-
-      const { referrals = {} } = await storage.get('referralData');
-      dispatch({ type: SET_REFERRALS_STATE, payload: referrals });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

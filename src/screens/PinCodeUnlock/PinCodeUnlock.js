@@ -56,7 +56,7 @@ type HandleUnlockActionProps = {
 }
 
 type Props = {
-  loginWithPin: (pin: string, callback: ?Function) => void,
+  loginWithPin: (pin: string, callback: ?Function, useBiometrics: ?boolean) => void,
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
@@ -228,10 +228,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handlePinSubmit = async (pin: string) => {
-    const { loginWithPin } = this.props;
+    const { loginWithPin, useBiometrics } = this.props;
     await this.handleUnlockAction({
       pin,
-      defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
+      defaultAction: () => loginWithPin(pin, this.onLoginSuccess, useBiometrics),
     });
     this.handleLocking(false);
   };
@@ -286,8 +286,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loginWithPin: (pin: string, callback: ?Function) => dispatch(
-    loginAction(pin, null, callback),
+  loginWithPin: (pin: string, callback: ?Function, useBiometrics: ?boolean) => dispatch(
+    loginAction(pin, null, callback, useBiometrics),
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
   initSmartWalletSdkWithPrivateKeyOrPin: ({ privateKey, pin }: InitSmartWalletProps) =>

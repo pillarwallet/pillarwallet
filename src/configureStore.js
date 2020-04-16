@@ -53,7 +53,7 @@ const persistConfig = {
   storage: AsyncStorage,
   // version: 0,
   stateReconciler: autoMergeLevel2,
-  whitelist: ['history', 'walletConnectSessions'],
+  whitelist: ['history', 'walletConnectSessions', 'referrals'],
   // migrate: createMigrate(migrations, { debug: true }),
   timeout: 0, // HACK: wait until the storage responds
 };
