@@ -85,7 +85,7 @@ type Props = {
   assets: Assets,
   fetchGasInfo: () => void,
   deploySmartWallet: () => void,
-  switchAccount: (accountId: string, privateKey?: string) => void,
+  switchAccount: (accountId: string) => void,
 };
 
 type State = {
@@ -379,7 +379,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
-  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SWActivationModal));

@@ -136,7 +136,7 @@ type Props = {
   accountAssets: Assets,
   activeBlockchainNetwork: string,
   bitcoinAddresses: BitcoinAddress[],
-  switchAccount: (accountId: string, privateKey?: string) => void,
+  switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
 };
 
@@ -1099,7 +1099,7 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
