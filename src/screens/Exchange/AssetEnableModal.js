@@ -78,9 +78,13 @@ const AssetEnableModal = (props: Props) => {
     onModalHide,
     onEnable,
     isVisible,
-    enableData = {},
+    enableData,
     theme,
   } = props;
+
+  if (!enableData) {
+    return null;
+  }
 
   const {
     providerName,
@@ -89,6 +93,7 @@ const AssetEnableModal = (props: Props) => {
     feeInFiat,
     assetSymbol,
     assetIcon,
+    isDisabled,
   } = enableData;
   const fullIconUrl = `${SDK_PROVIDER}/${assetIcon}?size=3`;
 
@@ -99,7 +104,7 @@ const AssetEnableModal = (props: Props) => {
       onModalHide={onModalHide}
       noClose
       headerProps={{
-        centerItems: [{ title: `Enable ${assetSymbol} for trading` }],
+        centerItems: [{ title: `Enable ${assetSymbol}` }],
         sideFlex: '0',
         wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
       }}
@@ -110,16 +115,17 @@ const AssetEnableModal = (props: Props) => {
           fallbackSource={fallbackSource}
         />
         <Paragraph>
-          {`Once enabled, it will be available for trading on ${providerName} exchange`}
+          {`Once enabled, it will be available for exchanging on ${providerName}`}
         </Paragraph>
         <Button
           secondary
-          title="Enable"
+          title={isDisabled ? 'Not enough ETH' : 'Enable'}
           onPress={onEnable}
           regularText
           style={{ marginBottom: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
           block
+          disabled={isDisabled}
         />
         <BaseText secondary>
           {`Fee ${feeInEth} ETH (${getCurrencySymbol(fiatCurrency)}${feeInFiat})`}

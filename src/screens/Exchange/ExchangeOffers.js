@@ -26,6 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
 import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
 import { utils } from 'ethers';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import {
@@ -56,15 +57,19 @@ import type { Theme } from 'models/Theme';
 import type { Accounts } from 'models/Account';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TokenTransactionPayload } from 'models/Transaction';
-import type { Asset, Rates } from 'models/Asset';
+import type { Asset, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
+
+//  selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { getOfferProviderLogo, isFiatProvider, getCryptoProviderName } from 'utils/exchange';
 import { formatAmount, formatAmountDisplay } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getActiveAccountAddress } from 'utils/accounts';
-import { getRate } from 'utils/assets';
+import { getBalance, getRate } from 'utils/assets';
+
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
@@ -80,6 +85,7 @@ export type EnableData = {
   fiatCurrency: string,
   feeInEth: string,
   feeInFiat: string,
+  isDisabled?: boolean,
 };
 
 type AllowanceResponse = {
@@ -112,6 +118,7 @@ type Props = {
   gasInfo: GasInfo,
   rates: Rates,
   setDismissTransaction: () => void,
+  balances: Balances,
 };
 
 type State = {
@@ -239,6 +246,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       setTokenAllowance,
       setExecutingTransaction,
       rates,
+      balances,
     } = this.props;
 
     const {
@@ -292,6 +300,10 @@ class ExchangeOffers extends React.Component<Props, State> {
           },
         };
 
+        const ethBalance = getBalance(balances, ETH);
+        const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
+        const isDisabled = !balanceInWei.gte(txFeeInWei);
+
         this.setState({
           isEnableAssetModalVisible: true,
           enableData: {
@@ -301,6 +313,7 @@ class ExchangeOffers extends React.Component<Props, State> {
             fiatCurrency,
             feeInEth,
             feeInFiat: (parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency)).toFixed(2),
+            isDisabled,
           },
           enablePayload: transactionPayload,
         });
@@ -645,6 +658,15 @@ const mapStateToProps = ({
   rates,
 });
 
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
@@ -658,4 +680,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ExchangeOffers));
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeOffers));
