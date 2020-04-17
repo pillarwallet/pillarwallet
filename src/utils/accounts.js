@@ -21,7 +21,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import omit from 'lodash.omit';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
-import type { Assets, Balances } from 'models/Asset';
+import type { Assets, Balances, BalancesStore } from 'models/Asset';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { addressesEqual } from './assets';
 
@@ -72,12 +72,12 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
-export const hasLegacyAccountBalance = (accounts: Accounts, balances: Balances): boolean => {
+export const hasLegacyAccountBalance = (accounts: Accounts, balances: BalancesStore): boolean => {
   const account = findKeyBasedAccount(accounts);
   if (!account || Object.keys(balances[account.id]).length === 0) {
     return false;
   }
-  const legacyBalances = balances[account.id];
+  const legacyBalances: Balances = balances[account.id];
   return Object.keys(legacyBalances).some(token => legacyBalances[token].balance !== '0.0');
 };
 export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
