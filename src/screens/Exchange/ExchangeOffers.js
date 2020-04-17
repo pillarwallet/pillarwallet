@@ -25,10 +25,12 @@ import { connect } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
 import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
+import { utils } from 'ethers';
 
 // actions
 import {
   authorizeWithShapeshiftAction,
+  setDismissTransactionAction,
   setExecutingTransactionAction,
   setTokenAllowanceAction,
   takeOfferAction,
@@ -39,8 +41,9 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import OfferCard from 'components/OfferCard/OfferCard';
 
 // constants
-import { PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
-import { EXCHANGE_CONFIRM, FIAT_EXCHANGE } from 'constants/navigationConstants';
+import { EXCHANGE, PROVIDER_SHAPESHIFT, NORMAL } from 'constants/exchangeConstants';
+import { EXCHANGE_CONFIRM, FIAT_EXCHANGE, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // services
 import { wyreWidgetUrl } from 'services/sendwyre';
@@ -52,18 +55,38 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { Accounts } from 'models/Account';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { TokenTransactionPayload } from 'models/Transaction';
+import type { Asset, Rates } from 'models/Asset';
+import type { GasInfo } from 'models/GasInfo';
 
 // utils
-import { getOfferProviderLogo, isFiatProvider } from 'utils/exchange';
-import { formatAmountDisplay } from 'utils/common';
+import { getOfferProviderLogo, isFiatProvider, getCryptoProviderName } from 'utils/exchange';
+import { formatAmount, formatAmountDisplay } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getActiveAccountAddress } from 'utils/accounts';
+import { getRate } from 'utils/assets';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { calculateAmountToBuy, getAvailable } from './utils';
 import type { FormValue } from './Exchange';
+import AssetEnableModal from './AssetEnableModal';
 
+
+export type EnableData = {
+  providerName: string,
+  assetSymbol: string,
+  assetIcon: string,
+  fiatCurrency: string,
+  feeInEth: string,
+  feeInFiat: string,
+};
+
+type AllowanceResponse = {
+  gasLimit: number,
+  payToAddress: string,
+  transactionObj: { data: string },
+};
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -71,7 +94,7 @@ type Props = {
   takeOffer: (string, string, number, string, string, () => void) => void,
   authorizeWithShapeshift: () => void,
   setExecutingTransaction: () => void,
-  setTokenAllowance: (string, string, string, string, string, () => void) => void,
+  setTokenAllowance: (string, string, string, string, string, (AllowanceResponse) => void) => void,
   exchangeAllowances: Allowance[],
   connectedProviders: ExchangeProvider[],
   smartWalletFeatureEnabled: boolean,
@@ -84,12 +107,20 @@ type Props = {
   value: FormValue,
   accounts: Accounts,
   btcAddresses: BitcoinAddress[],
+  exchangeSupportedAssets: Asset[],
+  baseFiatCurrency: ?string,
+  gasInfo: GasInfo,
+  rates: Rates,
+  setDismissTransaction: () => void,
 };
 
 type State = {
   shapeshiftAuthPressed: boolean,
   pressedOfferId: string, // offer id will be passed to prevent double clicking
   pressedTokenAllowanceId: string,
+  isEnableAssetModalVisible: boolean,
+  enableData?: ?EnableData,
+  enablePayload: ?TokenTransactionPayload,
 };
 
 
@@ -109,6 +140,7 @@ const ESWrapper = styled.View`
 const OfferCardWrapper = styled.View`
   padding: 0 ${spacing.layoutSides}px;
 `;
+
 // const PromoWrapper = styled.View`
 //   width: 100%;
 //   align-items: center;
@@ -173,7 +205,7 @@ function getCardAdditionalButtonData(additionalData) {
     return {
       title: storedAllowance ? 'Pending' : 'Allow this exchange',
       onPress: () => onSetTokenAllowancePress(offer),
-      disabled: isSetAllowancePressed,
+      disabled: isSetAllowancePressed || !!storedAllowance,
       isLoading: isSetAllowancePressed,
     };
   }
@@ -185,6 +217,9 @@ class ExchangeOffers extends React.Component<Props, State> {
     pressedOfferId: '',
     shapeshiftAuthPressed: false,
     pressedTokenAllowanceId: '',
+    isEnableAssetModalVisible: false,
+    enableData: null,
+    enablePayload: null,
   };
 
   onShapeshiftAuthPress = () => {
@@ -197,10 +232,15 @@ class ExchangeOffers extends React.Component<Props, State> {
 
   onSetTokenAllowancePress = (offer: Offer) => {
     const {
-      navigation,
+      exchangeSupportedAssets,
+      providersMeta,
+      baseFiatCurrency,
+      gasInfo,
       setTokenAllowance,
       setExecutingTransaction,
+      rates,
     } = this.props;
+
     const {
       _id,
       provider,
@@ -208,23 +248,81 @@ class ExchangeOffers extends React.Component<Props, State> {
       toAsset,
       trackId = '',
     } = offer;
-    const { address: fromAssetAddress, code: fromAssetCode } = fromAsset;
-    const { address: toAssetAddress } = toAsset;
+    const { address: fromAssetAddress, code: fromAssetCode, decimals } = fromAsset;
+    const { address: toAssetAddress, code: toAssetCode } = toAsset;
+
     this.setState({ pressedTokenAllowanceId: _id }, () => {
       setTokenAllowance(fromAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, (response) => {
         this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
         if (isEmpty(response)) return;
         setExecutingTransaction();
-        navigation.navigate(EXCHANGE_CONFIRM, {
-          offerOrder: {
-            ...response,
-            provider,
-            fromAsset,
-            toAsset,
-            setTokenAllowance: true,
+        const {
+          gasLimit,
+          payToAddress,
+          transactionObj: {
+            data,
+          } = {},
+        } = response;
+
+        const assetToEnable = exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode) || {};
+        const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
+        const providerName = getCryptoProviderName(providersMeta, provider);
+        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+        const gasPriceInfo = gasInfo.gasPrice[NORMAL] || 0;
+        const gasPrice = utils.parseUnits(gasPriceInfo.toString(), 'gwei');
+        const txFeeInWei = gasPrice.mul(gasLimit);
+        const feeInEth = formatAmount(utils.formatEther(txFeeInWei));
+
+        const transactionPayload = {
+          gasLimit,
+          txFeeInWei,
+          gasPrice,
+          amount: 0,
+          to: payToAddress,
+          symbol: fromAssetCode,
+          contractAddress: fromAssetAddress || '',
+          decimals: parseInt(decimals, 10) || 18,
+          data,
+          extra: {
+            allowance: {
+              provider,
+              fromAssetCode,
+              toAssetCode,
+            },
           },
+        };
+
+        this.setState({
+          isEnableAssetModalVisible: true,
+          enableData: {
+            providerName,
+            assetSymbol,
+            assetIcon,
+            fiatCurrency,
+            feeInEth,
+            feeInFiat: (parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency)).toFixed(2),
+          },
+          enablePayload: transactionPayload,
         });
       });
+    });
+  };
+
+  hideEnableAssetModal = () => {
+    const { setDismissTransaction } = this.props;
+    setDismissTransaction();
+    this.setState({ isEnableAssetModalVisible: false, enableData: null });
+  };
+
+  enableAsset = () => {
+    const { enablePayload } = this.state;
+    const { navigation } = this.props;
+    this.hideEnableAssetModal();
+
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
+      transactionPayload: enablePayload,
+      goBackDismiss: true,
+      transactionType: EXCHANGE,
     });
   };
 
@@ -463,48 +561,57 @@ class ExchangeOffers extends React.Component<Props, State> {
       isExchangeActive,
       showEmptyMessage,
     } = this.props;
+    const { isEnableAssetModalVisible, enableData } = this.state;
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
 
     return (
-      <FlatList
-        data={reorderedOffers}
-        keyExtractor={(item) => item._id}
-        style={{ width: '100%', flex: 1 }}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          width: '100%',
-          paddingVertical: 10,
-          flexGrow: 1,
-        }}
-        renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
-        ListHeaderComponent={(
-          <ListHeader>
-            <ExchangeStatus isVisible={isExchangeActive} />
-          </ListHeader>
-        )}
-        ListEmptyComponent={!!showEmptyMessage && (
-          <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
-            <EmptyStateParagraph
-              title="No live offers"
-              bodyText="Currently no matching offers from exchange services are provided.
-                              New offers may appear at any time — don’t miss it."
-              large
-              wide
-            />
-          </ESWrapper>
-        )}
-        // ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }}
-        // ListFooterComponent={
-        //   <PopularSwapsGridWrapper>
-        //     <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
-        //       <MediumText medium style={{ marginBottom: spacing.medium }}>
-        //           Try these popular swaps
-        //       </MediumText>
-        //       <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
-        //     </SafeAreaView>
-        //   </PopularSwapsGridWrapper>
-        // }
-      />
+      <React.Fragment>
+        <FlatList
+          data={reorderedOffers}
+          keyExtractor={(item) => item._id}
+          style={{ width: '100%', flex: 1 }}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            width: '100%',
+            paddingVertical: 10,
+            flexGrow: 1,
+          }}
+          renderItem={(props) => this.renderOffers(props, disableNonFiatExchange)}
+          ListHeaderComponent={(
+            <ListHeader>
+              <ExchangeStatus isVisible={isExchangeActive} />
+            </ListHeader>
+          )}
+          ListEmptyComponent={!!showEmptyMessage && (
+            <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
+              <EmptyStateParagraph
+                title="No live offers"
+                bodyText="Currently no matching offers from exchange services are provided.
+                                New offers may appear at any time — don’t miss it."
+                large
+                wide
+              />
+            </ESWrapper>
+          )}
+          // ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }}
+          // ListFooterComponent={
+          //   <PopularSwapsGridWrapper>
+          //     <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
+          //       <MediumText medium style={{ marginBottom: spacing.medium }}>
+          //           Try these popular swaps
+          //       </MediumText>
+          //       <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
+          //     </SafeAreaView>
+          //   </PopularSwapsGridWrapper>
+          // }
+        />
+        <AssetEnableModal
+          isVisible={isEnableAssetModalVisible}
+          onModalHide={this.hideEnableAssetModal}
+          onEnable={this.enableAsset}
+          enableData={enableData}
+        />
+      </React.Fragment>
     );
   }
 }
@@ -512,6 +619,7 @@ class ExchangeOffers extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
+  appSettings: { data: { baseFiatCurrency } },
   exchange: {
     data: {
       offers,
@@ -519,20 +627,28 @@ const mapStateToProps = ({
       connectedProviders,
     },
     providersMeta,
+    exchangeSupportedAssets,
   },
   bitcoin: { data: { addresses: btcAddresses } },
+  history: { gasInfo },
+  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
+  baseFiatCurrency,
   offers,
   exchangeAllowances,
   connectedProviders,
   providersMeta,
+  exchangeSupportedAssets,
   btcAddresses,
+  gasInfo,
+  rates,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
+  setDismissTransaction: () => dispatch(setDismissTransactionAction()),
   setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback) => dispatch(
     setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback),
   ),
