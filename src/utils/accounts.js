@@ -72,6 +72,14 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
+export const hasLegacyAccountBalance = (accounts: Accounts, balances: Balances): boolean => {
+  const account = findKeyBasedAccount(accounts);
+  if (!account || Object.keys(balances[account.id]).length === 0) {
+    return false;
+  }
+  const legacyBalances = balances[account.id];
+  return Object.keys(legacyBalances).some(token => legacyBalances[token].balance !== '0.0');
+};
 export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 };

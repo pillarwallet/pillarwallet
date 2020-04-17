@@ -38,7 +38,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
+import { getAccountName, getActiveAccount, getActiveAccountType, hasLegacyAccountBalance } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
@@ -174,8 +174,10 @@ class AccountsScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const isActiveKeyWallet = getActiveAccountType(props.accounts) === ACCOUNT_TYPES.KEY_BASED;
+    const hasLegacyBalance = hasLegacyAccountBalance(props.accounts, props.balances);
     const { user } = props;
-    const forceShowLegacyWallet = !user.isLegacyUser && isActiveKeyWallet;
+    const forceShowLegacyWallet =
+        (!user.isLegacyUser && isActiveKeyWallet) || hasLegacyBalance;
     this.state = {
       showPinModal: false,
       changingAccount: false,
