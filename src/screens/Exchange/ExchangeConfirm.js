@@ -282,7 +282,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     return defaultCost;
   };
 
-  getTxFeeInWei = async (txSpeed?: string, gasLimit?: number): BigNumber => {
+  getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
     const { gasInfo, activeAccount } = this.props;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();

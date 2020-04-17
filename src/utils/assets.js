@@ -179,10 +179,13 @@ export const isEnoughBalanceForTransactionFee = (
 
   // subtract from balance if transaction asset matches fee asset
   if (transactionAmount && feeSymbol === transactionSymbol) {
-    balanceInWei = balanceInWei.sub(new BigNumber(utils.parseUnits(transactionAmount.toString(), transactionDecimals)));
+    const amountInWei = new BigNumber(utils.parseUnits(transactionAmount.toString(), transactionDecimals));
+    balanceInWei = balanceInWei.minus(amountInWei);
   }
 
-  return balanceInWei.gte(txFeeInWei);
+  const txFeeInWeiBN = new BigNumber(txFeeInWei.toString()); // compatibility
+
+  return balanceInWei.gte(txFeeInWeiBN);
 };
 
 export const balanceInEth = (balances: Balances, rates: Rates): number => {

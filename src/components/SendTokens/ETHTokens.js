@@ -36,6 +36,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import SendTokenDetails from 'components/SendTokenDetails';
 import Spinner from 'components/Spinner';
+import RelayerMigrationModal from 'components/RelayerMigrationModal';
 
 // utils
 import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
@@ -119,7 +120,7 @@ type State = {
   value: ?{
     amount: ?string,
   },
-  showModal: boolean,
+  showTransactionSpeedModal: boolean,
   gasLimit: number,
   gettingFee: boolean,
   calculatingMaxValue: boolean,
@@ -127,6 +128,7 @@ type State = {
   txFeeInWei: BigNumber,
   submitPressed: boolean,
   feeByGasToken: boolean,
+  showRelayerMigrationModal: boolean,
 };
 
 const { Form } = t.form;
@@ -138,7 +140,7 @@ class SendETHTokens extends React.Component<Props, State> {
 
   state = {
     value: null,
-    showModal: false,
+    showTransactionSpeedModal: false,
     gasLimit: 0,
     gettingFee: true,
     calculatingMaxValue: false,
@@ -146,6 +148,7 @@ class SendETHTokens extends React.Component<Props, State> {
     txFeeInWei: 0,
     submitPressed: false,
     feeByGasToken: false,
+    showRelayerMigrationModal: false,
   };
 
   constructor(props: Props) {
@@ -173,7 +176,7 @@ class SendETHTokens extends React.Component<Props, State> {
   handleGasPriceChange = (txSpeed: string) => () => {
     this.props.onUpdateTransactionSpeed(txSpeed);
     this.setState({
-      showModal: false,
+      showTransactionSpeedModal: false,
     });
   };
 
@@ -301,7 +304,7 @@ class SendETHTokens extends React.Component<Props, State> {
     });
   };
 
-  getTxFeeInWei = async (txSpeed?: string, gasLimit?: number): BigNumber => {
+  getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
     const { gasInfo, activeAccount } = this.props;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();
@@ -358,6 +361,17 @@ class SendETHTokens extends React.Component<Props, State> {
     return defaultCost;
   };
 
+  renderRelayerMigrationButton = () => {
+    return (
+      <Button
+        title="Pay fees with PLR"
+        onPress={() => this.setState({ showRelayerMigrationModal: true })}
+        secondary
+        small
+      />
+    );
+  };
+
   renderTxSpeedButtons = () => {
     const { rates, fiatCurrency, activeAccount } = this.props;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) return null;
@@ -391,7 +405,7 @@ class SendETHTokens extends React.Component<Props, State> {
   render() {
     const {
       value,
-      showModal,
+      showTransactionSpeedModal,
       gasLimit,
       gettingFee,
       calculatingMaxValue,
@@ -399,6 +413,7 @@ class SendETHTokens extends React.Component<Props, State> {
       txFeeInWei,
       submitPressed,
       feeByGasToken,
+      showRelayerMigrationModal,
     } = this.state;
     const {
       session,
@@ -411,8 +426,7 @@ class SendETHTokens extends React.Component<Props, State> {
     } = this.props;
 
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
-    const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount;
-    const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
+
     const { token, iconColor, decimals } = assetData;
     const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
     const feeSymbol = parsedGasToken ? gasToken.symbol : ETH;
@@ -464,25 +478,32 @@ class SendETHTokens extends React.Component<Props, State> {
       ? 'Getting the fee..'
       : 'Next';
 
+
+    const showRelayerMigration = showFee && true; // TODO: show according to smart wallet account settings
+    const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
+
+    const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
+
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: `Send ${assetData.token}` }] }}
         footer={(
           <FooterInner>
-            {!!transactionSpeed &&
-            <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
+            {!!showTransactionSpeeds &&
+              <TouchableOpacity onPress={() => this.setState({ showTransactionSpeedModal: true })}>
+                <SendTokenDetailsValue>
+                  <Label small>Fee: </Label>
+                  <TextLink>{SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
+                </SendTokenDetailsValue>
+              </TouchableOpacity>
+            }
+            {!showTransactionSpeeds && !showRelayerMigration && showFee &&
               <SendTokenDetailsValue>
-                <Label small>Fee: </Label>
-                <TextLink>{SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
+                <Label small>Estimated fee: {feeDisplayValue}</Label>
               </SendTokenDetailsValue>
-            </TouchableOpacity>
             }
-            {!transactionSpeed && showFee &&
-            <SendTokenDetailsValue>
-              <Label small>Estimated fee: {feeDisplayValue}</Label>
-            </SendTokenDetailsValue>
-            }
-            {!showTransactionSpeeds && !showFee && <Label>&nbsp;</Label>}
+            {showFee && showRelayerMigration && this.renderRelayerMigrationButton()}
+            {!showTransactionSpeeds && !showFee && !showRelayerMigration && <Label>&nbsp;</Label>}
             {showNextButton &&
               <Button
                 disabled={isNextButtonDisabled}
@@ -524,14 +545,20 @@ class SendETHTokens extends React.Component<Props, State> {
         </BackgroundWrapper>
         {showTransactionSpeeds &&
           <SlideModal
-            isVisible={showModal}
+            isVisible={showTransactionSpeedModal}
             title="Transaction speed"
-            onModalHide={() => { this.setState({ showModal: false }); }}
+            onModalHide={() => { this.setState({ showTransactionSpeedModal: false }); }}
           >
             <Label>Choose your gas price.</Label>
             <Label>Faster transaction requires more fee.</Label>
             <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
           </SlideModal>
+        }
+        {showRelayerMigration &&
+          <RelayerMigrationModal
+            isVisible={showRelayerMigrationModal}
+            onModalHide={() => this.setState({ showRelayerMigrationModal: false })}
+          />
         }
       </ContainerWithHeader>
     );
