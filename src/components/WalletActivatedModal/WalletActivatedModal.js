@@ -31,6 +31,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 type Props = {
   isVisible: boolean,
   onModalHide: () => void,
+  onButtonPress: () => void,
   theme: Theme,
 }
 
@@ -71,11 +72,11 @@ const WalletActivatedModal = (props: Props) => {
     >
       <ContainerWithHeader
         headerProps={{
-            leftItems: [{ title: "What's next" }],
-            rightItems: [{ close: true }],
-            onClose: props.onModalHide,
-            close: true,
-          }}
+          leftItems: [{ title: "What's next" }],
+          rightItems: [{ close: true }],
+          onClose: props.onModalHide,
+          close: true,
+        }}
       >
         <ScrollView
           showsVerticalScrollIndicator={false}

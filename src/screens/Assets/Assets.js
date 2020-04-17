@@ -72,7 +72,6 @@ import { activeAccountSelector } from 'selectors';
 import PPNView from 'screens/Assets/PPNView';
 import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
-import WalletActivatedModal from '../../components/WalletActivatedModal/WalletActivatedModal';
 
 type Props = {
   fetchInitialAssets: () => void,
@@ -331,7 +330,6 @@ class AssetsScreen extends React.Component<Props, State> {
         inset={{ bottom: 0 }}
         tab
       >
-        <WalletActivatedModal isVisible />
         {onScroll => this.renderView(screenView, onScroll)}
       </ContainerWithHeader>
     );
