@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { ScrollView, Linking, View } from 'react-native';
+import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
@@ -57,13 +58,13 @@ type Props = {
 
 class WalletActivation extends React.PureComponent {
   handleFaq = () => {
-    //
+    Linking.openURL('https://help.pillarproject.io/en/articles/3935106-smart-wallet-faq');
   };
 
   handleEtherscan = () => {
     const { deploymentHash } = this.props;
     if (deploymentHash) {
-      Linking.openURL(`https://etherscan.io/tx/${deploymentHash}`);
+      Linking.openURL(`${TX_DETAILS_URL}${deploymentHash}`);
     }
   };
 
@@ -74,6 +75,7 @@ class WalletActivation extends React.PureComponent {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 20 }}
+        showsVerticalScrollIndicator={false}
       >
         <Title>{title}</Title>
         <Text>{text}</Text>

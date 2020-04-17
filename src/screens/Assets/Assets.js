@@ -21,6 +21,7 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import get from 'lodash.get';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import { withTheme } from 'styled-components/native';
@@ -72,6 +73,7 @@ import { activeAccountSelector } from 'selectors';
 import PPNView from 'screens/Assets/PPNView';
 import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
+import WalletActivation from 'screens/Assets/WalletActivation';
 
 type Props = {
   fetchInitialAssets: () => void,
@@ -256,6 +258,13 @@ class AssetsScreen extends React.Component<Props, State> {
     const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+    const { upgrade: { deploymentStarted } } = smartWalletState;
+
+    const isDeploying = deploymentStarted
+      || [
+        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+      ].includes(smartWalletStatus.status);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -268,6 +277,13 @@ class AssetsScreen extends React.Component<Props, State> {
             <Button title="Try again" onPress={() => fetchInitialAssets()} />
           )}
         </Container>
+      );
+    }
+
+    if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
+      const deploymentHash = get(smartWalletState, 'upgrade.deploymentData.hash', {});
+      return (
+        <WalletActivation deploymentHash={deploymentHash} />
       );
     }
 
