@@ -20,13 +20,18 @@
 import * as React from 'react';
 import { ScrollView, Image } from 'react-native';
 import SlideModal from 'components/Modals/SlideModal';
-import styled from 'styled-components/native';
-import { fontStyles, UIColors, baseColors } from 'utils/variables';
+import styled, { withTheme } from 'styled-components/native';
+import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
+import type { Theme } from 'models/Theme';
+import { DARK_THEME } from 'constants/appSettingsConstants';
+import Button from 'components/Button';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 type Props = {
   isVisible: boolean,
   onModalHide: () => void,
+  theme: Theme,
 }
 
 const Title = styled(MediumText)`
@@ -37,10 +42,16 @@ const Title = styled(MediumText)`
 
 const Text = styled(BaseText)`
   ${fontStyles.medium};
-  margin: -35px 56px 0;
+  margin: 35px 56px;
 `;
 
-const image = require('assets/images/smart_wallet.png');
+const ButtonWrapper = styled.View`
+  width: 100%;
+  padding: 0 30px;
+`;
+
+const imageLight = require('assets/images/swActivatedLight.png');
+const imageDark = require('assets/images/swActivatedLight.png');
 
 const title = 'Your Smart Wallet is now activated';
 // eslint-disable-next-line quotes
@@ -48,27 +59,44 @@ const text = `You can now access your new Smart Wallet and the new Pillar Paymen
 hand side of the Assets screen`;
 
 const WalletActivatedModal = (props: Props) => {
+  const isDarkTheme = props.theme === DARK_THEME;
+  const imgSource = isDarkTheme ? imageDark : imageLight;
   return (
     <SlideModal
       isVisible={props.isVisible}
       noSwipeToDismiss
-      onModalHide={props.onModalHide}
+      hideHeader
+    //   onModalHide={props.onModalHide}
       fullScreen
-      headerProps={{
-        leftItems: [{ title: "What's next" }],
-        wrapperStyle: { paddingTop: 40 },
-      }}
     >
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{ flex: 1 }}
+      <ContainerWithHeader
+        headerProps={{
+            leftItems: [{ title: "What's next" }],
+            rightItems: [{ close: true }],
+            onClose: props.onModalHide,
+            close: true,
+          }}
       >
-        <Title>{title}</Title>
-        <Image source={image} style={{ flex: 1, marginTop: -70 }} resizeMode="contain" />
-        <Text>{text}</Text>
-      </ScrollView>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+        >
+          <Title>{title}</Title>
+          <Image source={imgSource} style={{ height: 137, width: '100%' }} resizeMode="stretch" />
+          <Text>{text}</Text>
+          <ButtonWrapper>
+            <Button
+              title="Go to Smart Wallet"
+              onPress={props.onModalHide}
+              secondary
+              height={48}
+              textStyle={fontStyles.medium}
+            />
+          </ButtonWrapper>
+        </ScrollView>
+      </ContainerWithHeader>
     </SlideModal>
   );
 };
 
-export default WalletActivatedModal;
+export default withTheme(WalletActivatedModal);
