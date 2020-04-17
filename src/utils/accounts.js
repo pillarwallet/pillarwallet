@@ -21,7 +21,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import omit from 'lodash.omit';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
-import type { Assets } from 'models/Asset';
+import type { Assets, Balances } from 'models/Asset';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { addressesEqual } from './assets';
 
