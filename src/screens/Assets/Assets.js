@@ -60,7 +60,7 @@ import { ACCOUNTS, RECOVERY_SETTINGS, SECURITY_SETTINGS } from 'constants/naviga
 
 // utils
 import { getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, isDeployingSmartWallet } from 'utils/smartWallet';
 import { getThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 
@@ -258,13 +258,8 @@ class AssetsScreen extends React.Component<Props, State> {
     const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const { upgrade: { deploymentStarted } } = smartWalletState;
 
-    const isDeploying = deploymentStarted
-      || [
-        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-      ].includes(smartWalletStatus.status);
+    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
