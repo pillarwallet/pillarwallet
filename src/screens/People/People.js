@@ -176,6 +176,7 @@ const LocalContactsItemName = styled(BaseText)`
 
 const MIN_QUERY_LENGTH = 2;
 const OVERLAY_OFFSET = 72;
+const ITEM_HEIGHT = 82;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -595,6 +596,12 @@ class PeopleScreen extends React.Component<Props, State> {
     );
   }
 
+  getItemLayout = (data, index) => {
+    const { query } = this.state;
+    const inSearchMode = query.length >= MIN_QUERY_LENGTH;
+    return ({ length: ITEM_HEIGHT, offset: (ITEM_HEIGHT * index) + (inSearchMode ? index : 0), index });
+  }
+
   renderContent = (onScroll) => {
     const {
       query,
@@ -655,6 +662,7 @@ class PeopleScreen extends React.Component<Props, State> {
           </>
           }
         ItemSeparatorComponent={() => inSearchMode ? <Separator spaceOnLeft={82} /> : null}
+        getItemLayout={this.getItemLayout}
       />
     );
   }
