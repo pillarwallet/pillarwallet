@@ -27,6 +27,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import InviteBanner from 'screens/People/InviteBanner';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
@@ -56,7 +57,7 @@ type Props = {
   deploymentHash: ?string,
 }
 
-class WalletActivation extends React.PureComponent {
+class WalletActivation extends React.PureComponent<Props> {
   handleFaq = () => {
     Linking.openURL('https://help.pillarproject.io/en/articles/3935106-smart-wallet-faq');
   };
