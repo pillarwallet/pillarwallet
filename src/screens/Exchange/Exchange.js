@@ -68,7 +68,7 @@ import { fiatCurrencies, initialAssets } from 'fixtures/assets';
 import { spacing } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatProvider, isFiatCurrency, getOfferProviderLogo } from 'utils/exchange';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getActiveAccountType, getActiveAccountAddress } from 'utils/accounts';
 import { themedColors } from 'utils/themes';
 import { satoshisToBtc } from 'utils/bitcoin';
@@ -1197,7 +1197,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       });
     }
 
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+    const deploymentData = getDeploymentData(smartWalletState);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const blockView = !isEmpty(sendingBlockedMessage)
