@@ -58,7 +58,7 @@ import type { EthereumWallet } from 'models/Wallet';
 // constants
 import {
   ASSETS,
-  PILLAR_NETWORK_INTRO,
+  // PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
 } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
