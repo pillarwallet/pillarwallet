@@ -276,7 +276,7 @@ class SmartWallet {
     const { totalCost } = parseEstimatePayload(deployEstimate);
 
     if (totalCost && accountBalance.gte(totalCost)) {
-      return this.sdk.deployAccount(deployEstimate);
+      return this.sdk.deployAccount(deployEstimate, false);
     }
 
     printLog('insufficient balance: ', deployEstimate, accountBalance);
@@ -511,6 +511,10 @@ class SmartWallet {
     return this.sdk
       .setAccountEnsName(estimated)
       .catch(e => this.reportError('Unable to set ENS name for user', { e, username, ensName }));
+  }
+
+  switchToGasTokenRelayer() {
+    return this.sdk.switchToGasTokenRelayer();
   }
 
   handleError(error: any) {

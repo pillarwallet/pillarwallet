@@ -92,7 +92,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -420,7 +420,9 @@ class EventDetails extends React.Component<Props, State> {
       // $FlowFixMe
       const showProfileImage = !relatedUser.type;
 
-      const freeTx = isPPNTransaction || tag === SET_SMART_WALLET_ACCOUNT_ENS;
+      const freeTx = isPPNTransaction
+        || tag === SET_SMART_WALLET_ACCOUNT_ENS
+        || tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER;
 
       let feeDisplayValue;
       if (freeTx) {

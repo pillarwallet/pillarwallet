@@ -65,6 +65,7 @@ type Props = {
   updateAppSettings: (path: string, value: any) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
+  smartWalletAccountSupportsGasToken: ?boolean,
 };
 
 class SendTokenAmount extends React.Component<Props> {
@@ -107,6 +108,7 @@ class SendTokenAmount extends React.Component<Props> {
       navigation,
       accountAssets,
       supportedAssets,
+      smartWalletAccountSupportsGasToken,
     } = this.props;
     const { token } = this.assetData;
     const AmountComponent = this.selectAmountComponent(token);
@@ -116,7 +118,9 @@ class SendTokenAmount extends React.Component<Props> {
     let gasToken;
     const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
-    if (isSmartAccount && !isEmpty(gasTokenData)) {
+    if (isSmartAccount
+      && smartWalletAccountSupportsGasToken
+      && !isEmpty(gasTokenData)) {
       const { decimals, address, symbol } = gasTokenData;
       gasToken = { decimals, address, symbol };
     }
@@ -147,12 +151,14 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, transactionSpeed } },
   assets: { supportedAssets },
+  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   baseFiatCurrency,
   transactionSpeed,
   supportedAssets,
+  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({

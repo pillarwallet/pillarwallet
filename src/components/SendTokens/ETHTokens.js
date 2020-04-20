@@ -164,8 +164,13 @@ class SendETHTokens extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
+    const { session, gasToken } = this.props;
+    if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
       this.props.fetchGasInfo();
+    }
+    // if gas token was updated after switching to gas token relayer
+    if (isEmpty(prevProps.gasToken) && !isEmpty(gasToken)) {
+      this.handleChange();
     }
   }
 
@@ -180,10 +185,11 @@ class SendETHTokens extends React.Component<Props, State> {
     });
   };
 
-  handleChange = (value: Object) => {
+  handleChange = (value: ?Object) => {
     const { activeAccount } = this.props;
-    // first update the amount, then after state is updated check for errors
-    this.setState({ value, gettingFee: true });
+    let updateState = { gettingFee: true };
+    if (!isEmpty(value)) updateState = { ...updateState, value };
+    this.setState(updateState);
     this.checkFormInputErrors();
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       this.updateTxFee();
@@ -478,8 +484,7 @@ class SendETHTokens extends React.Component<Props, State> {
       ? 'Getting the fee..'
       : 'Next';
 
-
-    const showRelayerMigration = showFee && true; // TODO: show according to smart wallet account settings
+    const showRelayerMigration = showFee && isSmartAccount && isEmpty(gasToken);
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
 
     const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
