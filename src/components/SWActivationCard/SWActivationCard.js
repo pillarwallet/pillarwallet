@@ -44,7 +44,7 @@ import smartWalletService from 'services/smartWallet';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
+import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // actions
@@ -260,10 +260,11 @@ class SWActivationCard extends React.Component<Props, State> {
 
   activateSW = () => {
     const { selectedWallet } = this.state;
-    const { deploySmartWallet } = this.props;
+    const { deploySmartWallet, navigation } = this.props;
     if (!selectedWallet) return;
     if (selectedWallet === ACCOUNT_TYPES.SMART_WALLET) {
       deploySmartWallet();
+      navigation.navigate(ASSETS);
     } else {
       this.deployFromLegacyWallet();
     }
