@@ -323,7 +323,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
   toggleScroll = (ref: Object, shouldAllowScroll: boolean) => {
     if (ref && Object.keys(ref).length) {
-      ref.setNativeProps({ scrollEnabled: shouldAllowScroll });
+      ref.current.setNativeProps({ scrollEnabled: shouldAllowScroll });
     }
   };
 
