@@ -61,6 +61,7 @@ import {
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { toggleBadgesAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -119,6 +120,8 @@ type Props = {
   activeBlockchainNetwork: ?string,
   referralsFeatureEnabled: boolean,
   goToInvitationFlow: () => void,
+  hideBadges: boolean,
+  toggleBadges: () => void,
 };
 
 type State = {
@@ -126,7 +129,6 @@ type State = {
   isReferralBannerVisible: boolean,
   showRewardModal: boolean,
   loaderMessage: string,
-  isBadgesCollapsed: boolean,
 };
 
 
@@ -304,14 +306,11 @@ class HomeScreen extends React.Component<Props, State> {
       theme,
       activeBlockchainNetwork,
       referralsFeatureEnabled,
+      hideBadges,
+      toggleBadges,
     } = this.props;
 
-    const {
-      activeTab,
-      showRewardModal,
-      loaderMessage,
-      isBadgesCollapsed,
-    } = this.state;
+    const { activeTab, showRewardModal, loaderMessage } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -458,7 +457,7 @@ class HomeScreen extends React.Component<Props, State> {
                         keyExtractor={(item) => (item.id.toString())}
                         renderItem={this.renderBadge}
                         style={{ width: '100%', paddingBottom: spacing.medium }}
-                        contentContainerStyle={{ paddingHorizontal: 2, paddingTop: 16, ...badgesContainerStyle }}
+                        contentContainerStyle={{ paddingHorizontal: 2, paddingTop: 26, ...badgesContainerStyle }}
                         initialNumToRender={5}
                         ListEmptyComponent={(
                           <EmptyStateWrapper>
@@ -470,8 +469,8 @@ class HomeScreen extends React.Component<Props, State> {
                         )}
                       />
                     }
-                    onPress={() => { this.setState({ isBadgesCollapsed: !isBadgesCollapsed }); }}
-                    open={!isBadgesCollapsed}
+                    onPress={toggleBadges}
+                    open={!hideBadges}
                   />
                 </React.Fragment>
               )}
@@ -515,7 +514,7 @@ const mapStateToProps = ({
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, hideBadges } },
   featureFlags: {
     data: {
       REFERRALS_ENABLED: referralsFeatureEnabled,
@@ -532,6 +531,7 @@ const mapStateToProps = ({
   accounts,
   userEvents,
   baseFiatCurrency,
+  hideBadges,
   referralsFeatureEnabled,
 });
 
@@ -559,6 +559,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  toggleBadges: () => dispatch(toggleBadgesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
