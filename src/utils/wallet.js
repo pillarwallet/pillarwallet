@@ -21,6 +21,7 @@ import { ethers, utils } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
 import * as Sentry from '@sentry/react-native';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -191,4 +192,11 @@ export async function decryptWallet(encryptedWallet: Object, saltedPin: string, 
     wallet = wallet.connect(provider);
   }
   return wallet;
+}
+
+export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch) {
+  const { wallet: encryptedWallet } = await storage.get('wallet');
+  const saltedPin = await getSaltedPin(pin, dispatch);
+  const wallet = await decryptWallet(encryptedWallet, saltedPin);
+  return get(wallet, 'signingKey.privateKey');
 }

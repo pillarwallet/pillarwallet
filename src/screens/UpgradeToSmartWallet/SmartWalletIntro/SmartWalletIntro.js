@@ -47,19 +47,21 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { Assets } from 'models/Asset';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
   accounts: Accounts,
   initSmartWalletSdk: (privateKey: string) => void,
   importSmartWalletAccounts: (privateKey: string, createNewAccount: boolean, initAssets: Assets) => void,
-  switchAccount: (accountId: string, privateKey?: string) => void,
+  switchAccount: (accountId: string) => void,
 };
 
 type State = {
   showPinModal: boolean,
   showLoader: boolean,
 };
+
 
 const CustomWrapper = styled.View`
   flex: 1;
@@ -81,7 +83,6 @@ const ButtonWrapper = styled(Wrapper)`
   margin: 30px 0 50px;
   padding: 0 46px;
 `;
-
 
 const FeatureIcon = styled(CachedImage)`
   height: 124px;
@@ -107,9 +108,9 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
     await importSmartWalletAccounts(wallet.privateKey, true, {});
     const { accounts } = this.props;
     const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
-    await switchAccount(smartAccount.id, wallet.privateKey);
+    await switchAccount(smartAccount.id);
     navigation.navigate(ASSETS);
-  }
+  };
 
   render() {
     const { showPinModal, showLoader } = this.state;
@@ -187,7 +188,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
   importSmartWalletAccounts: (privateKey: string, createNewAccount: boolean, initAssets: Assets) =>
     dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initAssets)),
-  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(SmartWalletIntro));
