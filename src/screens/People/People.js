@@ -602,20 +602,17 @@ class PeopleScreen extends React.Component<Props, State> {
     return ({ length: ITEM_HEIGHT, offset: (ITEM_HEIGHT * index) + (inSearchMode ? index : 0), index });
   }
 
-  renderContent = (onScroll) => {
+  renderContent = (onScroll, sortedLocalContacts) => {
     const {
       query,
     } = this.state;
     const {
-      localContacts,
       chats,
       fetchInviteNotifications,
       searchResults: { apiUsers },
       isSearching,
     } = this.props;
     const inSearchMode = query.length >= MIN_QUERY_LENGTH;
-
-    const sortedLocalContacts = sortLocalContacts(localContacts, chats);
     const localContactsIds = sortedLocalContacts.map(({ id }) => id);
     const filteredApiUsers = apiUsers.filter((user) => !localContactsIds.includes(user.id));
 
@@ -698,7 +695,7 @@ class PeopleScreen extends React.Component<Props, State> {
       >
         {onScroll => (
           <InnerWrapper>
-            {this.renderContent(onScroll)}
+            {this.renderContent(onScroll, sortedLocalContacts)}
             {contact && <ConnectionConfirmationModal
               showConfirmationModal={showConfirmationModal}
               manageContactType={manageContactType}
