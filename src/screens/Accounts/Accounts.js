@@ -233,7 +233,8 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   initialisePPN = () => {
-    this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    // this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    this.setPPNAsActiveNetwork();
   };
 
   renderListItem = ({ item }: ListElement) => {
