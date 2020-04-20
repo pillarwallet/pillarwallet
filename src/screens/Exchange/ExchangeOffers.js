@@ -70,7 +70,6 @@ import { spacing } from 'utils/variables';
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 
-
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { calculateAmountToBuy, getAvailable } from './utils';
@@ -537,7 +536,6 @@ class ExchangeOffers extends React.Component<Props, State> {
               disabled: disableFiatExchange,
               isLoading: isTakeOfferPressed,
             }}
-
             cardNote={offerRestricted}
             additionalCardButton={getCardAdditionalButtonData(additionalData)}
           />
