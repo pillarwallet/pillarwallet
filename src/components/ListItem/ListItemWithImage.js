@@ -184,12 +184,13 @@ const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${props => props.backgroundColor || themedColors.card};
+  background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-color: ${props => props.border ? themedColors.border : 'transparent'};
-  border-width: 1px;
+  ${({ border, theme }) => border &&
+    `border-color: ${theme.colors.border};
+    border-width: 1px;`};
 `;
 
 const ItemIcon = styled(Icon)`

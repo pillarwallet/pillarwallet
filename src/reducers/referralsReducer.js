@@ -25,7 +25,6 @@ import {
   SENDING_INVITE,
   REFERRAL_INVITE_ERROR,
   SET_ALREADY_INVITED_CONTACTS,
-  SET_REFERRALS_STATE,
   ALLOW_ACCESS_PHONE_CONTACTS,
   RECEIVED_REFERRAL_TOKEN,
   CLAIM_REWARD,
@@ -81,18 +80,13 @@ export type ReferralsInviteAlreadySentAction = {|
   payload: ReferralContact[],
 |};
 
-export type ReferralsStateAction = {|
-  type: 'SET_REFERRALS_STATE',
-  payload: {
-    addedContactsToInvite: ReferralContact[],
-    hasAllowedToAccessContacts: boolean,
-    sentInvitationsCount: SentInvitationsCount,
-  },
-|};
-
 export type ReferralsTokenReceived = {|
   type: 'RECEIVED_REFERRAL_TOKEN',
-  payload: string,
+  payload: {|
+    token: string,
+    email: ?string,
+    phone: ?string,
+  |},
 |};
 
 type ReferralsClaimReward = {|
@@ -106,20 +100,21 @@ export type ReferralsReducerAction =
   | ReferralsRemoveContactAction
   | ReferralsErrorErrorAction
   | ReferralsInviteAlreadySentAction
-  | ReferralsStateAction
   | ReferralsTokenReceived
   | ReferralsClaimReward
   | ReferralsAllowPhoneContactsAccess;
 
-export type ReferralsReducerState = {
+export type ReferralsReducerState = {|
   isSendingInvite: boolean,
   addedContactsToInvite: ReferralContact[],
   alreadyInvitedContacts: ReferralContact[],
   hasAllowedToAccessContacts: boolean,
   sentInvitationsCount: SentInvitationsCount,
   referralToken: ?string,
+  referredEmail: ?string,
+  referredPhone: ?string,
   isRewardClaimed: boolean,
-};
+|};
 
 export const initialState: ReferralsReducerState = {
   addedContactsToInvite: [],
@@ -131,6 +126,8 @@ export const initialState: ReferralsReducerState = {
     date: '',
   },
   referralToken: null,
+  referredEmail: null,
+  referredPhone: null,
   isRewardClaimed: false,
 };
 
@@ -185,15 +182,6 @@ const setAlreadySentInvites = (
   return { ...state, alreadyInvitedContacts: payload };
 };
 
-const setReferralsState = (
-  state: ReferralsReducerState,
-  action: ReferralsStateAction,
-): ReferralsReducerState => {
-  const { payload } = action;
-  return { ...state, ...payload };
-};
-
-
 export default function referralsReducer(
   state: ReferralsReducerState = initialState,
   action: ReferralsReducerAction,
@@ -201,9 +189,6 @@ export default function referralsReducer(
   switch (action.type) {
     case SENDING_INVITE:
       return { ...state, isSendingInvite: true };
-
-    case SET_REFERRALS_STATE:
-      return setReferralsState(state, action);
 
     case INVITE_SENT:
       return setInvitations(state, action);
@@ -224,7 +209,15 @@ export default function referralsReducer(
       return { ...state, hasAllowedToAccessContacts: true };
 
     case RECEIVED_REFERRAL_TOKEN:
-      return { ...state, referralToken: action.payload };
+      const { payload: { token, email, phone } } = action;
+
+      return {
+        ...state,
+        isRewardClaimed: false,
+        referralToken: token,
+        referredEmail: email,
+        referredPhone: phone,
+      };
 
     case CLAIM_REWARD:
       return { ...state, isRewardClaimed: true };
