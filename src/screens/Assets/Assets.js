@@ -21,7 +21,6 @@ import * as React from 'react';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import get from 'lodash.get';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import { withTheme } from 'styled-components/native';
@@ -60,7 +59,7 @@ import { ACCOUNTS, RECOVERY_SETTINGS, SECURITY_SETTINGS } from 'constants/naviga
 
 // utils
 import { getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus, isDeployingSmartWallet } from 'utils/smartWallet';
+import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
 import { getThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 
@@ -276,7 +275,7 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
-      const deploymentHash = get(smartWalletState, 'upgrade.deploymentData.hash', {});
+      const deploymentHash = getDeploymentHash(smartWalletState);
       return (
         <WalletActivation deploymentHash={deploymentHash} />
       );

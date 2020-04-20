@@ -288,3 +288,7 @@ export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState
 export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {
   return get(smartWalletState, 'upgrade.deploymentData', {});
 };
+
+export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => {
+  return get(smartWalletState, 'upgrade.deploymentData.hash', '');
+};
