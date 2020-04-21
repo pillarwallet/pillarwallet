@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { ScrollView, Linking, View } from 'react-native';
+import { ScrollView, Linking } from 'react-native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -27,6 +27,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import InviteBanner from 'screens/People/InviteBanner';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { Spacing } from 'components/Layout';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 const Title = styled(MediumText)`
@@ -44,12 +45,6 @@ const ButtonsWrapper = styled.View`
   width: 100%;
   margin-bottom: 32px;
 `;
-
-const title = 'Smart Wallet is being activated';
-
-// eslint-disable-next-line quotes
-const text = `It won’t take long. While activation is in progress, \
-feel free to explore exciting features of Pillar Smart Wallet`;
 
 type Props = {
   referralsFeatureEnabled: boolean,
@@ -78,8 +73,11 @@ class WalletActivation extends React.PureComponent<Props> {
         contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <Title>{title}</Title>
-        <Text>{text}</Text>
+        <Title>Smart Wallet is being activated</Title>
+        <Text>
+          It won’t take long. While activation is in progress,
+          feel free to explore exciting features of Pillar Smart Wallet
+        </Text>
         <ButtonsWrapper>
           <Button
             height={48}
@@ -87,7 +85,7 @@ class WalletActivation extends React.PureComponent<Props> {
             onPress={this.handleFaq}
             textStyle={fontStyles.medium}
           />
-          <View style={{ height: 4 }} />
+          <Spacing h={4} />
           <Button
             primaryInverted
             height={48}
