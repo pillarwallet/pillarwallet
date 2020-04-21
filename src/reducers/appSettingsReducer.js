@@ -38,6 +38,7 @@ export type AppSettingsReducerState = {
     hasSeenExchangeIntro?: boolean,
     hideBalance?: boolean,
     hasDismissedConnectAppsIntro?: boolean,
+    hideBadges?: boolean,
   },
   isFetched: boolean,
 };
@@ -62,6 +63,7 @@ export const initialState: AppSettingsReducerState = {
     hasSeenExchangeIntro: false,
     hideBalance: false,
     hasDismissedConnectAppsIntro: false,
+    hideBadges: false,
   },
   isFetched: false,
 };
