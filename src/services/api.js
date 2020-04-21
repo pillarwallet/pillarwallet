@@ -36,6 +36,7 @@ import {
   MOONPAY_KEY,
 } from 'react-native-dotenv';
 import axios, { AxiosResponse } from 'axios';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -142,9 +143,11 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  registerOnBackend(fcm: string, username: string) {
+  registerOnBackend(fcmToken: ?string, username: string) {
+    let requestPayload = { username };
+    if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
     return Promise.resolve()
-      .then(() => this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username }))
+      .then(() => this.pillarWalletSdk.wallet.register(requestPayload))
       .then(({ data }) => data)
       .catch((e = {}) => {
         const status = get(e, 'response.status');
@@ -173,13 +176,11 @@ class SDKWrapper {
 
   registerOnAuthServer(walletPrivateKey: string, fcmToken: ?string, username: string) {
     const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
+    let requestPayload = { privateKey, username };
+    if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
     return Promise.resolve()
       .then(() => {
-        return this.pillarWalletSdk.wallet.registerAuthServer({
-          privateKey,
-          fcmToken,
-          username,
-        });
+        return this.pillarWalletSdk.wallet.registerAuthServer(requestPayload);
       })
       .then(({ data }) => data)
       .catch((error) => {
