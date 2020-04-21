@@ -19,20 +19,19 @@
 */
 import * as React from 'react';
 import { ScrollView, Image } from 'react-native';
-import SlideModal from 'components/Modals/SlideModal';
+import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 import { DARK_THEME } from 'constants/appSettingsConstants';
+import { ASSETS } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 type Props = {
-  isVisible: boolean,
-  onModalHide: () => void,
-  onButtonPress: () => void,
   theme: Theme,
+  navigation: NavigationScreenProp<*>,
 }
 
 const Title = styled(MediumText)`
@@ -54,50 +53,41 @@ const ButtonWrapper = styled.View`
 const imageLight = require('assets/images/swActivatedLight.png');
 const imageDark = require('assets/images/swActivatedLight.png');
 
-const title = 'Your Smart Wallet is now activated';
-// eslint-disable-next-line quotes
-const text = `You can now access your new Smart Wallet and the new Pillar Payment Network from the upper right \
-hand side of the Assets screen`;
 
-const WalletActivatedModal = (props: Props) => {
+const WalletActivated = (props: Props) => {
   const isDarkTheme = props.theme === DARK_THEME;
   const imgSource = isDarkTheme ? imageDark : imageLight;
   return (
-    <SlideModal
-      isVisible={props.isVisible}
-      noSwipeToDismiss
-      hideHeader
-    //   onModalHide={props.onModalHide}
-      fullScreen
-    >
-      <ContainerWithHeader
-        headerProps={{
+    <ContainerWithHeader
+      headerProps={{
           leftItems: [{ title: "What's next" }],
           rightItems: [{ close: true }],
-          onClose: props.onModalHide,
+          onClose: () => props.navigation.goBack(),
           close: true,
         }}
+    >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
       >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
-        >
-          <Title>{title}</Title>
-          <Image source={imgSource} style={{ height: 137, width: '100%' }} resizeMode="stretch" />
-          <Text>{text}</Text>
-          <ButtonWrapper>
-            <Button
-              title="Go to Smart Wallet"
-              onPress={props.onModalHide}
-              secondary
-              height={48}
-              textStyle={fontStyles.medium}
-            />
-          </ButtonWrapper>
-        </ScrollView>
-      </ContainerWithHeader>
-    </SlideModal>
+        <Title>Your Smart Wallet is now activated</Title>
+        <Image source={imgSource} style={{ height: 137, width: '100%' }} resizeMode="stretch" />
+        <Text>
+          You can now access your new Smart Wallet and the new Pillar Payment Network from the upper right
+          hand side of the Assets screen
+        </Text>
+        <ButtonWrapper>
+          <Button
+            title="Go to Smart Wallet"
+            onPress={() => props.navigation.navigate(ASSETS)}
+            secondary
+            height={48}
+            textStyle={fontStyles.medium}
+          />
+        </ButtonWrapper>
+      </ScrollView>
+    </ContainerWithHeader>
   );
 };
 
-export default withTheme(WalletActivatedModal);
+export default withTheme(withNavigation(WalletActivated));
