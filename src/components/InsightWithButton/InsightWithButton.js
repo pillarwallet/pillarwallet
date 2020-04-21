@@ -34,8 +34,9 @@ type Props = {
   buttonTitle: string,
   description?: string,
   buttonProps?: $Shape<ButtonProps>,
-  onButtonPress: () => void,
+  onButtonPress?: () => void,
   spinner?: boolean,
+  footerChildren?: React.Node,
 };
 
 const MainContainer = styled.View`
@@ -90,7 +91,7 @@ const Item = ({ text }) => {
 };
 
 const InsightWithButton = ({
-  title, itemsList, buttonTitle, description, buttonProps, onButtonPress, spinner,
+  title, itemsList, buttonTitle, description, buttonProps, onButtonPress, spinner, footerChildren,
 }: Props) => {
   return (
     <InsightWrapper>
@@ -114,6 +115,7 @@ const InsightWithButton = ({
           :
             <Button small title={buttonTitle} onPress={onButtonPress} {...buttonProps} />
           }
+          {footerChildren}
         </MainContainer>
       </ShadowedCard>
     </InsightWrapper>
