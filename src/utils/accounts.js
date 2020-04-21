@@ -74,7 +74,7 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
 
 export const hasLegacyAccountBalance = (accounts: Accounts, balances: BalancesStore): boolean => {
   const account = findKeyBasedAccount(accounts);
-  if (!account || Object.keys(balances[account.id]).length === 0) {
+  if (!account || isEmpty(balances[account.id])) {
     return false;
   }
   const legacyBalances: Balances = balances[account.id];
