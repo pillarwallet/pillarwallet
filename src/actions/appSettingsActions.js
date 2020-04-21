@@ -232,6 +232,18 @@ export const toggleBalanceAction = () => {
   };
 };
 
+export const toggleBadgesAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideBadges } },
+    } = getState();
+    const newBadgesState = !hideBadges;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideBadges: newBadgesState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideBadges: newBadgesState } });
+  };
+};
+
 export const dismissConnectAppsIntroAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { hasDismissedConnectAppsIntro: true } }));
