@@ -32,7 +32,7 @@ import { dismissPPNInsightAction } from 'actions/insightsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
@@ -118,11 +118,6 @@ const TopPartWrapper = styled.View`
   padding: ${spacing.large}px ${spacing.layoutSides}px;
   border-bottom-width: 1;
   border-color: ${themedColors.border};
-`;
-
-const SectionTitle = styled(MediumText)`
-  ${fontStyles.regular};
-  color: ${themedColors.accent};
 `;
 
 const TankBalanceWrapper = styled.View`
@@ -347,7 +342,6 @@ class PPNView extends React.Component<Props, State> {
         >
           {this.renderInsight(!disableTopUpAndSettle)}
           <TopPartWrapper>
-            <SectionTitle>PLR Tank</SectionTitle>
             <TankBalanceWrapper>
               <TankBalance>
                 {`${availableFormattedAmount} PLR`}
