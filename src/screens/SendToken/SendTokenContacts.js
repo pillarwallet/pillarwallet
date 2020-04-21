@@ -465,6 +465,21 @@ class SendTokenContacts extends React.Component<Props, State> {
     return [{ title: `Send ${tokenName}` }];
   };
 
+  renderFooter = () => {
+    const { value, isValidatingEns } = this.state;
+    const isSearchQueryProvided = !!(value && value.address.length);
+    const submitDisabled = !value.address.length || isValidatingEns;
+    return (
+      <>
+        {isSearchQueryProvided && (
+          <Footer keyboardVerticalOffset={35}>
+            <Button flexRight small disabled={submitDisabled} title="Next" onPress={this.handleFormSubmit} />
+          </Footer>
+        )}
+      </>
+    );
+  }
+
   render() {
     const {
       localContacts = [],
@@ -474,7 +489,6 @@ class SendTokenContacts extends React.Component<Props, State> {
     } = this.props;
     const {
       isScanning,
-      isValidatingEns,
       formStructure,
       formOptions,
       value,
@@ -482,18 +496,17 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const { tokenType, token } = this.assetData;
     const isCollectible = tokenType === COLLECTIBLES;
-    const isSearchQueryProvided = !!(value && value.address.length);
 
     const showContacts = !isChanging && (isCollectible || token !== BTC);
     const headerTitleItems = this.getHeaderItems();
 
     const showSpinner = isOnline && ((!contactsSmartAddressesSynced && !isEmpty(localContacts)) || isChanging);
-    const submitDisabled = !value.address.length || isValidatingEns;
 
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: headerTitleItems }}
         inset={{ bottom: 0 }}
+        footer={this.renderFooter()}
       >
         {!isChanging &&
         <FormWrapper>
@@ -515,11 +528,6 @@ class SendTokenContacts extends React.Component<Props, State> {
           onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        {isSearchQueryProvided &&
-          <Footer keyboardVerticalOffset={35}>
-            <Button flexRight small disabled={submitDisabled} title="Next" onPress={this.handleFormSubmit} />
-          </Footer>
-        }
       </ContainerWithHeader>
     );
   }
