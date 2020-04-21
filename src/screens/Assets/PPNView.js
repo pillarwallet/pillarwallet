@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, ScrollView, View } from 'react-native';
@@ -64,7 +65,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { Balances, BalancesStore } from 'models/Asset';
+import type { Balances, BalancesStore, Rates } from 'models/Asset';
 
 // utils
 import { getRate } from 'utils/assets';
@@ -86,7 +87,7 @@ import { accountHistorySelector } from 'selectors/history';
 
 type Props = {
   baseFiatCurrency: ?string,
-  rates: Object,
+  rates: Rates,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
   assetsOnNetwork: Object,
@@ -103,11 +104,11 @@ type Props = {
   PPNInsightDismissed: boolean,
   onScroll: (event: Object) => void,
   balances: BalancesStore,
-}
+};
 
 type State = {
   activeTab: string,
-}
+};
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
