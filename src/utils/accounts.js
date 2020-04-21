@@ -23,7 +23,7 @@ import omit from 'lodash.omit';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
 import type { Assets, Balances, BalancesStore } from 'models/Asset';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { addressesEqual } from './assets';
+import { addressesEqual, getBalance } from './assets';
 
 export const getActiveAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ isActive }) => isActive);
