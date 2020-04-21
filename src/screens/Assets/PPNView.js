@@ -29,7 +29,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
-import { dismissPPNInsightAction } from 'actions/insightsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // components
@@ -40,7 +39,7 @@ import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
-import SWActivationCard from 'components/SWActivationCard';
+import SWActivationModal from 'components/SWActivationModal';
 
 // constants
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
@@ -100,14 +99,13 @@ type Props = {
   history: Object[],
   fetchTransactionsHistory: () => void,
   theme: Theme,
-  dismissPPNInsight: () => void,
-  PPNInsightDismissed: boolean,
   onScroll: (event: Object) => void,
   balances: BalancesStore,
 };
 
 type State = {
   activeTab: string,
+  isInitSmartWalletModalVisible: boolean,
 };
 
 const AssetButtonsWrapper = styled.View`
@@ -154,6 +152,7 @@ const insightItemsList = [
 class PPNView extends React.Component<Props, State> {
   state = {
     activeTab: UNSETTLED,
+    isInitSmartWalletModalVisible: false,
   };
 
   setActiveTab = (activeTab) => {
@@ -172,14 +171,7 @@ class PPNView extends React.Component<Props, State> {
   };
 
   renderInsight = (isSmartWalletInitialised) => {
-    const {
-      dismissPPNInsight,
-      availableStake,
-      PPNInsightDismissed,
-      accounts,
-      balances,
-    } = this.props;
-
+    const { availableStake, accounts, balances } = this.props;
     const smartWalletAccount = findFirstSmartAccount(accounts);
 
     if (isSmartWalletInitialised && smartWalletAccount) {
@@ -210,29 +202,24 @@ class PPNView extends React.Component<Props, State> {
           />
         );
       }
-    } else {
-      if (PPNInsightDismissed) {
-        return (
-          <SWActivationCard
-            message="To use Pillar Network you need to activate Smart Wallet"
-          />
-        );
-      }
-
-      return (
-        <InsightWithButton
-          title="Unique benefits of Pillar Payment Network for PLR users"
-          itemsList={insightItemsList}
-          buttonTitle="Activate Pillar Network"
-          onButtonPress={dismissPPNInsight}
-        />
-      );
     }
-    return null;
+
+    return (
+      <InsightWithButton
+        title="Unique benefits of Pillar Payment Network for PLR users"
+        itemsList={insightItemsList}
+        buttonTitle="Activate Pillar Network"
+        onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
+      />
+    );
+  };
+
+  closeSmartWalletModal = () => {
+    this.setState({ isInitSmartWalletModalVisible: false });
   };
 
   render() {
-    const { activeTab } = this.state;
+    const { activeTab, isInitSmartWalletModalVisible } = this.state;
     const {
       availableStake,
       assetsOnNetwork,
@@ -414,6 +401,11 @@ class PPNView extends React.Component<Props, State> {
             />
           </FloatingButtonView>
         }
+        <SWActivationModal
+          navigation={navigation}
+          isModalVisible={isInitSmartWalletModalVisible}
+          closeModal={this.closeSmartWalletModal}
+        />
       </View>
     );
   }
@@ -425,7 +417,6 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-  insights: { PPNInsightDismissed },
   balances: { data: balances },
 }: RootReducerState): $Shape<Props> => ({
   rates,
@@ -434,7 +425,6 @@ const mapStateToProps = ({
   accounts,
   contacts,
   contactsSmartAddresses,
-  PPNInsightDismissed,
   balances,
 });
 
@@ -453,7 +443,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
-  dismissPPNInsight: () => dispatch(dismissPPNInsightAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));
