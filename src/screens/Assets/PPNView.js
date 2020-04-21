@@ -200,7 +200,7 @@ class PPNView extends React.Component<Props, State> {
               buttonTitle="Not enough PLR"
               buttonProps={{ disabled: true, secondary: true }}
               footerChildren={(
-                <Button title="Buy PLR" small marginTop={12} onPress={this.navigateToBuyPillar} />
+                <Button title="Buy PLR" small marginTop={12} onPress={this.navigateToBuyPillar} regularText />
               )}
             />
           );

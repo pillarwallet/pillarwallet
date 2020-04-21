@@ -37,10 +37,11 @@ type Props = {
   onButtonPress?: () => void,
   spinner?: boolean,
   footerChildren?: React.Node,
+  largeTitle?: boolean,
 };
 
 const MainContainer = styled.View`
-  padding: 22px ${spacing.large}px 30px;
+  padding: 22px 30px 30px;
 `;
 
 const ItemContainer = styled.View`
@@ -51,6 +52,7 @@ const ItemContainer = styled.View`
 const ItemText = styled(BaseText)`
   flex: 1;
   color: ${themedColors.secondaryText};
+  max-width: 80%;
 `;
 
 const CheckIcon = styled(Icon)`
@@ -65,6 +67,7 @@ const ItemsContainer = styled.View`
 
 const TitleText = styled(MediumText)`
   margin-bottom: ${spacing.large}px;
+  ${({ largeTitle }) => largeTitle ? fontStyles.large : fontStyles.big};
 `;
 
 const DescriptionText = styled(BaseText)`
@@ -91,18 +94,18 @@ const Item = ({ text }) => {
 };
 
 const InsightWithButton = ({
-  title, itemsList, buttonTitle, description, buttonProps, onButtonPress, spinner, footerChildren,
+  title, itemsList, buttonTitle, description, buttonProps, onButtonPress, spinner, footerChildren, largeTitle,
 }: Props) => {
   return (
     <InsightWrapper>
       <ShadowedCard borderRadius={30}>
         <MainContainer>
           {title && (
-            <TitleText large center>
+            <TitleText largeTitle={largeTitle} center>
               {title}
             </TitleText>
           )}
-          {!!description && <DescriptionText medium center>{description}</DescriptionText>}
+          {!!description && <DescriptionText medium style={{ marginBottom: 24 }}>{description}</DescriptionText>}
           {itemsList && (
             <ItemsContainer>
               {itemsList.map(item => <Item text={item} key={item} />)}
@@ -113,7 +116,7 @@ const InsightWithButton = ({
               <Spinner />
             </SpinnerWrapper>
           :
-            <Button small title={buttonTitle} onPress={onButtonPress} {...buttonProps} />
+            <Button small title={buttonTitle} onPress={onButtonPress} {...buttonProps} regularText />
           }
           {footerChildren}
         </MainContainer>

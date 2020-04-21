@@ -9018,8 +9018,8 @@ exports[`Storyshots InsightWithButton with list 1`] = `
               Array [
                 Object {
                   "paddingBottom": 30,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
+                  "paddingLeft": 30,
+                  "paddingRight": 30,
                   "paddingTop": 22,
                 },
                 undefined,
@@ -9028,14 +9028,11 @@ exports[`Storyshots InsightWithButton with list 1`] = `
           >
             <Text
               center={true}
-              large={true}
               style={
                 Array [
                   Object {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 24,
-                    "lineHeight": 38,
                     "textAlign": "center",
                     "textAlignVertical": "center",
                   },
@@ -9043,13 +9040,13 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                     Object {
                       "color": "#0A1427",
                       "fontFamily": "EuclidCircularB-Medium",
-                      "fontSize": 24,
-                      "lineHeight": 38,
                       "textAlign": "center",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
+                        "fontSize": 18,
+                        "lineHeight": 28,
                         "marginBottom": 20,
                       },
                       undefined,
@@ -9115,6 +9112,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                           "flexBasis": 0,
                           "flexGrow": 1,
                           "flexShrink": 1,
+                          "maxWidth": "80%",
                         },
                         undefined,
                       ],
@@ -9169,6 +9167,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                           "flexBasis": 0,
                           "flexGrow": 1,
                           "flexShrink": 1,
+                          "maxWidth": "80%",
                         },
                         undefined,
                       ],
@@ -9242,20 +9241,11 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textAlignVertical": "center",
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "marginBottom": 0,
                       },
-                      Array [
-                        Object {
-                          "color": "#FCFDFF",
-                          "fontSize": 14,
-                          "marginBottom": 0,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ],
                   ]
                 }
@@ -9395,8 +9385,8 @@ exports[`Storyshots InsightWithButton without list 1`] = `
               Array [
                 Object {
                   "paddingBottom": 30,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
+                  "paddingLeft": 30,
+                  "paddingRight": 30,
                   "paddingTop": 22,
                 },
                 undefined,
@@ -9404,7 +9394,6 @@ exports[`Storyshots InsightWithButton without list 1`] = `
             }
           >
             <Text
-              center={true}
               medium={true}
               style={
                 Array [
@@ -9413,14 +9402,15 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                     "fontFamily": "EuclidCircularB-Regular",
                     "fontSize": 16,
                     "lineHeight": 24,
-                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
                       "marginBottom": 20,
                     },
-                    undefined,
+                    Object {
+                      "marginBottom": 24,
+                    },
                   ],
                 ]
               }
@@ -9481,20 +9471,11 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textAlignVertical": "center",
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "marginBottom": 0,
                       },
-                      Array [
-                        Object {
-                          "color": "#FCFDFF",
-                          "fontSize": 14,
-                          "marginBottom": 0,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ],
                   ]
                 }
@@ -9617,8 +9598,8 @@ Array [
               Array [
                 Object {
                   "paddingBottom": 30,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
+                  "paddingLeft": 30,
+                  "paddingRight": 30,
                   "paddingTop": 22,
                 },
                 undefined,
@@ -9626,7 +9607,6 @@ Array [
             }
           >
             <Text
-              center={true}
               medium={true}
               style={
                 Array [
@@ -9635,14 +9615,15 @@ Array [
                     "fontFamily": "EuclidCircularB-Regular",
                     "fontSize": 16,
                     "lineHeight": 24,
-                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
                       "marginBottom": 20,
                     },
-                    undefined,
+                    Object {
+                      "marginBottom": 24,
+                    },
                   ],
                 ]
               }
@@ -9712,20 +9693,11 @@ Array [
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textAlignVertical": "center",
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "marginBottom": 0,
                       },
-                      Array [
-                        Object {
-                          "color": "#FCFDFF",
-                          "fontSize": 14,
-                          "marginBottom": 0,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ],
                   ]
                 }
