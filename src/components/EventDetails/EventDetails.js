@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
@@ -111,7 +110,7 @@ import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
-
+import type { NavigationScreenProp } from 'react-navigation';
 
 type Props = {
   theme: Theme,
@@ -456,7 +455,6 @@ class EventDetail extends React.Component<Props, State> {
             {
               title: 'Activate',
               onPress: this.topUpPillarNetwork,
-
             },
           ],
         };
@@ -1011,7 +1009,7 @@ class EventDetail extends React.Component<Props, State> {
           <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
             <BaseText tiny secondary>{eventTime}</BaseText>
             <Spacing h={10} />
-            <BaseText medium >{name}</BaseText>
+            <BaseText medium>{name}</BaseText>
             <Spacing h={20} />
             {this.renderImage(eventData)}
             <Spacing h={20} />
