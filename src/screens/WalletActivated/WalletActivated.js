@@ -60,11 +60,11 @@ const WalletActivated = (props: Props) => {
   return (
     <ContainerWithHeader
       headerProps={{
-          leftItems: [{ title: "What's next" }],
-          rightItems: [{ close: true }],
-          onClose: () => props.navigation.goBack(),
-          close: true,
-        }}
+        leftItems: [{ title: "What's next" }],
+        rightItems: [{ close: true }],
+        onClose: () => props.navigation.goBack(),
+        close: true,
+      }}
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
