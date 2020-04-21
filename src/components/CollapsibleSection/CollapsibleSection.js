@@ -21,46 +21,48 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import Collapsible from 'react-native-collapsible';
 
-import { spacing } from 'utils/variables';
+import { MediumText } from 'components/Typography';
+import Icon from 'components/Icon';
 
-import ButtonText from 'components/ButtonText';
-import Title from 'components/Title';
+import { fontStyles, spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
-const Section = styled.View`
-  flex-direction: column; 
-  justify-content: space-between;
-`;
-
-const SectionHeader = styled.View`
-  flex: 1;
-  flex-direction: row; 
-  padding: ${spacing.small}px;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 ${spacing.mediumLarge}px;
-`;
-
-const SectionHeaderAddon = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const CollapseWrapper = styled.View`
-`;
-
-const StyledTitle = styled(Title)``;
 
 type Props = {
   label: string,
-  onPress?: Function,
+  onPress?: () => void,
   open?: boolean,
   collapseContent?: React.Node,
   sectionWrapperStyle?: Object,
-  onAnimationEnd?: Function,
-}
+  onAnimationEnd?: () => void,
+};
 
-export const CollapsibleSection = (props: Props) => {
+
+const Section = styled.View`
+  flex-direction: column; 
+  width: 100%;
+`;
+
+const SectionHeader = styled.TouchableOpacity`
+  flex-direction: row; 
+  padding: 18px ${spacing.layoutSides}px 8px;
+  align-items: center;
+`;
+
+const SectionTitle = styled(MediumText)`
+  ${fontStyles.regular};
+  color: ${themedColors.accent};
+`;
+
+const ChevronIcon = styled(Icon)`
+  color: ${themedColors.accent};
+  font-size: 6px;
+  margin-left: 10px;
+  margin-top: 2px;
+`;
+
+
+const CollapsibleSection = (props: Props) => {
   const {
     onPress,
     label,
@@ -70,21 +72,19 @@ export const CollapsibleSection = (props: Props) => {
     onAnimationEnd,
   } = props;
 
+  const rotate = open ? '-90deg' : '90deg';
+
   return (
     <Section style={sectionWrapperStyle}>
-      <SectionHeader>
-        <StyledTitle subtitle title={label} />
-        {!!collapseContent &&
-        <SectionHeaderAddon>
-          <ButtonText buttonText={open ? 'Hide' : 'Show'} onPress={onPress} />
-        </SectionHeaderAddon>}
+      <SectionHeader onPress={collapseContent && onPress}>
+        <SectionTitle>{label}</SectionTitle>
+        {!!collapseContent && <ChevronIcon name="chevron-right" style={{ transform: [{ rotate }] }} />}
       </SectionHeader>
       <Collapsible collapsed={!open} onAnimationEnd={onAnimationEnd}>
-        <CollapseWrapper>
-          {collapseContent}
-        </CollapseWrapper>
+        {collapseContent}
       </Collapsible>
     </Section>
   );
 };
 
+export default CollapsibleSection;
