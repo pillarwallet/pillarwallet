@@ -58,7 +58,7 @@ import type { EthereumWallet } from 'models/Wallet';
 // constants
 import {
   ASSETS,
-  PILLAR_NETWORK_INTRO,
+  // PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
 } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -233,7 +233,8 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   initialisePPN = () => {
-    this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    // this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    this.setPPNAsActiveNetwork();
   };
 
   renderListItem = ({ item }: ListElement) => {
