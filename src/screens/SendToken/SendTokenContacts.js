@@ -32,7 +32,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 // components
 import Separator from 'components/Separator';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Container, Footer } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -58,7 +58,7 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { addressValidator, isEnsName } from 'utils/validators';
 import { resolveEnsName, isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { themedColors, getThemeColors } from 'utils/themes';
 
@@ -116,6 +116,11 @@ const ImageIcon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   tint-color: ${themedColors.primary};
+`;
+
+const ButtonWrapper = styled.View`
+  width: 100%;
+  padding: 0 20px 16px;
 `;
 
 const { Form } = t.form;
@@ -472,9 +477,16 @@ class SendTokenContacts extends React.Component<Props, State> {
     return (
       <>
         {isSearchQueryProvided && (
-          <Footer keyboardVerticalOffset={35}>
-            <Button flexRight small disabled={submitDisabled} title="Next" onPress={this.handleFormSubmit} />
-          </Footer>
+          <ButtonWrapper>
+            <Button
+              height={48}
+              regularText
+              textStyle={fontStyles.medium}
+              disabled={submitDisabled}
+              title="Next"
+              onPress={this.handleFormSubmit}
+            />
+          </ButtonWrapper>
         )}
       </>
     );
