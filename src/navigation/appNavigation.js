@@ -308,6 +308,7 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE]: ExchangeScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
