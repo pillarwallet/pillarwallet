@@ -359,8 +359,10 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
-  StackNavigatorModalConfig,
+  StackNavigatorConfig,
 );
+walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // HOME FLOW
 const homeFlow = createStackNavigator({

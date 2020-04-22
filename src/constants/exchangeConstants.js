@@ -44,3 +44,7 @@ export const MARK_NOTIFICATION_SEEN = 'MARK_NOTIFICATION_SEEN';
 export const MIN_MOONPAY_FIAT_VALUE = 20;
 
 export const EXCHANGE = 'EXCHANGE';
+
+export const SLOW = 'min';
+export const NORMAL = 'avg';
+export const FAST = 'max';
