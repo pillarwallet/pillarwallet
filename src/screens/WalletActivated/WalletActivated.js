@@ -19,19 +19,28 @@
 */
 import * as React from 'react';
 import { ScrollView, Image } from 'react-native';
+import { connect } from 'react-redux';
 import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
-import { DARK_THEME } from 'constants/appSettingsConstants';
 import { ASSETS } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { images } from 'utils/images';
+import { switchAccountAction } from 'actions/accountsActions';
+import { getActiveAccountType, findFirstSmartAccount } from 'utils/accounts';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import type { Accounts } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   theme: Theme,
   navigation: NavigationScreenProp<*>,
+  accounts: Accounts,
+  isChanging: boolean,
+  switchAccount: (id: string) => void,
 }
 
 const Title = styled(MediumText)`
@@ -50,44 +59,64 @@ const ButtonWrapper = styled.View`
   padding: 0 30px;
 `;
 
-const imageLight = require('assets/images/swActivatedLight.png');
-const imageDark = require('assets/images/swActivatedLight.png');
+class WalletActivated extends React.PureComponent<Props> {
+  handleNavigate = async () => {
+    const { navigation, accounts, switchAccount } = this.props;
+    const activeAccountType = getActiveAccountType(accounts);
+    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
+      const smartWallet = findFirstSmartAccount(accounts);
+      await switchAccount(smartWallet.id);
+    }
+    navigation.navigate(ASSETS);
+  }
 
-
-const WalletActivated = (props: Props) => {
-  const isDarkTheme = props.theme === DARK_THEME;
-  const imgSource = isDarkTheme ? imageDark : imageLight;
-  return (
-    <ContainerWithHeader
-      headerProps={{
-        leftItems: [{ title: "What's next" }],
-        rightItems: [{ close: true }],
-        onClose: () => props.navigation.goBack(),
-        close: true,
-      }}
-    >
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{ flex: 1 }}
+  render() {
+    const { theme, navigation, isChanging } = this.props;
+    const { swActivated } = images(theme);
+    return (
+      <ContainerWithHeader
+        headerProps={{
+          leftItems: [{ title: "What's next" }],
+          rightItems: [{ close: true }],
+          onClose: () => navigation.goBack(),
+          close: true,
+        }}
       >
-        <Title>Your Smart Wallet is now activated</Title>
-        <Image source={imgSource} style={{ height: 137, width: '100%' }} resizeMode="stretch" />
-        <Text>
-          You can now access your new Smart Wallet and the new Pillar Payment Network from the upper right
-          hand side of the Assets screen
-        </Text>
-        <ButtonWrapper>
-          <Button
-            title="Go to Smart Wallet"
-            onPress={() => props.navigation.navigate(ASSETS)}
-            secondary
-            height={48}
-            textStyle={fontStyles.medium}
-          />
-        </ButtonWrapper>
-      </ScrollView>
-    </ContainerWithHeader>
-  );
-};
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+        >
+          <Title>Your Smart Wallet is now activated</Title>
+          <Image source={swActivated} style={{ height: 137, width: '100%' }} resizeMode="stretch" />
+          <Text>
+            You can now access your new Smart Wallet and the new Pillar Payment Network from the upper right
+            hand side of the Assets screen
+          </Text>
+          <ButtonWrapper>
+            <Button
+              isLoading={isChanging}
+              title="Go to Smart Wallet"
+              onPress={this.handleNavigate}
+              secondary
+              height={48}
+              textStyle={fontStyles.medium}
+            />
+          </ButtonWrapper>
+        </ScrollView>
+      </ContainerWithHeader>
+    );
+  }
+}
 
-export default withTheme(withNavigation(WalletActivated));
+const mapStateToProps = ({
+  accounts: { data: accounts, isChanging },
+}: RootReducerState): $Shape<Props> => ({
+  accounts,
+  isChanging,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(withNavigation(WalletActivated)));
