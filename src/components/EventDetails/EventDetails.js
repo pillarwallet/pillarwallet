@@ -956,7 +956,7 @@ class EventDetail extends React.Component<Props, State> {
       );
     }
     if (itemImageSource) {
-      return <TokenImage source={itemImageSource} fallbackSource={fallbackSource} />;
+      return <TokenImage source={itemImageSource} />;
     }
     if (iconName) {
       return (
