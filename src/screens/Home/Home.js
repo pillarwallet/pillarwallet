@@ -26,7 +26,6 @@ import Intercom from 'react-native-intercom';
 // components
 import ActivityFeed from 'components/ActivityFeed';
 import styled, { withTheme } from 'styled-components/native';
-import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
@@ -36,6 +35,7 @@ import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
 import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 import Loader from 'components/Loader';
+import CollapsibleSection from 'components/CollapsibleSection';
 
 // constants
 import { BADGE, MENU, MANAGE_USERS_FLOW } from 'constants/navigationConstants';
@@ -61,6 +61,7 @@ import {
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { toggleBadgesAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -68,7 +69,7 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
@@ -119,6 +120,8 @@ type Props = {
   activeBlockchainNetwork: ?string,
   referralsFeatureEnabled: boolean,
   goToInvitationFlow: () => void,
+  hideBadges: boolean,
+  toggleBadges: () => void,
 };
 
 type State = {
@@ -134,19 +137,6 @@ const {
   height: SCREEN_HEIGHT,
 } = Dimensions.get('window');
 const profileImageWidth = 24;
-
-const ListHeader = styled(MediumText)`
-  color: ${themedColors.accent};
-  ${fontStyles.regular};
-  margin: ${spacing.medium}px ${spacing.layoutSides}px ${spacing.small}px;
-`;
-
-const BadgesWrapper = styled.View`
-  padding-top: ${spacing.medium}px;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.border};
-`;
 
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
@@ -175,6 +165,7 @@ class HomeScreen extends React.Component<Props, State> {
     isReferralBannerVisible: true,
     showRewardModal: false,
     loaderMessage: '',
+    isBadgesCollapsed: false,
   };
 
   componentDidMount() {
@@ -244,6 +235,7 @@ class HomeScreen extends React.Component<Props, State> {
       <BadgeTouchableItem
         data={item}
         onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
+        style={{ paddingHorizontal: 8 }}
       />
     );
   };
@@ -263,7 +255,7 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  renderReferral = (colors) => {
+  renderReferral = () => {
     const { isReferralBannerVisible } = this.state;
     const { goToInvitationFlow } = this.props;
 
@@ -280,7 +272,6 @@ class HomeScreen extends React.Component<Props, State> {
           },
           source: referralImage,
         }}
-        wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
         onClose={() => this.setState({ isReferralBannerVisible: false })}
       />
     );
@@ -315,6 +306,8 @@ class HomeScreen extends React.Component<Props, State> {
       theme,
       activeBlockchainNetwork,
       referralsFeatureEnabled,
+      hideBadges,
+      toggleBadges,
     } = this.props;
 
     const { activeTab, showRewardModal, loaderMessage } = this.state;
@@ -454,27 +447,31 @@ class HomeScreen extends React.Component<Props, State> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
-                  <BadgesWrapper>
-                    <ListHeader>Game of badges</ListHeader>
-                    <FlatList
-                      data={badges}
-                      horizontal
-                      keyExtractor={(item) => (item.id.toString())}
-                      renderItem={this.renderBadge}
-                      style={{ width: '100%', paddingBottom: spacing.medium }}
-                      contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
-                      initialNumToRender={5}
-                      ListEmptyComponent={(
-                        <EmptyStateWrapper>
-                          <EmptyStateParagraph
-                            title="No badges"
-                            bodyText="You do not have badges yet"
-                          />
-                        </EmptyStateWrapper>
-                    )}
-                    />
-                  </BadgesWrapper>
-                  {!!referralsFeatureEnabled && this.renderReferral(colors)}
+                  {!!referralsFeatureEnabled && this.renderReferral()}
+                  <CollapsibleSection
+                    label="Game of badges"
+                    collapseContent={
+                      <FlatList
+                        data={badges}
+                        horizontal
+                        keyExtractor={(item) => (item.id.toString())}
+                        renderItem={this.renderBadge}
+                        style={{ width: '100%', paddingBottom: spacing.medium }}
+                        contentContainerStyle={{ paddingHorizontal: 2, paddingTop: 26, ...badgesContainerStyle }}
+                        initialNumToRender={5}
+                        ListEmptyComponent={(
+                          <EmptyStateWrapper>
+                            <EmptyStateParagraph
+                              title="No badges"
+                              bodyText="You do not have badges yet"
+                            />
+                          </EmptyStateWrapper>
+                        )}
+                      />
+                    }
+                    onPress={toggleBadges}
+                    open={!hideBadges}
+                  />
                 </React.Fragment>
               )}
               tabsComponent={(
@@ -517,7 +514,7 @@ const mapStateToProps = ({
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, hideBadges } },
   featureFlags: {
     data: {
       REFERRALS_ENABLED: referralsFeatureEnabled,
@@ -534,6 +531,7 @@ const mapStateToProps = ({
   accounts,
   userEvents,
   baseFiatCurrency,
+  hideBadges,
   referralsFeatureEnabled,
 });
 
@@ -561,6 +559,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  toggleBadges: () => dispatch(toggleBadgesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

@@ -43,7 +43,7 @@ import Spinner from 'components/Spinner';
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { EXCHANGE } from 'constants/exchangeConstants';
+import { EXCHANGE, SLOW, NORMAL, FAST } from 'constants/exchangeConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
@@ -157,9 +157,6 @@ const SliderContentWrapper = styled.View`
   margin: 30px 0;
 `;
 
-const SLOW = 'min';
-const NORMAL = 'avg';
-const FAST = 'max';
 
 // do not add exchange provider to speed types list as it might not always be present
 const SPEED_TYPES = {

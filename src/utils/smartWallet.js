@@ -291,3 +291,21 @@ export const isHiddenUnsettledTransaction = (
     [PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT].includes(tag)
       && transactionExtraContainsPaymentHash(paymentHash, extra),
   );
+
+export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
+  const { upgrade: { deploymentStarted } } = smartWalletState;
+  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+  return deploymentStarted
+    || [
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+    ].includes(smartWalletStatus.status);
+};
+
+export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {
+  return get(smartWalletState, 'upgrade.deploymentData', {});
+};
+
+export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => {
+  return get(smartWalletState, 'upgrade.deploymentData.hash', '');
+};

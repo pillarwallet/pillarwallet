@@ -21,9 +21,9 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import omit from 'lodash.omit';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
-import type { Assets } from 'models/Asset';
+import type { Assets, Balances, BalancesStore } from 'models/Asset';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { addressesEqual } from './assets';
+import { addressesEqual, getBalance } from './assets';
 
 export const getActiveAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ isActive }) => isActive);
@@ -72,6 +72,14 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
+export const hasLegacyAccountBalance = (accounts: Accounts, balances: BalancesStore): boolean => {
+  const account = findKeyBasedAccount(accounts);
+  if (!account || isEmpty(balances[account.id])) {
+    return false;
+  }
+  const accountBalances: Balances = balances[account.id];
+  return Object.keys(accountBalances).some(token => getBalance(accountBalances, token) > 0);
+};
 export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 };

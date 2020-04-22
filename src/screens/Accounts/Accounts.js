@@ -38,7 +38,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
+import { getAccountName, getActiveAccount, getActiveAccountType, hasLegacyAccountBalance } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
@@ -58,7 +58,7 @@ import type { EthereumWallet } from 'models/Wallet';
 // constants
 import {
   ASSETS,
-  PILLAR_NETWORK_INTRO,
+  // PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
 } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -174,8 +174,10 @@ class AccountsScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const isActiveKeyWallet = getActiveAccountType(props.accounts) === ACCOUNT_TYPES.KEY_BASED;
+    const hasLegacyBalance = hasLegacyAccountBalance(props.accounts, props.balances);
     const { user } = props;
-    const forceShowLegacyWallet = !user.isLegacyUser && isActiveKeyWallet;
+    const forceShowLegacyWallet =
+        (!user.isLegacyUser && isActiveKeyWallet) || hasLegacyBalance;
     this.state = {
       showPinModal: false,
       changingAccount: false,
@@ -233,7 +235,8 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   initialisePPN = () => {
-    this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    // this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    this.setPPNAsActiveNetwork();
   };
 
   renderListItem = ({ item }: ListElement) => {
