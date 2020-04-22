@@ -195,10 +195,10 @@ type Props = {
   theme: Theme,
   referralsFeatureEnabled: boolean,
   goToInvitationFlow: () => void,
-  sendInvitation: Function,
-  acceptInvitation: Function,
-  cancelInvitation: Function,
-  rejectInvitation: Function,
+  sendInvitation: (user: ApiUser) => void,
+  acceptInvitation: (invitation: Object) => void,
+  cancelInvitation: (invitation: Object) => void,
+  rejectInvitation: (invitation: Object) => void,
 }
 
 type ConnectionStatusProps = {
@@ -632,7 +632,7 @@ class PeopleScreen extends React.Component<Props, State> {
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={() => { fetchInviteNotifications(); }}
+            onRefresh={fetchInviteNotifications}
           />
           }
         ListEmptyComponent={
@@ -749,10 +749,10 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
-  sendInvitation: (user) => dispatch(sendInvitationAction(user)),
-  acceptInvitation: (user) => dispatch(acceptInvitationAction(user)),
-  cancelInvitation: (user) => dispatch(cancelInvitationAction(user)),
-  rejectInvitation: (user) => dispatch(rejectInvitationAction(user)),
+  sendInvitation: (user: ApiUser) => dispatch(sendInvitationAction(user)),
+  acceptInvitation: (invitation: Object) => dispatch(acceptInvitationAction(invitation)),
+  cancelInvitation: (invitation: Object) => dispatch(cancelInvitationAction(invitation)),
+  rejectInvitation: (invitation: Object) => dispatch(rejectInvitationAction(invitation)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PeopleScreen));

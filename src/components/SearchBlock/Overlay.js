@@ -19,7 +19,9 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Dimensions, PanResponder } from 'react-native';
+import { Animated, PanResponder, StyleSheet } from 'react-native';
+import { getDeviceHeight } from 'utils/common';
+
 
 type Props = {
   active: boolean,
@@ -28,22 +30,16 @@ type Props = {
   handleClick?: () => void,
 };
 
-const { height: screenHeight } = Dimensions.get('window');
-
 const FullScreenOverlayWrapper = styled.View`
   z-index: 100;
+  ${StyleSheet.absoluteFillObject};
   top: ${({ topOffset }) => topOffset}px;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: ${screenHeight}px;
   position: absolute;
 `;
 
 const FullScreenOverlay = styled.View`
   width: 100%;
-  height: ${screenHeight}px;
+  height: ${getDeviceHeight()}px;
   background-color: rgba(0,0,0,.6);
 `;
 
@@ -80,7 +76,7 @@ class Overlay extends React.Component<Props> {
     }
   }
 
-  animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
+  animateFullScreenOverlayOpacity = (active: boolean, onEnd?: () => void) => {
     const { fullScreenOverlayOpacity } = this;
     if (!active) {
       fullScreenOverlayOpacity.setValue(0);
