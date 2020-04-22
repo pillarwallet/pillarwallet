@@ -123,7 +123,7 @@ const NumberedListItem = styled.View`
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 `;
 
 const ListNumberWrapper = styled.View`
@@ -141,8 +141,13 @@ const ListNumberWrapper = styled.View`
 `;
 
 const TextWrapper = styled.View`
-  max-width: 80%;
   flex-wrap: wrap;
+  flex-grow: 1;
+`;
+
+const TextRow = styled.View`
+  flex-direction: row;
+  width: 90%;
 `;
 
 const ListNumber = styled(BaseText)`
@@ -159,6 +164,8 @@ const ListTitle = styled(MediumText)`
 const ListBody = styled(BaseText)`
   color: ${themedColors.accent};
   ${fontStyles.regular};
+  flex-wrap: wrap;
+  flex: 1;
 `;
 
 const StatusIcon = ({ isDone }) => {
@@ -234,8 +241,12 @@ const Insight = (props: Props) => {
                       <ListNumber>{index + 1}</ListNumber>
                     </ListNumberWrapper>
                     <TextWrapper>
-                      <ListTitle>{itemTitle}</ListTitle>
-                      <ListBody>{body}</ListBody>
+                      <TextRow>
+                        <ListTitle>{itemTitle}</ListTitle>
+                      </TextRow>
+                      <TextRow>
+                        <ListBody>{body}</ListBody>
+                      </TextRow>
                     </TextWrapper>
                   </NumberedListItem>
                 );
