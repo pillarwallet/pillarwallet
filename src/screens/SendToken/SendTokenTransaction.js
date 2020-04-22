@@ -75,11 +75,12 @@ const getTransactionSuccessMessage = (transactionType: ?string) => {
 const getTransactionSuccessTitle = (props) => {
   const { transactionTokenType, transactionType, isAllowanceTransaction } = props;
   if (transactionType === EXCHANGE) {
+    if (isAllowanceTransaction) {
+      return 'Transaction is on its way';
+    }
     return 'Swapping tokens...';
   } else if (transactionTokenType === COLLECTIBLES) {
     return 'Collectible is on its way';
-  } else if (isAllowanceTransaction) {
-    return 'Transaction is on its way';
   }
   return 'Tokens are on their way';
 };
