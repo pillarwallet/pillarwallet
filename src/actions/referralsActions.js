@@ -30,6 +30,7 @@ import type {
   ReferralsSendingInviteAction,
   ReferralContact,
   InviteSentPayload,
+  ReferralsTokenReceived,
 } from 'reducers/referralsReducer';
 
 // constants
@@ -41,7 +42,6 @@ import {
   REMOVE_CONTACT_FOR_REFERRAL,
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
-  RECEIVED_REFERRAL_TOKEN,
   CLAIM_REWARD,
 } from 'constants/referralsConstants';
 import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW } from 'constants/navigationConstants';
@@ -53,8 +53,8 @@ import Toast from 'components/Toast';
 import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
-// actions
-import { saveDbAction } from 'actions/dbActions';
+// utils
+import { noop } from 'utils/common';
 
 
 export type ClaimTokenAction = {
@@ -69,36 +69,53 @@ export type ReferralInvitation = {|
 
 let branchIoSubscription;
 
+const referralsTokenReceivedAction = (
+  token: string,
+  email: ?string,
+  phone: ?string,
+): ReferralsTokenReceived => ({
+  type: 'RECEIVED_REFERRAL_TOKEN',
+  payload: {
+    token,
+    email,
+    phone,
+  },
+});
+
 const sendingInviteAction = (): ReferralsSendingInviteAction => ({
   type: SENDING_INVITE,
 });
 
-const inviteSentAction = (dispatch: Dispatch, payload: InviteSentPayload) => {
-  dispatch({
-    type: INVITE_SENT,
-    payload,
-  });
-  dispatch({
-    type: ADD_NOTIFICATION,
-    payload: {
-      message: 'Invitations sent',
-      messageType: 'success',
-    },
-  });
+const inviteSentAction = (payload: InviteSentPayload) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: INVITE_SENT,
+      payload,
+    });
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: 'Invitations sent',
+        messageType: 'success',
+      },
+    });
+  };
 };
 
-const inviteErrorAction = (dispatch: Dispatch, errorMessage?: string) => {
-  dispatch({
-    type: ADD_NOTIFICATION,
-    payload: {
-      message: errorMessage || 'Please try again later',
-      title: 'Invites have not been sent',
-      messageType: 'warning',
-    },
-  });
-  dispatch({
-    type: REFERRAL_INVITE_ERROR,
-  });
+const inviteErrorAction = (errorMessage?: string) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: errorMessage || 'Please try again later',
+        title: 'Invites have not been sent',
+        messageType: 'warning',
+      },
+    });
+    dispatch({
+      type: REFERRAL_INVITE_ERROR,
+    });
+  };
 };
 
 export const completeReferralsEventAction = () => {
@@ -120,9 +137,6 @@ export const completeReferralsEventAction = () => {
     dispatch({
       type: CLAIM_REWARD,
     });
-    dispatch(saveDbAction('referralData', {
-      referrals: { isRewardClaimed: true },
-    }));
 
     Toast.show({
       message: 'You are gonna receive your rewards soon!',
@@ -137,7 +151,6 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletId = get(getState(), 'user.data.walletId');
     const sentInvitationsCount = get(getState(), 'referrals.sentInvitationsCount');
-    const alreadyInvitedContacts = get(getState(), 'referrals.alreadyInvitedContacts', []);
     const { count, date } = sentInvitationsCount;
     dispatch(sendingInviteAction());
 
@@ -147,43 +160,40 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
       const { email, phone } = invitation;
       const token = await api.generateReferralToken(walletId);
 
-      if (token.result === 'success') {
-        const referralLink = await getUserReferralLink(walletId, {
-          email,
-          phone,
-          token: token.token,
-        });
-
-        const { error } = await api.sendReferralInvitation({
-          token: token.token,
-          walletId,
-          referralLink,
-          email,
-          phone,
-        });
-
-        if (error) {
-          const errorMessage = get(error, 'response.data.message');
-          inviteErrorAction(dispatch, errorMessage);
-        } else {
-          let updatedInvitationCount = count + invitationContacts.length;
-          const currentDate = formatDate(new Date(), 'YYYY-MM-DD');
-          if (date !== currentDate) updatedInvitationCount = invitationContacts.length;
-          const updatedAlreadyInvitedContacts = [...alreadyInvitedContacts, ...invitationContacts];
-          await dispatch(saveDbAction('referralData', {
-            referrals: {
-              alreadyInvitedContacts: updatedAlreadyInvitedContacts,
-              sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
-            },
-          }));
-          inviteSentAction(dispatch, {
-            alreadyInvitedContacts: invitationContacts,
-            sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
-          });
-        }
-      } else {
-        inviteErrorAction(dispatch);
+      if (token.result !== 'success') {
+        dispatch(inviteErrorAction());
+        return;
       }
+
+      const referralLink = await getUserReferralLink(walletId, {
+        email,
+        phone,
+        token: token.token,
+      });
+
+      const { error } = await api.sendReferralInvitation({
+        token: token.token,
+        walletId,
+        referralLink,
+        email,
+        phone,
+      });
+
+      if (error) {
+        const errorMessage = get(error, 'response.data.message');
+        dispatch(inviteErrorAction(errorMessage));
+        return;
+      }
+
+      let updatedInvitationCount = count + invitationContacts.length;
+      const currentDate = formatDate(new Date(), 'YYYY-MM-DD');
+      if (date !== currentDate) {
+        updatedInvitationCount = invitationContacts.length;
+      }
+      dispatch(inviteSentAction({
+        alreadyInvitedContacts: invitationContacts,
+        sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
+      }));
     }));
   };
 };
@@ -191,19 +201,18 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
 export const startReferralsListenerAction = () => {
   return (dispatch: Dispatch) => {
     if (branchIoSubscription) return;
+
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) return;
-      console.log('params: ', params);
       if (!params['+clicked_branch_link']) return;
 
-      const { token } = params;
-      dispatch({
-        type: RECEIVED_REFERRAL_TOKEN,
-        payload: token,
-      });
-      dispatch(saveDbAction('referralData', {
-        referrals: { referralToken: token },
-      }));
+      const { token, phone, email } = params;
+
+      dispatch(referralsTokenReceivedAction(
+        token,
+        email,
+        phone,
+      ));
     });
   };
 };
@@ -251,14 +260,13 @@ export const removeContactForReferralAction = (id: string) => ({
 
 export const allowToAccessPhoneContactsAction = () => {
   return async (dispatch: Dispatch) => {
-    await dispatch(saveDbAction('referralData', { referrals: { hasAllowedToAccessContacts: true } }));
     dispatch({
       type: ALLOW_ACCESS_PHONE_CONTACTS,
     });
   };
 };
 
-export const goToInvitationFlowAction = () => {
+export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = noop) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       user: { data: { isEmailVerified, isPhoneVerified } },
@@ -270,6 +278,7 @@ export const goToInvitationFlowAction = () => {
         params: {},
         action: NavigationActions.navigate({ routeName: REFER_FLOW }),
       });
+      onNavigationCallback();
       navigate(navigateToReferFlow);
     } else {
       const navigateToUserSettings = NavigationActions.navigate({
@@ -283,7 +292,10 @@ export const goToInvitationFlowAction = () => {
         type: 'warning',
         title: 'Phone or Email verification needed',
         autoClose: false,
-        onPress: () => navigate(navigateToUserSettings),
+        onPress: () => {
+          onNavigationCallback();
+          navigate(navigateToUserSettings);
+        },
       });
     }
   };

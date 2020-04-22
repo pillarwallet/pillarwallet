@@ -343,7 +343,6 @@ export class ActivityFeedItem extends React.Component<Props> {
             subtext: 'from Smart Wallet',
             iconName: 'sent',
             iconColor: 'negative',
-            iconBackgroundColor: 'iconBackground',
             itemValue: `- ${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
@@ -423,7 +422,6 @@ export class ActivityFeedItem extends React.Component<Props> {
             iconColor: isReceived ? 'transactionReceivedIcon' : 'negative',
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
             valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
-            iconBackgroundColor: 'iconBackground',
           };
         }
     }

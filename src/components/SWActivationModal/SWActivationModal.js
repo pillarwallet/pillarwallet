@@ -41,7 +41,7 @@ import smartWalletService from 'services/smartWallet';
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
+import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -249,10 +249,11 @@ class SWActivationModal extends React.Component<Props, State> {
 
   activateSW = () => {
     const { selectedWallet } = this.state;
-    const { deploySmartWallet, onClose } = this.props;
+    const { deploySmartWallet, onClose, navigation } = this.props;
     if (!selectedWallet) return;
     if (selectedWallet === ACCOUNT_TYPES.SMART_WALLET) {
       deploySmartWallet();
+      navigation.navigate(ASSETS);
     } else {
       this.deployFromLegacyWallet();
     }

@@ -308,6 +308,7 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE]: ExchangeScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
@@ -359,8 +360,10 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
-  StackNavigatorModalConfig,
+  StackNavigatorConfig,
 );
+walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // HOME FLOW
 const homeFlow = createStackNavigator({

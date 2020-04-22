@@ -111,7 +111,6 @@ const LeftSide = (props: LeftSideProps) => {
     note,
   } = props;
 
-
   if (note) {
     return (
       <CardNote>{note}</CardNote>

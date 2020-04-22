@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
@@ -55,7 +54,7 @@ import { getActiveAccount, getAccountName } from 'utils/accounts';
 import { images } from 'utils/images';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -89,6 +88,7 @@ import {
 // selectors
 import {
   PPNTransactionsSelector,
+  isPPNActivatedSelector,
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
@@ -112,7 +112,7 @@ import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
-
+import type { NavigationScreenProp } from 'react-navigation';
 
 type Props = {
   theme: Theme,
@@ -138,7 +138,9 @@ type Props = {
   activeBlockchainNetwork: string,
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
-  goToInvitationFlow: () => void,
+  goToInvitationFlow: (onNavigationCallback: () => void) => void,
+  referralsFeatureEnabled: boolean,
+  isPPNActivated: boolean,
 };
 
 type State = {
@@ -163,10 +165,12 @@ type EventData = {
   fee?: string,
   settleEventData?: Object,
   username?: string,
+  imageBorder?: boolean,
+  imageBackground?: ?string,
 };
 
 const Wrapper = styled(SafeAreaView)`
-  padding: 16px 0 80px;
+  padding: 16px 0 40px;
   align-items: center;
 `;
 
@@ -184,12 +188,13 @@ const IconCircle = styled.View`
   width: 64px;
   height: 64px;
   border-radius: 32px;
-  background-color: ${themedColors.iconBackground};
+  background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-color: ${themedColors.border};
-  border-width: 1px;
+  ${({ border, theme }) => border &&
+    `border-color: ${theme.colors.border};
+    border-width: 1px;`};
 `;
 
 const ItemIcon = styled(Icon)`
@@ -249,7 +254,7 @@ class EventDetail extends React.Component<Props, State> {
       event, baseFiatCurrency, rates, assetDecimals,
     } = this.props;
     const {
-      gasUsed, gasPrice, btcFee, asset,
+      gasUsed, gasPrice, btcFee,
     } = event;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -261,9 +266,9 @@ class EventDetail extends React.Component<Props, State> {
     } else {
       formattedFee = parseFloat(formatUnits(btcFee, assetDecimals));
     }
-    const rate = getRate(rates, asset, fiatCurrency);
+    const rate = getRate(rates, ETH, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
-    const feeLabel = `Fee ${formattedFee} ${asset} (${formattedFiatValue})`;
+    const feeLabel = `Fee ${formattedFee} ETH (${formattedFiatValue})`;
     return feeLabel;
   }
 
@@ -323,7 +328,7 @@ class EventDetail extends React.Component<Props, State> {
   }
 
   referFriends = () => {
-    this.props.goToInvitationFlow();
+    this.props.goToInvitationFlow(this.props.onClose);
   }
 
   activateSW = () => {
@@ -337,7 +342,7 @@ class EventDetail extends React.Component<Props, State> {
     const SWAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
 
     const assetsData = getAssetsAsList(accountAssets);
-    const assetData = getAssetData(assetsData, supportedAssets, 'ETH');
+    const assetData = getAssetData(assetsData, supportedAssets, ETH);
     const fullIconUrl = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
     const fullIconMonoUrl = `${SDK_PROVIDER}/${assetData.iconMonoUrl}?size=2`;
 
@@ -443,13 +448,32 @@ class EventDetail extends React.Component<Props, State> {
   }
 
   getUserEventData = (event: Object): ?EventData => {
-    const { theme } = this.props;
+    const { theme, isPPNActivated } = this.props;
     const { PPNIcon, keyWalletIcon } = images(theme);
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
         return this.getWalletCreatedEventData(event);
       case PPN_INIT_EVENT:
+        if (isPPNActivated) {
+          return {
+            name: 'Pillar Network',
+            itemImageSource: PPNIcon,
+            actionTitle: 'Activated',
+            buttons: [
+              {
+                title: 'Send',
+                onPress: this.sendSynthetic,
+                secondary: true,
+              },
+              {
+                title: 'Top up',
+                onPress: this.topUpPillarNetwork,
+                squarePrimary: true,
+              },
+            ],
+          };
+        }
         return {
           name: 'Pillar Network',
           itemImageSource: PPNIcon,
@@ -458,10 +482,10 @@ class EventDetail extends React.Component<Props, State> {
             {
               title: 'Activate',
               onPress: this.topUpPillarNetwork,
-
             },
           ],
         };
+
       case WALLET_BACKUP_EVENT:
         return {
           name: 'Key wallet',
@@ -551,7 +575,21 @@ class EventDetail extends React.Component<Props, State> {
             ],
           };
         }
-        return null;
+        return {
+          name: 'Pillar Network',
+          iconName: 'sent',
+          iconColor: this.getColor('negative'),
+          actionTitle: `- ${formattedValue} ${event.asset}`,
+          actionSubtitle: 'from Smart Wallet',
+          buttons: [
+            {
+              title: 'Top up more',
+              onPress: this.topUpPillarNetwork,
+              secondary: true,
+            },
+          ],
+        };
+
       case SET_SMART_WALLET_ACCOUNT_ENS:
         return {
           name: 'ENS name',
@@ -607,7 +645,7 @@ class EventDetail extends React.Component<Props, State> {
               <TankAssetBalance
                 amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
                 textStyle={{ fontSize: fontSizes.large }}
-                iconStyle={{ height: 14, width: 6, marginRight: 9 }}
+                iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
             ),
             actionSubtitle: 'Pillar Network',
@@ -761,13 +799,15 @@ class EventDetail extends React.Component<Props, State> {
     let eventData: EventData = {
       name: asset,
       imageUrl: icon,
+      imageBackground: this.getColor('card'),
+      imageBorder: true,
     };
 
     if (isReceived) {
       eventData = {
         ...eventData,
         actionTitle: 'Received',
-        actionSubtitle: `from ${usernameOrAddress}`,
+        actionSubtitle: `Collectible from ${usernameOrAddress}`,
         buttons: [
           {
             title: 'View on the Blockchain',
@@ -780,7 +820,7 @@ class EventDetail extends React.Component<Props, State> {
       eventData = {
         ...eventData,
         actionTitle: 'Sent',
-        actionSubtitle: `to ${usernameOrAddress}`,
+        actionSubtitle: `Collectible to ${usernameOrAddress}`,
       };
     }
 
@@ -814,9 +854,7 @@ class EventDetail extends React.Component<Props, State> {
       actionTitle: 'Received',
       actionSubtitle: 'Badge',
       actionIcon: isPending ? 'pending' : null,
-      buttons: [
-        isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
-      ],
+      buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
     };
   }
 
@@ -824,7 +862,6 @@ class EventDetail extends React.Component<Props, State> {
     const { contacts } = this.props;
     const { type, username, profileImage } = event;
     const acceptedContact = contacts.find(contact => contact.username === username);
-    if (!acceptedContact) return null;
 
     if (type === TYPE_RECEIVED) {
       return {
@@ -846,6 +883,8 @@ class EventDetail extends React.Component<Props, State> {
         username,
       };
     }
+
+    if (!acceptedContact) return null;
 
     if (type === TYPE_ACCEPTED) {
       return {
@@ -904,14 +943,20 @@ class EventDetail extends React.Component<Props, State> {
   }
 
   renderImage = (eventData) => {
+    const { theme } = this.props;
     const {
-      imageUrl, itemImageSource, profileImage, username, iconName, iconColor,
+      imageUrl, itemImageSource, profileImage, username, iconName, iconColor, imageBackground, imageBorder,
     } = eventData;
+    const { genericToken: fallbackSource } = images(theme);
     if (imageUrl) {
-      return <TokenImage source={{ uri: imageUrl }} />;
+      return (
+        <IconCircle border={imageBorder} backgroundColor={imageBackground}>
+          <TokenImage source={{ uri: imageUrl }} fallbackSource={fallbackSource} />
+        </IconCircle>
+      );
     }
     if (itemImageSource) {
-      return <TokenImage source={itemImageSource} />;
+      return <TokenImage source={itemImageSource} fallbackSource={fallbackSource} />;
     }
     if (iconName) {
       return (
@@ -953,7 +998,7 @@ class EventDetail extends React.Component<Props, State> {
               <TankAssetBalance
                 amount={`- ${formatUnits(group.value.toString(), 18)} ${group.symbol}`}
                 textStyle={{ fontSize: fontSizes.big }}
-                iconStyle={{ height: 14, width: 6, marginRight: 9 }}
+                iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
             </Row>
             {group.transactions.map(({
@@ -985,7 +1030,7 @@ class EventDetail extends React.Component<Props, State> {
 
   render() {
     const {
-      isVisible, onClose, event, activeAccountAddress, navigation,
+      isVisible, onClose, event, activeAccountAddress, navigation, referralsFeatureEnabled,
     } = this.props;
     const {
       isReceiveModalVisible,
@@ -1000,6 +1045,10 @@ class EventDetail extends React.Component<Props, State> {
       buttons = [], settleEventData, fee,
     } = eventData;
 
+    const filteredButtons = referralsFeatureEnabled ?
+      buttons :
+      buttons.filter(button => button.onPress !== this.referFriends);
+
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
 
     return (
@@ -1009,12 +1058,11 @@ class EventDetail extends React.Component<Props, State> {
           onModalHide={onClose}
           noClose
           hideHeader
-          sideMargins={spacing.large}
         >
           <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
             <BaseText tiny secondary>{eventTime}</BaseText>
             <Spacing h={10} />
-            <BaseText medium >{name}</BaseText>
+            <BaseText medium>{name}</BaseText>
             <Spacing h={20} />
             {this.renderImage(eventData)}
             <Spacing h={20} />
@@ -1043,7 +1091,7 @@ class EventDetail extends React.Component<Props, State> {
               </React.Fragment>
             )}
             <ButtonsContainer>
-              {buttons.map(buttonProps => (
+              {filteredButtons.map(buttonProps => (
                 <React.Fragment key={buttonProps.title} >
                   <Button regularText {...buttonProps} />
                   <Spacing h={4} />
@@ -1075,6 +1123,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
+  featureFlags: { data: { REFERRALS_ENABLED: referralsFeatureEnabled } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1084,6 +1133,7 @@ const mapStateToProps = ({
   accounts,
   ensRegistry,
   supportedAssets,
+  referralsFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1094,6 +1144,7 @@ const structuredSelector = createStructuredSelector({
   accountAssets: accountAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
   bitcoinAddresses: bitcoinAddressSelector,
+  isPPNActivated: isPPNActivatedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
@@ -1103,7 +1154,7 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
-  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  goToInvitationFlow: (onNavigationCallback: () => void) => dispatch(goToInvitationFlowAction(onNavigationCallback)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));
