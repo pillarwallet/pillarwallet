@@ -176,7 +176,7 @@ const InputField = styled(Input)`
   padding: 0 14px;
   align-self: center;
   margin: 0;
-  text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'left'};
+  text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'auto'};
 `;
 
 const IosFocusInput = styled(RNInput)`
@@ -552,20 +552,22 @@ class TextInput extends React.Component<Props, State> {
     let { fallbackSource } = this.props;
 
     const colors = getThemeColors(theme);
-    const { value = '', selectorValue = {}, label } = inputProps;
+    const {
+      value = '', selectorValue = {}, label, multiline,
+    } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
     if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
 
-    const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
+    const variableFocus = Platform.OS === 'ios' && multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
 
     let inputHeight = 54;
-    if (inputProps.multiline) {
+    if (multiline) {
       inputHeight = Platform.OS === 'ios' ? 120 : 100;
     }
 
-    const customStyle = inputProps.multiline ? { paddingTop: 10 } : {};
+    const customStyle = multiline ? { paddingTop: 10 } : {};
 
     const {
       options = [],
@@ -680,9 +682,9 @@ class TextInput extends React.Component<Props, State> {
                 autoCorrect={autoCorrect}
                 style={[{
                   fontSize: getFontSize(this.props),
-                  lineHeight: getLineHeight(this.props),
+                  lineHeight: multiline ? getLineHeight(this.props) : null,
                   fontFamily: getFontFamily(this.props),
-                  textAlignVertical: inputProps.multiline ? 'top' : 'center',
+                  textAlignVertical: multiline ? 'top' : 'center',
                   height: inputHeight,
                   flex: 1,
                 }, customStyle,
