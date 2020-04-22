@@ -40,6 +40,7 @@ const Pill = styled.View`
   background-color: ${themedColors.tertiary};
   align-self: flex-start;
   flex-direction: row;
+  align-items: center;
 `;
 
 const Label = styled(BaseText)`
