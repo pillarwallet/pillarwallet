@@ -65,7 +65,9 @@ class WalletActivated extends React.PureComponent<Props> {
     const activeAccountType = getActiveAccountType(accounts);
     if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
       const smartWallet = findFirstSmartAccount(accounts);
-      await switchAccount(smartWallet.id);
+      if (smartWallet) {
+        await switchAccount(smartWallet.id);
+      }
     }
     navigation.navigate(ASSETS);
   }
