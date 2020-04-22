@@ -7,7 +7,8 @@ import { spacing } from 'utils/variables';
 
 type Props = {
   data: Badge,
-  onPress: Function,
+  onPress: () => void,
+  style?: Object,
 };
 
 const BadgesItem = styled.TouchableOpacity`
@@ -15,9 +16,9 @@ const BadgesItem = styled.TouchableOpacity`
   margin-bottom: ${spacing.medium};
 `;
 
-const BadgeTouchableItem = ({ data: badge, onPress }: Props) => {
+const BadgeTouchableItem = ({ data: badge, onPress, style }: Props) => {
   return (
-    <BadgesItem key={badge.id} onPress={onPress}>
+    <BadgesItem key={badge.id} onPress={onPress} style={style}>
       <BadgeImage data={badge} />
     </BadgesItem>
   );
