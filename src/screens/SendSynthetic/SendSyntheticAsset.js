@@ -118,9 +118,10 @@ class SendSyntheticAsset extends React.Component<Props> {
           syntheticBalance: balanceFormatted,
           value: availableLabel,
           token: assetSymbol,
-          custom: !isAvailable && (
+          customOnRight: !isAvailable && (
             <TooltipButton
               onPress={() => navigation.navigate(SEND_SYNTHETIC_UNAVAILABLE, { assetSymbol })}
+              style={{ marginTop: 4, marginLeft: 10 }}
             />
           ),
         }}
