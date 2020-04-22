@@ -50,53 +50,16 @@ import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Input from 'components/Input';
 
-import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { formatMoney, noop } from 'utils/common';
 import { images } from 'utils/images';
+import { getMatchingSortedData, resolveAssetSource, getFontFamily, getLineHeight, getFontSize } from 'utils/textInput';
 
 import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
-
-
-type SelectorValueType = {
-  input: string | number,
-  selector: {
-    icon?: string,
-    iconFallback?: string,
-    value: string | number,
-  }
-};
-
-type SelectorOptions = {
-  options?: Array<Object>,
-  horizontalOptions?: Array<Object>,
-  fiatOptions?: Array<Object>,
-  selectorPlaceholder?: 'string',
-  fullWidth?: boolean,
-  showOptionsTitles?: boolean,
-  horizontalOptionsTitle?: string,
-  optionsTitle?: string,
-  fiatOptionsTitle?: string,
-  selectorModalTitle?: string,
-  optionsSearchPlaceholder?: string,
-  displayFiatOptionsFirst?: boolean,
-};
-
-type Value = string | number;
-
-type InputPropsType = {
-  placeholder?: string,
-  onChange: (Value | SelectorValueType) => void,
-  onBlur?: (Value | SelectorValueType) => void,
-  value: Value,
-  selectorValue: SelectorValueType,
-  multiline?: boolean,
-  onSelectorOpen?: () => void,
-  onSelectorChange?: () => void,
-  label?: string,
-};
+import type { InputPropsType, SelectorOptions } from 'models/TextInput';
 
 type Props = {
   errorMessage?: string,
@@ -133,27 +96,6 @@ type EventLike = {
   nativeEvent: Object,
 };
 
-const getFontSize = (props: Props) => {
-  const { inputProps: { value }, numeric } = props;
-  if (numeric) return 34;
-  if (value || value === 0) return 16;
-  return 14;
-};
-
-const getLineHeight = (props: Props) => {
-  const { inputProps: { value }, numeric } = props;
-  if (numeric) return 42;
-  if (value || value === 0) return 20;
-  return 14;
-};
-
-const getFontFamily = (props: Props) => {
-  const { inputProps: { value }, numeric } = props;
-  if (!(value || value === 0)) return appFont.medium;
-  if (numeric) return appFont.bold;
-  return appFont.regular;
-};
-
 const viewConfig = {
   minimumViewTime: 300,
   viewAreaCoveragePercentThreshold: 100,
@@ -161,9 +103,6 @@ const viewConfig = {
 };
 
 const MIN_QUERY_LENGTH = 2;
-
-const isMatchingSearch = (query, text) => query && text && text.toUpperCase().includes(query.toUpperCase());
-const isCaseInsensitiveMatch = (query, text) => query && text && text.toLowerCase() === query.toLowerCase();
 
 const ErrorMessage = styled(BaseText)`
   color: ${themedColors.negative};
@@ -392,6 +331,11 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
+    const { inputProps, keyboardAvoidance } = this.props;
+    if (Platform.OS === 'ios' && inputProps.multiline && keyboardAvoidance) {
+      this.handleMultilineFocus();
+      return;
+    }
     this.setState({
       isFocused: true,
     });
@@ -411,14 +355,6 @@ class TextInput extends React.Component<Props, State> {
       this.rnInput.focus();
     }
   };
-
-  resolveAssetSource(uri?: string | number) {
-    if (!uri) return { uri: null };
-    if (typeof uri === 'number') return uri;
-    return {
-      uri,
-    };
-  }
 
   openSelector = () => {
     Keyboard.dismiss();
@@ -559,9 +495,6 @@ class TextInput extends React.Component<Props, State> {
     const textInputValue = inputValue || value;
     if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
 
-    const variableFocus = Platform.OS === 'ios' && multiline && this.props.keyboardAvoidance ?
-      this.handleMultilineFocus : this.handleFocus;
-
     let inputHeight = 54;
     if (multiline) {
       inputHeight = Platform.OS === 'ios' ? 120 : 100;
@@ -599,21 +532,12 @@ class TextInput extends React.Component<Props, State> {
 
     const isSearchQuery = query && query.length >= MIN_QUERY_LENGTH;
     if (isSearchQuery && showOptionsSelector) {
-      // filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
-      filteredListData = filteredListData
-        .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
-        .sort(
-          ({ value: val, name }) => isCaseInsensitiveMatch(query, val) || isCaseInsensitiveMatch(query, name) ? -1 : 0,
-        );
-      filteredHorizontalListData = filteredHorizontalListData
-        .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
-        .sort(
-          ({ value: val, name }) => isCaseInsensitiveMatch(query, val) || isCaseInsensitiveMatch(query, name) ? -1 : 0,
-        );
+      filteredListData = getMatchingSortedData(filteredListData, query);
+      filteredHorizontalListData = getMatchingSortedData(filteredHorizontalListData, query);
     }
 
-    const imageSource = this.resolveAssetSource(innerImageURI);
-    const optionImageSource = this.resolveAssetSource(selectedOptionIcon);
+    const imageSource = resolveAssetSource(innerImageURI);
+    const optionImageSource = resolveAssetSource(selectedOptionIcon);
 
     const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
 
@@ -677,13 +601,13 @@ class TextInput extends React.Component<Props, State> {
                 onChange={this.handleChange}
                 onBlur={this.handleBlur}
                 onEndEditing={this.handleBlur}
-                onFocus={variableFocus}
+                onFocus={this.handleFocus}
                 value={textInputValue}
                 autoCorrect={autoCorrect}
                 style={[{
-                  fontSize: getFontSize(this.props),
-                  lineHeight: multiline ? getLineHeight(this.props) : null,
-                  fontFamily: getFontFamily(this.props),
+                  fontSize: getFontSize(value, numeric),
+                  lineHeight: multiline ? getLineHeight(value, numeric) : null,
+                  fontFamily: getFontFamily(value, numeric),
                   textAlignVertical: multiline ? 'top' : 'center',
                   height: inputHeight,
                   flex: 1,
