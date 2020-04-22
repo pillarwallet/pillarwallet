@@ -169,10 +169,6 @@ type EventData = {
   imageBackground?: ?string,
 };
 
-const PPNIcon = require('assets/icons/icon_PPN.png');
-const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
-
 const Wrapper = styled(SafeAreaView)`
   padding: 16px 0 40px;
   align-items: center;
@@ -396,6 +392,8 @@ class EventDetail extends React.Component<Props, State> {
   }
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
+    const { theme } = this.props;
+    const { keyWalletIcon, smartWalletIcon } = images(theme);
     const keyWalletButtons = [
       {
         title: 'Top up',
@@ -450,7 +448,9 @@ class EventDetail extends React.Component<Props, State> {
   }
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated } = this.props;
+    const { theme, isPPNActivated } = this.props;
+    const { PPNIcon, keyWalletIcon } = images(theme);
+
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
         return this.getWalletCreatedEventData(event);
@@ -511,13 +511,14 @@ class EventDetail extends React.Component<Props, State> {
 
   getTransactionEventData = (event: Object): ?EventData => {
     const {
-      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses,
+      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses, theme,
     } = this.props;
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const avatarUrl = contact && contact.profileImage;
+    const { smartWalletIcon, PPNIcon } = images(theme);
 
     const formattedValue = formatAmount(value);
 

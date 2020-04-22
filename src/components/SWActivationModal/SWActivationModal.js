@@ -42,7 +42,6 @@ import smartWalletService from 'services/smartWallet';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
-import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -53,8 +52,8 @@ import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { spacing } from 'utils/variables';
 import { getRate, getAssetsAsList, getBalance } from 'utils/assets';
 import { formatFiat, getGasPriceWei } from 'utils/common';
-import { getThemeType } from 'utils/themes';
 import { findKeyBasedAccount } from 'utils/accounts';
+import { images } from 'utils/images';
 
 // selectors
 import { balancesSelector } from 'selectors';
@@ -111,9 +110,6 @@ const OptionLeft = styled.View`
 const ModalContainer = styled.View`
   padding: 20px ${spacing.layoutSides}px 80px;
 `;
-
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
-const smartWalletIconDark = require('assets/icons/icon_smart_wallet_dark.png');
 
 const Option = ({
   name, checked, eth, onPress,
@@ -302,7 +298,7 @@ class SWActivationModal extends React.Component<Props, State> {
       buttonText = buttonEnabled ? 'Activate' : 'Not enough ETH';
     }
 
-    const themeType = getThemeType(theme);
+    const { smartWalletIcon } = images(theme);
 
     return (
       <SlideModal
@@ -316,7 +312,7 @@ class SWActivationModal extends React.Component<Props, State> {
             <Spacing h={18} />
             <CachedImage
               style={{ width: 64, height: 64, alignSelf: 'center' }}
-              source={themeType === DARK_THEME ? smartWalletIconDark : smartWalletIcon}
+              source={smartWalletIcon}
             />
             <Spacing h={20} />
             <BaseText medium>
