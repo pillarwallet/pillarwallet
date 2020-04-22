@@ -223,9 +223,8 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
     if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
       const accountAssets = accountAssetsSelector(getState());
-      if (isEmpty(accountAssets)) {
-        dispatch(fetchInitialAssetsAction(false));
-      }
+      if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction(false));
+      dispatch({ type: SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED });
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
