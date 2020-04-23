@@ -197,16 +197,10 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
-
       - run:
           name: Install coureutils
           command: |
             brew install coreutils
-      
-      - run:
-          name: Fail the build
-          command: |
-            cd is && bundle exec fastlane deploy_ios_appcent 
 
       - *node_restore_cache
       - *node_artifactory_authenticate
@@ -682,23 +676,31 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
+      - build-and-test
       - appcenter_ios:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
-                - fix/slack-alerts
+                - develop
       - appcenter_android:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
                 - develop
       - get-latest-tag:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
                 - master
       - prod_ios:
           requires:
+            - build-and-test
             - get-latest-tag
           filters:
             branches:
@@ -706,6 +708,7 @@ workflows:
                 - master
       - prod_android:
           requires:
+            - build-and-test
             - get-latest-tag
           filters:
             branches:
