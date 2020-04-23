@@ -197,8 +197,11 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
-            export SLACK_IOS_MESSAGE=$(gshuf -n 1 ios_appcenter.txt)
-            echo $SLACK_IOS_MESSAGE
+      
+      - run:
+          name: Fail the build
+          command: |
+            cd is && bundle exec fastlane deploy_ios_appcent 
 
       - *node_restore_cache
       - *node_artifactory_authenticate
@@ -252,7 +255,7 @@ jobs:
           destination: app_build 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
+          failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
@@ -270,8 +273,6 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_appcenter.txt)
-            echo $SLACK_ANDROID_MESSAGE
       
       - *node_restore_cache
       - *node_artifactory_authenticate
@@ -290,7 +291,7 @@ jobs:
           name: Get keystore file
           command: |
             cd /home/circleci/pillarwallet/android/keystores/
-            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/stging-key.keystore .
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/staging-key.keystore .
       - run:
           name: Accept Android SDK licenses
           command: |
@@ -343,7 +344,7 @@ jobs:
       - slack/status:
           fail_only: true
           failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
-          webhook: "${TONI_SLACK_WEBHOOK_URL}"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
     executor: node10-executor
@@ -381,7 +382,6 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
-            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_prod.txt)
       - run:
           name: Append circleCI build number to version
           command: |
@@ -490,7 +490,7 @@ jobs:
             - ios-release 
       - slack/status:
           fail_only: true
-          failure_message: "$SLACK_IOS_MESSAGE :circleci-fail:"
+          failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   prod_android:
@@ -507,7 +507,6 @@ jobs:
           name: Set slack message
           command: |
             aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_prod.txt)
       - run:
           name: Install npm latest
           command: sudo npm install -g npm@latest
@@ -641,7 +640,7 @@ jobs:
             - android-release 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
+          failure_message: '$(shuf -n 1 android_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   publish_releases_to_github:
@@ -678,23 +677,31 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
+      - build-and-test
       - appcenter_ios:
-          filters:
-            branches:
-              only:
-                - develop
-      - appcenter_android:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
                 - fix/slack-alerts
+      - appcenter_android:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - develop
       - get-latest-tag:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
                 - master
       - prod_ios:
           requires:
+            - build-and-test
             - get-latest-tag
           filters:
             branches:
@@ -702,6 +709,7 @@ workflows:
                 - master
       - prod_android:
           requires:
+            - build-and-test
             - get-latest-tag
           filters:
             branches:
