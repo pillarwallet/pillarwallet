@@ -104,6 +104,7 @@ import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
 import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
+import WalletActivatedScreen from 'screens/WalletActivated';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -239,6 +240,7 @@ import {
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   EXPLORE_APPS,
+  WALLET_ACTIVATED,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -359,8 +361,10 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
-  StackNavigatorModalConfig,
+  StackNavigatorConfig,
 );
+walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // HOME FLOW
 const homeFlow = createStackNavigator({
@@ -713,6 +717,7 @@ const AppFlowNavigation = createStackNavigator(
     [MENU_FLOW]: menuFlow,
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
+    [WALLET_ACTIVATED]: WalletActivatedScreen,
   },
   modalTransition,
 );

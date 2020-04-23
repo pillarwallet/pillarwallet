@@ -141,6 +141,10 @@ const themes = {
     opacity: 0.5,
     shadow: false,
   },
+  positiveDisabled: {
+    opacity: 0.5,
+    shadow: false,
+  },
 };
 
 const themeColors = (theme: Theme) => {
@@ -221,6 +225,10 @@ const themeColors = (theme: Theme) => {
     secondaryDisabled: {
       surface: colors.buttonSecondaryBackground,
       text: isDarkTheme ? colors.text : colors.primary,
+    },
+    positiveDisabled: {
+      surface: colors.positive,
+      text: colors.control,
     },
   });
 };
@@ -372,6 +380,10 @@ const getThemeType = (props: Props, isForColors?: boolean) => {
 
   if (props.secondary && props.disabled) {
     return 'secondaryDisabled';
+  }
+
+  if (props.positive && props.disabled) {
+    return 'positiveDisabled';
   }
 
   const propsKeys = Object.keys(props);
