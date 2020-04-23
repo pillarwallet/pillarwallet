@@ -261,7 +261,7 @@ jobs:
       - slack/status:
           fail_only: true
           failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
-          webhook: "${TONI_SLACK_WEBHOOK_URL}"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
     executor: android-executor
