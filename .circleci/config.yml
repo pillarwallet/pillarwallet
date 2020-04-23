@@ -197,6 +197,11 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
+
+      - run:
+          name: Install coureutils
+          command: |
+            brew install coreutils
       
       - run:
           name: Fail the build
@@ -256,7 +261,7 @@ jobs:
       - slack/status:
           fail_only: true
           failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
-          webhook: "${SLACK_WEBHOOK_URL}"
+          webhook: "${TONI_SLACK_WEBHOOK_URL}"
 
   appcenter_android:
     executor: android-executor
