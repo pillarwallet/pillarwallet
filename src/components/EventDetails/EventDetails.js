@@ -83,6 +83,7 @@ import {
   SEND_TOKEN_FROM_HOME_FLOW,
   SEND_SYNTHETIC_ASSET,
   SETTLE_BALANCE,
+  TANK_WITHDRAWAL_FLOW,
 } from 'constants/navigationConstants';
 
 // selectors
@@ -323,8 +324,40 @@ class EventDetail extends React.Component<Props, State> {
     navigation.navigate(BADGE, { badgeId });
   }
 
-  topUpKeyWallet = () => {
+  switchToKW = async () => {
+    const {
+      accounts, switchAccount,
+    } = this.props;
+    const keyBasedAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.KEY_BASED) || {};
+    const { type: activeAccType } = getActiveAccount(accounts) || {};
+    if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
+      await switchAccount(keyBasedAccount.id);
+    }
+  }
+
+  switchToSW = async () => {
+    const {
+      accounts, switchAccount,
+    } = this.props;
+    const swAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
+    const { type: activeAccType } = getActiveAccount(accounts) || {};
+    if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
+      await switchAccount(swAccount.id);
+    }
+  }
+
+  showReceiveModal = () => {
     this.props.onClose(() => this.setState({ isReceiveModalVisible: true }));
+  }
+
+  topUpKeyWallet = async () => {
+    await this.switchToKW();
+    this.showReceiveModal();
+  }
+
+  topUpSW = async () => {
+    await this.switchToSW();
+    this.showReceiveModal();
   }
 
   referFriends = () => {
@@ -335,9 +368,9 @@ class EventDetail extends React.Component<Props, State> {
     this.props.onClose(() => this.setState({ SWActivationModalVisible: true }));
   }
 
-  topUpSW = () => {
+  sendETHFromKWToSW = async () => {
     const {
-      onClose, navigation, accounts, accountAssets, supportedAssets, switchAccount,
+      onClose, navigation, accounts, accountAssets, supportedAssets,
     } = this.props;
     const SWAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
 
@@ -359,11 +392,7 @@ class EventDetail extends React.Component<Props, State> {
     };
 
     onClose();
-    const keyBasedAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.KEY_BASED) || {};
-    const { type: activeAccType } = getActiveAccount(accounts) || {};
-    if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
-      switchAccount(keyBasedAccount.id);
-    }
+    await this.switchToKW();
     navigation.navigate(SEND_TOKEN_AMOUNT, params);
   }
 
@@ -371,6 +400,12 @@ class EventDetail extends React.Component<Props, State> {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(TANK_FUND_FLOW);
+  }
+
+  PPNwithdraw = () => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(TANK_WITHDRAWAL_FLOW);
   }
 
   send = () => {
@@ -392,7 +427,7 @@ class EventDetail extends React.Component<Props, State> {
   }
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
-    const { theme } = this.props;
+    const { theme, isSmartWalletActivated } = this.props;
     const { keyWalletIcon, smartWalletIcon } = images(theme);
     const keyWalletButtons = [
       {
@@ -415,23 +450,30 @@ class EventDetail extends React.Component<Props, State> {
           actionTitle: 'Created',
           buttons: keyWalletButtons,
         };
-      case 'Smart wallet created':
-        if (this.props.isSmartWalletActivated) return null;
+      case 'Smart Wallet created':
+        const activateButton = {
+          title: 'Activate',
+          onPress: this.activateSW,
+          secondary: true,
+        };
+
+        const topUpButton = {
+          title: 'Top Up',
+          onPress: this.topUpSW,
+          secondary: true,
+        };
+
+        const topUpButtonSecondary = {
+          title: 'Top Up',
+          onPress: this.topUpSW,
+          squarePrimary: true,
+        };
+
         return {
           name: 'Smart Wallet',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Created',
-          buttons: [
-            {
-              title: 'Activate',
-              onPress: this.activateSW,
-              secondary: true,
-            },
-            {
-              title: 'Top Up',
-              onPress: this.topUpSW,
-              squarePrimary: true,
-            }],
+          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton, topUpButtonSecondary],
         };
       case 'Wallet imported':
         return {
@@ -511,7 +553,14 @@ class EventDetail extends React.Component<Props, State> {
 
   getTransactionEventData = (event: Object): ?EventData => {
     const {
-      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses, theme,
+      ensRegistry,
+      activeBlockchainNetwork,
+      assetDecimals,
+      accounts,
+      contacts,
+      contactsSmartAddresses,
+      theme,
+      isPPNActivated,
     } = this.props;
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
@@ -535,23 +584,30 @@ class EventDetail extends React.Component<Props, State> {
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
+        const activatePillarNetworkButton = {
+          title: 'Activate Pillar Network',
+          onPress: this.topUpPillarNetwork,
+          secondary: true,
+        };
+
+        const referFriendsButton = {
+          title: 'Refer friends',
+          onPress: this.referFriends,
+          secondary: true,
+        };
+
+        const referFriendsButtonSecondary = {
+          title: 'Refer friends',
+          onPress: this.referFriends,
+          squarePrimary: true,
+        };
+
         return {
           name: 'Smart Wallet',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Activated',
           actionSubtitle: this.getFeeLabel(),
-          buttons: [
-            {
-              title: 'Activate Pillar Network',
-              onPress: this.topUpPillarNetwork,
-              secondary: true,
-            },
-            {
-              title: 'Refer friends',
-              onPress: this.referFriends,
-              squarePrimary: true,
-            },
-          ],
+          buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
@@ -605,7 +661,20 @@ class EventDetail extends React.Component<Props, State> {
           ],
         };
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
-        return null;
+        return {
+          name: 'Smart Wallet',
+          iconName: 'sent',
+          iconColor: this.getColor('negative'),
+          actionTitle: `- ${formattedValue} ${event.asset}`,
+          actionSubtitle: 'from Pillar Tank',
+          buttons: [
+            {
+              title: 'Withdraw more',
+              onPress: this.PPNwithdraw,
+              secondary: true,
+            },
+          ],
+        };
       case PAYMENT_NETWORK_TX_SETTLEMENT:
         return {
           name: 'Settle',
@@ -745,7 +814,7 @@ class EventDetail extends React.Component<Props, State> {
 
           const topUpMore = {
             title: 'Top up more',
-            onPress: this.topUpSW,
+            onPress: this.sendETHFromKWToSW,
             squarePrimary: true,
           };
 
