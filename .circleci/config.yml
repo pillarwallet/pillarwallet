@@ -342,8 +342,8 @@ jobs:
           destination: apks
       - slack/status:
           fail_only: true
-          failure_message: "$SLACK_ANDROID_MESSAGE :circleci-fail:"
-          webhook: "${SLACK_WEBHOOK_URL}"
+          failure_message: '$SLACK_ANDROID_MESSAGE :circleci-fail:'
+          webhook: "${TONI_SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
     executor: node10-executor
