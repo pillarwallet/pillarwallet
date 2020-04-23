@@ -24,7 +24,6 @@ import {
   createSdk,
   Sdk,
   sdkConstants,
-  createLocalSdkEnvironment,
 } from '@smartwallet/sdk';
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';

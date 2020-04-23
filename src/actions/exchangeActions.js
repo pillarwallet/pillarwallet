@@ -21,8 +21,11 @@ import { Linking } from 'react-native';
 import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import ExchangeService from 'services/exchange';
+
+// components
 import Toast from 'components/Toast';
+
+// constants
 import {
   RESET_OFFERS,
   ADD_OFFER,
@@ -41,16 +44,22 @@ import {
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
-import { calculateGasEstimate } from 'services/assets';
+// utils
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
 import { isFiatCurrency } from 'utils/exchange';
 
+// services
+import ExchangeService from 'services/exchange';
+
+// types
 import type SDKWrapper from 'services/api';
 import type { Offer, OfferOrder } from 'models/Offer';
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 
+// actions
 import { saveDbAction } from './dbActions';
+
 
 const exchangeService = new ExchangeService();
 

@@ -35,7 +35,6 @@ import { Spacing } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import Toast from 'components/Toast';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
