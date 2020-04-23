@@ -64,6 +64,12 @@ export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: st
   return getLocallyStoredProviderLogo(provider, theme);
 };
 
+export const getCryptoProviderName = (providersMeta: ProvidersMeta, provider: string) => {
+  const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
+  const { name } = providerInfo;
+  return name;
+};
+
 export const isFiatProvider = (provider: string) => {
   switch (provider) {
     case PROVIDER_MOONPAY:
