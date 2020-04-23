@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import Modal from 'react-native-modal';
 
@@ -29,8 +30,7 @@ type Props = {
   children: React.Node,
 };
 
-const Wrapper = styled.View`
-  height: 100%;
+const Wrapper = styled.KeyboardAvoidingView`
   flex: 1;
   flex-direction: column;
   align-items: center;
@@ -54,7 +54,10 @@ const ModalBox = (props: Props) => (
     backdropOpacity={0.7}
     onModalHide={props.onModalHide}
   >
-    <Wrapper>
+    <Wrapper
+      enabled
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+    >
       <Box>
         {props.children}
       </Box>
