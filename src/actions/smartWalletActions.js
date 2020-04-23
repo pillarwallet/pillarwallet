@@ -86,6 +86,7 @@ import {
   ACCOUNTS,
   SEND_SYNTHETIC_AMOUNT,
   PIN_CODE,
+  WALLET_ACTIVATED,
 } from 'constants/navigationConstants';
 
 // configs
@@ -776,12 +777,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         // smart wallet account deployment check
         if (accountState !== deployedAccountDeviceState) {
           dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
-          Toast.show({
-            message: 'Your Smart Wallet has been deployed',
-            type: 'success',
-            title: 'Success',
-            autoClose: true,
-          });
+          navigate(WALLET_ACTIVATED);
         }
 
         // smart wallet account relayer device deployment check
