@@ -677,31 +677,23 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - build-and-test
       - appcenter_ios:
-          requires:
-            - build-and-test
           filters:
             branches:
               only:
                 - fix/slack-alerts
       - appcenter_android:
-          requires:
-            - build-and-test
           filters:
             branches:
               only:
                 - develop
       - get-latest-tag:
-          requires:
-            - build-and-test
           filters:
             branches:
               only:
                 - master
       - prod_ios:
           requires:
-            - build-and-test
             - get-latest-tag
           filters:
             branches:
@@ -709,7 +701,6 @@ workflows:
                 - master
       - prod_android:
           requires:
-            - build-and-test
             - get-latest-tag
           filters:
             branches:
