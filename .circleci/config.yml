@@ -342,7 +342,7 @@ jobs:
           destination: apks
       - slack/status:
           fail_only: true
-          failure_message: '$SLACK_ANDROID_MESSAGE :circleci-fail:'
+          failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${TONI_SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
