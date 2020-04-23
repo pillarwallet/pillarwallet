@@ -474,23 +474,20 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { value, isValidatingEns } = this.state;
     const isSearchQueryProvided = !!(value && value.address.length);
     const submitDisabled = !value.address.length || isValidatingEns;
+    if (!isSearchQueryProvided) return <></>;
     return (
-      <>
-        {isSearchQueryProvided && (
-          <ButtonWrapper>
-            <Button
-              height={48}
-              regularText
-              textStyle={fontStyles.medium}
-              disabled={submitDisabled}
-              title="Next"
-              onPress={this.handleFormSubmit}
-            />
-          </ButtonWrapper>
-        )}
-      </>
+      <ButtonWrapper>
+        <Button
+          height={48}
+          regularText
+          textStyle={fontStyles.medium}
+          disabled={submitDisabled}
+          title="Next"
+          onPress={this.handleFormSubmit}
+        />
+      </ButtonWrapper>
     );
-  }
+  };
 
   render() {
     const {
