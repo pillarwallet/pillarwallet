@@ -178,7 +178,7 @@ class SmartWallet {
     await this.sdk
       .initialize({ device: { privateKey } })
       .then(() => { this.sdkInitialized = true; })
-      .catch((err) => {
+      .catch(() => {
         printLog('Error initiating sdk.');
       });
 
