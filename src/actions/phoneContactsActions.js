@@ -71,7 +71,7 @@ const filterDuplicateEmails = (emailAddresses: PhoneContactEmail[]): PhoneContac
 
 const filterDuplicatePhones = (phoneNumbers: PhoneContactPhone[]): PhoneContactPhone[] => {
   return phoneNumbers.reduce((uniqueValidPhones, phoneItem) => {
-    const phoneWithoutSpaces = stringWithoutSpaces(phoneItem.number);
+    const phoneWithoutSpaces = stringWithoutSpaces(phoneItem.number).replace(/[()-]/g, '');
 
     if (!uniqueValidPhones.some(({ number }) => number === phoneWithoutSpaces)) {
       return [...uniqueValidPhones, { ...phoneItem, number: phoneWithoutSpaces }];
@@ -87,11 +87,13 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
       recordID,
       displayName,
       givenName,
+      familyName,
       emailAddresses,
       phoneNumbers,
       thumbnailPath,
     } = contact;
-    const name = displayName || givenName;
+    const fullName = givenName && familyName ? `${givenName} ${familyName}` : (givenName || familyName);
+    const name = displayName || fullName;
     const arrayOfContacts = [];
 
     if (!isEmpty(emailAddresses)) {
