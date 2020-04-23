@@ -38,6 +38,8 @@ const sendWyreLogoLight = require('assets/images/exchangeProviders/wyre.png');
 const moonPayLogoLight = require('assets/images/exchangeProviders/moon_pay.png');
 const sendWyreLogoDark = require('assets/images/exchangeProviders/wyre_dark.png');
 const moonPayLogoDark = require('assets/images/exchangeProviders/moon_pay_dark.png');
+const swActivatedLight = require('assets/images/swActivatedLight.png');
+const swActivatedDark = require('assets/images/swActivatedDark.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -77,6 +79,10 @@ export const images = (theme: Theme) => {
     moonPayLogoHorizontal: getImageByTheme(currentTheme, {
       lightTheme: moonPayLogoLight,
       darkTheme: moonPayLogoDark,
+    }),
+    swActivated: getImageByTheme(currentTheme, {
+      lightTheme: swActivatedLight,
+      darkTheme: swActivatedDark,
     }),
   };
 };
