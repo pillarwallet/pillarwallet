@@ -24,7 +24,6 @@ import isEmpty from 'lodash.isempty';
 import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 
 // components
 import Toast from 'components/Toast';
@@ -93,14 +92,14 @@ import {
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
-import smartWalletService, { parseEstimatePayload } from 'services/smartWallet';
+import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 
 // selectors
-import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { activeAccountAddressSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 
 // actions
@@ -133,7 +132,11 @@ import type { SendNavigateOptions } from 'models/Navigation';
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, normalizeForEns } from 'utils/accounts';
-import { isConnectedToSmartAccount, isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import {
+  buildSmartWalletTransactionEstimate,
+  isConnectedToSmartAccount,
+  isHiddenUnsettledTransaction,
+} from 'utils/smartWallet';
 import {
   addressesEqual,
   getAssetData,
@@ -151,8 +154,11 @@ import {
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getPrivateKeyFromPin } from 'utils/wallet';
+
+// actions
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
+
 
 const storage = Storage.getInstance('db');
 
@@ -167,17 +173,6 @@ const notifySmartWalletNotInitialized = () => {
     type: 'warning',
     autoClose: false,
   });
-};
-
-export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
-  return async (dispatch: Dispatch) => {
-    await smartWalletService.init(walletPrivateKey, dispatch);
-    const initialized: boolean = smartWalletService.sdkInitialized;
-    dispatch({
-      type: SET_SMART_WALLET_SDK_INIT,
-      payload: initialized,
-    });
-  };
 };
 
 export const loadSmartWalletAccountsAction = (privateKey?: string) => {
@@ -990,6 +985,17 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
   };
 };
 
+export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
+  return async (dispatch: Dispatch) => {
+    await smartWalletService.init(walletPrivateKey, (event) => dispatch(onSmartWalletSdkEventAction(event)));
+    const initialized: boolean = smartWalletService.sdkInitialized;
+    dispatch({
+      type: SET_SMART_WALLET_SDK_INIT,
+      payload: initialized,
+    });
+  };
+};
+
 export const ensureSmartAccountConnectedAction = (privateKey?: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -1036,36 +1042,8 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
       });
     if (isEmpty(response)) return;
 
-    const {
-      gasAmount,
-      gasPrice,
-      totalCost,
-      gasTokenCost,
-      gasToken: parsedGasToken,
-    } = parseEstimatePayload(response);
-
-    let estimate = {
-      gasAmount,
-      gasPrice,
-      totalCost,
-    };
-
-    // check if fee by gas token available
     const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
-    const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-
-    if (!isEmpty(gasToken)
-      && !isEmpty(parsedGasToken)
-      && addressesEqual(parsedGasToken.address, gasToken.address)
-      && gasTokenCost
-      && gasTokenCost.gt(0)) {
-      estimate = {
-        ...estimate,
-        gasToken,
-        gasTokenCost: parsedGasTokenCost,
-      };
-    }
+    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
 
     dispatch({
       type: SET_ESTIMATED_TOPUP_FEE,
@@ -1170,36 +1148,8 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
       });
     if (isEmpty(response)) return;
 
-    const {
-      gasAmount,
-      gasPrice,
-      totalCost,
-      gasTokenCost,
-      gasToken: parsedGasToken,
-    } = parseEstimatePayload(response);
-
-    let estimate = {
-      gasAmount,
-      gasPrice,
-      totalCost,
-    };
-
-    // check if fee by gas token available
     const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
-    const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-
-    if (!isEmpty(gasToken)
-      && !isEmpty(parsedGasToken)
-      && addressesEqual(parsedGasToken.address, gasToken.address)
-      && gasTokenCost
-      && gasTokenCost.gt(0)) {
-      estimate = {
-        ...estimate,
-        gasToken,
-        gasTokenCost: parsedGasTokenCost,
-      };
-    }
+    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
 
     dispatch({
       type: SET_ESTIMATED_WITHDRAWAL_FEE,
@@ -1359,37 +1309,9 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
       });
     if (isEmpty(response)) return;
 
-    const {
-      gasAmount,
-      gasPrice,
-      totalCost,
-      gasTokenCost,
-      gasToken: parsedGasToken,
-    } = parseEstimatePayload(response);
-
-    let estimate = {
-      gasAmount,
-      gasPrice,
-      totalCost,
-    };
-
-    // check if fee by gas token available
     const accountAssets = accountAssetsSelector(getState());
     const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
-    const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-
-    if (!isEmpty(gasToken)
-      && !isEmpty(parsedGasToken)
-      && addressesEqual(parsedGasToken.address, gasToken.address)
-      && gasTokenCost
-      && gasTokenCost.gt(0)) {
-      estimate = {
-        ...estimate,
-        gasToken,
-        gasTokenCost: parsedGasTokenCost,
-      };
-    }
+    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
 
     dispatch({
       type: SET_ESTIMATED_SETTLE_TX_FEE,

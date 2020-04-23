@@ -128,7 +128,7 @@ export const parseFeeWithGasToken = (
   gasToken: ?GasToken,
   fee: any,
 ): ?FeeWithGasToken => {
-  if (isEmpty(gasToken)) return null;
+  if (!gasToken || isEmpty(gasToken)) return {};
   const feeInWei = new BigNumber(fee.toString());
   return { feeInWei, gasToken };
 };

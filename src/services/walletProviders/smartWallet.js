@@ -172,7 +172,12 @@ export default class SmartWalletProvider {
       return Promise.reject(new Error('SDK is not initialized'));
     }
 
-    const { to, contractAddress, tokenId } = transaction;
+    const {
+      to,
+      contractAddress,
+      tokenId,
+      gasToken,
+    } = transaction;
     const from = getAccountAddress(account);
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
@@ -186,6 +191,7 @@ export default class SmartWalletProvider {
         value: 0,
         data,
         transactionSpeed,
+        gasToken,
       })
       .then(hash => ({
         from,

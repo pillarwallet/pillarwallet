@@ -64,7 +64,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
 import type { GasInfo } from 'models/GasInfo';
-import type { GasToken, TransactionPayload } from 'models/Transaction';
+import type { GasToken, TokenTransactionPayload } from 'models/Transaction';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -88,13 +88,13 @@ type Props = {
   theme: Theme,
   note: ?string,
   handleNoteChange: (text: string) => void,
-  getTransactionDetails: (request: CallRequest) => Object,
-  getTransactionPayload: (estimate: Object, request: ?CallRequest) => TransactionPayload,
+  getTransactionDetails: (request: ?CallRequest) => Object,
+  getTransactionPayload: (estimate: Object, request: ?CallRequest) => TokenTransactionPayload,
   isUnsupportedTransaction: (transaction: Object) => boolean,
   gasInfo: GasInfo,
   fetchGasInfo: () => void,
   rejectWCRequest: (request: CallRequest) => void,
-  acceptWCRequest: (request: CallRequest, transactionPayload: ?TransactionPayload) => void,
+  acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
@@ -209,6 +209,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     }
   };
 
+  getGasPriceWei = () => {
+    const gasPrice = this.props.gasInfo.gasPrice.avg || 0;
+    return utils.parseUnits(gasPrice.toString(), 'gwei');
+  };
+
   /**
    *  we're using our wallet avg gas price and gas limit
    *
@@ -221,7 +226,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
    *  and both gasPrice and gasLimit is not always present from plaforms
    */
   getTxFeeInWei = (gasLimit?: number): BigNumber => {
-    const { gasInfo, activeAccount } = this.props;
+    const { activeAccount } = this.props;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();
     }
@@ -229,8 +234,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     // calculate either with gasLimit in state or provided as param
     if (!gasLimit) ({ gasLimit } = this.state);
 
-    const gasPrice = gasInfo.gasPrice.avg || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    const gasPriceWei = this.getGasPriceWei();
 
     return gasPriceWei.mul(gasLimit);
   };
@@ -317,7 +321,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const {
       txFeeInWei,
       gasLimit,
-      gasPrice,
       gettingFee,
       feeByGasToken,
     } = this.state;
@@ -344,12 +347,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       case 'eth_signTransaction':
         type = 'Transaction';
 
+        const gasPrice = this.getGasPriceWei().toNumber();
         const estimatePart = {
           txFeeInWei,
           gasLimit,
           gasPrice,
+          gasToken: {},
         };
-        if (feeByGasToken) estimatePart.gasToken = this.gasToken;
+        if (feeByGasToken && this.gasToken) estimatePart.gasToken = this.gasToken;
         transactionPayload = getTransactionPayload(estimatePart, request);
 
         const {
@@ -373,7 +378,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             txFeeInWei,
             gasToken: parsedGasToken,
           })) {
-            const feeSymbol = parsedGasToken ? this.gasToken.symbol : ETH;
+            const feeSymbol = get(parsedGasToken, 'symbol', ETH);
             errorMessage = `Not enough ${feeSymbol} for transaction fee`;
           }
           if (!gettingFee && txFeeInWeiBN.eq(0)) {

@@ -75,7 +75,7 @@ export type Transaction = {
   tag?: string,
   extra?: TransactionExtra,
   stateInPPN?: string,
-  feeWithGasToken: ?FeeWithGasToken,
+  feeWithGasToken?: ?FeeWithGasToken,
 }
 
 export type TransactionsStore = {
@@ -91,7 +91,7 @@ export type TokenTransactionPayload = {
   txFeeInWei: number,
   txSpeed?: string,
   symbol: string,
-  contractAddress: ?string,
+  contractAddress: string,
   decimals: number,
   note?: ?string,
   name?: string,
@@ -101,7 +101,7 @@ export type TokenTransactionPayload = {
   data?: string,
   extra?: Object,
   usePPN?: boolean,
-  gasToken: ?GasToken,
+  gasToken?: ?GasToken,
 }
 
 export type CollectibleTransactionPayload = {
@@ -112,12 +112,13 @@ export type CollectibleTransactionPayload = {
   tokenType: string,
   tokenId: string,
   note?: ?string,
-  tokenId: string,
   signOnly?: ?boolean,
   signedHash?: ?string,
   gasPrice?: ?number,
   gasLimit?: ?number,
   txSpeed?: string,
+  gasToken?: ?GasToken,
+  txFeeInWei: number,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
@@ -137,6 +138,7 @@ export type TransactionEthers = {
   tag?: string,
   extra?: TransactionExtra,
   stateInPPN?: string,
+  feeWithGasToken?: ?FeeWithGasToken,
 };
 
 export type SmartWalletTransferTransaction = {

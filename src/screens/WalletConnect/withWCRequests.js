@@ -43,7 +43,7 @@ import { getAssetDataByAddress } from 'utils/assets';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
-import type { TransactionPayload } from 'models/Transaction';
+import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { CallRequest } from 'models/WalletConnect';
 
@@ -60,6 +60,10 @@ type State = {
   note: ?string,
 };
 
+const isTokenTransfer = (data) => typeof data === 'string'
+  && data.toLowerCase() !== '0x'
+  && data.toLowerCase().startsWith(TOKEN_TRANSFER);
+
 export default function withWCRequests(WrappedComponent: React.ComponentType<*>) {
   const ComponentWithWCTransactions = class extends React.Component<Props, State> {
     state = {
@@ -75,8 +79,9 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
       let { to = '' } = request.params[0];
       let amount;
 
-      const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
-      const assetData = isTokenTransfer && getAssetDataByAddress([], supportedAssets, to);
+      const assetData = isTokenTransfer(data)
+        ? getAssetDataByAddress([], supportedAssets, to)
+        : {};
 
       if (isEmpty(assetData)) {
         amount = utils.formatEther(utils.bigNumberify(value).toString());
@@ -108,22 +113,21 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
         contractAddress,
         decimals,
         note: this.state.note,
-        isTokenTransfer,
       };
     };
 
-    isUnsupportedTransaction = (transaction: TransactionPayload): boolean => {
-      const { contractAddress, isTokenTransfer } = transaction;
+    isUnsupportedTransaction = (transaction: TokenTransactionPayload): boolean => {
+      const { contractAddress, data } = transaction;
       // unsupported action is if it's our wallet's unsupported token transfer
-      return isTokenTransfer && contractAddress === '';
+      return isTokenTransfer(data) && contractAddress === '';
     };
 
-    getTransactionPayload = (estimatePart, request): TransactionPayload => {
+    getTransactionPayload = (estimatePart, request): TokenTransactionPayload => {
       const transaction = this.getTransactionDetails(request);
       return { ...estimatePart, ...transaction };
     };
 
-    acceptWCRequest = (request: any, transactionPayload?: TransactionPayload) => {
+    acceptWCRequest = (request: any, transactionPayload?: TokenTransactionPayload) => {
       const { navigation } = this.props;
 
       switch (request.method) {

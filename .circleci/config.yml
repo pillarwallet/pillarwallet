@@ -674,10 +674,6 @@ workflows:
   build_and_deploy:
     jobs:
       - build-and-test
-          filters:
-            branches:
-              ignore:
-                - feature/relayer
       - appcenter_ios:
           requires:
             - build-and-test

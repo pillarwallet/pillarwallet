@@ -20,12 +20,10 @@
 
 import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
-import { SafeAreaView, withNavigation } from 'react-navigation';
+import { SafeAreaView } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
-import { createStructuredSelector } from 'reselect';
-import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native';
 
 // actions
 import { switchToGasTokenRelayerAction } from 'actions/smartWalletActions';
@@ -43,10 +41,6 @@ import { SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletC
 // utils
 import { spacing } from 'utils/variables';
 
-// selectors
-import { accountAssetsSelector } from 'selectors/assets';
-import { accountHistorySelector } from 'selectors/history';
-
 // types
 import type { Theme } from 'models/Theme';
 import type { Assets } from 'models/Asset';
@@ -57,10 +51,9 @@ import type { Transaction } from 'models/Transaction';
 type Props = {
   isVisible: boolean,
   onModalHide: (callback: () => void) => void,
-  accountAssets: Assets,
-  navigation: NavigationScreenProp<*>,
   theme: Theme,
   switchToGasTokenRelayer: () => void,
+  accountAssets: Assets,
   accountHistory: Transaction[],
 };
 
@@ -136,13 +129,8 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
   }
 }
 
-const structuredSelector = createStructuredSelector({
-  accountAssets: accountAssetsSelector,
-  accountHistory: accountHistorySelector,
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchToGasTokenRelayer: () => dispatch(switchToGasTokenRelayerAction()),
 });
 
-export default withNavigation(connect(structuredSelector, mapDispatchToProps)(RelayerMigrationModal));
+export default connect(null, mapDispatchToProps)(RelayerMigrationModal);

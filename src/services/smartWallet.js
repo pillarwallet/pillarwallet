@@ -24,6 +24,7 @@ import {
   createSdk,
   Sdk,
   sdkConstants,
+  sdkInterfaces,
 } from '@smartwallet/sdk';
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
@@ -32,10 +33,6 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
 import abi from 'ethjs-abi';
-import type { IGasToken } from '@smartwallet/sdk/build/interfaces';
-
-// actions
-import { onSmartWalletSdkEventAction } from 'actions/smartWalletActions';
 
 // constants
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
@@ -80,10 +77,10 @@ export type AccountTransaction = {
   value: number | string | BigNumber,
   data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
-  gasToken: ?GasToken,
+  gasToken?: ?GasToken,
 };
 
-type EstimatePayload = {
+export type EstimatePayload = {
   gasFee: BigNumber,
   signedGasPrice: {
     gasPrice: BigNumber,
@@ -94,7 +91,7 @@ type ParsedEstimate = {
   gasAmount: ?BigNumber,
   gasPrice: ?BigNumber,
   totalCost: ?BigNumber,
-  gasToken: ?IGasToken,
+  gasToken: ?sdkInterfaces.IGasToken,
   gasTokenCost: ?BigNumber,
 };
 
@@ -131,12 +128,12 @@ const calculateEstimate = (
     : defaultGasAmount,
   );
 
+  const parsedGasTokenAddress = get(parsedPayload, 'gasToken.address');
+  const gasTokenAddress = get(gasToken, 'address');
   const isGasTokenAvailable = !isEmpty(gasToken)
-    && !isEmpty(parsedPayload.gasToken)
-    && addressesEqual(parsedPayload.gasToken.address, gasToken.address)
-    && gasTokenCost;
+    && addressesEqual(parsedGasTokenAddress, gasTokenAddress);
 
-  gasTokenCost = new BigNumber(isGasTokenAvailable
+  gasTokenCost = new BigNumber(isGasTokenAvailable && gasTokenCost
     ? gasTokenCost.toString()
     : 0,
   );
@@ -176,7 +173,7 @@ class SmartWallet {
     }
   }
 
-  async init(privateKey: string, dispatch?: Function) {
+  async init(privateKey: string, onEvent?: Function) {
     if (this.sdkInitialized) return;
 
     await this.sdk
@@ -187,15 +184,15 @@ class SmartWallet {
       });
 
     if (this.sdkInitialized) {
-      this.subscribeToEvents(dispatch);
+      this.subscribeToEvents(onEvent);
     }
     // TODO: remove private key from smart wallet sdk
   }
 
-  subscribeToEvents(dispatch?: Function) {
-    if (subscribedToEvents || !dispatch) return;
+  subscribeToEvents(onEvent?: Function) {
+    if (subscribedToEvents || !onEvent) return;
     this.sdk.event$.subscribe(event => {
-      if (dispatch) dispatch(onSmartWalletSdkEventAction(event));
+      if (onEvent) onEvent(event);
     });
     subscribedToEvents = true;
   }
@@ -452,7 +449,7 @@ class SmartWallet {
     transaction: AccountTransaction,
     gasInfo: GasInfo,
     assetData: AssetData,
-  ) {
+  ): Promise<{ gasTokenCost: BigNumber, cost: BigNumber }> {
     const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG], gasToken } = transaction;
     let { data, recipient } = transaction;
     const { decimals, contractAddress, token: assetSymbol } = assetData;

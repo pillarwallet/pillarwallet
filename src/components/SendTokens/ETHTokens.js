@@ -51,8 +51,8 @@ import smartWalletService from 'services/smartWallet';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Account } from 'models/Account';
 import type { GasInfo } from 'models/GasInfo';
-import type { GasToken, TokenTransactionPayload } from 'models/Transaction';
-import type { Balances, Rates, AssetData } from 'models/Asset';
+import type { GasToken, TokenTransactionPayload, Transaction } from 'models/Transaction';
+import type { Balances, Rates, AssetData, Assets } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 
@@ -114,6 +114,8 @@ type Props = {
   activeAccount: ?Account,
   onUpdateTransactionSpeed: (speed: string) => void,
   gasToken: ?GasToken,
+  accountAssets: Assets,
+  accountHistory: Transaction[],
 };
 
 type State = {
@@ -145,7 +147,7 @@ class SendETHTokens extends React.Component<Props, State> {
     gettingFee: true,
     calculatingMaxValue: false,
     inputHasError: false,
-    txFeeInWei: 0,
+    txFeeInWei: new BigNumber(0),
     submitPressed: false,
     feeByGasToken: false,
     showRelayerMigrationModal: false,
@@ -219,6 +221,7 @@ class SendETHTokens extends React.Component<Props, State> {
       activeAccount,
     } = this.props;
 
+    // $FlowFixMe
     let transactionPayload: TokenTransactionPayload = {
       to: receiver,
       receiverEnsName,
@@ -274,7 +277,8 @@ class SendETHTokens extends React.Component<Props, State> {
       const transactionSpeed = this.getTxSpeed();
       txFeeInWei = this.getTxFeeInWei(transactionSpeed, updatedState.gasLimit);
     }
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, feeByGasToken && gasToken);
+    const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, parsedGasToken);
     const amount = formatAmount(maxAmount);
     this.setState({
       ...updatedState,
@@ -429,13 +433,15 @@ class SendETHTokens extends React.Component<Props, State> {
       assetData,
       fiatCurrency,
       gasToken,
+      accountAssets,
+      accountHistory,
     } = this.props;
 
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
 
     const { token, iconColor, decimals } = assetData;
     const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
-    const feeSymbol = parsedGasToken ? gasToken.symbol : ETH;
+    const feeSymbol = get(parsedGasToken, 'symbol', ETH);
 
     // balance
     const balance = getBalance(balances, token);
@@ -487,8 +493,6 @@ class SendETHTokens extends React.Component<Props, State> {
     const showRelayerMigration = showFee && isSmartAccount && isEmpty(gasToken);
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
 
-    const transactionSpeed = showTransactionSpeeds && this.getTxSpeed();
-
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: `Send ${assetData.token}` }] }}
@@ -498,7 +502,7 @@ class SendETHTokens extends React.Component<Props, State> {
               <TouchableOpacity onPress={() => this.setState({ showTransactionSpeedModal: true })}>
                 <SendTokenDetailsValue>
                   <Label small>Fee: </Label>
-                  <TextLink>{SPEED_TYPE_LABELS[transactionSpeed]}</TextLink>
+                  <TextLink>{SPEED_TYPE_LABELS[this.getTxSpeed()]}</TextLink>
                 </SendTokenDetailsValue>
               </TouchableOpacity>
             }
@@ -563,6 +567,8 @@ class SendETHTokens extends React.Component<Props, State> {
           <RelayerMigrationModal
             isVisible={showRelayerMigrationModal}
             onModalHide={() => this.setState({ showRelayerMigrationModal: false })}
+            accountAssets={accountAssets}
+            accountHistory={accountHistory}
           />
         }
       </ContainerWithHeader>

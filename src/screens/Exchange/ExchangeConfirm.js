@@ -27,6 +27,7 @@ import BigNumber from 'bignumber.js';
 import isEqual from 'lodash.isequal';
 import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -41,15 +42,14 @@ import TitleWithIcon from 'components/Title/TitleWithIcon';
 import Spinner from 'components/Spinner';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, SPEED_TYPE_LABELS, SPEED_TYPES } from 'constants/assetsConstants';
 import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { EXCHANGE, SLOW, NORMAL, FAST } from 'constants/exchangeConstants';
+import { EXCHANGE, NORMAL } from 'constants/exchangeConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
-import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { fontSizes, spacing } from 'utils/variables';
@@ -78,7 +78,7 @@ import smartWalletService from 'services/smartWallet';
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { OfferOrder, ProvidersMeta } from 'models/Offer';
-import type { GasToken, TransactionPayload } from 'models/Transaction';
+import type { GasToken, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Account, Accounts } from 'models/Account';
@@ -87,6 +87,7 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { accountBalancesSelector } from 'selectors/balances';
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
@@ -157,16 +158,8 @@ const SliderContentWrapper = styled.View`
   margin: 30px 0;
 `;
 
-
-// do not add exchange provider to speed types list as it might not always be present
-const SPEED_TYPES = {
-  [SLOW]: 'Slow',
-  [NORMAL]: 'Normal',
-  [FAST]: 'Fast',
-};
-
 class ExchangeConfirmScreen extends React.Component<Props, State> {
-  transactionPayload: TransactionPayload;
+  transactionPayload: TokenTransactionPayload;
   gasToken: ?GasToken;
 
   state = {
@@ -254,13 +247,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       decimals,
     };
 
-    const transaction = {
+    let transaction = {
       recipient,
       value,
       gasToken: this.gasToken,
     };
 
-    if (data) transaction.data = data;
+    if (data) transaction = { ...transaction, data };
 
     const { gasTokenCost, cost: defaultCost } = await smartWalletService
       .estimateAccountTransaction(transaction, gasInfo, assetData)
@@ -302,10 +295,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const { transactionSpeed } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-    const speedOptions = Object.keys(SPEED_TYPES).map(txSpeed => {
+    const speedOptions = Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-      const speedTitle = SPEED_TYPES[txSpeed];
+      const speedTitle = SPEED_TYPE_LABELS[txSpeed];
       return {
         id: speedTitle,
         label: speedTitle,
@@ -332,7 +325,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     });
   };
 
-  onConfirmTransactionPress = () => {
+  onConfirmTransactionPress = (offerOrder) => {
     const { navigation, activeAccount } = this.props;
     const { txFeeInWei, feeByGasToken } = this.state;
 
@@ -341,7 +334,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       toAsset,
       setTokenAllowance,
       provider,
-    } = navigation.getParam('offerOrder');
+    } = offerOrder;
 
     let { transactionPayload } = this;
 
@@ -427,7 +420,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const { code: toAssetCode } = toAsset;
 
     const parsedGasToken = feeByGasToken && !isEmpty(this.gasToken) ? this.gasToken : null;
-    const feeSymbol = parsedGasToken ? this.gasToken.symbol : ETH;
+    const feeSymbol = get(parsedGasToken, 'symbol', ETH);
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);

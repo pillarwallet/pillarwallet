@@ -20,7 +20,6 @@
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
-import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 
 // constants
@@ -30,14 +29,8 @@ import { ETH, BTC } from 'constants/assetsConstants';
 import { formatFiat, formatAmount, isCaseInsensitiveMatch } from 'utils/common';
 
 // types
-import type {
-  Asset,
-  Assets,
-  Balance,
-  Balances,
-  Rates,
-} from 'models/Asset';
-import type { GasToken, TransactionPayload } from 'models/Transaction';
+import type { Asset, Assets, Balance, Balances, Rates } from 'models/Asset';
+import type { GasToken } from 'models/Transaction';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -137,18 +130,18 @@ export const calculateMaxAmount = (
   txFeeInWei: BigNumber,
   gasToken: ?GasToken = {},
 ): number => {
-  const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
-
   if (typeof balance !== 'string') {
     balance = balance.toString();
   }
+
+  const feeSymbol = get(gasToken, 'symbol', ETH);
 
   if (token !== feeSymbol) {
     return +balance;
   }
 
   // we need to convert txFeeInWei to BigNumber as ethers.js utils use different library for Big Numbers
-  const decimals = feeSymbol === ETH ? 'ether' : gasToken.decimals;
+  const decimals = get(gasToken, 'decimals', 'ether');
   const maxAmount = utils.parseUnits(balance, decimals).sub(utils.bigNumberify(txFeeInWei.toString()));
   if (maxAmount.lt(0)) return 0;
 
@@ -157,18 +150,24 @@ export const calculateMaxAmount = (
 
 export const isEnoughBalanceForTransactionFee = (
   balances: Balances,
-  transaction: ?TransactionPayload,
+  transaction: $Shape<{
+    txFeeInWei: number,
+    gasToken?: ?GasToken,
+    amount?: any,
+    decimals?: number,
+    symbol?: string,
+  }>,
 ): boolean => {
   const {
     txFeeInWei,
     gasToken,
-    amount: transactionAmount,
     decimals: transactionDecimals,
+    amount: transactionAmount,
     symbol: transactionSymbol,
   } = transaction;
 
-  const feeSymbol = !gasToken || isEmpty(gasToken) ? ETH : gasToken.symbol;
-  const feeDecimals = feeSymbol === ETH ? 'ether' : gasToken.decimals;
+  const feeSymbol = get(gasToken, 'symbol', ETH);
+  const feeDecimals = get(gasToken, 'decimals', 'ether');
 
   if (!balances[feeSymbol]) return false;
 
@@ -177,7 +176,7 @@ export const isEnoughBalanceForTransactionFee = (
   // we need to convert balanceInWei to BigNumber as ethers.js utils use different library for Big Numbers
   let balanceInWei = new BigNumber(utils.parseUnits(balance.toString(), feeDecimals));
 
-  // subtract from balance if transaction asset matches fee asset
+  // subtract from balance if transaction asset matches fee asset, not suitable for collectibles
   if (transactionAmount && feeSymbol === transactionSymbol) {
     const amountInWei = new BigNumber(utils.parseUnits(transactionAmount.toString(), transactionDecimals));
     balanceInWei = balanceInWei.minus(amountInWei);

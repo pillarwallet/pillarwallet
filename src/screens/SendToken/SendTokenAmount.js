@@ -23,6 +23,9 @@ import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 
+// actions
+import { updateAppSettingsAction } from 'actions/appSettingsActions';
+
 // constants
 import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 
@@ -42,16 +45,18 @@ import type {
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { SessionData } from 'models/Session';
+import type { Transaction } from 'models/Transaction';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
 
-// actions
-import { updateAppSettingsAction } from 'actions/appSettingsActions';
+// utils
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { checkIfSmartWalletAccount } from 'utils/accounts';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -66,6 +71,7 @@ type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   smartWalletAccountSupportsGasToken: ?boolean,
+  accountHistory: Transaction[],
 };
 
 class SendTokenAmount extends React.Component<Props> {
@@ -109,6 +115,7 @@ class SendTokenAmount extends React.Component<Props> {
       accountAssets,
       supportedAssets,
       smartWalletAccountSupportsGasToken,
+      accountHistory,
     } = this.props;
     const { token } = this.assetData;
     const AmountComponent = this.selectAmountComponent(token);
@@ -140,6 +147,8 @@ class SendTokenAmount extends React.Component<Props> {
         transactionSpeed={transactionSpeed}
         activeAccountAddress={activeAccountAddress}
         onUpdateTransactionSpeed={this.updateTransactionSpeed}
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
         gasToken={gasToken}
       />
     );
@@ -166,6 +175,7 @@ const structuredSelector = createStructuredSelector({
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
+  accountHistory: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
