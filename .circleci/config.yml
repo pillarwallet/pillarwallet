@@ -382,6 +382,10 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
       - run:
+          name: Install coureutils
+          command: |
+            brew install coreutils
+      - run:
           name: Append circleCI build number to version
           command: |
             git config user.email "devops@pillar.io"
