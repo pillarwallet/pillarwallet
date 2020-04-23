@@ -159,13 +159,8 @@ class SmartWallet {
 
   constructor() {
     // TODO: restore back before merge
-    // const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    // const sdkOptions = getSdkEnvironment(environmentNetwork);
-    const sdkOptions = createLocalSdkEnvironment({
-      host: '192.168.0.17',
-      port: 8880,
-    });
-
+    const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
+    const sdkOptions = getSdkEnvironment(environmentNetwork);
     try {
       this.sdk = createSdk(sdkOptions);
     } catch (err) {

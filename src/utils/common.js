@@ -363,18 +363,15 @@ export const smallScreen = () => {
 };
 
 export const getEthereumProvider = (network: string) => {
-  // TODO: restore before merge
   // Connect to INFURA
-  // const infuraProvider = new providers.InfuraProvider(network, INFURA_PROJECT_ID);
+  const infuraProvider = new providers.InfuraProvider(network, INFURA_PROJECT_ID);
 
   // Connect to Etherscan
-  // const etherscanProvider = new providers.EtherscanProvider(network);
+  const etherscanProvider = new providers.EtherscanProvider(network);
 
   // Creating a provider to automatically fallback onto Etherscan
   // if INFURA is down
-  // return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
-
-  return new providers.JsonRpcProvider('http://192.168.0.17:8545');
+  return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
 export const resolveEnsName = (ensName: string): Promise<?string> => {
