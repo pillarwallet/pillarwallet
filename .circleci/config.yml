@@ -290,7 +290,7 @@ jobs:
           name: Get keystore file
           command: |
             cd /home/circleci/pillarwallet/android/keystores/
-            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/staging-key.keystore .
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/stging-key.keystore .
       - run:
           name: Accept Android SDK licenses
           command: |
@@ -342,7 +342,7 @@ jobs:
           destination: apks
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
+          failure_message: "$SLACK_ANDROID_MESSAGE :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
@@ -490,7 +490,7 @@ jobs:
             - ios-release 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
+          failure_message: "$SLACK_IOS_MESSAGE :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   prod_android:
