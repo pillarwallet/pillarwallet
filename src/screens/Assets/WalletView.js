@@ -432,7 +432,7 @@ class WalletView extends React.Component<Props, State> {
     return (
       <CustomKAWrapper
         hasStickyTabs={!isInSearchAndFocus && !blockAssetsView}
-        stickyHeaderIndices={showDeploySmartWallet ? [3] : [2]}
+        stickyHeaderIndices={showDeploySmartWallet ? [2] : [1]}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -455,23 +455,6 @@ class WalletView extends React.Component<Props, State> {
         {smartWalletFeatureEnabled && (blockAssetsView || !!deploymentData.error) &&
           <SWActivationCard />
         }
-        {!blockAssetsView &&
-        <SearchBlock
-          hideSearch={blockAssetsView}
-          searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
-          onSearchChange={this.handleSearchChange}
-          wrapperStyle={{
-            paddingHorizontal: spacing.layoutSides,
-            paddingVertical: spacing.mediumLarge,
-            marginBottom: searchMarginBottom,
-          }}
-          onSearchFocus={() => {
-            this.setState({ hideInsightForSearch: true });
-          }}
-          onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
-          itemSearchState={!!isInSearchMode}
-          navigation={navigation}
-        />}
         {smartWalletFeatureEnabled && !blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
           SWInsightDismissed ?
             (
@@ -489,12 +472,33 @@ class WalletView extends React.Component<Props, State> {
             )
           )
         }
-        {!isInSearchAndFocus && !blockAssetsView &&
-        <Tabs
-          tabs={assetsTabs}
-          wrapperStyle={{ paddingBottom: 0 }}
-          activeTab={activeTab}
-        />}
+        {!blockAssetsView &&
+        <>
+          <SearchBlock
+            hideSearch={blockAssetsView}
+            searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
+            onSearchChange={this.handleSearchChange}
+            wrapperStyle={{
+            paddingHorizontal: spacing.layoutSides,
+            paddingVertical: spacing.mediumLarge,
+            marginBottom: searchMarginBottom,
+          }}
+            onSearchFocus={() => {
+            this.setState({ hideInsightForSearch: true });
+          }}
+            onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
+            itemSearchState={!!isInSearchMode}
+            navigation={navigation}
+          />
+          {!isInSearchAndFocus &&
+            <Tabs
+              tabs={assetsTabs}
+              wrapperStyle={{ paddingBottom: 0 }}
+              activeTab={activeTab}
+            />
+          }
+        </>
+        }
         {isSearching &&
         <SearchSpinner center>
           <Spinner />
