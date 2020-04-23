@@ -26,6 +26,7 @@ import BigNumber from 'bignumber.js';
 import {
   SET_SMART_WALLET_ACCOUNT_ENS,
   SMART_WALLET_DEPLOYMENT_ERRORS,
+  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -135,6 +136,7 @@ export const parseSmartWalletTransactions = (
   smartWalletTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
   assets: Asset[],
+  connectedAccount: ?Object,
 ): Transaction[] => smartWalletTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
@@ -252,6 +254,16 @@ export const parseSmartWalletTransactions = (
           ensName: get(fromDetails, 'account.ensName'),
         },
       };
+    } else if (transactionType === AccountTransactionTypes.AddDevice) {
+      const addedDeviceAddress = get(smartWalletTransaction, 'extra.address');
+      const connectedAccountDevices = get(connectedAccount, 'devices', []);
+      const gasTokenSupported = connectedAccountDevices.some((device) => !!get(device, 'features.gasTokenSupported'));
+      if (!isEmpty(addedDeviceAddress) && gasTokenSupported) {
+        transaction = {
+          ...transaction,
+          tag: SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+        };
+      }
     }
 
     if (!isEmpty(gasTokenAddress)) {

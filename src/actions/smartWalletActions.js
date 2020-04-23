@@ -264,7 +264,9 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
       return;
     }
     if (!isEmpty(connectedAccount.devices)) {
-      const gasTokenSupported = connectedAccount.devices.some((device) => !!get(device, 'features.gasTokenSupported'));
+      const gasTokenSupported = connectedAccount.devices.some((
+        device,
+      ) => !!get(device, 'features.gasTokenSupported') && device.state === sdkConstants.AccountDeviceStates.Deployed);
       connectedAccount = { ...connectedAccount, gasTokenSupported };
     }
     dispatch({
@@ -1800,5 +1802,11 @@ export const switchToGasTokenRelayerAction = () => {
       tag: SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
     });
     dispatch(insertTransactionAction(historyTx, accountId));
+    // get updated devices
+    const connectedAccount = await smartWalletService.fetchConnectedAccount();
+    dispatch({
+      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+      payload: connectedAccount,
+    });
   };
 };
