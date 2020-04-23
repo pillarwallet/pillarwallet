@@ -154,7 +154,6 @@ class SmartWallet {
   sdkInitialized: boolean = false;
 
   constructor() {
-    // TODO: restore back before merge
     const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
     const sdkOptions = getSdkEnvironment(environmentNetwork);
     try {
@@ -179,7 +178,8 @@ class SmartWallet {
     await this.sdk
       .initialize({ device: { privateKey } })
       .then(() => { this.sdkInitialized = true; })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         printLog('Error initiating sdk.');
       });
 
