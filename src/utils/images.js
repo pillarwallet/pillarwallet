@@ -40,6 +40,10 @@ const sendWyreLogoDark = require('assets/images/exchangeProviders/wyre_dark.png'
 const moonPayLogoDark = require('assets/images/exchangeProviders/moon_pay_dark.png');
 const swActivatedLight = require('assets/images/swActivatedLight.png');
 const swActivatedDark = require('assets/images/swActivatedDark.png');
+const emailIconLight = require('assets/icons/icon_email_light.png');
+const emailIconDark = require('assets/icons/icon_email_dark.png');
+const phoneIconLight = require('assets/icons/icon_phone_light.png');
+const phoneIconDark = require('assets/icons/icon_phone_dark.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -83,6 +87,14 @@ export const images = (theme: Theme) => {
     swActivated: getImageByTheme(currentTheme, {
       lightTheme: swActivatedLight,
       darkTheme: swActivatedDark,
+    }),
+    roundedEmailIcon: getImageByTheme(currentTheme, {
+      lightTheme: emailIconLight,
+      darkTheme: emailIconDark,
+    }),
+    roundedPhoneIcon: getImageByTheme(currentTheme, {
+      lightTheme: phoneIconLight,
+      darkTheme: phoneIconDark,
     }),
   };
 };

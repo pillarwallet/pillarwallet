@@ -19,26 +19,39 @@
 */
 
 import React from 'react';
-import styled from 'styled-components/native';
+import { TouchableOpacity } from 'react-native';
+import styled, { withTheme } from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 
-import { BaseText, TextLink } from 'components/Typography';
 import { Note } from 'components/Note';
-import { fontStyles, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
+import { images } from 'utils/images';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
   isEmailVerified: boolean,
   isPhoneVerified: boolean,
   onPressAdd: () => void,
+  theme: Theme,
 };
 
-const StyledTextLink = styled(TextLink)`
-  ${fontStyles.regular};
+
+const NoteImage = styled(CachedImage)`
+  width: 48px;
+  height: 48px;
 `;
 
+const IconWrapper = styled.View`
+  padding-left: 36px;
+`;
+
+const PHONE = 'phone number';
+const EMAIL = 'email';
+
 const getMissingVerification = (isPhoneVerified: boolean, isEmailVerified: boolean): ?string => {
-  if (!isPhoneVerified) return 'phone';
-  if (!isEmailVerified) return 'email';
+  if (!isPhoneVerified) return PHONE;
+  if (!isEmailVerified) return EMAIL;
 
   return null;
 };
@@ -48,6 +61,7 @@ const MissingInfoNote = (props: Props) => {
     isEmailVerified,
     isPhoneVerified,
     onPressAdd,
+    theme,
   } = props;
 
   const missingType = getMissingVerification(isPhoneVerified, isEmailVerified);
@@ -56,19 +70,22 @@ const MissingInfoNote = (props: Props) => {
     return null;
   }
 
+  const { roundedEmailIcon, roundedPhoneIcon } = images(theme);
+  const noteIcon = missingType === PHONE ? roundedPhoneIcon : roundedEmailIcon;
+
   return (
-    <Note
-      containerStyle={{ margin: spacing.layoutSides, marginTop: 0 }}
-      note={
-        <React.Fragment>
-          <BaseText>
-            {`To show your ${missingType} contacts, please add and verify your ${missingType}. `}
-          </BaseText>
-          <StyledTextLink onPress={onPressAdd}>Add</StyledTextLink>
-        </React.Fragment>
-      }
-    />
+    <TouchableOpacity onPress={onPressAdd}>
+      <Note
+        containerStyle={{ margin: spacing.layoutSides, marginTop: 0 }}
+        note={`To invite via ${missingType === PHONE ? 'SMS' : missingType}, you need to verify your ${missingType}.`}
+        childrenOnRight={
+          <IconWrapper>
+            <NoteImage source={noteIcon} />
+          </IconWrapper>
+        }
+      />
+    </TouchableOpacity>
   );
 };
 
-export default MissingInfoNote;
+export default withTheme(MissingInfoNote);
