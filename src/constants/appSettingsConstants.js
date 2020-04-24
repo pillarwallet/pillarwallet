@@ -23,3 +23,5 @@ export const LIGHT_THEME = 'lightTheme';
 export const DARK_THEME = 'darkTheme';
 export const DARK_PREFERENCE = 'dark'; // react-native-appearance variable
 export const USER_JOINED_BETA_SETTING = 'userJoinedBeta';
+export const DARK_CONTENT = 'dark-content';
+export const LIGHT_CONTENT = 'light-content';
