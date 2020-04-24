@@ -252,7 +252,7 @@ import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from '
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
 
@@ -291,6 +291,12 @@ const StackNavigatorConfig = {
   defaultNavigationOptions: {
     header: null,
     gesturesEnabled: true,
+  },
+  cardStyle: {
+    backgroundColor: {
+      dark: darkThemeColors.surface,
+      light: lightThemeColors.surface,
+    },
   },
 };
 
