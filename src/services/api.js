@@ -316,6 +316,13 @@ class SDKWrapper {
       });
   }
 
+  getSentReferralInvites(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.list({ walletId }))
+      .then(({ data }) => data.data)
+      .catch(() => ([]));
+  }
+
   updateUserAvatar(walletId: string, formData: Object) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
