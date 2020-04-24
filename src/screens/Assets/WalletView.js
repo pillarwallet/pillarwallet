@@ -413,11 +413,20 @@ class WalletView extends React.Component<Props, State> {
 
     const stickyHeaderIndices = this.getStickyIndices();
 
+    const refProps = Platform.select({
+      ios: {
+        innerRef: ref => { this.scrollViewRef = ref; },
+      },
+      android: {
+        ref: ref => { this.scrollViewRef = ref; },
+      },
+    });
+
     return (
       <ScrollComponent
         stickyHeaderIndices={stickyHeaderIndices}
         refreshControl={this.renderRefreshControl()}
-        getRef={(ref) => { this.scrollViewRef = ref; }}
+        {...refProps}
         onScroll={onScroll}
       >
         <Insight
