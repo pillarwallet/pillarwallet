@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { withNavigation } from 'react-navigation';
@@ -29,6 +28,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import { BaseText, MediumText, BoldText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
+import ConfettiBackground from 'components/ConfettiBackground';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -37,25 +37,16 @@ import { spacing } from 'utils/variables';
 
 import type { NavigationScreenProp } from 'react-navigation';
 
+
 type Props = {
   isVisible: boolean,
   onModalHide: (callback: () => void) => void,
   navigation: NavigationScreenProp<*>,
 };
 
-const { width: screenWidth } = Dimensions.get('window');
-
 const StyledScrollView = styled.ScrollView`
   flex-grow: 1;
   background-color: ${themedColors.surface};
-`;
-
-const ContentWrapper = styled.View`
-  position: relative;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 40px ${spacing.layoutSides}px;
 `;
 
 const RewardBadge = styled(CachedImage)`
@@ -64,17 +55,8 @@ const RewardBadge = styled(CachedImage)`
   margin-bottom: ${spacing.medium}px;
 `;
 
-const Confetti = styled(CachedImage)`
-  position: absolute;
-  left: 0;
-  ${({ top }) => top ? 'top: 0;' : 'bottom: 0;'}
-  width: ${screenWidth}px;
-  height: ${({ height }) => height}px;
-`;
 
 const rewardBadge = require('assets/images/referralBadge.png');
-const confettiTop = require('assets/images/rewardBackgroundTop.png');
-const confettiBottom = require('assets/images/rewardBackgroundBottom.png');
 
 class ReferralModalReward extends React.Component<Props> {
   navigateToProfile = () => {
@@ -100,9 +82,7 @@ class ReferralModalReward extends React.Component<Props> {
               noBack
             />
             <StyledScrollView contentContainerStyle={{ flexGrow: 1 }}>
-              <ContentWrapper>
-                <Confetti source={confettiTop} resizeMode="cover" top height={screenWidth * 0.73} />
-                <Confetti source={confettiBottom} resizeMode="contain" height={screenWidth * 0.48} />
+              <ConfettiBackground>
                 <RewardBadge source={rewardBadge} />
                 <MediumText positive large center>
                   Your reward is on the way
@@ -118,7 +98,7 @@ class ReferralModalReward extends React.Component<Props> {
                   marginBottom={spacing.mediumLarge}
                   marginTop={40}
                 />
-              </ContentWrapper>
+              </ConfettiBackground>
             </StyledScrollView>
           </Wrapper>
         )}
