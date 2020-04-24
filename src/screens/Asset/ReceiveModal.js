@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Image, Dimensions, Share } from 'react-native';
+import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -124,7 +124,11 @@ export default class ReceiveModal extends React.Component<Props, *> {
         <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
           <WarningBanner rounded small />
           <QRCodeWrapper>
-            <WalletAddress>{address}</WalletAddress>
+            <WalletAddress
+                onPress={() => Clipboard.setString(address)}
+            >
+              {address}
+            </WalletAddress>
             <View
               style={{
                 overflow: 'hidden',
