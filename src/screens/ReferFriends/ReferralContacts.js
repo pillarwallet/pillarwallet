@@ -158,6 +158,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         subtext={item.email || item.phone}
         itemImageUrl={item.photo}
         onPress={!isPreviouslyInvited ? () => this.toggleContact(item) : null}
+        wrapperOpacity={!isPreviouslyInvited ? 1 : 0.5}
         customAddon={(
           <Checkbox
             checked={isSelected}
@@ -165,6 +166,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             disabled={isPreviouslyInvited}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
+            positive
           />
         )}
         noSeparator
