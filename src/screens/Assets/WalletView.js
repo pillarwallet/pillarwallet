@@ -161,12 +161,6 @@ const initialSWInsights = [
   'It works great with Pillar Network — instant and free transactions',
 ];
 
-/**
- * due to KeyboardAwareScrollView issues with stickyHeaderIndices on Android
- * separate scrolling wrappers are implemented for iOS and Android
- * (Android natively supports keyboard aware view due to windowSoftInputMode set in AndroidManifest.xml)
- */
-
 class WalletView extends React.Component<Props, State> {
   scrollViewRef: ?Object;
 
@@ -467,9 +461,7 @@ class WalletView extends React.Component<Props, State> {
             paddingVertical: spacing.mediumLarge,
             marginBottom: searchMarginBottom,
           }}
-            onSearchFocus={() => {
-            this.setState({ hideInsightForSearch: true });
-          }}
+            onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
             onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
             itemSearchState={!!isInSearchMode}
             navigation={navigation}
