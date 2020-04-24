@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
@@ -144,4 +145,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SWActivationCard);
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(SWActivationCard));
