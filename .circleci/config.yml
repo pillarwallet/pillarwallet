@@ -197,7 +197,10 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
-            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_appcenter.txt)
+      - run:
+          name: Install coureutils
+          command: |
+            brew install coreutils
 
       - *node_restore_cache
       - *node_artifactory_authenticate
@@ -251,7 +254,7 @@ jobs:
           destination: app_build 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
+          failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
@@ -269,7 +272,6 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_appcenter.txt) 
       
       - *node_restore_cache
       - *node_artifactory_authenticate
@@ -340,7 +342,7 @@ jobs:
           destination: apks
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
+          failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
@@ -379,7 +381,10 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
-            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_prod.txt)
+      - run:
+          name: Install coureutils
+          command: |
+            brew install coreutils
       - run:
           name: Append circleCI build number to version
           command: |
@@ -488,7 +493,7 @@ jobs:
             - ios-release 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
+          failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   prod_android:
@@ -505,7 +510,6 @@ jobs:
           name: Set slack message
           command: |
             aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_prod.txt)
       - run:
           name: Install npm latest
           command: sudo npm install -g npm@latest
@@ -639,7 +643,7 @@ jobs:
             - android-release 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
+          failure_message: '$(shuf -n 1 android_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   publish_releases_to_github:
