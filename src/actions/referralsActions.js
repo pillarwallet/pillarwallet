@@ -44,7 +44,7 @@ import {
   ALLOW_ACCESS_PHONE_CONTACTS,
   CLAIM_REWARD,
 } from 'constants/referralsConstants';
-import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW } from 'constants/navigationConstants';
+import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW, REFERRAL_SENT } from 'constants/navigationConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -88,24 +88,18 @@ const inviteSentAction = (payload: InviteSentPayload) => {
       type: INVITE_SENT,
       payload,
     });
-    dispatch({
-      type: ADD_NOTIFICATION,
-      payload: {
-        message: 'Invitations sent',
-        messageType: 'success',
-      },
-    });
   };
 };
 
-const inviteErrorAction = (errorMessage?: string) => {
+const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) => {
   return async (dispatch: Dispatch) => {
     dispatch({
       type: ADD_NOTIFICATION,
       payload: {
         message: errorMessage || 'Please try again later',
-        title: 'Invites have not been sent',
+        title: `${isAllInvitesNotSent ? 'Invites' : 'Some invites'} have not been sent`,
         messageType: 'warning',
+        autoClose: false,
       },
     });
     dispatch({
@@ -152,12 +146,15 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
 
     const invitations = invitationContacts.map(({ email, phone }) => ({ email, phone }));
 
+    const unsentInvitations = [];
+    let errorMessage;
+
     await Promise.all(invitations.map(async (invitation) => {
       const { email, phone } = invitation;
       const token = await api.generateReferralToken(walletId);
 
       if (token.result !== 'success') {
-        dispatch(inviteErrorAction());
+        unsentInvitations.push(invitation);
         return;
       }
 
@@ -176,8 +173,8 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
       });
 
       if (error) {
-        const errorMessage = get(error, 'response.data.message');
-        dispatch(inviteErrorAction(errorMessage));
+        errorMessage = get(error, 'response.data.message');
+        unsentInvitations.push(invitation);
         return;
       }
 
@@ -191,6 +188,10 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
       }));
     }));
+    if (unsentInvitations.length < invitations.length) {
+      navigate(REFERRAL_SENT);
+    }
+    dispatch(inviteErrorAction(errorMessage, unsentInvitations.length === invitations.length));
   };
 };
 
