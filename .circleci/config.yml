@@ -188,6 +188,20 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
 
+      - aws-cli/setup:
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
+          aws-region: AWS_DEFAULT_REGION
+
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
+      - run:
+          name: Install coureutils
+          command: |
+            brew install coreutils
+
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -204,11 +218,6 @@ jobs:
       - *fetch_pods
       - *install_pods
       - *save_pod_cache
-
-      - aws-cli/setup:
-          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
-          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
-          aws-region: AWS_DEFAULT_REGION
 
       - run:
           name: Set staging environment
@@ -242,15 +251,10 @@ jobs:
             cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
       - store_artifacts:
           path: ./toArchive
-          destination: app_build
-      - run:
-          name: Set slack message
-          command: |
-            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
-            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_appcenter.txt) 
+          destination: app_build 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
+          failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
@@ -259,6 +263,16 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+
+      - aws-cli/setup:
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
+          aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
+      
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -272,10 +286,6 @@ jobs:
       - *save_gems_cache_android
       - *gradle_restore_cache
 
-      - aws-cli/setup:
-          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
-          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
-          aws-region: AWS_DEFAULT_REGION
       - run:
           name: Get keystore file
           command: |
@@ -330,14 +340,9 @@ jobs:
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
-      - run:
-          name: Set slack message
-          command: |
-            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_appcenter.txt) 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
+          failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   get-latest-tag:
@@ -372,6 +377,14 @@ jobs:
           aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
           aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
+      - run:
+          name: Install coureutils
+          command: |
+            brew install coreutils
       - run:
           name: Append circleCI build number to version
           command: |
@@ -477,15 +490,10 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - ios-release
-      - run:
-          name: Set slack message
-          command: |
-            aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
-            export SLACK_IOS_MESSAGE=$(shuf -n 1 ios_prod.txt) 
+            - ios-release 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_IOS_MESSAGE} :circleci-fail:"
+          failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   prod_android:
@@ -498,6 +506,10 @@ jobs:
           aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
           aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Set slack message
+          command: |
+            aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
       - run:
           name: Install npm latest
           command: sudo npm install -g npm@latest
@@ -628,15 +640,10 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - android-release
-      - run:
-          name: Set slack message
-          command: |
-            aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
-            export SLACK_ANDROID_MESSAGE=$(shuf -n 1 android_prod.txt) 
+            - android-release 
       - slack/status:
           fail_only: true
-          failure_message: "${SLACK_ANDROID_MESSAGE} :circleci-fail:"
+          failure_message: '$(shuf -n 1 android_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   publish_releases_to_github:

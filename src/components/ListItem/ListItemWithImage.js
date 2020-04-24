@@ -539,23 +539,25 @@ const Addon = (props: AddonProps) => {
       token = '',
       value = '',
       custom,
+      customOnRight,
     } = balance;
     return (
-      <Wrapper style={{ alignItems: 'flex-end' }}>
-        {!!tokenBalance.toString() &&
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <BalanceValue>{`${tokenBalance} ${token}`}</BalanceValue>
-          {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
-        </View>
-        }
-        {!!syntheticBalance.toString() &&
-        <TankAssetBalance
-          monoColor
-          amount={syntheticBalance}
-          token={token}
-        />}
-        <BalanceFiatValue>{value}</BalanceFiatValue>
-      </Wrapper>
+      <View style={{ flexDirection: 'row' }}>
+        <Wrapper style={{ alignItems: 'flex-end' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {!!tokenBalance.toString() && <BalanceValue>{`${tokenBalance} ${token}`}</BalanceValue>}
+            {!!syntheticBalance.toString() &&
+            <TankAssetBalance
+              monoColor
+              amount={syntheticBalance}
+              token={token}
+            />}
+            {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
+          </View>
+          <BalanceFiatValue>{value}</BalanceFiatValue>
+        </Wrapper>
+        {customOnRight}
+      </View>
     );
   }
 
