@@ -314,11 +314,8 @@ class WalletView extends React.Component<Props, State> {
 
   getStickyIndices = () => {
     const { showDeploySmartWallet } = this.props;
-    if (!this.isInSearchAndFocus() && !this.shouldBlockAssetsView()) {
-      return showDeploySmartWallet ? [2] : [1];
-    }
-    return [1];
-  }
+    return !this.isInSearchAndFocus() && !this.shouldBlockAssetsView() && showDeploySmartWallet ? [2] : [1];
+  };
 
   shouldBlockAssetsView = () => {
     const { accounts, smartWalletState } = this.props;
@@ -328,17 +325,17 @@ class WalletView extends React.Component<Props, State> {
     return !isEmpty(sendingBlockedMessage)
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       && !deploymentData.error;
-  }
+  };
 
   isInSearchAndFocus = () => {
     const { hideInsightForSearch } = this.state;
     return hideInsightForSearch || this.isInSearchMode();
-  }
+  };
 
   isInSearchMode = () => {
     if (this.state.activeTab === TOKENS) return this.isInAssetSearchMode();
     return this.isInCollectiblesSearchMode();
-  }
+  };
 
   isInAssetSearchMode = () => this.state.query.length >= MIN_QUERY_LENGTH && !!this.props.assetsSearchState;
 
