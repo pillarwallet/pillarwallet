@@ -3096,7 +3096,7 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -3309,7 +3309,7 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -5242,7 +5242,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -8736,7 +8736,7 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
