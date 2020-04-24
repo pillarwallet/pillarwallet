@@ -124,9 +124,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
         <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
           <WarningBanner rounded small />
           <QRCodeWrapper>
-            <WalletAddress
-                onPress={() => Clipboard.setString(address)}
-            >
+            <WalletAddress onPress={() => Clipboard.setString(address)}>
               {address}
             </WalletAddress>
             <View
