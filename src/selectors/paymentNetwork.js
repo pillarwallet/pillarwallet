@@ -79,3 +79,9 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) =
       }, {});
   },
 );
+
+export const isPPNActivatedSelector = createSelector(
+  availableStakeSelector,
+  PPNTransactionsSelector,
+  (availableStake, ppnTransactions) => availableStake || ppnTransactions.length,
+);
