@@ -187,14 +187,13 @@ export default class ProfileForm extends React.Component<Props, State> {
 
   handleBlur = (field: string, value: string) => {
     const component = this._formRef.getComponent(field);
-
-    const result = component.validate();
-    if (!isEmpty(get(result, 'errors'))) {
-      return;
-    }
-
     const { value: originalValue, onUpdate, updateAlertProps } = this.props;
     const isModified = !originalValue || !isEqual(value, originalValue[field]);
+
+    const result = component.validate();
+    if (!isEmpty(get(result, 'errors')) && !(isModified && isEmpty(value))) {
+      return;
+    }
 
     if (isModified && onUpdate) {
       if (!!updateAlertProps && !isEmpty(updateAlertProps)) {
