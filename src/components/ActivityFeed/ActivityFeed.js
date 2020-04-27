@@ -123,6 +123,7 @@ type Props = {
   tabsComponent?: React.Node,
   headerComponent?: React.Node,
   flatListProps?: FlatList,
+  isPPNView: boolean,
 };
 
 type State = {|
@@ -224,13 +225,14 @@ class ActivityFeed extends React.Component<Props, State> {
           </SectionHeaderWrapper>
         );
       default:
-        const { onRejectInvitation, onAcceptInvitation } = this.props;
+        const { onRejectInvitation, onAcceptInvitation, isPPNView } = this.props;
         return (
           <ActivityFeedItem
             event={item.item}
             selectEvent={this.selectEvent}
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
+            isPPNView={isPPNView}
           />
         );
     }
@@ -316,6 +318,11 @@ class ActivityFeed extends React.Component<Props, State> {
             activeTab={activeTab || firstTab}
           />
         }
+        {formattedFeedData.length === 2 && (
+          <EmptyStateWrapper>
+            <EmptyStateParagraph {...emptyStateData} />
+          </EmptyStateWrapper>
+        )}
         {!tabIsChanging &&
         <ActivityFeedList
           data={formattedFeedData}
@@ -325,11 +332,6 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          ListEmptyComponent={(
-            <EmptyStateWrapper>
-              <EmptyStateParagraph {...emptyStateData} />
-            </EmptyStateWrapper>
-          )}
           stickyHeaderIndices={[1]}
           {...flatListProps}
         />}

@@ -114,6 +114,7 @@ type Props = {
   isSmartWalletActivated: boolean,
   assetDecimals: number,
   bitcoinAddresses: BitcoinAddress[],
+  isPPNView: boolean,
 };
 
 type EventData = {
@@ -298,7 +299,7 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   getTransactionEventData = (event: Object) => {
     const {
-      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses, theme,
+      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses, theme, isPPNView,
     } = this.props;
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
@@ -331,12 +332,17 @@ export class ActivityFeedItem extends React.Component<Props> {
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
           data = {
-            label: NAMES.PPN_NETWORK,
             itemImageSource: PPNIcon,
-            subtext: 'Top Up',
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
+          if (isPPNView) {
+            data.label = 'Top Up';
+            data.subtext = 'from Smart Wallet';
+          } else {
+            data.label = NAMES.PPN_NETWORK;
+            data.subtext = 'Top Up';
+          }
         } else {
           data = {
             label: NAMES.PPN_NETWORK,
@@ -357,14 +363,20 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
-          label: NAMES.PPN_NETWORK,
           itemImageSource: PPNIcon,
-          subtext: 'Withdrawal',
           itemValue: `- ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
+        if (isPPNView) {
+          data.label = 'Withdraw';
+          data.subtext = 'to Smart Wallet';
+        } else {
+          data.label = NAMES.PPN_NETWORK;
+          data.subtext = 'Withdrawal';
+        }
         break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
+        const transactionsCount = event.extra.length;
         const formattedValuesArray = this.getFormattedSettleValues();
         data = {
           label: 'Settle',
@@ -379,7 +391,10 @@ export class ActivityFeedItem extends React.Component<Props> {
                   monoColor
                 />
               ))}
-              {formattedValuesArray.map(({ formatted, symbol }) =>
+              {isPPNView && transactionsCount > 1 && (
+                <BaseText regular secondary>Total {transactionsCount}</BaseText>
+              )}
+              {!isPPNView && formattedValuesArray.map(({ formatted, symbol }) =>
                 <ItemValue key={symbol}>{`+ ${formatted} ${symbol}`}</ItemValue>,
               )}
             </ListWrapper>),
@@ -407,12 +422,27 @@ export class ActivityFeedItem extends React.Component<Props> {
           data = {
             label: usernameOrAddress,
             avatarUrl,
-            customAddon: (
-              <TankAssetBalance
-                amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
-              />
-            ),
           };
+
+          if (event.extra) {
+            const { syntheticTransaction: { toAmount, toAssetCode } } = event.extra;
+            data.customAddon = (
+              <ListWrapper>
+                <TankAssetBalance
+                  amount={`${directionSymbol} ${toAmount} ${toAssetCode}`}
+                />
+                {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
+              </ListWrapper>
+            );
+          } else {
+            data.customAddon = (
+              <ListWrapper>
+                <TankAssetBalance
+                  amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
+                />
+              </ListWrapper>
+            );
+          }
         } else {
           data = {
             label: usernameOrAddress,
