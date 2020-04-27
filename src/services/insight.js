@@ -42,7 +42,7 @@ const BTC_NET = BITCOIN_NETWORK === 'testnet' ? BITCOIN_NETWORK : 'mainnet';
 const validateResponse = (name: string) => (response: AxiosResponse) => {
   if (response.status === 200) return response.data;
   const message = `${name} failed`;
-  console.error(message, { response }); // eslint-disable-line no-console
+  console.warn(message, { response }); // eslint-disable-line no-console
   return new Error(message);
 };
 

@@ -425,7 +425,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     );
 
     InAppBrowser.open(wyreUrl).catch(error => {
-      console.error('InAppBrowser.error', error); // eslint-disable-line no-console
+      console.warn('InAppBrowser.error', error); // eslint-disable-line no-console
     });
   }
 

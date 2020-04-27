@@ -28,7 +28,7 @@ export const setActiveBlockchainNetworkAction = (id: string) => {
     const network = networks.find(({ id: networkId }) => networkId === id);
 
     if (!network) {
-      console.error('Trying to activate an invalid network'); // eslint-disable-line no-console
+      console.warn('Trying to activate an invalid network'); // eslint-disable-line no-console
       return;
     }
 

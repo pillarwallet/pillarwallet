@@ -93,7 +93,7 @@ class BTCView extends React.Component<Props, State> {
     const btcToken = supportedAssets.find(e => e.symbol === BTC);
 
     if (!btcToken) {
-      console.error('BTC token not found'); // eslint-disable-line no-console
+      console.warn('BTC token not found'); // eslint-disable-line no-console
       return;
     }
 

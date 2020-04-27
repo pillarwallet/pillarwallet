@@ -444,7 +444,7 @@ class SmartWallet {
   }
 
   handleError(error: any) {
-    console.error('SmartWallet handleError: ', error);
+    console.warn('SmartWallet handleError: ', error);
   }
 
   reportError(errorMessage: string, errorData: Object) {
