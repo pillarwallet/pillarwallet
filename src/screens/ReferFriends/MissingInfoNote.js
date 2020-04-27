@@ -78,12 +78,11 @@ const MissingInfoNote = (props: Props) => {
       <Note
         containerStyle={{ margin: spacing.layoutSides, marginTop: 0 }}
         note={`To invite via ${missingType === PHONE ? 'SMS' : missingType}, you need to verify your ${missingType}.`}
-        childrenOnRight={
-          <IconWrapper>
-            <NoteImage source={noteIcon} />
-          </IconWrapper>
-        }
-      />
+      >
+        <IconWrapper>
+          <NoteImage source={noteIcon} />
+        </IconWrapper>
+      </Note>
     </TouchableOpacity>
   );
 };

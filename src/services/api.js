@@ -320,7 +320,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.list({ walletId }))
       .then(({ data }) => data.data)
-      .catch(() => ([]));
+      .catch(() => []);
   }
 
   updateUserAvatar(walletId: string, formData: Object) {

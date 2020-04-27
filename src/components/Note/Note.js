@@ -29,7 +29,7 @@ type Props = {
   note: string | React.Node,
   emoji?: string,
   containerStyle?: Object,
-  childrenOnRight?: React.Node,
+  children?: React.Node,
 }
 
 const NoteWrapper = styled.View`
@@ -60,7 +60,7 @@ export const Note = (props: Props) => {
     note,
     emoji,
     containerStyle,
-    childrenOnRight,
+    children,
   } = props;
   return (
     <NoteWrapper style={containerStyle}>
@@ -69,15 +69,11 @@ export const Note = (props: Props) => {
           <NoteText>
             {note}
           </NoteText>
-          {!!emoji &&
-          <React.Fragment>
-            {'  '}
-            <NoteEmoji name={emoji} />
-          </React.Fragment>
-          }
+          {!!emoji && '  '}
+          {!!emoji && <NoteEmoji name={emoji} />}
         </Text>
       </TextWrapper>
-      {childrenOnRight}
+      {children}
     </NoteWrapper>
   );
 };
