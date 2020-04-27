@@ -51,7 +51,7 @@ const QRCodeWrapper = styled.View`
 `;
 
 const WalletAddress = styled(BaseText)`
-  ${fontStyles.small};
+  ${fontStyles.regular};
   margin: ${spacing.mediumLarge}px 0;
 `;
 
@@ -131,7 +131,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
           <WarningBanner rounded small />
           <QRCodeWrapper>
             <WalletAddress onPress={() => this.handleCopyToClipboard(address)}>
-              {address}  &#128203;
+              {address}
             </WalletAddress>
             <View
               style={{
