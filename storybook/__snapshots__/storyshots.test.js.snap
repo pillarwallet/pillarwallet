@@ -8444,38 +8444,50 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
               ]
             }
           >
-            <View>
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <Text
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "paddingLeft": 16,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View>
+                <View
                   style={
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "textAlignVertical": "center",
+                        "alignItems": "center",
+                        "flexDirection": "row",
                       },
-                      Array [
-                        Object {
-                          "color": "#2329d6",
-                          "fontSize": 18,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ]
                   }
                 >
-                  + 1 PLR
-                </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2329d6",
+                            "fontSize": 18,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    + 1 PLR
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
@@ -8680,38 +8692,50 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
               ]
             }
           >
-            <View>
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <Text
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "paddingLeft": 16,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View>
+                <View
                   style={
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "textAlignVertical": "center",
+                        "alignItems": "center",
+                        "flexDirection": "row",
                       },
-                      Array [
-                        Object {
-                          "color": "#2329d6",
-                          "fontSize": 18,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ]
                   }
                 >
-                  - 1 PLR
-                </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2329d6",
+                            "fontSize": 18,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    - 1 PLR
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
