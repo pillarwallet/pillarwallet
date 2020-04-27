@@ -61,6 +61,7 @@ import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { fontSizes, spacing } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { themedColors, getThemeColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -101,8 +102,6 @@ type State = {
   formOptions: Object,
 };
 
-const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const FormWrapper = styled.View`
@@ -316,6 +315,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
+    const { theme } = this.props;
+    const { keyWalletIcon, smartWalletIcon } = images(theme);
+
     const {
       username,
       hasSmartWallet,

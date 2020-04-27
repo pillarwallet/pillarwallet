@@ -65,10 +65,6 @@ const transaction = (attrs = {}) => {
 };
 
 describe('ActivityFeed', () => {
-  const navigation = {
-    navigate: () => jest.fn(),
-  };
-
   it('renders the Asset correctly', () => {
     const transactions = [
       transaction(),
@@ -78,7 +74,7 @@ describe('ActivityFeed', () => {
 
     const component = Component(initialStore,
       <ThemeProvider theme={defaultTheme}>
-        <ActivityFeed tabs={tabs} navigation={navigation} />
+        <ActivityFeed tabs={tabs} />
       </ThemeProvider>).toJSON();
 
     expect(component).toMatchSnapshot();
@@ -93,7 +89,7 @@ describe('ActivityFeed', () => {
 
     const component = Component(initialStore,
       <ThemeProvider theme={defaultTheme}>
-        <ActivityFeed tabs={tabs} navigation={navigation} />
+        <ActivityFeed tabs={tabs} />
       </ThemeProvider>).toJSON();
 
     expect(component).toMatchSnapshot();
