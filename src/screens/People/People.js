@@ -478,7 +478,7 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <SearchBlock
         headerProps={{ title: 'people' }}
-        searchInputPlaceholder="Search or add people"
+        searchInputPlaceholder="ENS or username"
         onSearchChange={(q) => this.handleSearchChange(q)}
         onSearchFocus={() => {
           this.setState({ isSearchFocused: true });
