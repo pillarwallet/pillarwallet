@@ -1676,8 +1676,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           },
                           Array [
                             Object {
-                              "fontSize": 14,
-                              "lineHeight": 22,
+                              "fontSize": 12,
+                              "lineHeight": 18,
                               "marginBottom": 16,
                               "marginLeft": 0,
                               "marginRight": 0,
@@ -1687,7 +1687,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           ],
                         ]
                       }
-                    />
+                    >
+                        📋
+                    </Text>
                     <View
                       style={
                         Object {

@@ -28,6 +28,7 @@ import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
 import { LabelBadge } from 'components/LabelBadge';
+import Toast from 'components/Toast';
 
 const ContentWrapper = styled(SafeAreaView)`
   padding: 0 ${spacing.layoutSides}px ${spacing.large}px;
@@ -89,6 +90,11 @@ export default class ReceiveModal extends React.Component<Props, *> {
     Share.share({ title: 'Public address', message: address });
   };
 
+  handleCopyToClipboard = (address: string) => {
+    Clipboard.setString(address);
+    Toast.show({ message: 'Address copied to clipboard.', type: 'success', title: 'Success' });
+  }
+
   render() {
     const {
       isVisible,
@@ -124,7 +130,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
         <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
           <WarningBanner rounded small />
           <QRCodeWrapper>
-            <WalletAddress onPress={() => Clipboard.setString(address)}>
+            <WalletAddress onPress={() => this.handleCopyToClipboard(address)}>
               {address}  &#128203;
             </WalletAddress>
             <View
