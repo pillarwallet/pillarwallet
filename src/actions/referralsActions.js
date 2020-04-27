@@ -43,6 +43,7 @@ import {
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
   CLAIM_REWARD,
+  SET_ALREADY_INVITED_CONTACTS,
 } from 'constants/referralsConstants';
 import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW } from 'constants/navigationConstants';
 
@@ -52,6 +53,10 @@ import Toast from 'components/Toast';
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
+
+// utils
+import { noop } from 'utils/common';
+
 
 export type ClaimTokenAction = {
   walletId: string,
@@ -97,6 +102,7 @@ const inviteSentAction = (payload: InviteSentPayload) => {
     });
   };
 };
+
 
 const inviteErrorAction = (errorMessage?: string) => {
   return async (dispatch: Dispatch) => {
@@ -262,7 +268,7 @@ export const allowToAccessPhoneContactsAction = () => {
   };
 };
 
-export const goToInvitationFlowAction = () => {
+export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = noop) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       user: { data: { isEmailVerified, isPhoneVerified } },
@@ -274,6 +280,7 @@ export const goToInvitationFlowAction = () => {
         params: {},
         action: NavigationActions.navigate({ routeName: REFER_FLOW }),
       });
+      onNavigationCallback();
       navigate(navigateToReferFlow);
     } else {
       const navigateToUserSettings = NavigationActions.navigate({
@@ -287,8 +294,26 @@ export const goToInvitationFlowAction = () => {
         type: 'warning',
         title: 'Phone or Email verification needed',
         autoClose: false,
-        onPress: () => navigate(navigateToUserSettings),
+        onPress: () => {
+          onNavigationCallback();
+          navigate(navigateToUserSettings);
+        },
       });
     }
+  };
+};
+
+export const fetchSentReferralInvitationsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+    } = getState();
+
+    const sentInvitations = await api.getSentReferralInvites(walletId);
+
+    dispatch({
+      type: SET_ALREADY_INVITED_CONTACTS,
+      payload: sentInvitations,
+    });
   };
 };

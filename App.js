@@ -218,6 +218,7 @@ class App extends React.Component<Props, *> {
                   if (!node) return;
                   setTopLevelNavigator(node);
                 }}
+                theme={current === LIGHT_THEME ? 'light' : 'dark'}
               />
               {!!SHOW_THEME_TOGGLE &&
               <TouchableOpacity

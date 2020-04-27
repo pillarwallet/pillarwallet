@@ -39,21 +39,30 @@ type Props = {
   lightText?: boolean,
   small?: boolean,
   theme: Theme,
+  positive?: boolean,
 };
 
+const getCheckboxBorderColor = (theme: Theme, active: boolean, positive: boolean) => {
+  const colors = getThemeColors(theme);
+  if (active) {
+    if (positive) return colors.positive;
+    return colors.primary;
+  }
+  return colors.border;
+};
 
 const CheckboxBox = styled.View`
   width: 24;
   height: 24;
   margin-right: ${spacing.mediumLarge}px;
-  border-radius: ${props => props.rounded ? 12 : 2}px;
+  border-radius: ${({ rounded }) => rounded ? 12 : 2}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${({ theme, active }) => active ? theme.colors.primary : theme.colors.border};
+  border-color: ${({ theme, active, positive }) => getCheckboxBorderColor(theme, active, positive)};
   justify-content: center;
   align-items: center;
   ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};
-  ${({ rounded, active, theme }) => rounded && active && theme.current === LIGHT_THEME
+  ${({ rounded, clickable, theme }) => rounded && clickable && theme.current === LIGHT_THEME
     ? `
       shadow-color: #000000;
       shadow-radius: 3px;
@@ -94,6 +103,7 @@ const Checkbox = (props: Props) => {
     theme,
     checked,
     onPress,
+    positive,
   } = props;
 
   const colors = getThemeColors(theme);
@@ -105,12 +115,12 @@ const Checkbox = (props: Props) => {
       disabled={!onPress}
     >
       <CheckboxWrapper disabled={disabled}>
-        <CheckboxBox active={disabled ? false : checked} rounded={rounded}>
+        <CheckboxBox active={checked} rounded={rounded} positive={positive} clickable={!disabled}>
           {!!checked &&
           <Icon
             name="check"
             style={{
-              color: colors.primary,
+              color: positive ? colors.positive : colors.primary,
               fontSize: fontSizes.tiny,
             }}
           />
