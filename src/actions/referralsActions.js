@@ -54,6 +54,10 @@ import Toast from 'components/Toast';
 import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
+// utils
+import { noop } from 'utils/common';
+
+
 export type ClaimTokenAction = {
   walletId: string,
   code: string,
@@ -264,7 +268,7 @@ export const allowToAccessPhoneContactsAction = () => {
   };
 };
 
-export const goToInvitationFlowAction = () => {
+export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = noop) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       user: { data: { isEmailVerified, isPhoneVerified } },
@@ -276,6 +280,7 @@ export const goToInvitationFlowAction = () => {
         params: {},
         action: NavigationActions.navigate({ routeName: REFER_FLOW }),
       });
+      onNavigationCallback();
       navigate(navigateToReferFlow);
     } else {
       const navigateToUserSettings = NavigationActions.navigate({
@@ -289,7 +294,10 @@ export const goToInvitationFlowAction = () => {
         type: 'warning',
         title: 'Phone or Email verification needed',
         autoClose: false,
-        onPress: () => navigate(navigateToUserSettings),
+        onPress: () => {
+          onNavigationCallback();
+          navigate(navigateToUserSettings);
+        },
       });
     }
   };

@@ -250,7 +250,7 @@ import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from '
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
 
@@ -290,6 +290,12 @@ const StackNavigatorConfig = {
     header: null,
     gesturesEnabled: true,
   },
+  cardStyle: {
+    backgroundColor: {
+      dark: darkThemeColors.surface,
+      light: lightThemeColors.surface,
+    },
+  },
 };
 
 const hideTabNavigatorOnChildView = ({ navigation }) => {
@@ -310,6 +316,7 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE]: ExchangeScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
@@ -383,6 +390,7 @@ const homeFlow = createStackNavigator({
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [EXCHANGE]: ExchangeScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
