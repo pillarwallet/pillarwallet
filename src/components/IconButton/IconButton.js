@@ -36,6 +36,7 @@ export type Props = {
   type?: string,
   margin?: number,
   iconText?: string,
+  iconTextStyle?: StyleSheet.Styles,
   horizontalAlign?: string,
   theme: Theme,
   secondary?: boolean,
@@ -62,6 +63,7 @@ const IconButton = (props: Props) => {
     margin,
     type,
     iconText,
+    iconTextStyle,
     iconStyle = {},
     horizontalAlign,
     secondary,
@@ -87,7 +89,7 @@ const IconButton = (props: Props) => {
   return (
     <IconButtonWrapper style={style} onPress={onPress} horizontalAlign={horizontalAlign}>
       <Icon {...iconParams} />
-      {!!iconText && <ButtonText>{iconText}</ButtonText>}
+      {!!iconText && <ButtonText style={iconTextStyle}>{iconText}</ButtonText>}
     </IconButtonWrapper>
   );
 };

@@ -57,6 +57,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import Overlay from 'components/SearchBlock/Overlay';
+import IconButton from 'components/IconButton';
 
 // constants
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
@@ -681,15 +682,35 @@ class PeopleScreen extends React.Component<Props, State> {
     const {
       localContacts,
       chats,
+      theme,
+      goToInvitationFlow,
     } = this.props;
     const inSearchMode = query.length >= MIN_QUERY_LENGTH;
 
     const sortedLocalContacts = sortLocalContacts(localContacts, chats);
     const contact = sortedLocalContacts.find(({ id }) => id === manageContactId);
 
+    const colors = getThemeColors(theme);
+
     return (
       <ContainerWithHeader
-        headerProps={{ noBack: true, leftItems: [{ title: 'People' }] }}
+        headerProps={{
+          noBack: true,
+          leftItems: [{ title: 'People' }],
+          rightItems: [{
+            custom: (
+              <IconButton
+                icon="present"
+                color={colors.positive}
+                iconText="Invite friends"
+                style={{ flexDirection: 'row' }}
+                iconTextStyle={{ color: colors.positive, ...fontStyles.regular }}
+                iconStyle={{ marginRight: 4 }}
+                onPress={goToInvitationFlow}
+              />
+            ),
+          }],
+         }}
         inset={{ bottom: 0 }}
         tab
       >
