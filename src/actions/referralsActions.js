@@ -43,6 +43,7 @@ import {
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
   CLAIM_REWARD,
+  SET_ALREADY_INVITED_CONTACTS,
 } from 'constants/referralsConstants';
 import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW } from 'constants/navigationConstants';
 
@@ -101,6 +102,7 @@ const inviteSentAction = (payload: InviteSentPayload) => {
     });
   };
 };
+
 
 const inviteErrorAction = (errorMessage?: string) => {
   return async (dispatch: Dispatch) => {
@@ -298,5 +300,20 @@ export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = n
         },
       });
     }
+  };
+};
+
+export const fetchSentReferralInvitationsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+    } = getState();
+
+    const sentInvitations = await api.getSentReferralInvites(walletId);
+
+    dispatch({
+      type: SET_ALREADY_INVITED_CONTACTS,
+      payload: sentInvitations,
+    });
   };
 };
