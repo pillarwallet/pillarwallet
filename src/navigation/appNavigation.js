@@ -36,7 +36,6 @@ import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
 import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
 import ContactScreen from 'screens/Contact';
-import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -151,7 +150,6 @@ import {
   HOME,
   HOME_TAB,
   LOGIN,
-  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -349,7 +347,6 @@ referFlow.navigationOptions = hideTabNavigatorOnChildView;
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
-  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
