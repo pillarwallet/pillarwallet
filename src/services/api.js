@@ -293,7 +293,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
       .then(({ data }) => data)
-      .catch((error) => ({ result: 'error', error }));
+      .catch((error) => ({ result: 'error', reward: null, error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {

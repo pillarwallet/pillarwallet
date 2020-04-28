@@ -92,6 +92,7 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
+import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
 import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
 import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
@@ -239,6 +240,7 @@ import {
   PIN_CODE,
   EXPLORE_APPS,
   WALLET_ACTIVATED,
+  REFERRAL_SENT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -334,6 +336,7 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+
 // REFER FLOW
 const referFlow = createStackNavigator({
   [REFER_MAIN_SCREEN]: ReferFriendsScreen,
@@ -342,6 +345,7 @@ const referFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 referFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
@@ -723,6 +727,7 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
+    [REFERRAL_SENT]: ReferralSentScreen,
   },
   modalTransition,
 );
