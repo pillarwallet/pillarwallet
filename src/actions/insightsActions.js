@@ -18,10 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {
-  DISMISS_SMART_WALLET_INSIGHT,
-  DISMISS_PPN_INSIGHT,
-} from 'constants/insightsConstants';
+import { DISMISS_SMART_WALLET_INSIGHT } from 'constants/insightsConstants';
 import { saveDbAction } from 'actions/dbActions';
 import type { Dispatch } from 'reducers/rootReducer';
 
@@ -31,11 +28,3 @@ export const dismissSmartWalletInsightAction = () => {
     dispatch({ type: DISMISS_SMART_WALLET_INSIGHT });
   };
 };
-
-export const dismissPPNInsightAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch(saveDbAction('insights', { insights: { PPNInsightDismissed: true } }));
-    dispatch({ type: DISMISS_PPN_INSIGHT });
-  };
-};
-

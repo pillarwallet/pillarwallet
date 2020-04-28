@@ -125,7 +125,7 @@ const LeftIcon = styled(Icon)`
 `;
 
 const RightLabel = styled(BaseText)`
-  color: ${themedColors.primary};
+  color: ${themedColors.link};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
