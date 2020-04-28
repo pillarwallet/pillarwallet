@@ -43,6 +43,7 @@ import {
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
   CLAIM_REWARD,
+  SET_REFERRAL_REWARD_AMOUNT,
 } from 'constants/referralsConstants';
 import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW, REFERRAL_SENT } from 'constants/navigationConstants';
 
@@ -164,7 +165,7 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         token: token.token,
       });
 
-      const { error } = await api.sendReferralInvitation({
+      const { error, reward } = await api.sendReferralInvitation({
         token: token.token,
         walletId,
         referralLink,
@@ -187,11 +188,20 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         alreadyInvitedContacts: invitationContacts,
         sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
       }));
+
+      if (!isEmpty(reward)) {
+        dispatch({
+          type: SET_REFERRAL_REWARD_AMOUNT,
+          payload: reward,
+        });
+      }
     }));
     if (unsentInvitations.length < invitations.length) {
       navigate(REFERRAL_SENT);
     }
-    dispatch(inviteErrorAction(errorMessage, unsentInvitations.length === invitations.length));
+    if (unsentInvitations.length) {
+      dispatch(inviteErrorAction(errorMessage, unsentInvitations.length === invitations.length));
+    }
   };
 };
 

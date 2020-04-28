@@ -34,10 +34,14 @@ import Button from 'components/Button';
 import { fontStyles, spacing } from 'utils/variables';
 
 import type { NavigationScreenProp } from 'react-navigation';
+import type { RootReducerState } from 'reducers/rootReducer';
+import { connect } from 'react-redux';
+import type { ReferralReward } from 'reducers/referralsReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  reward: ReferralReward,
 };
 
 const RewardBadge = styled(CachedImage)`
@@ -62,7 +66,9 @@ const rewardBadge = require('assets/images/referralBadge.png');
 
 class ReferralSent extends React.PureComponent<Props> {
   render() {
-    const { navigation } = this.props;
+    const { navigation, reward = {} } = this.props;
+    const { asset, amount } = reward;
+    const rewardText = asset ? `${amount || 'some'} ${asset}` : 'a gift';
     return (
       <ConfettiBackground>
         <ContainerWithHeader
@@ -78,10 +84,10 @@ class ReferralSent extends React.PureComponent<Props> {
           <Wrapper flex={1} center>
             <RewardBadge source={rewardBadge} />
             <Title>Your reward is on the way</Title>
-            <Paragraph>
-              Thank you for spreading the word about Pillar.
-              You will receive 25 PLR for each friend installed the app with your referral link.
-              You both should have verified your details in order to be eligible.
+            <Paragraph center>
+              {'Thank you for spreading the word about Pillar.\n' +
+              `You will receive ${rewardText} for each friend installed the app with your referral link. ` +
+              'You both should have verified your details in order to be eligible.'}
             </Paragraph>
 
             <Button
@@ -104,4 +110,11 @@ class ReferralSent extends React.PureComponent<Props> {
   }
 }
 
-export default ReferralSent;
+
+const mapStateToProps = ({
+  referrals: { reward },
+}: RootReducerState): $Shape<Props> => ({
+  reward,
+});
+
+export default connect(mapStateToProps)(ReferralSent);
