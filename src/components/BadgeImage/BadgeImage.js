@@ -15,7 +15,6 @@ const BadgeImage = ({ data: badge, size = 96 }: Props) => {
   const badgeUri = badge.imageUrl ? `${badge.imageUrl}?t=${badge.updatedAt || 0}` : '';
   return (
     <FastImage
-      ref={img => { this.img = img; }}
       style={{
               height: size,
               width: size,
@@ -25,7 +24,8 @@ const BadgeImage = ({ data: badge, size = 96 }: Props) => {
               priority: FastImage.priority.normal,
           }}
       resizeMode={FastImage.resizeMode.contain}
-      onError={() => { this.img.source = defaultBadge; }}
+      fallback
+      defaultSource={defaultBadge}
     />
   );
 };
