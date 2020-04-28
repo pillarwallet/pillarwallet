@@ -83,7 +83,7 @@ type State = {
 const EmptyStateWrapper = styled.View`
   width: 100%;
   align-items: center;
-  margin: 20px 0 30px;
+  padding: 20px 30px 30px;
 `;
 
 const ButtonWrapper = styled.View`
@@ -289,10 +289,13 @@ class ReferralContacts extends React.PureComponent<Props, State> {
                   <EmptyStateParagraph
                     title={!phoneContactsFetchError ? 'Nobody found' : 'Could not fetch contacts'}
                     bodyText={!phoneContactsFetchError
-                      ? 'Make sure you have entered name, e-mail address or phone number correctly'
+                      ? 'Make sure you entered phone or email address correctly'
                     : ''}
+                    wide
+                    large
                   >
-                    <Button title="Try again" onPress={fetchPhoneContacts} marginTop={spacing.large} />
+                    {phoneContactsFetchError &&
+                    <Button title="Try again" onPress={fetchPhoneContacts} marginTop={spacing.large} />}
                   </EmptyStateParagraph>
                 </EmptyStateWrapper>
               )}

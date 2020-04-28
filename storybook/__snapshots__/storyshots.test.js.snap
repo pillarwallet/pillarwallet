@@ -5446,7 +5446,6 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
             style={
               Array [
                 Object {
-                  "alignSelf": "flex-start",
                   "backgroundColor": "#007AFF",
                   "borderRadius": 12,
                   "paddingBottom": 3,

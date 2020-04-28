@@ -96,7 +96,9 @@ const getModalActionsInfo = (actionType: string) => {
       return {
         title: 'Smart Wallet',
         paragraph: 'You are able to recover your wallet using another device, i.e. desktop computer.',
-        children: (<LabelBadge label="Recommended" positive containerStyle={{ marginTop: 11 }} />),
+        children: (
+          <LabelBadge label="Recommended" positive containerStyle={{ marginTop: 11, alignSelf: 'flex-start' }} />
+        ),
       };
 
     case ACCOUNT_TYPES.KEY_BASED:

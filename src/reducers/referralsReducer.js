@@ -28,6 +28,7 @@ import {
   ALLOW_ACCESS_PHONE_CONTACTS,
   RECEIVED_REFERRAL_TOKEN,
   CLAIM_REWARD,
+  SET_REFERRAL_REWARD_AMOUNT,
 } from 'constants/referralsConstants';
 
 export type SentInvitationsCount = {
@@ -42,6 +43,11 @@ export type ReferralContact = {|
   phone?: string,
   photo?: string,
 |};
+
+export type ReferralReward = {
+  asset: string,
+  amount: number,
+};
 
 export type InviteSentPayload = {
   alreadyInvitedContacts: ReferralContact[],
@@ -93,6 +99,7 @@ type ReferralsClaimReward = {|
   type: 'CLAIM_REWARD',
 |};
 
+
 export type ReferralsReducerAction =
   | ReferralsSendingInviteAction
   | ReferralsInviteSentAction
@@ -114,6 +121,7 @@ export type ReferralsReducerState = {|
   referredEmail: ?string,
   referredPhone: ?string,
   isRewardClaimed: boolean,
+  reward: ReferralReward,
 |};
 
 export const initialState: ReferralsReducerState = {
@@ -129,6 +137,7 @@ export const initialState: ReferralsReducerState = {
   referredEmail: null,
   referredPhone: null,
   isRewardClaimed: false,
+  reward: {},
 };
 
 
@@ -221,6 +230,9 @@ export default function referralsReducer(
 
     case CLAIM_REWARD:
       return { ...state, isRewardClaimed: true };
+
+    case SET_REFERRAL_REWARD_AMOUNT:
+      return { ...state, reward: action.payload };
 
     default:
       return state;

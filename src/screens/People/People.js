@@ -51,16 +51,16 @@ import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
 import { BaseText, SubHeadingMedium } from 'components/Typography';
-import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import Overlay from 'components/SearchBlock/Overlay';
+import IconButton from 'components/IconButton';
 
 // constants
-import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
-import { TYPE_RECEIVED, TYPE_INVITE, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
+import { CONTACT } from 'constants/navigationConstants';
+import { TYPE_INVITE, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
 import {
   DISCONNECT,
   MUTE,
@@ -87,32 +87,8 @@ import { createAlert } from 'utils/alerts';
 
 // partials
 import InviteBanner from './InviteBanner';
+import ConnectionRequests from './ConnectionRequests';
 
-
-const ConnectionRequestBanner = styled.TouchableHighlight`
-  height: 60px;
-  padding-left: 30px;
-  border-bottom-width: 1px;
-  border-top-width: 1px;
-  border-color: ${themedColors.border};
-  align-items: center;
-  flex-direction: row;
-`;
-
-const ConnectionRequestBannerText = styled(BaseText)`
-  ${fontStyles.big};
-`;
-
-const ConnectionRequestBannerIcon = styled(Icon)`
-  font-size: ${fontSizes.small}px;
-  color: ${themedColors.secondaryText};
-  margin-left: auto;
-  margin-right: ${spacing.rhythm}px;
-`;
-
-const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
-  margin-left: 10px;
-`;
 
 const ItemBadge = styled.View`
   height: 20px;
@@ -307,10 +283,6 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONTACT, { contact });
   };
 
-  handleConnectionsRequestBannerPress = () => {
-    this.props.navigation.navigate(CONNECTION_REQUESTS);
-  };
-
   manageConnection = (manageContactType: string, contactData: Object) => {
     // condition to avoid confirmation if MUTE should be considered here
     this.setState({
@@ -478,7 +450,7 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <SearchBlock
         headerProps={{ title: 'people' }}
-        searchInputPlaceholder="Search or add people"
+        searchInputPlaceholder="ENS or username"
         onSearchChange={(q) => this.handleSearchChange(q)}
         onSearchFocus={() => {
           this.setState({ isSearchFocused: true });
@@ -568,34 +540,6 @@ class PeopleScreen extends React.Component<Props, State> {
       ));
   };
 
-  renderConnectionRequests = () => {
-    const {
-      invitations,
-      theme,
-    } = this.props;
-    const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
-    const colors = getThemeColors(theme);
-
-    if (!pendingConnectionRequests) return null;
-
-    return (
-      <ConnectionRequestBanner
-        onPress={this.handleConnectionsRequestBannerPress}
-        underlayColor={colors.secondaryAccent}
-      >
-        <React.Fragment>
-          <ConnectionRequestBannerText>
-            Connection requests
-          </ConnectionRequestBannerText>
-          <ConnectionRequestNotificationCircle>
-            {pendingConnectionRequests}
-          </ConnectionRequestNotificationCircle>
-          <ConnectionRequestBannerIcon name="chevron-right" />
-        </React.Fragment>
-      </ConnectionRequestBanner>
-    );
-  }
-
   getItemLayout = (data, index) => {
     const { query } = this.state;
     const inSearchMode = query.length >= MIN_QUERY_LENGTH;
@@ -622,9 +566,12 @@ class PeopleScreen extends React.Component<Props, State> {
         data={inSearchMode ? filteredApiUsers : sortedLocalContacts}
         renderItem={inSearchMode ? this.renderSearchModeContact : this.renderContact}
         keyExtractor={({ username }) => username}
-        onScroll={onScroll}
+        onScroll={(e) => {
+          Keyboard.dismiss();
+          onScroll(e);
+        }}
         scrollEventThrottle={16}
-        keyboardShouldPersistTaps="never"
+        keyboardShouldPersistTaps="always"
         contentContainerStyle={{
           flexGrow: 1,
         }}
@@ -653,7 +600,7 @@ class PeopleScreen extends React.Component<Props, State> {
         ListHeaderComponent={
           <>
             {this.renderSearchBlock()}
-            {!inSearchMode && this.renderConnectionRequests()}
+            {!inSearchMode && <ConnectionRequests />}
             {inSearchMode && this.renderLocalContactsList()}
             {inSearchMode && !!filteredApiUsers.length && <ListSubHeading>ALL USERS</ListSubHeading>}
           </>
@@ -681,15 +628,37 @@ class PeopleScreen extends React.Component<Props, State> {
     const {
       localContacts,
       chats,
+      theme,
+      goToInvitationFlow,
+      referralsFeatureEnabled,
     } = this.props;
     const inSearchMode = query.length >= MIN_QUERY_LENGTH;
 
     const sortedLocalContacts = sortLocalContacts(localContacts, chats);
     const contact = sortedLocalContacts.find(({ id }) => id === manageContactId);
 
+    const colors = getThemeColors(theme);
+
     return (
       <ContainerWithHeader
-        headerProps={{ noBack: true, leftItems: [{ title: 'People' }] }}
+        headerProps={{
+          noBack: true,
+          leftItems: [{ title: 'People' }],
+          rightItems: referralsFeatureEnabled ? [{
+            custom: (
+              <IconButton
+                icon="present"
+                color={colors.positive}
+                iconText="Invite friends"
+                style={{ flexDirection: 'row' }}
+                iconTextStyle={{ color: colors.positive, ...fontStyles.regular }}
+                iconStyle={{ marginRight: 4 }}
+                onPress={goToInvitationFlow}
+              />
+            ),
+            itemStyle: { alignItems: 'center' },
+          }] : [],
+         }}
         inset={{ bottom: 0 }}
         tab
       >
