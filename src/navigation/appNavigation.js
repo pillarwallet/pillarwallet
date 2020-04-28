@@ -318,6 +318,7 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE]: ExchangeScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
@@ -393,6 +394,7 @@ const homeFlow = createStackNavigator({
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [EXCHANGE]: ExchangeScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

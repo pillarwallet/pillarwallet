@@ -22,26 +22,32 @@ import { Text } from 'react-native';
 import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 import { BaseText } from 'components/Typography';
-import { fontStyles } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 type Props = {
   note: string | React.Node,
   emoji?: string,
   containerStyle?: Object,
+  children?: React.Node,
 }
 
 const NoteWrapper = styled.View`
   flex-direction: row;
-  align-items: center;
-  background-color: ${themedColors.accent};
+  justify-content: center;
+  background-color: ${themedColors.card};
   border: 1px solid ${themedColors.border};
-  padding: 6px 12px;
+  padding: ${spacing.layoutSides}px;
   border-radius: 4px;
 `;
 
+const TextWrapper = styled.View`
+  flex-direction: row;
+  flex: 1;
+`;
+
 const NoteText = styled(BaseText)`
-  ${fontStyles.regular};
+  ${fontStyles.medium};
 `;
 
 const NoteEmoji = styled(Emoji)`
@@ -50,20 +56,24 @@ const NoteEmoji = styled(Emoji)`
 `;
 
 export const Note = (props: Props) => {
-  const { note, emoji, containerStyle } = props;
+  const {
+    note,
+    emoji,
+    containerStyle,
+    children,
+  } = props;
   return (
     <NoteWrapper style={containerStyle}>
-      <Text style={{ lineHeight: 19 }}>
-        <NoteText>
-          {note}
-        </NoteText>
-        {!!emoji &&
-        <React.Fragment>
-          {'  '}
-          <NoteEmoji name={emoji} />
-        </React.Fragment>
-        }
-      </Text>
+      <TextWrapper>
+        <Text style={{ lineHeight: 19 }}>
+          <NoteText>
+            {note}
+          </NoteText>
+          {!!emoji && '  '}
+          {!!emoji && <NoteEmoji name={emoji} />}
+        </Text>
+      </TextWrapper>
+      {children}
     </NoteWrapper>
   );
 };

@@ -56,6 +56,7 @@ const getTextStyle = (props) => {
   if (props.positive) textProps.color = colors.positive;
   if (props.tertiary) textProps.color = colors.tertiary;
   if (props.accent) textProps.color = colors.accent;
+  if (props.synthetic) textProps.color = colors.synthetic;
   if (props.color) textProps.color = props.color; // for custom color
 
   // positioning
