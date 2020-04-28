@@ -298,7 +298,7 @@ class SearchBar extends React.Component<Props, State> {
         </Animated.View>
         {(isFocused || !!value || forceShowCloseButton) &&
         <CancelButton onPress={customCloseAction || this.handleCancel}>
-          <BaseText style={{ color: colors.primary }}>Close</BaseText>
+          <BaseText style={{ color: colors.link }}>Close</BaseText>
         </CancelButton>
         }
       </SearchHolder>
