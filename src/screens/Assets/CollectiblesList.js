@@ -158,6 +158,7 @@ class CollectiblesList extends React.PureComponent<Props> {
         initialNumToRender={4}
         removeClippedSubviews
         viewabilityConfig={viewConfig}
+        keyboardShouldPersistTaps="always"
       />
     );
   }
