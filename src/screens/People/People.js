@@ -540,10 +540,6 @@ class PeopleScreen extends React.Component<Props, State> {
       ));
   };
 
-  renderConnectionRequests = () => {
-    return <ConnectionRequests />;
-  }
-
   getItemLayout = (data, index) => {
     const { query } = this.state;
     const inSearchMode = query.length >= MIN_QUERY_LENGTH;
@@ -601,7 +597,7 @@ class PeopleScreen extends React.Component<Props, State> {
         ListHeaderComponent={
           <>
             {this.renderSearchBlock()}
-            {!inSearchMode && this.renderConnectionRequests()}
+            {!inSearchMode && <ConnectionRequests />}
             {inSearchMode && this.renderLocalContactsList()}
             {inSearchMode && !!filteredApiUsers.length && <ListSubHeading>ALL USERS</ListSubHeading>}
           </>
@@ -631,6 +627,7 @@ class PeopleScreen extends React.Component<Props, State> {
       chats,
       theme,
       goToInvitationFlow,
+      referralsFeatureEnabled,
     } = this.props;
     const inSearchMode = query.length >= MIN_QUERY_LENGTH;
 
@@ -644,7 +641,7 @@ class PeopleScreen extends React.Component<Props, State> {
         headerProps={{
           noBack: true,
           leftItems: [{ title: 'People' }],
-          rightItems: [{
+          rightItems: referralsFeatureEnabled ? [{
             custom: (
               <IconButton
                 icon="present"
@@ -656,7 +653,8 @@ class PeopleScreen extends React.Component<Props, State> {
                 onPress={goToInvitationFlow}
               />
             ),
-          }],
+            itemStyle: { alignItems: 'center' },
+          }] : [],
          }}
         inset={{ bottom: 0 }}
         tab
