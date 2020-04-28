@@ -182,6 +182,7 @@ const CustomKAWrapper = (props) => {
       onScroll(ev);
       Keyboard.dismiss();
     },
+    keyboardShouldPersistTaps: 'always',
   };
 
   if (Platform.OS === 'ios') {
@@ -285,6 +286,7 @@ class WalletView extends React.Component<Props, State> {
           </EmptyStateWrapper>
         }
         onScroll={() => Keyboard.dismiss()}
+        keyboardShouldPersistTaps="always"
       />
     );
   }
@@ -444,6 +446,7 @@ class WalletView extends React.Component<Props, State> {
         }
         getRef={(ref) => { this.scrollViewRef = ref; }}
         onScroll={onScroll}
+        keyboardShouldPersistTaps="always"
       >
         <Insight
           isVisible={isInsightVisible}
