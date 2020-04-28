@@ -154,6 +154,7 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
 
     const unsentInvitations = [];
     let errorMessage;
+    let rewardToStore = {};
 
     await Promise.all(invitations.map(async (invitation) => {
       const { email, phone } = invitation;
@@ -195,18 +196,32 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
       }));
 
       if (!isEmpty(reward)) {
-        dispatch({
-          type: SET_REFERRAL_REWARD_AMOUNT,
-          payload: reward,
-        });
+        rewardToStore = reward;
       }
     }));
     if (unsentInvitations.length < invitations.length) {
-      navigate(REFERRAL_SENT);
+      if (!isEmpty(rewardToStore)) {
+        navigate(REFERRAL_SENT);
+      } else {
+        // if no reward is being issued - show simple toast
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            message: 'Success',
+            title: `${!unsentInvitations.length ? 'Invites' : 'Some invites'} have been sent`,
+            messageType: 'success',
+          },
+        });
+      }
     }
     if (unsentInvitations.length) {
       dispatch(inviteErrorAction(errorMessage, unsentInvitations.length === invitations.length));
     }
+    // to override reward if it is not returned because no reward is being issued
+    dispatch({
+      type: SET_REFERRAL_REWARD_AMOUNT,
+      payload: rewardToStore,
+    });
   };
 };
 
