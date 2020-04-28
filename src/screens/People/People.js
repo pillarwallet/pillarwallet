@@ -622,9 +622,12 @@ class PeopleScreen extends React.Component<Props, State> {
         data={inSearchMode ? filteredApiUsers : sortedLocalContacts}
         renderItem={inSearchMode ? this.renderSearchModeContact : this.renderContact}
         keyExtractor={({ username }) => username}
-        onScroll={onScroll}
+        onScroll={(e) => {
+          Keyboard.dismiss();
+          onScroll(e);
+        }}
         scrollEventThrottle={16}
-        keyboardShouldPersistTaps="never"
+        keyboardShouldPersistTaps="always"
         contentContainerStyle={{
           flexGrow: 1,
         }}
