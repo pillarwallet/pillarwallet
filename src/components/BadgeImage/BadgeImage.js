@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
 import FastImage from 'react-native-fast-image';
 import type { Badge } from 'models/Badge';
 
