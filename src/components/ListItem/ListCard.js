@@ -156,12 +156,12 @@ export const ListCard = (props: Props) => {
             {getTitle()}
             {!!label && <Label>{label}</Label>}
             {!!labelBadge && (
-            <LabelBadge
-              label={labelBadge.label}
-              labelStyle={{ fontSize: fontSizes.regular }}
-              color={labelBadge.color}
-            />
-              )}
+              <LabelBadge
+                label={labelBadge.label}
+                labelStyle={{ fontSize: fontSizes.regular }}
+                color={labelBadge.color}
+              />
+            )}
           </TitleWrapper>
           {!!subtitle && (
             <CardSubtitleView>
