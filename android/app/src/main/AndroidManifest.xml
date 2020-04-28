@@ -82,7 +82,10 @@
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
         <!-- react-native-notifications override push notification subscription -->
-        <service android:name="com.pillarproject.wallet.PillarFirebaseMessagingService">
+        <service
+            android:name="com.pillarproject.wallet.PillarFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
