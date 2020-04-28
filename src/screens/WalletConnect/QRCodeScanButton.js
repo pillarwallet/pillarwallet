@@ -45,7 +45,7 @@ type State = {
 
 const Container = styled.View`
   align-items: center;
-  margin-top: 30px;
+  margin-top: 12px;
   margin-bottom: 36px;
 `;
 
