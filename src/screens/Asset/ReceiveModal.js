@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Image, Dimensions, Share } from 'react-native';
+import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -28,6 +28,7 @@ import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
 import { LabelBadge } from 'components/LabelBadge';
+import Toast from 'components/Toast';
 
 const ContentWrapper = styled(SafeAreaView)`
   padding: 0 ${spacing.layoutSides}px ${spacing.large}px;
@@ -89,6 +90,11 @@ export default class ReceiveModal extends React.Component<Props, *> {
     Share.share({ title: 'Public address', message: address });
   };
 
+  handleCopyToClipboard = (address: string) => {
+    Clipboard.setString(address);
+    Toast.show({ message: 'Address copied to clipboard.', type: 'success', title: 'Success' });
+  }
+
   render() {
     const {
       isVisible,
@@ -124,7 +130,9 @@ export default class ReceiveModal extends React.Component<Props, *> {
         <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
           <WarningBanner rounded small />
           <QRCodeWrapper>
-            <WalletAddress>{address}</WalletAddress>
+            <WalletAddress onPress={() => this.handleCopyToClipboard(address)}>
+              {address}
+            </WalletAddress>
             <View
               style={{
                 overflow: 'hidden',
