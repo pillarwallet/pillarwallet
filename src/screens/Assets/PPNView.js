@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, ScrollView, View } from 'react-native';
@@ -28,20 +29,20 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
-import { dismissPPNInsightAction } from 'actions/insightsActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
-import SWActivationCard from 'components/SWActivationCard';
+import SWActivationModal from 'components/SWActivationModal';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
@@ -49,6 +50,7 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
   SEND_SYNTHETIC_ASSET,
+  EXCHANGE,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -63,6 +65,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { Balances, BalancesStore, Rates } from 'models/Asset';
 
 // utils
 import { getRate } from 'utils/assets';
@@ -71,6 +74,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { findFirstSmartAccount, getAccountId } from 'utils/accounts';
 
 // selectors
 import {
@@ -79,12 +83,11 @@ import {
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 
 type Props = {
   baseFiatCurrency: ?string,
-  rates: Object,
+  rates: Rates,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
   assetsOnNetwork: Object,
@@ -97,14 +100,14 @@ type Props = {
   history: Object[],
   fetchTransactionsHistory: () => void,
   theme: Theme,
-  dismissPPNInsight: () => void,
-  PPNInsightDismissed: boolean,
   onScroll: (event: Object) => void,
-}
+  balances: BalancesStore,
+};
 
 type State = {
   activeTab: string,
-}
+  isInitSmartWalletModalVisible: boolean,
+};
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
@@ -115,11 +118,6 @@ const TopPartWrapper = styled.View`
   padding: ${spacing.large}px ${spacing.layoutSides}px;
   border-bottom-width: 1;
   border-color: ${themedColors.border};
-`;
-
-const SectionTitle = styled(MediumText)`
-  ${fontStyles.regular};
-  color: ${themedColors.accent};
 `;
 
 const TankBalanceWrapper = styled.View`
@@ -148,56 +146,81 @@ const FloatingButtonView = styled.View`
 const UNSETTLED = 'UNSETTLED';
 const SETTLED = 'SETTLED';
 const insightItemsList = [
-  'Free transactions',
-  'Instant transactions',
-  'Send tokens you don’t actually own. Wait, what?',
+  'Instant, gas-free and private transactions',
+  'A single token experience including the ability to send/spend tokens you don’t already own through real-time swaps.',
 ];
 
 class PPNView extends React.Component<Props, State> {
   state = {
     activeTab: UNSETTLED,
+    isInitSmartWalletModalVisible: false,
   };
 
   setActiveTab = (activeTab) => {
     this.setState({ activeTab });
   };
 
-  renderInsight = (disableTopUpAndSettle) => {
-    const {
-      dismissPPNInsight, availableStake, navigation, PPNInsightDismissed,
-    } = this.props;
-    if (disableTopUpAndSettle) {
-      if (PPNInsightDismissed) {
+  navigateToBuyPillar = () => {
+    const { navigation, baseFiatCurrency } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    navigation.navigate(EXCHANGE, { fromAssetCode: fiatCurrency, toAssetCode: PLR });
+  };
+
+  navigateToFundTank = () => {
+    const { navigation } = this.props;
+    navigation.navigate(FUND_TANK);
+  };
+
+  renderInsight = (isSmartWalletInitialised) => {
+    const { availableStake, accounts, balances } = this.props;
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+
+    if (isSmartWalletInitialised && smartWalletAccount) {
+      const smartWalletAccountId = getAccountId(smartWalletAccount);
+      const accountBalances: Balances = balances[smartWalletAccountId];
+      const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
+
+      if (!availableStake) {
+        if (!hasPLRInSmartWallet) {
+          return (
+            <InsightWithButton
+              title="Activate Pillar Network"
+              description="To send any token you need to top up Pillar Tank with PLR first"
+              buttonTitle="Not enough PLR"
+              buttonProps={{ disabled: true, secondary: true }}
+              footerChildren={(
+                <Button title="Buy PLR" small marginTop={12} onPress={this.navigateToBuyPillar} regularText />
+              )}
+            />
+          );
+        }
         return (
-          <SWActivationCard
-            message="To use Pillar Network you need to activate Smart Wallet"
+          <InsightWithButton
+            title="Activate Pillar Network"
+            description="To send any token you need to top up Pillar Tank with PLR first"
+            buttonTitle="Top up PLR Tank"
+            onButtonPress={this.navigateToFundTank}
           />
         );
       }
-      return (
-        <InsightWithButton
-          title="It’s hard to believe what you can do with Pillar Network"
-          itemsList={insightItemsList}
-          buttonTitle="Enable Pillar Network"
-          onButtonPress={dismissPPNInsight}
-        />
-      );
     }
-    if (availableStake <= 0) {
-      return (
-        <InsightWithButton
-          description="To send any token you need to top up Pillar Tank with PLR first"
-          buttonTitle="Top up Pillar Tank"
-          buttonProps={{ positive: true }}
-          onButtonPress={() => navigation.navigate(FUND_TANK)}
-        />
-      );
-    }
-    return null;
-  }
+
+    return (
+      <InsightWithButton
+        title="Unique benefits of Pillar Payment Network for PLR users"
+        itemsList={insightItemsList}
+        buttonTitle="Activate Pillar Network"
+        onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
+      />
+    );
+  };
+
+  closeSmartWalletModal = () => {
+    this.setState({ isInitSmartWalletModalVisible: false });
+  };
 
   render() {
-    const { activeTab } = this.state;
+    const { activeTab, isInitSmartWalletModalVisible } = this.state;
     const {
       availableStake,
       assetsOnNetwork,
@@ -306,9 +329,8 @@ class PPNView extends React.Component<Props, State> {
           onScroll={onScroll}
           scrollEventThrottle={16}
         >
-          {this.renderInsight(disableTopUpAndSettle)}
+          {this.renderInsight(!disableTopUpAndSettle)}
           <TopPartWrapper>
-            <SectionTitle>PLR Tank</SectionTitle>
             <TankBalanceWrapper>
               <TankBalance>
                 {`${availableFormattedAmount} PLR`}
@@ -317,7 +339,7 @@ class PPNView extends React.Component<Props, State> {
             <AssetButtonsWrapper>
               <CircleButton
                 label="Top up"
-                onPress={() => navigation.navigate(FUND_TANK)}
+                onPress={this.navigateToFundTank}
                 fontIcon="plus"
                 fontIconStyle={{ fontSize: fontSizes.big }}
                 disabled={!!disableTopUpAndSettle}
@@ -380,6 +402,11 @@ class PPNView extends React.Component<Props, State> {
             />
           </FloatingButtonView>
         }
+        <SWActivationModal
+          navigation={navigation}
+          isVisible={isInitSmartWalletModalVisible}
+          onClose={this.closeSmartWalletModal}
+        />
       </View>
     );
   }
@@ -391,7 +418,7 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-  insights: { PPNInsightDismissed },
+  balances: { data: balances },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -399,7 +426,7 @@ const mapStateToProps = ({
   accounts,
   contacts,
   contactsSmartAddresses,
-  PPNInsightDismissed,
+  balances,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -417,7 +444,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
-  dismissPPNInsight: () => dispatch(dismissPPNInsightAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));
