@@ -504,7 +504,7 @@ const Addon = (props: AddonProps) => {
         title={buttonActionLabel}
         onPress={buttonAction}
         small
-        primaryInverted={secondaryButton}
+        secondary={secondaryButton}
         listItemButton
       />
     );
