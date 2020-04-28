@@ -23,6 +23,7 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
@@ -193,7 +194,12 @@ class ContainerWithHeader extends React.Component<Props, State> {
 
     return (
       <View style={{ flex: 1 }}>
-        <HeaderBlock {...headerProps} navigation={navigation} bottomBorderAnimationValue={bottomBorderAnimationValue} />
+        {!isEmpty(headerProps) &&
+          <HeaderBlock
+            {...headerProps}
+            navigation={navigation}
+            bottomBorderAnimationValue={bottomBorderAnimationValue}
+          />}
         <StyledSafeAreaView
           forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
           androidStatusbarHeight={androidStatusBarSpacing}

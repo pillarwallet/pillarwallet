@@ -72,10 +72,6 @@ class ReferralSent extends React.PureComponent<Props> {
     return (
       <ConfettiBackground>
         <ContainerWithHeader
-          headerProps={{
-            floating: true,
-            noBack: true,
-          }}
           backgroundColor="transparent"
           statusbarColor={{
             [LIGHT_THEME]: DARK_CONTENT,
