@@ -102,7 +102,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  color: ${themedColors.primary};
+  color: ${themedColors.link};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;

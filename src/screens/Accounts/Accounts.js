@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
@@ -38,13 +38,14 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, getActiveAccount, getActiveAccountType } from 'utils/accounts';
+import { getAccountName, getActiveAccount, getActiveAccountType, hasLegacyAccountBalance } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { themedColors } from 'utils/themes';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
+import { images } from 'utils/images';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -54,11 +55,12 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { EthereumWallet } from 'models/Wallet';
+import type { Theme } from 'models/Theme';
 
 // constants
 import {
   ASSETS,
-  PILLAR_NETWORK_INTRO,
+  // PILLAR_NETWORK_INTRO,
   SMART_WALLET_INTRO,
 } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -131,6 +133,7 @@ type Props = {|
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
   isChanging: boolean,
+  theme: Theme,
 |};
 
 type State = {|
@@ -162,10 +165,7 @@ const ToggleText = styled(BaseText)`
   color: ${themedColors.secondaryText};
 `;
 
-const pillarNetworkIcon = require('assets/icons/icon_PPN.png');
 const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
-const ethereumWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
@@ -174,8 +174,10 @@ class AccountsScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const isActiveKeyWallet = getActiveAccountType(props.accounts) === ACCOUNT_TYPES.KEY_BASED;
+    const hasLegacyBalance = hasLegacyAccountBalance(props.accounts, props.balances);
     const { user } = props;
-    const forceShowLegacyWallet = !user.isLegacyUser && isActiveKeyWallet;
+    const forceShowLegacyWallet =
+        (!user.isLegacyUser && isActiveKeyWallet) || hasLegacyBalance;
     this.state = {
       showPinModal: false,
       changingAccount: false,
@@ -233,7 +235,8 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   initialisePPN = () => {
-    this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    // this.props.navigation.navigate(PILLAR_NETWORK_INTRO);
+    this.setPPNAsActiveNetwork();
   };
 
   renderListItem = ({ item }: ListElement) => {
@@ -273,7 +276,10 @@ class AccountsScreen extends React.Component<Props, State> {
       rates,
       smartWalletFeatureEnabled,
       baseFiatCurrency,
+      theme,
     } = this.props;
+
+    const { smartWalletIcon, keyWalletIcon } = images(theme);
 
     const visibleAccounts = this.visibleAccounts(accounts, smartWalletFeatureEnabled);
 
@@ -304,7 +310,7 @@ class AccountsScreen extends React.Component<Props, State> {
         mainAction: () => this.switchWallet(account),
         initialiseAction: null,
         isActive: isActiveWallet,
-        iconSource: isSmartWallet ? smartWalletIcon : ethereumWalletIcon,
+        iconSource: isSmartWallet ? smartWalletIcon : keyWalletIcon,
         isSmartWallet,
       };
     });
@@ -365,7 +371,10 @@ class AccountsScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       bitcoinBalances,
+      theme,
     } = this.props;
+
+    const { PPNIcon } = images(theme);
 
     const ppnNetwork = blockchainNetworks.find(
       (network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
@@ -386,7 +395,7 @@ class AccountsScreen extends React.Component<Props, State> {
         mainAction: this.setPPNAsActiveNetwork,
         initialiseAction: this.initialisePPN,
         isActive,
-        iconSource: pillarNetworkIcon,
+        iconSource: PPNIcon,
       });
     }
 
@@ -570,4 +579,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen));

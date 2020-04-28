@@ -19,21 +19,16 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Dimensions, Keyboard, PanResponder } from 'react-native';
+import { Keyboard } from 'react-native';
 import SearchBar from 'components/SearchBar';
-import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { withNavigation } from 'react-navigation';
-
-const { height: screenHeight } = Dimensions.get('window');
+import Overlay from './Overlay';
 
 type State = {
   query: string,
   searchIsFocused: boolean,
-  fullScreenOverlayOpacity: Animated.Value,
 };
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   onSearchChange: Function,
   itemSearchState?: boolean,
   searchInputPlaceholder?: string,
@@ -43,6 +38,7 @@ type Props = {
   inputRef?: Function,
   wrapperStyle?: Object,
   onSearchBlur?: Function,
+  hideOverlay?: boolean,
 };
 
 const SearchBarWrapper = styled.View`
@@ -52,81 +48,16 @@ const SearchBarWrapper = styled.View`
   background-color: ${({ isFocused, theme }) => isFocused ? theme.colors.card : 'transparent'};
 `;
 
-const FullScreenOverlayWrapper = styled.View`
-  z-index: 100;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  width: 100%;
-  height: ${screenHeight}px;
-  position: absolute;
-`;
-
-const FullScreenOverlay = styled.View`
-  width: 100%;
-  height: ${screenHeight}px;
-  background-color: rgba(0,0,0,.6);
-`;
-
-const AnimatedFullScreenOverlay = Animated.createAnimatedComponent(FullScreenOverlay);
-
 const MIN_QUERY_LENGTH = 2;
 
 class SearchBlock extends React.Component<Props, State> {
-  _willBlur: NavigationEventSubscription;
-  _panResponder: Object;
-
   constructor(props: Props) {
     super(props);
     this.state = {
       query: '',
       searchIsFocused: false,
-      fullScreenOverlayOpacity: new Animated.Value(0),
     };
-    this._panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponderCapture: () => true,
-      onPanResponderGrant: () => { if (this.state.searchIsFocused) this.handleSearchBlur(); },
-      onPanResponderMove: () => { if (this.state.searchIsFocused) this.handleSearchBlur(); },
-      onPanResponderTerminationRequest: () => false,
-    });
   }
-
-  componentDidMount() {
-    const { navigation } = this.props;
-    this._willBlur = navigation.addListener('willBlur', this.onScreenBlur);
-  }
-
-  componentWillUnmount() {
-    this._willBlur.remove();
-  }
-
-  onScreenBlur = () => {
-    Keyboard.dismiss();
-    this.animateFullScreenOverlayOpacity(true);
-  };
-
-  animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
-    const { fullScreenOverlayOpacity } = this.state;
-    if (!active) {
-      fullScreenOverlayOpacity.setValue(0);
-      Animated.timing(fullScreenOverlayOpacity, {
-        toValue: 1,
-        duration: 80,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      fullScreenOverlayOpacity.setValue(1);
-      Animated.timing(fullScreenOverlayOpacity, {
-        toValue: 0,
-        duration: 80,
-        useNativeDriver: true,
-      }).start(() => onEnd && onEnd());
-    }
-  };
 
   handleSearchChange = (query: string) => {
     this.props.onSearchChange(query);
@@ -140,7 +71,6 @@ class SearchBlock extends React.Component<Props, State> {
       searchIsFocused: false,
     });
     Keyboard.dismiss();
-    this.animateFullScreenOverlayOpacity(true, this.animateAfterDelay);
   };
 
   handleSearchFocus = () => {
@@ -149,7 +79,6 @@ class SearchBlock extends React.Component<Props, State> {
       searchIsFocused: true,
     });
     if (onSearchFocus) onSearchFocus();
-    this.animateFullScreenOverlayOpacity(false);
   };
 
   animateAfterDelay = () => {
@@ -158,6 +87,10 @@ class SearchBlock extends React.Component<Props, State> {
     });
   };
 
+  handleOverlayClick = () => {
+    if (this.state.searchIsFocused) this.handleSearchBlur();
+  }
+
   render() {
     const {
       itemSearchState,
@@ -165,26 +98,24 @@ class SearchBlock extends React.Component<Props, State> {
       hideSearch,
       wrapperStyle,
       inputRef,
+      hideOverlay,
     } = this.props;
     const {
       query,
       searchIsFocused,
-      fullScreenOverlayOpacity,
     } = this.state;
 
     const inSearchMode = query.length >= MIN_QUERY_LENGTH && itemSearchState;
 
     return (
       <React.Fragment>
-        {!!searchIsFocused && !inSearchMode &&
-        <FullScreenOverlayWrapper {...this._panResponder.panHandlers}>
-          <AnimatedFullScreenOverlay
-            style={{
-              opacity: fullScreenOverlayOpacity,
-            }}
+        {!hideOverlay && (
+          <Overlay
+            active={searchIsFocused && !inSearchMode}
+            fadeOutAnimationCallback={this.animateAfterDelay}
+            handleClick={this.handleOverlayClick}
           />
-        </FullScreenOverlayWrapper>
-        }
+        )}
         {!hideSearch &&
           <SearchBarWrapper style={wrapperStyle} isFocused={!!searchIsFocused && !inSearchMode}>
             <SearchBar
@@ -206,4 +137,4 @@ class SearchBlock extends React.Component<Props, State> {
   }
 }
 
-export default withNavigation(SearchBlock);
+export default (SearchBlock);

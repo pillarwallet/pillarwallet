@@ -31,13 +31,15 @@ import { Container, Wrapper } from 'components/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
 import { TooltipButton } from 'components/Button';
+import { BaseText } from 'components/Typography';
 
 // actions
 import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 
 // utils, services
-import { spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { formatAmount } from 'utils/common';
+import { themedColors } from 'utils/themes';
 
 // constants
 import { SEND_SYNTHETIC_UNAVAILABLE, SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
@@ -66,6 +68,12 @@ const InnerWrapper = styled(Wrapper)`
 
 const ContentBackground = styled(Wrapper)`
   flex: 1;
+`;
+
+const Paragraph = styled(BaseText)`
+  ${fontStyles.medium};
+  color: ${themedColors.secondaryText};
+  margin: 0 ${spacing.layoutSides}px 30px;
 `;
 
 
@@ -110,8 +118,11 @@ class SendSyntheticAsset extends React.Component<Props> {
           syntheticBalance: balanceFormatted,
           value: availableLabel,
           token: assetSymbol,
-          custom: !isAvailable && (
-            <TooltipButton onPress={() => navigation.navigate(SEND_SYNTHETIC_UNAVAILABLE, { assetSymbol })} />
+          customOnRight: !isAvailable && (
+            <TooltipButton
+              onPress={() => navigation.navigate(SEND_SYNTHETIC_UNAVAILABLE, { assetSymbol })}
+              style={{ marginTop: 4, marginLeft: 10 }}
+            />
           ),
         }}
       />
@@ -134,28 +145,34 @@ class SendSyntheticAsset extends React.Component<Props> {
           <InnerWrapper>
             {isFetchingSyntheticAssets && <Container center><Spinner /></Container>}
             {!isFetchingSyntheticAssets &&
-              <FlatList
-                keyExtractor={item => item.symbol}
-                data={availableSyntheticAssets}
-                renderItem={this.renderAsset}
-                refreshing={isFetchingSyntheticAssets}
-                onRefresh={() => fetchAvailableSyntheticAssets()}
-                ListEmptyComponent={
-                  <Wrapper
-                    fullScreen
-                    style={{
-                      paddingTop: 90,
-                      paddingBottom: 90,
-                      alignItems: 'center',
-                    }}
-                  >
-                    <EmptyStateParagraph
-                      title="No assets to send"
-                      bodyText="None synthetic assets currently have available liquidity"
-                    />
-                  </Wrapper>
-                }
-              />
+              <React.Fragment>
+                <Paragraph>
+                  The amounts you see is a total of tokens circulating in Pillar Network.
+                  You can send as many tokens worth of PLR.
+                </Paragraph>
+                <FlatList
+                  keyExtractor={item => item.symbol}
+                  data={availableSyntheticAssets}
+                  renderItem={this.renderAsset}
+                  refreshing={isFetchingSyntheticAssets}
+                  onRefresh={() => fetchAvailableSyntheticAssets()}
+                  ListEmptyComponent={
+                    <Wrapper
+                      fullScreen
+                      style={{
+                        paddingTop: 90,
+                        paddingBottom: 90,
+                        alignItems: 'center',
+                      }}
+                    >
+                      <EmptyStateParagraph
+                        title="No assets to send"
+                        bodyText="None synthetic assets currently have available liquidity"
+                      />
+                    </Wrapper>
+                  }
+                />
+              </React.Fragment>
             }
           </InnerWrapper>
         </ContentBackground>

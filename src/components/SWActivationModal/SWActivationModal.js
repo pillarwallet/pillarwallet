@@ -42,8 +42,7 @@ import smartWalletService from 'services/smartWallet';
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { SMART_WALLET_UNLOCK } from 'constants/navigationConstants';
-import { DARK_THEME } from 'constants/appSettingsConstants';
+import { SMART_WALLET_UNLOCK, ASSETS } from 'constants/navigationConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -54,8 +53,8 @@ import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import { spacing } from 'utils/variables';
 import { getRate, getAssetsAsList, getBalance } from 'utils/assets';
 import { formatFiat, getGasPriceWei } from 'utils/common';
-import { getThemeType } from 'utils/themes';
 import { findKeyBasedAccount } from 'utils/accounts';
+import { images } from 'utils/images';
 
 // selectors
 import { balancesSelector } from 'selectors';
@@ -70,21 +69,21 @@ import type { Theme } from 'models/Theme';
 
 
 type Props = {
+  theme: Theme,
   navigation: NavigationScreenProp<*>,
+  isVisible: Boolean,
+  onClose: () => void,
+  baseFiatCurrency: ?string,
+  rates: Rates,
   accounts: Accounts,
+  gasInfo: GasInfo,
   balances: {
     [account: string]: Balances,
   },
-  rates: Rates,
-  baseFiatCurrency: ?string,
-  deploySmartWallet: () => void,
-  fetchGasInfo: () => void,
-  switchAccount: (accountId: string) => void,
-  gasInfo: GasInfo,
   assets: Assets,
-  theme: Theme,
-  isModalVisible: boolean,
-  closeModal: () => void,
+  fetchGasInfo: () => void,
+  deploySmartWallet: () => void,
+  switchAccount: (accountId: string) => void,
 };
 
 type State = {
@@ -111,8 +110,6 @@ const ModalContainer = styled.View`
   padding: 20px ${spacing.layoutSides}px 80px;
 `;
 
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
-const smartWalletIconDark = require('assets/icons/icon_smart_wallet_dark.png');
 
 const Option = ({
   name, checked, eth, onPress,
@@ -128,6 +125,7 @@ const Option = ({
     </OptionContainer>
   );
 };
+
 
 class SWActivationModal extends React.Component<Props, State> {
   _isMounted: boolean;
@@ -255,14 +253,15 @@ class SWActivationModal extends React.Component<Props, State> {
 
   activateSW = () => {
     const { selectedWallet } = this.state;
-    const { deploySmartWallet, closeModal } = this.props;
+    const { deploySmartWallet, onClose, navigation } = this.props;
     if (!selectedWallet) return;
     if (selectedWallet === ACCOUNT_TYPES.SMART_WALLET) {
       deploySmartWallet();
+      navigation.navigate(ASSETS);
     } else {
       this.deployFromLegacyWallet();
     }
-    closeModal();
+    onClose();
   };
 
   getFormattedAmount = (amount) => {
@@ -273,7 +272,7 @@ class SWActivationModal extends React.Component<Props, State> {
   };
 
   render() {
-    const { theme, isModalVisible, closeModal } = this.props;
+    const { theme, isVisible, onClose } = this.props;
     const { selectedWallet, totalFees, feesLoaded } = this.state;
 
     const ethBalanceInSmartWallet = this.getAccountBalance(ACCOUNT_TYPES.SMART_WALLET);
@@ -299,12 +298,12 @@ class SWActivationModal extends React.Component<Props, State> {
       buttonText = buttonEnabled ? 'Activate' : 'Not enough ETH';
     }
 
-    const themeType = getThemeType(theme);
+    const { smartWalletIcon } = images(theme);
 
     return (
       <SlideModal
-        isVisible={isModalVisible}
-        onModalHide={closeModal}
+        isVisible={isVisible}
+        onModalHide={onClose}
         hideHeader
       >
         <SafeAreaView>
@@ -313,7 +312,7 @@ class SWActivationModal extends React.Component<Props, State> {
             <Spacing h={18} />
             <CachedImage
               style={{ width: 64, height: 64, alignSelf: 'center' }}
-              source={themeType === DARK_THEME ? smartWalletIconDark : smartWalletIcon}
+              source={smartWalletIcon}
             />
             <Spacing h={20} />
             <BaseText medium>

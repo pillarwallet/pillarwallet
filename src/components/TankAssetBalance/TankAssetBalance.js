@@ -30,6 +30,7 @@ type Props = {
   amount: string,
   wrapperStyle?: Object,
   textStyle?: ?Object,
+  iconStyle?: ?Object,
   token?: string,
   bottomExtra?: any,
 };
@@ -60,12 +61,13 @@ const TankAssetBalance = (props: Props) => {
     textStyle,
     token,
     bottomExtra,
+    iconStyle,
   } = props;
 
   return (
     <View>
       <Wrapper style={wrapperStyle}>
-        <Icon source={lightningIcon} />
+        <Icon style={iconStyle} source={lightningIcon} />
         <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
         {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
       </Wrapper>

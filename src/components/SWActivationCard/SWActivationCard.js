@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import get from 'lodash.get';
 import { withNavigation } from 'react-navigation';
 
 // components
@@ -33,12 +32,18 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // utils
-import { getSmartWalletStatus, getDeployErrorMessage } from 'utils/smartWallet';
+import {
+  getSmartWalletStatus,
+  getDeployErrorMessage,
+  isDeployingSmartWallet,
+  getDeploymentData,
+} from 'utils/smartWallet';
 
 // types
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
@@ -50,6 +55,7 @@ type Props = {
   onButtonPress?: () => void,
   title?: string,
   deploySmartWallet: () => void,
+  theme: Theme,
 };
 
 type State = {
@@ -83,13 +89,9 @@ class SWActivationCard extends React.Component<Props, State> {
 
     const { upgrade: { deploymentStarted } } = smartWalletState;
 
-    const isDeploying = deploymentStarted
-      || [
-        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-      ].includes(smartWalletStatus.status);
+    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
 
-    const deploymentData = get(smartWalletState, 'upgrade.deploymentData', {});
+    const deploymentData = getDeploymentData(smartWalletState);
 
     const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
     const deploymentErrorMessage = deploymentData.error ?

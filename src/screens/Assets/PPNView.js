@@ -404,8 +404,8 @@ class PPNView extends React.Component<Props, State> {
         }
         <SWActivationModal
           navigation={navigation}
-          isModalVisible={isInitSmartWalletModalVisible}
-          closeModal={this.closeSmartWalletModal}
+          isVisible={isInitSmartWalletModalVisible}
+          onClose={this.closeSmartWalletModal}
         />
       </View>
     );
