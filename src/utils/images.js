@@ -38,6 +38,17 @@ const sendWyreLogoLight = require('assets/images/exchangeProviders/wyre.png');
 const moonPayLogoLight = require('assets/images/exchangeProviders/moon_pay.png');
 const sendWyreLogoDark = require('assets/images/exchangeProviders/wyre_dark.png');
 const moonPayLogoDark = require('assets/images/exchangeProviders/moon_pay_dark.png');
+const keyWalletIcon = require('assets/icons/icon_key_wallet.png');
+const keyWalletIconDark = require('assets/icons/key_wallet_dark.png');
+const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
+const smartWalletIconDark = require('assets/icons/icon_smart_wallet_dark.png');
+const PPNIcon = require('assets/icons/icon_PPN.png');
+const swActivatedLight = require('assets/images/swActivatedLight.png');
+const swActivatedDark = require('assets/images/swActivatedDark.png');
+const emailIconLight = require('assets/icons/icon_email_light.png');
+const emailIconDark = require('assets/icons/icon_email_dark.png');
+const phoneIconLight = require('assets/icons/icon_phone_light.png');
+const phoneIconDark = require('assets/icons/icon_phone_dark.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -77,6 +88,30 @@ export const images = (theme: Theme) => {
     moonPayLogoHorizontal: getImageByTheme(currentTheme, {
       lightTheme: moonPayLogoLight,
       darkTheme: moonPayLogoDark,
+    }),
+    keyWalletIcon: getImageByTheme(currentTheme, {
+      lightTheme: keyWalletIcon,
+      darkTheme: keyWalletIconDark,
+    }),
+    smartWalletIcon: getImageByTheme(currentTheme, {
+      lightTheme: smartWalletIcon,
+      darkTheme: smartWalletIconDark,
+    }),
+    PPNIcon: getImageByTheme(currentTheme, {
+      lightTheme: PPNIcon,
+      darkTheme: PPNIcon,
+    }),
+    swActivated: getImageByTheme(currentTheme, {
+      lightTheme: swActivatedLight,
+      darkTheme: swActivatedDark,
+    }),
+    roundedEmailIcon: getImageByTheme(currentTheme, {
+      lightTheme: emailIconLight,
+      darkTheme: emailIconDark,
+    }),
+    roundedPhoneIcon: getImageByTheme(currentTheme, {
+      lightTheme: phoneIconLight,
+      darkTheme: phoneIconDark,
     }),
   };
 };

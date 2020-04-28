@@ -50,7 +50,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
-import { setContactsForReferralAction } from 'actions/referralsActions';
+import { setContactsForReferralAction, fetchSentReferralInvitationsAction } from 'actions/referralsActions';
 import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
 
 import { ADD_EDIT_USER, REFER_MAIN_SCREEN } from 'constants/navigationConstants';
@@ -72,6 +72,7 @@ type Props = {
   sentInvitationsCount: SentInvitationsCount,
   userPhone: string,
   userEmail: string,
+  fetchSentReferralInvitations: () => void,
 };
 
 type State = {
@@ -128,7 +129,10 @@ class ReferralContacts extends React.PureComponent<Props, State> {
       isFetchingPhoneContactsComplete,
       isFetchingPhoneContacts,
       fetchPhoneContacts,
+      fetchSentReferralInvitations,
     } = this.props;
+
+    fetchSentReferralInvitations();
 
     if (!isFetchingPhoneContacts && !isFetchingPhoneContactsComplete) {
       fetchPhoneContacts();
@@ -154,7 +158,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         subtext={item.email || item.phone}
         itemImageUrl={item.photo}
         onPress={!isPreviouslyInvited ? () => this.toggleContact(item) : null}
-        wrapperOpacity={!isPreviouslyInvited ? 1 : 0.7}
+        wrapperOpacity={!isPreviouslyInvited ? 1 : 0.5}
         customAddon={(
           <Checkbox
             checked={isSelected}
@@ -162,6 +166,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             disabled={isPreviouslyInvited}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
+            positive
           />
         )}
         noSeparator
@@ -337,6 +342,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setContactsForReferral: (contacts: ReferralContact[]) => dispatch(setContactsForReferralAction(contacts)),
   fetchPhoneContacts: () => dispatch(fetchPhoneContactsAction()),
+  fetchSentReferralInvitations: () => dispatch(fetchSentReferralInvitationsAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferralContacts));

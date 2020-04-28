@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
@@ -201,7 +201,7 @@ const themeColors = (theme: Theme) => {
     },
     squarePrimary: {
       surface: 'transparent',
-      text: colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
       border: 'transparent',
     },
     squareDanger: {
@@ -220,11 +220,11 @@ const themeColors = (theme: Theme) => {
     },
     secondary: {
       surface: colors.buttonSecondaryBackground,
-      text: isDarkTheme ? colors.text : colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
     },
     secondaryDisabled: {
       surface: colors.buttonSecondaryBackground,
-      text: isDarkTheme ? colors.text : colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
     },
     positiveDisabled: {
       surface: colors.positive,
@@ -268,6 +268,10 @@ const getButtonPadding = (props) => {
 
   if (props.noPadding) {
     return '0';
+  }
+
+  if (props.listItemButton) {
+    return '9px';
   }
 
   if (props.small || props.block) {
@@ -485,6 +489,7 @@ class Button extends React.Component<Props, State> {
       isLoading,
       style,
       theme,
+      listItemButton,
     } = this.props;
 
     const updatedColors = themeColors(theme)[getThemeType(this.props, true)];
@@ -499,6 +504,7 @@ class Button extends React.Component<Props, State> {
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
         borderRadius={this.props.small ? 3 : 6}
         style={style}
+        listItemButton={listItemButton}
       >
         {this.renderButtonContent({ customTheme, updatedTheme })}
         {children}
@@ -533,7 +539,8 @@ export const ButtonNext = (props: ButtonNextProps) => {
 };
 
 type TooltipButtonProps = {
-  onPress: Function,
+  onPress: () => void,
+  style?: Object,
 };
 
 const TooltipButtonWrapper = styled(BaseText)`
@@ -552,8 +559,10 @@ const TooltipButtonWrapper = styled(BaseText)`
   border-width: 1px;
 `;
 
-export const TooltipButton = ({ onPress }: TooltipButtonProps) => (
-  <TouchableOpacity onPress={onPress}>
-    <TooltipButtonWrapper>?</TooltipButtonWrapper>
-  </TouchableOpacity>
+export const TooltipButton = ({ onPress, style }: TooltipButtonProps) => (
+  <View style={style}>
+    <TouchableOpacity onPress={onPress}>
+      <TooltipButtonWrapper>?</TooltipButtonWrapper>
+    </TouchableOpacity>
+  </View>
 );

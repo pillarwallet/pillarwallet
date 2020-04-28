@@ -32,7 +32,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 // components
 import Separator from 'components/Separator';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Container, Footer } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -58,9 +58,10 @@ import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 import { addressValidator, isEnsName } from 'utils/validators';
 import { resolveEnsName, isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { themedColors, getThemeColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -101,8 +102,6 @@ type State = {
   formOptions: Object,
 };
 
-const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const FormWrapper = styled.View`
@@ -116,6 +115,11 @@ const ImageIcon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   tint-color: ${themedColors.primary};
+`;
+
+const ButtonWrapper = styled.View`
+  width: 100%;
+  padding: 0 20px 16px;
 `;
 
 const { Form } = t.form;
@@ -316,6 +320,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
+    const { theme } = this.props;
+    const { keyWalletIcon, smartWalletIcon } = images(theme);
+
     const {
       username,
       hasSmartWallet,
@@ -465,6 +472,25 @@ class SendTokenContacts extends React.Component<Props, State> {
     return [{ title: `Send ${tokenName}` }];
   };
 
+  renderFooter = () => {
+    const { value, isValidatingEns } = this.state;
+    const isSearchQueryProvided = !!(value && value.address.length);
+    const submitDisabled = !value.address.length || isValidatingEns;
+    if (!isSearchQueryProvided) return <></>;
+    return (
+      <ButtonWrapper>
+        <Button
+          height={48}
+          regularText
+          textStyle={fontStyles.medium}
+          disabled={submitDisabled}
+          title="Next"
+          onPress={this.handleFormSubmit}
+        />
+      </ButtonWrapper>
+    );
+  };
+
   render() {
     const {
       localContacts = [],
@@ -474,7 +500,6 @@ class SendTokenContacts extends React.Component<Props, State> {
     } = this.props;
     const {
       isScanning,
-      isValidatingEns,
       formStructure,
       formOptions,
       value,
@@ -482,18 +507,17 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const { tokenType, token } = this.assetData;
     const isCollectible = tokenType === COLLECTIBLES;
-    const isSearchQueryProvided = !!(value && value.address.length);
 
     const showContacts = !isChanging && (isCollectible || token !== BTC);
     const headerTitleItems = this.getHeaderItems();
 
     const showSpinner = isOnline && ((!contactsSmartAddressesSynced && !isEmpty(localContacts)) || isChanging);
-    const submitDisabled = !value.address.length || isValidatingEns;
 
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: headerTitleItems }}
         inset={{ bottom: 0 }}
+        footer={this.renderFooter()}
       >
         {!isChanging &&
         <FormWrapper>
@@ -515,11 +539,6 @@ class SendTokenContacts extends React.Component<Props, State> {
           onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        {isSearchQueryProvided &&
-          <Footer keyboardVerticalOffset={35}>
-            <Button flexRight small disabled={submitDisabled} title="Next" onPress={this.handleFormSubmit} />
-          </Footer>
-        }
       </ContainerWithHeader>
     );
   }
