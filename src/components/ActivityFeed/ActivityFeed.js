@@ -318,6 +318,7 @@ class ActivityFeed extends React.Component<Props, State> {
             activeTab={activeTab || firstTab}
           />
         }
+        {/* tabs and header are always put in the data */}
         {formattedFeedData.length === 2 && (
           <EmptyStateWrapper>
             <EmptyStateParagraph {...emptyStateData} />
