@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
@@ -62,7 +63,6 @@ import { accountAssetsSelector } from 'selectors/assets';
 // types
 import type { Balances, Rates, Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { GasInfo } from 'models/GasInfo';
 import type { Theme } from 'models/Theme';
@@ -76,7 +76,6 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   accounts: Accounts,
-  smartWalletState: SmartWalletStatus,
   gasInfo: GasInfo,
   balances: {
     [account: string]: Balances,
@@ -110,6 +109,7 @@ const OptionLeft = styled.View`
 const ModalContainer = styled.View`
   padding: 20px ${spacing.layoutSides}px 80px;
 `;
+
 
 const Option = ({
   name, checked, eth, onPress,
@@ -222,7 +222,11 @@ class SWActivationModal extends React.Component<Props, State> {
 
   deployFromLegacyWallet = async () => {
     const {
-      switchAccount, accounts, navigation, gasInfo, assets,
+      switchAccount,
+      accounts,
+      navigation,
+      gasInfo,
+      assets,
     } = this.props;
     const keyBasedAccount = findKeyBasedAccount(accounts);
     if (!keyBasedAccount) return;
@@ -269,11 +273,7 @@ class SWActivationModal extends React.Component<Props, State> {
 
   render() {
     const { theme, isVisible, onClose } = this.props;
-    const {
-      selectedWallet,
-      totalFees,
-      feesLoaded,
-    } = this.state;
+    const { selectedWallet, totalFees, feesLoaded } = this.state;
 
     const ethBalanceInSmartWallet = this.getAccountBalance(ACCOUNT_TYPES.SMART_WALLET);
     const ethBalanceInKeyWallet = this.getAccountBalance(ACCOUNT_TYPES.KEY_BASED);
@@ -353,13 +353,11 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
   accounts: { data: accounts },
-  smartWallet: smartWalletState,
   history: { gasInfo },
 }) => ({
   baseFiatCurrency,
   rates,
   accounts,
-  smartWalletState,
   gasInfo,
 });
 
