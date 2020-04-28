@@ -55,6 +55,7 @@ type Props = {
   sidePaddingsForWidth?: number,
   theme: Theme,
   iconStyle?: Object,
+  isSwitching: boolean,
 }
 
 const ItemWrapper = styled.View`
