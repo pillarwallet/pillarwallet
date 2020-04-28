@@ -201,7 +201,7 @@ const themeColors = (theme: Theme) => {
     },
     squarePrimary: {
       surface: 'transparent',
-      text: colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
       border: 'transparent',
     },
     squareDanger: {
@@ -220,11 +220,11 @@ const themeColors = (theme: Theme) => {
     },
     secondary: {
       surface: colors.buttonSecondaryBackground,
-      text: isDarkTheme ? colors.text : colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
     },
     secondaryDisabled: {
       surface: colors.buttonSecondaryBackground,
-      text: isDarkTheme ? colors.text : colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
     },
     positiveDisabled: {
       surface: colors.positive,
@@ -268,6 +268,10 @@ const getButtonPadding = (props) => {
 
   if (props.noPadding) {
     return '0';
+  }
+
+  if (props.listItemButton) {
+    return '9px';
   }
 
   if (props.small || props.block) {
@@ -485,6 +489,7 @@ class Button extends React.Component<Props, State> {
       isLoading,
       style,
       theme,
+      listItemButton,
     } = this.props;
 
     const updatedColors = themeColors(theme)[getThemeType(this.props, true)];
@@ -499,6 +504,7 @@ class Button extends React.Component<Props, State> {
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
         borderRadius={this.props.small ? 3 : 6}
         style={style}
+        listItemButton={listItemButton}
       >
         {this.renderButtonContent({ customTheme, updatedTheme })}
         {children}

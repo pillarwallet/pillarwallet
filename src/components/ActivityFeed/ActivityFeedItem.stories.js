@@ -67,6 +67,7 @@ const reduxData = {
   activeBlockchainNetwork: '',
   isSmartWalletActivated: false,
   accounts: [],
+  bitcoinAddresses: [],
 };
 
 const ActivityFeedItem = withTheme(ActivityFeedItemNoTheme);
