@@ -19,19 +19,20 @@
 */
 
 import * as React from 'react';
-import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
 import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { getDeviceWidth } from 'utils/common';
 
 
 type Props = {
   children: React.Node,
 };
 
-const { width: screenWidth } = Dimensions.get('window');
+
+const screenWidth = getDeviceWidth();
 
 const StyledScrollView = styled.ScrollView`
   flex-grow: 1;
