@@ -69,13 +69,6 @@ class ServicesScreen extends React.Component<Props> {
         labelBadge: offersBadge,
       },
       {
-        key: 'peerToPeerTrading',
-        title: 'Peer-to-peer trading',
-        body: 'Swap tokens directly with others. Safe, secure, anonymous',
-        disabled: true,
-        label: 'soon',
-      },
-      {
         key: 'buyCryptoWithFiat',
         // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
         title: [
@@ -92,6 +85,13 @@ class ServicesScreen extends React.Component<Props> {
             toAssetCode: ETH,
             displayFiatOptionsFirst: true,
           }),
+      },
+      {
+        key: 'peerToPeerTrading',
+        title: 'Peer-to-peer trading',
+        body: 'Swap tokens directly with others. Safe, secure, anonymous',
+        disabled: true,
+        label: 'soon',
       },
     ];
   };
