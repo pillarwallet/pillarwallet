@@ -239,6 +239,7 @@ class WalletView extends React.Component<Props, State> {
           </EmptyStateWrapper>
         }
         onScroll={() => Keyboard.dismiss()}
+        keyboardShouldPersistTaps="always"
       />
     );
   }
@@ -424,6 +425,7 @@ class WalletView extends React.Component<Props, State> {
         refreshControl={this.renderRefreshControl()}
         {...this.getRefProps()}
         onScroll={onScroll}
+        keyboardShouldPersistTaps="always"
       >
         <Insight
           isVisible={isInsightVisible}
