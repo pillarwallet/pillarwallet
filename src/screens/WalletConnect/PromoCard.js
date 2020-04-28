@@ -57,7 +57,7 @@ const ContentContainer = styled.View`
 `;
 
 const CardWrapper = styled.View`
-  margin: 20px ${spacing.layoutSides}px;
+  margin: 0 ${spacing.layoutSides}px;
 `;
 
 const CollapsedWrapper = styled.TouchableOpacity`
