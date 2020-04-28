@@ -1666,6 +1666,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     }
                   >
                     <Text
+                      onPress={[Function]}
                       style={
                         Array [
                           Object {

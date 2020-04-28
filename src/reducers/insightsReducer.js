@@ -20,7 +20,6 @@
 
 import {
   DISMISS_SMART_WALLET_INSIGHT,
-  DISMISS_PPN_INSIGHT,
   SET_INSIGHTS_STATE,
 } from 'constants/insightsConstants';
 
@@ -48,11 +47,6 @@ export default function insightsReducer(
       return {
         ...state,
         SWInsightDismissed: true,
-      };
-    case DISMISS_PPN_INSIGHT:
-      return {
-        ...state,
-        PPNInsightDismissed: true,
       };
     case SET_INSIGHTS_STATE:
       return {
