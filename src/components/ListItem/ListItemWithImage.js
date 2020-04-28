@@ -184,12 +184,13 @@ const IconCircle = styled.View`
   width: ${props => props.diameter || 52}px;
   height: ${props => props.diameter || 52}px;
   border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
-  background-color: ${props => props.backgroundColor || themedColors.card};
+  background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-color: ${props => props.border ? themedColors.border : 'transparent'};
-  border-width: 1px;
+  ${({ border, theme }) => border &&
+    `border-color: ${theme.colors.border};
+    border-width: 1px;`};
 `;
 
 const ItemIcon = styled(Icon)`
@@ -503,7 +504,7 @@ const Addon = (props: AddonProps) => {
         title={buttonActionLabel}
         onPress={buttonAction}
         small
-        primaryInverted={secondaryButton}
+        secondary={secondaryButton}
         listItemButton
       />
     );
@@ -538,23 +539,25 @@ const Addon = (props: AddonProps) => {
       token = '',
       value = '',
       custom,
+      customOnRight,
     } = balance;
     return (
-      <Wrapper style={{ alignItems: 'flex-end' }}>
-        {!!tokenBalance.toString() &&
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <BalanceValue>{`${tokenBalance} ${token}`}</BalanceValue>
-          {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
-        </View>
-        }
-        {!!syntheticBalance.toString() &&
-        <TankAssetBalance
-          monoColor
-          amount={syntheticBalance}
-          token={token}
-        />}
-        <BalanceFiatValue>{value}</BalanceFiatValue>
-      </Wrapper>
+      <View style={{ flexDirection: 'row' }}>
+        <Wrapper style={{ alignItems: 'flex-end' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {!!tokenBalance.toString() && <BalanceValue>{`${tokenBalance} ${token}`}</BalanceValue>}
+            {!!syntheticBalance.toString() &&
+            <TankAssetBalance
+              monoColor
+              amount={syntheticBalance}
+              token={token}
+            />}
+            {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
+          </View>
+          <BalanceFiatValue>{value}</BalanceFiatValue>
+        </Wrapper>
+        {customOnRight}
+      </View>
     );
   }
 

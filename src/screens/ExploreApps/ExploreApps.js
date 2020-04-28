@@ -49,9 +49,10 @@ class ExploreApps extends React.PureComponent<Props> {
       <ContainerWithHeader
         navigation={this.props.navigation}
         headerProps={{ centerItems: [{ title: 'Explore apps' }] }}
+        inset={{ bottom: 'never' }}
       >
         <FlatList
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 30 }}
           ListHeaderComponent={this.renderListHeader()}
           data={APPS}
           renderItem={this.renderItem}

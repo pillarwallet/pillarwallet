@@ -195,16 +195,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               }
             >
               <View
-                backgroundColor="#ebf0f5"
+                backgroundColor={null}
                 diameter={48}
                 style={
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#ebf0f5",
-                      "borderColor": "transparent",
+                      "backgroundColor": "#EBF0F6",
                       "borderRadius": 24,
-                      "borderWidth": 1,
                       "height": 48,
                       "justifyContent": "center",
                       "textAlign": "center",
@@ -596,16 +594,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               }
             >
               <View
-                backgroundColor="#ebf0f5"
+                backgroundColor={null}
                 diameter={48}
                 style={
                   Array [
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#ebf0f5",
-                      "borderColor": "transparent",
+                      "backgroundColor": "#EBF0F6",
                       "borderRadius": 24,
-                      "borderWidth": 1,
                       "height": 48,
                       "justifyContent": "center",
                       "textAlign": "center",

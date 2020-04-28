@@ -740,10 +740,8 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#FFFFFF",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -1014,7 +1012,6 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -1295,7 +1292,6 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -2112,7 +2108,6 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -2245,7 +2240,6 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
             }
           >
             <View
-              button={false}
               style={
                 Array [
                   Object {
@@ -2257,7 +2251,6 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
               }
             >
               <Text
-                button={false}
                 color="#8B939E"
                 style={
                   Array [
@@ -2357,7 +2350,6 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -2490,47 +2482,108 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
             }
           >
             <View
-              button={true}
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
               style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "borderColor": "#EDEDED",
-                    "borderRadius": 3,
-                    "borderStyle": "solid",
-                    "borderWidth": 1,
-                    "height": 34,
-                    "justifyContent": "center",
-                  },
-                  undefined,
-                ]
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#e6f1f9",
+                  "borderColor": "#EDEDED",
+                  "borderRadius": 3,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "flexDirection": "row",
+                  "height": 34,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 9,
+                  "paddingRight": 9,
+                  "paddingTop": 0,
+                  "width": "auto",
+                }
               }
             >
               <Text
-                button={true}
-                color="#007AFF"
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": false,
+                  }
+                }
+                small={true}
                 style={
                   Array [
                     Object {
-                      "color": "#007AFF",
+                      "color": "#0A1427",
                       "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
                         "color": "#007AFF",
                         "fontSize": 14,
-                        "lineHeight": 22,
-                        "marginBottom": 2,
-                        "marginLeft": "auto",
-                        "paddingBottom": 0,
-                        "paddingLeft": 20,
-                        "paddingRight": 20,
-                        "paddingTop": 0,
+                        "marginBottom": 0,
                       },
                       undefined,
                     ],
                   ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "bitcoinWallet": "#F79319",
+                      "border": "#EDEDED",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "popularSwaps": "#d08cb1",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#e6f1f9",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#007AFF",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
                 }
               >
                 Requested
@@ -2607,7 +2660,6 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -3103,7 +3155,7 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -3316,7 +3368,7 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -3565,16 +3617,14 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -3863,7 +3913,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -4131,16 +4180,14 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -4430,16 +4477,14 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -4728,7 +4773,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -4996,16 +5040,14 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -5259,7 +5301,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -5575,16 +5617,14 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -6599,16 +6639,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -6897,7 +6935,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -7165,16 +7202,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -7464,16 +7499,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -7762,7 +7795,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -8030,16 +8062,14 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
       }
     >
       <View
-        backgroundColor="#ebf0f5"
+        backgroundColor={null}
         diameter={48}
         style={
           Array [
             Object {
               "alignItems": "center",
-              "backgroundColor": "#ebf0f5",
-              "borderColor": "transparent",
+              "backgroundColor": "#EBF0F6",
               "borderRadius": 24,
-              "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
               "textAlign": "center",
@@ -8342,7 +8372,6 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -8579,7 +8608,6 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#EBF0F5",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -8767,7 +8795,7 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
 >
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -9049,8 +9077,8 @@ exports[`Storyshots InsightWithButton with list 1`] = `
               Array [
                 Object {
                   "paddingBottom": 30,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
+                  "paddingLeft": 30,
+                  "paddingRight": 30,
                   "paddingTop": 22,
                 },
                 undefined,
@@ -9059,14 +9087,11 @@ exports[`Storyshots InsightWithButton with list 1`] = `
           >
             <Text
               center={true}
-              large={true}
               style={
                 Array [
                   Object {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 24,
-                    "lineHeight": 38,
                     "textAlign": "center",
                     "textAlignVertical": "center",
                   },
@@ -9074,13 +9099,13 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                     Object {
                       "color": "#0A1427",
                       "fontFamily": "EuclidCircularB-Medium",
-                      "fontSize": 24,
-                      "lineHeight": 38,
                       "textAlign": "center",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
+                        "fontSize": 18,
+                        "lineHeight": 28,
                         "marginBottom": 20,
                       },
                       undefined,
@@ -9146,6 +9171,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                           "flexBasis": 0,
                           "flexGrow": 1,
                           "flexShrink": 1,
+                          "maxWidth": "80%",
                         },
                         undefined,
                       ],
@@ -9200,6 +9226,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                           "flexBasis": 0,
                           "flexGrow": 1,
                           "flexShrink": 1,
+                          "maxWidth": "80%",
                         },
                         undefined,
                       ],
@@ -9273,20 +9300,11 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textAlignVertical": "center",
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "marginBottom": 0,
                       },
-                      Array [
-                        Object {
-                          "color": "#FCFDFF",
-                          "fontSize": 14,
-                          "marginBottom": 0,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ],
                   ]
                 }
@@ -9426,8 +9444,8 @@ exports[`Storyshots InsightWithButton without list 1`] = `
               Array [
                 Object {
                   "paddingBottom": 30,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
+                  "paddingLeft": 30,
+                  "paddingRight": 30,
                   "paddingTop": 22,
                 },
                 undefined,
@@ -9435,7 +9453,6 @@ exports[`Storyshots InsightWithButton without list 1`] = `
             }
           >
             <Text
-              center={true}
               medium={true}
               style={
                 Array [
@@ -9444,14 +9461,15 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                     "fontFamily": "EuclidCircularB-Regular",
                     "fontSize": 16,
                     "lineHeight": 24,
-                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
                       "marginBottom": 20,
                     },
-                    undefined,
+                    Object {
+                      "marginBottom": 24,
+                    },
                   ],
                 ]
               }
@@ -9512,20 +9530,11 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textAlignVertical": "center",
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "marginBottom": 0,
                       },
-                      Array [
-                        Object {
-                          "color": "#FCFDFF",
-                          "fontSize": 14,
-                          "marginBottom": 0,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ],
                   ]
                 }
@@ -9648,8 +9657,8 @@ Array [
               Array [
                 Object {
                   "paddingBottom": 30,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
+                  "paddingLeft": 30,
+                  "paddingRight": 30,
                   "paddingTop": 22,
                 },
                 undefined,
@@ -9657,7 +9666,6 @@ Array [
             }
           >
             <Text
-              center={true}
               medium={true}
               style={
                 Array [
@@ -9666,14 +9674,15 @@ Array [
                     "fontFamily": "EuclidCircularB-Regular",
                     "fontSize": 16,
                     "lineHeight": 24,
-                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
                       "marginBottom": 20,
                     },
-                    undefined,
+                    Object {
+                      "marginBottom": 24,
+                    },
                   ],
                 ]
               }
@@ -9743,20 +9752,11 @@ Array [
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textAlignVertical": "center",
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "marginBottom": 0,
                       },
-                      Array [
-                        Object {
-                          "color": "#FCFDFF",
-                          "fontSize": 14,
-                          "marginBottom": 0,
-                        },
-                        undefined,
-                      ],
+                      undefined,
                     ],
                   ]
                 }

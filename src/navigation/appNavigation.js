@@ -104,6 +104,7 @@ import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
 import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
+import WalletActivatedScreen from 'screens/WalletActivated';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -239,6 +240,7 @@ import {
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   EXPLORE_APPS,
+  WALLET_ACTIVATED,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -248,7 +250,7 @@ import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from '
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
 
@@ -288,6 +290,12 @@ const StackNavigatorConfig = {
     header: null,
     gesturesEnabled: true,
   },
+  cardStyle: {
+    backgroundColor: {
+      dark: darkThemeColors.surface,
+      light: lightThemeColors.surface,
+    },
+  },
 };
 
 const hideTabNavigatorOnChildView = ({ navigation }) => {
@@ -308,6 +316,7 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE]: ExchangeScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
@@ -359,8 +368,10 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
-  StackNavigatorModalConfig,
+  StackNavigatorConfig,
 );
+walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // HOME FLOW
 const homeFlow = createStackNavigator({
@@ -379,6 +390,7 @@ const homeFlow = createStackNavigator({
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [EXCHANGE]: ExchangeScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -713,6 +725,7 @@ const AppFlowNavigation = createStackNavigator(
     [MENU_FLOW]: menuFlow,
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
+    [WALLET_ACTIVATED]: WalletActivatedScreen,
   },
   modalTransition,
 );
