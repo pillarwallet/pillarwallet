@@ -45,7 +45,7 @@ import {
   ETHEREUM_ADDRESS_PREFIX,
   BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import * as NAVSCREENS from 'constants/navigationConstants';
 import { isProdEnv, isTest } from './environment';
 
 
@@ -268,7 +268,16 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
-const DEFAULT_TRANSITION_SCREENS = [MANAGE_USERS_FLOW];
+const DEFAULT_TRANSITION_SCREENS = [
+  NAVSCREENS.MANAGE_USERS_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
+  NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
+  NAVSCREENS.SEND_BITCOIN_FLOW,
+];
 
 const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
   return DEFAULT_TRANSITION_SCREENS.some(
