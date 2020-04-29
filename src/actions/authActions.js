@@ -23,6 +23,7 @@ import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
+import { ethers } from 'ethers';
 
 // constants
 import {
@@ -346,8 +347,7 @@ export const checkAuthAction = (
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       } else if (privateKey) {
-        const walletAddress = normalizeWalletAddress(encryptedWallet.address);
-        wallet = { ...encryptedWallet, privateKey, address: walletAddress };
+        wallet = new ethers.Wallet(privateKey);
       }
       if (wallet) {
         dispatch({
