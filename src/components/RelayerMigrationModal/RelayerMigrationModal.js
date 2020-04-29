@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { SafeAreaView } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
@@ -103,7 +103,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
             <MediumText center medium>Pay fees with PLR</MediumText>
             <Spacing h={18} />
             {iconUrl &&
-            <CachedImage
+            <FastImage
               style={{ width: 64, height: 64, alignSelf: 'center' }}
               source={{ uri: `${SDK_PROVIDER}/${iconUrl}?size=2` }}
               resizeMode="contain"
