@@ -779,7 +779,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       // check if new account device state updated to deployed
       if (newAccountDeviceState === deployedAccountDeviceState) {
         // smart wallet account deployment check
-        if (accountState !== deployedAccountDeviceState) {
+        if (accountState !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
           dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
           navigate(WALLET_ACTIVATED);
         }
