@@ -145,7 +145,7 @@ class ImportWallet extends React.Component<Props, State> {
     const { walletState, error } = nextProps.wallet;
 
     if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
-      const errorMessage = activeTab === TWORDSPHRASE ? 'Incorrect backup phrase' : 'Incorrect private key';
+      const errorMessage = 'Incorrect backup phrase';
       return {
         ...prevState,
         errorMessage,
