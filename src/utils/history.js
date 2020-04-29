@@ -17,13 +17,26 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
+import BigNumber from 'bignumber.js';
+
+// constants
 import {
   TRANSACTION_CONFIRMATION_EVENT,
   TRANSACTION_CONFIRMATION_SENDER_EVENT,
   TRANSACTION_PENDING_EVENT,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
-import type { Transaction, TransactionEthers, TransactionsStore } from 'models/Transaction';
+
+// types
+import type {
+  FeeWithGasToken,
+  GasToken,
+  Transaction,
+  TransactionEthers,
+  TransactionsStore,
+} from 'models/Transaction';
+
 
 export const buildHistoryTransaction = ({
   from,
@@ -40,6 +53,7 @@ export const buildHistoryTransaction = ({
   tag,
   extra,
   stateInPPN,
+  feeWithGasToken,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
   gasUsed: gasLimit ? Number(gasLimit) : 0,
@@ -57,6 +71,7 @@ export const buildHistoryTransaction = ({
   tag,
   extra,
   stateInPPN,
+  feeWithGasToken,
 });
 
 export const isTransactionEvent = (eventType: string) => {
@@ -108,3 +123,12 @@ export function updateHistoryRecord(
     txUpdated,
   };
 }
+
+export const parseFeeWithGasToken = (
+  gasToken: ?GasToken,
+  fee: any,
+): ?FeeWithGasToken => {
+  if (!gasToken || isEmpty(gasToken)) return {};
+  const feeInWei = new BigNumber(fee.toString());
+  return { feeInWei, gasToken };
+};

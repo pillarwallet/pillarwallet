@@ -159,6 +159,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     } = this.assetData;
 
     const gasPrice = this.getGasPriceInWei().toNumber();
+    const txFeeInWei = this.getTxFeeInWei();
 
     const transactionPayload: CollectibleTransactionPayload = {
       to: this.receiver,
@@ -170,6 +171,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       note,
       gasLimit,
       gasPrice,
+      txFeeInWei,
     };
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
