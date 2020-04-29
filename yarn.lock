@@ -15008,6 +15008,11 @@ react-native-extra-dimensions-android@^1.2.5:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-extra-dimensions-android/-/react-native-extra-dimensions-android-1.2.5.tgz#8ade91029aaac7519bf305116d39019e618a60f0"
   integrity sha1-it6RApqqx1Gb8wURbTkBnmGKYPA=
 
+react-native-fast-image@^8.1.5:
+  version "8.1.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-fast-image/-/react-native-fast-image-8.1.5.tgz#0a6404c988dad68c98d26f91155d0a5293ba2ea5"
+  integrity sha1-CmQEyYja1oyY0m+RFV0KUpO6LqU=
+
 react-native-gesture-handler@1.6.1:
   version "1.6.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-gesture-handler/-/react-native-gesture-handler-1.6.1.tgz#678e2dce250ed66e93af409759be22cd6375dd17"
