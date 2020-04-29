@@ -251,7 +251,7 @@ jobs:
             cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
       - store_artifacts:
           path: ./toArchive
-          destination: app_build 
+          destination: app_build
       - slack/status:
           fail_only: true
           failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
@@ -272,7 +272,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
-      
+
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -490,7 +490,7 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - ios-release 
+            - ios-release
       - slack/status:
           fail_only: true
           failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
@@ -640,7 +640,7 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - android-release 
+            - android-release
       - slack/status:
           fail_only: true
           failure_message: '$(shuf -n 1 android_prod.txt) :circleci-fail:'
