@@ -16,13 +16,13 @@ const BadgeImage = ({ data: badge, size = 96 }: Props) => {
   return (
     <FastImage
       style={{
-                height: size,
-                width: size,
-            }}
+        height: size,
+        width: size,
+      }}
       source={{
-                uri: badgeUri,
-                priority: FastImage.priority.normal,
-            }}
+        uri: badgeUri,
+        priority: FastImage.priority.normal,
+      }}
       resizeMode={FastImage.resizeMode.contain}
       fallback
       defaultSource={defaultBadge}
