@@ -29,13 +29,12 @@ import type { Transaction } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // components
-import SlideModal from 'components/Modals/SlideModal';
 import Title from 'components/Title';
-import EventDetails from 'components/EventDetails';
 import Tabs from 'components/Tabs';
 import { BaseText } from 'components/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
+import EventDetails from 'components/EventDetails';
 
 // utils
 import { groupAndSortByDate } from 'utils/common';
@@ -129,11 +128,7 @@ type Props = {
 type State = {|
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
-  eventType: string,
-  eventStatus: string,
   tabIsChanging: boolean,
-  scrollOffset: ?number,
-  maxScrollOffset: ?number,
 |};
 
 const ITEM_TYPE = {
@@ -153,11 +148,7 @@ class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
     selectedEventData: null,
-    eventType: '',
-    eventStatus: '',
     tabIsChanging: false,
-    scrollOffset: undefined,
-    maxScrollOffset: undefined,
   };
 
   generateFeedSections = memoize(
@@ -206,10 +197,8 @@ class ActivityFeed extends React.Component<Props, State> {
     return !isEq;
   }
 
-  selectEvent = (eventData: Object, eventType, eventStatus) => {
+  selectEvent = (eventData: Object) => {
     this.setState({
-      eventType,
-      eventStatus,
       selectedEventData: eventData,
       showModal: true,
     });
@@ -247,20 +236,15 @@ class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
-  handleRejectInvitation = () => {
-    this.props.onRejectInvitation(this.state.selectedEventData);
-  };
-
-  handleCancelInvitation = () => {
-    this.props.onCancelInvitation(this.state.selectedEventData);
-  };
-
-  handleAcceptInvitation = () => {
-    this.props.onAcceptInvitation(this.state.selectedEventData);
-  };
-
-  handleClose = () => {
-    this.setState({ showModal: false });
+  handleClose = (callback) => {
+    this.setState({ showModal: false }, () => {
+      if (callback) {
+        const timer = setTimeout(() => {
+          callback();
+          clearTimeout(timer);
+        }, 500);
+      }
+    });
   };
 
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
@@ -296,16 +280,14 @@ class ActivityFeed extends React.Component<Props, State> {
       headerComponent,
       tabsComponent,
       flatListProps,
+      onRejectInvitation,
+      onAcceptInvitation,
     } = this.props;
 
     const {
       showModal,
       selectedEventData,
-      eventType,
-      eventStatus,
       tabIsChanging,
-      scrollOffset,
-      maxScrollOffset,
     } = this.state;
 
     const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
@@ -352,34 +334,14 @@ class ActivityFeed extends React.Component<Props, State> {
           {...flatListProps}
         />}
         {!!selectedEventData &&
-        <SlideModal
-          isVisible={showModal}
-          title="transaction details"
-          onModalHide={this.handleClose}
-          eventDetail
-          handleScrollTo={({ y }) => {
-            if (this.eventDetailScrollViewRef && y) {
-              this.eventDetailScrollViewRef.scrollTo({ x: 0, y, animated: false });
-            }
-          }}
-          scrollOffset={scrollOffset}
-          scrollOffsetMax={maxScrollOffset}
-          onSwipeComplete={this.handleClose}
-        >
           <EventDetails
-            eventData={selectedEventData}
-            eventType={eventType}
-            eventStatus={eventStatus}
-            onClose={this.handleClose}
-            onReject={this.handleRejectInvitation}
-            onCancel={this.handleCancelInvitation}
-            onAccept={this.handleAcceptInvitation}
+            isVisible={showModal}
+            event={selectedEventData}
             navigation={navigation}
-            getRef={(ref) => { this.eventDetailScrollViewRef = ref; }}
-            getScrollOffset={(offset) => this.setState({ scrollOffset: offset })}
-            getMaxScrollOffset={(maxOffset) => this.setState({ maxScrollOffset: maxOffset })}
+            onClose={this.handleClose}
+            rejectInvitation={onRejectInvitation}
+            acceptInvitation={onAcceptInvitation}
           />
-        </SlideModal>
         }
       </ActivityFeedWrapper>
     );

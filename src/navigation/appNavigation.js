@@ -36,7 +36,6 @@ import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
 import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
 import ContactScreen from 'screens/Contact';
-import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -93,6 +92,7 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
+import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
 import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
 import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
@@ -151,7 +151,6 @@ import {
   HOME,
   HOME_TAB,
   LOGIN,
-  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -241,6 +240,7 @@ import {
   PIN_CODE,
   EXPLORE_APPS,
   WALLET_ACTIVATED,
+  REFERRAL_SENT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -316,6 +316,7 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE]: ExchangeScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
@@ -335,6 +336,7 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+
 // REFER FLOW
 const referFlow = createStackNavigator({
   [REFER_MAIN_SCREEN]: ReferFriendsScreen,
@@ -344,11 +346,11 @@ const referFlow = createStackNavigator({
 
 referFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
-  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
@@ -389,6 +391,7 @@ const homeFlow = createStackNavigator({
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [EXCHANGE]: ExchangeScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -724,6 +727,7 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
+    [REFERRAL_SENT]: ReferralSentScreen,
   },
   modalTransition,
 );

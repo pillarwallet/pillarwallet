@@ -22,6 +22,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
+import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
 import BigNumber from 'bignumber.js';
 
@@ -29,15 +30,18 @@ import BigNumber from 'bignumber.js';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { addressesEqual } from 'utils/assets';
 import { createAlert } from 'utils/alerts';
-import { findMatchingContact } from 'utils/contacts';
 import { fontSizes, spacing } from 'utils/variables';
+import {
+  elipsizeAddress, isPendingTransaction, isSWAddress, isKWAddress, groupPPNTransactions, getUsernameOrAddress,
+} from 'utils/feedData';
+import { findMatchingContact } from 'utils/contacts';
 import {
   findAccountByAddress,
   checkIfSmartWalletAccount,
   checkIfKeyBasedAccount,
   getAccountName,
 } from 'utils/accounts';
-import isEqual from 'lodash.isequal';
+import { images } from 'utils/images';
 
 // components
 import {
@@ -59,7 +63,6 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
   TX_PENDING_STATUS,
-  CONNECTION_EVENT,
 } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
@@ -88,6 +91,8 @@ import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
+import type { TransactionsGroup } from 'utils/feedData';
+import type { BitcoinAddress } from 'models/Bitcoin';
 
 
 type Props = {
@@ -108,6 +113,7 @@ type Props = {
   accounts: Accounts,
   isSmartWalletActivated: boolean,
   assetDecimals: number,
+  bitcoinAddresses: BitcoinAddress[],
 };
 
 type EventData = {
@@ -127,17 +133,12 @@ type EventData = {
   valueColor?: string,
   customAddon?: React.Node,
   itemStatusIcon?: string,
-  eventData?: Object,
-  eventType?: string,
-  eventStatus?: string,
   iconBackgroundColor?: string,
   iconBorder?: boolean,
   fallbackToGenericToken?: boolean,
+  secondaryButton?: boolean,
+  buttonActionLabel?: string,
 };
-
-const PPNIcon = require('assets/icons/icon_PPN.png');
-const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 
 const NAMES = {
   SMART_WALLET: 'Smart Wallet',
@@ -167,43 +168,40 @@ const ItemValue = styled(BaseText)`
   text-align: right;
 `;
 
-const elipsizeAddress = (address: string) => {
-  return `${address.slice(0, 6)}…${address.slice(-6)}`;
-};
-
 export class ActivityFeedItem extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
     const isEq = isEqual(this.props, nextProps);
     return !isEq;
   }
 
-  isReceived = ({ to: address }: Object) => {
-    const { activeAccountAddress } = this.props;
-    return addressesEqual(address, activeAccountAddress);
-  }
+  isReceived = ({ to: address }: Object): boolean => {
+    const { activeAccountAddress, bitcoinAddresses } = this.props;
+    return addressesEqual(address, activeAccountAddress) || bitcoinAddresses.some(e => e.address === address);
+  };
 
-  getContact = (event: Object) => {
-    const { contacts } = this.props;
-    const address = this.isReceived(event) ? event.from : event.to;
-    return contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress));
-  }
+  getRelevantAddress = (event: Object): string => {
+    const isReceived = this.isReceived(event);
+    return isReceived ? event.from : event.to;
+  };
 
-  getMatchingContact = (event: Object) => {
-    const { contacts, contactsSmartAddresses } = this.props;
-    const address = this.isReceived(event) ? event.from : event.to;
-    return findMatchingContact(address, contacts, contactsSmartAddresses) || {};
-  }
+  getFormattedSettleValues = () => {
+    const {
+      event,
+      asset,
+      assetDecimals,
+    } = this.props;
+    const settleData = event.extra;
+    const ppnTransactions = asset
+      ? settleData.filter(({ symbol }) => symbol === asset)
+      : settleData;
 
-  usernameOrAddress = (event: Object) => {
-    if (event.username) {
-      return event.username;
-    }
-    const contact = this.getContact(event);
-    if (contact) {
-      return contact.username;
-    }
-    const address = this.isReceived(event) ? event.from : event.to;
-    return elipsizeAddress(address);
+    const groupedPPNTransactions: TransactionsGroup[] = groupPPNTransactions(ppnTransactions);
+
+    const formattedValuesArray: Object[] = groupedPPNTransactions.map(({ symbol, value }): Object => ({
+      formatted: formatAmount(formatUnits(value.toString(), assetDecimals)),
+      symbol,
+    }));
+    return formattedValuesArray;
   }
 
   isSWAddress = (address: string) => {
@@ -249,7 +247,8 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getWalletCreatedEventData = (event: Object) => {
-    const { isSmartWalletActivated } = this.props;
+    const { isSmartWalletActivated, theme } = this.props;
+    const { keyWalletIcon, smartWalletIcon } = images(theme);
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
@@ -276,7 +275,8 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getUserEventData = (event: Object) => {
-    const { isSmartWalletActivated } = this.props;
+    const { isSmartWalletActivated, theme } = this.props;
+    const { keyWalletIcon, PPNIcon } = images(theme);
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
         return this.getWalletCreatedEventData(event);
@@ -300,11 +300,12 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   getTransactionEventData = (event: Object) => {
     const {
-      ensRegistry, activeBlockchainNetwork, assetDecimals,
+      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses, theme,
     } = this.props;
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
-    const contact = this.getMatchingContact(event);
+    const relevantAddress = this.getRelevantAddress(event);
+    const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const avatarUrl = contact && contact.profileImage;
 
     const formattedValue = formatAmount(value);
@@ -315,8 +316,11 @@ export class ActivityFeedItem extends React.Component<Props> {
       directionSymbol = '';
     }
 
+    const isPending = isPendingTransaction(event);
+
     let data: EventData = {};
-    const trxData = {};
+
+    const { smartWalletIcon, PPNIcon } = images(theme);
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -325,9 +329,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemImageSource: smartWalletIcon,
           actionLabel: STATUSES.ACTIVATED,
         };
-        trxData.hideSender = true;
-        trxData.hideAmount = true;
-        trxData.txType = 'Deployment';
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
@@ -348,9 +349,6 @@ export class ActivityFeedItem extends React.Component<Props> {
             valueColor: 'text',
           };
         }
-        trxData.hideSender = true;
-        trxData.hideAmount = true;
-        trxData.txType = 'PLR Tank Top Up';
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
         data = {
@@ -358,9 +356,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemImageSource: smartWalletIcon,
           subtext: 'Register ENS label',
         };
-        trxData.hideSender = true;
-        trxData.hideAmount = true;
-        trxData.txType = 'Register ENS label';
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
@@ -370,9 +365,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: `- ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
-        trxData.txType = 'Withdrawal';
-        trxData.hideAmount = true;
-        trxData.hideSender = true;
         break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
         const formattedValuesArray = this.getFormattedSettleValues();
@@ -396,21 +388,20 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       default:
-        const address = isReceived ? event.from : event.to;
         const usernameOrAddress = event.username
-            || ensRegistry[address]
-            || elipsizeAddress(address);
+            || ensRegistry[relevantAddress]
+            || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         let subtext = getAccountName(event.accountType);
         const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
         const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
-        if (isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
+        if (isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
           subtext = `to ${keyWallet}`;
-        } else if (isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
+        } else if (isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
           subtext = `to ${smartWallet}`;
-        } else if (!isReceived && this.isSWAddress(event.from) && this.isKWAddress(event.to)) {
+        } else if (!isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
           subtext = `from ${smartWallet}`;
-        } else if (!isReceived && this.isKWAddress(event.from) && this.isSWAddress(event.to)) {
+        } else if (!isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
           subtext = `from ${keyWallet}`;
         }
 
@@ -436,32 +427,27 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         }
     }
-    data.itemStatusIcon = event.status === TX_PENDING_STATUS ? TX_PENDING_STATUS : '';
+    data.itemStatusIcon = isPending ? TX_PENDING_STATUS : '';
     if (activeBlockchainNetwork === 'BITCOIN') {
       data.subtext = 'Bitcoin wallet';
     }
-    data.eventData = {
-      ...event,
-      value,
-      contact,
-      ...trxData,
-    };
     return data;
   }
 
   getCollectibleTransactionEventData = (event: Object) => {
+    const { contacts } = this.props;
     const isReceived = this.isReceived(event);
     const { asset, icon } = event;
-    const usernameOrAddress = this.usernameOrAddress(event);
+    const relevantAddress = this.getRelevantAddress(event);
+
+    const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
     const subtext = `Collectible ${isReceived ? 'from' : 'to'} ${usernameOrAddress}`;
-    const contact = this.getContact(event);
 
     return {
       label: asset,
       itemImageUrl: icon,
       subtext,
       actionLabel: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
-      eventData: { ...event, contact },
       iconBackgroundColor: 'card',
       iconBorder: true,
       fallbackToGenericToken: true,
@@ -475,7 +461,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       itemImageUrl: imageUrl,
       subtext: 'Badge',
       actionLabel: STATUSES.RECEIVED,
-      eventData: { ...event },
     };
   }
 
@@ -486,8 +471,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     let actionLabel;
     if (type === TYPE_ACCEPTED) {
       actionLabel = STATUSES.CONNECTED;
-    } else if (type === TYPE_SENT) {
-      actionLabel = STATUSES.REQUESTED;
     } else {
       actionLabel = null;
     }
@@ -496,11 +479,12 @@ export class ActivityFeedItem extends React.Component<Props> {
       label: username,
       actionLabel,
       avatarUrl: profileImage,
-      eventData: { ...event },
-      eventType: CONNECTION_EVENT,
-      eventStatus: event.type,
-      labelAsButton: type === TYPE_SENT,
     };
+
+    if (type === TYPE_SENT) {
+      data.buttonActionLabel = STATUSES.REQUESTED;
+      data.secondaryButton = true;
+    }
 
     if (type === TYPE_RECEIVED) {
       data.subtext = 'Connection request';
@@ -545,16 +529,13 @@ export class ActivityFeedItem extends React.Component<Props> {
     const {
       iconColor,
       valueColor,
-      eventData,
-      eventType,
-      eventStatus,
       iconBackgroundColor,
     } = itemData;
 
     return (
       <ListItemWithImage
         {...itemData}
-        onPress={eventData && (() => selectEvent(eventData, eventType || event.type, eventStatus || event.status))}
+        onPress={() => selectEvent(event)}
         actionLabelColor={this.getColor('secondaryText')}
         iconColor={this.getColor(iconColor)}
         diameter={48}

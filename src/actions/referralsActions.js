@@ -43,8 +43,10 @@ import {
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
   CLAIM_REWARD,
+  SET_REFERRAL_REWARD_AMOUNT,
+  SET_ALREADY_INVITED_CONTACTS,
 } from 'constants/referralsConstants';
-import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW } from 'constants/navigationConstants';
+import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW, REFERRAL_SENT } from 'constants/navigationConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -52,6 +54,10 @@ import Toast from 'components/Toast';
 // services
 import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
+
+// utils
+import { noop } from 'utils/common';
+
 
 export type ClaimTokenAction = {
   walletId: string,
@@ -88,24 +94,18 @@ const inviteSentAction = (payload: InviteSentPayload) => {
       type: INVITE_SENT,
       payload,
     });
-    dispatch({
-      type: ADD_NOTIFICATION,
-      payload: {
-        message: 'Invitations sent',
-        messageType: 'success',
-      },
-    });
   };
 };
 
-const inviteErrorAction = (errorMessage?: string) => {
+const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) => {
   return async (dispatch: Dispatch) => {
     dispatch({
       type: ADD_NOTIFICATION,
       payload: {
         message: errorMessage || 'Please try again later',
-        title: 'Invites have not been sent',
+        title: `${isAllInvitesNotSent ? 'Invites' : 'Some invites'} have not been sent`,
         messageType: 'warning',
+        autoClose: false,
       },
     });
     dispatch({
@@ -152,12 +152,16 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
 
     const invitations = invitationContacts.map(({ email, phone }) => ({ email, phone }));
 
+    const unsentInvitations = [];
+    let errorMessage;
+    let rewardToStore = {};
+
     await Promise.all(invitations.map(async (invitation) => {
       const { email, phone } = invitation;
       const token = await api.generateReferralToken(walletId);
 
       if (token.result !== 'success') {
-        dispatch(inviteErrorAction());
+        unsentInvitations.push(invitation);
         return;
       }
 
@@ -167,7 +171,7 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         token: token.token,
       });
 
-      const { error } = await api.sendReferralInvitation({
+      const { error, reward } = await api.sendReferralInvitation({
         token: token.token,
         walletId,
         referralLink,
@@ -176,8 +180,8 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
       });
 
       if (error) {
-        const errorMessage = get(error, 'response.data.message');
-        dispatch(inviteErrorAction(errorMessage));
+        errorMessage = get(error, 'response.data.message');
+        unsentInvitations.push(invitation);
         return;
       }
 
@@ -190,7 +194,34 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         alreadyInvitedContacts: invitationContacts,
         sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
       }));
+
+      if (!isEmpty(reward)) {
+        rewardToStore = reward;
+      }
     }));
+    if (unsentInvitations.length < invitations.length) {
+      if (!isEmpty(rewardToStore)) {
+        navigate(REFERRAL_SENT);
+      } else {
+        // if no reward is being issued - show simple toast
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            message: 'Success',
+            title: `${!unsentInvitations.length ? 'Invites' : 'Some invites'} have been sent`,
+            messageType: 'success',
+          },
+        });
+      }
+    }
+    if (unsentInvitations.length) {
+      dispatch(inviteErrorAction(errorMessage, unsentInvitations.length === invitations.length));
+    }
+    // to override reward if it is not returned because no reward is being issued
+    dispatch({
+      type: SET_REFERRAL_REWARD_AMOUNT,
+      payload: rewardToStore,
+    });
   };
 };
 
@@ -262,7 +293,7 @@ export const allowToAccessPhoneContactsAction = () => {
   };
 };
 
-export const goToInvitationFlowAction = () => {
+export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = noop) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       user: { data: { isEmailVerified, isPhoneVerified } },
@@ -274,6 +305,7 @@ export const goToInvitationFlowAction = () => {
         params: {},
         action: NavigationActions.navigate({ routeName: REFER_FLOW }),
       });
+      onNavigationCallback();
       navigate(navigateToReferFlow);
     } else {
       const navigateToUserSettings = NavigationActions.navigate({
@@ -287,8 +319,26 @@ export const goToInvitationFlowAction = () => {
         type: 'warning',
         title: 'Phone or Email verification needed',
         autoClose: false,
-        onPress: () => navigate(navigateToUserSettings),
+        onPress: () => {
+          onNavigationCallback();
+          navigate(navigateToUserSettings);
+        },
       });
     }
+  };
+};
+
+export const fetchSentReferralInvitationsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+    } = getState();
+
+    const sentInvitations = await api.getSentReferralInvites(walletId);
+
+    dispatch({
+      type: SET_ALREADY_INVITED_CONTACTS,
+      payload: sentInvitations,
+    });
   };
 };
