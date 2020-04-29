@@ -14,11 +14,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
   }
 >
   <RCTScrollView
-    ListEmptyComponent={
-      <ActivityFeed__EmptyStateWrapper>
-        <EmptyStateParagraph />
-      </ActivityFeed__EmptyStateWrapper>
-    }
     contentContainerStyle={
       Array [
         Object {},
@@ -413,11 +408,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
   }
 >
   <RCTScrollView
-    ListEmptyComponent={
-      <ActivityFeed__EmptyStateWrapper>
-        <EmptyStateParagraph />
-      </ActivityFeed__EmptyStateWrapper>
-    }
     contentContainerStyle={
       Array [
         Object {},

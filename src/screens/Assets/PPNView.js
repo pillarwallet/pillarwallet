@@ -54,9 +54,13 @@ import {
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
-  PAYMENT_PROCESSED,
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+} from 'constants/paymentNetworkConstants';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -68,7 +72,7 @@ import type { Theme } from 'models/Theme';
 import type { Balances, BalancesStore, Rates } from 'models/Asset';
 
 // utils
-import { getRate } from 'utils/assets';
+import { getRate, addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
@@ -83,6 +87,7 @@ import {
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
+import { activeAccountAddressSelector } from 'selectors';
 
 
 type Props = {
@@ -101,6 +106,7 @@ type Props = {
   fetchTransactionsHistory: () => void,
   theme: Theme,
   onScroll: (event: Object) => void,
+  activeAccountAddress: string,
   balances: BalancesStore,
 };
 
@@ -143,8 +149,10 @@ const FloatingButtonView = styled.View`
   width: 100%;
 `;
 
-const UNSETTLED = 'UNSETTLED';
+const INCOMING = 'INCOMING';
+const SENT = 'SENT';
 const SETTLED = 'SETTLED';
+
 const insightItemsList = [
   'Instant, gas-free and private transactions',
   'A single token experience including the ability to send/spend tokens you don’t already own through real-time swaps.',
@@ -152,7 +160,7 @@ const insightItemsList = [
 
 class PPNView extends React.Component<Props, State> {
   state = {
-    activeTab: UNSETTLED,
+    activeTab: INCOMING,
     isInitSmartWalletModalVisible: false,
   };
 
@@ -237,6 +245,7 @@ class PPNView extends React.Component<Props, State> {
       fetchTransactionsHistory,
       theme,
       onScroll,
+      activeAccountAddress,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -272,29 +281,52 @@ class PPNView extends React.Component<Props, State> {
     );
 
     const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
-      const { stateInPPN, hash } = transaction;
-      const { settled, unsettled } = filtered;
-      switch (stateInPPN) {
-        case PAYMENT_PROCESSED:
+      const {
+        stateInPPN, hash, tag, from,
+      } = transaction;
+      const {
+        settled, incoming, sent,
+      } = filtered;
+      switch (tag) {
+        case PAYMENT_NETWORK_ACCOUNT_TOPUP:
+          filtered.incoming = incoming.concat(transaction);
+          break;
+        case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
+          filtered.sent = sent.concat(transaction);
+          break;
+        case PAYMENT_NETWORK_TX_SETTLEMENT:
           filtered.settled = settled.concat(transaction);
           break;
-        case PAYMENT_COMPLETED:
-          if (!isHiddenUnsettledTransaction(hash, history)) filtered.unsettled = unsettled.concat(transaction);
-          break;
         default:
-          break;
+          if (addressesEqual(from, activeAccountAddress)) {
+            filtered.sent = sent.concat(transaction);
+          } else if (stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history)) {
+            filtered.incoming = incoming.concat(transaction);
+            filtered.unsettledCount += 1;
+          }
       }
       return filtered;
-    }, { settled: [], unsettled: [] });
+    }, {
+      settled: [], incoming: [], sent: [], unsettledCount: 0,
+    });
 
     const historyTabs = [
       {
-        id: UNSETTLED,
-        name: 'Unsettled',
-        onPress: () => this.setActiveTab(UNSETTLED),
-        data: PPNTransactionsGrouped.unsettled,
+        id: INCOMING,
+        name: 'Incoming',
+        onPress: () => this.setActiveTab(INCOMING),
+        data: PPNTransactionsGrouped.incoming,
         emptyState: {
-          title: 'No unsettled transactions',
+          title: 'No incoming transactions',
+        },
+      },
+      {
+        id: SENT,
+        name: 'Sent',
+        onPress: () => this.setActiveTab(SENT),
+        data: PPNTransactionsGrouped.sent,
+        emptyState: {
+          title: 'No sent transactions',
         },
       },
       {
@@ -308,7 +340,7 @@ class PPNView extends React.Component<Props, State> {
       },
     ];
 
-    const showSettleButton = activeTab !== SETTLED && !!PPNTransactionsGrouped.unsettled.length;
+    const showSettleButton = activeTab === INCOMING && !!PPNTransactionsGrouped.unsettledCount;
 
     return (
       <View style={{ flex: 1 }}>
@@ -389,6 +421,7 @@ class PPNView extends React.Component<Props, State> {
             initialNumToRender={6}
             wrapperStyle={{ flexGrow: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
+            isPPNView
           />
           }
         </ScrollView>
@@ -434,6 +467,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   PPNTransactions: PPNTransactionsSelector,
   history: accountHistorySelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

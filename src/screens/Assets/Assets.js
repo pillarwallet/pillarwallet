@@ -22,7 +22,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
+import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
 import { withTheme } from 'styled-components/native';
 
 // components
@@ -369,7 +369,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
-  PPNTransactions: PPNTransactionsSelector,
+  PPNTransactions: PPNIncomingTransactionsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

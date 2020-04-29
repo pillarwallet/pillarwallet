@@ -22,22 +22,33 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
-import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
-import { Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
-import { fontSizes, spacing } from 'utils/variables';
+// actions
 import {
   estimateWithdrawFromVirtualAccountAction,
   withdrawFromVirtualAccountAction,
 } from 'actions/smartWalletActions';
-import { formatAmount } from 'utils/common';
-import type { WithdrawalFee } from 'models/PaymentNetwork';
-import { PPN_TOKEN } from 'configs/assetsConfig';
+
+// constants
 import { ASSETS } from 'constants/navigationConstants';
+
+// components
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/Layout';
+import { Label, MediumText } from 'components/Typography';
+import Button from 'components/Button';
+import Spinner from 'components/Spinner';
+
+// utils
+import { fontSizes, spacing } from 'utils/variables';
+import { formatTransactionFee } from 'utils/common';
+
+// types
+import type { WithdrawalFee } from 'models/PaymentNetwork';
+
+// other
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 
 type Props = {
@@ -93,19 +104,23 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const { navigation, withdrawFromVirtualAccount } = this.props;
     this.setState({ buttonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
-    await withdrawFromVirtualAccount(amount);
+    const payForGasWithToken = !!get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
+    await withdrawFromVirtualAccount(amount, payForGasWithToken);
     this.setState({ buttonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
+    return get(this.props, 'withdrawalFee.feeInfo.gasTokenCost')
+      || get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
   };
 
   render() {
     const { session, navigation, withdrawalFee } = this.props;
     const { buttonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
-    const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei().toString()));
+
+    const gasToken = get(this.props, 'withdrawalFee.feeInfo.gasToken');
+    const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     const submitButtonTitle = buttonSubmitted
       ? 'Processing...'
@@ -133,12 +148,13 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
             <Value>{amount} {PPN_TOKEN}</Value>
           </LabeledRow>
           <LabeledRow>
-            <Label>Recipient username</Label>
+            <Label>Recipient</Label>
             <Value>Main Account</Value>
           </LabeledRow>
           <LabeledRow>
             <Label>Transaction fee</Label>
-            <Value>{feeInEth} ETH</Value>
+            {!withdrawalFee.isFetched && <Spinner width={20} height={20} />}
+            {withdrawalFee.isFetched && <Value>{feeDisplayValue}</Value>}
           </LabeledRow>
         </ScrollWrapper>
       </ContainerWithHeader>
@@ -155,7 +171,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  withdrawFromVirtualAccount: (amount: string) => dispatch(withdrawFromVirtualAccountAction(amount)),
+  withdrawFromVirtualAccount: (
+    amount: string,
+    payForGasWithToken: boolean,
+  ) => dispatch(withdrawFromVirtualAccountAction(amount, payForGasWithToken)),
   estimateWithdrawFromVirtualAccount: (amount: string) => dispatch(estimateWithdrawFromVirtualAccountAction(amount)),
 });
 

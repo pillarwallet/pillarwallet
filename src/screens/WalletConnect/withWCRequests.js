@@ -21,73 +21,71 @@ import * as React from 'react';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils, Interface } from 'ethers';
+import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
+import type { NavigationScreenProp } from 'react-navigation';
+
+// actions
 import { rejectCallRequestAction } from 'actions/walletConnectActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
-import { calculateGasEstimate } from 'services/assets';
+
+// constants
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import { ETH } from 'constants/assetsConstants';
+
+// selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountAddressSelector } from 'selectors';
-import type { NavigationScreenProp } from 'react-navigation';
+
+// utils
+import { getAssetDataByAddress } from 'utils/assets';
+
+// assets
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
+// types
 import type { TokenTransactionPayload } from 'models/Transaction';
-import type { GasInfo } from 'models/GasInfo';
 import type { Asset } from 'models/Asset';
 import type { CallRequest } from 'models/WalletConnect';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   requests: CallRequest[],
   session: Object,
   rejectCallRequest: (callId: number) => void,
-  gasInfo: GasInfo,
-  fetchGasInfo: () => void,
-  activeAccountAddress: string,
   supportedAssets: Asset[],
 };
 
 type State = {
   note: ?string,
-  gasLimit: number,
 };
+
+const isTokenTransfer = (data) => typeof data === 'string'
+  && data.toLowerCase() !== '0x'
+  && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
 export default function withWCRequests(WrappedComponent: React.ComponentType<*>) {
   const ComponentWithWCTransactions = class extends React.Component<Props, State> {
     state = {
       note: null,
-      gasLimit: 0,
     };
 
-    componentDidMount() {
-      this.props.fetchGasInfo();
-    }
-
-    componentDidUpdate(prevProps: Props) {
-      const {
-        fetchGasInfo,
-        session: { isOnline },
-      } = this.props;
-      if (prevProps.session.isOnline !== isOnline && isOnline) {
-        fetchGasInfo();
-      }
-    }
-
-    transactionDetails = (request) => {
-      if (!request) {
-        return {};
-      }
+    getTransactionDetails = (request) => {
+      if (!request) return {};
 
       const { supportedAssets } = this.props;
       const { value = 0, data } = request.params[0];
+
       let { to = '' } = request.params[0];
-      let amount = utils.formatEther(utils.bigNumberify(value).toString());
-      const asset = supportedAssets.find(
-        ({ address: assetAddress = '' }) => assetAddress.toLowerCase() === to.toLowerCase(),
-      );
-      const isTokenTransfer = data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
-      if (asset && isTokenTransfer) {
+      let amount;
+
+      const assetData = isTokenTransfer(data)
+        ? getAssetDataByAddress([], supportedAssets, to)
+        : {};
+
+      if (isEmpty(assetData)) {
+        amount = utils.formatEther(utils.bigNumberify(value).toString());
+      } else {
         const iface = new Interface(ERC20_CONTRACT_ABI);
         const parsedTransaction = iface.parseTransaction({ data, value }) || {};
         const {
@@ -97,71 +95,44 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
           ],
         } = parsedTransaction; // get method value and address input
         // do not parse amount as number, last decimal numbers might change after converting
-        amount = utils.formatUnits(methodValue, asset.decimals);
+        amount = utils.formatUnits(methodValue, assetData.decimals);
         to = methodToAddress;
       }
+
+      const {
+        symbol = ETH,
+        address: contractAddress = '',
+        decimals = 18,
+      } = assetData;
+
       return {
         to,
         amount,
         data,
-        symbol: asset ? asset.symbol : ETH,
-        contractAddress: asset ? asset.address : '',
-        decimals: asset ? asset.decimals : 18,
+        symbol,
+        contractAddress,
+        decimals,
         note: this.state.note,
-        isTokenTransfer,
       };
     };
 
-    getTokenTransactionPayload = (gasLimit, request): {
-      unsupportedAction: boolean,
-      transaction: TokenTransactionPayload,
-    } => {
-      const { gasInfo } = this.props;
-      const transaction = this.transactionDetails(request);
-      const { contractAddress, isTokenTransfer } = transaction;
-
-      /**
-       *  we're using our wallet avg gas price and gas limit
-       *
-       *  the reason we're not using gas price and gas limit provided by WC since it's
-       *  optional in platform end while also gas limit and gas price values provided
-       *  by platform are not always enough to fulfill transaction
-       *
-       *  if we start using gasPrice provided by then WC incoming value is gwei in hex
-       *  `gasPrice = utils.bigNumberify(gasPrice);`
-       *  and both gasPrice and gasLimit is not always present from plaforms
-       */
-
-      const defaultGasPrice = gasInfo.gasPrice.avg || 0;
-      const gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
-      const txFeeInWei = gasPrice.mul(gasLimit);
-
-      return {
-        unsupportedAction: isTokenTransfer && contractAddress === '',
-        transaction: {
-          ...transaction,
-          gasLimit,
-          gasPrice,
-          txFeeInWei,
-        },
-      };
+    isUnsupportedTransaction = (transaction: TokenTransactionPayload): boolean => {
+      const { contractAddress, data } = transaction;
+      // unsupported action is if it's our wallet's unsupported token transfer
+      return isTokenTransfer(data) && contractAddress === '';
     };
 
-    acceptWCRequest = async request => {
-      const { navigation, activeAccountAddress } = this.props;
+    getTransactionPayload = (estimatePart, request): TokenTransactionPayload => {
+      const transaction = this.getTransactionDetails(request);
+      return { ...estimatePart, ...transaction };
+    };
+
+    acceptWCRequest = (request: any, transactionPayload?: TokenTransactionPayload) => {
+      const { navigation } = this.props;
 
       switch (request.method) {
         case 'eth_sendTransaction':
         case 'eth_signTransaction':
-          const gasLimit = await calculateGasEstimate({
-            ...this.transactionDetails(request),
-            from: activeAccountAddress,
-          });
-
-          const {
-            transaction: transactionPayload,
-          } = this.getTokenTransactionPayload(gasLimit, request);
-
           navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
             callId: request.callId,
             transactionPayload,
@@ -179,24 +150,20 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
         default:
           break;
       }
-    }
+    };
 
-    rejectWCRequest = request => {
-      const { rejectCallRequest } = this.props;
-      rejectCallRequest(request.callId);
-    }
+    rejectWCRequest = request => this.props.rejectCallRequest(request.callId);
 
-    handleNoteChange(text) {
-      this.setState({ note: text });
-    }
+    handleNoteChange = (text) => this.setState({ note: text });
 
     render() {
       return (
         <WrappedComponent
           acceptWCRequest={this.acceptWCRequest}
           rejectWCRequest={this.rejectWCRequest}
-          transactionDetails={this.transactionDetails}
-          getTokenTransactionPayload={this.getTokenTransactionPayload}
+          getTransactionDetails={this.getTransactionDetails}
+          getTransactionPayload={this.getTransactionPayload}
+          isUnsupportedTransaction={this.isUnsupportedTransaction}
           handleNoteChange={this.handleNoteChange}
           note={this.state.note}
           {...this.props}
@@ -210,18 +177,15 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
     contacts: { data: contacts },
     session: { data: session },
     walletConnect: { requests },
-    history: { gasInfo },
   }) => ({
     contacts,
     session,
     supportedAssets,
     requests,
-    gasInfo,
   });
 
   const structuredSelector = createStructuredSelector({
     balances: accountBalancesSelector,
-    activeAccountAddress: activeAccountAddressSelector,
   });
 
   const combinedMapStateToProps = (state) => ({
@@ -231,7 +195,6 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
 
   const mapDispatchToProps = dispatch => ({
     rejectCallRequest: (callId: number) => dispatch(rejectCallRequestAction(callId)),
-    fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   });
 
   return withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(ComponentWithWCTransactions));
