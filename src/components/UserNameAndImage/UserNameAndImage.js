@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 
 import ProfileImage from 'components/ProfileImage';
-import { BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 
 import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 
@@ -48,7 +48,7 @@ const UserWrapper = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const UserName = styled(BaseText)`
+const UserName = styled(MediumText)`
   margin-left: 10px;
   flex-wrap: wrap;
   flex-shrink: 1;
