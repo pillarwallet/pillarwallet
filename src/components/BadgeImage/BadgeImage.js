@@ -4,8 +4,8 @@ import FastImage from 'react-native-fast-image';
 import type { Badge } from 'models/Badge';
 
 type Props = {
-  data: Badge,
-  size?: number,
+    data: Badge,
+    size?: number,
 };
 
 const defaultBadge = require('assets/images/defaultBadge.png');
@@ -16,13 +16,13 @@ const BadgeImage = ({ data: badge, size = 96 }: Props) => {
   return (
     <FastImage
       style={{
-              height: size,
-              width: size,
-          }}
+                height: size,
+                width: size,
+            }}
       source={{
-              uri: badgeUri,
-              priority: FastImage.priority.normal,
-          }}
+                uri: badgeUri,
+                priority: FastImage.priority.normal,
+            }}
       resizeMode={FastImage.resizeMode.contain}
       fallback
       defaultSource={defaultBadge}
