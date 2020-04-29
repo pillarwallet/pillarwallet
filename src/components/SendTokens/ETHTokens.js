@@ -354,7 +354,7 @@ class SendETHTokens extends React.Component<Props, State> {
     if (!value) return new BigNumber(0);
 
     const transaction = { recipient: receiver, value, gasToken };
-    const { gasTokenCost, cost: defaultCost } = await smartWalletService
+    const { gasTokenCost, cost: ethCost } = await smartWalletService
       .estimateAccountTransaction(transaction, gasInfo, assetData)
       .catch(() => ({}));
 
@@ -365,10 +365,10 @@ class SendETHTokens extends React.Component<Props, State> {
       return gasTokenCost;
     }
 
-    // reset to fee by eth because calculating failed
+    // reset to fee by eth because the calculation failed
     if (feeByGasToken) this.setState({ feeByGasToken: false });
 
-    return defaultCost;
+    return ethCost;
   };
 
   renderRelayerMigrationButton = () => {

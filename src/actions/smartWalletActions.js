@@ -134,7 +134,9 @@ import type { SendNavigateOptions } from 'models/Navigation';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, normalizeForEns } from 'utils/accounts';
 import {
+  accountHasGasTokenSupport,
   buildSmartWalletTransactionEstimate,
+  deviceHasGasTokenSupport,
   isConnectedToSmartAccount,
   isHiddenUnsettledTransaction,
 } from 'utils/smartWallet';
@@ -218,9 +220,14 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
     if (upgradeStatus === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
+
       const accountAssets = accountAssetsSelector(getState());
       if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction(false));
-      dispatch({ type: SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED });
+
+      const { smartWallet: { connectedAccount } } = getState();
+      if (accountHasGasTokenSupport(connectedAccount)) {
+        dispatch({ type: SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED });
+      }
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
@@ -259,11 +266,8 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
       });
       return;
     }
-    if (!isEmpty(connectedAccount.devices)) {
-      const gasTokenSupported = connectedAccount.devices.some((
-        device,
-      ) => !!get(device, 'features.gasTokenSupported') && device.state === sdkConstants.AccountDeviceStates.Deployed);
-      connectedAccount = { ...connectedAccount, gasTokenSupported };
+    if (accountHasGasTokenSupport(connectedAccount)) {
+      connectedAccount = { ...connectedAccount, gasTokenSupported: true };
     }
     dispatch({
       type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
@@ -771,7 +775,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     if (event.name === ACCOUNT_DEVICE_UPDATED) {
       const newAccountDeviceState = get(event, 'payload.state', '');
-      const deployedAccountDeviceState = get(sdkConstants, 'AccountStates.Deployed', '');
+      const deployedAccountDeviceState = get(sdkConstants, 'AccountDeviceStates.Deployed', '');
       // check if new account device state updated to deployed
       if (newAccountDeviceState === deployedAccountDeviceState) {
         // smart wallet account deployment check
@@ -782,8 +786,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 
         // smart wallet account relayer device deployment check
         const gasTokenSupportedPrev = get(getState(), 'smartWallet.connectedAccount.gasTokenSupported');
-        const gasTokenSupportedNew = get(event, 'payload.features.gasTokenSupported');
-        if (!gasTokenSupportedPrev && !!gasTokenSupportedNew) {
+        const gasTokenSupportedNew = deviceHasGasTokenSupport(event.payload);
+        if (!gasTokenSupportedPrev && gasTokenSupportedNew) {
           dispatch({ type: SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED });
         }
       }

@@ -64,6 +64,7 @@ import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
+type IAccountDevice = sdkInterfaces.IAccountDevice;
 const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 
 const getMessage = (
@@ -139,6 +140,17 @@ export const getDeployErrorMessage = (errorType: string) => ({
     ? 'You need to top up your Smart Account first'
     : 'There was an error on our server. Please try to re-activate the account by clicking the button bellow',
 });
+
+export const deviceHasGasTokenSupport = (device: IAccountDevice): boolean => {
+  return !!get(device, 'features.gasTokenSupported');
+};
+
+export const accountHasGasTokenSupport = (account: Object): boolean => {
+  if (isEmpty(get(account, 'devices', []))) return false;
+  return account.devices.some(device => {
+    return deviceHasGasTokenSupport(device) && device.state === sdkConstants.AccountDeviceStates.Deployed;
+  });
+};
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
 
@@ -266,8 +278,7 @@ export const parseSmartWalletTransactions = (
       };
     } else if (transactionType === AccountTransactionTypes.AddDevice) {
       const addedDeviceAddress = get(smartWalletTransaction, 'extra.address');
-      const connectedAccountDevices = get(connectedAccount, 'devices', []);
-      const gasTokenSupported = connectedAccountDevices.some((device) => !!get(device, 'features.gasTokenSupported'));
+      const gasTokenSupported = accountHasGasTokenSupport(connectedAccount);
       if (!isEmpty(addedDeviceAddress) && gasTokenSupported) {
         transaction = {
           ...transaction,
@@ -334,7 +345,7 @@ export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => 
 };
 
 export const buildSmartWalletTransactionEstimate = (
-  response: EstimatePayload,
+  apiEstimate: EstimatePayload,
   accountAssets: Assets,
   supportedAssets: Asset[],
 ) => {
@@ -344,7 +355,7 @@ export const buildSmartWalletTransactionEstimate = (
     totalCost,
     gasTokenCost,
     gasToken: parsedGasToken,
-  } = parseEstimatePayload(response);
+  } = parseEstimatePayload(apiEstimate);
 
   let estimate = {
     gasAmount,
