@@ -37,7 +37,7 @@ type Props = {
   rejectWCRequest: (request: CallRequest) => void,
   acceptWCRequest: (request: CallRequest) => void,
   theme: Theme,
-  showOneOnly?: boolean,
+  showLastOneOnly?: boolean,
 };
 
 const ActionCircleButton = styled(IconButton)`
@@ -109,10 +109,10 @@ class Requests extends React.Component<Props> {
   };
 
   render() {
-    const { requests, showOneOnly } = this.props;
+    const { requests, showLastOneOnly } = this.props;
     if (!requests.length) return null;
-    if (showOneOnly) {
-      return this.renderRequest({ item: requests[0] });
+    if (showLastOneOnly) {
+      return this.renderRequest({ item: requests[requests.length - 1] });
     }
 
     return (

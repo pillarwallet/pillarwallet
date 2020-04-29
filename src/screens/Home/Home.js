@@ -142,7 +142,7 @@ const {
 const profileImageWidth = 24;
 
 const RequestsWrapper = styled.View`
-  margin-top: 2px;
+  margin-top: ${({ marginOnTop }) => marginOnTop ? 18 : 2}px;
   align-items: flex-end;
 `;
 
@@ -457,14 +457,14 @@ class HomeScreen extends React.Component<Props, State> {
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
                   {!!walletConnectRequests &&
-                  <RequestsWrapper>
+                  <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
                     {walletConnectRequests.length > 1 &&
                     <ButtonText
                       onPress={() => navigation.navigate(WALLETCONNECT)}
                       buttonText={`View all ${walletConnectRequests.length}`}
                       wrapperStyle={{ padding: spacing.layoutSides }}
                     />}
-                    <Requests showOneOnly />
+                    <Requests showLastOneOnly />
                   </RequestsWrapper>}
                   {!!referralsFeatureEnabled && this.renderReferral()}
                   <CollapsibleSection
