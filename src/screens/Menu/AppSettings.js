@@ -26,7 +26,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import { spacing, fontStyles, fontTrackings } from 'utils/variables';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
-import { MediumText, Paragraph, BaseText } from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
@@ -58,11 +58,6 @@ type State = {
   leaveBetaPressed: boolean,
   joinBetaPressed: boolean,
 };
-
-const SettingsModalTitle = styled(MediumText)`
-  ${fontStyles.big};
-  margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
-`;
 
 const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
@@ -205,10 +200,9 @@ class AppSettings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
+          title="Choose your base currency"
+          insetTop
         >
-          <SettingsModalTitle extraHorizontalSpacing>
-            Choose your base currency
-          </SettingsModalTitle>
           <FlatList
             data={currencies}
             renderItem={this.renderCurrencyListItem}
@@ -225,6 +219,7 @@ class AppSettings extends React.Component<Props, State> {
           avoidKeyboard
           title="Smart Wallet Early Access"
           onModalHide={() => this.setState({ visibleModal: null })}
+          insetTop
         >
           <StyledWrapper regularPadding flex={1}>
             <Paragraph small>
@@ -251,6 +246,7 @@ class AppSettings extends React.Component<Props, State> {
           avoidKeyboard
           title="Leaving Early Access program"
           onModalHide={() => this.setState({ visibleModal: null })}
+          insetTop
         >
           <StyledWrapper regularPadding flex={1}>
             <Paragraph small>
@@ -281,6 +277,7 @@ class AppSettings extends React.Component<Props, State> {
           onModalHide={() => this.setState({ visibleModal: null })}
           avoidKeyboard
           title="Usage analytics"
+          insetTop
         >
           <Wrapper regularPadding flex={1}>
             <StyledWrapper>
@@ -310,6 +307,7 @@ class AppSettings extends React.Component<Props, State> {
           showHeader
           title="System info"
           onModalHide={() => this.setState({ visibleModal: null })}
+          insetTop
         >
           <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
         </SlideModal>

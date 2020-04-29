@@ -1593,7 +1593,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "paddingBottom": 20,
+                      "paddingBottom": 60,
                       "paddingLeft": 16,
                       "paddingRight": 16,
                       "paddingTop": 0,
