@@ -65,7 +65,7 @@ const InnerUsername = styled(MediumText)`
   color: ${themedColors.control};
 `;
 
-type Props = {
+export type ExternalProfileImageProps = {
   uri?: string,
   userName?: string,
   containerStyle?: Object,
@@ -80,8 +80,11 @@ type Props = {
   initialsSize?: number,
   noShadow?: boolean,
   showProfileImage?: boolean,
-  theme: Theme,
   fallbackImage?: string,
+}
+
+type Props = ExternalProfileImageProps & {
+  theme: Theme,
 }
 
 const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
