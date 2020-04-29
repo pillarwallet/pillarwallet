@@ -62,7 +62,7 @@ export function makeAmountForm(
     if (!enoughForFee) {
       return `Not enough ${feeSymbol || ETH} to process the transaction fee`;
     } else if (amount >= maxAmount) {
-      return 'Amount should not exceed the sum of total balance and est. network fee';
+      return 'Amount should not exceed the total balance';
     } else if (amount === 0) {
       /**
        * 0 is the first number that can be typed therefore we don't want

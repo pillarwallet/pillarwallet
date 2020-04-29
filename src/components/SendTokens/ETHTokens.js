@@ -483,8 +483,9 @@ class SendETHTokens extends React.Component<Props, State> {
       customProps: { inputWrapperStyle: { marginTop: spacing.large } },
     });
 
+    const enteredMoreThanBalance = currentValue > balance;
     const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
-    const showFee = !gettingFee && !!txFeeInWei && txFeeInWei.gt(0);
+    const showFee = !enteredMoreThanBalance && !gettingFee && !!txFeeInWei && txFeeInWei.gt(0);
     const isNextButtonDisabled = gettingFee || !session.isOnline;
     const nextButtonTitle = gettingFee
       ? 'Getting the fee..'
