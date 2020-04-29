@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
 import { MediumText } from 'components/Typography';
@@ -64,27 +63,24 @@ const StatusIcon = styled.View`
   width: 8px;
   border-radius: 4px;
   background-color: ${({ isActive, theme }) => isActive ? theme.colors.positive : theme.colors.negative};
-  position: absolute;
-  top: 5px;
-  left: 5px;
 `;
 
 const StatusIndicatorHolder = styled.View`
-  position: relative;
-  width: 15px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const AnimationWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
 `;
 
 const StyledAnimation = styled(Animation)`
-  position: absolute;
-  top: ${Platform.select({
-    ios: '-0.5px',
-    android: '-1px',
-  })};
-  left: ${Platform.select({
-    ios: '-0.6px',
-    android: '-1px',
-  })};
   width: 22px;
   height: 22px;
 `;
@@ -94,7 +90,7 @@ const animationSource = require('assets/animations/livePulsatingAnimation.json')
 const Status = ({ isActive }) => {
   return (
     <StatusIndicatorHolder>
-      {!!isActive && <StyledAnimation source={animationSource} loop speed={0.9} />}
+      {!!isActive && <AnimationWrapper><StyledAnimation source={animationSource} loop speed={0.9} /></AnimationWrapper>}
       <StatusIcon isActive={isActive} />
     </StatusIndicatorHolder>
   );
