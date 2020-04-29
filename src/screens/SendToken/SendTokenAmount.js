@@ -20,6 +20,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import isEmpty from 'lodash.isempty';
+import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
+
+// actions
+import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 // constants
 import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -30,20 +35,28 @@ import SendBTCAmount from 'components/SendTokens/BTCAmount';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Balances, Rates, AssetData } from 'models/Asset';
+import type {
+  Balances,
+  Rates,
+  AssetData,
+  Asset,
+  Assets,
+} from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { SessionData } from 'models/Session';
+import type { Transaction } from 'models/Transaction';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import {
-  activeAccountAddressSelector,
-  activeAccountSelector,
-} from 'selectors';
+import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
 
-// actions
-import { updateAppSettingsAction } from 'actions/appSettingsActions';
+// utils
+import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
+import { checkIfSmartWalletAccount } from 'utils/accounts';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -55,6 +68,10 @@ type Props = {
   activeAccountAddress: string,
   activeAccount: ?Account,
   updateAppSettings: (path: string, value: any) => void,
+  accountAssets: Assets,
+  supportedAssets: Asset[],
+  smartWalletAccountSupportsGasToken: ?boolean,
+  accountHistory: Transaction[],
 };
 
 class SendTokenAmount extends React.Component<Props> {
@@ -95,11 +112,25 @@ class SendTokenAmount extends React.Component<Props> {
       activeAccountAddress,
       transactionSpeed,
       navigation,
+      accountAssets,
+      supportedAssets,
+      smartWalletAccountSupportsGasToken,
+      accountHistory,
     } = this.props;
     const { token } = this.assetData;
     const AmountComponent = this.selectAmountComponent(token);
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+    let gasToken;
+    const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
+    const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
+    if (isSmartAccount
+      && smartWalletAccountSupportsGasToken
+      && !isEmpty(gasTokenData)) {
+      const { decimals, address, symbol } = gasTokenData;
+      gasToken = { decimals, address, symbol };
+    }
 
     return (
       <AmountComponent
@@ -116,6 +147,9 @@ class SendTokenAmount extends React.Component<Props> {
         transactionSpeed={transactionSpeed}
         activeAccountAddress={activeAccountAddress}
         onUpdateTransactionSpeed={this.updateTransactionSpeed}
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
+        gasToken={gasToken}
       />
     );
   }
@@ -125,17 +159,23 @@ const mapStateToProps = ({
   session: { data: session },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, transactionSpeed } },
+  assets: { supportedAssets },
+  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   baseFiatCurrency,
   transactionSpeed,
+  supportedAssets,
+  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccount: activeAccountSelector,
   activeAccountAddress: activeAccountAddressSelector,
+  accountAssets: accountAssetsSelector,
+  accountHistory: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

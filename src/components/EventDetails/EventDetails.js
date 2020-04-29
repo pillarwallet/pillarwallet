@@ -27,6 +27,7 @@ import { format as formatDate } from 'date-fns';
 import FastImage from 'react-native-fast-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
@@ -44,7 +45,12 @@ import SWActivationModal from 'components/SWActivationModal';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
 import { getRate, addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
-import { formatFiat, formatAmount, formatUnits } from 'utils/common';
+import {
+  formatFiat,
+  formatAmount,
+  formatUnits,
+  formatTransactionFee,
+} from 'utils/common';
 import {
   groupPPNTransactions, elipsizeAddress, isPendingTransaction, isSWAddress, isKWAddress, getUsernameOrAddress,
 } from 'utils/feedData';
@@ -72,7 +78,10 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import {
+  SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
@@ -194,7 +203,7 @@ const IconCircle = styled.View`
   justify-content: center;
   text-align: center;
   ${({ border, theme }) => border &&
-    `border-color: ${theme.colors.border};
+  `border-color: ${theme.colors.border};
     border-width: 1px;`};
 `;
 
@@ -255,11 +264,15 @@ class EventDetail extends React.Component<Props, State> {
       event, baseFiatCurrency, rates, assetDecimals,
     } = this.props;
     const {
-      gasUsed, gasPrice, btcFee,
+      gasUsed, gasPrice, btcFee, feeWithGasToken,
     } = event;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     let formattedFee;
+
+    if (!isEmpty(feeWithGasToken)) {
+      return `Fee ${formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken'))}`;
+    }
 
     if (gasUsed) {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
@@ -645,7 +658,6 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
-
       case SET_SMART_WALLET_ACCOUNT_ENS:
         return {
           name: 'ENS name',
@@ -688,10 +700,23 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+      case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
+        return {
+          name: 'Smart Wallet fees with PLR',
+          itemImageSource: smartWalletIcon,
+          actionTitle: 'Enabled',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
       default:
         const usernameOrAddress = event.username
-            || ensRegistry[relevantAddress]
-            || elipsizeAddress(relevantAddress);
+          || ensRegistry[relevantAddress]
+          || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         let subtext = getAccountName(event.accountType);
         const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
@@ -1156,7 +1181,7 @@ class EventDetail extends React.Component<Props, State> {
                     <BaseText regular secondary>{fee}</BaseText>
                     <Spacing h={32} />
                   </React.Fragment>
-              )}
+                )}
               </React.Fragment>
             )}
             <ButtonsContainer>

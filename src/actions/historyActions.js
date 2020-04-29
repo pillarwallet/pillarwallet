@@ -178,7 +178,7 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId },
+      smartWallet: { lastSyncedTransactionId, connectedAccount },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -193,7 +193,12 @@ export const fetchSmartWalletTransactionsAction = () => {
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = accountAssetsSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
-    const history = parseSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
+    const history = parseSmartWalletTransactions(
+      smartWalletTransactions,
+      supportedAssets,
+      assetsList,
+      connectedAccount,
+    );
 
     if (!history.length) return;
 

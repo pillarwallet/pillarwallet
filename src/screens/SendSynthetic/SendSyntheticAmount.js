@@ -241,7 +241,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       const { navigation } = this.props;
       const amount = parseNumericAmount(value);
       Keyboard.dismiss();
-      const { token: assetCode, contractAddress, decimals } = this.assetData;
+      const { token: assetCode, contractAddress = '', decimals } = this.assetData;
       if (assetCode === PLR) {
         // go through regular confirm as PLR is staked by the user already so he owns it
         const transactionPayload: TokenTransactionPayload = {
