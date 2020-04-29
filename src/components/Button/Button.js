@@ -270,6 +270,10 @@ const getButtonPadding = (props) => {
     return '0';
   }
 
+  if (props.listItemButton) {
+    return '9px';
+  }
+
   if (props.small || props.block) {
     return `${spacing.rhythm}px`;
   }
@@ -485,6 +489,7 @@ class Button extends React.Component<Props, State> {
       isLoading,
       style,
       theme,
+      listItemButton,
     } = this.props;
 
     const updatedColors = themeColors(theme)[getThemeType(this.props, true)];
@@ -499,6 +504,7 @@ class Button extends React.Component<Props, State> {
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
         borderRadius={this.props.small ? 3 : 6}
         style={style}
+        listItemButton={listItemButton}
       >
         {this.renderButtonContent({ customTheme, updatedTheme })}
         {children}

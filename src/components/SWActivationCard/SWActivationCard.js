@@ -20,7 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 
 // components
 import InsightWithButton from 'components/InsightWithButton';
@@ -43,6 +42,7 @@ import {
 // types
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
+import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 
 
@@ -62,10 +62,13 @@ type State = {
   isModalVisible: boolean,
 };
 
-
 class SWActivationCard extends React.Component<Props, State> {
   state = {
     isModalVisible: false,
+  };
+
+  closeActivationModal = () => {
+    this.setState({ isModalVisible: false });
   };
 
   render() {
@@ -79,9 +82,7 @@ class SWActivationCard extends React.Component<Props, State> {
       deploySmartWallet,
       navigation,
     } = this.props;
-    const {
-      isModalVisible,
-    } = this.state;
+    const { isModalVisible } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
@@ -123,9 +124,7 @@ class SWActivationCard extends React.Component<Props, State> {
         )}
         <SWActivationModal
           isVisible={isModalVisible}
-          onClose={() => {
-            this.setState({ isModalVisible: false });
-          }}
+          onClose={this.closeActivationModal}
           navigation={navigation}
         />
       </React.Fragment>
