@@ -122,7 +122,7 @@ type Props = {
   tabsComponent?: React.Node,
   headerComponent?: React.Node,
   flatListProps?: FlatList,
-  isPPNView: boolean,
+  isPPNView?: boolean,
 };
 
 type State = {|

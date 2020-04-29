@@ -114,7 +114,7 @@ type Props = {
   isSmartWalletActivated: boolean,
   assetDecimals: number,
   bitcoinAddresses: BitcoinAddress[],
-  isPPNView: boolean,
+  isPPNView?: boolean,
 };
 
 type EventData = {
