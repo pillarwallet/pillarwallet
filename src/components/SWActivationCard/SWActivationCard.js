@@ -124,7 +124,7 @@ class SWActivationCard extends React.Component<Props, State> {
         )}
         <SWActivationModal
           isVisible={isModalVisible}
-          closeModal={this.closeActivationModal}
+          onClose={this.closeActivationModal}
           navigation={navigation}
         />
       </React.Fragment>

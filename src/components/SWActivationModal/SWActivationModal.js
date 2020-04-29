@@ -261,7 +261,7 @@ class SWActivationModal extends React.Component<Props, State> {
     } else {
       this.deployFromLegacyWallet();
     }
-    onClose();
+    if (onClose) onClose();
   };
 
   getFormattedAmount = (amount) => {
