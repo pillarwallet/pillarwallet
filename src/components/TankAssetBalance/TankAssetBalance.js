@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 import { fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
@@ -45,7 +45,7 @@ const BalanceInTank = styled(BaseText)`
   font-size: ${fontSizes.big}px;
 `;
 
-const Icon = styled(CachedImage)`
+const Icon = styled(FastImage)`
   width: 6px;
   height: 12px;
   margin-right: 4px;

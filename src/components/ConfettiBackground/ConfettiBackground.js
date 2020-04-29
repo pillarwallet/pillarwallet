@@ -20,8 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { getDeviceWidth } from 'utils/common';
@@ -47,7 +46,7 @@ const ContentWrapper = styled.View`
   padding: 40px ${spacing.layoutSides}px;
 `;
 
-const Confetti = styled(CachedImage)`
+const Confetti = styled(FastImage)`
   position: absolute;
   left: 0;
   ${({ top }) => top ? 'top: 0;' : 'bottom: 0;'}

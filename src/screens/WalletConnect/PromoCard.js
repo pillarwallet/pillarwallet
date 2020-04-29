@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { withNavigation, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -105,7 +105,7 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
   return (
     <CardWrapper>
       <ShadowedCard borderRadius={30}>
-        <CachedImage
+        <FastImage
           source={promoImage}
           resizeMode="cover"
           style={{ width: '100%', aspectRatio: promoImageAspectRatio }}

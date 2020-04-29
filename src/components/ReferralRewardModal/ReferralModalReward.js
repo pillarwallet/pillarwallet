@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { withNavigation } from 'react-navigation';
 
 import { Wrapper } from 'components/Layout';
@@ -49,7 +49,7 @@ const StyledScrollView = styled.ScrollView`
   background-color: ${themedColors.surface};
 `;
 
-const RewardBadge = styled(CachedImage)`
+const RewardBadge = styled(FastImage)`
   width: 104px;
   height: 104px;
   margin-bottom: ${spacing.medium}px;

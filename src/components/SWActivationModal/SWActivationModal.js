@@ -26,7 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import isEqual from 'lodash.isequal';
 import { utils } from 'ethers';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -310,7 +310,7 @@ class SWActivationModal extends React.Component<Props, State> {
           <ModalContainer>
             <MediumText center medium>Activate Smart Wallet</MediumText>
             <Spacing h={18} />
-            <CachedImage
+            <FastImage
               style={{ width: 64, height: 64, alignSelf: 'center' }}
               source={smartWalletIcon}
             />

@@ -20,8 +20,7 @@
 import * as React from 'react';
 import { Dimensions } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
@@ -105,7 +104,7 @@ const IconWrapper = styled.View`
 `;
 
 const iconRadius = responsiveSize(52);
-const CardImage = styled(CachedImage)`
+const CardImage = styled(FastImage)`
   height: ${iconRadius}px;
   width: ${iconRadius}px;
   border-radius: ${iconRadius / 2}px;
@@ -117,7 +116,7 @@ const SettingsLabel = styled(MediumText)`
   margin-top: 4px;
 `;
 
-const ButtonIcon = styled(CachedImage)`
+const ButtonIcon = styled(FastImage)`
   height: 24px;
   width: 24px;
   justify-content: center;
@@ -206,7 +205,7 @@ const SettingsItemCarded = (props: Props) => {
         <CardRow>
           {showIcon &&
           <IconWrapper>
-            {(!!icon || !!fallbackIcon) && <CardImage source={{ uri: icon }} fallbackSource={fallbackIcon} />}
+            {(!!icon || !!fallbackIcon) && <CardImage source={{ uri: icon }} fallback defaultSource={fallbackIcon} />}
             {customIcon}
           </IconWrapper>}
           <CardContent>

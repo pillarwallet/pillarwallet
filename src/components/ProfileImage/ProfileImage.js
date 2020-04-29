@@ -18,9 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { ImageBackground } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
 import { getThemeType, themedColors } from 'utils/themes';
@@ -29,7 +28,7 @@ import { Shadow } from 'components/Shadow';
 import type { Theme } from 'models/Theme';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
-const CircleImage = styled(CachedImage)`
+const CircleImage = styled(FastImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
@@ -129,9 +128,6 @@ const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node,
   );
 };
 
-const CACHED_IMAGE_REF = 'cachedImage';
-const IMAGE_LOAD_FAILED = 'image_load_failed';
-
 const ProfileImage = (props: Props) => {
   const {
     uri,
@@ -152,6 +148,7 @@ const ProfileImage = (props: Props) => {
     fallbackImage,
   } = props;
 
+  const [loadError, setLoadError] = React.useState(false);
   const themeType = getThemeType(theme);
   const diameterWithBorder = diameter + (borderWidth * 2) + (borderSpacing * 2);
 
@@ -162,13 +159,6 @@ const ProfileImage = (props: Props) => {
     return (<DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />);
   };
 
-  const renderImage = (data: Object) => {
-    if (data.source === IMAGE_LOAD_FAILED) {
-      return renderDefaultImage();
-    }
-    return <ImageBackground imageStyle={data.style} ref={CACHED_IMAGE_REF} {...data} />;
-  };
-
   return (
     <Wrapper noShadow={noShadow || themeType === DARK_THEME} diameter={diameterWithBorder}>
       {showProfileImage &&
@@ -177,21 +167,19 @@ const ProfileImage = (props: Props) => {
           diameter={diameterWithBorder}
           disabled={!onPress}
           onPress={onPress}
-          transparent={uri}
+          transparent={uri && !loadError}
           style={style}
           hasChildren={children}
           borderWidth={borderWidth}
           borderColor={borderColor}
-          needBackground={!uri}
+          needBackground={!uri || loadError}
         >
-          {!uri && renderDefaultImage()}
-          {!!uri &&
+          {(!uri || loadError) && renderDefaultImage()}
+          {(!!uri && !loadError) &&
           <CircleImage
-            useQueryParamsInCacheKey
             additionalImageStyle={imageStyle}
             diameter={diameter}
-            renderImage={renderImage}
-            fallbackSource={IMAGE_LOAD_FAILED}
+            onError={() => { setLoadError(true); }}
             source={{ uri }}
           />
           }

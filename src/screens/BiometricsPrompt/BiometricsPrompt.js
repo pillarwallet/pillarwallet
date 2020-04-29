@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -72,7 +72,7 @@ const ButtonsWrapper = styled.View`
   padding-bottom: 15%;
 `;
 
-const TouchIdImage = styled(CachedImage)`
+const TouchIdImage = styled(FastImage)`
   width: 164px;
   height: 164px;
 `;

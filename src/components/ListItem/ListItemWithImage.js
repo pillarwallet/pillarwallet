@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
 
@@ -198,12 +198,12 @@ const ItemIcon = styled(Icon)`
   color: ${({ iconColor, theme }) => iconColor || theme.colors.primary};
 `;
 
-const IconImage = styled(CachedImage)`
+const IconImage = styled(FastImage)`
   width: 24px;
   height: 24px;
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(FastImage)`
   width: ${props => props.diameter || 54}px;
   height: ${props => props.diameter || 54}px;
   border-radius: ${props => props.diameter / 2 || 27}px;
@@ -383,13 +383,13 @@ const ItemImage = (props: Props) => {
   if (itemImageUrl) {
     return (
       <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
-        <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
+        <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallback defaultSource={fallbackSource} />
       </IconCircle>
     );
   }
 
   if (itemImageSource) {
-    return (<TokenImage diameter={diameter} source={itemImageSource} fallbackSource={fallbackSource} />);
+    return (<TokenImage diameter={diameter} source={itemImageSource} />);
   }
 
   const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;

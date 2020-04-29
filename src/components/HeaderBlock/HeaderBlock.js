@@ -19,8 +19,7 @@
 */
 import * as React from 'react';
 import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import styled, { withTheme } from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
@@ -171,7 +170,7 @@ const Indicator = styled.View`
   right: 0;
 `;
 
-const IconImage = styled(CachedImage)`
+const IconImage = styled(FastImage)`
   width: 24px;
   height: 24px;
 `;

@@ -19,8 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
 import { fontStyles, spacing, fontSizes } from 'utils/variables';
@@ -53,7 +52,7 @@ const CardRow = styled.View`
    align-items: center;
 `;
 
-const CardImage = styled(CachedImage)`
+const CardImage = styled(FastImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
@@ -149,7 +148,7 @@ export const ListCard = (props: Props) => {
       noShadow
     >
       <CardRow>
-        {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
+        {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallback defaultSource={fallbackIcon} />}
         {customIcon}
         <CardContent>
           <TitleWrapper>

@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
@@ -108,7 +108,7 @@ const Subtext = styled(MediumText)`
   margin-top: ${responsiveSize(10)}px;
 `;
 
-const FeatureIcon = styled(CachedImage)`
+const FeatureIcon = styled(FastImage)`
   height: 124px;
   width: 124px;
   margin-bottom: 24px;

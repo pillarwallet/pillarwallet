@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Swiper from 'react-native-swiper';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 
 import { IMPORT_WALLET } from 'constants/navigationConstants';
@@ -45,7 +45,7 @@ type Props = {
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
-const PillarLogo = styled(CachedImage)`
+const PillarLogo = styled(FastImage)`
   height: 30px;
   width: 60px;
 `;

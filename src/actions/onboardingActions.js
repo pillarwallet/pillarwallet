@@ -21,7 +21,6 @@ import { ethers } from 'ethers';
 import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { ImageCacheManager } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
 
 // constants
@@ -144,9 +143,6 @@ const getTokenWalletAndRegister = async (
       payload: sdkWallet.reason,
     });
   }
-
-  // invalidate image cache
-  ImageCacheManager().clearCache().catch(() => null);
 
   return {
     sdkWallet,

@@ -19,8 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import IconButton from 'components/IconButton';
 import { Paragraph } from 'components/Typography';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
@@ -65,7 +64,7 @@ const BannerParagraph = styled(Paragraph)`
   margin: 8px 0;
 `;
 
-const BannerImage = styled(CachedImage)`
+const BannerImage = styled(FastImage)`
 `;
 
 export const Banner = (props: Props) => {

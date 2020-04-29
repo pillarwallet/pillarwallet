@@ -22,8 +22,7 @@ import * as React from 'react';
 import { Dimensions, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { ColorMatrix, saturate } from 'react-native-color-matrix-image-filters';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import { getThemeType, themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -90,7 +89,7 @@ const IconWrapper = styled.View`
   background-color: ${themedColors.card};
 `;
 
-const NoIconImage = styled(CachedImage)`
+const NoIconImage = styled(FastImage)`
   height: 192px;
   width: 192px;
 `;

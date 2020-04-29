@@ -24,7 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { format as formatDate } from 'date-fns';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
@@ -179,7 +179,7 @@ const ButtonsContainer = styled.View`
   align-self: stretch;
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(FastImage)`
   width: 64px;
   height: 64px;
   border-radius: 64px;
@@ -1020,7 +1020,7 @@ class EventDetail extends React.Component<Props, State> {
     if (imageUrl) {
       return (
         <IconCircle border={imageBorder} backgroundColor={imageBackground}>
-          <TokenImage source={{ uri: imageUrl }} fallbackSource={fallbackSource} />
+          <TokenImage source={{ uri: imageUrl }} fallback defaultSource={fallbackSource} />
         </IconCircle>
       );
     }

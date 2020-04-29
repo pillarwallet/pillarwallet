@@ -23,8 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
@@ -105,7 +104,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
         <ScrollWrapper regularPadding>
           <Title subtitle title="WalletConnect Request" />
           {!!icon && (
-            <CachedImage
+            <FastImage
               key={name}
               style={{
                 height: 55,
@@ -113,7 +112,8 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
                 marginBottom: spacing.mediumLarge,
               }}
               source={{ uri: icon }}
-              fallbackSource={genericToken}
+              fallback
+              defaultSource={genericToken}
               resizeMode="contain"
             />
           )}

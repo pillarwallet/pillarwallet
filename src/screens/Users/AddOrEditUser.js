@@ -23,7 +23,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -92,7 +92,7 @@ const ProfileImagePlaceholder = styled.View`
   border: 2px dashed ${themedColors.border};
 `;
 
-const BlankAvatar = styled(CachedImage)`
+const BlankAvatar = styled(FastImage)`
   width: 28px;
   height: 28px;
 `;

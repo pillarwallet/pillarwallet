@@ -23,7 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { createStructuredSelector } from 'reselect';
 
 // components
@@ -234,7 +234,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
               <Value>{name}</Value>
             </LabeledRow>
             {!!icon && (
-              <CachedImage
+              <FastImage
                 key={name}
                 style={{
                   height: 55,
@@ -242,7 +242,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                   marginBottom: spacing.mediumLarge,
                 }}
                 source={{ uri: icon }}
-                fallbackSource={genericToken}
+                fallback
+                defaultSource={genericToken}
                 resizeMode="contain"
               />
             )}

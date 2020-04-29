@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { FlatList, Alert, View } from 'react-native';
 import Emoji from 'react-native-emoji';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
@@ -98,7 +98,7 @@ const LockScreenSection = styled.View`
   padding: ${spacing.mediumLarge}px;
 `;
 
-const HeaderLogo = styled(CachedImage)`
+const HeaderLogo = styled(FastImage)`
   width: 40px;
   height: 20px;
 `;

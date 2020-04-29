@@ -22,7 +22,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 
 import { Container, Footer, Wrapper } from 'components/Layout';
@@ -49,7 +49,7 @@ type State = {
 };
 
 
-const PillarLogo = styled(CachedImage)`
+const PillarLogo = styled(FastImage)`
   height: 60px;
   width: 120px;
 `;

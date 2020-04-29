@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // constants
@@ -61,7 +61,7 @@ const ContentWrapper = styled(SafeAreaView)`
   align-items: center;
 `;
 
-const AssetImage = styled(CachedImage)`
+const AssetImage = styled(FastImage)`
   margin-top: 4px;
   width: 64px;
   height: 64px;
@@ -112,7 +112,8 @@ const AssetEnableModal = (props: Props) => {
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <AssetImage
           source={{ uri: fullIconUrl }}
-          fallbackSource={fallbackSource}
+          fallback
+          defaultSource={fallbackSource}
         />
         <Paragraph>
           {`Once enabled, it will be available for exchanging on ${providerName}`}

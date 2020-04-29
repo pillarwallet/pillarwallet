@@ -23,7 +23,7 @@ import { Platform } from 'react-native';
 import { MediumText, BaseText } from 'components/Typography';
 import { fontTrackings, fontSizes, spacing, fontStyles } from 'utils/variables';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
@@ -154,7 +154,7 @@ const EventIcon = styled(Icon)`
   margin-top: ${spacing.medium}px;
 `;
 
-const EventImage = styled(CachedImage)`
+const EventImage = styled(FastImage)`
   width: ${props => props.imageDiameter || 58}px;
   height: ${props => props.imageDiameter || 58}px;
 `;
@@ -219,7 +219,8 @@ const EventHeader = (props: Props) => {
           <EventImage
             key={imageKey}
             source={{ uri: iconUrl }}
-            fallbackSource={genericToken}
+            fallback
+            defaultSource={genericToken}
             resizeMode="contain"
             imageDiameter={imageDiameter}
           />

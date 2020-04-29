@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { MediumText, BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import ShadowedCard from 'components/ShadowedCard';
@@ -74,7 +74,7 @@ class Requests extends React.Component<Props> {
       <CardWrapper>
         <ShadowedCard>
           <ItemContainer>
-            <CachedImage
+            <FastImage
               style={{
               height: 50,
               width: 50,

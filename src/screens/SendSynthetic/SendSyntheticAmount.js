@@ -28,7 +28,7 @@ import t from 'tcomb-form-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -158,7 +158,7 @@ const TextRow = styled.View`
   flex-direction: row;
 `;
 
-const ImageIcon = styled(CachedImage)`
+const ImageIcon = styled(FastImage)`
   width: 6px;
   height: 12px;
   tint-color: ${themedColors.primary};

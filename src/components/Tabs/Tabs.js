@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { MediumText } from 'components/Typography';
@@ -179,7 +179,7 @@ const UnreadText = styled(MediumText)`
   color: ${themedColors.control};
 `;
 
-const TabImage = styled(CachedImage)`
+const TabImage = styled(FastImage)`
   width: 16px;
   height: 16px;
   margin-right: 4px;

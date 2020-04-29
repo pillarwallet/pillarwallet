@@ -25,7 +25,7 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 // components
 import AssetButtons from 'components/AssetButtons';
@@ -179,7 +179,7 @@ const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
 
-const SyntheticAssetIcon = styled(CachedImage)`
+const SyntheticAssetIcon = styled(FastImage)`
   width: 12px;
   height: 24px;
   margin-right: 4px;

@@ -23,7 +23,7 @@ import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -103,14 +103,15 @@ class CollectiblesList extends React.PureComponent<Props> {
           contentWrapperStyle={{ padding: spacing.medium, alignItems: 'center' }}
           onPress={() => this.handleCardTap(item)}
         >
-          <CachedImage
+          <FastImage
             style={{
               height: 135,
               width: 135,
               marginBottom: spacing.mediumLarge,
             }}
             source={{ uri: icon }}
-            fallbackSource={genericToken}
+            fallback
+            defaultSource={genericToken}
             resizeMode="contain"
           />
           <CardRow>

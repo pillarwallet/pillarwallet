@@ -22,7 +22,6 @@ import * as React from 'react';
 import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { ImageCacheManager } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -181,29 +180,12 @@ class Contact extends React.Component<Props, State> {
       fetchContactTransactions,
       syncContact,
       session,
-      navigation,
       // fetchContactBadges,
       logScreenView,
       syncContactsSmartAddresses,
     } = this.props;
     this.isComponentMounted = true;
-    const contactName = navigation.getParam('username', '');
-    const contact = navigation.getParam('contact', { username: contactName });
-    const defaultImageCacheManager = ImageCacheManager();
     this.getRelatedTransactions();
-
-    if (contact.profileImage && session.isOnline) {
-      defaultImageCacheManager
-        .deleteUrl(contact.profileImage, {
-          useQueryParamsInCacheKey: true,
-        })
-        .catch(() => null);
-      defaultImageCacheManager
-        .deleteUrl(contact.profileLargeImage, {
-          useQueryParamsInCacheKey: true,
-        })
-        .catch(() => null);
-    }
 
     const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {

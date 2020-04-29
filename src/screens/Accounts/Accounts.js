@@ -23,7 +23,7 @@ import { FlatList, Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -155,7 +155,7 @@ const Wrapper = styled.View`
   align-items: center;
 `;
 
-const IconImage = styled(CachedImage)`
+const IconImage = styled(FastImage)`
   height: 52px;
   width: 52px;
 `;

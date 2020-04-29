@@ -21,8 +21,7 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
-
+import FastImage from 'react-native-fast-image';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper, Container } from 'components/Layout';
 import { MediumText, BoldText } from 'components/Typography';
@@ -84,7 +83,7 @@ const ButtonWrapper = styled(Wrapper)`
   padding: 0 46px;
 `;
 
-const FeatureIcon = styled(CachedImage)`
+const FeatureIcon = styled(FastImage)`
   height: 124px;
   width: 124px;
   margin-bottom: 24px;

@@ -24,7 +24,7 @@ import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { createStructuredSelector } from 'reselect';
 import ImageView from 'react-native-image-view';
 
@@ -95,7 +95,7 @@ const CircleButtonsWrapper = styled(Wrapper)`
   })};
 `;
 
-const CollectibleImage = styled(CachedImage)`
+const CollectibleImage = styled(FastImage)`
   align-self: center;
   height: 180px;
   width: 180px;
@@ -235,7 +235,8 @@ class CollectibleScreen extends React.Component<Props, State> {
             <CollectibleImage
               key={id.toString()}
               source={{ uri: image }}
-              fallbackSource={genericCollectible}
+              fallback
+              defaultSource={genericCollectible}
               resizeMode="contain"
             />
           </TouchableOpacity>

@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { Image } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 
 
 type ImageSource = ?string | { [uri: string]: string };
@@ -76,7 +76,7 @@ class DynamicSizeImage extends React.Component<Props, State> {
     const { width, height } = this.state;
 
     return (
-      <CachedImage
+      <FastImage
         source={imageSource}
         resizeMode="contain"
         style={{ ...style, width, height }}

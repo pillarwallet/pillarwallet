@@ -29,7 +29,7 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
+import FastImage from 'react-native-fast-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 
@@ -173,7 +173,7 @@ const RightSideWrapper = styled.View`
   align-items: center;
 `;
 
-const Image = styled(CachedImage)`
+const Image = styled(FastImage)`
   height: 24px;
   width: 24px;
   resize-mode: contain;
@@ -568,7 +568,8 @@ class TextInput extends React.Component<Props, State> {
                       <Image
                         key={selectedValue}
                         source={optionImageSource}
-                        fallbackSource={optionImageSource ? selectedOptionFallback : optionImageSource}
+                        fallback
+                        defaultSource={optionImageSource ? selectedOptionFallback : optionImageSource}
                         resizeMode="contain"
                       />
                       <SelectorValue>{selectedValue}</SelectorValue>
@@ -582,7 +583,8 @@ class TextInput extends React.Component<Props, State> {
                 <LeftSideWrapper>
                   {(innerImageURI || fallbackSource) && <Image
                     source={imageSource}
-                    fallbackSource={fallbackSource}
+                    fallback
+                    defaultSource={fallbackSource}
                     style={{ marginRight: 9 }}
                   />}
                   {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}

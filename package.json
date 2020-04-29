@@ -94,7 +94,6 @@
     "react-native-appearance": "^0.3.2",
     "react-native-background-timer": "2.1.1",
     "react-native-branch": "^4.2.1",
-    "react-native-cached-image": "https://github.com/pillarwallet/react-native-cached-image",
     "react-native-camera": "^3.17.0",
     "react-native-collapsible": "^1.4.0",
     "react-native-color-matrix-image-filters": "^5.1.4",

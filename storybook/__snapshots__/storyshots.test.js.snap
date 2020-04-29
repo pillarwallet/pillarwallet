@@ -750,7 +750,44 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
             undefined,
           ]
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "borderRadius": 24,
+                  "height": 48,
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <Image
+            diameter={48}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -1025,7 +1062,47 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -1305,7 +1382,47 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -1578,7 +1695,49 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
             undefined,
           ]
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "borderRadius": 24,
+                  "height": 48,
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <Image
+            defaultSource={
+              Object {
+                "testUri": "../../../src/assets/images/tokens/genericTokenLight.png",
+              }
+            }
+            diameter={48}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -1846,7 +2005,49 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
             undefined,
           ]
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "borderRadius": 24,
+                  "height": 48,
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <Image
+            defaultSource={
+              Object {
+                "testUri": "../../../src/assets/images/tokens/genericTokenLight.png",
+              }
+            }
+            diameter={48}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -2121,7 +2322,47 @@ exports[`Storyshots ActivityFeedItem Connection established 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -2363,7 +2604,47 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -2673,7 +2954,47 @@ exports[`Storyshots ActivityFeedItem Connection request 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -2984,7 +3305,44 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_smart_wallet.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -3189,7 +3547,44 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_key_wallet.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -3402,7 +3797,44 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_key_wallet.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -3926,7 +4358,47 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -4786,7 +5258,47 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -5335,7 +5847,44 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_PPN.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -5897,7 +6446,44 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_PPN.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -6148,7 +6734,44 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_smart_wallet.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -6361,7 +6984,44 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_PPN.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -6534,6 +7194,42 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                     ]
                   }
                 >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "overflow": "hidden",
+                        },
+                        Array [
+                          Object {
+                            "height": 12,
+                            "marginRight": 4,
+                            "tintColor": "#2329d6",
+                            "width": 6,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    <FastImageView
+                      resizeMode="cover"
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/icon_lightning_sm.png",
+                        }
+                      }
+                      style={
+                        Object {
+                          "bottom": 0,
+                          "left": 0,
+                          "position": "absolute",
+                          "right": 0,
+                          "top": 0,
+                        }
+                      }
+                    />
+                  </View>
                   <Text
                     style={
                       Array [
@@ -6947,7 +7643,47 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -7807,7 +8543,47 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -8384,7 +9160,47 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -8514,6 +9330,42 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                   ]
                 }
               >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "overflow": "hidden",
+                      },
+                      Array [
+                        Object {
+                          "height": 12,
+                          "marginRight": 4,
+                          "tintColor": "#2329d6",
+                          "width": 6,
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  <FastImageView
+                    resizeMode="cover"
+                    source={
+                      Object {
+                        "testUri": "../../../src/assets/icons/icon_lightning_sm.png",
+                      }
+                    }
+                    style={
+                      Object {
+                        "bottom": 0,
+                        "left": 0,
+                        "position": "absolute",
+                        "right": 0,
+                        "top": 0,
+                      }
+                    }
+                  />
+                </View>
                 <Text
                   style={
                     Array [
@@ -8620,7 +9472,47 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "overflow": "hidden",
+              },
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "borderRadius": 24,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "width": 48,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <FastImageView
+            diameter={48}
+            onFastImageError={[Function]}
+            resizeMode="cover"
+            source={
+              Object {
+                "uri": "https://picsum.photos/200",
+              }
+            }
+            style={
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          />
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -8750,6 +9642,42 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                   ]
                 }
               >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "overflow": "hidden",
+                      },
+                      Array [
+                        Object {
+                          "height": 12,
+                          "marginRight": 4,
+                          "tintColor": "#2329d6",
+                          "width": 6,
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  <FastImageView
+                    resizeMode="cover"
+                    source={
+                      Object {
+                        "testUri": "../../../src/assets/icons/icon_lightning_sm.png",
+                      }
+                    }
+                    style={
+                      Object {
+                        "bottom": 0,
+                        "left": 0,
+                        "position": "absolute",
+                        "right": 0,
+                        "top": 0,
+                      }
+                    }
+                  />
+                </View>
                 <Text
                   style={
                     Array [
@@ -8828,7 +9756,44 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "overflow": "hidden",
+            },
+            Array [
+              Object {
+                "borderRadius": 24,
+                "height": 48,
+                "width": 48,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <FastImageView
+          diameter={48}
+          resizeMode="cover"
+          source={
+            Object {
+              "testUri": "../../../src/assets/icons/icon_key_wallet.png",
+            }
+          }
+          style={
+            Object {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+      </View>
+    </View>
     <View
       style={
         Object {
@@ -10051,6 +11016,38 @@ Array [
                       ]
                     }
                   />
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "overflow": "hidden",
+                        },
+                        Object {
+                          "alignSelf": "center",
+                          "height": 64,
+                          "width": 64,
+                        },
+                      ]
+                    }
+                  >
+                    <FastImageView
+                      resizeMode="cover"
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/icon_smart_wallet.png",
+                        }
+                      }
+                      style={
+                        Object {
+                          "bottom": 0,
+                          "left": 0,
+                          "position": "absolute",
+                          "right": 0,
+                          "top": 0,
+                        }
+                      }
+                    />
+                  </View>
                   <View
                     h={20}
                     style={
