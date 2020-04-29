@@ -175,7 +175,7 @@ android {
         vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
 
         // branch.io
-        resValue "string", "branch_io_app_link", "abgsz.test-app.link"
+        resValue "string", "branch_io_app_link", "plr.test-app.link"
         resValue "string", "branch_io_app_link_alternate", "abgsz-alternate.test-app.link"
         resValue "string", "branch_io_key_live", ""
         resValue "string", "branch_io_key_test", "key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a"
@@ -240,6 +240,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
     implementation 'io.intercom.android:intercom-sdk-base:5.+' // react-native-intercom to override for Intercom PN handler implementation
+    implementation 'io.intercom.android:intercom-sdk-fcm:5.+' // react-native-intercom
 
     // branch.io
     implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching

@@ -45,7 +45,8 @@ type State = {
 
 const Container = styled.View`
   align-items: center;
-  margin-top: -15px;
+  margin-top: 30px;
+  margin-bottom: 36px;
 `;
 
 class QRCodeScanButton extends React.Component<Props, State> {

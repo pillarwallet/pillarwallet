@@ -70,7 +70,7 @@ const Pill = styled.TouchableOpacity`
 `;
 
 const SwapText = styled(BaseText)`
-  color: ${themedColors.primary};
+  color: ${themedColors.link};
   ${fontStyles.small}
 `;
 

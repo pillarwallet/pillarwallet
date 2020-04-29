@@ -1459,7 +1459,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             style={
                               Array [
                                 Object {
-                                  "alignSelf": "flex-start",
                                   "backgroundColor": "#007AFF",
                                   "borderRadius": 12,
                                   "paddingBottom": 3,
@@ -1594,7 +1593,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "paddingBottom": 20,
+                      "paddingBottom": 60,
                       "paddingLeft": 16,
                       "paddingRight": 16,
                       "paddingTop": 0,
@@ -1666,6 +1665,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     }
                   >
                     <Text
+                      onPress={[Function]}
                       style={
                         Array [
                           Object {

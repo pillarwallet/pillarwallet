@@ -23,6 +23,7 @@ import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
+import { ethers } from 'ethers';
 
 // constants
 import {
@@ -112,6 +113,7 @@ export const loginAction = (
   pin: ?string,
   privateKey: ?string,
   onLoginSuccess: ?Function,
+  useBiometrics?: ?boolean,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     let { accounts: { data: accounts } } = getState();
@@ -136,8 +138,8 @@ export const loginAction = (
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
         // no further code will be executed if pin is wrong
-        // migrate older users for keychain access
-        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' });
+        // migrate older users for keychain access OR fallback for biometrics login
+        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' }, useBiometrics);
       } else if (privateKey) {
         const walletAddress = normalizeWalletAddress(encryptedWallet.address);
         wallet = { ...encryptedWallet, privateKey, address: walletAddress };
@@ -345,8 +347,7 @@ export const checkAuthAction = (
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       } else if (privateKey) {
-        const walletAddress = normalizeWalletAddress(encryptedWallet.address);
-        wallet = { ...encryptedWallet, privateKey, address: walletAddress };
+        wallet = new ethers.Wallet(privateKey);
       }
       if (wallet) {
         dispatch({

@@ -156,6 +156,13 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.setState({ verifyingField: null });
   };
 
+  getAlertData = (dataType: string) => {
+    return ({
+      title: `Change ${dataType}`,
+      message: `You will have to re-verify your ${dataType} after changing it`,
+    });
+  };
+
   render() {
     const {
       permissionsGranted,
@@ -187,7 +194,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             { title: 'User settings' },
           ],
         }}
-        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper disableOnAndroid>
           <CameraButton onPress={this.openCamera}>
@@ -249,6 +255,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               keyboardType: 'email-address',
             }]}
             onUpdate={this.handleUserFieldUpdate}
+            updateAlertProps={isEmailVerified ? this.getAlertData('email') : null}
             value={{ email }}
           />
 
@@ -263,6 +270,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               keyboardType: 'phone-pad',
             }]}
             onUpdate={this.handleUserFieldUpdate}
+            updateAlertProps={isPhoneVerified ? this.getAlertData('phone') : null}
             value={{ phone }}
           />
 

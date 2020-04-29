@@ -36,7 +36,6 @@ import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
 import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
 import ContactScreen from 'screens/Contact';
-import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -93,6 +92,7 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
+import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
 import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
 import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
@@ -102,6 +102,9 @@ import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
 import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
 import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
+import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
+import ExploreAppsScreen from 'screens/ExploreApps';
+import WalletActivatedScreen from 'screens/WalletActivated';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -148,7 +151,6 @@ import {
   HOME,
   HOME_TAB,
   LOGIN,
-  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -235,6 +237,10 @@ import {
   CONNECT_TAB,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_TOKEN_FROM_HOME_FLOW,
+  PIN_CODE,
+  EXPLORE_APPS,
+  WALLET_ACTIVATED,
+  REFERRAL_SENT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -244,7 +250,7 @@ import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from '
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
 
@@ -284,6 +290,12 @@ const StackNavigatorConfig = {
     header: null,
     gesturesEnabled: true,
   },
+  cardStyle: {
+    backgroundColor: {
+      dark: darkThemeColors.surface,
+      light: lightThemeColors.surface,
+    },
+  },
 };
 
 const hideTabNavigatorOnChildView = ({ navigation }) => {
@@ -304,6 +316,7 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE]: ExchangeScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
@@ -323,6 +336,7 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+
 // REFER FLOW
 const referFlow = createStackNavigator({
   [REFER_MAIN_SCREEN]: ReferFriendsScreen,
@@ -332,15 +346,16 @@ const referFlow = createStackNavigator({
 
 referFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
-  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
   [REFER_FLOW]: referFlow,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -352,9 +367,12 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+    [EXPLORE_APPS]: ExploreAppsScreen,
   },
-  StackNavigatorModalConfig,
+  StackNavigatorConfig,
 );
+walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // HOME FLOW
 const homeFlow = createStackNavigator({
@@ -373,6 +391,7 @@ const homeFlow = createStackNavigator({
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [EXCHANGE]: ExchangeScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -706,6 +725,9 @@ const AppFlowNavigation = createStackNavigator(
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
+    [PIN_CODE]: PinCodeUnlockScreen,
+    [WALLET_ACTIVATED]: WalletActivatedScreen,
+    [REFERRAL_SENT]: ReferralSentScreen,
   },
   modalTransition,
 );

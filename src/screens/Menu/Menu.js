@@ -45,9 +45,9 @@ import {
   ADD_EDIT_USER,
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
-  REFER_FLOW,
 } from 'constants/navigationConstants';
 import { lockScreenAction, logoutAction } from 'actions/authActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -55,7 +55,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { User } from 'models/User';
 
-import { toastReferral } from 'utils/toasts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -65,6 +64,7 @@ type Props = {
   logoutUser: () => void,
   referralsFeatureEnabled: boolean,
   lockScreen: () => void,
+  goToInvitationFlow: () => void,
 };
 
 type State = {
@@ -128,19 +128,9 @@ class Menu extends React.Component<Props, State> {
     visibleModal: null,
   };
 
-  handleReferralItemPress = () => {
-    const { navigation, user } = this.props;
-    const { isEmailVerified, isPhoneVerified } = user;
-    if (isEmailVerified || isPhoneVerified) {
-      navigation.navigate(REFER_FLOW);
-    } else {
-      toastReferral(navigation);
-    }
-  };
-
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus, referralsFeatureEnabled,
+      theme, navigation, backupStatus, referralsFeatureEnabled, goToInvitationFlow,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
@@ -149,7 +139,7 @@ class Menu extends React.Component<Props, State> {
       title: 'Refer friends',
       icon: 'present',
       iconColor: colors.accent,
-      action: this.handleReferralItemPress,
+      action: goToInvitationFlow,
     };
     const menuItems = [
       {
@@ -364,6 +354,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Menu));

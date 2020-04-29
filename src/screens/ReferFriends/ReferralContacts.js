@@ -22,6 +22,7 @@ import * as React from 'react';
 import { FlatList, Keyboard } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
+import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 
 import { Wrapper } from 'components/Layout';
@@ -32,23 +33,24 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Checkbox from 'components/Checkbox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
-import { BaseText, TextLink } from 'components/Typography';
-import { Note } from 'components/Note';
 import Toast from 'components/Toast';
+import MissingInfoNote from 'screens/ReferFriends/MissingInfoNote';
 
-import { fontStyles, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import {
   getRemainingDailyInvitations,
   isSameContact,
   isSameContactData,
+  filterAllowedContacts,
+  searchContacts,
 } from 'utils/referrals';
-import { isValidPhone } from 'utils/validators';
+import { isValidPhone, isValidEmail } from 'utils/validators';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
-import { setContactsForReferralAction } from 'actions/referralsActions';
+import { setContactsForReferralAction, fetchSentReferralInvitationsAction } from 'actions/referralsActions';
 import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
 
 import { ADD_EDIT_USER, REFER_MAIN_SCREEN } from 'constants/navigationConstants';
@@ -70,6 +72,7 @@ type Props = {
   sentInvitationsCount: SentInvitationsCount,
   userPhone: string,
   userEmail: string,
+  fetchSentReferralInvitations: () => void,
 };
 
 type State = {
@@ -80,7 +83,7 @@ type State = {
 const EmptyStateWrapper = styled.View`
   width: 100%;
   align-items: center;
-  margin: 20px 0 30px;
+  padding: 20px 30px 30px;
 `;
 
 const ButtonWrapper = styled.View`
@@ -88,30 +91,27 @@ const ButtonWrapper = styled.View`
   padding: ${spacing.layoutSides}px;
 `;
 
-const StyledTextLink = styled(TextLink)`
-  ${fontStyles.regular};
-`;
-
 const MIN_QUERY_LENGTH = 3;
 
-const getInfoTypes = (isPhoneVerified, isEmailVerified) => {
-  // one or another should be true, otherwise feature is not available at all
-  if (!isPhoneVerified) {
-    return 'phone';
-  } else if (!isEmailVerified) {
-    return 'email';
-  }
-  return null;
-};
+const createCustomContact = (
+  query: string,
+  isPhoneVerified: boolean,
+  isEmailVerified: boolean,
+): ?ReferralContact => {
+  const contact = {
+    id: 'custom-contact',
+    name: query,
+  };
 
-const getFilteredContacts = (contacts: ReferralContact[], _query: string) => {
-  if (!_query || _query.length < MIN_QUERY_LENGTH) return contacts;
-  const query = _query.toUpperCase();
-  return contacts.filter(({ name, email = '', phone = '' }) => {
-    return name.toUpperCase().indexOf(query) > -1
-      || email.toUpperCase().indexOf(query) > -1
-      || phone.indexOf(query) > -1;
-  });
+  if (isPhoneVerified && isValidPhone(query)) {
+    return { ...contact, phone: query };
+  }
+
+  if (isEmailVerified && isValidEmail(query)) {
+    return { ...contact, email: query };
+  }
+
+  return null;
 };
 
 class ReferralContacts extends React.PureComponent<Props, State> {
@@ -129,13 +129,15 @@ class ReferralContacts extends React.PureComponent<Props, State> {
       isFetchingPhoneContactsComplete,
       isFetchingPhoneContacts,
       fetchPhoneContacts,
+      fetchSentReferralInvitations,
     } = this.props;
+
+    fetchSentReferralInvitations();
 
     if (!isFetchingPhoneContacts && !isFetchingPhoneContactsComplete) {
       fetchPhoneContacts();
     }
   }
-
 
   handleSearch = (query: string) => {
     this.setState({ query });
@@ -156,7 +158,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         subtext={item.email || item.phone}
         itemImageUrl={item.photo}
         onPress={!isPreviouslyInvited ? () => this.toggleContact(item) : null}
-        wrapperOpacity={!isPreviouslyInvited ? 1 : 0.7}
+        wrapperOpacity={!isPreviouslyInvited ? 1 : 0.5}
         customAddon={(
           <Checkbox
             checked={isSelected}
@@ -164,6 +166,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             disabled={isPreviouslyInvited}
             rounded
             wrapperStyle={{ width: 24, marginRight: 4, marginLeft: 12 }}
+            positive
           />
         )}
         noSeparator
@@ -234,9 +237,17 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     } = this.props;
 
     const showConfirmButton = !!(selectedContacts.length || addedContactsToInvite.length);
-    const missingType = getInfoTypes(isPhoneVerified, isEmailVerified);
-    const allowedContacts = !missingType ? phoneContacts : phoneContacts.filter((contact) => !contact[missingType]);
-    const filteredContacts = getFilteredContacts(allowedContacts, query);
+    const allowedContacts = filterAllowedContacts(phoneContacts, isPhoneVerified, isEmailVerified);
+    const isSearching = query && query.length >= MIN_QUERY_LENGTH;
+    const filteredContacts = isSearching ? searchContacts(allowedContacts, query) : allowedContacts;
+
+    if (isSearching && isEmpty(filteredContacts)) {
+      const customContact = createCustomContact(query, isPhoneVerified, isEmailVerified);
+
+      if (customContact) {
+        filteredContacts.push(customContact);
+      }
+    }
 
     return (
       <ContainerWithHeader
@@ -250,23 +261,16 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         {!isFetchingPhoneContacts &&
           <React.Fragment>
             <SearchBlock
-              searchInputPlaceholder="Search for contact"
+              searchInputPlaceholder="Search or add contact"
               onSearchChange={(q) => this.handleSearch(q)}
               itemSearchState={query.length >= MIN_QUERY_LENGTH}
               wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
             />
-            {!!missingType &&
-            <Note
-              containerStyle={{ margin: spacing.layoutSides, marginTop: 0 }}
-              note={
-                <React.Fragment>
-                  <BaseText>
-                    {`To show your ${missingType} contacts, please add and verify your ${missingType}. `}
-                  </BaseText>
-                  <StyledTextLink onPress={() => navigation.navigate(ADD_EDIT_USER)}>Add</StyledTextLink>
-                </React.Fragment>
-              }
-            />}
+            <MissingInfoNote
+              isEmailVerified={isEmailVerified}
+              isPhoneVerified={isPhoneVerified}
+              onPressAdd={() => navigation.navigate(ADD_EDIT_USER)}
+            />
             <FlatList
               data={filteredContacts}
               extraData={selectedContacts}
@@ -285,10 +289,13 @@ class ReferralContacts extends React.PureComponent<Props, State> {
                   <EmptyStateParagraph
                     title={!phoneContactsFetchError ? 'Nobody found' : 'Could not fetch contacts'}
                     bodyText={!phoneContactsFetchError
-                      ? 'Make sure you have entered name, e-mail address or phone number correctly'
+                      ? 'Make sure you entered phone or email address correctly'
                     : ''}
+                    wide
+                    large
                   >
-                    <Button title="Try again" onPress={fetchPhoneContacts} marginTop={spacing.large} />
+                    {phoneContactsFetchError &&
+                    <Button title="Try again" onPress={fetchPhoneContacts} marginTop={spacing.large} />}
                   </EmptyStateParagraph>
                 </EmptyStateWrapper>
               )}
@@ -338,6 +345,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setContactsForReferral: (contacts: ReferralContact[]) => dispatch(setContactsForReferralAction(contacts)),
   fetchPhoneContacts: () => dispatch(fetchPhoneContactsAction()),
+  fetchSentReferralInvitations: () => dispatch(fetchSentReferralInvitationsAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferralContacts));

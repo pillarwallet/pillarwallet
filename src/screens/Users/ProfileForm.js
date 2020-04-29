@@ -19,6 +19,7 @@
 */
 
 import React from 'react';
+import { Alert } from 'react-native';
 import t from 'tcomb-form-native';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
@@ -56,6 +57,7 @@ type Props = {
   value?: Object,
   buttonTitle?: string,
   onUpdate?: (update: Object) => void,
+  updateAlertProps?: ?{ title: string, message: string },
 };
 
 type State = {
@@ -185,16 +187,33 @@ export default class ProfileForm extends React.Component<Props, State> {
 
   handleBlur = (field: string, value: string) => {
     const component = this._formRef.getComponent(field);
+    const { value: originalValue, onUpdate, updateAlertProps } = this.props;
+    const isModified = !originalValue || !isEqual(value, originalValue[field]);
 
     const result = component.validate();
-    if (!isEmpty(get(result, 'errors'))) {
+    if (!isEmpty(get(result, 'errors')) && !(isModified && isEmpty(value))) {
       return;
     }
 
-    const { value: originalValue, onUpdate } = this.props;
-    const isModified = !originalValue || !isEqual(value, originalValue[field]);
-
     if (isModified && onUpdate) {
+      if (!!updateAlertProps && !isEmpty(updateAlertProps)) {
+        const { title, message } = updateAlertProps;
+        Alert.alert(
+          title,
+          message,
+          [
+            {
+              text: 'Cancel',
+              onPress: () => this.setState({ value: originalValue }),
+            },
+            {
+              text: 'Proceed',
+              onPress: () => onUpdate({ [field]: value }),
+            },
+          ],
+        );
+        return;
+      }
       onUpdate({ [field]: value });
     }
   };

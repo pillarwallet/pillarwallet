@@ -23,12 +23,15 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { isIphoneX } from 'utils/common';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
+
+import { DARK_THEME, LIGHT_CONTENT, DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import { ScrollWrapper } from './Layout';
 
@@ -44,6 +47,10 @@ type Props = {
   putContentInScrollView?: boolean,
   shouldFooterAvoidKeyboard?: boolean,
   tab?: boolean,
+  statusbarColor?: {
+    darkTheme?: string,
+    lightTheme?: string
+  }
 };
 
 type State = {
@@ -70,7 +77,7 @@ const { height: screenHeight } = Dimensions.get('window');
 const animatedValueOne = new Animated.Value(1);
 
 class ContainerWithHeader extends React.Component<Props, State> {
-  focusSubscriptions: NavigationEventSubscription[];
+  focusSubscription: NavigationEventSubscription;
 
   state = {
     scrollY: new Animated.Value(0),
@@ -83,29 +90,39 @@ class ContainerWithHeader extends React.Component<Props, State> {
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.focusSubscriptions = [
-      navigation.addListener('didFocus', this.setStatusBarStyleForView),
-      navigation.addListener('willBlur', this.resetStatusBarStyle),
-    ];
+    this.focusSubscription = navigation.addListener('didFocus', this.setStatusBarStyleForView);
   }
 
   componentWillUnmount() {
-    this.resetStatusBarStyle();
-    this.focusSubscriptions.forEach(sub => sub.remove());
+    if (this.focusSubscription) this.focusSubscription.remove();
   }
 
-  setStatusBarStyleForView = () => {
-    const { headerProps = {} } = this.props;
-    const { color } = headerProps;
-    let statusBarStyle = 'dark-content';
-    if (color && isColorDark(color)) {
-      statusBarStyle = 'light-content';
+  getStatusBarColor = (themeType) => {
+    const { statusbarColor = {} } = this.props;
+    if (themeType === DARK_THEME) {
+      if (statusbarColor[DARK_THEME]) return statusbarColor[DARK_THEME];
+      return LIGHT_CONTENT;
     }
-    StatusBar.setBarStyle(statusBarStyle);
+    return statusbarColor[LIGHT_THEME] || DARK_CONTENT;
   };
 
-  resetStatusBarStyle = () => {
-    StatusBar.setBarStyle('dark-content');
+  setStatusBarStyleForView = () => {
+    const {
+      headerProps = {},
+      theme,
+      backgroundColor,
+      statusbarColor,
+    } = this.props;
+    const { transparent, floating } = headerProps;
+    const themeType = getThemeType(theme);
+    let statusBarStyle = this.getStatusBarColor(themeType);
+
+    if ((!!transparent || !!floating) && backgroundColor && !statusbarColor) {
+      statusBarStyle = isColorDark(backgroundColor)
+        ? this.getStatusBarColor(DARK_THEME)
+        : this.getStatusBarColor(LIGHT_THEME);
+    }
+    StatusBar.setBarStyle(statusBarStyle);
   };
 
   renderContent = (shouldRenderFooter, shouldRenderChildrenInScrollView) => {
@@ -177,7 +194,12 @@ class ContainerWithHeader extends React.Component<Props, State> {
 
     return (
       <View style={{ flex: 1 }}>
-        <HeaderBlock {...headerProps} navigation={navigation} bottomBorderAnimationValue={bottomBorderAnimationValue} />
+        {!isEmpty(headerProps) &&
+          <HeaderBlock
+            {...headerProps}
+            navigation={navigation}
+            bottomBorderAnimationValue={bottomBorderAnimationValue}
+          />}
         <StyledSafeAreaView
           forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
           androidStatusbarHeight={androidStatusBarSpacing}

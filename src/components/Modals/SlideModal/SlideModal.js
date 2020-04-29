@@ -20,6 +20,7 @@
 import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled, { withTheme } from 'styled-components/native';
+import isEmpty from 'lodash.isempty';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
@@ -28,6 +29,7 @@ import { spacing } from 'utils/variables';
 import { Keyboard } from 'react-native';
 import { getThemeColors, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
+import type { Props as HeaderProps } from 'components/HeaderBlock';
 
 export type ScrollToProps = {
   x?: number,
@@ -69,7 +71,9 @@ type Props = {
   noPadding?: boolean,
   headerLeftItems?: Object[],
   sideMargins?: number,
-  noTopPadding?: boolean
+  noTopPadding?: boolean,
+  headerProps?: HeaderProps,
+  insetTop?: boolean,
 };
 
 const themes = {
@@ -211,13 +215,15 @@ class SlideModal extends React.Component<Props, *> {
       headerLeftItems,
       sideMargins,
       noTopPadding,
+      headerProps = {},
+      insetTop,
     } = this.props;
 
     const customTheme = getTheme(this.props);
     const colors = getThemeColors(theme);
     const backgroundColor = bgColor || colors.surface;
 
-    const showModalHeader = (!fullScreen || showHeader) && !hideHeader;
+    const showModalHeader = ((!fullScreen || showHeader) && !hideHeader) || !isEmpty(headerProps);
     let leftItems = [];
     const centerItems = centerTitle ? [{ title }] : [];
     const rightItems = [{
@@ -244,7 +250,8 @@ class SlideModal extends React.Component<Props, *> {
             noHorizonatalPadding={!fullScreen && !noPadding}
             leftSideFlex={centerTitle ? null : 4}
             noBack
-            forceInsetTop="never"
+            forceInsetTop={insetTop ? 'always' : 'never'}
+            {...headerProps}
           />
         }
         <ModalContent

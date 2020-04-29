@@ -102,7 +102,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  color: ${themedColors.primary};
+  color: ${themedColors.link};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
@@ -156,12 +156,12 @@ export const ListCard = (props: Props) => {
             {getTitle()}
             {!!label && <Label>{label}</Label>}
             {!!labelBadge && (
-            <LabelBadge
-              label={labelBadge.label}
-              labelStyle={{ fontSize: fontSizes.regular }}
-              color={labelBadge.color}
-            />
-              )}
+              <LabelBadge
+                label={labelBadge.label}
+                labelStyle={{ fontSize: fontSizes.regular }}
+                color={labelBadge.color}
+              />
+            )}
           </TitleWrapper>
           {!!subtitle && (
             <CardSubtitleView>

@@ -30,30 +30,39 @@ export type KeyChainData = {
   mnemonic?: string,
 };
 
-export const setKeychainDataObject = (data: KeyChainData, biometry?: boolean) => Keychain
-  .setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), {
-    accessControl: biometry && Platform.select({
-      ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
-      android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
-    }),
-    accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
-    service: KEYCHAIN_SERVICE,
-  })
-  .catch(() => null);
-
-export const getKeychainDataObject = (errorHandler?: Function) => Keychain
-  .getGenericPassword({
-    service: KEYCHAIN_SERVICE,
-    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
-  })
-  .then(({ password = '{}' }) => JSON.parse(password))
-  .catch(errorHandler || (() => null));
-
 export const resetKeychainDataObject = () => Keychain
   .resetGenericPassword({
     service: KEYCHAIN_SERVICE,
   })
   .catch(() => null);
+
+export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?boolean) => {
+  await resetKeychainDataObject();
+
+  const basicOptions = {
+    accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+    service: KEYCHAIN_SERVICE,
+  };
+
+  const biometryOptions = {
+    accessControl: Platform.select({
+      ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+      android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+    }),
+  };
+
+  const options = biometry ? { ...basicOptions, ...biometryOptions } : basicOptions;
+
+  return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options).catch(() => null);
+};
+
+export const getKeychainDataObject = (errorHandler?: Function) => Keychain
+  .getGenericPassword({
+    service: KEYCHAIN_SERVICE,
+    authenticationPrompt: { title: BIOMETRICS_PROMPT_MESSAGE },
+  })
+  .then(({ password = '{}' }) => JSON.parse(password))
+  .catch(errorHandler || (() => null));
 
 export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
   Keychain.getSupportedBiometryType().then(resHandler).catch(errorHandler || (() => null));

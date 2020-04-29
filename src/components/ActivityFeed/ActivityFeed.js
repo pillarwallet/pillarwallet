@@ -29,13 +29,12 @@ import type { Transaction } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // components
-import SlideModal from 'components/Modals/SlideModal';
 import Title from 'components/Title';
-import EventDetails from 'components/EventDetails';
 import Tabs from 'components/Tabs';
 import { BaseText } from 'components/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
+import EventDetails from 'components/EventDetails';
 
 // utils
 import { groupAndSortByDate } from 'utils/common';
@@ -82,7 +81,6 @@ const SectionHeader = styled(BaseText)`
 const EmptyStateWrapper = styled.View`
   padding: 15px 30px 30px;
   width: 100%;
-  flex: 1;
   align-items: center;
   justify-content: center;
 `;
@@ -124,16 +122,13 @@ type Props = {
   tabsComponent?: React.Node,
   headerComponent?: React.Node,
   flatListProps?: FlatList,
+  isPPNView?: boolean,
 };
 
 type State = {|
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
-  eventType: string,
-  eventStatus: string,
   tabIsChanging: boolean,
-  scrollOffset: ?number,
-  maxScrollOffset: ?number,
 |};
 
 const ITEM_TYPE = {
@@ -141,6 +136,7 @@ const ITEM_TYPE = {
   TABS: 'TABS',
   SECTION: 'SECTION',
   ITEM: 'ITEM',
+  EMPTY_STATE: 'EMPTY_STATE',
 };
 
 class ActivityFeed extends React.Component<Props, State> {
@@ -153,11 +149,7 @@ class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
     selectedEventData: null,
-    eventType: '',
-    eventStatus: '',
     tabIsChanging: false,
-    scrollOffset: undefined,
-    maxScrollOffset: undefined,
   };
 
   generateFeedSections = memoize(
@@ -176,10 +168,14 @@ class ActivityFeed extends React.Component<Props, State> {
       const items = [];
       items.push({ type: ITEM_TYPE.HEADER, component: headerComponent });
       items.push({ type: ITEM_TYPE.TABS, component: tabsComponent });
-      dataSections.forEach(({ data, ...section }) => {
-        items.push({ type: ITEM_TYPE.SECTION, section });
-        data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
-      });
+      if (!filteredFeedList.length) {
+        items.push({ type: ITEM_TYPE.EMPTY_STATE });
+      } else {
+        dataSections.forEach(({ data, ...section }) => {
+          items.push({ type: ITEM_TYPE.SECTION, section });
+          data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
+        });
+      }
 
       return items;
     },
@@ -206,10 +202,8 @@ class ActivityFeed extends React.Component<Props, State> {
     return !isEq;
   }
 
-  selectEvent = (eventData: Object, eventType, eventStatus) => {
+  selectEvent = (eventData: Object) => {
     this.setState({
-      eventType,
-      eventStatus,
       selectedEventData: eventData,
       showModal: true,
     });
@@ -228,6 +222,13 @@ class ActivityFeed extends React.Component<Props, State> {
       case ITEM_TYPE.HEADER:
       case ITEM_TYPE.TABS:
         return item.component;
+      case ITEM_TYPE.EMPTY_STATE:
+        const emptyStateData = this.getEmptyStateData();
+        return (
+          <EmptyStateWrapper>
+            <EmptyStateParagraph {...emptyStateData} />
+          </EmptyStateWrapper>
+        );
       case ITEM_TYPE.SECTION:
         return (
           <SectionHeaderWrapper>
@@ -235,38 +236,35 @@ class ActivityFeed extends React.Component<Props, State> {
           </SectionHeaderWrapper>
         );
       default:
-        const { onRejectInvitation, onAcceptInvitation } = this.props;
+        const { onRejectInvitation, onAcceptInvitation, isPPNView } = this.props;
         return (
           <ActivityFeedItem
             event={item.item}
             selectEvent={this.selectEvent}
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
+            isPPNView={isPPNView}
           />
         );
     }
   };
 
-  handleRejectInvitation = () => {
-    this.props.onRejectInvitation(this.state.selectedEventData);
-  };
-
-  handleCancelInvitation = () => {
-    this.props.onCancelInvitation(this.state.selectedEventData);
-  };
-
-  handleAcceptInvitation = () => {
-    this.props.onAcceptInvitation(this.state.selectedEventData);
-  };
-
-  handleClose = () => {
-    this.setState({ showModal: false });
+  handleClose = (callback) => {
+    this.setState({ showModal: false }, () => {
+      if (callback) {
+        const timer = setTimeout(() => {
+          callback();
+          clearTimeout(timer);
+        }, 500);
+      }
+    });
   };
 
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
     switch (item.type) {
       case ITEM_TYPE.HEADER:
       case ITEM_TYPE.TABS:
+      case ITEM_TYPE.EMPTY_STATE:
         return item.type;
       case ITEM_TYPE.SECTION:
         return item.section.title;
@@ -296,21 +294,17 @@ class ActivityFeed extends React.Component<Props, State> {
       headerComponent,
       tabsComponent,
       flatListProps,
+      onRejectInvitation,
+      onAcceptInvitation,
     } = this.props;
 
     const {
       showModal,
       selectedEventData,
-      eventType,
-      eventStatus,
       tabIsChanging,
-      scrollOffset,
-      maxScrollOffset,
     } = this.state;
 
     const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
-
-    const emptyStateData = this.getEmptyStateData();
 
     const firstTab = tabs.length ? tabs[0].id : '';
 
@@ -343,43 +337,18 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          ListEmptyComponent={(
-            <EmptyStateWrapper>
-              <EmptyStateParagraph {...emptyStateData} />
-            </EmptyStateWrapper>
-          )}
           stickyHeaderIndices={[1]}
           {...flatListProps}
         />}
         {!!selectedEventData &&
-        <SlideModal
-          isVisible={showModal}
-          title="transaction details"
-          onModalHide={this.handleClose}
-          eventDetail
-          handleScrollTo={({ y }) => {
-            if (this.eventDetailScrollViewRef && y) {
-              this.eventDetailScrollViewRef.scrollTo({ x: 0, y, animated: false });
-            }
-          }}
-          scrollOffset={scrollOffset}
-          scrollOffsetMax={maxScrollOffset}
-          onSwipeComplete={this.handleClose}
-        >
           <EventDetails
-            eventData={selectedEventData}
-            eventType={eventType}
-            eventStatus={eventStatus}
-            onClose={this.handleClose}
-            onReject={this.handleRejectInvitation}
-            onCancel={this.handleCancelInvitation}
-            onAccept={this.handleAcceptInvitation}
+            isVisible={showModal}
+            event={selectedEventData}
             navigation={navigation}
-            getRef={(ref) => { this.eventDetailScrollViewRef = ref; }}
-            getScrollOffset={(offset) => this.setState({ scrollOffset: offset })}
-            getMaxScrollOffset={(maxOffset) => this.setState({ maxScrollOffset: maxOffset })}
+            onClose={this.handleClose}
+            rejectInvitation={onRejectInvitation}
+            acceptInvitation={onAcceptInvitation}
           />
-        </SlideModal>
         }
       </ActivityFeedWrapper>
     );

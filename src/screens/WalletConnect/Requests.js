@@ -61,7 +61,7 @@ const CardWrapper = styled.View`
 `;
 
 const Header = styled(MediumText)`
-  padding: 8px ${spacing.layoutSides}px;
+  padding: 18px ${spacing.layoutSides}px 8px;
 `;
 
 class Requests extends React.Component<Props> {

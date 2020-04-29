@@ -37,6 +37,8 @@ export type AppSettingsReducerState = {
     optOutTracking?: boolean,
     hasSeenExchangeIntro?: boolean,
     hideBalance?: boolean,
+    hasDismissedConnectAppsIntro?: boolean,
+    hideBadges?: boolean,
   },
   isFetched: boolean,
 };
@@ -60,6 +62,8 @@ export const initialState: AppSettingsReducerState = {
     isManualThemeSelection: false,
     hasSeenExchangeIntro: false,
     hideBalance: false,
+    hasDismissedConnectAppsIntro: false,
+    hideBadges: false,
   },
   isFetched: false,
 };
