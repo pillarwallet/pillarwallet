@@ -72,7 +72,7 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -400,6 +400,13 @@ export class ActivityFeedItem extends React.Component<Props> {
                 <ItemValue key={symbol}>{`+ ${formatted} ${symbol}`}</ItemValue>,
               )}
             </ListWrapper>),
+        };
+        break;
+      case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
+        data = {
+          label: NAMES.SMART_WALLET,
+          itemImageSource: smartWalletIcon,
+          subtext: 'Enable transaction fees with PLR',
         };
         break;
       default:

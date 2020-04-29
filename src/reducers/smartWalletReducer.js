@@ -34,6 +34,7 @@ import {
   RESET_SMART_WALLET_DEPLOYMENT,
   SET_ASSET_TRANSFER_GAS_LIMIT,
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
+  SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 import type { AssetTransfer } from 'models/Asset';
@@ -43,7 +44,7 @@ import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 export type SmartWalletReducerState = {
   sdkInitialized: boolean,
-  connectedAccount: Object,
+  connectedAccount: Object, // TODO: right model will be added with work in "feature/web-recovery-portal"
   accounts: SmartWalletAccount[],
   upgrade: {
     status: ?string,
@@ -236,6 +237,14 @@ export default function smartWalletReducer(
               return updated;
             }, state.upgrade.transfer.collectibles),
           },
+        },
+      };
+    case SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED:
+      return {
+        ...state,
+        connectedAccount: {
+          ...state.connectedAccount,
+          gasTokenSupported: true,
         },
       };
     default:
