@@ -293,7 +293,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
       .then(({ data }) => data)
-      .catch((error) => ({ result: 'error', error }));
+      .catch((error) => ({ result: 'error', reward: null, error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {
@@ -314,6 +314,13 @@ class SDKWrapper {
         }, Sentry.Severity.Error);
         return { responseStatus: status, message };
       });
+  }
+
+  getSentReferralInvites(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.list({ walletId }))
+      .then(({ data }) => data.data)
+      .catch(() => []);
   }
 
   updateUserAvatar(walletId: string, formData: Object) {

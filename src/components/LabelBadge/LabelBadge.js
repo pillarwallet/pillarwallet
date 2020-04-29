@@ -58,7 +58,6 @@ const BadgeWrapper = styled.View`
   background-color: ${props => getBackgroundColor(props)};
   padding: 3px 8px;
   border-radius: 12px;
-  align-self: flex-start;
 `;
 
 const Label = styled(MediumText)`

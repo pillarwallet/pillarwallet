@@ -27,6 +27,7 @@ import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
 
 // components

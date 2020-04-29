@@ -543,6 +543,10 @@ export const getDeviceHeight = () => {
   return Dimensions.get('window').height;
 };
 
+export const getDeviceWidth = () => {
+  return Dimensions.get('window').width;
+};
+
 export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken) => {
   if (!feeInWei) return '';
 

@@ -136,6 +136,8 @@ type EventData = {
   iconBackgroundColor?: string,
   iconBorder?: boolean,
   fallbackToGenericToken?: boolean,
+  secondaryButton?: boolean,
+  buttonActionLabel?: string,
 };
 
 const NAMES = {
@@ -476,8 +478,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     let actionLabel;
     if (type === TYPE_ACCEPTED) {
       actionLabel = STATUSES.CONNECTED;
-    } else if (type === TYPE_SENT) {
-      actionLabel = STATUSES.REQUESTED;
     } else {
       actionLabel = null;
     }
@@ -486,8 +486,12 @@ export class ActivityFeedItem extends React.Component<Props> {
       label: username,
       actionLabel,
       avatarUrl: profileImage,
-      labelAsButton: type === TYPE_SENT,
     };
+
+    if (type === TYPE_SENT) {
+      data.buttonActionLabel = STATUSES.REQUESTED;
+      data.secondaryButton = true;
+    }
 
     if (type === TYPE_RECEIVED) {
       data.subtext = 'Connection request';
