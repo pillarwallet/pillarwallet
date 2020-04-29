@@ -108,13 +108,6 @@
         <!-- Branch init -->
         <meta-data android:name="io.branch.sdk.BranchKey" android:value="@string/branch_io_key_live" />
         <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="@string/branch_io_key_test" />
-
-        <!-- Branch install referrer tracking (optional) -->
-        <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
