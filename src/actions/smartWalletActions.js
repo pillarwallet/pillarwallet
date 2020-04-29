@@ -112,11 +112,7 @@ import {
   fetchInitialAssetsAction,
 } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import {
-  fetchGasInfoAction,
-  fetchSmartWalletTransactionsAction,
-  insertTransactionAction,
-} from 'actions/historyActions';
+import { fetchSmartWalletTransactionsAction, insertTransactionAction } from 'actions/historyActions';
 
 // types
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
@@ -297,26 +293,6 @@ export const deploySmartWalletAction = () => {
         SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
       ));
       printLog('deploySmartWalletAction account is already deployed!');
-      return;
-    }
-
-    await dispatch(fetchGasInfoAction());
-    const gasInfo = get(getState(), 'history.gasInfo', {});
-    const deployEstimateFee = await smartWalletService.estimateAccountDeployment(gasInfo);
-    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const etherBalanceBN = new BigNumber(smartWalletService.getAccountRealBalance().toString());
-    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
-      Toast.show({
-        message: 'Not enough ETH to make deployment',
-        type: 'warning',
-        title: 'Unable to upgrade',
-        autoClose: false,
-      });
-      await dispatch(setSmartWalletDeploymentDataAction(
-        null,
-        SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS,
-      ));
-      dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
       return;
     }
 
