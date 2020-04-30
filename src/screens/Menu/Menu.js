@@ -119,7 +119,7 @@ const LogoutTextLink = styled(TextLink)`
 `;
 
 const LockScreenTextLink = styled(TextLink)`
-  color: ${themedColors.orange};
+  color: ${themedColors.link};
   ${fontStyles.regular};
 `;
 
@@ -310,13 +310,13 @@ class Menu extends React.Component<Props, State> {
               </LinksSection>
               <LockScreenSection>
                 <LockScreenTextLink onPress={lockScreen}>
-                  Lock screen
+                  Lock wallet
                 </LockScreenTextLink>
               </LockScreenSection>
               <LogoutSection>
                 <LogoutIcon name="signout" />
                 <LogoutTextLink onPress={this.deleteWallet}>
-                  Logout
+                  Sign out from wallet
                 </LogoutTextLink>
               </LogoutSection>
             </Footer>
