@@ -462,7 +462,7 @@ class HomeScreen extends React.Component<Props, State> {
                     <ButtonText
                       onPress={() => navigation.navigate(WALLETCONNECT)}
                       buttonText={`View all ${walletConnectRequests.length}`}
-                      wrapperStyle={{ padding: spacing.layoutSides }}
+                      wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
                     />}
                     <Requests showLastOneOnly />
                   </RequestsWrapper>}
