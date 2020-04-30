@@ -120,7 +120,6 @@ type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
-  referralsFeatureEnabled: boolean,
   goToInvitationFlow: () => void,
   hideBadges: boolean,
   toggleBadges: () => void,
@@ -248,28 +247,6 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  renderReferral = () => {
-    const { isReferralBannerVisible } = this.state;
-    const { goToInvitationFlow } = this.props;
-
-    return (
-      <Banner
-        isVisible={isReferralBannerVisible}
-        onPress={goToInvitationFlow}
-        bannerText="Refer friends and earn rewards, free PLR and more."
-        imageProps={{
-          style: {
-            width: 96,
-            height: 60,
-            marginRight: -4,
-          },
-          source: referralImage,
-        }}
-        onClose={() => this.setState({ isReferralBannerVisible: false })}
-      />
-    );
-  };
-
   handleModalHide = (callback: () => void) => {
     this.setState({ showRewardModal: false }, () => {
       if (callback) callback();
@@ -298,14 +275,19 @@ class HomeScreen extends React.Component<Props, State> {
       badgesEvents,
       theme,
       activeBlockchainNetwork,
-      referralsFeatureEnabled,
       hideBadges,
       toggleBadges,
       walletConnectRequests,
       user,
+      goToInvitationFlow,
     } = this.props;
 
-    const { activeTab, showRewardModal, loaderMessage } = this.state;
+    const {
+      activeTab,
+      showRewardModal,
+      loaderMessage,
+      isReferralBannerVisible,
+    } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -452,7 +434,20 @@ class HomeScreen extends React.Component<Props, State> {
                     />}
                     <Requests showLastOneOnly />
                   </RequestsWrapper>}
-                  {!!referralsFeatureEnabled && this.renderReferral()}
+                  <Banner
+                    isVisible={isReferralBannerVisible}
+                    onPress={goToInvitationFlow}
+                    bannerText="Refer friends and earn rewards, free PLR and more."
+                    imageProps={{
+                      style: {
+                        width: 96,
+                        height: 60,
+                        marginRight: -4,
+                      },
+                      source: referralImage,
+                    }}
+                    onClose={() => this.setState({ isReferralBannerVisible: false })}
+                  />
                   <CollapsibleSection
                     label="Game of badges"
                     collapseContent={
@@ -520,11 +515,6 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   userEvents: { data: userEvents },
   appSettings: { data: { baseFiatCurrency, hideBadges } },
-  featureFlags: {
-    data: {
-      REFERRALS_ENABLED: referralsFeatureEnabled,
-    },
-  },
   walletConnect: { requests: walletConnectRequests },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
@@ -538,7 +528,6 @@ const mapStateToProps = ({
   userEvents,
   baseFiatCurrency,
   hideBadges,
-  referralsFeatureEnabled,
   walletConnectRequests,
 });
 
