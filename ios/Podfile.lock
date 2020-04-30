@@ -314,7 +314,7 @@ PODS:
     - React
   - react-native-netinfo (5.6.1):
     - React
-  - react-native-notifications (3.1.2):
+  - react-native-notifications (3.1.4):
     - React
   - react-native-randombytes (3.5.3):
     - React
@@ -724,7 +724,7 @@ SPEC CHECKSUMS:
   react-native-in-app-browser: e144148387430ae08cbf6d130b6c86e1a6bfd461
   react-native-intercom: 25ceddd224fdf63be29d4e25e95a893e5befe18f
   react-native-netinfo: fa42683301345997e876760ba2be86f06148baa5
-  react-native-notifications: f56a12d741eeb2fd4d7a418a4689111c50f7cd72
+  react-native-notifications: 36929512507417ba0021659bd2f9e0184dda2489
   react-native-randombytes: 3638d24759d67c68f6ccba60c52a7a8a8faa6a23
   react-native-safe-area-context: 9d7613228b994d9d089a881e17b33bf7c2855f90
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
