@@ -40,7 +40,7 @@ import Requests from 'screens/WalletConnect/Requests';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // constants
-import { BADGE, MENU, MANAGE_USERS_FLOW, WALLETCONNECT } from 'constants/navigationConstants';
+import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
