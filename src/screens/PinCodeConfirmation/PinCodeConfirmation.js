@@ -20,7 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -43,9 +42,8 @@ type State = {
   errorMessage: string,
 };
 
-const ContentWrapper = styled.View`
+const ContentWrapper = styled.ScrollView`
   flex: 1;
-  padding-top: ${spacing.medium}px;
 `;
 
 const HeaderText = styled(MediumText)`
@@ -108,20 +106,18 @@ class PinCodeConfirmation extends React.Component<Props, State> {
           {this.state.errorMessage}
         </ErrorMessage>
         }
-        <ContentWrapper>
+        <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
           <HeaderText>
             Re-enter to confirm
           </HeaderText>
-          <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
-            <PinCode
-              onPinEntered={this.handlePinSubmit}
-              onPinChanged={this.handlePinChange}
-              pageInstructions="Confirm your Pincode"
-              showForgotButton={false}
-              pinError={!!errorMessage}
-              flex={false}
-            />
-          </Wrapper>
+          <PinCode
+            onPinEntered={this.handlePinSubmit}
+            onPinChanged={this.handlePinChange}
+            pageInstructions="Confirm your Pincode"
+            showForgotButton={false}
+            pinError={!!errorMessage}
+            flex={false}
+          />
         </ContentWrapper>
       </ContainerWithHeader>
     );
