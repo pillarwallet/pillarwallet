@@ -168,12 +168,12 @@ const themeColors = (theme: Theme) => {
       border: colors.negative,
     },
     secondaryTransparent: {
-      background: 'transparent',
+      surface: 'transparent',
       text: colors.control,
       border: colors.primary,
     },
     secondaryTransparentDisabled: {
-      background: 'transparent',
+      surface: 'transparent',
       text: colors.secondaryText,
     },
     secondaryDanger: {
@@ -181,11 +181,11 @@ const themeColors = (theme: Theme) => {
       text: colors.negative,
     },
     danger: {
-      background: colors.negative,
+      surface: colors.danger,
       text: colors.control,
     },
     dark: {
-      background: colors.tertiary,
+      surface: colors.tertiary,
       color: colors.control,
       borderColor: colors.tertiary,
     },
