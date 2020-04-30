@@ -28,7 +28,7 @@ import Button from 'components/Button';
 import InviteBanner from 'screens/People/InviteBanner';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { Spacing } from 'components/Layout';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
@@ -47,7 +47,6 @@ const ButtonsWrapper = styled.View`
 `;
 
 type Props = {
-  referralsFeatureEnabled: boolean,
   goToInvitationFlow: () => void,
   deploymentHash: ?string,
 }
@@ -65,7 +64,7 @@ class WalletActivation extends React.PureComponent<Props> {
   };
 
   render() {
-    const { referralsFeatureEnabled, goToInvitationFlow } = this.props;
+    const { goToInvitationFlow } = this.props;
 
     return (
       <ScrollView
@@ -95,24 +94,14 @@ class WalletActivation extends React.PureComponent<Props> {
             style={{ borderColor: 'transparent' }}
           />
         </ButtonsWrapper>
-        {referralsFeatureEnabled && (
-          <InviteBanner title="Invite friends" onInvitePress={goToInvitationFlow} />
-        )}
+        <InviteBanner title="Invite friends" onInvitePress={goToInvitationFlow} />
       </ScrollView>
     );
   }
 }
 
-const mapStateToProps = ({
-  featureFlags: {
-    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
-  },
-}: RootReducerState): $Shape<Props> => ({
-  referralsFeatureEnabled,
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WalletActivation);
+export default connect(null, mapDispatchToProps)(WalletActivation);
