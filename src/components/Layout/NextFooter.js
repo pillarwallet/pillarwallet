@@ -30,7 +30,7 @@ type Props = {
 }
 
 const FooterWrapper = styled.KeyboardAvoidingView`
-  padding: 0 30px;
+  padding: 30px;
   flex-direction: column;
 `;
 
