@@ -52,7 +52,6 @@ const ItemContainer = styled.View`
 const ItemText = styled(BaseText)`
   flex: 1;
   color: ${themedColors.secondaryText};
-  max-width: 80%;
 `;
 
 const CheckIcon = styled(Icon)`

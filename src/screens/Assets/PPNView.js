@@ -154,7 +154,7 @@ const SENT = 'SENT';
 const SETTLED = 'SETTLED';
 
 const insightItemsList = [
-  'Instant, gas-free and private transactions',
+  'Instant, gas-free and private transactions.',
   'A single token experience including the ability to send/spend tokens you don’t already own through real-time swaps.',
 ];
 
@@ -211,16 +211,18 @@ class PPNView extends React.Component<Props, State> {
           />
         );
       }
+    } else {
+      return (
+        <InsightWithButton
+          title="Unique benefits of Pillar Payment Network for PLR users"
+          itemsList={insightItemsList}
+          buttonTitle="Activate Pillar Network"
+          onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
+        />
+      );
     }
 
-    return (
-      <InsightWithButton
-        title="Unique benefits of Pillar Payment Network for PLR users"
-        itemsList={insightItemsList}
-        buttonTitle="Activate Pillar Network"
-        onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
-      />
-    );
+    return null;
   };
 
   closeSmartWalletModal = () => {
