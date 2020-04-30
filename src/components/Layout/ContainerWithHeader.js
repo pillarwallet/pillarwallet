@@ -50,7 +50,8 @@ type Props = {
   statusbarColor?: {
     darkTheme?: string,
     lightTheme?: string
-  }
+  },
+  keyboardShouldPersistTaps?: string,
 };
 
 type State = {
@@ -126,7 +127,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
   };
 
   renderContent = (shouldRenderFooter, shouldRenderChildrenInScrollView) => {
-    const { children, footer } = this.props;
+    const { children, footer, keyboardShouldPersistTaps = 'never' } = this.props;
     if (!shouldRenderFooter) {
       if (!shouldRenderChildrenInScrollView) {
         if (typeof children === 'function') {
@@ -136,13 +137,17 @@ class ContainerWithHeader extends React.Component<Props, State> {
       }
 
       return (
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps={keyboardShouldPersistTaps}>
           {children}
         </ScrollView>
       );
     }
     return (
-      <ScrollWrapper style={{ flex: 1 }} contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
+      <ScrollWrapper
+        style={{ flex: 1 }}
+        contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      >
         <ContentWrapper>
           {children}
         </ContentWrapper>
