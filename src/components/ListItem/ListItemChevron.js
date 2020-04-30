@@ -100,6 +100,7 @@ type Props = {
   wrapperStyle?: Object,
   chevronStyle?: Object,
   rightAddon?: React.Node,
+  disabled?: boolean,
 }
 
 export const ListItemChevron = (props: Props) => {
@@ -114,10 +115,11 @@ export const ListItemChevron = (props: Props) => {
     wrapperStyle,
     chevronStyle,
     rightAddon,
+    disabled,
   } = props;
   return (
     <ListItem bordered={bordered} style={wrapperStyle}>
-      <NativeTouchable onPress={onPress}>
+      <NativeTouchable onPress={onPress} disabled={disabled}>
         <ItemRow>
           <ContentWrapper>
             <TextWrapper>
