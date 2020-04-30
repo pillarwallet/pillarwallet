@@ -327,7 +327,7 @@ class Permissions extends React.Component<Props, State> {
           }}
           collapseContent={
             <View style={{
-              flexDirection: 'column',
+              flexDirection: 'row',
               flexWrap: 'wrap',
               flex: 1,
               marginRight: 30,
