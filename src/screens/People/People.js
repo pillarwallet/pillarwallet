@@ -52,7 +52,6 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
 import { BaseText, SubHeadingMedium } from 'components/Typography';
 import Button from 'components/Button';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 import Overlay from 'components/SearchBlock/Overlay';
@@ -111,13 +110,6 @@ const InnerWrapper = styled.View`
   flex: 1;
 `;
 
-const EmptyStateWrapper = styled.View`
-  flex: 1;
-  flex-grow: 1;
-  align-items: center;
-  justify-content: center;
-`;
-
 const LocalContacts = styled.View`
   border-top-width: 1px;
   border-bottom-width: 1px;
@@ -169,7 +161,6 @@ type Props = {
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
   theme: Theme,
-  referralsFeatureEnabled: boolean,
   goToInvitationFlow: () => void,
   sendInvitation: (user: ApiUser) => void,
   acceptInvitation: (invitation: Object) => void,
@@ -418,27 +409,15 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
-  renderEmptyState = ({ inviteTitle, esTitle, esBody }) => {
-    const { referralsFeatureEnabled, goToInvitationFlow } = this.props;
+  renderEmptyState = (inviteTitle) => {
+    const { goToInvitationFlow } = this.props;
 
     return (
       <Wrapper fullScreen style={{ marginTop: 8, marginBottom: spacing.large }}>
-        {!referralsFeatureEnabled
-          ? (
-            <EmptyStateWrapper>
-              <EmptyStateParagraph
-                title={esTitle}
-                bodyText={esBody}
-              />
-            </EmptyStateWrapper>
-          )
-          : (
-            <InviteBanner
-              title={inviteTitle}
-              onInvitePress={goToInvitationFlow}
-            />
-          )
-        }
+        <InviteBanner
+          title={inviteTitle}
+          onInvitePress={goToInvitationFlow}
+        />
       </Wrapper>
     );
   };
@@ -584,16 +563,8 @@ class PeopleScreen extends React.Component<Props, State> {
           }
         ListEmptyComponent={
           <>
-            {inSearchMode && !isSearching && this.renderEmptyState({
-                inviteTitle: 'Pillar is social',
-                esTitle: 'Nobody found',
-                esBody: 'Make sure you entered the name correctly',
-              })}
-            {!inSearchMode && !isSearching && this.renderEmptyState({
-                inviteTitle: 'Invite friends',
-                esTitle: 'Start making friends',
-                esBody: 'Build your connection list by searching for someone',
-              })}
+            {inSearchMode && !isSearching && this.renderEmptyState('Pillar is social')}
+            {!inSearchMode && !isSearching && this.renderEmptyState('Invite friends')}
             {isSearching && <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>}
           </>
           }
@@ -630,7 +601,6 @@ class PeopleScreen extends React.Component<Props, State> {
       chats,
       theme,
       goToInvitationFlow,
-      referralsFeatureEnabled,
     } = this.props;
     const inSearchMode = query.length >= MIN_QUERY_LENGTH;
 
@@ -644,7 +614,7 @@ class PeopleScreen extends React.Component<Props, State> {
         headerProps={{
           noBack: true,
           leftItems: [{ title: 'People' }],
-          rightItems: referralsFeatureEnabled ? [{
+          rightItems: [{
             custom: (
               <IconButton
                 icon="present"
@@ -657,7 +627,7 @@ class PeopleScreen extends React.Component<Props, State> {
               />
             ),
             itemStyle: { alignItems: 'center' },
-          }] : [],
+          }],
          }}
         inset={{ bottom: 0 }}
         tab
@@ -697,16 +667,12 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
-  featureFlags: {
-    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
-  },
 }: RootReducerState): $Shape<Props> => ({
   searchResults,
   isSearching,
   localContacts,
   invitations,
   chats,
-  referralsFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
