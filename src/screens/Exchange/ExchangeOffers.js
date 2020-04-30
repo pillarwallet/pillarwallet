@@ -65,7 +65,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { getOfferProviderLogo, isFiatProvider, getCryptoProviderName } from 'utils/exchange';
-import { formatAmount, formatAmountDisplay } from 'utils/common';
+import { formatAmount, formatAmountDisplay, reportOrWarn } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
@@ -425,7 +425,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     );
 
     InAppBrowser.open(wyreUrl).catch(error => {
-      console.warn('InAppBrowser.error', error); // eslint-disable-line no-console
+      reportOrWarn('InAppBrowser.error', error, 'warning');
     });
   }
 

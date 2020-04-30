@@ -21,6 +21,7 @@ import { SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { updateAppSettingsAction } from 'actions/appSettingsActions';
+import { reportOrWarn } from 'utils/common';
 
 export const setActiveBlockchainNetworkAction = (id: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -28,7 +29,7 @@ export const setActiveBlockchainNetworkAction = (id: string) => {
     const network = networks.find(({ id: networkId }) => networkId === id);
 
     if (!network) {
-      console.warn('Trying to activate an invalid network'); // eslint-disable-line no-console
+      reportOrWarn('Trying to activate an invalid network', null, 'critical');
       return;
     }
 
