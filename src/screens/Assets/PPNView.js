@@ -154,7 +154,7 @@ const SENT = 'SENT';
 const SETTLED = 'SETTLED';
 
 const insightItemsList = [
-  'Instant, gas-free and private transactions',
+  'Instant, gas-free and private transactions.',
   'A single token experience including the ability to send/spend tokens you don’t already own through real-time swaps.',
 ];
 
@@ -211,16 +211,18 @@ class PPNView extends React.Component<Props, State> {
           />
         );
       }
+    } else {
+      return (
+        <InsightWithButton
+          title="Unique benefits of Pillar Payment Network for PLR users"
+          itemsList={insightItemsList}
+          buttonTitle="Activate Pillar Network"
+          onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
+        />
+      );
     }
 
-    return (
-      <InsightWithButton
-        title="Unique benefits of Pillar Payment Network for PLR users"
-        itemsList={insightItemsList}
-        buttonTitle="Activate Pillar Network"
-        onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
-      />
-    );
+    return null;
   };
 
   closeSmartWalletModal = () => {
@@ -397,6 +399,7 @@ class PPNView extends React.Component<Props, State> {
               borderTopWidth: 0,
               borderBottomWidth: 1,
               borderColor: colors.border,
+              opacity: disableTopUpAndSettle ? 0.5 : 1,
             }}
             chevronStyle={{ color: colors.secondaryText }}
             label="Incoming balance"
@@ -404,6 +407,7 @@ class PPNView extends React.Component<Props, State> {
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
             color={colors.text}
             bordered
+            disabled={!!disableTopUpAndSettle}
           />}
           {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
@@ -432,6 +436,7 @@ class PPNView extends React.Component<Props, State> {
               width="auto"
               title="Settle transactions"
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
+              disabled={disableTopUpAndSettle}
             />
           </FloatingButtonView>
         }
