@@ -36,7 +36,7 @@ import {
 } from 'constants/walletConstants';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
@@ -391,8 +391,9 @@ class ImportWallet extends React.Component<Props, State> {
         )}
       >
         <ScrollWrapper disableAutomaticScroll keyboardShouldPersistTaps="always">
-          <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
+          {__DEV__ && <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />}
           <Wrapper regularPadding>
+            {!__DEV__ && <MediumText center style={{ marginTop: spacing.large }}>Enter your 12 words</MediumText>}
             <InputWrapper>
               <FormWrapper>
                 {this.renderForm(tabsInfo)}
