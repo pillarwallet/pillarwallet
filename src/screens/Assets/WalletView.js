@@ -156,9 +156,9 @@ const ActionsWrapper = styled(Wrapper)`
 
 
 const initialSWInsights = [
-  'It can be recovered from another linked device',
-  'You will be able to set spending limits for better security. Coming soon',
-  'It works great with Pillar Network — instant and free transactions',
+  'It can be recovered from any web-connected device following proper set up.',
+  'It provides access to the Pillar Payment Network including instant and gas-free transactions.',
+  'It can control multiple keys providing for dapp-specific usage and spending limits.',
 ];
 
 class WalletView extends React.Component<Props, State> {
@@ -446,7 +446,9 @@ class WalletView extends React.Component<Props, State> {
             ) :
             (
               <InsightWithButton
-                title="Why Smart Wallet knocks out your old private key wallet?"
+                title="Welcome to the Pillar Smart Wallet!"
+                description="The Pillar Smart Wallet replaces the existing Pillar Legacy Wallet and
+                features the following benefits:"
                 itemsList={initialSWInsights}
                 buttonTitle="Wow, that's cool"
                 onButtonPress={dismissSmartWalletInsight}

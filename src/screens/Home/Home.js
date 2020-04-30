@@ -32,12 +32,12 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
-import ProfileImage from 'components/ProfileImage';
 import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 import Loader from 'components/Loader';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
 import Requests from 'screens/WalletConnect/Requests';
+import UserNameAndImage from 'components/UserNameAndImage';
 
 // constants
 import { BADGE, MENU, MANAGE_USERS_FLOW, WALLETCONNECT } from 'constants/navigationConstants';
@@ -139,7 +139,7 @@ const {
   width: SCREEN_WIDTH,
   height: SCREEN_HEIGHT,
 } = Dimensions.get('window');
-const profileImageWidth = 24;
+
 
 const RequestsWrapper = styled.View`
   margin-top: ${({ marginOnTop }) => marginOnTop ? 18 : 2}px;
@@ -248,21 +248,6 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  renderUser = () => {
-    const { user, navigation } = this.props;
-    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
-    return (
-      <ProfileImage
-        uri={userImageUri}
-        userName={user.username}
-        diameter={profileImageWidth}
-        noShadow
-        borderWidth={0}
-        onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}
-      />
-    );
-  };
-
   renderReferral = () => {
     const { isReferralBannerVisible } = this.state;
     const { goToInvitationFlow } = this.props;
@@ -317,6 +302,7 @@ class HomeScreen extends React.Component<Props, State> {
       hideBadges,
       toggleBadges,
       walletConnectRequests,
+      user,
     } = this.props;
 
     const { activeTab, showRewardModal, loaderMessage } = this.state;
@@ -417,7 +403,7 @@ class HomeScreen extends React.Component<Props, State> {
                 ),
               },
             ],
-            centerItems: [{ custom: this.renderUser() }],
+            centerItems: [{ custom: <UserNameAndImage user={user} /> }],
             rightItems: [
               {
                 link: 'Support',
@@ -436,7 +422,7 @@ class HomeScreen extends React.Component<Props, State> {
                 ),
               },
             ],
-            sideFlex: 4,
+            sideFlex: '20px',
           }}
           inset={{ bottom: 0 }}
           tab

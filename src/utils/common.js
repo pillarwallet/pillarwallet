@@ -36,16 +36,23 @@ import {
 import { providers, utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
-import type { GasInfo } from 'models/GasInfo';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
+
+// constants
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import * as NAVSCREENS from 'constants/navigationConstants';
+
+// types
+import type { GasInfo } from 'models/GasInfo';
+import type { GasToken } from 'models/Transaction';
+
+// local
 import { isProdEnv, isTest } from './environment';
 
 
@@ -268,7 +275,16 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
-const DEFAULT_TRANSITION_SCREENS = [MANAGE_USERS_FLOW];
+const DEFAULT_TRANSITION_SCREENS = [
+  NAVSCREENS.MANAGE_USERS_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
+  NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
+  NAVSCREENS.SEND_BITCOIN_FLOW,
+];
 
 const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
   return DEFAULT_TRANSITION_SCREENS.some(
@@ -538,4 +554,15 @@ export const getDeviceHeight = () => {
 
 export const getDeviceWidth = () => {
   return Dimensions.get('window').width;
+};
+
+export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken) => {
+  if (!feeInWei) return '';
+
+  if (gasToken && !isEmpty(gasToken)) {
+    const { symbol, decimals } = gasToken;
+    return `${formatAmount(utils.formatUnits(feeInWei.toString(), decimals), 2)} ${symbol}`;
+  }
+
+  return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
 };

@@ -31,7 +31,7 @@ import { LabelBadge } from 'components/LabelBadge';
 import Toast from 'components/Toast';
 
 const ContentWrapper = styled(SafeAreaView)`
-  padding: 0 ${spacing.layoutSides}px ${spacing.large}px;
+  padding: 0 ${spacing.layoutSides}px 60px;
   align-items: center;
 `;
 

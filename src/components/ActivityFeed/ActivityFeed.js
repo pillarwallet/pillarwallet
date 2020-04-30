@@ -81,7 +81,6 @@ const SectionHeader = styled(BaseText)`
 const EmptyStateWrapper = styled.View`
   padding: 15px 30px 30px;
   width: 100%;
-  flex: 1;
   align-items: center;
   justify-content: center;
 `;
@@ -123,6 +122,7 @@ type Props = {
   tabsComponent?: React.Node,
   headerComponent?: React.Node,
   flatListProps?: FlatList,
+  isPPNView?: boolean,
 };
 
 type State = {|
@@ -136,6 +136,7 @@ const ITEM_TYPE = {
   TABS: 'TABS',
   SECTION: 'SECTION',
   ITEM: 'ITEM',
+  EMPTY_STATE: 'EMPTY_STATE',
 };
 
 class ActivityFeed extends React.Component<Props, State> {
@@ -167,10 +168,14 @@ class ActivityFeed extends React.Component<Props, State> {
       const items = [];
       items.push({ type: ITEM_TYPE.HEADER, component: headerComponent });
       items.push({ type: ITEM_TYPE.TABS, component: tabsComponent });
-      dataSections.forEach(({ data, ...section }) => {
-        items.push({ type: ITEM_TYPE.SECTION, section });
-        data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
-      });
+      if (!filteredFeedList.length) {
+        items.push({ type: ITEM_TYPE.EMPTY_STATE });
+      } else {
+        dataSections.forEach(({ data, ...section }) => {
+          items.push({ type: ITEM_TYPE.SECTION, section });
+          data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
+        });
+      }
 
       return items;
     },
@@ -217,6 +222,13 @@ class ActivityFeed extends React.Component<Props, State> {
       case ITEM_TYPE.HEADER:
       case ITEM_TYPE.TABS:
         return item.component;
+      case ITEM_TYPE.EMPTY_STATE:
+        const emptyStateData = this.getEmptyStateData();
+        return (
+          <EmptyStateWrapper>
+            <EmptyStateParagraph {...emptyStateData} />
+          </EmptyStateWrapper>
+        );
       case ITEM_TYPE.SECTION:
         return (
           <SectionHeaderWrapper>
@@ -224,13 +236,14 @@ class ActivityFeed extends React.Component<Props, State> {
           </SectionHeaderWrapper>
         );
       default:
-        const { onRejectInvitation, onAcceptInvitation } = this.props;
+        const { onRejectInvitation, onAcceptInvitation, isPPNView } = this.props;
         return (
           <ActivityFeedItem
             event={item.item}
             selectEvent={this.selectEvent}
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
+            isPPNView={isPPNView}
           />
         );
     }
@@ -251,6 +264,7 @@ class ActivityFeed extends React.Component<Props, State> {
     switch (item.type) {
       case ITEM_TYPE.HEADER:
       case ITEM_TYPE.TABS:
+      case ITEM_TYPE.EMPTY_STATE:
         return item.type;
       case ITEM_TYPE.SECTION:
         return item.section.title;
@@ -292,8 +306,6 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
 
-    const emptyStateData = this.getEmptyStateData();
-
     const firstTab = tabs.length ? tabs[0].id : '';
 
     const additionalContentContainerStyle = !formattedFeedData.length
@@ -325,11 +337,6 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
-          ListEmptyComponent={(
-            <EmptyStateWrapper>
-              <EmptyStateParagraph {...emptyStateData} />
-            </EmptyStateWrapper>
-          )}
           stickyHeaderIndices={[1]}
           {...flatListProps}
         />}
