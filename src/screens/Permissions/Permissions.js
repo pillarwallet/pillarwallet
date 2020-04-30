@@ -378,7 +378,6 @@ class Permissions extends React.Component<Props, State> {
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'space-between',
-            paddingTop: '10%',
           }}
         >
           <StyledFlatList

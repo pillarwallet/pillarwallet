@@ -407,7 +407,6 @@ class NewProfile extends React.Component<Props, State> {
           <NextFooter
             onNextPress={this.handleSubmit}
             nextDisabled={!allowNext}
-            wrapperStyle={{ paddingBottom: 15, paddingTop: 15 }}
           >
             {!importedWallet &&
             <React.Fragment>
