@@ -85,6 +85,10 @@ export type EstimatePayload = {
   signedGasPrice: {
     gasPrice: BigNumber,
   },
+  signedGasTokenCost?: sdkInterfaces.ISignedGasTokenCost;
+  gasToken: sdkInterfaces.IGasToken;
+  relayerVersion: number;
+  relayerFeatures: sdkInterfaces.RelayerFeatures;
 };
 
 type ParsedEstimate = {
