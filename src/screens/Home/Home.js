@@ -35,10 +35,12 @@ import IconButton from 'components/IconButton';
 import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 import Loader from 'components/Loader';
 import CollapsibleSection from 'components/CollapsibleSection';
+import ButtonText from 'components/ButtonText';
+import Requests from 'screens/WalletConnect/Requests';
 import UserNameAndImage from 'components/UserNameAndImage';
 
 // constants
-import { BADGE, MENU } from 'constants/navigationConstants';
+import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -78,7 +80,7 @@ import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
-import type { Connector } from 'models/WalletConnect';
+import type { CallRequest, Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -122,6 +124,7 @@ type Props = {
   goToInvitationFlow: () => void,
   hideBadges: boolean,
   toggleBadges: () => void,
+  walletConnectRequests: CallRequest[],
 };
 
 type State = {
@@ -137,6 +140,11 @@ const {
   height: SCREEN_HEIGHT,
 } = Dimensions.get('window');
 
+
+const RequestsWrapper = styled.View`
+  margin-top: ${({ marginOnTop }) => marginOnTop ? 18 : 2}px;
+  align-items: flex-end;
+`;
 
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
@@ -293,6 +301,7 @@ class HomeScreen extends React.Component<Props, State> {
       referralsFeatureEnabled,
       hideBadges,
       toggleBadges,
+      walletConnectRequests,
       user,
     } = this.props;
 
@@ -433,6 +442,16 @@ class HomeScreen extends React.Component<Props, State> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
+                  {!!walletConnectRequests &&
+                  <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
+                    {walletConnectRequests.length > 1 &&
+                    <ButtonText
+                      onPress={() => navigation.navigate(WALLETCONNECT)}
+                      buttonText={`View all ${walletConnectRequests.length}`}
+                      wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
+                    />}
+                    <Requests showLastOneOnly />
+                  </RequestsWrapper>}
                   {!!referralsFeatureEnabled && this.renderReferral()}
                   <CollapsibleSection
                     label="Game of badges"
@@ -506,6 +525,7 @@ const mapStateToProps = ({
       REFERRALS_ENABLED: referralsFeatureEnabled,
     },
   },
+  walletConnect: { requests: walletConnectRequests },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -519,6 +539,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   hideBadges,
   referralsFeatureEnabled,
+  walletConnectRequests,
 });
 
 const structuredSelector = createStructuredSelector({

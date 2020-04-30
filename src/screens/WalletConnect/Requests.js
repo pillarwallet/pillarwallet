@@ -37,6 +37,7 @@ type Props = {
   rejectWCRequest: (request: CallRequest) => void,
   acceptWCRequest: (request: CallRequest) => void,
   theme: Theme,
+  showLastOneOnly?: boolean,
 };
 
 const ActionCircleButton = styled(IconButton)`
@@ -58,6 +59,8 @@ const ItemContainer = styled.View`
 
 const CardWrapper = styled.View`
   padding: 0 ${spacing.layoutSides}px 8px;
+  width: 100%
+  margin-bottom: ${spacing.small}px; 
 `;
 
 const Header = styled(MediumText)`
@@ -72,14 +75,14 @@ class Requests extends React.Component<Props> {
 
     return (
       <CardWrapper>
-        <ShadowedCard>
+        <ShadowedCard borderRadius={30}>
           <ItemContainer>
             <CachedImage
               style={{
-              height: 50,
-              width: 50,
-              borderRadius: 7,
-            }}
+                height: 50,
+                width: 50,
+                borderRadius: 7,
+              }}
               source={{ uri: icon }}
             />
             <Spacing w={15} />
@@ -96,7 +99,7 @@ class Requests extends React.Component<Props> {
               margin={0}
               accept
               icon="check"
-              fontSize={fontSizes.regular}
+              fontSize={fontSizes.small}
               onPress={() => acceptWCRequest(item)}
             />
           </ItemContainer>
@@ -106,8 +109,11 @@ class Requests extends React.Component<Props> {
   };
 
   render() {
-    const { requests } = this.props;
+    const { requests, showLastOneOnly } = this.props;
     if (!requests.length) return null;
+    if (showLastOneOnly) {
+      return this.renderRequest({ item: requests[requests.length - 1] });
+    }
 
     return (
       <React.Fragment>
@@ -116,6 +122,7 @@ class Requests extends React.Component<Props> {
           data={requests}
           renderItem={this.renderRequest}
           keyExtractor={({ callId }) => callId.toString()}
+          contentContainerStyle={{ paddingTop: 10 }}
         />
       </React.Fragment>
     );
