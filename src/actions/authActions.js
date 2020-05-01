@@ -17,13 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
-import { ethers } from 'ethers';
 
 // constants
 import {
@@ -55,7 +55,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // utils
 import { delay } from 'utils/common';
-import { getSaltedPin, decryptWallet, normalizeWalletAddress } from 'utils/wallet';
+import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
 import { findKeyBasedAccount, getActiveAccountType } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
@@ -141,8 +141,7 @@ export const loginAction = (
         // migrate older users for keychain access OR fallback for biometrics login
         await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' }, useBiometrics);
       } else if (privateKey) {
-        const walletAddress = normalizeWalletAddress(encryptedWallet.address);
-        wallet = { ...encryptedWallet, privateKey, address: walletAddress };
+        wallet = constructWalletFromPrivateKey(privateKey);
       } else {
         // nothing provided, invalid login
         throw new Error();
@@ -347,7 +346,7 @@ export const checkAuthAction = (
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       } else if (privateKey) {
-        wallet = new ethers.Wallet(privateKey);
+        wallet = constructWalletFromPrivateKey(privateKey);
       }
       if (wallet) {
         dispatch({
