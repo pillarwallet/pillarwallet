@@ -54,7 +54,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // utils
-import { delay } from 'utils/common';
+import { delay, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
 import { findKeyBasedAccount, getActiveAccountType } from 'utils/accounts';
 import { toastWalletBackup } from 'utils/toasts';
@@ -361,7 +361,7 @@ export const checkAuthAction = (
         return;
       }
     } catch (e) {
-      // err
+      reportOrWarn('Error constructing the wallet object', e, 'error');
     }
     dispatch({
       type: UPDATE_WALLET_STATE,
