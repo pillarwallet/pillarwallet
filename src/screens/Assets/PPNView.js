@@ -399,6 +399,7 @@ class PPNView extends React.Component<Props, State> {
               borderTopWidth: 0,
               borderBottomWidth: 1,
               borderColor: colors.border,
+              opacity: disableTopUpAndSettle ? 0.5 : 1,
             }}
             chevronStyle={{ color: colors.secondaryText }}
             label="Incoming balance"
@@ -406,6 +407,7 @@ class PPNView extends React.Component<Props, State> {
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
             color={colors.text}
             bordered
+            disabled={!!disableTopUpAndSettle}
           />}
           {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
@@ -434,6 +436,7 @@ class PPNView extends React.Component<Props, State> {
               width="auto"
               title="Settle transactions"
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
+              disabled={disableTopUpAndSettle}
             />
           </FloatingButtonView>
         }

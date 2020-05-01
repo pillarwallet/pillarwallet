@@ -62,7 +62,6 @@ type Props = {
   user: User,
   backupStatus: BackupStatus,
   logoutUser: () => void,
-  referralsFeatureEnabled: boolean,
   lockScreen: () => void,
   goToInvitationFlow: () => void,
 };
@@ -130,17 +129,10 @@ class Menu extends React.Component<Props, State> {
 
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus, referralsFeatureEnabled, goToInvitationFlow,
+      theme, navigation, backupStatus, goToInvitationFlow,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
-    const referalItem = {
-      key: 'referFriends',
-      title: 'Refer friends',
-      icon: 'present',
-      iconColor: colors.accent,
-      action: goToInvitationFlow,
-    };
     const menuItems = [
       {
         key: 'securitySettings',
@@ -175,6 +167,13 @@ class Menu extends React.Component<Props, State> {
         action: () => navigation.navigate(APP_SETTINGS),
       },
       {
+        key: 'referFriends',
+        title: 'Refer friends',
+        icon: 'present',
+        iconColor: colors.accent,
+        action: goToInvitationFlow,
+      },
+      {
         key: 'community',
         title: 'Community',
         icon: 'like',
@@ -204,10 +203,6 @@ class Menu extends React.Component<Props, State> {
         hidden: !__DEV__,
       },
     ];
-
-    if (referralsFeatureEnabled) {
-      menuItems.splice(4, 0, referalItem);
-    }
     return menuItems;
   };
 
@@ -342,13 +337,9 @@ class Menu extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
-  featureFlags: {
-    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
-  },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
-  referralsFeatureEnabled,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

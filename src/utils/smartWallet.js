@@ -364,6 +364,9 @@ export const buildSmartWalletTransactionEstimate = (
   };
 
   // check if fee by gas token available
+  const hasGasTokenSupport = get(apiEstimate, 'relayerFeatures.gasTokenSupported', false);
+  if (!hasGasTokenSupport) return estimate;
+
   const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
   const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
   const parsedGasTokenAddress = get(parsedGasToken, 'address');
