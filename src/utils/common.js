@@ -82,6 +82,18 @@ export const reportLog = (
   printLog(`${level}: ${message}`, extra);
 };
 
+export const reportOrWarn = (
+  message: string,
+  extra?: Object,
+  level: Sentry.Severity = Sentry.Severity.Info,
+) => {
+  if (__DEV__) {
+    console.warn(message, extra); // eslint-disable-line no-console
+    return;
+  }
+  reportLog(message, extra, level);
+};
+
 export const stringWithoutSpaces = (s: string): string => {
   return s.replace(/\s/g, '');
 };
