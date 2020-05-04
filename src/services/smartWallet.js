@@ -40,7 +40,7 @@ import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
-import { printLog, reportLog } from 'utils/common';
+import { printLog, reportLog, reportOrWarn } from 'utils/common';
 
 // services
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
@@ -85,6 +85,10 @@ export type EstimatePayload = {
   signedGasPrice: {
     gasPrice: BigNumber,
   },
+  signedGasTokenCost?: sdkInterfaces.ISignedGasTokenCost;
+  gasToken: sdkInterfaces.IGasToken;
+  relayerVersion: number;
+  relayerFeatures: sdkInterfaces.RelayerFeatures;
 };
 
 type ParsedEstimate = {
@@ -93,6 +97,7 @@ type ParsedEstimate = {
   totalCost: ?BigNumber,
   gasToken: ?sdkInterfaces.IGasToken,
   gasTokenCost: ?BigNumber,
+  relayerFeatures: ?sdkInterfaces.RelayerFeatures;
 };
 
 let subscribedToEvents = false;
@@ -102,12 +107,14 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   const gasToken = get(estimatePayload, 'gasToken');
   const gasPrice = get(estimatePayload, 'signedGasPrice.gasPrice');
   const gasTokenCost = get(estimatePayload, 'signedGasTokenCost.gasTokenCost');
+  const relayerFeatures = get(estimatePayload, 'relayerFeatures');
   return {
     gasAmount,
     gasPrice,
     totalCost: gasAmount && gasPrice && gasPrice.mul(gasAmount),
     gasToken,
     gasTokenCost,
+    relayerFeatures,
   };
 };
 
@@ -128,9 +135,10 @@ const calculateEstimate = (
     : defaultGasAmount,
   );
 
+  const hasGasTokenSupport = get(parsedPayload, 'relayerFeatures.gasTokenSupported', false);
   const parsedGasTokenAddress = get(parsedPayload, 'gasToken.address');
   const gasTokenAddress = get(gasToken, 'address');
-  const isGasTokenAvailable = !isEmpty(gasToken)
+  const isGasTokenAvailable = hasGasTokenSupport && !isEmpty(gasToken)
     && addressesEqual(parsedGasTokenAddress, gasTokenAddress);
 
   gasTokenCost = new BigNumber(isGasTokenAvailable && gasTokenCost
@@ -508,7 +516,7 @@ class SmartWallet {
   }
 
   handleError(error: any) {
-    console.error('SmartWallet handleError: ', error);
+    reportOrWarn('SmartWallet handleError: ', error, 'critical');
   }
 
   reportError(errorMessage: string, errorData: Object) {

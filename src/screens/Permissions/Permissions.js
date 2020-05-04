@@ -327,7 +327,7 @@ class Permissions extends React.Component<Props, State> {
           }}
           collapseContent={
             <View style={{
-              flexDirection: 'column',
+              flexDirection: 'row',
               flexWrap: 'wrap',
               flex: 1,
               marginRight: 30,
@@ -378,7 +378,6 @@ class Permissions extends React.Component<Props, State> {
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'space-between',
-            paddingTop: '10%',
           }}
         >
           <StyledFlatList

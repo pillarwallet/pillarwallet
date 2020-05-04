@@ -149,7 +149,6 @@ type Props = {
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: (onNavigationCallback: () => void) => void,
-  referralsFeatureEnabled: boolean,
   isPPNActivated: boolean,
 };
 
@@ -1124,7 +1123,7 @@ class EventDetail extends React.Component<Props, State> {
 
   render() {
     const {
-      isVisible, onClose, event, activeAccountAddress, navigation, referralsFeatureEnabled,
+      isVisible, onClose, event, activeAccountAddress, navigation,
     } = this.props;
     const {
       isReceiveModalVisible,
@@ -1138,10 +1137,6 @@ class EventDetail extends React.Component<Props, State> {
       actionTitle, actionSubtitle, actionIcon, actionColor, customActionTitle,
       buttons = [], settleEventData, fee,
     } = eventData;
-
-    const filteredButtons = referralsFeatureEnabled ?
-      buttons :
-      buttons.filter(button => button.onPress !== this.referFriends);
 
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
 
@@ -1185,7 +1180,7 @@ class EventDetail extends React.Component<Props, State> {
               </React.Fragment>
             )}
             <ButtonsContainer>
-              {filteredButtons.map(buttonProps => (
+              {buttons.map(buttonProps => (
                 <React.Fragment key={buttonProps.title} >
                   <Button regularText {...buttonProps} />
                   <Spacing h={4} />
@@ -1217,7 +1212,6 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
-  featureFlags: { data: { REFERRALS_ENABLED: referralsFeatureEnabled } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1227,7 +1221,6 @@ const mapStateToProps = ({
   accounts,
   ensRegistry,
   supportedAssets,
-  referralsFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({

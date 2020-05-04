@@ -1925,24 +1925,24 @@
   dependencies:
     type-detect "4.0.8"
 
-"@smartwallet/contracts@2.0.0":
-  version "2.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/contracts/-/contracts-2.0.0.tgz#7884a32d2e7079a72aa63e12aa9b7e98aa10a9a9"
-  integrity sha1-eISjLS5weacqpj4Sqpt+mKoQqak=
+"@smartwallet/contracts@2.0.1":
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/contracts/-/contracts-2.0.1.tgz#6575f8fc1ff1d69a3ed052a91d3f5e56a6a3e09f"
+  integrity sha1-ZXX4/B/x1po+0FKpHT9eVqaj4J8=
   dependencies:
     "@ensdomains/ens" "0.4.0"
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@smartwallet/sdk@2.0.2":
-  version "2.0.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-2.0.2.tgz#90edba89d5c3e4e1fa3be90f32e89e3e2b427fc2"
-  integrity sha1-kO26idXD5OH6O+kPMuiePitCf8I=
+"@smartwallet/sdk@2.0.3":
+  version "2.0.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-2.0.3.tgz#a0ee34c61bf1d397d744eda1dfe877449868ebb9"
+  integrity sha1-oO40xhvx05fXRO2h3+h3RJho67k=
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@netgum/types" "^0.1.8"
     "@netgum/utils" "^0.1.3"
-    "@smartwallet/contracts" "2.0.0"
+    "@smartwallet/contracts" "2.0.1"
     "@types/bn.js" "^4.11.5"
     "@types/node" "^12.0.0"
     "@types/webpack-env" "^1.13.9"
