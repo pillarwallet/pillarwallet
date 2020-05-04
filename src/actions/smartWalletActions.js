@@ -102,6 +102,7 @@ import { calculateGasEstimate, waitForTransaction } from 'services/assets';
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
+import { accountBalancesSelector } from 'selectors/balances';
 
 // actions
 import { addAccountAction, setActiveAccountAction, switchAccountAction } from 'actions/accountsActions';
@@ -141,6 +142,7 @@ import {
   getAssetData,
   getAssetDataByAddress,
   getAssetsAsList,
+  getBalance,
   getPPNTokenAddress,
 } from 'utils/assets';
 import {
@@ -1002,9 +1004,14 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
     dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
 
     const accountAssets = accountAssetsSelector(getState());
+    const balances = accountBalancesSelector(getState());
     const { decimals = 18 } = accountAssets[PPN_TOKEN] || {};
     const value = utils.parseUnits(amount, decimals);
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
+    if (!tokenAddress) return;
+
+    const balance = getBalance(balances, tokenAddress);
+    if (balance < +amount) return;
 
     const response = await smartWalletService
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
