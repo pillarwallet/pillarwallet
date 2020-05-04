@@ -133,7 +133,6 @@ aliases:
       key: node-{{ checksum "./yarn.lock" }}
       paths:
         - ~/nodes_modules
-
   - &gradle_restore_cache
     restore_cache:
       key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
@@ -147,6 +146,13 @@ aliases:
       paths:
         - ~/android/.gradle
         - ~/android/.m2
+  - &sentry_js_sourcemaps_upload
+    run:
+      name: Upload JavaScript sourcemaps to Sentry
+      command: |
+        echo "Will upload Sentry sourcemaps for $APP_PACKAGE_NAME-$buildNumber under dist number $APP_BUILD_NUMBER..."
+        ~/pillarwallet/node_modules/@sentry/cli/bin/sentry-cli releases files "$APP_PACKAGE_NAME-$buildNumber" upload-sourcemaps --dist APP_BUILD_NUMBER --strip-prefix ~/pillarwallet --rewrite ~/pillarwallet
+
 
 jobs:
   build-and-test:
@@ -237,6 +243,7 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+            export APP_PACKAGE_NAME = "com.pillarproject.wallet.staging"
       - run:
           no_output_timeout: 20m
           name: Upload to App Center
@@ -249,6 +256,7 @@ jobs:
           command: |
             mkdir -p ./toArchive
             cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
+      - *sentry_js_sourcemaps_upload
       - store_artifacts:
           path: ./toArchive
           destination: app_build
@@ -321,6 +329,7 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+            export APP_PACKAGE_NAME = "com.pillarproject.wallet.staging"
       - run:
           name: Initial build
           command: |
@@ -337,6 +346,7 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_appcenter
+      - *sentry_js_sourcemaps_upload
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
@@ -402,6 +412,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+            export APP_PACKAGE_NAME = "com.pillarproject.wallet"
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
       - run:
@@ -487,6 +498,7 @@ jobs:
       - store_artifacts:
           path: ./toArchive
           destination: app_build
+      - *sentry_js_sourcemaps_upload
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
@@ -536,6 +548,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" android/app/src/main/assets/branch.json
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+            export APP_PACKAGE_NAME = "com.pillarproject.wallet"
       - restore_cache:
           key: android-node-{{ checksum "./yarn.lock" }}
       - run:
@@ -637,6 +650,7 @@ jobs:
       - store_artifacts:
           path: ./toArchive
           destination: apks
+      - *sentry_js_sourcemaps_upload
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
