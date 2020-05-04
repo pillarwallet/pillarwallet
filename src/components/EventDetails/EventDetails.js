@@ -688,27 +688,34 @@ class EventDetail extends React.Component<Props, State> {
           squarePrimary: true,
         };
 
-        return {
+        eventData = {
           name: 'Smart Wallet',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Activated',
           actionSubtitle: this.getFeeLabel(),
           buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
+        break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
-          return {
+          eventData = {
             name: 'Pillar Network',
             itemImageSource: PPNIcon,
             actionTitle: `+ ${formattedValue} ${event.asset}`,
             actionColor: this.getColor('positive'),
             actionSubtitle: 'Top up',
             buttons: [
-              {
-                title: 'Send',
-                onPress: this.sendSynthetic,
-                secondary: true,
-              },
+              isPending ?
+                {
+                  title: 'View on the blockchain',
+                  onPress: this.viewOnTheBlockchain,
+                  secondary: true,
+                } :
+                {
+                  title: 'Send',
+                  onPress: this.sendSynthetic,
+                  secondary: true,
+                },
               {
                 title: 'Top up more',
                 onPress: this.topUpPillarNetwork,
@@ -716,23 +723,25 @@ class EventDetail extends React.Component<Props, State> {
               },
             ],
           };
+        } else {
+          eventData = {
+            name: 'Pillar Network',
+            iconName: 'sent',
+            iconColor: this.getColor('negative'),
+            actionTitle: `- ${formattedValue} ${event.asset}`,
+            actionSubtitle: 'from Smart Wallet',
+            buttons: [
+              {
+                title: 'Top up more',
+                onPress: this.topUpPillarNetwork,
+                secondary: true,
+              },
+            ],
+          };
         }
-        return {
-          name: 'Pillar Network',
-          iconName: 'sent',
-          iconColor: this.getColor('negative'),
-          actionTitle: `- ${formattedValue} ${event.asset}`,
-          actionSubtitle: 'from Smart Wallet',
-          buttons: [
-            {
-              title: 'Top up more',
-              onPress: this.topUpPillarNetwork,
-              secondary: true,
-            },
-          ],
-        };
+        break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
-        return {
+        eventData = {
           name: 'ENS name',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Registered',
@@ -745,8 +754,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
-        return {
+        eventData = {
           name: 'Smart Wallet',
           iconName: 'sent',
           iconColor: this.getColor('negative'),
@@ -760,8 +770,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
-        return {
+        eventData = {
           name: 'Settle',
           itemImageSource: PPNIcon,
           settleEventData: event,
@@ -773,8 +784,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
-        return {
+        eventData = {
           name: 'Smart Wallet fees with PLR',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Enabled',
@@ -786,6 +798,7 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       default:
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]
@@ -946,14 +959,14 @@ class EventDetail extends React.Component<Props, State> {
             eventData.fee = this.getFeeLabel();
           }
         }
-        if (isPending) {
-          eventData.actionIcon = 'pending';
-        }
         if (activeBlockchainNetwork === 'BITCOIN') {
           eventData.actionSubtitle = isReceived ? 'to Bitcoin wallet' : 'from Bitcoin wallet';
         }
-        return eventData;
     }
+    if (isPending) {
+      eventData.actionIcon = 'pending';
+    }
+    return eventData;
   }
 
   getCollectibleTransactionEventData = (event: Object): EventData => {
