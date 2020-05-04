@@ -88,7 +88,7 @@ export const reportOrWarn = (
   level: Sentry.Severity = Sentry.Severity.Info,
 ) => {
   if (__DEV__) {
-    console.warn(message, extra); // eslint-disable-line no-console
+    console.error(message, extra); // eslint-disable-line no-console
     return;
   }
   reportLog(message, extra, level);
