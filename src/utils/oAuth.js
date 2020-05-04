@@ -27,6 +27,7 @@ import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
+import { getKeychainDataObject, getPrivateKeyFromKeychainData } from './keychain';
 
 export type OAuthTokens = {
   refreshToken: ?string,
@@ -47,9 +48,19 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 };
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
-  return async (callback: () => void) => {
+  return async (refreshTokensCallback: (privateKey: string) => void) => {
+    // try to get the private key from the keychain first
+    const keychainData = await getKeychainDataObject().catch(() => null);
+    const privateKey = getPrivateKeyFromKeychainData(keychainData);
+    if (privateKey) {
+      const privateKeyParam = privateKey.indexOf('0x') === 0 ? privateKey.slice(2) : privateKey;
+      refreshTokensCallback(privateKeyParam);
+      return;
+    }
+    // send user to the Auth flow
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
-    dispatch(lockScreenAction(callback, 'Authentication tokens expired, please enter your PIN to proceed.'));
+    const errorMessage = 'Authentication tokens expired, please enter your PIN to proceed.';
+    dispatch(lockScreenAction(refreshTokensCallback, errorMessage));
   };
 };
