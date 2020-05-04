@@ -68,7 +68,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -107,10 +107,13 @@ import {
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { activeBlockchainSelector } from 'selectors/selectors';
+import { accountHistorySelector } from 'selectors/history';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { updateTransactionStatusAction } from 'actions/historyActions';
+import { lookupAddressAction } from 'actions/ensRegistryActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -150,6 +153,9 @@ type Props = {
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: (onNavigationCallback: () => void) => void,
   isPPNActivated: boolean,
+  updateTransactionStatus: (hash: string) => void,
+  lookupAddress: (address: string) => void,
+  history: Object[],
 };
 
 type State = {
@@ -243,14 +249,82 @@ const Divider = styled.View`
 
 
 class EventDetail extends React.Component<Props, State> {
+  timer: ?IntervalID;
+  timeout: ?TimeoutID;
+  cachedTxInfo = {};
+
   state = {
     isReceiveModalVisible: false,
     SWActivationModalVisible: false,
   };
 
-  isReceived = ({ to: address }: Object): boolean => {
+  componentDidMount() {
+    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const txInfo = this.findTxInfo() || {};
+    this.syncEnsRegistry(txInfo);
+    this.syncTxStatus(txInfo);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const txInfo = this.findTxInfo() || {};
+    if (!prevProps.isVisible && this.props.isVisible) {
+      this.syncEnsRegistry(txInfo);
+      this.syncTxStatus(txInfo);
+    }
+    if (prevProps.isVisible && !this.props.isVisible) {
+      this.cleanup();
+    }
+    if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  componentWillUnmount() {
+    this.cleanup();
+  }
+
+  cleanup() {
+    if (this.timer) clearInterval(this.timer);
+    if (this.timeout) clearTimeout(this.timeout);
+    this.cachedTxInfo = {};
+  }
+
+  findTxInfo = () => {
+    const { history, event } = this.props;
+    return history.find(tx => tx.hash === event.hash);
+  }
+
+  syncEnsRegistry = (txInfo) => {
+    const { ensRegistry, lookupAddress } = this.props;
+    const relatedAddress = this.getRelevantAddress(txInfo);
+
+    if (!ensRegistry[relatedAddress]) {
+      lookupAddress(relatedAddress);
+    }
+  }
+
+  syncTxStatus = (txInfo) => {
+    const {
+      event,
+      updateTransactionStatus,
+    } = this.props;
+    if (txInfo.status === TX_PENDING_STATUS) {
+      this.timeout = setTimeout(() => updateTransactionStatus(event.hash), 500);
+      this.timer = setInterval(() => updateTransactionStatus(event.hash), 10000);
+    }
+
+    if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
+      updateTransactionStatus(event.hash);
+    }
+  }
+
+  isReceived = ({ to: address, tag }: Object): boolean => {
     const { activeAccountAddress, bitcoinAddresses } = this.props;
-    return addressesEqual(address, activeAccountAddress) || bitcoinAddresses.some(e => e.address === address);
+    return addressesEqual(address, activeAccountAddress)
+      || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+      || bitcoinAddresses.some(e => e.address === address);
   };
 
   getRelevantAddress = (event: Object): string => {
@@ -1123,13 +1197,20 @@ class EventDetail extends React.Component<Props, State> {
 
   render() {
     const {
-      isVisible, onClose, event, activeAccountAddress, navigation,
+      isVisible, onClose, activeAccountAddress, navigation,
     } = this.props;
     const {
       isReceiveModalVisible,
       SWActivationModalVisible,
     } = this.state;
 
+    let { event } = this.props;
+
+    if (event.type === TRANSACTION_EVENT) {
+      const txInfo = this.findTxInfo() || this.cachedTxInfo;
+      this.cachedTxInfo = txInfo;
+      event = { ...event, ...txInfo };
+    }
     const eventData = this.getEventData(event);
     if (!eventData) return null;
     const {
@@ -1232,6 +1313,7 @@ const structuredSelector = createStructuredSelector({
   activeBlockchainNetwork: activeBlockchainSelector,
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
+  history: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
@@ -1242,6 +1324,8 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   goToInvitationFlow: (onNavigationCallback: () => void) => dispatch(goToInvitationFlowAction(onNavigationCallback)),
+  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
+  lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));
