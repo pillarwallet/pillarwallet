@@ -40,7 +40,7 @@ import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
-import { printLog, reportLog } from 'utils/common';
+import { printLog, reportLog, reportOrWarn } from 'utils/common';
 
 // services
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
@@ -516,7 +516,7 @@ class SmartWallet {
   }
 
   handleError(error: any) {
-    console.error('SmartWallet handleError: ', error);
+    reportOrWarn('SmartWallet handleError: ', error, 'critical');
   }
 
   reportError(errorMessage: string, errorData: Object) {
