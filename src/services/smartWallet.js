@@ -269,16 +269,12 @@ class SmartWallet {
 
   async deploy() {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
-
-    const accountBalance = this.getAccountRealBalance();
-    const { totalCost } = parseEstimatePayload(deployEstimate);
-
-    if (totalCost && accountBalance.gte(totalCost)) {
-      return this.sdk.deployAccount(deployEstimate, false);
-    }
-
-    printLog('insufficient balance: ', deployEstimate, accountBalance);
-    return null;
+    return this.sdk.deployAccount(deployEstimate, false)
+      .then((hash) => ({ deployTxHash: hash }))
+      .catch((e) => {
+        this.reportError('Unable to deploy', { e });
+        return { error: e.message };
+      });
   }
 
   getAccountRealBalance() {
