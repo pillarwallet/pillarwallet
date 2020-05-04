@@ -56,8 +56,7 @@ import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
 // utils
-import { noop } from 'utils/common';
-
+import { noop, reportLog } from 'utils/common';
 
 export type ClaimTokenAction = {
   walletId: string,
@@ -230,7 +229,10 @@ export const startReferralsListenerAction = () => {
     if (branchIoSubscription) return;
 
     branchIoSubscription = branch.subscribe(({ error, params }) => {
-      if (!isEmpty(error)) return;
+      if (!isEmpty(error)) {
+        reportLog('Branch.io Subscribe error', error, 'error');
+        return;
+      }
       if (!params['+clicked_branch_link']) return;
 
       const { token, phone, email } = params;
