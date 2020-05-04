@@ -31,7 +31,7 @@ import type { Props as ButtonProps } from 'components/Button';
 type Props = {
   title?: string,
   itemsList?: string[],
-  buttonTitle: string,
+  buttonTitle?: string,
   description?: string,
   buttonProps?: $Shape<ButtonProps>,
   onButtonPress?: () => void,
