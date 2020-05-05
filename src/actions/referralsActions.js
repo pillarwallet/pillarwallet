@@ -56,7 +56,7 @@ import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
 // utils
-import { noop, reportLog } from 'utils/common';
+import { reportLog } from 'utils/common';
 
 export type ClaimTokenAction = {
   walletId: string,
@@ -295,7 +295,7 @@ export const allowToAccessPhoneContactsAction = () => {
   };
 };
 
-export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = noop) => {
+export const goToInvitationFlowAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       user: { data: { isEmailVerified, isPhoneVerified } },
@@ -307,7 +307,6 @@ export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = n
         params: {},
         action: NavigationActions.navigate({ routeName: REFER_FLOW }),
       });
-      onNavigationCallback();
       navigate(navigateToReferFlow);
     } else {
       navigate(REFERRAL_CONTACT_INFO_MISSING);

@@ -77,7 +77,6 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
             {'\n To enable referral system we need to make sure you\'re a genuine user. We care for our users ' +
             'privacy and never share your data.'}
           </Paragraph>
-
           <Button
             title="Verify email or phone"
             block
