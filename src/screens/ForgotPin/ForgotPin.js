@@ -70,6 +70,9 @@ class ForgotPin extends React.Component<Props, {}> {
               It is impossible to restore your wallet without the backup phrase, be careful.
             </FooterParagraph>
             <Button
+              leftIconName="down-arrow"
+              block
+              danger
               marginBottom={`${spacing.rhythm}px`}
               onPress={this.toImportWallet}
               title="Import wallet"

@@ -243,7 +243,7 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-            export APP_PACKAGE_NAME = "com.pillarproject.wallet.staging"
+            export APP_PACKAGE_NAME="com.pillarproject.wallet.staging"
       - run:
           no_output_timeout: 20m
           name: Upload to App Center
@@ -329,7 +329,7 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-            export APP_PACKAGE_NAME = "com.pillarproject.wallet.staging"
+            export APP_PACKAGE_NAME="com.pillarproject.wallet.staging"
       - run:
           name: Initial build
           command: |
@@ -412,7 +412,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-            export APP_PACKAGE_NAME = "com.pillarproject.wallet"
+            export APP_PACKAGE_NAME="com.pillarproject.wallet"
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
       - run:
@@ -548,7 +548,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" android/app/src/main/assets/branch.json
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-            export APP_PACKAGE_NAME = "com.pillarproject.wallet"
+            export APP_PACKAGE_NAME="com.pillarproject.wallet"
       - restore_cache:
           key: android-node-{{ checksum "./yarn.lock" }}
       - run:
