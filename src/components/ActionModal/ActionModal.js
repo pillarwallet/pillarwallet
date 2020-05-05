@@ -91,7 +91,7 @@ const Item = ({
 );
 
 class ActionModal extends React.Component<Props> {
-  renderItem = ({ item }) => {
+  renderItem = (item) => {
     const { onModalClose, doNotCloseOnPress } = this.props;
     const { onPress } = item;
     return (
@@ -119,11 +119,7 @@ class ActionModal extends React.Component<Props> {
       >
         <SafeAreaView>
           <MainContainer>
-            <FlatList
-              data={items}
-              renderItem={this.renderItem}
-              keyExtractor={item => item.key}
-            />
+            {items.map(this.renderItem)}
           </MainContainer>
         </SafeAreaView>
       </SlideModal>
