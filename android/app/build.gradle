@@ -84,9 +84,8 @@ project.ext.react = [
     bundleInRelease: true,
     bundleInStaging: true,
     devDisabledInStaging: true,
-    // bundle in 1 file, ref – https://reactnative.dev/docs/ram-bundles-inline-requires#enable-the-ram-format
+    // bundle in multiple files, ref – https://reactnative.dev/docs/ram-bundles-inline-requires#enable-the-ram-format
     bundleCommand: "ram-bundle",
-    extraPackagerArgs: ["--indexed-ram-bundle"]
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
