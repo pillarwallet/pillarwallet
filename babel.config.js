@@ -12,5 +12,8 @@ module.exports = {
     development: {
       plugins: ['babel-plugin-styled-components'],
     },
+    production: {
+      plugins: ['transform-remove-console'],
+    },
   },
 };
