@@ -329,7 +329,7 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-            export APP_PACKAGE_NAME=com.pillarproject.wallet.staging"
+            export APP_PACKAGE_NAME="com.pillarproject.wallet.staging"
       - run:
           name: Initial build
           command: |
