@@ -237,7 +237,7 @@ class SendETHTokens extends React.Component<Props, State> {
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
       const { gasLimit } = this.state;
       const transactionSpeed = this.getTxSpeed();
-      const gasPrice = txFeeInWei.div(gasLimit).toNumber();
+      const gasPrice = gasLimit ? txFeeInWei.div(gasLimit).toNumber() : 0;
       transactionPayload = {
         ...transactionPayload,
         gasPrice,
