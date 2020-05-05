@@ -20,15 +20,12 @@
 import * as React from 'react';
 import { ScrollView, Linking } from 'react-native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
-import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
-import InviteBanner from 'screens/People/InviteBanner';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { Spacing } from 'components/Layout';
-import type { Dispatch } from 'reducers/rootReducer';
+
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
@@ -47,7 +44,6 @@ const ButtonsWrapper = styled.View`
 `;
 
 type Props = {
-  goToInvitationFlow: () => void,
   deploymentHash: ?string,
 }
 
@@ -64,12 +60,12 @@ class WalletActivation extends React.PureComponent<Props> {
   };
 
   render() {
-    const { goToInvitationFlow } = this.props;
-
     return (
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 20 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16, paddingVertical: 20, justifyContent: 'center', flexGrow: 1,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <Title>Smart Wallet is being activated</Title>
@@ -94,14 +90,8 @@ class WalletActivation extends React.PureComponent<Props> {
             style={{ borderColor: 'transparent' }}
           />
         </ButtonsWrapper>
-        <InviteBanner title="Invite friends" onInvitePress={goToInvitationFlow} />
       </ScrollView>
     );
   }
 }
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
-});
-
-export default connect(null, mapDispatchToProps)(WalletActivation);
+export default WalletActivation;
