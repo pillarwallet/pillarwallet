@@ -46,7 +46,7 @@ import {
   SET_REFERRAL_REWARD_AMOUNT,
   SET_ALREADY_INVITED_CONTACTS,
 } from 'constants/referralsConstants';
-import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW, REFERRAL_SENT } from 'constants/navigationConstants';
+import { APP_FLOW, REFER_FLOW, REFERRAL_SENT, REFERRAL_CONTACT_INFO_MISSING } from 'constants/navigationConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -310,22 +310,7 @@ export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = n
       onNavigationCallback();
       navigate(navigateToReferFlow);
     } else {
-      const navigateToUserSettings = NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: NavigationActions.navigate({ routeName: ADD_EDIT_USER }),
-      });
-
-      Toast.show({
-        message: 'Please add and verify your email address or phone number to proceed',
-        type: 'warning',
-        title: 'Phone or Email verification needed',
-        autoClose: false,
-        onPress: () => {
-          onNavigationCallback();
-          navigate(navigateToUserSettings);
-        },
-      });
+      navigate(REFERRAL_CONTACT_INFO_MISSING);
     }
   };
 };
