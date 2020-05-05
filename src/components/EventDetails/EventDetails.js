@@ -107,7 +107,6 @@ import {
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { activeBlockchainSelector } from 'selectors/selectors';
-import { accountHistorySelector } from 'selectors/history';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -155,7 +154,7 @@ type Props = {
   isPPNActivated: boolean,
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
-  history: Object[],
+  history: {[string]: Object[]},
 };
 
 type State = {
@@ -251,7 +250,6 @@ const Divider = styled.View`
 class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
-  cachedTxInfo = {};
 
   state = {
     isReceiveModalVisible: false,
@@ -260,14 +258,14 @@ class EventDetail extends React.Component<Props, State> {
 
   componentDidMount() {
     if (this.props.event.type !== TRANSACTION_EVENT) return;
-    const txInfo = this.findTxInfo() || {};
+    const txInfo = this.findTxInfo();
     this.syncEnsRegistry(txInfo);
     this.syncTxStatus(txInfo);
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.event.type !== TRANSACTION_EVENT) return;
-    const txInfo = this.findTxInfo() || {};
+    const txInfo = this.findTxInfo();
     if (!prevProps.isVisible && this.props.isVisible) {
       this.syncEnsRegistry(txInfo);
       this.syncTxStatus(txInfo);
@@ -288,12 +286,13 @@ class EventDetail extends React.Component<Props, State> {
   cleanup() {
     if (this.timer) clearInterval(this.timer);
     if (this.timeout) clearTimeout(this.timeout);
-    this.cachedTxInfo = {};
   }
 
   findTxInfo = () => {
     const { history, event } = this.props;
-    return history.find(tx => tx.hash === event.hash);
+    const accountsHistory: Object[] = Object.values(history);
+    return accountsHistory.map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
+      .find(tx => tx) || {};
   }
 
   syncEnsRegistry = (txInfo) => {
@@ -1220,8 +1219,7 @@ class EventDetail extends React.Component<Props, State> {
     let { event } = this.props;
 
     if (event.type === TRANSACTION_EVENT) {
-      const txInfo = this.findTxInfo() || this.cachedTxInfo;
-      this.cachedTxInfo = txInfo;
+      const txInfo = this.findTxInfo();
       event = { ...event, ...txInfo };
     }
     const eventData = this.getEventData(event);
@@ -1306,6 +1304,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
+  history: { data: history },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1315,6 +1314,7 @@ const mapStateToProps = ({
   accounts,
   ensRegistry,
   supportedAssets,
+  history,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1326,7 +1326,6 @@ const structuredSelector = createStructuredSelector({
   activeBlockchainNetwork: activeBlockchainSelector,
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
-  history: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
