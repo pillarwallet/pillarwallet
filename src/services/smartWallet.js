@@ -290,6 +290,7 @@ class SmartWallet {
   }
 
   getAccountStakedAmount(tokenAddress: ?string): BigNumber {
+    if (!tokenAddress) return new BigNumber(0);
     return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
       .then(data => {
         let value;
