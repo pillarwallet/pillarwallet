@@ -279,20 +279,15 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
-      accounts: {
-        data: accounts,
-      },
+      accounts: { data: accounts },
     } = getState();
 
     const activeAccountId = getActiveAccountId(accounts);
     const activeAccountType = getActiveAccountType(accounts);
-
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
-      await dispatch(initSmartWalletSdkAction(privateKey));
-      return;
-    }
-
     await dispatch(initSmartWalletSdkAction(privateKey));
+
+    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
 

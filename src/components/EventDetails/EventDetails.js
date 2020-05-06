@@ -807,13 +807,13 @@ class EventDetail extends React.Component<Props, State> {
         let subtext = getAccountName(event.accountType);
         const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
         const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
-        if (isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
+        if (isReceived && isKWAddress(event.to, accounts)) {
           subtext = `to ${keyWallet}`;
-        } else if (isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
+        } else if (isReceived && isSWAddress(event.to, accounts)) {
           subtext = `to ${smartWallet}`;
-        } else if (!isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
+        } else if (!isReceived && isSWAddress(event.from, accounts)) {
           subtext = `from ${smartWallet}`;
-        } else if (!isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
+        } else if (!isReceived && isKWAddress(event.from, accounts)) {
           subtext = `from ${keyWallet}`;
         }
 

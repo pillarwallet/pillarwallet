@@ -313,11 +313,6 @@ class WalletView extends React.Component<Props, State> {
     });
   };
 
-  getStickyIndices = () => {
-    const { showDeploySmartWallet } = this.props;
-    return !this.isInSearchAndFocus() && !this.shouldBlockAssetsView() && showDeploySmartWallet ? [2] : [1];
-  };
-
   shouldBlockAssetsView = () => {
     const { accounts, smartWalletState } = this.props;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
@@ -417,45 +412,46 @@ class WalletView extends React.Component<Props, State> {
 
     const ScrollComponent = Platform.OS === 'ios' ? ScrollWrapper : ScrollView;
 
-    const stickyHeaderIndices = this.getStickyIndices();
-
     return (
       <ScrollComponent
-        stickyHeaderIndices={stickyHeaderIndices}
+        stickyHeaderIndices={[1]}
         refreshControl={this.renderRefreshControl()}
         {...this.getRefProps()}
         onScroll={onScroll}
         keyboardShouldPersistTaps="always"
       >
-        <Insight
-          isVisible={isInsightVisible}
-          title={insightsTitle}
-          insightChecklist={insightList}
-          onClose={() => { hideInsight(); }}
-          wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
-        />
-        {smartWalletFeatureEnabled && (blockAssetsView || !!deploymentData.error) &&
-          <SWActivationCard />
-        }
-        {smartWalletFeatureEnabled && !blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
-          SWInsightDismissed ?
-            (
-              <SWActivationCard
-                message="To start sending and exchanging assets you need to activate Smart Wallet"
-              />
-            ) :
-            (
-              <InsightWithButton
-                title="Welcome to the Pillar Smart Wallet!"
-                description="The Pillar Smart Wallet replaces the existing Pillar Legacy Wallet and
-                features the following benefits:"
-                itemsList={initialSWInsights}
-                buttonTitle="Wow, that's cool"
-                onButtonPress={dismissSmartWalletInsight}
-              />
+        <>
+          <Insight
+            isVisible={isInsightVisible}
+            title={insightsTitle}
+            insightChecklist={insightList}
+            onClose={() => { hideInsight(); }}
+            wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
+          />
+          {smartWalletFeatureEnabled && (blockAssetsView || !!deploymentData.error) &&
+            <SWActivationCard />
+          }
+          {!deploymentData.error && smartWalletFeatureEnabled && !blockAssetsView && !isInSearchAndFocus
+          && showDeploySmartWallet && (
+            SWInsightDismissed ?
+              (
+                <SWActivationCard
+                  message="To start sending and exchanging assets you need to activate Smart Wallet"
+                />
+              ) :
+              (
+                <InsightWithButton
+                  title="Welcome to the Pillar Smart Wallet!"
+                  description="The Pillar Smart Wallet replaces the existing Pillar Legacy Wallet and
+                  features the following benefits:"
+                  itemsList={initialSWInsights}
+                  buttonTitle="Wow, that's cool"
+                  onButtonPress={dismissSmartWalletInsight}
+                />
+              )
             )
-          )
-        }
+          }
+        </>
         {!blockAssetsView &&
         <>
           <SearchBlock
@@ -463,10 +459,10 @@ class WalletView extends React.Component<Props, State> {
             searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
             onSearchChange={this.handleSearchChange}
             wrapperStyle={{
-            paddingHorizontal: spacing.layoutSides,
-            paddingVertical: spacing.mediumLarge,
-            marginBottom: searchMarginBottom,
-          }}
+              paddingHorizontal: spacing.layoutSides,
+              paddingVertical: spacing.mediumLarge,
+              marginBottom: searchMarginBottom,
+            }}
             onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
             onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
             itemSearchState={!!isInSearchMode}

@@ -88,6 +88,7 @@ import {
   PIN_CODE,
   WALLET_ACTIVATED,
 } from 'constants/navigationConstants';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -254,12 +255,12 @@ export const resetSmartWalletDeploymentDataAction = () => {
 export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-    let connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
+    let connectedAccount = await smartWalletService.connectAccount(accountId);
     if (!connectedAccount) {
       Toast.show({
         message: 'Failed to connect to Smart Wallet account',
         type: 'warning',
-        title: 'Unable to upgrade',
+        title: 'Unable to connect',
         autoClose: false,
       });
       return;
@@ -305,11 +306,24 @@ export const deploySmartWalletAction = () => {
       return;
     }
 
-    const deployTxHash = await smartWalletService.deploy();
+    const { deployTxHash, error } = await smartWalletService.deploy();
+
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
+      if (error && error === 'reverted') {
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            message: 'Activation is temporarily unavailable. Please try again latter',
+            title: 'Could not activate Smart Wallet',
+            messageType: 'warning',
+          },
+        });
+        return;
+      }
       return;
     }
+
     await dispatch(setSmartWalletDeploymentDataAction(deployTxHash));
 
     // depends from where it's called status might already be `deploying`
@@ -319,13 +333,15 @@ export const deploySmartWalletAction = () => {
       ));
     }
 
-    // update accounts info
+    // update account info
     await dispatch(loadSmartWalletAccountsAction());
     const account = await smartWalletService.fetchConnectedAccount();
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: account,
-    });
+    if (account) {
+      dispatch({
+        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+        payload: account,
+      });
+    }
   };
 };
 
@@ -953,10 +969,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       // update account info
       await dispatch(loadSmartWalletAccountsAction());
       const account = await smartWalletService.fetchConnectedAccount();
-      dispatch({
-        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-        payload: account,
-      });
+      if (account) {
+        dispatch({
+          type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+          payload: account,
+        });
+      }
     }
 
     printLog(event);
@@ -1709,9 +1727,11 @@ export const switchToGasTokenRelayerAction = () => {
     dispatch(insertTransactionAction(historyTx, accountId));
     // get updated devices
     const connectedAccount = await smartWalletService.fetchConnectedAccount();
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: connectedAccount,
-    });
+    if (connectedAccount) {
+      dispatch({
+        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+        payload: connectedAccount,
+      });
+    }
   };
 };
