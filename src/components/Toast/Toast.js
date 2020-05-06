@@ -122,7 +122,7 @@ const ToastBody = styled(BaseText)`
 `;
 
 const ToastIcon = styled(Icon)`
-  color: ${({ iconType, theme }) => typeColors(theme.colors)[iconType]}
+  color: ${({ iconType, theme }) => typeColors(theme.colors)[iconType]};
   font-size: ${fontSizes.large}px;
 `;
 
