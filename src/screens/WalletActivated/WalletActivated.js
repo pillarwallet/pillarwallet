@@ -100,7 +100,6 @@ class WalletActivated extends React.PureComponent<Props> {
               title="Go to Smart Wallet"
               onPress={this.handleNavigate}
               secondary
-              height={48}
               textStyle={fontStyles.medium}
             />
           </ButtonWrapper>
