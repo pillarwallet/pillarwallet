@@ -68,7 +68,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -111,6 +111,8 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { updateTransactionStatusAction } from 'actions/historyActions';
+import { lookupAddressAction } from 'actions/ensRegistryActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -150,6 +152,9 @@ type Props = {
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: (onNavigationCallback: () => void) => void,
   isPPNActivated: boolean,
+  updateTransactionStatus: (hash: string) => void,
+  lookupAddress: (address: string) => void,
+  history: {[string]: Object[]},
 };
 
 type State = {
@@ -243,14 +248,83 @@ const Divider = styled.View`
 
 
 class EventDetail extends React.Component<Props, State> {
+  timer: ?IntervalID;
+  timeout: ?TimeoutID;
+
   state = {
     isReceiveModalVisible: false,
     SWActivationModalVisible: false,
   };
 
-  isReceived = ({ to: address }: Object): boolean => {
+  componentDidMount() {
+    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const txInfo = this.findTxInfo();
+    this.syncEnsRegistry(txInfo);
+    this.syncTxStatus(txInfo);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const txInfo = this.findTxInfo();
+    if (!prevProps.isVisible && this.props.isVisible) {
+      this.syncEnsRegistry(txInfo);
+      this.syncTxStatus(txInfo);
+    }
+    if (prevProps.isVisible && !this.props.isVisible) {
+      this.cleanup();
+    }
+    if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  componentWillUnmount() {
+    this.cleanup();
+  }
+
+  cleanup() {
+    if (this.timer) clearInterval(this.timer);
+    if (this.timeout) clearTimeout(this.timeout);
+  }
+
+  findTxInfo = () => {
+    const { history, event } = this.props;
+    const accountsHistory: Object[] = Object.values(history);
+    return accountsHistory
+      .map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
+      .find(tx => tx) || {};
+  }
+
+  syncEnsRegistry = (txInfo) => {
+    const { ensRegistry, lookupAddress } = this.props;
+    const relatedAddress = this.getRelevantAddress(txInfo);
+
+    if (!ensRegistry[relatedAddress]) {
+      lookupAddress(relatedAddress);
+    }
+  }
+
+  syncTxStatus = (txInfo) => {
+    const {
+      event,
+      updateTransactionStatus,
+    } = this.props;
+    if (txInfo.status === TX_PENDING_STATUS) {
+      this.timeout = setTimeout(() => updateTransactionStatus(event.hash), 500);
+      this.timer = setInterval(() => updateTransactionStatus(event.hash), 10000);
+    }
+
+    if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
+      updateTransactionStatus(event.hash);
+    }
+  }
+
+  isReceived = ({ to: address, tag }: Object): boolean => {
     const { activeAccountAddress, bitcoinAddresses } = this.props;
-    return addressesEqual(address, activeAccountAddress) || bitcoinAddresses.some(e => e.address === address);
+    return addressesEqual(address, activeAccountAddress)
+      || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+      || bitcoinAddresses.some(e => e.address === address);
   };
 
   getRelevantAddress = (event: Object): string => {
@@ -614,27 +688,34 @@ class EventDetail extends React.Component<Props, State> {
           squarePrimary: true,
         };
 
-        return {
+        eventData = {
           name: 'Smart Wallet',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Activated',
           actionSubtitle: this.getFeeLabel(),
           buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
+        break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
-          return {
+          eventData = {
             name: 'Pillar Network',
             itemImageSource: PPNIcon,
             actionTitle: `+ ${formattedValue} ${event.asset}`,
             actionColor: this.getColor('positive'),
             actionSubtitle: 'Top up',
             buttons: [
-              {
-                title: 'Send',
-                onPress: this.sendSynthetic,
-                secondary: true,
-              },
+              isPending ?
+                {
+                  title: 'View on the blockchain',
+                  onPress: this.viewOnTheBlockchain,
+                  secondary: true,
+                } :
+                {
+                  title: 'Send',
+                  onPress: this.sendSynthetic,
+                  secondary: true,
+                },
               {
                 title: 'Top up more',
                 onPress: this.topUpPillarNetwork,
@@ -642,23 +723,25 @@ class EventDetail extends React.Component<Props, State> {
               },
             ],
           };
+        } else {
+          eventData = {
+            name: 'Pillar Network',
+            iconName: 'sent',
+            iconColor: this.getColor('negative'),
+            actionTitle: `- ${formattedValue} ${event.asset}`,
+            actionSubtitle: 'from Smart Wallet',
+            buttons: [
+              {
+                title: 'Top up more',
+                onPress: this.topUpPillarNetwork,
+                secondary: true,
+              },
+            ],
+          };
         }
-        return {
-          name: 'Pillar Network',
-          iconName: 'sent',
-          iconColor: this.getColor('negative'),
-          actionTitle: `- ${formattedValue} ${event.asset}`,
-          actionSubtitle: 'from Smart Wallet',
-          buttons: [
-            {
-              title: 'Top up more',
-              onPress: this.topUpPillarNetwork,
-              secondary: true,
-            },
-          ],
-        };
+        break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
-        return {
+        eventData = {
           name: 'ENS name',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Registered',
@@ -671,8 +754,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
-        return {
+        eventData = {
           name: 'Smart Wallet',
           iconName: 'sent',
           iconColor: this.getColor('negative'),
@@ -686,8 +770,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
-        return {
+        eventData = {
           name: 'Settle',
           itemImageSource: PPNIcon,
           settleEventData: event,
@@ -699,8 +784,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
-        return {
+        eventData = {
           name: 'Smart Wallet fees with PLR',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Enabled',
@@ -712,6 +798,7 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       default:
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]
@@ -872,14 +959,14 @@ class EventDetail extends React.Component<Props, State> {
             eventData.fee = this.getFeeLabel();
           }
         }
-        if (isPending) {
-          eventData.actionIcon = 'pending';
-        }
         if (activeBlockchainNetwork === 'BITCOIN') {
           eventData.actionSubtitle = isReceived ? 'to Bitcoin wallet' : 'from Bitcoin wallet';
         }
-        return eventData;
     }
+    if (isPending) {
+      eventData.actionIcon = 'pending';
+    }
+    return eventData;
   }
 
   getCollectibleTransactionEventData = (event: Object): EventData => {
@@ -1123,13 +1210,19 @@ class EventDetail extends React.Component<Props, State> {
 
   render() {
     const {
-      isVisible, onClose, event, activeAccountAddress, navigation,
+      isVisible, onClose, activeAccountAddress, navigation,
     } = this.props;
     const {
       isReceiveModalVisible,
       SWActivationModalVisible,
     } = this.state;
 
+    let { event } = this.props;
+
+    if (event.type === TRANSACTION_EVENT) {
+      const txInfo = this.findTxInfo();
+      event = { ...event, ...txInfo };
+    }
     const eventData = this.getEventData(event);
     if (!eventData) return null;
     const {
@@ -1212,6 +1305,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
+  history: { data: history },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1221,6 +1315,7 @@ const mapStateToProps = ({
   accounts,
   ensRegistry,
   supportedAssets,
+  history,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1242,6 +1337,8 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   goToInvitationFlow: (onNavigationCallback: () => void) => dispatch(goToInvitationFlowAction(onNavigationCallback)),
+  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
+  lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));
