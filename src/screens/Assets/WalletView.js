@@ -451,32 +451,32 @@ class WalletView extends React.Component<Props, State> {
               )
             )
           }
-          {!blockAssetsView &&
-          <>
-            <SearchBlock
-              hideSearch={blockAssetsView}
-              searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
-              onSearchChange={this.handleSearchChange}
-              wrapperStyle={{
+        </>
+        {!blockAssetsView &&
+        <>
+          <SearchBlock
+            hideSearch={blockAssetsView}
+            searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
+            onSearchChange={this.handleSearchChange}
+            wrapperStyle={{
               paddingHorizontal: spacing.layoutSides,
               paddingVertical: spacing.mediumLarge,
               marginBottom: searchMarginBottom,
             }}
-              onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
-              onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
-              itemSearchState={!!isInSearchMode}
-              navigation={navigation}
+            onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
+            onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
+            itemSearchState={!!isInSearchMode}
+            navigation={navigation}
+          />
+          {!isInSearchAndFocus &&
+            <Tabs
+              tabs={this.getAssetTabs()}
+              wrapperStyle={{ paddingBottom: 0 }}
+              activeTab={activeTab}
             />
-            {!isInSearchAndFocus &&
-              <Tabs
-                tabs={this.getAssetTabs()}
-                wrapperStyle={{ paddingBottom: 0 }}
-                activeTab={activeTab}
-              />
-            }
-          </>
           }
         </>
+        }
         {isSearching &&
         <SearchSpinner center>
           <Spinner />
