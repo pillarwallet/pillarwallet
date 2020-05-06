@@ -254,12 +254,12 @@ export const resetSmartWalletDeploymentDataAction = () => {
 export const connectSmartWalletAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-    let connectedAccount = await smartWalletService.connectAccount(accountId).catch(() => null);
+    let connectedAccount = await smartWalletService.connectAccount(accountId);
     if (!connectedAccount) {
       Toast.show({
         message: 'Failed to connect to Smart Wallet account',
         type: 'warning',
-        title: 'Unable to upgrade',
+        title: 'Unable to connect',
         autoClose: false,
       });
       return;
@@ -319,13 +319,15 @@ export const deploySmartWalletAction = () => {
       ));
     }
 
-    // update accounts info
+    // update account info
     await dispatch(loadSmartWalletAccountsAction());
     const account = await smartWalletService.fetchConnectedAccount();
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: account,
-    });
+    if (account) {
+      dispatch({
+        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+        payload: account,
+      });
+    }
   };
 };
 
@@ -953,10 +955,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       // update account info
       await dispatch(loadSmartWalletAccountsAction());
       const account = await smartWalletService.fetchConnectedAccount();
-      dispatch({
-        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-        payload: account,
-      });
+      if (account) {
+        dispatch({
+          type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+          payload: account,
+        });
+      }
     }
 
     printLog(event);
@@ -1709,9 +1713,11 @@ export const switchToGasTokenRelayerAction = () => {
     dispatch(insertTransactionAction(historyTx, accountId));
     // get updated devices
     const connectedAccount = await smartWalletService.fetchConnectedAccount();
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: connectedAccount,
-    });
+    if (connectedAccount) {
+      dispatch({
+        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+        payload: connectedAccount,
+      });
+    }
   };
 };
