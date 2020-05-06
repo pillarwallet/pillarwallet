@@ -21,7 +21,7 @@ import isEmpty from 'lodash.isempty';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from 'actions/dbActions';
-import { lockScreenAction } from 'actions/authActions';
+import { lockScreenAction, loginAction } from 'actions/authActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
@@ -52,14 +52,14 @@ export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
     // try to get the private key from the keychain first
     const keychainData = await getKeychainDataObject().catch(() => null);
     const privateKey = getPrivateKeyFromKeychainData(keychainData);
+    dispatch(stopListeningChatWebSocketAction());
+    dispatch(updateSignalInitiatedStateAction(false));
     if (privateKey) {
       const privateKeyParam = privateKey.indexOf('0x') === 0 ? privateKey.slice(2) : privateKey;
-      refreshTokensCallback(privateKeyParam);
+      dispatch(loginAction(null, privateKeyParam, refreshTokensCallback));
       return;
     }
     // send user to the Auth flow
-    dispatch(stopListeningChatWebSocketAction());
-    dispatch(updateSignalInitiatedStateAction(false));
     const errorMessage = 'Authentication tokens expired, please enter your PIN to proceed.';
     dispatch(lockScreenAction(refreshTokensCallback, errorMessage));
   };
