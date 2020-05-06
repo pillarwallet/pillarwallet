@@ -227,19 +227,17 @@ class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    const account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
-    const devices = await this.sdk.getConnectedAccountDevices()
-      .then(({ items = [] }) => items)
-      .catch(this.handleError);
-
-    /* if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
-      account = await this.sdk.updateAccount(account.address).catch(this.handleError);
-    } */
-
-    return {
-      ...account,
-      devices,
-    };
+    try {
+      const account = this.sdk.state.account || await this.sdk.connectAccount(address);
+      const devices = await this.sdk.getConnectedAccountDevices();
+      return {
+        ...account,
+        devices: get(devices, 'items', []),
+      };
+    } catch (e) {
+      this.handleError(e);
+    }
+    return null;
   }
 
   async syncSmartAccountsWithBackend(
@@ -286,6 +284,7 @@ class SmartWallet {
   }
 
   getAccountStakedAmount(tokenAddress: ?string): BigNumber {
+    if (!tokenAddress) return new BigNumber(0);
     return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
       .then(data => {
         let value;
@@ -311,12 +310,17 @@ class SmartWallet {
   }
 
   async fetchConnectedAccount() {
-    const { state: { account } } = this.sdk;
-    const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
-    return {
-      ...account,
-      devices: get(devices, 'items', []),
-    };
+    try {
+      const { state: { account } } = this.sdk;
+      const devices = await this.sdk.getConnectedAccountDevices();
+      return {
+        ...account,
+        devices: get(devices, 'items', []),
+      };
+    } catch (e) {
+      this.handleError(e);
+    }
+    return null;
   }
 
   async transferAsset(transaction: AccountTransaction) {
