@@ -88,6 +88,7 @@ import {
   PIN_CODE,
   WALLET_ACTIVATED,
 } from 'constants/navigationConstants';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -305,11 +306,24 @@ export const deploySmartWalletAction = () => {
       return;
     }
 
-    const deployTxHash = await smartWalletService.deploy();
+    const { deployTxHash, error } = await smartWalletService.deploy();
+
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
+      if (error && error === 'reverted') {
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            message: 'Activation is temporarily unavailable. Please try again latter',
+            title: 'Could not activate Smart Wallet',
+            messageType: 'warning',
+          },
+        });
+        return;
+      }
       return;
     }
+
     await dispatch(setSmartWalletDeploymentDataAction(deployTxHash));
 
     // depends from where it's called status might already be `deploying`
