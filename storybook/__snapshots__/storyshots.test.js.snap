@@ -539,7 +539,7 @@ exports[`Storyshots ActionModal default 1`] = `
                     ]
                   }
                 >
-
+                  
                 </Text>
               </View>
             </View>
@@ -10370,7 +10370,7 @@ Array [
                       ]
                     }
                   >
-
+                    
                   </Text>
                 </View>
               </View>

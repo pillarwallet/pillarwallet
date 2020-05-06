@@ -501,7 +501,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     ]
                   }
                 >
-
+                  
                 </Text>
               </View>
             </View>
