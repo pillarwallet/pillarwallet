@@ -78,7 +78,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   const {
     contractAddress,
     amount,
-    wallet,
+    wallet: walletInstance,
     decimals: defaultDecimals = 18,
     nonce,
     gasLimit,
@@ -87,8 +87,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   } = options;
   let { data, to } = options;
 
-  wallet.connect(getEthereumProvider(NETWORK_PROVIDER));
-
+  const wallet = walletInstance.connect(getEthereumProvider(NETWORK_PROVIDER));
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
@@ -227,7 +226,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
 export async function transferETH(options: ETHTransferOptions) {
   const {
     to,
-    wallet,
+    wallet: walletInstance,
     gasPrice,
     gasLimit,
     amount,
@@ -244,7 +243,7 @@ export async function transferETH(options: ETHTransferOptions) {
     nonce,
     data,
   };
-  wallet.connect(getEthereumProvider(NETWORK_PROVIDER));
+  const wallet = walletInstance.connect(getEthereumProvider(NETWORK_PROVIDER));
   if (!signOnly) return wallet.sendTransaction(trx);
   const signedHash = await wallet.sign(trx);
   return { signedHash, value };

@@ -133,7 +133,6 @@ aliases:
       key: node-{{ checksum "./yarn.lock" }}
       paths:
         - ~/nodes_modules
-
   - &gradle_restore_cache
     restore_cache:
       key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}

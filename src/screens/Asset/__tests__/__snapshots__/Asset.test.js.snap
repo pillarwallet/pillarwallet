@@ -2219,7 +2219,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   Object {
                     "backgroundColor": "#fff",
                     "elevation": 4,
-                    "height": NaN,
                     "maxHeight": 667,
                     "minHeight": 56,
                     "opacity": 1,
@@ -2249,10 +2248,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   scrollEventThrottle={50}
                   stickyHeaderIndices={Array []}
                   style={
-                    Object {
-                      "marginHorizontal": -15,
-                      "marginTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "marginHorizontal": -15,
+                      },
+                      Object {
+                        "marginTop": 0,
+                      },
+                    ]
                   }
                   updateCellsBatchingPeriod={50}
                   viewabilityConfigCallbackPairs={Array []}
@@ -2854,7 +2857,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   Object {
                     "backgroundColor": "#fff",
                     "elevation": 4,
-                    "height": NaN,
                     "maxHeight": 667,
                     "minHeight": 56,
                     "opacity": 1,
@@ -2884,10 +2886,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   scrollEventThrottle={50}
                   stickyHeaderIndices={Array []}
                   style={
-                    Object {
-                      "marginHorizontal": -15,
-                      "marginTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "marginHorizontal": -15,
+                      },
+                      Object {
+                        "marginTop": 0,
+                      },
+                    ]
                   }
                   updateCellsBatchingPeriod={50}
                   viewabilityConfigCallbackPairs={Array []}
