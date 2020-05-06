@@ -123,18 +123,17 @@ export const loginAction = (
       session: { data: { isOnline } },
     } = getState();
 
-    const { wallet: encryptedWallet } = await storage.get('wallet');
-
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
-    await delay(100);
 
     try {
       let wallet;
 
       if (pin) {
+        const { wallet: encryptedWallet } = await storage.get('wallet');
+        await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
         // no further code will be executed if pin is wrong
@@ -334,15 +333,15 @@ export const checkAuthAction = (
   options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
   return async (dispatch: Dispatch) => {
-    const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
-    await delay(100);
     try {
       let wallet;
       if (pin) {
+        const { wallet: encryptedWallet } = await storage.get('wallet');
+        await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       } else if (privateKey) {

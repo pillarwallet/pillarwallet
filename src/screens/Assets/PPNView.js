@@ -75,7 +75,7 @@ import type { Balances, BalancesStore, Rates } from 'models/Asset';
 import { getRate, addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { findFirstSmartAccount, getAccountId } from 'utils/accounts';
@@ -179,39 +179,68 @@ class PPNView extends React.Component<Props, State> {
     navigation.navigate(FUND_TANK);
   };
 
-  renderInsight = (isSmartWalletInitialised) => {
-    const { availableStake, accounts, balances } = this.props;
+  renderInsight = () => {
+    const {
+      availableStake,
+      accounts,
+      balances,
+      smartWalletState,
+    } = this.props;
     const smartWalletAccount = findFirstSmartAccount(accounts);
 
-    if (isSmartWalletInitialised && smartWalletAccount) {
+    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+    if (isDeploying) {
+      return (
+        <InsightWithButton
+          spinner
+          footerChildren={
+            <BaseText
+              medium
+              center
+              style={{ marginTop: 20 }}
+            >
+              Activating your Smart Wallet. It will be ready shortly
+            </BaseText>
+          }
+        />
+      );
+    }
+
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+
+    if (smartWalletAccount && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       const smartWalletAccountId = getAccountId(smartWalletAccount);
       const accountBalances: Balances = balances[smartWalletAccountId];
       const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
 
       if (!availableStake) {
+        const insightProps = {};
         if (!hasPLRInSmartWallet) {
-          return (
-            <InsightWithButton
-              title="Activate Pillar Network"
-              description="To send any token you need to top up Pillar Tank with PLR first"
-              buttonTitle="Not enough PLR"
-              buttonProps={{ disabled: true, secondary: true }}
-              footerChildren={(
-                <Button title="Buy PLR" small marginTop={12} onPress={this.navigateToBuyPillar} regularText />
-              )}
-            />
-          );
+          insightProps.buttonTitle = 'Not enough PLR';
+          insightProps.buttonProps = { disabled: true, secondary: true };
+          insightProps.footerChildren = (
+            <Button
+              title="Buy PLR"
+              small
+              marginTop={12}
+              onPress={this.navigateToBuyPillar}
+              regularText
+            />);
+        } else {
+          insightProps.buttonTitle = 'Top up PLR Tank';
+          insightProps.onButtonPress = this.navigateToFundTank;
         }
         return (
           <InsightWithButton
             title="Activate Pillar Network"
             description="To send any token you need to top up Pillar Tank with PLR first"
-            buttonTitle="Top up PLR Tank"
-            onButtonPress={this.navigateToFundTank}
+            {...insightProps}
           />
         );
       }
-    } else {
+
+      return null;
+    } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
       return (
         <InsightWithButton
           title="Unique benefits of Pillar Payment Network for PLR users"
@@ -363,7 +392,7 @@ class PPNView extends React.Component<Props, State> {
           onScroll={onScroll}
           scrollEventThrottle={16}
         >
-          {this.renderInsight(!disableTopUpAndSettle)}
+          {this.renderInsight()}
           <TopPartWrapper>
             <TankBalanceWrapper>
               <TankBalance>
