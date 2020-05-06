@@ -291,7 +291,8 @@ class EventDetail extends React.Component<Props, State> {
   findTxInfo = () => {
     const { history, event } = this.props;
     const accountsHistory: Object[] = Object.values(history);
-    return accountsHistory.map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
+    return accountsHistory
+      .map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
       .find(tx => tx) || {};
   }
 
