@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, TouchableWithoutFeedback } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
@@ -44,6 +44,16 @@ type Props = {
   isVisible: boolean,
   items: ItemType[],
   doNotCloseOnPress?: boolean,
+};
+
+type ItemProps = {
+  label: string,
+  onPress: Function,
+  value: string,
+  chevron?: boolean,
+  isDisabled?: boolean,
+  paragraph?: React.Node,
+  children?: React.Node,
 };
 
 
@@ -76,7 +86,7 @@ const Paragraph = styled(BaseText)`
 
 const Item = ({
   label, onPress, value, chevron, isDisabled, paragraph, children,
-}) => (
+}: ItemProps) => (
   <TouchableWithoutFeedback onPress={onPress} disabled={isDisabled}>
     <ItemContainer disabled={isDisabled}>
       <Row>
@@ -91,7 +101,7 @@ const Item = ({
 );
 
 class ActionModal extends React.Component<Props> {
-  renderItem = ({ item }) => {
+  renderItem = (item) => {
     const { onModalClose, doNotCloseOnPress } = this.props;
     const { onPress } = item;
     return (
@@ -119,11 +129,7 @@ class ActionModal extends React.Component<Props> {
       >
         <SafeAreaView>
           <MainContainer>
-            <FlatList
-              data={items}
-              renderItem={this.renderItem}
-              keyExtractor={item => item.key}
-            />
+            {items.map(this.renderItem)}
           </MainContainer>
         </SafeAreaView>
       </SlideModal>

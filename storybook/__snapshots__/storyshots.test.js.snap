@@ -203,196 +203,145 @@ exports[`Storyshots ActionModal default 1`] = `
                   ]
                 }
               >
-                <RCTScrollView
-                  data={
+                <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
                     Array [
                       Object {
-                        "chevron": true,
-                        "key": "first",
-                        "label": "First item",
+                        "opacity": 1,
+                        "paddingBottom": 20,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 20,
                       },
-                      Object {
-                        "key": "second",
-                        "label": "Second item",
-                        "money": "123$",
-                      },
+                      undefined,
                     ]
                   }
-                  disableVirtualization={false}
-                  getItem={[Function]}
-                  getItemCount={[Function]}
-                  horizontal={false}
-                  initialNumToRender={10}
-                  keyExtractor={[Function]}
-                  maxToRenderPerBatch={10}
-                  numColumns={1}
-                  onContentSizeChange={[Function]}
-                  onEndReachedThreshold={2}
-                  onLayout={[Function]}
-                  onMomentumScrollEnd={[Function]}
-                  onScroll={[Function]}
-                  onScrollBeginDrag={[Function]}
-                  onScrollEndDrag={[Function]}
-                  removeClippedSubviews={false}
-                  renderItem={[Function]}
-                  scrollEventThrottle={50}
-                  stickyHeaderIndices={Array []}
-                  updateCellsBatchingPeriod={50}
-                  viewabilityConfigCallbackPairs={Array []}
-                  windowSize={21}
                 >
-                  <View>
-                    <View
-                      onLayout={[Function]}
-                      style={null}
-                    >
-                      <View
-                        accessible={true}
-                        focusable={true}
-                        onClick={[Function]}
-                        onResponderGrant={[Function]}
-                        onResponderMove={[Function]}
-                        onResponderRelease={[Function]}
-                        onResponderTerminate={[Function]}
-                        onResponderTerminationRequest={[Function]}
-                        onStartShouldSetResponder={[Function]}
-                        style={
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      big={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                          },
                           Array [
                             Object {
-                              "opacity": 1,
-                              "paddingBottom": 20,
-                              "paddingLeft": 0,
-                              "paddingRight": 0,
-                              "paddingTop": 20,
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 18,
+                              "lineHeight": 28,
+                              "textAlignVertical": "center",
                             },
                             undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <Text
-                            big={true}
-                            style={
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Regular",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlignVertical": "center",
-                                },
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "fontFamily": "EuclidCircularB-Medium",
-                                    "fontSize": 18,
-                                    "lineHeight": 28,
-                                    "textAlignVertical": "center",
-                                  },
-                                  undefined,
-                                ],
-                              ]
-                            }
-                          >
-                            First item
-                          </Text>
-                          <View
-                            name="chevron-right"
-                            style={
-                              Array [
-                                Object {
-                                  "color": "#8B939E",
-                                  "fontSize": 10,
-                                  "lineHeight": 14,
-                                },
-                                undefined,
-                              ]
-                            }
-                          />
-                        </View>
-                      </View>
-                    </View>
-                    <View
-                      onLayout={[Function]}
-                      style={null}
+                          ],
+                        ]
+                      }
                     >
-                      <View
-                        accessible={true}
-                        focusable={true}
-                        onClick={[Function]}
-                        onResponderGrant={[Function]}
-                        onResponderMove={[Function]}
-                        onResponderRelease={[Function]}
-                        onResponderTerminate={[Function]}
-                        onResponderTerminationRequest={[Function]}
-                        onStartShouldSetResponder={[Function]}
-                        style={
-                          Array [
-                            Object {
-                              "opacity": 1,
-                              "paddingBottom": 20,
-                              "paddingLeft": 0,
-                              "paddingRight": 0,
-                              "paddingTop": 20,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <Text
-                            big={true}
-                            style={
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Regular",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlignVertical": "center",
-                                },
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "fontFamily": "EuclidCircularB-Medium",
-                                    "fontSize": 18,
-                                    "lineHeight": 28,
-                                    "textAlignVertical": "center",
-                                  },
-                                  undefined,
-                                ],
-                              ]
-                            }
-                          >
-                            Second item
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
+                      First item
+                    </Text>
+                    <View
+                      name="chevron-right"
+                      style={
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 10,
+                            "lineHeight": 14,
+                          },
+                          undefined,
+                        ]
+                      }
+                    />
                   </View>
-                </RCTScrollView>
+                </View>
+                <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Array [
+                      Object {
+                        "opacity": 1,
+                        "paddingBottom": 20,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 20,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      big={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 18,
+                              "lineHeight": 28,
+                              "textAlignVertical": "center",
+                            },
+                            undefined,
+                          ],
+                        ]
+                      }
+                    >
+                      Second item
+                    </Text>
+                  </View>
+                </View>
               </View>
             </View>
           </View>
