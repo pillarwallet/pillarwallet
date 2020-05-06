@@ -81,7 +81,7 @@ class SWActivationModal extends React.Component<Props> {
       if (!smartAccount) {
         Toast.show({
           message: 'Smart Wallet not found',
-          type: 'error',
+          type: 'warning',
           title: 'Could not activate Smart Wallet',
           autoClose: false,
         });
