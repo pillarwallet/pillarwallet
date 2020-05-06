@@ -27,7 +27,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   FlatList,
-  ScrollView,
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -365,6 +364,9 @@ class TextInput extends React.Component<Props, State> {
   };
 
   renderOption = ({ item: option }: Object) => {
+    if (option.value === 'extendedHeaderItems') {
+      return option.component;
+    }
     const {
       name,
       symbol,
@@ -541,6 +543,30 @@ class TextInput extends React.Component<Props, State> {
 
     const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
 
+    const renderedHorizontalOptions = this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle);
+
+    const extendedHeaderItems = {
+      value: 'extendedHeaderItems',
+      component: (
+        <>
+          {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
+          {!!filteredHorizontalListData && renderedHorizontalOptions}
+          {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
+          {(showOptionsTitles && !!optionsTitle) && !!filteredListData.length &&
+          <OptionsHeader>{optionsTitle}</OptionsHeader>}
+          {(!filteredListData.length && !filteredHorizontalListData.length) &&
+          <EmptyStateWrapper fullScreen>
+            <EmptyStateParagraph title="Nothing found" />
+          </EmptyStateWrapper>
+          }
+        </>),
+    };
+
+    let allFeedListData = [extendedHeaderItems];
+    if (filteredListData.length) {
+      allFeedListData = [extendedHeaderItems, ...filteredListData];
+    }
+
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
         {!!errorMessage && !!errorMessageOnTop &&
@@ -664,55 +690,36 @@ class TextInput extends React.Component<Props, State> {
               centerItems: [{ title: selectorModalTitle }],
             }}
           >
-            <ScrollView
-              contentContainerStyle={{ paddingBottom: 30 }}
+            <FlatList
               stickyHeaderIndices={[0]}
-              onScroll={() => Keyboard.dismiss()}
+              data={allFeedListData}
+              renderItem={this.renderOption}
+              keyExtractor={({ value: val }) => val}
               keyboardShouldPersistTaps="always"
-            >
-              <SearchBarWrapper>
-                <SearchBar
-                  inputProps={{
-                    onChange: this.handleSearch,
-                    value: query,
-                    autoCapitalize: 'none',
-                  }}
-                  placeholder={optionsSearchPlaceholder}
-                  inputRef={ref => { this.searchInput = ref; }}
-                  noClose
-                  marginBottom="0"
-                />
-              </SearchBarWrapper>
-              {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
-              {this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle)}
-              {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
-              {!!filteredListData.length &&
-              <FlatList
-                data={filteredListData}
-                renderItem={this.renderOption}
-                keyExtractor={({ value: val }) => val}
-                keyboardShouldPersistTaps="always"
-                initialNumToRender={10}
-                viewabilityConfig={viewConfig}
-                ListHeaderComponent={
-                  (showOptionsTitles && !!optionsTitle) && filteredListData.length &&
-                  <OptionsHeader>{optionsTitle}</OptionsHeader>
-                }
-                getItemLayout={(data, index) => ({
-                  length: 70,
-                  offset: 70 * index,
-                  index,
-                })}
-                windowSize={10}
-                hideModalContentWhileAnimating
-              />
-              }
-              {(!filteredListData.length && !filteredHorizontalListData.length) &&
-              <EmptyStateWrapper fullScreen>
-                <EmptyStateParagraph title="Nothing found" />
-              </EmptyStateWrapper>
-              }
-            </ScrollView>
+              initialNumToRender={10}
+              viewabilityConfig={viewConfig}
+              ListHeaderComponent={
+                <SearchBarWrapper>
+                  <SearchBar
+                    inputProps={{
+                      onChange: this.handleSearch,
+                      value: query,
+                      autoCapitalize: 'none',
+                    }}
+                    placeholder={optionsSearchPlaceholder}
+                    inputRef={ref => { this.searchInput = ref; }}
+                    noClose
+                    marginBottom="0"
+                  />
+                </SearchBarWrapper>}
+              getItemLayout={(data, index) => ({
+                length: 70,
+                offset: 70 * index,
+                index,
+              })}
+              windowSize={10}
+              hideModalContentWhileAnimating
+            />
           </ContainerWithHeader>
         </SlideModal>
       </View>
