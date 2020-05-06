@@ -1731,7 +1731,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           "borderStyle": "solid",
                           "borderWidth": 0,
                           "flexDirection": "row",
-                          "height": 56,
+                          "height": 48,
                           "justifyContent": "center",
                           "marginBottom": 0,
                           "marginLeft": 0,
@@ -1766,7 +1766,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               Object {
                                 "color": "#FCFDFF",
                                 "fontSize": 18,
+                                "lineHeight": 18,
                                 "marginBottom": 0,
+                                "marginTop": 3.2399999999999998,
                               },
                               Object {
                                 "paddingTop": 4,
@@ -1841,7 +1843,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           "borderWidth": 0,
                           "elevation": 1,
                           "flexDirection": "row",
-                          "height": 56,
+                          "height": 48,
                           "justifyContent": "center",
                           "marginBottom": 0,
                           "marginLeft": 0,
@@ -1884,7 +1886,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               Object {
                                 "color": "#FCFDFF",
                                 "fontSize": 18,
+                                "lineHeight": 18,
                                 "marginBottom": 0,
+                                "marginTop": 3.2399999999999998,
                               },
                               Object {
                                 "paddingTop": 4,
@@ -2219,7 +2223,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   Object {
                     "backgroundColor": "#fff",
                     "elevation": 4,
-                    "height": NaN,
                     "maxHeight": 667,
                     "minHeight": 56,
                     "opacity": 1,
@@ -2249,10 +2252,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   scrollEventThrottle={50}
                   stickyHeaderIndices={Array []}
                   style={
-                    Object {
-                      "marginHorizontal": -15,
-                      "marginTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "marginHorizontal": -15,
+                      },
+                      Object {
+                        "marginTop": 0,
+                      },
+                    ]
                   }
                   updateCellsBatchingPeriod={50}
                   viewabilityConfigCallbackPairs={Array []}
@@ -2854,7 +2861,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   Object {
                     "backgroundColor": "#fff",
                     "elevation": 4,
-                    "height": NaN,
                     "maxHeight": 667,
                     "minHeight": 56,
                     "opacity": 1,
@@ -2884,10 +2890,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   scrollEventThrottle={50}
                   stickyHeaderIndices={Array []}
                   style={
-                    Object {
-                      "marginHorizontal": -15,
-                      "marginTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "marginHorizontal": -15,
+                      },
+                      Object {
+                        "marginTop": 0,
+                      },
+                    ]
                   }
                   updateCellsBatchingPeriod={50}
                   viewabilityConfigCallbackPairs={Array []}

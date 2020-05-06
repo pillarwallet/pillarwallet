@@ -40,7 +40,7 @@ import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
-import { printLog, reportLog } from 'utils/common';
+import { printLog, reportLog, reportOrWarn } from 'utils/common';
 
 // services
 import { DEFAULT_GAS_LIMIT } from 'services/assets';
@@ -227,19 +227,17 @@ class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    const account = this.sdk.state.account || await this.sdk.connectAccount(address).catch(this.handleError);
-    const devices = await this.sdk.getConnectedAccountDevices()
-      .then(({ items = [] }) => items)
-      .catch(this.handleError);
-
-    /* if (!account.ensName && account.state === sdkConstants.AccountStates.Created) {
-      account = await this.sdk.updateAccount(account.address).catch(this.handleError);
-    } */
-
-    return {
-      ...account,
-      devices,
-    };
+    try {
+      const account = this.sdk.state.account || await this.sdk.connectAccount(address);
+      const devices = await this.sdk.getConnectedAccountDevices();
+      return {
+        ...account,
+        devices: get(devices, 'items', []),
+      };
+    } catch (e) {
+      this.handleError(e);
+    }
+    return null;
   }
 
   async syncSmartAccountsWithBackend(
@@ -257,7 +255,7 @@ class SmartWallet {
           walletId,
           privateKey,
           ethAddress: account.address,
-          fcmToken,
+          fcmToken: fcmToken || '',
         });
       }
       return Promise.resolve();
@@ -269,16 +267,12 @@ class SmartWallet {
 
   async deploy() {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
-
-    const accountBalance = this.getAccountRealBalance();
-    const { totalCost } = parseEstimatePayload(deployEstimate);
-
-    if (totalCost && accountBalance.gte(totalCost)) {
-      return this.sdk.deployAccount(deployEstimate, false);
-    }
-
-    printLog('insufficient balance: ', deployEstimate, accountBalance);
-    return null;
+    return this.sdk.deployAccount(deployEstimate, false)
+      .then((hash) => ({ deployTxHash: hash }))
+      .catch((e) => {
+        this.reportError('Unable to deploy', { e });
+        return { error: e.message };
+      });
   }
 
   getAccountRealBalance() {
@@ -290,6 +284,7 @@ class SmartWallet {
   }
 
   getAccountStakedAmount(tokenAddress: ?string): BigNumber {
+    if (!tokenAddress) return new BigNumber(0);
     return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
       .then(data => {
         let value;
@@ -315,12 +310,17 @@ class SmartWallet {
   }
 
   async fetchConnectedAccount() {
-    const { state: { account } } = this.sdk;
-    const devices = await this.sdk.getConnectedAccountDevices().catch(this.handleError);
-    return {
-      ...account,
-      devices: get(devices, 'items', []),
-    };
+    try {
+      const { state: { account } } = this.sdk;
+      const devices = await this.sdk.getConnectedAccountDevices();
+      return {
+        ...account,
+        devices: get(devices, 'items', []),
+      };
+    } catch (e) {
+      this.handleError(e);
+    }
+    return null;
   }
 
   async transferAsset(transaction: AccountTransaction) {
@@ -516,7 +516,7 @@ class SmartWallet {
   }
 
   handleError(error: any) {
-    console.error('SmartWallet handleError: ', error);
+    reportOrWarn('SmartWallet handleError: ', error, 'critical');
   }
 
   reportError(errorMessage: string, errorData: Object) {

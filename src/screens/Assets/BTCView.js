@@ -51,6 +51,7 @@ import type { Rates, Asset, AssetData } from 'models/Asset';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { satoshisToBtc, extractBitcoinTransactions } from 'utils/bitcoin';
+import { reportOrWarn } from 'utils/common';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -93,7 +94,7 @@ class BTCView extends React.Component<Props, State> {
     const btcToken = supportedAssets.find(e => e.symbol === BTC);
 
     if (!btcToken) {
-      console.error('BTC token not found'); // eslint-disable-line no-console
+      reportOrWarn('BTC token not found', null, 'error');
       return;
     }
 

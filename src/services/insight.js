@@ -20,6 +20,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { BITCOIN_INSIGHT_URL, BITCOIN_NETWORK } from 'react-native-dotenv';
 
+import { reportOrWarn } from 'utils/common';
 import { defaultAxiosRequestConfig } from './api';
 
 const requestConfig = {
@@ -42,7 +43,7 @@ const BTC_NET = BITCOIN_NETWORK === 'testnet' ? BITCOIN_NETWORK : 'mainnet';
 const validateResponse = (name: string) => (response: AxiosResponse) => {
   if (response.status === 200) return response.data;
   const message = `${name} failed`;
-  console.error(message, { response }); // eslint-disable-line no-console
+  reportOrWarn(message, { response }, 'error');
   return new Error(message);
 };
 

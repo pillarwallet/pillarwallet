@@ -139,7 +139,6 @@ class ReferFriends extends React.PureComponent<Props> {
                 <Button
                   title="Add contacts..."
                   horizontalPaddings={8}
-                  height={32}
                   small
                   card
                   onPress={() => navigation.navigate(REFERRAL_CONTACTS)}

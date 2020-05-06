@@ -172,7 +172,7 @@ class SendETHTokens extends React.Component<Props, State> {
     }
     // if gas token was updated after switching to gas token relayer
     if (isEmpty(prevProps.gasToken) && !isEmpty(gasToken)) {
-      this.handleChange();
+      this.handleAmountChange();
     }
   }
 
@@ -187,7 +187,7 @@ class SendETHTokens extends React.Component<Props, State> {
     });
   };
 
-  handleChange = (value: ?Object) => {
+  handleAmountChange = (value: ?Object) => {
     const { activeAccount } = this.props;
     let updateState = { gettingFee: true };
     if (!isEmpty(value)) updateState = { ...updateState, value };
@@ -237,7 +237,7 @@ class SendETHTokens extends React.Component<Props, State> {
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
       const { gasLimit } = this.state;
       const transactionSpeed = this.getTxSpeed();
-      const gasPrice = txFeeInWei.div(gasLimit).toNumber();
+      const gasPrice = gasLimit ? txFeeInWei.div(gasLimit).toNumber() : 0;
       transactionPayload = {
         ...transactionPayload,
         gasPrice,
@@ -535,7 +535,7 @@ class SendETHTokens extends React.Component<Props, State> {
               type={formStructure}
               options={formFields}
               value={value}
-              onChange={this.handleChange}
+              onChange={this.handleAmountChange}
             />
             <ActionsWrapper>
               <SendTokenDetails
