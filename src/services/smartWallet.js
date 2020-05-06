@@ -255,7 +255,7 @@ class SmartWallet {
           walletId,
           privateKey,
           ethAddress: account.address,
-          fcmToken,
+          fcmToken: fcmToken || '',
         });
       }
       return Promise.resolve();
