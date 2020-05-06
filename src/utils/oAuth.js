@@ -27,7 +27,7 @@ import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
-import { getKeychainDataObject, getPrivateKeyFromKeychainData } from './keychain';
+// import { getKeychainDataObject, getPrivateKeyFromKeychainData } from './keychain';
 
 export type OAuthTokens = {
   refreshToken: ?string,
@@ -49,6 +49,7 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
+    /* Temporary disable this approach until we stabilise the auth flow
     // try to get the private key from the keychain first
     const keychainData = await getKeychainDataObject().catch(() => null);
     const privateKey = getPrivateKeyFromKeychainData(keychainData);
@@ -56,7 +57,7 @@ export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
       const privateKeyParam = privateKey.indexOf('0x') === 0 ? privateKey.slice(2) : privateKey;
       refreshTokensCallback(privateKeyParam);
       return;
-    }
+    } */
     // send user to the Auth flow
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
