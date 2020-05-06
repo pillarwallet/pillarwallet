@@ -327,13 +327,13 @@ export const isHiddenUnsettledTransaction = (
   );
 
 export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
-  const { upgrade: { deploymentStarted } } = smartWalletState;
+  const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
   const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  return deploymentStarted
+  return !error && (deploymentStarted
     || [
       SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
       SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ].includes(smartWalletStatus.status);
+    ].includes(smartWalletStatus.status));
 };
 
 export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {

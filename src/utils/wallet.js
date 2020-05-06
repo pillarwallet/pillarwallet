@@ -204,6 +204,15 @@ export function constructWalletFromPrivateKey(privateKey: string): Object {
   return wallet;
 }
 
+export function constructWalletFromMnemonic(mnemonic: string): Object {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = ethers.Wallet.fromMnemonic(mnemonic);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
+  return wallet;
+}
+
 export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch) {
   const { wallet: encryptedWallet } = await storage.get('wallet');
   const saltedPin = await getSaltedPin(pin, dispatch);

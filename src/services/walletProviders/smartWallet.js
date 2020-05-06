@@ -43,7 +43,9 @@ export default class SmartWalletProvider {
     this.sdkInitPromise = smartWalletService
       .init(privateKey)
       .then(() => smartWalletService.connectAccount(account.id))
-      .then(() => { this.sdkInitialized = true; })
+      .then((connectedAccount) => {
+        if (connectedAccount) this.sdkInitialized = true;
+      })
       .catch(() => null);
   }
 
