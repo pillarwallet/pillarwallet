@@ -55,8 +55,7 @@ export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
     if (privateKey) {
-      const privateKeyParam = privateKey.indexOf('0x') === 0 ? privateKey.slice(2) : privateKey;
-      dispatch(loginAction(null, privateKeyParam, refreshTokensCallback));
+      dispatch(loginAction(null, privateKey, refreshTokensCallback));
       return;
     }
     // send user to the Auth flow
