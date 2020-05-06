@@ -75,7 +75,6 @@ class WalletActivation extends React.PureComponent<Props> {
         </Text>
         <ButtonsWrapper>
           <Button
-            height={48}
             title="Smart Wallet FAQ"
             onPress={this.handleFaq}
             textStyle={fontStyles.medium}
@@ -83,7 +82,6 @@ class WalletActivation extends React.PureComponent<Props> {
           <Spacing h={4} />
           <Button
             primaryInverted
-            height={48}
             title="See on Etherscan"
             onPress={this.handleEtherscan}
             textStyle={fontStyles.medium}

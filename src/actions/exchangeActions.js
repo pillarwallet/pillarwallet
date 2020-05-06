@@ -409,7 +409,7 @@ export const setTokenAllowanceAction = (
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    const { data: { to: payToAddress, data } } = response;
+    const { data: { to: payToAddress, data, gasLimit } } = response;
     const asset = supportedAssets.find(a => a.symbol === formAssetCode);
     const from = getActiveAccountAddress(accounts);
     const transactionPayload = {
@@ -422,6 +422,7 @@ export const setTokenAllowanceAction = (
       amount: 0,
     };
     callback({
+      gasLimit,
       data,
       payToAddress,
       transactionObj: {
