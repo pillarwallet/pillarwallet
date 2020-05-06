@@ -20,7 +20,6 @@
 import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
@@ -70,7 +69,7 @@ export const getSupportedBiometryType = (resHandler: (biometryType?: string) => 
 };
 
 export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
-  if (!data || isEmpty(data) || !data.privateKey) return null;
+  if (!data || !(Object.keys(data).length) || !data.privateKey) return null;
   return get(data, 'privateKey', null);
 };
 

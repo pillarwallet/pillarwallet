@@ -27,12 +27,9 @@ import {
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
 import { saveDbAction } from 'actions/dbActions';
-import Storage from 'services/storage';
 import { isProdEnv, isTest } from 'utils/environment';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-
-const storage = Storage.getInstance('db');
 
 export const loadFeatureFlagsAction = (userInfo?: any) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -43,10 +40,7 @@ export const loadFeatureFlagsAction = (userInfo?: any) => {
 
     // fetch latest userInfo if it was not provided
     if (isEmpty(userInfo)) {
-      let walletId = get(getState(), 'user.data.walletId');
-      if (!walletId) {
-        walletId = get(await storage.get('user'), 'user.walletId');
-      }
+      const walletId = get(getState(), 'user.data.walletId');
       userInfo = await api.userInfo(walletId);
     }
 
