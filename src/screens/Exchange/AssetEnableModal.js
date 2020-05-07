@@ -89,7 +89,7 @@ const AssetEnableModal = (props: Props) => {
   const {
     providerName,
     fiatCurrency,
-    feeInEth,
+    feeDisplayValue,
     feeInFiat,
     assetSymbol,
     assetIcon,
@@ -128,7 +128,7 @@ const AssetEnableModal = (props: Props) => {
           disabled={isDisabled}
         />
         <BaseText secondary>
-          {`Fee ${feeInEth} ETH (${getCurrencySymbol(fiatCurrency)}${feeInFiat})`}
+          {`Fee ${feeDisplayValue} (${feeInFiat})`}
         </BaseText>
       </ContentWrapper>
     </SlideModal>

@@ -481,7 +481,7 @@ class SmartWallet {
       value,
       data,
       transactionSpeed,
-    ).catch(() => {});
+    ).catch(() => ({}));
 
     const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
       ? SPEED_TYPES.FAST
