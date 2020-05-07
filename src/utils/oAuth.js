@@ -21,13 +21,13 @@ import isEmpty from 'lodash.isempty';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from 'actions/dbActions';
-import { lockScreenAction, loginAction } from 'actions/authActions';
+import { lockScreenAction } from 'actions/authActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
-import { getKeychainDataObject, getPrivateKeyFromKeychainData } from './keychain';
+
 
 export type OAuthTokens = {
   refreshToken: ?string,
