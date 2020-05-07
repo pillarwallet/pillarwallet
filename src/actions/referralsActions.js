@@ -31,6 +31,7 @@ import type {
   ReferralContact,
   InviteSentPayload,
   ReferralsTokenReceived,
+  RewardsByCompany,
 } from 'reducers/referralsReducer';
 
 // constants
@@ -45,8 +46,15 @@ import {
   CLAIM_REWARD,
   SET_REFERRAL_REWARD_AMOUNT,
   SET_ALREADY_INVITED_CONTACTS,
+  FETCHING_REFERRAL_REWARD_AMOUNT,
 } from 'constants/referralsConstants';
-import { APP_FLOW, REFER_FLOW, REFERRAL_SENT, REFERRAL_CONTACT_INFO_MISSING } from 'constants/navigationConstants';
+import {
+  APP_FLOW,
+  REFER_FLOW,
+  REFERRAL_SENT,
+  REFERRAL_CONTACT_INFO_MISSING,
+  REFERRAL_INCOMING_REWARD,
+} from 'constants/navigationConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -153,7 +161,6 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
 
     const unsentInvitations = [];
     let errorMessage;
-    let rewardToStore = {};
 
     await Promise.all(invitations.map(async (invitation) => {
       const { email, phone } = invitation;
@@ -170,7 +177,7 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         token: token.token,
       });
 
-      const { error, reward } = await api.sendReferralInvitation({
+      const { error } = await api.sendReferralInvitation({
         token: token.token,
         walletId,
         referralLink,
@@ -193,34 +200,13 @@ export const sendReferralInvitationsAction = (invitationContacts: ReferralContac
         alreadyInvitedContacts: invitationContacts,
         sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
       }));
-
-      if (!isEmpty(reward)) {
-        rewardToStore = reward;
-      }
     }));
     if (unsentInvitations.length < invitations.length) {
-      if (!isEmpty(rewardToStore)) {
-        navigate(REFERRAL_SENT);
-      } else {
-        // if no reward is being issued - show simple toast
-        dispatch({
-          type: ADD_NOTIFICATION,
-          payload: {
-            message: 'Success',
-            title: `${!unsentInvitations.length ? 'Invites' : 'Some invites'} have been sent`,
-            messageType: 'success',
-          },
-        });
-      }
+      navigate(REFERRAL_SENT);
     }
     if (unsentInvitations.length) {
       dispatch(inviteErrorAction(errorMessage, unsentInvitations.length === invitations.length));
     }
-    // to override reward if it is not returned because no reward is being issued
-    dispatch({
-      type: SET_REFERRAL_REWARD_AMOUNT,
-      payload: rewardToStore,
-    });
   };
 };
 
@@ -242,6 +228,10 @@ export const startReferralsListenerAction = () => {
         email,
         phone,
       ));
+
+      if (token) {
+        navigate(REFERRAL_INCOMING_REWARD);
+      }
     });
   };
 };
@@ -325,6 +315,27 @@ export const fetchSentReferralInvitationsAction = () => {
     dispatch({
       type: SET_ALREADY_INVITED_CONTACTS,
       payload: sentInvitations,
+    });
+  };
+};
+
+
+export const fetchReferralRewardAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+      referrals: { referralToken },
+    } = getState();
+
+    dispatch({
+      type: FETCHING_REFERRAL_REWARD_AMOUNT,
+    });
+
+    const referralRewards: RewardsByCompany = await api.getReferralRewardValue(walletId, referralToken);
+
+    dispatch({
+      type: SET_REFERRAL_REWARD_AMOUNT,
+      payload: referralRewards,
     });
   };
 };

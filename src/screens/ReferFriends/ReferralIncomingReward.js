@@ -21,6 +21,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import isEmpty from 'lodash.isempty';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -31,16 +32,19 @@ import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { connect } from 'react-redux';
-import type { ReferralReward } from 'reducers/referralsReducer';
+import type { RewardsByCompany, ReferralReward } from 'reducers/referralsReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  reward: ReferralReward,
+  rewards: RewardsByCompany,
+  isFetchingRewards: boolean,
+  fetchReferralReward: () => void,
 };
 
 const RewardBadge = styled(CachedImage)`
@@ -63,11 +67,48 @@ const Paragraph = styled(BaseText)`
 
 const rewardBadge = require('assets/images/referralBadge.png');
 
+const getCampaignRewardText = (awardInfo: ReferralReward = {}) => {
+  const { asset, amount } = awardInfo;
+  return asset && amount ? `${amount} ${asset}` : '';
+};
+
+const getRewardText = (rewards: RewardsByCompany) => {
+  const { pillar, ...allOtherCampaigns } = rewards;
+  const referralCampaigns = Object.keys(allOtherCampaigns);
+  let rewardText = '';
+  let otherCampaignsRewardText = '';
+
+  if (pillar && !isEmpty(pillar)) {
+    rewardText = getCampaignRewardText(pillar);
+  }
+  if (referralCampaigns) {
+    referralCampaigns.forEach((campaign) => {
+      const text = getCampaignRewardText(allOtherCampaigns[campaign]);
+      if (!rewardText) {
+        otherCampaignsRewardText += `${text}`;
+      } else if (text) {
+        otherCampaignsRewardText += `, ${text}`;
+      }
+    });
+  }
+
+  if (otherCampaignsRewardText) {
+    rewardText += otherCampaignsRewardText;
+  }
+
+  return rewardText ? `${rewardText} and a badge` : 'a badge';
+};
+
 class ReferralIncomingReward extends React.PureComponent<Props> {
+  componentDidMount() {
+    const { fetchReferralReward } = this.props;
+    fetchReferralReward();
+  }
+
   render() {
-    const { navigation, reward = {} } = this.props;
-    const { asset, amount } = reward;
-    const rewardText = asset ? `${amount || 'some'} ${asset}` : 'a gift';
+    const { navigation, rewards = {}, isFetchingRewards } = this.props;
+    const rewardText = !isFetchingRewards ? '' : getRewardText(rewards);
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -80,7 +121,7 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
           <Wrapper flex={1} center fullScreen>
             <RewardBadge source={rewardBadge} />
             <Title>Your reward is on the way</Title>
-            <Paragraph center>
+            <Paragraph center style={{ opacity: !rewardText ? 0 : 1 }}>
               {'Thanks for joining Pillar.\n' +
               `To celebrate this, we also give you ${rewardText}.\n` +
               'You need to add and verify your email or phone in order to receive the reward.'}
@@ -101,9 +142,14 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
 
 
 const mapStateToProps = ({
-  referrals: { reward },
+  referrals: { rewards, isFetchingRewards },
 }: RootReducerState): $Shape<Props> => ({
-  reward,
+  rewards,
+  isFetchingRewards,
 });
 
-export default connect(mapStateToProps)(ReferralIncomingReward);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReferralIncomingReward);

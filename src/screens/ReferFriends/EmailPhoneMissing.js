@@ -21,6 +21,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import { connect } from 'react-redux';
+import get from 'lodash.get';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -30,12 +32,19 @@ import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 import type { NavigationScreenProp } from 'react-navigation';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { RewardsByCompany } from 'reducers/referralsReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  referrals: RewardsByCompany,
+  rewards: RewardsByCompany,
+  isFetchingRewards: boolean,
+  fetchReferralReward: () => void,
 };
 
 const RewardBadge = styled(CachedImage)`
@@ -59,8 +68,16 @@ const Paragraph = styled(BaseText)`
 const rewardBadge = require('assets/images/referralBadge.png');
 
 class EmailPhoneMissing extends React.PureComponent<Props> {
+  componentDidMount() {
+    const { fetchReferralReward } = this.props;
+    fetchReferralReward();
+  }
+
   render() {
-    const { navigation } = this.props;
+    const { navigation, rewards, isFetchingRewards } = this.props;
+    const { asset, amount } = get(rewards, 'pillar', {});
+    const rewardText = asset && amount ? `${amount} ${asset} and a badge` : 'a badge';
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -72,8 +89,8 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
         <Wrapper flex={1} center regularPadding>
           <RewardBadge source={rewardBadge} />
           <Title>Invite and get rewarded</Title>
-          <Paragraph center>
-            {'You will receive 25 PLR and a badge for each friend installed the app with your referral link.'}
+          <Paragraph center style={{ opacity: isFetchingRewards ? 0 : 1 }}>
+            {`You will receive ${rewardText} for each friend installed the app with your referral link.`}
             {'\n To enable referral system we need to make sure you\'re a genuine user. We care for our users ' +
             'privacy and never share your data.'}
           </Paragraph>
@@ -89,4 +106,16 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
   }
 }
 
-export default EmailPhoneMissing;
+const mapStateToProps = ({
+  referrals: { rewards, isFetchingRewards },
+}: RootReducerState): $Shape<Props> => ({
+  rewards,
+  isFetchingRewards,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(EmailPhoneMissing);

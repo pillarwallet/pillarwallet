@@ -21,6 +21,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import get from 'lodash.get';
+import { connect } from 'react-redux';
 
 import { REFER_MAIN_SCREEN, REFERRAL_CONTACTS } from 'constants/navigationConstants';
 import { DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -32,16 +34,18 @@ import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import type { RootReducerState } from 'reducers/rootReducer';
-import { connect } from 'react-redux';
-import type { ReferralReward } from 'reducers/referralsReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { RewardsByCompany } from 'reducers/referralsReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  reward: ReferralReward,
+  rewards: RewardsByCompany,
+  isFetchingRewards: boolean,
+  fetchReferralReward: () => void,
 };
 
 const RewardBadge = styled(CachedImage)`
@@ -65,10 +69,15 @@ const Paragraph = styled(BaseText)`
 const rewardBadge = require('assets/images/referralBadge.png');
 
 class ReferralSent extends React.PureComponent<Props> {
+  componentDidMount() {
+    const { fetchReferralReward } = this.props;
+    fetchReferralReward();
+  }
+
   render() {
-    const { navigation, reward = {} } = this.props;
-    const { asset, amount } = reward;
-    const rewardText = asset ? `${amount || 'some'} ${asset}` : 'a gift';
+    const { navigation, rewards, isFetchingRewards } = this.props;
+    const { asset, amount } = get(rewards, 'pillar', {});
+    const rewardText = asset && amount ? `${amount} ${asset} and a badge` : 'a badge';
     return (
       <ConfettiBackground>
         <ContainerWithHeader
@@ -80,7 +89,7 @@ class ReferralSent extends React.PureComponent<Props> {
           <Wrapper flex={1} center>
             <RewardBadge source={rewardBadge} />
             <Title>Your reward is on the way</Title>
-            <Paragraph center>
+            <Paragraph center style={{ opacity: isFetchingRewards ? 0 : 1 }}>
               {'Thank you for spreading the word about Pillar.\n' +
               `You will receive ${rewardText} for each friend installed the app with your referral link. ` +
               'You both should have verified your details in order to be eligible.'}
@@ -108,9 +117,15 @@ class ReferralSent extends React.PureComponent<Props> {
 
 
 const mapStateToProps = ({
-  referrals: { reward },
+  referrals: { rewards, isFetchingRewards },
 }: RootReducerState): $Shape<Props> => ({
-  reward,
+  rewards,
+  isFetchingRewards,
 });
 
-export default connect(mapStateToProps)(ReferralSent);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReferralSent);
