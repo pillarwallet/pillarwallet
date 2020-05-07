@@ -24,7 +24,7 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatAmount, formatFiat, isValidNumber } from 'utils/common';
+import { formatAmount, formatFiat, isValidNumber, reportOrWarn } from 'utils/common';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
@@ -170,6 +170,11 @@ const generateFormStructure = (balances: Balances) => {
   });
 
   FromOption.getValidationErrorMessage = ({ selector, input }) => {
+    if (!selector) {
+      reportOrWarn('Wrong exchange selector value', selector, 'critical');
+      return true;
+    }
+
     const { symbol, decimals } = selector;
 
     const isFiat = isFiatCurrency(symbol);
