@@ -92,8 +92,6 @@ const InviteBanner = (props: Props) => {
           </BodyText>
           <Button
             title="Invite friends"
-            small
-            height={48}
             block
             onPress={onInvitePress}
           />

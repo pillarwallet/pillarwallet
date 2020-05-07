@@ -203,196 +203,145 @@ exports[`Storyshots ActionModal default 1`] = `
                   ]
                 }
               >
-                <RCTScrollView
-                  data={
+                <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
                     Array [
                       Object {
-                        "chevron": true,
-                        "key": "first",
-                        "label": "First item",
+                        "opacity": 1,
+                        "paddingBottom": 20,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 20,
                       },
-                      Object {
-                        "key": "second",
-                        "label": "Second item",
-                        "money": "123$",
-                      },
+                      undefined,
                     ]
                   }
-                  disableVirtualization={false}
-                  getItem={[Function]}
-                  getItemCount={[Function]}
-                  horizontal={false}
-                  initialNumToRender={10}
-                  keyExtractor={[Function]}
-                  maxToRenderPerBatch={10}
-                  numColumns={1}
-                  onContentSizeChange={[Function]}
-                  onEndReachedThreshold={2}
-                  onLayout={[Function]}
-                  onMomentumScrollEnd={[Function]}
-                  onScroll={[Function]}
-                  onScrollBeginDrag={[Function]}
-                  onScrollEndDrag={[Function]}
-                  removeClippedSubviews={false}
-                  renderItem={[Function]}
-                  scrollEventThrottle={50}
-                  stickyHeaderIndices={Array []}
-                  updateCellsBatchingPeriod={50}
-                  viewabilityConfigCallbackPairs={Array []}
-                  windowSize={21}
                 >
-                  <View>
-                    <View
-                      onLayout={[Function]}
-                      style={null}
-                    >
-                      <View
-                        accessible={true}
-                        focusable={true}
-                        onClick={[Function]}
-                        onResponderGrant={[Function]}
-                        onResponderMove={[Function]}
-                        onResponderRelease={[Function]}
-                        onResponderTerminate={[Function]}
-                        onResponderTerminationRequest={[Function]}
-                        onStartShouldSetResponder={[Function]}
-                        style={
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      big={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                          },
                           Array [
                             Object {
-                              "opacity": 1,
-                              "paddingBottom": 20,
-                              "paddingLeft": 0,
-                              "paddingRight": 0,
-                              "paddingTop": 20,
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 18,
+                              "lineHeight": 28,
+                              "textAlignVertical": "center",
                             },
                             undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <Text
-                            big={true}
-                            style={
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Regular",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlignVertical": "center",
-                                },
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "fontFamily": "EuclidCircularB-Medium",
-                                    "fontSize": 18,
-                                    "lineHeight": 28,
-                                    "textAlignVertical": "center",
-                                  },
-                                  undefined,
-                                ],
-                              ]
-                            }
-                          >
-                            First item
-                          </Text>
-                          <View
-                            name="chevron-right"
-                            style={
-                              Array [
-                                Object {
-                                  "color": "#8B939E",
-                                  "fontSize": 10,
-                                  "lineHeight": 14,
-                                },
-                                undefined,
-                              ]
-                            }
-                          />
-                        </View>
-                      </View>
-                    </View>
-                    <View
-                      onLayout={[Function]}
-                      style={null}
+                          ],
+                        ]
+                      }
                     >
-                      <View
-                        accessible={true}
-                        focusable={true}
-                        onClick={[Function]}
-                        onResponderGrant={[Function]}
-                        onResponderMove={[Function]}
-                        onResponderRelease={[Function]}
-                        onResponderTerminate={[Function]}
-                        onResponderTerminationRequest={[Function]}
-                        onStartShouldSetResponder={[Function]}
-                        style={
-                          Array [
-                            Object {
-                              "opacity": 1,
-                              "paddingBottom": 20,
-                              "paddingLeft": 0,
-                              "paddingRight": 0,
-                              "paddingTop": 20,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <Text
-                            big={true}
-                            style={
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Regular",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlignVertical": "center",
-                                },
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "fontFamily": "EuclidCircularB-Medium",
-                                    "fontSize": 18,
-                                    "lineHeight": 28,
-                                    "textAlignVertical": "center",
-                                  },
-                                  undefined,
-                                ],
-                              ]
-                            }
-                          >
-                            Second item
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
+                      First item
+                    </Text>
+                    <View
+                      name="chevron-right"
+                      style={
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 10,
+                            "lineHeight": 14,
+                          },
+                          undefined,
+                        ]
+                      }
+                    />
                   </View>
-                </RCTScrollView>
+                </View>
+                <View
+                  accessible={true}
+                  focusable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Array [
+                      Object {
+                        "opacity": 1,
+                        "paddingBottom": 20,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 20,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      big={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 18,
+                              "lineHeight": 28,
+                              "textAlignVertical": "center",
+                            },
+                            undefined,
+                          ],
+                        ]
+                      }
+                    >
+                      Second item
+                    </Text>
+                  </View>
+                </View>
               </View>
             </View>
           </View>
@@ -635,7 +584,6 @@ exports[`Storyshots ActionModal default 1`] = `
               Object {
                 "backgroundColor": "#fff",
                 "elevation": 4,
-                "height": NaN,
                 "maxHeight": 667,
                 "minHeight": 56,
                 "opacity": 1,
@@ -665,10 +613,14 @@ exports[`Storyshots ActionModal default 1`] = `
               scrollEventThrottle={50}
               stickyHeaderIndices={Array []}
               style={
-                Object {
-                  "marginHorizontal": -15,
-                  "marginTop": 0,
-                }
+                Array [
+                  Object {
+                    "marginHorizontal": -15,
+                  },
+                  Object {
+                    "marginTop": 0,
+                  },
+                ]
               }
               updateCellsBatchingPeriod={50}
               viewabilityConfigCallbackPairs={Array []}
@@ -2502,7 +2454,7 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
                   "borderStyle": "solid",
                   "borderWidth": 0,
                   "flexDirection": "row",
-                  "height": 34,
+                  "height": 32,
                   "justifyContent": "center",
                   "marginBottom": 0,
                   "marginLeft": 0,
@@ -2538,7 +2490,9 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
                       Object {
                         "color": "#007AFF",
                         "fontSize": 14,
+                        "lineHeight": 14,
                         "marginBottom": 0,
+                        "marginTop": 2.52,
                       },
                       undefined,
                     ],
@@ -9280,7 +9234,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                   "borderWidth": 0,
                   "elevation": 1,
                   "flexDirection": "row",
-                  "height": 34,
+                  "height": 32,
                   "justifyContent": "center",
                   "marginBottom": 0,
                   "marginLeft": 0,
@@ -9323,7 +9277,9 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       Object {
                         "color": "#FCFDFF",
                         "fontSize": 14,
+                        "lineHeight": 14,
                         "marginBottom": 0,
+                        "marginTop": 2.52,
                       },
                       undefined,
                     ],
@@ -9518,7 +9474,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                   "borderStyle": "solid",
                   "borderWidth": 0,
                   "flexDirection": "row",
-                  "height": 34,
+                  "height": 32,
                   "justifyContent": "center",
                   "marginBottom": 0,
                   "marginLeft": 0,
@@ -9553,7 +9509,9 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       Object {
                         "color": "#FCFDFF",
                         "fontSize": 14,
+                        "lineHeight": 14,
                         "marginBottom": 0,
+                        "marginTop": 2.52,
                       },
                       undefined,
                     ],
@@ -9732,7 +9690,7 @@ Array [
                   "borderWidth": 0,
                   "elevation": 1,
                   "flexDirection": "row",
-                  "height": 34,
+                  "height": 32,
                   "justifyContent": "center",
                   "marginBottom": 0,
                   "marginLeft": 0,
@@ -9775,7 +9733,9 @@ Array [
                       Object {
                         "color": "#FCFDFF",
                         "fontSize": 14,
+                        "lineHeight": 14,
                         "marginBottom": 0,
+                        "marginTop": 2.52,
                       },
                       undefined,
                     ],
@@ -10135,7 +10095,7 @@ Array [
                         "borderStyle": "solid",
                         "borderWidth": 0,
                         "flexDirection": "row",
-                        "height": 56,
+                        "height": 48,
                         "justifyContent": "center",
                         "marginBottom": 0,
                         "marginLeft": 0,
@@ -10170,7 +10130,9 @@ Array [
                             Object {
                               "color": "#007AFF",
                               "fontSize": 18,
+                              "lineHeight": 18,
                               "marginBottom": 0,
+                              "marginTop": 3.2399999999999998,
                             },
                             undefined,
                           ],
@@ -10463,7 +10425,6 @@ Array [
                 Object {
                   "backgroundColor": "#fff",
                   "elevation": 4,
-                  "height": NaN,
                   "maxHeight": 667,
                   "minHeight": 56,
                   "opacity": 1,
@@ -10493,10 +10454,14 @@ Array [
                 scrollEventThrottle={50}
                 stickyHeaderIndices={Array []}
                 style={
-                  Object {
-                    "marginHorizontal": -15,
-                    "marginTop": 0,
-                  }
+                  Array [
+                    Object {
+                      "marginHorizontal": -15,
+                    },
+                    Object {
+                      "marginTop": 0,
+                    },
+                  ]
                 }
                 updateCellsBatchingPeriod={50}
                 viewabilityConfigCallbackPairs={Array []}

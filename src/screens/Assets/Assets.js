@@ -274,11 +274,14 @@ class AssetsScreen extends React.Component<Props, State> {
       );
     }
 
-    if (isDeploying && (viewType === VIEWS.SMART_WALLET_VIEW || VIEWS.PPN_VIEW)) {
+    if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
       const deploymentHash = getDeploymentHash(smartWalletState);
-      return (
-        <WalletActivation deploymentHash={deploymentHash} />
-      );
+
+      if (deploymentHash) {
+        return (
+          <WalletActivation deploymentHash={deploymentHash} />
+        );
+      }
     }
 
     switch (viewType) {
