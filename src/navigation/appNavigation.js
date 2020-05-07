@@ -314,6 +314,7 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [EXCHANGE]: ExchangeScreen,
+    [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
     [CHAT]: ChatScreen,
@@ -390,6 +391,7 @@ const homeFlow = createStackNavigator({
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [EXCHANGE]: ExchangeScreen,
+  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
