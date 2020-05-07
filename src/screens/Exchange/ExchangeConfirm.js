@@ -277,7 +277,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();
     }
-
     txSpeed = txSpeed || SPEED_TYPES.NORMAL;
     // calculate either with gasLimit in state or provided as param
     if (!gasLimit) {
