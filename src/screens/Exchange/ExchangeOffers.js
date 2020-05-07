@@ -275,7 +275,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       return gasTokenCost;
     }
 
-    return ethCost || BigNumber(0);
+    return ethCost || new BigNumber(0);
   };
 
   onSetTokenAllowancePress = (offer: Offer) => {
