@@ -49,17 +49,11 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
-    // try to get the private key from the keychain first
-    const keychainData = await getKeychainDataObject().catch(() => null);
-    const privateKey = getPrivateKeyFromKeychainData(keychainData);
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
-    if (privateKey) {
-      dispatch(loginAction(null, privateKey, refreshTokensCallback));
-      return;
-    }
-    // send user to the Auth flow
-    const errorMessage = 'Authentication tokens expired, please enter your PIN to proceed.';
-    dispatch(lockScreenAction(refreshTokensCallback, errorMessage));
+    dispatch(lockScreenAction(
+      refreshTokensCallback,
+      'Login session expired, please enter your PIN to proceed.',
+    ));
   };
 };
