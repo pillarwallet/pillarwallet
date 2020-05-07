@@ -106,6 +106,7 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
 import WalletActivatedScreen from 'screens/WalletActivated';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
+import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -243,6 +244,7 @@ import {
   WALLET_ACTIVATED,
   REFERRAL_SENT,
   REFERRAL_CONTACT_INFO_MISSING,
+  REFERRAL_INCOMING_REWARD,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -731,6 +733,7 @@ const AppFlowNavigation = createStackNavigator(
     [WALLET_ACTIVATED]: WalletActivatedScreen,
     [REFERRAL_SENT]: ReferralSentScreen,
     [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
+    [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
   },
   modalTransition,
 );
