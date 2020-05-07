@@ -628,7 +628,7 @@ export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) 
     } = getState();
 
     const initialAssets = await api.fetchInitialAssets(walletId);
-    if (!Object.keys(initialAssets).length) {
+    if (isEmpty(initialAssets)) {
       dispatch({
         type: UPDATE_ASSETS_STATE,
         payload: FETCH_INITIAL_FAILED,
@@ -761,15 +761,15 @@ export const loadSupportedAssetsAction = () => {
 
     const supportedAssets = await api.fetchSupportedAssets(walletId);
 
-    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+    // nothing to do if returned empty
+    if (isEmpty(supportedAssets)) return;
+
+    if (!supportedAssets.some(e => e.symbol === 'BTC')) {
       const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
       if (btcAsset) {
         supportedAssets.push(btcAsset);
       }
     }
-
-    // nothing to do if returned empty
-    if (isEmpty(supportedAssets)) return;
 
     dispatch({
       type: UPDATE_SUPPORTED_ASSETS,

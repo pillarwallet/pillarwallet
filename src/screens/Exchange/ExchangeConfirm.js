@@ -168,7 +168,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     txFeeInWei: new BigNumber(0),
     gasLimit: 0,
     gettingFee: true,
-    feeByGasToken: true,
+    feeByGasToken: false,
   };
 
   constructor(props: Props) {

@@ -116,8 +116,9 @@ class WalletsPart extends React.Component<Props, State> {
   };
 
   getWalletTitle = () => {
-    const { activeWallet } = this.props;
-    const { type: activeWalletType } = activeWallet;
+    const { availableWallets } = this.props;
+    const activeWalletType = getActiveAccountType(availableWallets);
+    if (!activeWalletType) return '';
 
     switch (activeWalletType) {
       case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:

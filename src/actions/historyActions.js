@@ -419,12 +419,7 @@ export const restoreTransactionHistoryAction = () => {
       api.importedEthTransactionHistory(walletAddress),
     ]);
 
-    if (!allAssets || !allAssets.length) return;
-    if (!Array.isArray(allAssets)) {
-      // sentry issue ID 1308336621
-      reportLog('Wrong allAssets type received from back-end', { allAssets });
-      return;
-    }
+    if (isEmpty(allAssets)) return;
 
     const erc20History = _erc20History.filter(tx => {
       const hashExists = ethHistory.find(el => el.hash === tx.transactionHash);

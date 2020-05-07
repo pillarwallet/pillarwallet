@@ -203,7 +203,13 @@ class SDKWrapper {
   fetchInitialAssets(walletId: string) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
-      .then(({ data }) => data)
+      .then(({ data }) => {
+        if (!Array.isArray(data)) {
+          reportLog('Wrong initial assets received', { data });
+          return [];
+        }
+        return data;
+      })
       .catch(() => [])
       .then(transformAssetsToObject);
   }
