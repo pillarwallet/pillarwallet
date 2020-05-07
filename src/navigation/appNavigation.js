@@ -397,6 +397,7 @@ const tabBarIcon = ({
   theme,
 }) => ({ focused }) => {
   const colors = getThemeColors(theme);
+  const tintColor = focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon;
 
   return (
     <View style={{ padding: 4 }}>
@@ -404,7 +405,7 @@ const tabBarIcon = ({
         style={{
           width: 24,
           height: 24,
-          tintColor: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
+          tintColor,
         }}
         resizeMode="contain"
         source={icon}
