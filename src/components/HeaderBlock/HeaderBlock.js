@@ -390,7 +390,7 @@ class HeaderBlock extends React.Component<Props> {
       <ThemeProvider theme={updatedTheme}>
         <Wrapper
           floating={floating}
-          style={{ ...wrapperStyle, backgroundColor, borderColor }}
+          style={{ backgroundColor, borderColor, ...wrapperStyle }}
         >
           <SafeArea
             forceInset={{ bottom: 'never', top: forceInsetTop }}
