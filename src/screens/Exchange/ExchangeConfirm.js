@@ -168,7 +168,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     txFeeInWei: new BigNumber(0),
     gasLimit: 0,
     gettingFee: true,
-    feeByGasToken: true,
+    feeByGasToken: false,
   };
 
   constructor(props: Props) {
@@ -274,14 +274,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
     const { gasInfo, activeAccount } = this.props;
-    const { feeByGasToken } = this.state;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();
-    }
-    if (feeByGasToken) {
-      this.setState({
-        feeByGasToken: false,
-      });
     }
 
     txSpeed = txSpeed || SPEED_TYPES.NORMAL;
