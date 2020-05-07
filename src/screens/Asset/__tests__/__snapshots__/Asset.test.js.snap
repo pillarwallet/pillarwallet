@@ -1335,7 +1335,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               <View
                 style={
                   Object {
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderBottomWidth": 1,
                     "borderColor": "transparent",
                     "width": "100%",
@@ -2442,7 +2442,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               <View
                 style={
                   Object {
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderBottomWidth": 1,
                     "borderColor": "transparent",
                     "width": "100%",

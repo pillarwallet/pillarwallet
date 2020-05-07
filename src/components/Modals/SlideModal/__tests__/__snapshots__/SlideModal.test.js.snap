@@ -170,7 +170,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           <View
             style={
               Object {
-                "backgroundColor": "#FFFFFF",
+                "backgroundColor": "transparent",
                 "borderBottomWidth": 1,
                 "borderColor": "transparent",
                 "width": "100%",
