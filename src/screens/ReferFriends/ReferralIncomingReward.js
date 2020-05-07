@@ -28,8 +28,9 @@ import { ADD_EDIT_USER } from 'constants/navigationConstants';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import ConfettiBackground from 'components/ConfettiBackground';
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import LoadingParagraph from 'components/LoadingParagraph';
 
 import { fontStyles, spacing } from 'utils/variables';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -57,12 +58,6 @@ const Title = styled(MediumText)`
   ${fontStyles.large};
   margin-top: 11px;
   margin-bottom: 12px;
-`;
-
-const Paragraph = styled(BaseText)`
-  ${fontStyles.regular};
-  padding: 0 14px;
-  margin-bottom: 30px;
 `;
 
 const rewardBadge = require('assets/images/referralBadge.png');
@@ -107,7 +102,7 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
 
   render() {
     const { navigation, rewards = {}, isFetchingRewards } = this.props;
-    const rewardText = !isFetchingRewards ? '' : getRewardText(rewards);
+    const rewardText = getRewardText(rewards);
 
     return (
       <ContainerWithHeader
@@ -121,11 +116,19 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
           <Wrapper flex={1} center fullScreen>
             <RewardBadge source={rewardBadge} />
             <Title>Your reward is on the way</Title>
-            <Paragraph center style={{ opacity: !rewardText ? 0 : 1 }}>
-              {'Thanks for joining Pillar.\n' +
+            <LoadingParagraph
+              isLoading={isFetchingRewards}
+              text={'Thanks for joining Pillar.\n' +
               `To celebrate this, we also give you ${rewardText}.\n` +
               'You need to add and verify your email or phone in order to receive the reward.'}
-            </Paragraph>
+              paragraphProps={{
+                center: true,
+                style: {
+                  paddingHorizontal: 14,
+                  marginBottom: 30,
+                },
+              }}
+            />
             <Button
               title="Add details"
               onPress={() => navigation.navigate(ADD_EDIT_USER)}

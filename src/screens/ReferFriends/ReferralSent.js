@@ -30,8 +30,9 @@ import { DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import ConfettiBackground from 'components/ConfettiBackground';
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import LoadingParagraph from 'components/LoadingParagraph';
 
 import { fontStyles, spacing } from 'utils/variables';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -60,12 +61,6 @@ const Title = styled(MediumText)`
   margin-bottom: 12px;
 `;
 
-const Paragraph = styled(BaseText)`
-  ${fontStyles.regular};
-  padding: 0 14px;
-  margin-bottom: 30px;
-`;
-
 const rewardBadge = require('assets/images/referralBadge.png');
 
 class ReferralSent extends React.PureComponent<Props> {
@@ -89,12 +84,19 @@ class ReferralSent extends React.PureComponent<Props> {
           <Wrapper flex={1} center>
             <RewardBadge source={rewardBadge} />
             <Title>Your reward is on the way</Title>
-            <Paragraph center style={{ opacity: isFetchingRewards ? 0 : 1 }}>
-              {'Thank you for spreading the word about Pillar.\n' +
+            <LoadingParagraph
+              isLoading={isFetchingRewards}
+              text={'Thank you for spreading the word about Pillar.\n' +
               `You will receive ${rewardText} for each friend installed the app with your referral link. ` +
               'You both should have verified your details in order to be eligible.'}
-            </Paragraph>
-
+              paragraphProps={{
+                center: true,
+                style: {
+                  paddingHorizontal: 14,
+                  marginBottom: 30,
+                },
+              }}
+            />
             <Button
               title="Invite more friends"
               block

@@ -28,8 +28,9 @@ import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import LoadingParagraph from 'components/LoadingParagraph';
 
 import { fontStyles, spacing } from 'utils/variables';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -59,12 +60,6 @@ const Title = styled(MediumText)`
   margin-bottom: 12px;
 `;
 
-const Paragraph = styled(BaseText)`
-  ${fontStyles.regular};
-  padding: 0 14px;
-  margin-bottom: 30px;
-`;
-
 const rewardBadge = require('assets/images/referralBadge.png');
 
 class EmailPhoneMissing extends React.PureComponent<Props> {
@@ -89,11 +84,21 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
         <Wrapper flex={1} center regularPadding>
           <RewardBadge source={rewardBadge} />
           <Title>Invite and get rewarded</Title>
-          <Paragraph center style={{ opacity: isFetchingRewards ? 0 : 1 }}>
-            {`You will receive ${rewardText} for each friend installed the app with your referral link.`}
-            {'\n To enable referral system we need to make sure you\'re a genuine user. We care for our users ' +
-            'privacy and never share your data.'}
-          </Paragraph>
+          <LoadingParagraph
+            isLoading={isFetchingRewards}
+            text={
+              `You will receive ${rewardText} for each friend installed the app with your referral link.` +
+              '\n To enable referral system we need to make sure you\'re a genuine user. We care for our users ' +
+              'privacy and never share your data.'
+            }
+            paragraphProps={{
+              center: true,
+              style: {
+                paddingHorizontal: 14,
+                marginBottom: 30,
+              },
+            }}
+          />
           <Button
             title="Verify email or phone"
             block
