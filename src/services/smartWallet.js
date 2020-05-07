@@ -455,11 +455,13 @@ class SmartWallet {
   async estimateAccountTransaction(
     transaction: AccountTransaction,
     gasInfo: GasInfo,
-    assetData: AssetData,
+    assetData?: AssetData,
   ): Promise<{ gasTokenCost: BigNumber, cost: BigNumber }> {
     const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG], gasToken } = transaction;
     let { data, recipient } = transaction;
-    const { decimals, contractAddress, token: assetSymbol } = assetData;
+    const decimals = get(assetData, 'decimals');
+    const assetSymbol = get(assetData, 'token');
+    const contractAddress = get(assetData, 'contractAddress');
 
     let value;
 
@@ -481,7 +483,7 @@ class SmartWallet {
       value,
       data,
       transactionSpeed,
-    ).catch(() => ({}));
+    ).catch(() => {});
 
     const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
       ? SPEED_TYPES.FAST

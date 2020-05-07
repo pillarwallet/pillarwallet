@@ -37,7 +37,6 @@ import type { ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 
 // utils
-import { getCurrencySymbol } from 'utils/common';
 import { images } from 'utils/images';
 
 import type { EnableData } from './ExchangeOffers';
@@ -88,7 +87,6 @@ const AssetEnableModal = (props: Props) => {
 
   const {
     providerName,
-    fiatCurrency,
     feeDisplayValue,
     feeInFiat,
     assetSymbol,

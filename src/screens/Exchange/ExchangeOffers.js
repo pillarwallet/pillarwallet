@@ -89,8 +89,7 @@ export type EnableData = {
   providerName: string,
   assetSymbol: string,
   assetIcon: string,
-  fiatCurrency: string,
-  feeInEth: string,
+  feeDisplayValue: string,
   feeInFiat: string,
   isDisabled?: boolean,
 };
@@ -107,7 +106,7 @@ type Props = {
   takeOffer: (string, string, number, string, string, () => void) => void,
   authorizeWithShapeshift: () => void,
   setExecutingTransaction: () => void,
-  setTokenAllowance: (string, string, string, string, string, (AllowanceResponse) => void) => void,
+  setTokenAllowance: (string, string, string, string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
   connectedProviders: ExchangeProvider[],
   smartWalletFeatureEnabled: boolean,
@@ -221,11 +220,11 @@ function getCardAdditionalButtonData(additionalData) {
       onPress: authoriseWithShapeShift,
       disabled: shapeshiftAuthPressed,
     };
-  } else if (true) {
+  } else if (!allowanceSet) {
     return {
       title: storedAllowance ? 'Pending' : 'Allow this exchange',
       onPress: () => onSetTokenAllowancePress(offer),
-      // disabled: isSetAllowancePressed || !!storedAllowance,
+      disabled: isSetAllowancePressed || !!storedAllowance,
       isLoading: isSetAllowancePressed,
     };
   }
@@ -266,9 +265,10 @@ class ExchangeOffers extends React.Component<Props, State> {
       data: transaction.data,
       recipient: transaction.to,
       gasToken: transaction.gasToken,
+      value: transaction.amount,
     };
     const { gasTokenCost, cost: ethCost } = await smartWalletService
-      .estimateAccountTransaction(estimateTransaction, this.props.gasInfo, {})
+      .estimateAccountTransaction(estimateTransaction, this.props.gasInfo)
       .catch(() => ({}));
 
     if (gasTokenCost && gasTokenCost.gt(0)) {
@@ -325,6 +325,7 @@ class ExchangeOffers extends React.Component<Props, State> {
         let gasToken;
         let txFeeInWei;
         let transactionPayload = {
+          gasToken: null,
           amount: 0,
           to: payToAddress,
           symbol: fromAssetCode,
@@ -352,7 +353,7 @@ class ExchangeOffers extends React.Component<Props, State> {
               address: gasTokenData.address,
               symbol: gasTokenData.symbol,
             };
-            transactionPayload.gasToken = gasToken;
+            transactionPayload = { ...transactionPayload, gasToken };
           }
           txFeeInWei = await this.getSmartWalletTxFeeInWei(transactionPayload);
         } else {
@@ -369,7 +370,7 @@ class ExchangeOffers extends React.Component<Props, State> {
           };
         }
 
-        transactionPayload.txFeeInWei = txFeeInWei;
+        transactionPayload = { ...transactionPayload, txFeeInWei };
 
         const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
         const feeSymbol = get(gasToken, 'symbol', ETH);
@@ -386,12 +387,11 @@ class ExchangeOffers extends React.Component<Props, State> {
             providerName,
             assetSymbol,
             assetIcon,
-            fiatCurrency,
             feeDisplayValue,
             feeInFiat,
             isDisabled,
           },
-          enablePayload: transactionPayload,
+          enablePayload: { ...transactionPayload },
         });
       });
     });
