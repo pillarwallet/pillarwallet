@@ -374,7 +374,7 @@ class TextInput extends React.Component<Props, State> {
       formattedBalanceInFiat,
       paymentNetworkBalance,
     } = option;
-    const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
+    const iconUrl = option.icon ? `${SDK_PROVIDER}/${option.icon}?size=3` : null;
     const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
 
     return (
@@ -591,12 +591,13 @@ class TextInput extends React.Component<Props, State> {
                 {selector.value
                   ? (
                     <ValueWrapper>
-                      <Image
-                        key={selectedValue}
-                        source={optionImageSource}
-                        fallbackSource={optionImageSource ? selectedOptionFallback : optionImageSource}
-                        resizeMode="contain"
-                      />
+                      {(selectedOptionIcon || selectedOptionFallback) && (
+                        <Image
+                          key={selectedValue}
+                          source={optionImageSource}
+                          fallbackSource={!selectedOptionIcon ? selectedOptionFallback : optionImageSource}
+                          resizeMode="contain"
+                        />)}
                       <SelectorValue>{selectedValue}</SelectorValue>
                     </ValueWrapper>
                     )
