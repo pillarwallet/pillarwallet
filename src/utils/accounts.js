@@ -18,10 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+import omit from 'lodash.omit';
 import type { Account, Accounts, AccountTypes } from 'models/Account';
+import type { Assets, Balances, BalancesStore } from 'models/Asset';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { userHasSmartWallet } from 'utils/smartWallet';
-import { addressesEqual } from './assets';
+import { addressesEqual, getBalance } from './assets';
 
 export const getActiveAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ isActive }) => isActive);
@@ -70,6 +72,18 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
+export const hasLegacyAccountBalance = (accounts: Accounts, balances: BalancesStore): boolean => {
+  const account = findKeyBasedAccount(accounts);
+  if (!account || isEmpty(balances[account.id])) {
+    return false;
+  }
+  const accountBalances: Balances = balances[account.id];
+  return Object.keys(accountBalances).some(token => getBalance(accountBalances, token) > 0);
+};
+export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
+  return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+};
+
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
@@ -87,13 +101,13 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.KEY_BASED;
 };
 
-export const getAccountName = (accountType: AccountTypes, accounts: Accounts): string => {
+export const getAccountName = (accountType: AccountTypes): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
       return 'Smart Wallet';
 
     case ACCOUNT_TYPES.KEY_BASED:
-      return userHasSmartWallet(accounts) ? 'Legacy wallet' : 'Key Based wallet';
+      return 'Key wallet';
 
     default:
       return '';
@@ -110,4 +124,17 @@ export const findAccountById = (accountId: string, accounts: Accounts): ?Account
 
 export const getAccountWalletId = (account: Account): string => {
   return get(account, 'walletId', '');
+};
+
+export const normalizeForEns = (value: string): string => {
+  return value
+    .toLowerCase()
+    .replace(/ /g, '-');
+};
+
+export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[]): Assets => {
+  if (!isEmpty(allAccountAssets)) {
+    return omit(allAccountAssets, hiddenAssets);
+  }
+  return {};
 };

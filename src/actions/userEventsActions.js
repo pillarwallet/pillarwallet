@@ -24,10 +24,11 @@ import {
   PPN_INIT_EVENT,
   WALLET_CREATE_EVENT,
   WALLET_IMPORT_EVENT,
+  WALLET_BACKUP_EVENT,
 } from 'constants/userEventsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { saveDbAction } from './dbActions';
@@ -45,7 +46,7 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
         eventTitle = 'Wallet created';
         break;
       case ACCOUNT_TYPES.SMART_WALLET:
-        eventTitle = 'Smart wallet created';
+        eventTitle = 'Smart Wallet created';
         break;
       case WALLET_IMPORT_EVENT:
         eventTitle = 'Wallet imported';
@@ -113,5 +114,28 @@ export const getWalletsCreationEventsAction = () => {
       return dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000));
     });
     await Promise.all(walletCreatedEventsPromises);
+  };
+};
+
+export const addWalletBackupEventAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      userEvents: { data: userEvents },
+    } = getState();
+
+    const walletBackupEvent = {
+      id: WALLET_BACKUP_EVENT,
+      eventTitle: 'Key wallet',
+      eventSubtitle: 'Backup secured',
+      createdAt: +new Date() / 1000,
+      type: USER_EVENT,
+      subType: WALLET_BACKUP_EVENT,
+    };
+    dispatch({
+      type: ADD_USER_EVENT,
+      payload: walletBackupEvent,
+    });
+    const updatedUserEvents = [...userEvents, walletBackupEvent];
+    await dispatch(saveDbAction('userEvents', { userEvents: updatedUserEvents }, true));
   };
 };

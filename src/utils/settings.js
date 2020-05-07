@@ -21,14 +21,18 @@
 import * as Keychain from 'react-native-keychain';
 
 
-export const getBiometryType = (biometryType: string) => {
+export const getBiometryType = (biometryType?: string) => {
   switch (biometryType) {
     case Keychain.BIOMETRY_TYPE.TOUCH_ID:
       return 'Touch ID';
     case Keychain.BIOMETRY_TYPE.FACE_ID:
       return 'Face ID';
     case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      return 'Android Fingerprint';
+      /**
+       * for Android it always return "fingerprint" even though face unlock is available (Android 10)
+       * TODO: check constantly for lib updates to update this
+       */
+      return 'Android Biometric Unlock';
     default:
       return 'Biometric Login';
   }

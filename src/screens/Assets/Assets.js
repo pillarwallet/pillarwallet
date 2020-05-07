@@ -22,8 +22,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
-import * as Keychain from 'react-native-keychain';
+import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
 import { withTheme } from 'styled-components/native';
 
 // components
@@ -56,13 +55,13 @@ import {
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, SETTINGS } from 'constants/navigationConstants';
-import { KEY_SECTION } from 'screens/Settings';
+import { ACCOUNTS, RECOVERY_SETTINGS, SECURITY_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
 import { getThemeColors } from 'utils/themes';
+import { getSupportedBiometryType } from 'utils/keychain';
 
 // selectors
 import { accountCollectiblesSelector } from 'selectors/collectibles';
@@ -73,6 +72,7 @@ import { activeAccountSelector } from 'selectors';
 import PPNView from 'screens/Assets/PPNView';
 import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
+import WalletActivation from 'screens/Assets/WalletActivation';
 
 type Props = {
   fetchInitialAssets: () => void,
@@ -131,9 +131,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     fetchAllCollectiblesData();
 
-    Keychain.getSupportedBiometryType()
-      .then(supported => this.setState({ supportsBiometrics: !!supported }))
-      .catch(() => null);
+    getSupportedBiometryType(biometryType => this.setState({ supportsBiometrics: !!biometryType }));
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -169,7 +167,6 @@ class AssetsScreen extends React.Component<Props, State> {
       activeAccount,
       availableStake,
       PPNTransactions,
-      accounts,
       theme,
     } = this.props;
     const colors = getThemeColors(theme);
@@ -181,7 +178,7 @@ class AssetsScreen extends React.Component<Props, State> {
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
         return {
-          label: getAccountName(walletType, accounts),
+          label: getAccountName(walletType),
           action: () => navigation.navigate(ACCOUNTS),
           screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
           customHeaderButtonProps: {
@@ -224,7 +221,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Backup wallet',
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(SETTINGS, { scrollTo: KEY_SECTION })
+          ? () => navigation.navigate(RECOVERY_SETTINGS)
           : null,
       },
       {
@@ -240,7 +237,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: 'Enable biometric login (optional)',
         status: useBiometrics,
         onPress: !useBiometrics
-          ? () => navigation.navigate(SETTINGS)
+          ? () => navigation.navigate(SECURITY_SETTINGS)
           : null,
       };
       return [...keyWalletInsights, biometricsInsight];
@@ -249,7 +246,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return keyWalletInsights;
   };
 
-  renderView = (viewType: string) => {
+  renderView = (viewType: string, onScroll: Object => void) => {
     const {
       assets,
       assetsState,
@@ -260,6 +257,8 @@ class AssetsScreen extends React.Component<Props, State> {
     const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+
+    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -275,17 +274,28 @@ class AssetsScreen extends React.Component<Props, State> {
       );
     }
 
+    if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
+      const deploymentHash = getDeploymentHash(smartWalletState);
+
+      if (deploymentHash) {
+        return (
+          <WalletActivation deploymentHash={deploymentHash} />
+        );
+      }
+    }
+
     switch (viewType) {
       case VIEWS.BTC_VIEW:
-        return <BTCView />;
+        return <BTCView onScroll={onScroll} />;
       case VIEWS.PPN_VIEW:
-        return <PPNView />;
+        return <PPNView onScroll={onScroll} />;
       case VIEWS.SMART_WALLET_VIEW:
         return (
           <WalletView
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
+            onScroll={onScroll}
           />);
       case VIEWS.KEY_WALLET_VIEW:
         return (
@@ -294,6 +304,7 @@ class AssetsScreen extends React.Component<Props, State> {
             hideInsight={() => this.hideWalletInsight('KEY')}
             insightList={this.getInsightsList()}
             insightsTitle="Never lose your funds"
+            onScroll={onScroll}
           />);
       default:
         return null;
@@ -324,11 +335,15 @@ class AssetsScreen extends React.Component<Props, State> {
               ...customHeaderButtonProps,
             },
           }],
+          leftItems: [{
+            title: 'Assets',
+          }],
           noBack: true,
         }}
         inset={{ bottom: 0 }}
+        tab
       >
-        {this.renderView(screenView)}
+        {onScroll => this.renderView(screenView, onScroll)}
       </ContainerWithHeader>
     );
   }
@@ -357,7 +372,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
-  PPNTransactions: PPNTransactionsSelector,
+  PPNTransactions: PPNIncomingTransactionsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

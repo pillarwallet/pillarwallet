@@ -26,6 +26,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import NativeTouchable from 'components/NativeTouchable';
 import Switcher from 'components/Switcher';
+import { LabelBadge } from 'components/LabelBadge';
 import { themedColors } from 'utils/themes';
 
 type Props = {
@@ -38,21 +39,33 @@ type Props = {
   disabled?: ?boolean,
   bordered?: ?boolean,
   isSelected?: boolean,
+  icon?: string,
+  iconColor?: string,
+  rightLabel?: string,
+  description?: string,
+  labelBadge?: {
+    label: string,
+    color?: string,
+  }
 }
 
-const ItemLabelHolder = styled.View`
+const MainWrapper = styled.View`
   flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px ${spacing.large}px 24px;
- ${({ bordered, theme }) => bordered
+  min-height: 70px;
+  padding: 24px ${spacing.large}px 24px;
+  ${({ bordered, theme }) => bordered
     ? `
     border-bottom-width: ${StyleSheet.hairlineWidth}px;
     border-top-width: ${StyleSheet.hairlineWidth}px;
     border-color: ${theme.colors.border};
     `
     : ''}
+`;
+
+const ItemLabelHolder = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const ListItemInnerWrapper = styled.View`
@@ -105,6 +118,25 @@ const ListAddon = styled.View`
   min-width: 70px;
 `;
 
+const LeftIcon = styled(Icon)`
+  color: ${({ color }) => color || themedColors.accent};
+  font-size: ${fontSizes.big}px;
+  margin-right: 10px;
+`;
+
+const RightLabel = styled(BaseText)`
+  color: ${themedColors.link};
+  ${fontStyles.regular};
+  text-align: right;
+  padding-left: ${spacing.medium}px;
+`;
+
+const Description = styled(BaseText)`
+  color: ${themedColors.secondaryText};
+  ${fontStyles.regular};
+  padding-right: 10%;
+`;
+
 class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
     const {
@@ -116,35 +148,54 @@ class SettingsListItem extends React.Component<Props> {
       disabled,
       bordered,
       isSelected,
+      icon,
+      iconColor,
+      labelBadge,
+      rightLabel,
+      description,
     } = this.props;
 
     if (!toggle) {
       return (
-        <ItemLabelHolder bordered={bordered}>
-          <ListItemInnerWrapper>
-            <ItemLabel primary={isSelected}>{label}</ItemLabel>
-            {!!processedValue && <ItemValue>{processedValue}</ItemValue>}
-          </ListItemInnerWrapper>
-          {!!(notificationsCount || warningNotification) &&
-          <ListAddon>
-            {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
-            {!!warningNotification && <WarningIcon name="warning-circle" />}
-          </ListAddon>}
-        </ItemLabelHolder>
+        <MainWrapper>
+          <ItemLabelHolder bordered={bordered}>
+            {!!icon && <LeftIcon name={icon} color={iconColor} />}
+            <ListItemInnerWrapper>
+              <ItemLabel primary={isSelected}>{label}</ItemLabel>
+              {!!label && <RightLabel>{rightLabel}</RightLabel>}
+              {!!labelBadge && (
+                <LabelBadge
+                  label={labelBadge.label}
+                  labelStyle={{ fontSize: fontSizes.regular }}
+                  color={labelBadge.color}
+                />
+              )}
+              {!!processedValue && <ItemValue>{processedValue}</ItemValue>}
+            </ListItemInnerWrapper>
+            {!!(notificationsCount || warningNotification) &&
+            <ListAddon>
+              {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
+              {!!warningNotification && <WarningIcon name="warning-circle" />}
+            </ListAddon>}
+          </ItemLabelHolder>
+          {!!description && <Description>{description}</Description>}
+        </MainWrapper>
       );
     }
 
     return (
-      <ItemLabelHolder bordered={bordered}>
-        <ItemLabel primary={isSelected}>{label}</ItemLabel>
-        <ListAddon>
-          <Switcher
-            isOn={processedValue}
-            onToggle={onPress}
-            disabled={disabled}
-          />
-        </ListAddon>
-      </ItemLabelHolder>
+      <MainWrapper>
+        <ItemLabelHolder bordered={bordered}>
+          <ItemLabel primary={isSelected}>{label}</ItemLabel>
+          <ListAddon>
+            <Switcher
+              isOn={processedValue}
+              onToggle={onPress}
+              disabled={disabled}
+            />
+          </ListAddon>
+        </ItemLabelHolder>
+      </MainWrapper>
     );
   }
   render() {

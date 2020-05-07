@@ -21,8 +21,15 @@ import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
+import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 
-import { SMART_WALLET_DEPLOYMENT_ERRORS, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+// constants
+import {
+  SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_DEPLOYMENT_ERRORS,
+  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
@@ -31,21 +38,33 @@ import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { ETH } from 'constants/assetsConstants';
 
+// services
+import { parseEstimatePayload } from 'services/smartWallet';
+
+// types
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction, TransactionExtra } from 'models/Transaction';
-import type { Asset } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import { ETH } from 'constants/assetsConstants';
+import type { EstimatePayload } from 'services/smartWallet';
 
-import { getActiveAccount } from './accounts';
-import { getAssetSymbolByAddress } from './assets';
+// local utils
+import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
+import {
+  addressesEqual,
+  getAssetDataByAddress,
+  getAssetsAsList,
+  getAssetSymbolByAddress,
+} from './assets';
 import { isCaseInsensitiveMatch } from './common';
-import { buildHistoryTransaction } from './history';
+import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
+type IAccountDevice = sdkInterfaces.IAccountDevice;
 const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 
 const getMessage = (
@@ -57,7 +76,7 @@ const getMessage = (
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (!isSmartWalletActive) return {};
       return {
-        title: 'To send assets, deploy Smart Wallet first',
+        title: 'To send assets, activate Smart Wallet first',
         message: 'You will have to pay a small fee',
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
@@ -87,6 +106,15 @@ export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
   return accounts.some(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
 };
 
+export const getPreferredWalletId = (accounts: Accounts = []): string => {
+  const smartWallet = findFirstSmartAccount(accounts);
+  if (smartWallet) {
+    return smartWallet.walletId;
+  }
+  const legacyWallet = findKeyBasedAccount(accounts);
+  return legacyWallet ? legacyWallet.walletId : '';
+};
+
 export const getSmartWalletStatus = (
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
@@ -107,11 +135,22 @@ export const getSmartWalletStatus = (
 export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
 export const getDeployErrorMessage = (errorType: string) => ({
-  title: 'Smart Wallet deployment failed',
+  title: 'Smart Wallet activation failed',
   message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
     ? 'You need to top up your Smart Account first'
-    : 'There was an error on our server. Please try to re-deploy the account by clicking the button bellow',
+    : 'There was an error on our server. Please try to re-activate the account by clicking the button bellow',
 });
+
+export const deviceHasGasTokenSupport = (device: IAccountDevice): boolean => {
+  return !!get(device, 'features.gasTokenSupported');
+};
+
+export const accountHasGasTokenSupport = (account: Object): boolean => {
+  if (isEmpty(get(account, 'devices', []))) return false;
+  return account.devices.some(device => {
+    return deviceHasGasTokenSupport(device) && device.state === sdkConstants.AccountDeviceStates.Deployed;
+  });
+};
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
 
@@ -119,6 +158,7 @@ export const parseSmartWalletTransactions = (
   smartWalletTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
   assets: Asset[],
+  connectedAccount: ?Object,
 ): Transaction[] => smartWalletTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
@@ -138,6 +178,8 @@ export const parseSmartWalletTransactions = (
         used: gasUsed,
         price: gasPrice,
       },
+      gasToken: gasTokenAddress,
+      fee: transactionFee,
     } = smartWalletTransaction;
 
     // NOTE: same transaction could have multiple records, those are different by index
@@ -226,6 +268,36 @@ export const parseSmartWalletTransactions = (
         ...transaction,
         tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
       };
+    } else if (transactionType === AccountTransactionTypes.UpdateAccountEnsName) {
+      transaction = {
+        ...transaction,
+        tag: SET_SMART_WALLET_ACCOUNT_ENS,
+        extra: {
+          ensName: get(fromDetails, 'account.ensName'),
+        },
+      };
+    } else if (transactionType === AccountTransactionTypes.AddDevice) {
+      const addedDeviceAddress = get(smartWalletTransaction, 'extra.address');
+      const gasTokenSupported = accountHasGasTokenSupport(connectedAccount);
+      if (!isEmpty(addedDeviceAddress) && gasTokenSupported) {
+        transaction = {
+          ...transaction,
+          tag: SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+        };
+      }
+    }
+
+    if (!isEmpty(gasTokenAddress)) {
+      const gasToken = getAssetDataByAddress(assets, supportedAssets, gasTokenAddress);
+      if (!isEmpty(gasToken)) {
+        const { decimals: gasTokenDecimals, symbol: gasTokenSymbol } = gasToken;
+        const feeWithGasToken = parseFeeWithGasToken({
+          decimals: gasTokenDecimals,
+          symbol: gasTokenSymbol,
+          address: gasTokenAddress,
+        }, transactionFee);
+        if (transactionFee) transaction = { ...transaction, feeWithGasToken };
+      }
     }
 
     const mappedTransaction = buildHistoryTransaction(transaction);
@@ -253,6 +325,65 @@ export const isHiddenUnsettledTransaction = (
     [PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL, PAYMENT_NETWORK_TX_SETTLEMENT].includes(tag)
       && transactionExtraContainsPaymentHash(paymentHash, extra),
   );
+
+export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
+  const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
+  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+  return !error && (deploymentStarted
+    || [
+      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
+      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
+    ].includes(smartWalletStatus.status));
+};
+
+export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {
+  return get(smartWalletState, 'upgrade.deploymentData', {});
+};
+
+export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => {
+  return get(smartWalletState, 'upgrade.deploymentData.hash', '');
+};
+
+export const buildSmartWalletTransactionEstimate = (
+  apiEstimate: EstimatePayload,
+  accountAssets: Assets,
+  supportedAssets: Asset[],
+) => {
+  const {
+    gasAmount,
+    gasPrice,
+    totalCost,
+    gasTokenCost,
+    gasToken: parsedGasToken,
+  } = parseEstimatePayload(apiEstimate);
+
+  let estimate = {
+    gasAmount,
+    gasPrice,
+    totalCost,
+  };
+
+  // check if fee by gas token available
+  const hasGasTokenSupport = get(apiEstimate, 'relayerFeatures.gasTokenSupported', false);
+  if (!hasGasTokenSupport) return estimate;
+
+  const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
+  const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
+  const parsedGasTokenAddress = get(parsedGasToken, 'address');
+
+  if (!isEmpty(gasToken)
+    && addressesEqual(parsedGasTokenAddress, gasToken.address)
+    && gasTokenCost
+    && gasTokenCost.gt(0)) {
+    estimate = {
+      ...estimate,
+      gasToken,
+      gasTokenCost: parsedGasTokenCost,
+    };
+  }
+
+  return estimate;
+};
 
 export const isSmartWalletDeviceDeployed = (
   device: $Shape<{ state: ?string, nextState: ?string }>,

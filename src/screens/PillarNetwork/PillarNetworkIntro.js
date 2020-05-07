@@ -29,8 +29,6 @@ import { ScrollWrapper } from 'components/Layout';
 import { BoldText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
 import { LabelBadge } from 'components/LabelBadge';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 
@@ -41,7 +39,6 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { delay } from 'utils/common';
-import { getActiveAccount } from 'utils/accounts';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
@@ -57,8 +54,8 @@ import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  addNetwork: Function,
   resetIncorrectPassword: Function,
+  addNetwork: Function,
   ensureSmartAccountConnected: Function,
   switchAccount: Function,
   accounts: Accounts,
@@ -68,7 +65,6 @@ type Props = {
   theme: Theme,
 }
 type State = {
-  showPinScreenForAction: boolean,
   processingCreate: boolean,
 }
 
@@ -154,20 +150,10 @@ const PPNIcon = require('assets/images/logo_PPN.png');
 
 class PillarNetworkIntro extends React.Component<Props, State> {
   state = {
-    showPinScreenForAction: false,
     processingCreate: false,
   };
 
-  handleCheckPinModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
-    resetIncorrectPassword();
-    this.setState({
-      showPinScreenForAction: false,
-      processingCreate: false,
-    });
-  };
-
-  goToPLRTank = async (_: string, wallet: Object) => {
+  goToPLRTank = async () => {
     const {
       ensureSmartAccountConnected,
       navigation,
@@ -176,16 +162,16 @@ class PillarNetworkIntro extends React.Component<Props, State> {
       setPLRTankAsInit,
       setActiveBlockchainNetwork,
     } = this.props;
-    this.setState({ showPinScreenForAction: false });
-    const activeAccount = getActiveAccount(accounts) || { type: '' };
-    if (activeAccount.type === ACCOUNT_TYPES.KEY_BASED) {
-      const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
-      const { id: smartAccountId } = smartAccount;
-      await switchAccount(smartAccountId, wallet.privateKey);
+    this.setState({ processingCreate: true });
+    const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+    if (!smartAccount) {
+      this.setState({ processingCreate: false });
+      return;
     }
+    await switchAccount(smartAccount.id);
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
     await delay(500);
-    ensureSmartAccountConnected(wallet.privateKey)
+    ensureSmartAccountConnected()
       .then(() => {
         this.setState({ processingCreate: false },
           () => {
@@ -197,7 +183,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
   };
 
   render() {
-    const { showPinScreenForAction, processingCreate } = this.state;
+    const { processingCreate } = this.state;
     const {
       smartWalletState,
       accounts,
@@ -265,7 +251,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               marginBottom: 70,
               borderColor: colors.PPNText,
             }}
-            label="Enable Smart wallet to create Tank"
+            label="Enable Smart Wallet to create Tank"
             onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
             color={colors.PPNText}
             bordered
@@ -275,7 +261,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             <Button
               block
               title="Go to PLR Tank"
-              onPress={() => this.setState({ showPinScreenForAction: true, processingCreate: true })}
+              onPress={this.goToPLRTank}
               style={{
                 backgroundColor: colors.PPNText,
                 marginTop: 40,
@@ -287,20 +273,6 @@ class PillarNetworkIntro extends React.Component<Props, State> {
             />
           </ButtonWrapper>}
         </ScrollWrapper>
-        <SlideModal
-          isVisible={!!showPinScreenForAction}
-          onModalHide={this.handleCheckPinModalClose}
-          title="Enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <Wrapper flex={1}>
-            <CheckPin
-              onPinValid={this.goToPLRTank}
-            />
-          </Wrapper>
-        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -315,9 +287,9 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  switchAccount: (accountId: string, privateKey?: string) => dispatch(switchAccountAction(accountId, privateKey)),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  ensureSmartAccountConnected: (privateKey: string) => dispatch(ensureSmartAccountConnectedAction(privateKey)),
+  ensureSmartAccountConnected: () => dispatch(ensureSmartAccountConnectedAction()),
   setPLRTankAsInit: () => dispatch(setPLRTankAsInitAction()),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
 });

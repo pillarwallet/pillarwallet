@@ -261,6 +261,7 @@ class AssetsList extends React.Component<Props, State> {
             value: formattedBalanceInFiat,
             token: symbol,
           }}
+          fallbackToGenericToken
         />
       </Swipeout>
     );
@@ -291,7 +292,7 @@ class AssetsList extends React.Component<Props, State> {
 
     const sortedAssets = Object.keys(assets)
       .map(id => assets[id])
-      .map(({ symbol, balance, ...rest }) => ({
+      .map(({ symbol, ...rest }) => ({
         symbol,
         balance: getBalance(balances, symbol),
         paymentNetworkBalance: getBalance(paymentNetworkBalances, symbol),

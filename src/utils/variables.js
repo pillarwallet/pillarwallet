@@ -28,7 +28,6 @@ export const baseColors = {
   warmPurple: '#b2329c',
   brightPurple: '#4f1a91',
   electricBlue: '#007AFF',
-  electricBlueIntense: '#2329d6',
   duckEggBlue: '#e6eefa',
   selago: '#f6fafe',
   hawkesBlue: '#f0f7fe',
@@ -150,6 +149,7 @@ export const UIColors = {
   headerContentBorder: 'rgba(255, 255, 255, 0.1)',
   listDivider: 'rgba(25, 16, 91, 0.05)',
   headerButtonBorder: 'rgba(0, 122, 255, 0.05)',
+  darkShadowColor: 'rgba(6, 15, 30, 0.8)',
 };
 
 export const fontSizes = {

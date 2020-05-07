@@ -23,7 +23,6 @@ import {
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
   ADD_SMART_WALLET_UPGRADE_ASSETS,
   ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
-  DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   ADD_SMART_WALLET_RECOVERY_AGENTS,
@@ -36,6 +35,7 @@ import {
   SET_ASSET_TRANSFER_GAS_LIMIT,
   SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
   ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
+  SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED,
 } from 'constants/smartWalletConstants';
 import type {
   SmartWalletAccount,
@@ -48,7 +48,6 @@ import type { SmartWalletTransferTransaction } from 'models/Transaction';
 import type { RecoveryAgent } from 'models/RecoveryAgents';
 
 export type SmartWalletReducerState = {
-  upgradeDismissed: boolean,
   sdkInitialized: boolean,
   connectedAccount: $Shape<ConnectedSmartWalletAccount>,
   accounts: SmartWalletAccount[],
@@ -76,7 +75,6 @@ export type SmartWalletReducerAction = {
 };
 
 export const initialState = {
-  upgradeDismissed: false,
   sdkInitialized: false,
   connectedAccount: {},
   accounts: [],
@@ -150,11 +148,6 @@ export default function smartWalletReducer(
           },
           recoveryAgents: action.payload,
         },
-      };
-    case DISMISS_SMART_WALLET_UPGRADE:
-      return {
-        ...state,
-        upgradeDismissed: true,
       };
     case SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS:
       return {
@@ -260,6 +253,14 @@ export default function smartWalletReducer(
             ...state.connectedAccount.devices,
             action.payload,
           ],
+        },
+      };
+    case SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED:
+      return {
+        ...state,
+        connectedAccount: {
+          ...state.connectedAccount,
+          gasTokenSupported: true,
         },
       };
     default:

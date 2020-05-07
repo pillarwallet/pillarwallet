@@ -22,7 +22,8 @@
 
 import PouchDB from 'pouchdb-react-native';
 import merge from 'lodash.merge';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
+import { printLog, reportLog } from 'utils/common';
 
 function PouchDBStorage(name: string, opts: ?Object = {}) {
   this.name = name;
@@ -33,7 +34,7 @@ function PouchDBStorage(name: string, opts: ?Object = {}) {
 PouchDBStorage.prototype.connect = function () {
   this.needToReconnect = false;
   this.connection = new PouchDB(this.name, this.opts);
-  console.log(`Connected to the database ${this.name}`);
+  printLog(`Connected to the database ${this.name}`);
 };
 
 PouchDBStorage.prototype.db = function () {
@@ -83,12 +84,10 @@ PouchDBStorage.prototype.save = function (id: string, data: Object, forceRewrite
     })
     .then(doc => {
       if (activeDocs[id]) {
-        Sentry.captureMessage('Race condition spotted', {
-          extra: {
-            id,
-            data,
-            forceRewrite,
-          },
+        reportLog('Race condition spotted', {
+          id,
+          data,
+          forceRewrite,
         });
       }
 
@@ -113,11 +112,7 @@ PouchDBStorage.prototype.save = function (id: string, data: Object, forceRewrite
     })
     .catch((err) => {
       if (err.status !== 409) {
-        Sentry.captureException({
-          id,
-          data,
-          err,
-        });
+        reportLog('PouchDBStorage Exception', { id, data, err }, Sentry.Severity.Error);
         throw err;
       }
       activeDocs[id] = false;
@@ -146,7 +141,7 @@ PouchDBStorage.getInstance = function (name: string, opts: ?Object) {
 };
 
 PouchDBStorage.prototype.close = function () {
-  console.log('Closing db connection');
+  printLog('Closing db connection');
   this.db().close();
   this.needToReconnect = true;
 };

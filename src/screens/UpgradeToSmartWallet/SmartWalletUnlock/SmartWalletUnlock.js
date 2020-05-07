@@ -21,9 +21,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ASSETS } from 'constants/navigationConstants';
-import { Container } from 'components/Layout';
-import CheckPin from 'components/CheckPin';
-import Header from 'components/Header';
+import CheckAuth from 'components/CheckAuth';
 import {
   initSmartWalletSdkAction,
   upgradeToSmartWalletAction,
@@ -40,17 +38,14 @@ type Props = {
 type State = {
   transferTransactions: Object[],
   isChecking: boolean,
-  successNavigateScreen?: ?string,
 };
 
 class SmartWalletUnlock extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const transferTransactions = this.props.navigation.getParam('transferTransactions', []);
-    const successNavigateScreen = this.props.navigation.getParam('successNavigateScreen');
     this.state = {
       transferTransactions,
-      successNavigateScreen,
       isChecking: false,
     };
   }
@@ -61,10 +56,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
       upgradeToSmartWallet,
       navigation,
     } = this.props;
-    const {
-      transferTransactions = [],
-      successNavigateScreen,
-    } = this.state;
+    const { transferTransactions = [] } = this.state;
     this.setState({
       isChecking: true,
     }, async () => {
@@ -77,7 +69,7 @@ class SmartWalletUnlock extends React.Component<Props, State> {
           return;
         }
       }
-      navigation.navigate(successNavigateScreen || ASSETS, {});
+      navigation.navigate(ASSETS);
     });
   };
 
@@ -90,13 +82,11 @@ class SmartWalletUnlock extends React.Component<Props, State> {
   render() {
     const { isChecking } = this.state;
     return (
-      <Container>
-        <Header
-          onBack={this.handleBack}
-          title="Enter pincode"
-        />
-        <CheckPin onPinValid={this.handleUpgradeStep} isChecking={isChecking} />
-      </Container>
+      <CheckAuth
+        onPinValid={this.handleUpgradeStep}
+        isChecking={isChecking}
+        headerProps={{ onBack: this.handleBack }}
+      />
     );
   }
 }

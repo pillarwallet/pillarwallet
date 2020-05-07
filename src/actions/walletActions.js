@@ -37,6 +37,7 @@ import {
   REMOVE_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
   UPDATE_WALLET_STATE,
+  IMPORTING,
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
 } from 'constants/walletConstants';
@@ -58,10 +59,16 @@ import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 import { registerWalletAction } from './onboardingActions';
+import { addWalletBackupEventAction } from './userEventsActions';
 
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: IMPORTING,
+    });
+
     try {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
 
@@ -98,6 +105,11 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
 
 export const importWalletFromPrivateKeyAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: IMPORTING,
+    });
+
     const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
@@ -202,6 +214,7 @@ export const backupWalletAction = () => {
     }));
     dispatch({ type: BACKUP_WALLET });
     dispatch(selfAwardBadgeAction('wallet-backed-up'));
+    dispatch(addWalletBackupEventAction());
 
     dispatch(logEventAction('phrase_backed_up'));
   };
@@ -235,7 +248,7 @@ export const encryptAndSaveWalletAction = (
   wallet: Object,
   isImported: boolean,
   isBackedUp: boolean,
-  isRecoveryPending?: boolean = false,
+  isRecoveryPending: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: { walletState } } = getState();

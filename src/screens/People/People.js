@@ -20,14 +20,12 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList, Keyboard, RefreshControl, View, ScrollView } from 'react-native';
+import { FlatList, Keyboard, RefreshControl } from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import debounce from 'lodash.debounce';
-import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled, { withTheme } from 'styled-components/native';
-import { Icon as NIcon } from 'native-base';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 
 // actions
@@ -38,8 +36,13 @@ import {
   muteContactAction,
   blockContactAction,
 } from 'actions/contactsActions';
-import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
+import { fetchInviteNotificationsAction,
+  sendInvitationAction,
+  acceptInvitationAction,
+  cancelInvitationAction,
+  rejectInvitationAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // components
 import Icon from 'components/Icon';
@@ -47,18 +50,16 @@ import { Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Spinner from 'components/Spinner';
-import { BaseText } from 'components/Typography';
-import NotificationCircle from 'components/NotificationCircle';
-import Button from 'components/Button/Button';
-import PeopleSearchResults from 'components/PeopleSearchResults';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { BaseText, SubHeadingMedium } from 'components/Typography';
+import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
+import Overlay from 'components/SearchBlock/Overlay';
+import IconButton from 'components/IconButton';
 
 // constants
-import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
-import { TYPE_RECEIVED } from 'constants/invitationsConstants';
-import { FETCHING, FETCHED } from 'constants/contactsConstants';
+import { CONTACT } from 'constants/navigationConstants';
+import { TYPE_INVITE, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
 import {
   DISCONNECT,
   MUTE,
@@ -69,37 +70,24 @@ import {
 
 // models/types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { SearchResults } from 'models/Contacts';
+import type { SearchResults, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 
 // utils
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, fontStyles, itemSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { sortLocalContacts } from 'utils/contacts';
 
-const ConnectionRequestBanner = styled.TouchableHighlight`
-  height: 60px;
-  padding-left: 30px;
-  border-bottom-width: 1px;
-  border-top-width: 1px;
-  border-color: ${themedColors.border};
-  align-items: center;
-  flex-direction: row;
-`;
+import unionBy from 'lodash.unionby';
+import intersectionBy from 'lodash.intersectionby';
+import Separator from 'components/Separator';
+import ProfileImage from 'components/ProfileImage';
+import { createAlert } from 'utils/alerts';
 
-const ConnectionRequestBannerText = styled(BaseText)`
-  ${fontStyles.big};
-`;
+// partials
+import InviteBanner from './InviteBanner';
+import ConnectionRequests from './ConnectionRequests';
 
-const ConnectionRequestBannerIcon = styled(NIcon)`
-  font-size: ${fontSizes.big}px;
-  color: ${themedColors.secondaryText};
-  margin-left: auto;
-  margin-right: ${spacing.rhythm}px;
-`;
-
-const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
-  margin-left: 10px;
-`;
 
 const ItemBadge = styled.View`
   height: 20px;
@@ -122,14 +110,47 @@ const InnerWrapper = styled.View`
   flex: 1;
 `;
 
+const LocalContacts = styled.View`
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${themedColors.border};
+`;
+
+const LocalContactsScrollView = styled.ScrollView`
+  margin-bottom: ${spacing.small}px;
+`;
+
+const LocalContactsSubHeading = styled(SubHeadingMedium)`
+  margin: 22px 16px 0;
+`;
+
+const ListSubHeading = styled(SubHeadingMedium)`
+  margin: 6px ${spacing.mediumLarge}px 8px;
+`;
+
+const LocalContactsItem = styled.TouchableOpacity`
+  align-items: center;
+  width: ${itemSizes.avatarCircleMedium + 4}px;
+  margin: 0 8px;
+`;
+
+const LocalContactsItemName = styled(BaseText)`
+  ${fontStyles.small};
+  color: ${themedColors.secondaryText};
+  padding: 0 4px;
+  margin-top: 3px;
+`;
+
 const MIN_QUERY_LENGTH = 2;
+const OVERLAY_OFFSET = 72;
+const ITEM_HEIGHT = 82;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   searchContacts: (query: string) => void,
   searchResults: SearchResults,
-  contactState: ?string,
-  user: Object,
+  isSearching: boolean,
   fetchInviteNotifications: () => void,
   disconnectContact: (contactId: string) => void,
   muteContact: (contactId: string, mute: boolean) => void,
@@ -140,6 +161,11 @@ type Props = {
   chats: Object[],
   logScreenView: (view: string, screen: string) => void,
   theme: Theme,
+  goToInvitationFlow: () => void,
+  sendInvitation: (user: ApiUser) => void,
+  acceptInvitation: (invitation: Object) => void,
+  cancelInvitation: (invitation: Object) => void,
+  rejectInvitation: (invitation: Object) => void,
 }
 
 type ConnectionStatusProps = {
@@ -152,6 +178,7 @@ type State = {
   manageContactType: string,
   manageContactId: string,
   forceHideRemoval: boolean,
+  isSearchFocused: boolean,
 }
 
 const ConnectionStatus = (props: ConnectionStatusProps) => {
@@ -176,21 +203,24 @@ const ConnectionStatus = (props: ConnectionStatusProps) => {
 class PeopleScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
-  scrollViewRef: ScrollView;
   flatListRef: FlatList;
+  searchBarRef: Object;
+
   forceRender = false;
+  state = {
+    query: '',
+    showConfirmationModal: false,
+    manageContactType: '',
+    manageContactId: '',
+    forceHideRemoval: false,
+    isSearchFocused: false,
+  };
 
   constructor(props: Props) {
     super(props);
-    this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
-    this.scrollViewRef = React.createRef();
-    this.state = {
-      query: '',
-      showConfirmationModal: false,
-      manageContactType: '',
-      manageContactId: '',
-      forceHideRemoval: false,
-    };
+    this.handleSearchChange = debounce(this.handleSearchChange, 500);
+    this.searchBarRef = React.createRef();
+    this.flatListRef = React.createRef();
   }
 
   componentDidMount() {
@@ -199,12 +229,12 @@ class PeopleScreen extends React.Component<Props, State> {
 
     this.willFocus = navigation.addListener(
       'willFocus',
-      () => { this.setState({ forceHideRemoval: false }); },
+      () => this.setState({ forceHideRemoval: false }),
     );
 
     this.didBlur = navigation.addListener(
       'didBlur',
-      () => { this.setState({ forceHideRemoval: true }); },
+      () => this.setState({ forceHideRemoval: true }),
     );
   }
 
@@ -232,11 +262,8 @@ class PeopleScreen extends React.Component<Props, State> {
 
   handleSearchChange = (query: any) => {
     this.setState({ query });
-    this.handleContactsSearch(query);
-  };
 
-  handleContactsSearch = (query: string) => {
-    if (!query || query.trim() === '' || query.length < MIN_QUERY_LENGTH) {
+    if (!query || query.trim().length < MIN_QUERY_LENGTH) {
       this.props.resetSearchContactsState();
       return;
     }
@@ -245,10 +272,6 @@ class PeopleScreen extends React.Component<Props, State> {
 
   handleContactCardPress = (contact: Object) => () => {
     this.props.navigation.navigate(CONTACT, { contact });
-  };
-
-  handleConnectionsRequestBannerPress = () => {
-    this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
   manageConnection = (manageContactType: string, contactData: Object) => {
@@ -263,7 +286,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
   toggleScroll = (ref: Object, shouldAllowScroll: boolean) => {
     if (ref && Object.keys(ref).length) {
-      ref.setNativeProps({ scrollEnabled: shouldAllowScroll });
+      ref.current.setNativeProps({ scrollEnabled: shouldAllowScroll });
     }
   };
 
@@ -291,8 +314,8 @@ class PeopleScreen extends React.Component<Props, State> {
             height={80}
             onPress={() => this.manageConnection(actionType, data)}
             title={capitalize(title)}
-            icon={icon}
-            iconSize="small"
+            leftIconName={icon}
+            leftIconStyle={{ fontSize: fontSizes.small, marginLeft: 6 }}
             {...btnProps}
             style={{ marginTop: 2 }}
             textStyle={{ marginTop: 6, fontSize: fontSizes.small }}
@@ -318,7 +341,6 @@ class PeopleScreen extends React.Component<Props, State> {
         close={this.state.forceHideRemoval}
         buttonWidth={80}
         scroll={(shouldAllowScroll) => {
-          this.toggleScroll(this.scrollViewRef, shouldAllowScroll);
           this.toggleScroll(this.flatListRef, shouldAllowScroll);
         }}
       >
@@ -335,6 +357,30 @@ class PeopleScreen extends React.Component<Props, State> {
           noSeparator
         />
       </Swipeout>
+    );
+  };
+
+  renderSearchModeContact = ({ item: user }) => {
+    const { invitations, navigation } = this.props;
+    const invitation = invitations.find(({ id }) => id === user.id);
+    let status = TYPE_INVITE;
+    if (invitation) {
+      status = invitation.type;
+    }
+
+    return (
+      <ListItemWithImage
+        label={user.username}
+        avatarUrl={user.profileImage}
+        navigateToProfile={() => navigation.navigate(CONTACT, { contact: user })}
+        rejectInvitation={this.handleRejectInvitationPress(user)}
+        acceptInvitation={this.handleAcceptInvitationPress(user)}
+        buttonAction={status === TYPE_SENT
+          ? this.handleCancelInvitationPress(user)
+          : this.handleSendInvitationPress(user)}
+        buttonActionLabel={status === TYPE_SENT ? 'Requested' : 'Connect'}
+        secondaryButton={status === TYPE_SENT}
+      />
     );
   };
 
@@ -363,98 +409,184 @@ class PeopleScreen extends React.Component<Props, State> {
     }, 1000);
   };
 
-  renderContent = (sortedLocalContacts: Object[], inSearchMode: boolean) => {
-    const { query } = this.state;
-    const {
-      searchResults,
-      contactState,
-      navigation,
-      invitations,
-      chats,
-      theme,
-    } = this.props;
-
-    const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
-    const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
-    const colors = getThemeColors(theme);
+  renderEmptyState = (inviteTitle) => {
+    const { goToInvitationFlow } = this.props;
 
     return (
-      <React.Fragment>
-        <SearchBlock
-          headerProps={{ title: 'people' }}
-          searchInputPlaceholder="Search or add people"
-          onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={!!contactState}
-          wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.mediumLarge }}
+      <Wrapper fullScreen style={{ marginTop: 8, marginBottom: spacing.large }}>
+        <InviteBanner
+          title={inviteTitle}
+          onInvitePress={goToInvitationFlow}
         />
-        {!inSearchMode && !!pendingConnectionRequests &&
-        <ConnectionRequestBanner
-          onPress={this.handleConnectionsRequestBannerPress}
-          underlayColor={colors.secondaryAccent}
-        >
-          <React.Fragment>
-            <ConnectionRequestBannerText>
-              Connection requests
-            </ConnectionRequestBannerText>
-            <ConnectionRequestNotificationCircle>
-              {pendingConnectionRequests}
-            </ConnectionRequestNotificationCircle>
-            <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
-          </React.Fragment>
-        </ConnectionRequestBanner>
-        }
-        <InnerWrapper>
-          {inSearchMode && contactState === FETCHED && usersFound &&
-          <PeopleSearchResults
-            searchResults={searchResults}
-            navigation={navigation}
-            invitations={invitations}
-            localContacts={sortedLocalContacts}
-          />
-          }
-          {!inSearchMode && !!sortedLocalContacts.length &&
-          <FlatList
-            ref={(ref) => { this.flatListRef = ref; }}
-            data={sortedLocalContacts}
-            extraData={chats}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderContact}
-            initialNumToRender={8}
-            onScroll={() => Keyboard.dismiss()}
-            contentContainerStyle={{
-              paddingVertical: spacing.rhythm,
-              paddingTop: 0,
-            }}
-          />
-          }
-          {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
-          <View
-            style={{ flex: 1 }}
-          >
-            {!!query && contactState === FETCHING &&
-            <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>
-            }
-
-            {inSearchMode && contactState === FETCHED && !usersFound &&
-            <Wrapper center fullScreen>
-              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-            </Wrapper>
-            }
-
-            {!inSearchMode && !sortedLocalContacts.length &&
-            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-              <EmptyStateParagraph
-                title="Start making friends"
-                bodyText="Build your connection list by searching for someone"
-              />
-            </Wrapper>
-            }
-          </View>
-          }
-        </InnerWrapper>
-      </React.Fragment>
+      </Wrapper>
     );
   };
+
+  renderSearchBlock = () => {
+    const {
+      isSearching,
+    } = this.props;
+    return (
+      <SearchBlock
+        headerProps={{ title: 'people' }}
+        searchInputPlaceholder="ENS or username"
+        onSearchChange={(q) => this.handleSearchChange(q)}
+        onSearchFocus={() => {
+          this.setState({ isSearchFocused: true });
+          this.flatListRef.current.scrollToOffset({ offset: 0 });
+        }}
+        onSearchBlur={() => this.setState({ isSearchFocused: false })}
+        itemSearchState={isSearching}
+        wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.mediumLarge }}
+        hideOverlay
+        ref={this.searchBarRef}
+      />
+    );
+  }
+
+  handleSendInvitationPress = (user: ApiUser) => () => {
+    Keyboard.dismiss();
+    this.props.sendInvitation(user);
+  };
+
+  handleAcceptInvitationPress = (user: ApiUser) => () => {
+    const { acceptInvitation, invitations } = this.props;
+    const invitation = invitations.find(({ id }) => id === user.id);
+    Keyboard.dismiss();
+    acceptInvitation(invitation);
+  };
+
+  handleCancelInvitationPress = (user: ApiUser) => () => {
+    const { cancelInvitation, invitations } = this.props;
+    const invitation = invitations.find(({ id }) => id === user.id);
+    Keyboard.dismiss();
+    cancelInvitation(invitation);
+  };
+
+  handleRejectInvitationPress = (user: ApiUser) => () => {
+    const { rejectInvitation, invitations } = this.props;
+    const invitation = invitations.find(({ id }) => id === user.id);
+    Keyboard.dismiss();
+    if (invitation && Object.keys(invitation).length > 0) {
+      createAlert(TYPE_REJECTED, invitation, () => rejectInvitation(invitation));
+    }
+  };
+
+  renderLocalContactsList = () => {
+    const {
+      searchResults: { apiUsers, localContacts: resultsLocalContacts },
+      localContacts,
+    } = this.props;
+
+    const updatedLocalContact = intersectionBy(localContacts, apiUsers, 'id');
+    const filteredLocalContacts = unionBy(resultsLocalContacts, updatedLocalContact, 'id');
+
+    if (filteredLocalContacts.length) {
+      return (
+        <LocalContacts>
+          <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
+          <LocalContactsScrollView
+            keyboardShouldPersistTaps="always"
+            horizontal
+            contentContainerStyle={{ paddingHorizontal: spacing.large / 2, paddingVertical: spacing.medium }}
+          >
+            {this.renderLocalContacts(filteredLocalContacts)}
+          </LocalContactsScrollView>
+        </LocalContacts>
+      );
+    }
+    return null;
+  };
+
+  renderLocalContacts = (filteredLocalContacts) => {
+    const { navigation } = this.props;
+    return filteredLocalContacts
+      .map(contact => (
+        <LocalContactsItem
+          key={contact.username}
+          onPress={() => navigation.navigate(CONTACT, { contact })}
+        >
+          <ProfileImage
+            uri={contact.profileImage}
+            userName={contact.username}
+            diameter={itemSizes.avatarCircleMedium}
+            textStyle={{ fontSize: fontSizes.big }}
+            noShadow
+            borderWidth={0}
+          />
+          <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
+        </LocalContactsItem>
+      ));
+  };
+
+  getItemLayout = (data, index) => {
+    const { query } = this.state;
+    const inSearchMode = query.length >= MIN_QUERY_LENGTH;
+    return ({ length: ITEM_HEIGHT, offset: (ITEM_HEIGHT * index) + (inSearchMode ? index : 0), index });
+  }
+
+  renderContent = (onScroll, sortedLocalContacts) => {
+    const {
+      query,
+    } = this.state;
+    const {
+      chats,
+      fetchInviteNotifications,
+      searchResults: { apiUsers },
+      isSearching,
+    } = this.props;
+    const inSearchMode = query.length >= MIN_QUERY_LENGTH;
+    const localContactsIds = sortedLocalContacts.map(({ id }) => id);
+    const filteredApiUsers = apiUsers.filter((user) => !localContactsIds.includes(user.id));
+
+    return (
+      <FlatList
+        ref={this.flatListRef}
+        data={inSearchMode ? filteredApiUsers : sortedLocalContacts}
+        renderItem={inSearchMode ? this.renderSearchModeContact : this.renderContact}
+        keyExtractor={({ username }) => username}
+        onScroll={(e) => {
+          Keyboard.dismiss();
+          onScroll(e);
+        }}
+        scrollEventThrottle={16}
+        keyboardShouldPersistTaps="always"
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        extraData={chats}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={fetchInviteNotifications}
+          />
+          }
+        ListEmptyComponent={
+          <>
+            {inSearchMode && !isSearching && this.renderEmptyState('Pillar is social')}
+            {!inSearchMode && !isSearching && this.renderEmptyState('Invite friends')}
+            {isSearching && <Wrapper center style={{ flex: 1 }}><Spinner /></Wrapper>}
+          </>
+          }
+        ListHeaderComponent={
+          <>
+            {this.renderSearchBlock()}
+            {!inSearchMode && <ConnectionRequests />}
+            {inSearchMode && this.renderLocalContactsList()}
+            {inSearchMode && !!filteredApiUsers.length && <ListSubHeading>ALL USERS</ListSubHeading>}
+          </>
+          }
+        ItemSeparatorComponent={() => inSearchMode ? <Separator spaceOnLeft={82} /> : null}
+        getItemLayout={this.getItemLayout}
+      />
+    );
+  }
+
+  handleOverlayClick = () => {
+    this.handleSearchChange('');
+    this.setState({ isSearchFocused: false });
+    this.searchBarRef.current.handleSearchBlur();
+  }
 
   render() {
     const {
@@ -462,69 +594,66 @@ class PeopleScreen extends React.Component<Props, State> {
       showConfirmationModal,
       manageContactType,
       manageContactId,
+      isSearchFocused,
     } = this.state;
     const {
-      contactState,
       localContacts,
       chats,
-      fetchInviteNotifications,
+      theme,
+      goToInvitationFlow,
     } = this.props;
-    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+    const inSearchMode = query.length >= MIN_QUERY_LENGTH;
 
-    const localContactsWithUnreads = localContacts.map((contact) => {
-      const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
-      return {
-        ...contact,
-        unread: chatWithUserInfo.unread || 0,
-        lastMessage: chatWithUserInfo.lastMessage || null,
-      };
-    });
-    const sortedLocalContacts = orderBy(
-      localContactsWithUnreads,
-      [(user) => {
-        if (user.lastMessage) {
-          return user.lastMessage.serverTimestamp;
-        }
-        return user.createdAt * 1000;
-      }],
-      'desc');
-    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
+    const sortedLocalContacts = sortLocalContacts(localContacts, chats);
+    const contact = sortedLocalContacts.find(({ id }) => id === manageContactId);
+
+    const colors = getThemeColors(theme);
 
     return (
       <ContainerWithHeader
-        headerProps={{ noBack: true, centerItems: [{ title: 'People' }] }}
+        headerProps={{
+          noBack: true,
+          leftItems: [{ title: 'People' }],
+          rightItems: [{
+            custom: (
+              <IconButton
+                icon="present"
+                color={colors.positive}
+                iconText="Invite friends"
+                style={{ flexDirection: 'row' }}
+                iconTextStyle={{ color: colors.positive, ...fontStyles.regular }}
+                iconStyle={{ marginRight: 4 }}
+                onPress={goToInvitationFlow}
+              />
+            ),
+            itemStyle: { alignItems: 'center' },
+          }],
+         }}
         inset={{ bottom: 0 }}
+        tab
       >
-        <ScrollView
-          keyboardShouldPersistTaps="always"
-          contentContainerStyle={{ flexGrow: 1 }}
-          ref={(ref) => { this.scrollViewRef = ref; }}
-          onScroll={() => {
-            if (inSearchMode) {
-              Keyboard.dismiss();
-            }
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => { fetchInviteNotifications(); }}
-            />
-          }
-        >
-          {this.renderContent(sortedLocalContacts, inSearchMode)}
-          <ConnectionConfirmationModal
-            showConfirmationModal={showConfirmationModal}
-            manageContactType={manageContactType}
-            contact={contact}
-            onConfirm={this.confirmManageAction}
-            onModalHide={() => {
+        {onScroll => (
+          <InnerWrapper>
+            {this.renderContent(onScroll, sortedLocalContacts)}
+            {contact && <ConnectionConfirmationModal
+              showConfirmationModal={showConfirmationModal}
+              manageContactType={manageContactType}
+              contact={contact}
+              onConfirm={this.confirmManageAction}
+              onModalHide={() => {
               this.setState({
                 showConfirmationModal: false,
                 forceHideRemoval: true,
               });
             }}
-          />
-        </ScrollView>
+            />}
+            <Overlay
+              active={isSearchFocused && !inSearchMode}
+              topOffset={OVERLAY_OFFSET}
+              handleClick={this.handleOverlayClick}
+            />
+          </InnerWrapper>
+        )}
       </ContainerWithHeader>
     );
   }
@@ -533,14 +662,14 @@ class PeopleScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: {
     searchResults,
-    contactState,
+    isSearching,
     data: localContacts,
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
 }: RootReducerState): $Shape<Props> => ({
   searchResults,
-  contactState,
+  isSearching,
   localContacts,
   invitations,
   chats,
@@ -554,6 +683,11 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   muteContact: (contactId: string, mute: boolean) => dispatch(muteContactAction(contactId, mute)),
   blockContact: (contactId: string, block: boolean) => dispatch(blockContactAction(contactId, block)),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  sendInvitation: (user: ApiUser) => dispatch(sendInvitationAction(user)),
+  acceptInvitation: (invitation: Object) => dispatch(acceptInvitationAction(invitation)),
+  cancelInvitation: (invitation: Object) => dispatch(cancelInvitationAction(invitation)),
+  rejectInvitation: (invitation: Object) => dispatch(rejectInvitationAction(invitation)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PeopleScreen));

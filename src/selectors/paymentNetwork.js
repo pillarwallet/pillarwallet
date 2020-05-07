@@ -6,6 +6,11 @@ import BigNumber from 'bignumber.js';
 
 // constants
 import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+} from 'constants/paymentNetworkConstants';
 
 // utils
 import { addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
@@ -40,7 +45,7 @@ export const paymentNetworkAccountBalancesSelector: ((state: RootReducerState) =
 export const availableStakeSelector =
   ({ paymentNetwork }: {paymentNetwork: PaymentNetworkReducerState}) => Number(paymentNetwork.availableStake);
 
-export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
+export const PPNIncomingTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
   accountHistorySelector,
   activeAccountAddressSelector,
   (history: Transaction[], activeAccountAddress: string) => {
@@ -48,8 +53,20 @@ export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[
   },
 );
 
+export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
+  accountHistorySelector,
+  (history: Transaction[]) => {
+    const ppnTags = [
+      PAYMENT_NETWORK_ACCOUNT_TOPUP,
+      PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+      PAYMENT_NETWORK_TX_SETTLEMENT,
+    ];
+    return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTags.includes(tag));
+  },
+);
+
 export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) => Balances) = createSelector(
-  PPNTransactionsSelector,
+  PPNIncomingTransactionsSelector,
   accountHistorySelector,
   supportedAssetsSelector,
   accountAssetsSelector,
@@ -78,4 +95,10 @@ export const paymentNetworkNonZeroBalancesSelector: ((state: RootReducerState) =
         };
       }, {});
   },
+);
+
+export const isPPNActivatedSelector = createSelector(
+  availableStakeSelector,
+  PPNTransactionsSelector,
+  (availableStake, ppnTransactions) => availableStake || ppnTransactions.length,
 );

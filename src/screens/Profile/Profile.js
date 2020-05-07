@@ -23,7 +23,6 @@ import { FlatList, Alert, ScrollView, Keyboard, View } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import * as Keychain from 'react-native-keychain';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import {
   CHANGE_PIN_FLOW,
@@ -43,7 +42,7 @@ import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
 import Checkbox from 'components/Checkbox';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import {
   saveBaseFiatCurrencyAction,
   changeUseBiometricsAction,
@@ -56,6 +55,7 @@ import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'ac
 import { cleanSmartWalletAccountsAction } from 'actions/smartWalletActions';
 import { logScreenViewAction, logEventAction } from 'actions/analyticsActions';
 import { isProdEnv } from 'utils/environment';
+import { getSupportedBiometryType, getKeychainDataObject, type KeyChainData } from 'utils/keychain';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { fontTrackings, spacing, fontStyles } from 'utils/variables';
@@ -119,7 +119,11 @@ const emailFormFields = [{
   label: 'Email',
   name: 'email',
   type: 'email',
-  config: { placeholder: 'user@example.com', autoCapitalize: 'none', error: 'Please specify valid email' },
+  config: {
+    placeholder: 'user@example.com',
+    autoCapitalize: 'none',
+    error: 'Please specify valid email',
+  },
 }];
 
 const phoneFormFields = [{
@@ -165,14 +169,14 @@ type Props = {
   appSettings: Object,
   intercomNotificationsCount: number,
   updateAssetsLayout: (value: string) => void,
-  updateUser: (walletId: string, field: Object, callback?: Function) => void,
-  createOneTimePassword: (walletId: string, field: Object, callback?: Function) => void,
+  updateUser: (walletId: string, field: Object, callback?: () => void) => void,
+  createOneTimePassword: (walletId: string, field: Object, callback?: () => void) => void,
   resetIncorrectPassword: () => void,
   lockScreen: () => void,
   logoutUser: () => void,
   backupStatus: Object,
   useBiometrics: ?boolean,
-  changeUseBiometrics: (enabled: boolean, privateKey: string) => void,
+  changeUseBiometrics: (enabled: boolean, data: KeyChainData) => void,
   cleanSmartWalletAccounts: Function,
   smartWalletFeatureEnabled: boolean,
   logScreenView: (view: string, screen: string) => void,
@@ -181,7 +185,7 @@ type Props = {
   optOutTracking: boolean,
   setUserJoinedBeta: (status: boolean) => void,
   userJoinedBeta: boolean,
-}
+};
 
 type State = {
   visibleModal: string | null,
@@ -193,7 +197,7 @@ type State = {
   showTrackingModal: boolean,
   showJoinBetaModal: boolean,
   joinBetaPressed: boolean,
-}
+};
 
 class Profile extends React.Component<Props, State> {
   static defaultProps = {
@@ -222,9 +226,7 @@ class Profile extends React.Component<Props, State> {
 
     logScreenView('View profile', 'Profile');
 
-    Keychain.getSupportedBiometryType()
-      .then(supported => this.setState({ showBiometricsSelector: !!supported }))
-      .catch(() => null);
+    getSupportedBiometryType(biometryType => this.setState({ showBiometricsSelector: !!biometryType }));
   }
 
   clearLocalStorage() {
@@ -252,9 +254,19 @@ class Profile extends React.Component<Props, State> {
     this.setState((prev: State) => ({ showTrackingModal: !prev.showTrackingModal }));
   }
 
-  handleChangeUseBiometrics = (enabled, privateKey) => {
+  handleBiometricPress = async () => {
+    const { useBiometrics } = this.props;
+    const keychainData = await getKeychainDataObject();
+    if (keychainData) {
+      this.handleChangeUseBiometrics(!useBiometrics, keychainData);
+    } else {
+      this.setState({ showCheckPinModal: true });
+    }
+  }
+
+  handleChangeUseBiometrics = async (enabled: boolean, data: KeyChainData) => {
     const { changeUseBiometrics } = this.props;
-    changeUseBiometrics(enabled, privateKey);
+    changeUseBiometrics(enabled, data);
     this.setState({ showCheckPinModal: false }, () => {
       const message = enabled ? 'Biometric login enabled' : 'Biometric login disabled';
       delay(500)
@@ -369,6 +381,11 @@ class Profile extends React.Component<Props, State> {
       this.props.setUserJoinedBeta(true);
     }
   };
+
+  onPinValid = (pin, { mnemonic, privateKey }) => {
+    const { useBiometrics } = this.props;
+    this.handleChangeUseBiometrics(!useBiometrics, { mnemonic, privateKey });
+  }
 
   render() {
     const {
@@ -654,26 +671,18 @@ class Profile extends React.Component<Props, State> {
               label="Biometric Login"
               value={useBiometrics}
               toggle
-              onPress={() => this.setState({ showCheckPinModal: true })}
+              onPress={this.handleBiometricPress}
             />
             }
 
-            <SlideModal
-              isVisible={showCheckPinModal}
-              onModalHide={this.handleCheckPinModalClose}
-              title="Enter pincode"
-              centerTitle
-              fullScreen
-              showHeader
-            >
-              <Wrapper flex={1}>
-                <CheckPin
-                  onPinValid={
-                    (pin, { privateKey }) => this.handleChangeUseBiometrics(!useBiometrics, privateKey)
-                  }
-                />
-              </Wrapper>
-            </SlideModal>
+            <CheckAuth
+              onPinValid={this.onPinValid}
+              revealMnemonic
+              modalProps={{
+                isVisible: showCheckPinModal,
+                onModalHide: this.handleCheckPinModalClose,
+              }}
+            />
 
             <ListSeparator>
               <SubHeading>APPEARANCE SETTINGS</SubHeading>
@@ -755,7 +764,7 @@ class Profile extends React.Component<Props, State> {
             {smartWalletFeatureEnabled && (
               <React.Fragment>
                 <ListSeparator>
-                  <SubHeading>Smart wallet</SubHeading>
+                  <SubHeading>Smart Wallet</SubHeading>
                 </ListSeparator>
                 <ProfileSettingsItem
                   key="clearSmartAccounts"
@@ -891,14 +900,14 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  updateUser: (walletId: string, field: Object, callback?: Function) =>
+  updateUser: (walletId: string, field: Object, callback?: () => void) =>
     dispatch(updateUserAction(walletId, field, callback)),
-  createOneTimePassword: (walletId: string, field: Object, callback?: Function) =>
+  createOneTimePassword: (walletId: string, field: Object, callback?: () => void) =>
     dispatch(createOneTimePasswordAction(walletId, field, callback)),
   updateAssetsLayout: (value: string) => dispatch(updateAssetsLayoutAction(value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
-  changeUseBiometrics: (enabled, privateKey) => dispatch(changeUseBiometricsAction(enabled, privateKey)),
+  changeUseBiometrics: (enabled: boolean, data: KeyChainData) => dispatch(changeUseBiometricsAction(enabled, data)),
   cleanSmartWalletAccounts: () => dispatch(cleanSmartWalletAccountsAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   logEvent: (name: string) => dispatch(logEventAction(name)),

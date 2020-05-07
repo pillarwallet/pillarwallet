@@ -131,29 +131,30 @@ export default class ExchangeService {
     this.io.off('offers');
   }
 
-  requestOffers(fromAssetAddress: string, toAssetAddress: string, quantity: number) {
-    const urlPath = `offers?fromAssetAddress=${fromAssetAddress}&toAssetAddress=${toAssetAddress}&quantity=${quantity}`;
+  requestOffers(fromAssetAddress: string, toAssetAddress: string, quantity: number, walletId: string) {
+    const urlPath = `offers?fromAssetAddress=${fromAssetAddress}&toAssetAddress=`
+      + `${toAssetAddress}&quantity=${quantity}&walletId=${walletId}`;
     return axios.get(buildApiUrl(urlPath, '2.0'), this.apiConfig)
       .then(({ data }: AxiosResponse) => data)
       .then(response => typeof response === 'string' && response.toLowerCase() === 'ok' ? {} : response)
       .catch((error: AxiosError) => ({ error }));
   }
 
-  takeOffer(order: OfferRequest) {
+  takeOffer(order: OfferRequest, trackId: string) {
     return axios.post(
       buildApiUrl('orders', '2.0'),
       JSON.stringify(order),
-      this.apiConfig,
+      { ...this.apiConfig, headers: { ...this.apiConfig.headers, trackid: trackId } },
     )
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));
   }
 
-  setTokenAllowance(request: TokenAllowanceRequest) {
+  setTokenAllowance(request: TokenAllowanceRequest, trackId: string) {
     return axios.post(
       buildApiUrl('orders/allowance', '2.0'),
       JSON.stringify(request),
-      this.apiConfig,
+      { ...this.apiConfig, headers: { ...this.apiConfig.headers, trackid: trackId } },
     )
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));

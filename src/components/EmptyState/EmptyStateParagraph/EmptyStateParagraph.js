@@ -20,39 +20,50 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
-import { BaseText, Paragraph } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
+import { themedColors } from 'utils/themes';
 
 type Props = {
-  title: string,
+  title?: string,
   bodyText?: string,
+  large?: boolean,
+  wide?: boolean,
+  children?: React.Node,
 }
 
 const EmptySectionTextWrapper = styled.View`
-  width: 234px;
+  ${({ wide }) => !wide && 'width: 234px;'}
   align-items: center;
   justify-content: center;
 `;
 
-const EmptySectionTitle = styled(BaseText)`
-  ${fontStyles.big};
+const EmptySectionTitle = styled(MediumText)`
+  ${({ large }) => large ? fontStyles.large : fontStyles.big};
   margin-bottom: 6px;
   text-align: center;
 `;
 
-const EmptySectionText = styled(Paragraph)`
+const EmptySectionText = styled(BaseText)`
+  ${fontStyles.regular};
   text-align: center;
+  flex-wrap: wrap;
+  color: ${themedColors.secondaryText};
 `;
 
 const EmptyStateParagraph = (props: Props) => {
   const {
     title,
     bodyText,
+    large,
+    wide,
+    children,
   } = props;
 
   return (
-    <EmptySectionTextWrapper>
-      <EmptySectionTitle>{title}</EmptySectionTitle>
-      {!!bodyText && <EmptySectionText small light>{bodyText}</EmptySectionText>}
+    <EmptySectionTextWrapper wide={wide}>
+      {!!title && <EmptySectionTitle large={large}>{title}</EmptySectionTitle>}
+      {!!bodyText && <EmptySectionText>{bodyText}</EmptySectionText>}
+      {children}
     </EmptySectionTextWrapper>
   );
 };

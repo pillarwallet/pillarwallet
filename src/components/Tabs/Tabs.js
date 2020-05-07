@@ -76,17 +76,18 @@ const TabItem = styled.TouchableOpacity`
   flex-direction: row;
   flex-grow: 1;
   ${({ active, theme }) => active && `background-color: ${theme.colors.card};`}
+  ${({ halfWidth }) => halfWidth && 'width: 50%;'}
 `;
 
 const TabItemIcon = styled(Icon)`
-  font-size: ${fontSizes.regular}px;
-  margin-right: 4px;
-  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.primary};
+  font-size: ${fontSizes.medium}px;
+  margin-right: 8px;
+  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.accent};
 `;
 
 const TabItemText = styled(MediumText)`
   font-size: ${fontSizes.regular}px;
-  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.primary};
+  color: ${({ active, theme }) => active ? theme.colors.text : theme.colors.accent};
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -211,7 +212,7 @@ export default class Tabs extends React.PureComponent<Props> {
     return null;
   };
 
-  renderTabItems = (tabs: Tab[]) => {
+  renderTabItems = (tabs: Tab[]): TabItem[] => {
     const { activeTab } = this.props;
 
     const tabItems = tabs.map(tab => {
@@ -232,6 +233,7 @@ export default class Tabs extends React.PureComponent<Props> {
             });
           }}
           key={id}
+          halfWidth={tabs.length === 2}
         >
           <TextWrapper extraPadding={!!unread}>
             {this.renderIcon(tab)}

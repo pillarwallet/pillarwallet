@@ -28,9 +28,9 @@ import { deleteChatAction, deleteContactAction } from 'actions/chatActions';
 
 // constants
 import {
-  UPDATE_SEARCH_RESULTS,
-  FETCHING,
-  UPDATE_CONTACTS_STATE,
+  RESET_SEARCH_RESULTS,
+  START_SEARCH,
+  FINISH_SEARCH,
   UPDATE_CONTACTS,
   START_SYNC_CONTACTS_SMART_ADDRESSES,
   UPDATE_CONTACTS_SMART_ADDRESSES,
@@ -43,27 +43,30 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { excludeLocalContacts } from 'utils/contacts';
 
 // models, types
-import type { ConnectionIdentityKey } from 'models/Connections';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
-    const { user: { data: { walletId } }, contacts: { data: localContacts } } = getState();
+    const {
+      user: { data: { walletId } },
+      contacts: { data: localContacts },
+    } = getState();
+    const upperCaseQuery = query.toUpperCase();
+
+    const myContacts = localContacts.filter(({ username }) => {
+      return username.toUpperCase().includes(upperCaseQuery);
+    });
 
     dispatch({
-      type: UPDATE_CONTACTS_STATE,
-      payload: FETCHING,
+      type: START_SEARCH,
+      payload: { localContacts: myContacts, apiUsers: [] },
     });
 
     let apiUsers = await api.userSearch(query, walletId);
     apiUsers = excludeLocalContacts(apiUsers, localContacts);
 
-    const myContacts = localContacts.filter(contact => {
-      return contact.username.toUpperCase().indexOf(query.toUpperCase()) > -1;
-    });
-
     dispatch({
-      type: UPDATE_SEARCH_RESULTS,
+      type: FINISH_SEARCH,
       payload: {
         apiUsers,
         localContacts: myContacts,
@@ -74,10 +77,7 @@ export const searchContactsAction = (query: string) => {
 
 export const resetSearchContactsStateAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch({
-      type: UPDATE_CONTACTS_STATE,
-      payload: null,
-    });
+    dispatch({ type: RESET_SEARCH_RESULTS });
   };
 };
 
@@ -86,26 +86,9 @@ export const syncContactAction = (userId: string) => {
     const {
       user: { data: { walletId } },
       contacts: { data: contacts },
-      accessTokens: { data: accessTokens },
-      connectionIdentityKeys: { data: connections },
     } = getState();
 
-    let userInfo;
-    const connection = connections.find((conn: ConnectionIdentityKey) => conn.targetUserId === userId);
-    if (connection) {
-      userInfo = {
-        ...connection.targetUserInfo,
-        id: connection.targetUserId,
-      };
-    } else {
-      const accessToken = accessTokens.find(token => token.userId === userId);
-      if (!accessToken) return;
-      userInfo = await api.userInfoById(userId, {
-        walletId,
-        userAccessKey: accessToken.myAccessToken,
-        targetUserAccessKey: accessToken.userAccessToken,
-      });
-    }
+    const userInfo = await api.userInfoById(userId, walletId);
 
     if (!userInfo || !Object.keys(userInfo).length) {
       return;
@@ -136,18 +119,10 @@ export const disconnectContactAction = (contactId: string) => {
       user: { data: { walletId } },
       invitations: { data: invitations },
       contacts: { data: contacts },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
-
-
-    const { sourceIdentityKey, targetIdentityKey } = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
-      return cik.targetUserId === contactId;
-    }) || { sourceIdentityKey: null, targetIdentityKey: null };
 
     const disconnectResult = await api.disconnectUser(
       contactId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
     );
 
@@ -198,18 +173,10 @@ export const muteContactAction = (contactId: string, mute: boolean) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
-
-
-    const { sourceIdentityKey, targetIdentityKey } = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
-      return cik.targetUserId === contactId;
-    }) || { sourceIdentityKey: null, targetIdentityKey: null };
 
     const muteResult = await api.muteUser(
       contactId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
       mute,
     );
@@ -249,18 +216,10 @@ export const blockContactAction = (contactId: string, block: boolean) => {
       user: { data: { walletId } },
       invitations: { data: invitations },
       contacts: { data: contacts },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
-
-
-    const { sourceIdentityKey, targetIdentityKey } = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
-      return cik.targetUserId === contactId;
-    }) || { sourceIdentityKey: null, targetIdentityKey: null };
 
     const blockResult = await api.blockUser(
       contactId,
-      sourceIdentityKey,
-      targetIdentityKey,
       walletId,
       block,
     );
@@ -311,38 +270,16 @@ export const syncContactsSmartAddressesAction = () => {
     const {
       user: { data: { walletId } },
       contacts: { data: contacts },
-      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
-
 
     dispatch({ type: START_SYNC_CONTACTS_SMART_ADDRESSES });
 
     // get all connections keys
-    const connections = contacts
-      .map(({ id: contactId }) => {
-        const connectionKeys = connectionIdentityKeys.find((cik: ConnectionIdentityKey) => {
-          return cik.targetUserId === contactId;
-        });
-
-        if (connectionKeys) {
-          return {
-            contactId,
-            connectionKeys: {
-              sourceIdentityKey: connectionKeys.sourceIdentityKey,
-              targetIdentityKey: connectionKeys.targetIdentityKey,
-            },
-          };
-        }
-
-        return null;
-      })
-      .filter(Boolean);
+    const connections = contacts.map(({ id: contactId }) => ({ contactId }));
 
     // call the api
-    const {
-      smartWallets: contactsSmartAddresses,
-    } = await api.getContactsSmartAddresses(walletId, connections).catch(() => null) || {};
-
+    const { smartWallets: contactsSmartAddresses } =
+      await api.getContactsSmartAddresses(walletId, connections) || {};
 
     if (!contactsSmartAddresses) return;
 

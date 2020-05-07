@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Asset renders the Asset correctly 1`] = `
+exports[`Asset renders the Asset Screen correctly 1`] = `
 <View
   style={
     Object {
@@ -10,15 +10,12 @@ exports[`Asset renders the Asset correctly 1`] = `
 >
   <View
     style={
-      Array [
-        Object {
-          "backgroundColor": "#FFFFFF",
-          "borderBottomColor": "#EDEDED",
-          "borderBottomWidth": 1,
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "backgroundColor": "rgba(255, 255, 255, 1)",
+        "borderBottomWidth": 1,
+        "borderColor": "rgba(237, 237, 237, 1)",
+        "width": "100%",
+      }
     }
   >
     <View
@@ -40,10 +37,8 @@ exports[`Asset renders the Asset correctly 1`] = `
           Array [
             Object {
               "minHeight": 58,
-              "paddingBottom": 15,
-              "paddingLeft": 16,
-              "paddingRight": 16,
-              "paddingTop": 15,
+              "paddingHorizontal": 16,
+              "paddingVertical": 15,
               "width": "100%",
             },
             undefined,
@@ -82,7 +77,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -92,7 +89,7 @@ exports[`Asset renders the Asset correctly 1`] = `
               style={
                 Object {
                   "alignItems": "flex-start",
-                  "height": 24,
+                  "height": 34,
                   "justifyContent": "center",
                   "marginLeft": -12,
                   "opacity": 1,
@@ -168,7 +165,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={true}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -255,6 +254,7 @@ exports[`Asset renders the Asset correctly 1`] = `
       }
       resetKeyboardSpace={[Function]}
       scrollForExtraHeightOnAndroid={[Function]}
+      scrollIntoView={[Function]}
       scrollToEnd={[Function]}
       scrollToFocusedInput={[Function]}
       scrollToPosition={[Function]}
@@ -267,6 +267,7 @@ exports[`Asset renders the Asset correctly 1`] = `
           "paddingHorizontal": 0,
         }
       }
+      update={[Function]}
       viewIsInsideTabBar={false}
     >
       <RCTRefreshControl />
@@ -929,7 +930,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -958,7 +961,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -999,22 +1006,15 @@ exports[`Asset renders the Asset correctly 1`] = `
                     ]
                   }
                 >
-                  <Image
-                    disabled={false}
-                    resizeMethod="resize"
-                    resizeMode="contain"
-                    source={1}
+                  <View
+                    name="qrDetailed"
                     style={
-                      Array [
-                        Object {
-                          "display": "flex",
-                          "height": 24,
-                          "justifyContent": "center",
-                          "opacity": 1,
-                          "width": 24,
-                        },
-                        undefined,
-                      ]
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 1,
+                      }
                     }
                   />
                 </View>
@@ -1047,7 +1047,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             </View>
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1076,7 +1078,11 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <Image
-                  source={1}
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button_disabled.png",
+                    }
+                  }
                   style={
                     Array [
                       Object {
@@ -1117,22 +1123,15 @@ exports[`Asset renders the Asset correctly 1`] = `
                     ]
                   }
                 >
-                  <Image
-                    disabled={true}
-                    resizeMethod="resize"
-                    resizeMode="contain"
-                    source={1}
+                  <View
+                    name="paperPlane"
                     style={
-                      Array [
-                        Object {
-                          "display": "flex",
-                          "height": 24,
-                          "justifyContent": "center",
-                          "opacity": 0.3,
-                          "width": 24,
-                        },
-                        undefined,
-                      ]
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 0.5,
+                      }
                     }
                   />
                 </View>
@@ -1152,7 +1151,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                         "fontSize": 16,
                         "letterSpacing": 0.1,
                         "marginTop": -6,
-                        "opacity": 0.7,
+                        "opacity": 1,
                         "textAlign": "center",
                       },
                       undefined,
@@ -1192,6 +1191,8 @@ exports[`Asset renders the Asset correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -1280,6 +1281,8 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -1300,7 +1303,7 @@ exports[`Asset renders the Asset correctly 1`] = `
               customTheme={
                 Object {
                   "borderRadius": "30px",
-                  "padding": "0 20px",
+                  "padding": 0,
                 }
               }
               style={
@@ -1310,10 +1313,12 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "borderTopLeftRadius": 30,
                     "borderTopRightRadius": 30,
                     "elevation": 1,
+                    "marginHorizontal": 0,
                     "marginTop": "auto",
+                    "overflow": "hidden",
                     "paddingBottom": 0,
-                    "paddingLeft": 20,
-                    "paddingRight": 20,
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
                     "paddingTop": 0,
                     "shadowColor": "rgba(0,0,0,.1)",
                     "shadowOffset": Object {
@@ -1329,186 +1334,243 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 style={
-                  Array [
-                    Object {
-                      "width": "100%",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "backgroundColor": "#FFFFFF",
+                    "borderBottomWidth": 1,
+                    "borderColor": "transparent",
+                    "width": "100%",
+                  }
                 }
               >
                 <View
-                  noPadding={true}
+                  androidStatusbarHeight={42}
+                  noPaddingTop={true}
+                  onLayout={[Function]}
+                  pointerEvents="box-none"
                   style={
-                    Array [
-                      Object {
-                        "borderBottomWidth": 0,
-                        "paddingBottom": 0,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
-                        "paddingTop": 0,
-                        "zIndex": 10,
-                      },
-                      undefined,
-                    ]
+                    Object {
+                      "paddingBottom": 0,
+                      "paddingLeft": 0,
+                      "paddingRight": 0,
+                      "paddingTop": 0,
+                    }
                   }
                 >
                   <View
+                    noHorizonatalPadding={false}
                     style={
                       Array [
                         Object {
-                          "alignItems": "flex-end",
-                          "flexDirection": "row",
-                          "height": 50,
-                          "justifyContent": "flex-end",
-                          "marginBottom": 4,
-                          "marginTop": 20,
+                          "minHeight": 58,
+                          "paddingHorizontal": 16,
+                          "paddingVertical": 15,
+                          "width": "100%",
                         },
                         undefined,
                       ]
                     }
                   >
                     <View
-                      flex={[Function]}
-                      showTitleLeft={true}
                       style={
                         Array [
                           Object {
-                            "alignItems": "flex-start",
-                            "alignSelf": "center",
-                            "flex": 1,
-                          },
-                          Object {
-                            "alignItems": "flex-end",
-                            "flexBasis": 0,
-                            "flexGrow": 2,
-                            "flexShrink": 1,
-                            "justifyContent": "flex-start",
+                            "alignItems": "center",
+                            "flexDirection": "row",
+                            "justifyContent": "space-between",
+                            "width": "100%",
                           },
                           undefined,
                         ]
                       }
                     >
                       <View
-                        noMargin={true}
+                        sideFlex={4}
                         style={
                           Array [
                             Object {
-                              "alignSelf": "flex-start",
-                              "marginBottom": 0,
-                              "marginLeft": 0,
-                              "marginRight": 0,
-                              "marginTop": 0,
-                              "position": "relative",
-                              "top": 0,
+                              "alignItems": "center",
+                              "flexBasis": 0,
+                              "flexDirection": "row",
+                              "flexGrow": 4,
+                              "flexShrink": 1,
+                              "flexWrap": "wrap",
+                              "justifyContent": "flex-start",
+                              "minHeight": 28,
                             },
-                            undefined,
+                            Object {},
                           ]
                         }
                       >
-                        <Text
-                          ellipsizeMode="middle"
-                          numberOfLines={1}
+                        <View
                           style={
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "textAlignVertical": "center",
-                              },
+                            Object {
+                              "flexDirection": "row",
+                              "flexWrap": "wrap",
+                            }
+                          }
+                        >
+                          <Text
+                            centerText={false}
+                            style={
                               Array [
                                 Object {
                                   "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "fontFamily": "EuclidCircularB-Regular",
                                   "textAlignVertical": "center",
                                 },
                                 Array [
                                   Object {
-                                    "fontSize": 18,
-                                    "lineHeight": 28,
+                                    "color": "#0A1427",
+                                    "fontFamily": "EuclidCircularB-Medium",
+                                    "textAlignVertical": "center",
                                   },
-                                  Object {},
+                                  Array [
+                                    Object {
+                                      "color": "#0A1427",
+                                      "fontSize": 16,
+                                      "lineHeight": 26,
+                                      "textAlign": "left",
+                                    },
+                                    Object {},
+                                  ],
                                 ],
-                              ],
-                            ]
-                          }
+                              ]
+                            }
+                          >
+                            Receive
+                          </Text>
+                        </View>
+                        <View
+                          style={Object {}}
                         >
-                          Receive
-                        </Text>
+                          <View
+                            containerStyle={
+                              Object {
+                                "marginLeft": 8,
+                              }
+                            }
+                            label="ERC-20 tokens only"
+                            labelStyle={
+                              Object {
+                                "fontSize": 10,
+                              }
+                            }
+                            primary={true}
+                            style={
+                              Array [
+                                Object {
+                                  "backgroundColor": "#007AFF",
+                                  "borderRadius": 12,
+                                  "paddingBottom": 3,
+                                  "paddingLeft": 8,
+                                  "paddingRight": 8,
+                                  "paddingTop": 3,
+                                },
+                                Object {
+                                  "marginLeft": 8,
+                                },
+                              ]
+                            }
+                          >
+                            <Text
+                              style={
+                                Array [
+                                  Object {
+                                    "color": "#0A1427",
+                                    "fontFamily": "EuclidCircularB-Regular",
+                                    "textAlignVertical": "center",
+                                  },
+                                  Array [
+                                    Object {
+                                      "color": "#0A1427",
+                                      "fontFamily": "EuclidCircularB-Medium",
+                                      "textAlignVertical": "center",
+                                    },
+                                    Array [
+                                      Object {
+                                        "color": "#FCFDFF",
+                                        "fontSize": 8,
+                                      },
+                                      Object {
+                                        "fontSize": 10,
+                                      },
+                                    ],
+                                  ],
+                                ]
+                              }
+                            >
+                              ERC-20 tokens only
+                            </Text>
+                          </View>
+                        </View>
                       </View>
-                    </View>
-                    <View
-                      flex={[Function]}
-                      onClose={[Function]}
-                      style={
-                        Array [
-                          Object {
-                            "alignItems": "flex-end",
-                            "alignSelf": "center",
-                            "flex": 1,
-                          },
-                          Object {
-                            "alignItems": "flex-end",
-                            "flexBasis": 44,
-                            "flexDirection": "row",
-                            "flexGrow": 0,
-                            "flexShrink": 0,
-                            "justifyContent": "flex-end",
-                          },
-                          undefined,
-                        ]
-                      }
-                    >
                       <View
                         style={
                           Array [
                             Object {
                               "alignItems": "center",
+                              "flexBasis": 0,
                               "flexDirection": "row",
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "flexWrap": "wrap",
                               "justifyContent": "flex-end",
+                              "minHeight": 28,
                             },
                             undefined,
                           ]
                         }
                       >
                         <View
-                          accessible={true}
-                          isTVSelectable={true}
-                          onResponderGrant={[Function]}
-                          onResponderMove={[Function]}
-                          onResponderRelease={[Function]}
-                          onResponderTerminate={[Function]}
-                          onResponderTerminationRequest={[Function]}
-                          onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "alignItems": "center",
-                              "height": 44,
-                              "justifyContent": "center",
+                              "marginBottom": -20,
+                              "marginLeft": -12,
                               "marginRight": -20,
-                              "opacity": 1,
-                              "paddingBottom": 0,
-                              "paddingLeft": 0,
-                              "paddingRight": 0,
-                              "paddingTop": 0,
-                              "width": 58,
+                              "marginTop": -20,
                             }
                           }
                         >
                           <View
-                            name="close"
+                            accessible={true}
+                            focusable={true}
+                            isTVSelectable={true}
+                            onClick={[Function]}
+                            onResponderGrant={[Function]}
+                            onResponderMove={[Function]}
+                            onResponderRelease={[Function]}
+                            onResponderTerminate={[Function]}
+                            onResponderTerminationRequest={[Function]}
+                            onStartShouldSetResponder={[Function]}
                             style={
                               Object {
-                                "color": "#0A1427",
-                                "fontSize": 16,
-                                "marginBottom": undefined,
-                                "marginLeft": undefined,
-                                "marginRight": undefined,
-                                "marginTop": undefined,
-                                "paddingTop": 0,
+                                "alignItems": "flex-end",
+                                "alignSelf": "center",
+                                "justifyContent": "center",
+                                "opacity": 1,
+                                "paddingBottom": 20,
+                                "paddingLeft": 20,
+                                "paddingRight": 20,
+                                "paddingTop": 20,
+                                "position": "relative",
                               }
                             }
-                          />
+                          >
+                            <View
+                              name="close"
+                              style={
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontSize": 14,
+                                  "marginBottom": undefined,
+                                  "marginLeft": undefined,
+                                  "marginRight": undefined,
+                                  "marginTop": undefined,
+                                  "paddingTop": 0,
+                                }
+                              }
+                            />
+                          </View>
                         </View>
                       </View>
                     </View>
@@ -1526,340 +1588,84 @@ exports[`Asset renders the Asset correctly 1`] = `
                 }
               >
                 <View
+                  onLayout={[Function]}
+                  pointerEvents="box-none"
                   style={
-                    Array [
-                      Object {
-                        "height": 300,
-                        "justifyContent": "flex-start",
-                      },
-                      undefined,
-                    ]
+                    Object {
+                      "alignItems": "center",
+                      "paddingBottom": 60,
+                      "paddingLeft": 16,
+                      "paddingRight": 16,
+                      "paddingTop": 0,
+                    }
                   }
                 >
+                  <View
+                    rounded={true}
+                    small={true}
+                    style={
+                      Array [
+                        Object {
+                          "backgroundColor": "#BD573A",
+                          "borderRadius": 8,
+                          "justifyContent": "center",
+                          "paddingBottom": 8,
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                          "paddingTop": 8,
+                          "width": "100%",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      small={true}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "fontSize": 12,
+                            "lineHeight": 18,
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "fontSize": 12,
+                              "lineHeight": 18,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#FCFDFF",
+                                "fontSize": 14,
+                                "lineHeight": 22,
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                    >
+                      Do not send real ETH or ERC20 tokens.
+                    </Text>
+                  </View>
                   <View
                     style={
                       Array [
                         Object {
                           "alignItems": "center",
-                          "flexBasis": 0,
-                          "flexGrow": 1,
-                          "flexShrink": 1,
                           "justifyContent": "center",
                         },
                         undefined,
                       ]
                     }
                   >
-                    <View
-                      style={
-                        Object {
-                          "overflow": "hidden",
-                        }
-                      }
-                    >
-                      <RNSVGSvgView
-                        bbHeight={160}
-                        bbWidth={160}
-                        height={160}
-                        style={
-                          Array [
-                            Object {
-                              "backgroundColor": "transparent",
-                              "borderWidth": 0,
-                            },
-                            undefined,
-                            null,
-                            Object {
-                              "flex": 0,
-                              "height": 160,
-                              "width": 160,
-                            },
-                          ]
-                        }
-                        width={160}
-                      >
-                        <RNSVGGroup
-                          fill={
-                            Array [
-                              0,
-                              4278190080,
-                            ]
-                          }
-                          fillOpacity={1}
-                          fillRule={1}
-                          font={Object {}}
-                          matrix={
-                            Array [
-                              1,
-                              0,
-                              0,
-                              1,
-                              0,
-                              0,
-                            ]
-                          }
-                          opacity={1}
-                          originX={0}
-                          originY={0}
-                          propList={Array []}
-                          rotation={0}
-                          scaleX={1}
-                          scaleY={1}
-                          skewX={0}
-                          skewY={0}
-                          stroke={null}
-                          strokeDasharray={null}
-                          strokeDashoffset={null}
-                          strokeLinecap={0}
-                          strokeLinejoin={0}
-                          strokeMiterlimit={4}
-                          strokeOpacity={1}
-                          strokeWidth={1}
-                          vectorEffect={0}
-                          x={0}
-                          y={0}
-                        >
-                          <RNSVGDefs>
-                            <RNSVGClipPath
-                              name="clip-wrapper"
-                            >
-                              <RNSVGRect
-                                fill={
-                                  Array [
-                                    0,
-                                    4278190080,
-                                  ]
-                                }
-                                fillOpacity={1}
-                                fillRule={1}
-                                height={24}
-                                matrix={
-                                  Array [
-                                    1,
-                                    0,
-                                    0,
-                                    1,
-                                    0,
-                                    0,
-                                  ]
-                                }
-                                opacity={1}
-                                originX={0}
-                                originY={0}
-                                propList={Array []}
-                                rotation={0}
-                                rx={0}
-                                ry={0}
-                                scaleX={1}
-                                scaleY={1}
-                                skewX={0}
-                                skewY={0}
-                                stroke={null}
-                                strokeDasharray={null}
-                                strokeDashoffset={null}
-                                strokeLinecap={0}
-                                strokeLinejoin={0}
-                                strokeMiterlimit={4}
-                                strokeOpacity={1}
-                                strokeWidth={1}
-                                vectorEffect={0}
-                                width={24}
-                                x={0}
-                                y={0}
-                              />
-                            </RNSVGClipPath>
-                            <RNSVGClipPath
-                              name="clip-logo"
-                            >
-                              <RNSVGRect
-                                fill={
-                                  Array [
-                                    0,
-                                    4278190080,
-                                  ]
-                                }
-                                fillOpacity={1}
-                                fillRule={1}
-                                height={20}
-                                matrix={
-                                  Array [
-                                    1,
-                                    0,
-                                    0,
-                                    1,
-                                    0,
-                                    0,
-                                  ]
-                                }
-                                opacity={1}
-                                originX={0}
-                                originY={0}
-                                propList={Array []}
-                                rotation={0}
-                                rx={0}
-                                ry={0}
-                                scaleX={1}
-                                scaleY={1}
-                                skewX={0}
-                                skewY={0}
-                                stroke={null}
-                                strokeDasharray={null}
-                                strokeDashoffset={null}
-                                strokeLinecap={0}
-                                strokeLinejoin={0}
-                                strokeMiterlimit={4}
-                                strokeOpacity={1}
-                                strokeWidth={1}
-                                vectorEffect={0}
-                                width={20}
-                                x={0}
-                                y={0}
-                              />
-                            </RNSVGClipPath>
-                          </RNSVGDefs>
-                          <RNSVGRect
-                            fill={
-                              Array [
-                                0,
-                                4294967295,
-                              ]
-                            }
-                            fillOpacity={1}
-                            fillRule={1}
-                            height={160}
-                            matrix={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
-                            opacity={1}
-                            originX={0}
-                            originY={0}
-                            propList={
-                              Array [
-                                "fill",
-                              ]
-                            }
-                            rotation={0}
-                            rx={0}
-                            ry={0}
-                            scaleX={1}
-                            scaleY={1}
-                            skewX={0}
-                            skewY={0}
-                            stroke={null}
-                            strokeDasharray={null}
-                            strokeDashoffset={null}
-                            strokeLinecap={0}
-                            strokeLinejoin={0}
-                            strokeMiterlimit={4}
-                            strokeOpacity={1}
-                            strokeWidth={1}
-                            vectorEffect={0}
-                            width={160}
-                            x={0}
-                            y={0}
-                          />
-                          <RNSVGPath
-                            d="M0 3.2 L44.800000000000004 3.2 M83.2 3.2 L108.80000000000001 3.2 M115.2 3.2 L160 3.2 M0 9.600000000000001 L6.4 9.600000000000001 M38.400000000000006 9.600000000000001 L44.800000000000004 9.600000000000001 M51.2 9.600000000000001 L57.6 9.600000000000001 M70.4 9.600000000000001 L76.80000000000001 9.600000000000001 M89.60000000000001 9.600000000000001 L108.80000000000001 9.600000000000001 M115.2 9.600000000000001 L121.60000000000001 9.600000000000001 M153.60000000000002 9.600000000000001 L160 9.600000000000001 M0 16 L6.4 16 M12.8 16 L32 16 M38.400000000000006 16 L44.800000000000004 16 M70.4 16 L83.2 16 M89.60000000000001 16 L96 16 M115.2 16 L121.60000000000001 16 M128 16 L147.20000000000002 16 M153.60000000000002 16 L160 16 M0 22.400000000000002 L6.4 22.400000000000002 M12.8 22.400000000000002 L32 22.400000000000002 M38.400000000000006 22.400000000000002 L44.800000000000004 22.400000000000002 M64 22.400000000000002 L76.80000000000001 22.400000000000002 M83.2 22.400000000000002 L89.60000000000001 22.400000000000002 M96 22.400000000000002 L102.4 22.400000000000002 M115.2 22.400000000000002 L121.60000000000001 22.400000000000002 M128 22.400000000000002 L147.20000000000002 22.400000000000002 M153.60000000000002 22.400000000000002 L160 22.400000000000002 M0 28.8 L6.4 28.8 M12.8 28.8 L32 28.8 M38.400000000000006 28.8 L44.800000000000004 28.8 M51.2 28.8 L57.6 28.8 M64 28.8 L102.4 28.8 M115.2 28.8 L121.60000000000001 28.8 M128 28.8 L147.20000000000002 28.8 M153.60000000000002 28.8 L160 28.8 M0 35.2 L6.4 35.2 M38.400000000000006 35.2 L44.800000000000004 35.2 M57.6 35.2 L70.4 35.2 M76.80000000000001 35.2 L83.2 35.2 M89.60000000000001 35.2 L102.4 35.2 M115.2 35.2 L121.60000000000001 35.2 M153.60000000000002 35.2 L160 35.2 M0 41.60000000000001 L44.800000000000004 41.60000000000001 M51.2 41.60000000000001 L57.6 41.60000000000001 M64 41.60000000000001 L70.4 41.60000000000001 M76.80000000000001 41.60000000000001 L83.2 41.60000000000001 M89.60000000000001 41.60000000000001 L96 41.60000000000001 M102.4 41.60000000000001 L108.80000000000001 41.60000000000001 M115.2 41.60000000000001 L160 41.60000000000001 M57.6 48.00000000000001 L76.80000000000001 48.00000000000001 M96 48.00000000000001 L108.80000000000001 48.00000000000001 M0 54.400000000000006 L6.4 54.400000000000006 M12.8 54.400000000000006 L19.200000000000003 54.400000000000006 M25.6 54.400000000000006 L32 54.400000000000006 M38.400000000000006 54.400000000000006 L44.800000000000004 54.400000000000006 M70.4 54.400000000000006 L76.80000000000001 54.400000000000006 M102.4 54.400000000000006 L108.80000000000001 54.400000000000006 M128 54.400000000000006 L134.4 54.400000000000006 M147.20000000000002 54.400000000000006 L153.60000000000002 54.400000000000006 M6.4 60.800000000000004 L19.200000000000003 60.800000000000004 M51.2 60.800000000000004 L89.60000000000001 60.800000000000004 M102.4 60.800000000000004 L128 60.800000000000004 M134.4 60.800000000000004 L160 60.800000000000004 M0 67.2 L12.8 67.2 M19.200000000000003 67.2 L25.6 67.2 M38.400000000000006 67.2 L57.6 67.2 M64 67.2 L70.4 67.2 M89.60000000000001 67.2 L96 67.2 M115.2 67.2 L160 67.2 M0 73.60000000000001 L6.4 73.60000000000001 M12.8 73.60000000000001 L25.6 73.60000000000001 M44.800000000000004 73.60000000000001 L57.6 73.60000000000001 M64 73.60000000000001 L70.4 73.60000000000001 M83.2 73.60000000000001 L96 73.60000000000001 M102.4 73.60000000000001 L115.2 73.60000000000001 M121.60000000000001 73.60000000000001 L128 73.60000000000001 M147.20000000000002 73.60000000000001 L153.60000000000002 73.60000000000001 M12.8 80.00000000000001 L25.6 80.00000000000001 M32 80.00000000000001 L51.2 80.00000000000001 M64 80.00000000000001 L76.80000000000001 80.00000000000001 M89.60000000000001 80.00000000000001 L121.60000000000001 80.00000000000001 M134.4 80.00000000000001 L140.8 80.00000000000001 M6.4 86.4 L32 86.4 M44.800000000000004 86.4 L51.2 86.4 M70.4 86.4 L76.80000000000001 86.4 M89.60000000000001 86.4 L96 86.4 M102.4 86.4 L108.80000000000001 86.4 M134.4 86.4 L140.8 86.4 M147.20000000000002 86.4 L160 86.4 M0 92.80000000000001 L6.4 92.80000000000001 M12.8 92.80000000000001 L25.6 92.80000000000001 M38.400000000000006 92.80000000000001 L44.800000000000004 92.80000000000001 M51.2 92.80000000000001 L70.4 92.80000000000001 M83.2 92.80000000000001 L89.60000000000001 92.80000000000001 M115.2 92.80000000000001 L121.60000000000001 92.80000000000001 M128 92.80000000000001 L140.8 92.80000000000001 M147.20000000000002 92.80000000000001 L160 92.80000000000001 M6.4 99.2 L12.8 99.2 M25.6 99.2 L38.400000000000006 99.2 M70.4 99.2 L76.80000000000001 99.2 M121.60000000000001 99.2 L128 99.2 M134.4 99.2 L140.8 99.2 M147.20000000000002 99.2 L153.60000000000002 99.2 M0 105.60000000000001 L6.4 105.60000000000001 M12.8 105.60000000000001 L64 105.60000000000001 M76.80000000000001 105.60000000000001 L83.2 105.60000000000001 M102.4 105.60000000000001 L134.4 105.60000000000001 M147.20000000000002 105.60000000000001 L160 105.60000000000001 M51.2 112.00000000000001 L57.6 112.00000000000001 M70.4 112.00000000000001 L89.60000000000001 112.00000000000001 M96 112.00000000000001 L108.80000000000001 112.00000000000001 M128 112.00000000000001 L140.8 112.00000000000001 M0 118.4 L44.800000000000004 118.4 M70.4 118.4 L83.2 118.4 M89.60000000000001 118.4 L96 118.4 M102.4 118.4 L108.80000000000001 118.4 M115.2 118.4 L121.60000000000001 118.4 M128 118.4 L134.4 118.4 M140.8 118.4 L160 118.4 M0 124.80000000000001 L6.4 124.80000000000001 M38.400000000000006 124.80000000000001 L44.800000000000004 124.80000000000001 M64 124.80000000000001 L70.4 124.80000000000001 M76.80000000000001 124.80000000000001 L96 124.80000000000001 M102.4 124.80000000000001 L108.80000000000001 124.80000000000001 M128 124.80000000000001 L134.4 124.80000000000001 M147.20000000000002 124.80000000000001 L160 124.80000000000001 M0 131.2 L6.4 131.2 M12.8 131.2 L32 131.2 M38.400000000000006 131.2 L44.800000000000004 131.2 M51.2 131.2 L57.6 131.2 M64 131.2 L76.80000000000001 131.2 M89.60000000000001 131.2 L96 131.2 M102.4 131.2 L134.4 131.2 M153.60000000000002 131.2 L160 131.2 M0 137.6 L6.4 137.6 M12.8 137.6 L32 137.6 M38.400000000000006 137.6 L44.800000000000004 137.6 M57.6 137.6 L64 137.6 M70.4 137.6 L76.80000000000001 137.6 M89.60000000000001 137.6 L102.4 137.6 M121.60000000000001 137.6 L147.20000000000002 137.6 M0 144 L6.4 144 M12.8 144 L32 144 M38.400000000000006 144 L44.800000000000004 144 M51.2 144 L64 144 M83.2 144 L89.60000000000001 144 M102.4 144 L121.60000000000001 144 M128 144 L147.20000000000002 144 M153.60000000000002 144 L160 144 M0 150.4 L6.4 150.4 M38.400000000000006 150.4 L44.800000000000004 150.4 M57.6 150.4 L76.80000000000001 150.4 M96 150.4 L115.2 150.4 M128 150.4 L134.4 150.4 M147.20000000000002 150.4 L153.60000000000002 150.4 M0 156.8 L44.800000000000004 156.8 M51.2 156.8 L57.6 156.8 M64 156.8 L70.4 156.8 M76.80000000000001 156.8 L83.2 156.8 M102.4 156.8 L108.80000000000001 156.8 M128 156.8 L140.8 156.8 M147.20000000000002 156.8 L160 156.8 "
-                            fill={
-                              Array [
-                                0,
-                                4278190080,
-                              ]
-                            }
-                            fillOpacity={1}
-                            fillRule={1}
-                            matrix={
-                              Array [
-                                1,
-                                0,
-                                0,
-                                1,
-                                0,
-                                0,
-                              ]
-                            }
-                            opacity={1}
-                            originX={0}
-                            originY={0}
-                            propList={
-                              Array [
-                                "stroke",
-                                "strokeWidth",
-                              ]
-                            }
-                            rotation={0}
-                            scaleX={1}
-                            scaleY={1}
-                            skewX={0}
-                            skewY={0}
-                            stroke={
-                              Array [
-                                0,
-                                4278190080,
-                              ]
-                            }
-                            strokeDasharray={null}
-                            strokeDashoffset={null}
-                            strokeLinecap={0}
-                            strokeLinejoin={0}
-                            strokeMiterlimit={4}
-                            strokeOpacity={1}
-                            strokeWidth={6.4}
-                            vectorEffect={0}
-                            x={0}
-                            y={0}
-                          />
-                        </RNSVGGroup>
-                      </RNSVGSvgView>
-                    </View>
-                    <View
-                      accessible={true}
-                      isTVSelectable={true}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        Object {
-                          "alignItems": "center",
-                          "marginBottom": 20,
-                          "marginTop": 20,
-                          "opacity": 1,
-                        }
-                      }
-                    >
-                      <Text
-                        style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "textAlignVertical": "center",
-                            },
-                            Array [
-                              Object {
-                                "color": "#007AFF",
-                                "fontSize": 16,
-                                "lineHeight": 24,
-                              },
-                              undefined,
-                            ],
-                          ]
-                        }
-                      >
-                        Copy wallet address to clipboard
-                      </Text>
-                    </View>
                     <Text
+                      onPress={[Function]}
                       style={
                         Array [
                           Object {
@@ -1869,53 +1675,157 @@ exports[`Asset renders the Asset correctly 1`] = `
                           },
                           Array [
                             Object {
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "fontSize": 14,
+                              "lineHeight": 22,
+                              "marginBottom": 16,
+                              "marginLeft": 0,
+                              "marginRight": 0,
+                              "marginTop": 16,
                             },
                             undefined,
                           ],
                         ]
                       }
                     />
+                    <View
+                      style={
+                        Object {
+                          "overflow": "hidden",
+                          "padding": 10,
+                        }
+                      }
+                    />
                   </View>
-                </View>
-                <View
-                  onLayout={[Function]}
-                  style={
-                    Array [
-                      Object {
-                        "backgroundColor": "transparent",
-                        "flexDirection": "column",
-                        "marginTop": "auto",
-                        "paddingBottom": 0,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
-                        "paddingTop": 0,
-                        "width": "100%",
-                      },
-                      undefined,
-                    ]
-                  }
-                >
                   <View
                     style={
                       Array [
                         Object {
-                          "alignItems": "center",
-                          "flexDirection": "column",
-                          "justifyContent": "flex-end",
-                          "padding": 16,
-                          "position": "relative",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                          "marginBottom": 20,
+                          "marginTop": 40,
+                          "width": "100%",
                         },
-                        Object {
-                          "bottom": 0,
-                        },
+                        undefined,
                       ]
                     }
                   >
                     <View
                       accessible={true}
+                      focusable={true}
                       isTVSelectable={true}
+                      onClick={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        Object {
+                          "alignItems": "center",
+                          "alignSelf": "auto",
+                          "backgroundColor": "#2AA057",
+                          "borderColor": "#EDEDED",
+                          "borderRadius": 6,
+                          "borderStyle": "solid",
+                          "borderWidth": 0,
+                          "flexDirection": "row",
+                          "height": 48,
+                          "justifyContent": "center",
+                          "marginBottom": 0,
+                          "marginLeft": 0,
+                          "marginRight": 0,
+                          "marginTop": 0,
+                          "opacity": 1,
+                          "paddingBottom": 0,
+                          "paddingLeft": 19,
+                          "paddingRight": 19,
+                          "paddingTop": 0,
+                          "width": 353,
+                        }
+                      }
+                    >
+                      <Text
+                        customTheme={
+                          Object {
+                            "borderWidth": 0,
+                          }
+                        }
+                        small={false}
+                        style={
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 12,
+                              "lineHeight": 18,
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#FCFDFF",
+                                "fontSize": 18,
+                                "lineHeight": 18,
+                                "marginBottom": 0,
+                                "marginTop": 3.2399999999999998,
+                              },
+                              Object {
+                                "paddingTop": 4,
+                              },
+                            ],
+                          ]
+                        }
+                        theme={
+                          Object {
+                            "colors": Object {
+                              "PPNSurface": "#0a0c78",
+                              "PPNText": "#f33726",
+                              "accent": "#818EB3",
+                              "activeTabBarIcon": "#007AFF",
+                              "bitcoinWallet": "#F79319",
+                              "border": "#EDEDED",
+                              "buttonSecondaryBackground": "#e6f1f9",
+                              "card": "#FFFFFF",
+                              "control": "#FCFDFF",
+                              "danger": "#ff0005",
+                              "helpIcon": "#f7931a",
+                              "iconBackground": "#ebf0f5",
+                              "inactiveTabBarIcon": "#D4D9DB",
+                              "indicator": "#F8E71C",
+                              "legacyWallet": "#FA574F",
+                              "link": "#007aff",
+                              "negative": "#BD573A",
+                              "notice": "#ea480e",
+                              "orange": "#f57c00",
+                              "popularSwaps": "#d08cb1",
+                              "positive": "#2AA057",
+                              "primary": "#007AFF",
+                              "secondaryAccent": "#EBF0F5",
+                              "secondaryText": "#8B939E",
+                              "smartWallet": "#3C71FE",
+                              "smartWalletSurface": "#f3f7ff",
+                              "smartWalletText": "#1D24D8",
+                              "surface": "#2AA057",
+                              "synthetic": "#2329d6",
+                              "tertiary": "#EBF0F6",
+                              "text": "#FCFDFF",
+                              "transactionReceivedIcon": "#497391",
+                              "userAvatar": "#d1d9e4",
+                              "warning": "#ECA93A",
+                            },
+                            "current": "lightTheme",
+                          }
+                        }
+                      >
+                        Buy tokens
+                      </Text>
+                    </View>
+                    <View
+                      accessible={true}
+                      focusable={true}
+                      isTVSelectable={true}
+                      onClick={[Function]}
                       onResponderGrant={[Function]}
                       onResponderMove={[Function]}
                       onResponderRelease={[Function]}
@@ -1933,16 +1843,16 @@ exports[`Asset renders the Asset correctly 1`] = `
                           "borderWidth": 0,
                           "elevation": 1,
                           "flexDirection": "row",
-                          "height": 56,
+                          "height": 48,
                           "justifyContent": "center",
-                          "marginBottom": 20,
+                          "marginBottom": 0,
                           "marginLeft": 0,
                           "marginRight": 0,
                           "marginTop": 0,
                           "opacity": 1,
                           "paddingBottom": 0,
-                          "paddingLeft": 30,
-                          "paddingRight": 30,
+                          "paddingLeft": 19,
+                          "paddingRight": 19,
                           "paddingTop": 0,
                           "shadowColor": "rgba(0,0,0,.12)",
                           "shadowOffset": Object {
@@ -1951,7 +1861,7 @@ exports[`Asset renders the Asset correctly 1`] = `
                           },
                           "shadowOpacity": 1,
                           "shadowRadius": 7,
-                          "width": "auto",
+                          "width": 353,
                         }
                       }
                     >
@@ -1962,27 +1872,27 @@ exports[`Asset renders the Asset correctly 1`] = `
                             "shadow": true,
                           }
                         }
+                        small={false}
                         style={
                           Array [
                             Object {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 12,
+                              "lineHeight": 18,
                               "textAlignVertical": "center",
                             },
                             Array [
                               Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "textAlignVertical": "center",
+                                "color": "#FCFDFF",
+                                "fontSize": 18,
+                                "lineHeight": 18,
+                                "marginBottom": 0,
+                                "marginTop": 3.2399999999999998,
                               },
-                              Array [
-                                Object {
-                                  "color": "#FCFDFF",
-                                  "fontSize": 18,
-                                  "marginBottom": 0,
-                                },
-                                undefined,
-                              ],
+                              Object {
+                                "paddingTop": 4,
+                              },
                             ],
                           ]
                         }
@@ -1992,15 +1902,23 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "PPNSurface": "#0a0c78",
                               "PPNText": "#f33726",
                               "accent": "#818EB3",
+                              "activeTabBarIcon": "#007AFF",
                               "bitcoinWallet": "#F79319",
                               "border": "#007AFF",
+                              "buttonSecondaryBackground": "#e6f1f9",
                               "card": "#FFFFFF",
                               "control": "#FCFDFF",
                               "danger": "#ff0005",
+                              "helpIcon": "#f7931a",
+                              "iconBackground": "#ebf0f5",
+                              "inactiveTabBarIcon": "#D4D9DB",
                               "indicator": "#F8E71C",
                               "legacyWallet": "#FA574F",
+                              "link": "#007aff",
                               "negative": "#BD573A",
+                              "notice": "#ea480e",
                               "orange": "#f57c00",
+                              "popularSwaps": "#d08cb1",
                               "positive": "#2AA057",
                               "primary": "#007AFF",
                               "secondaryAccent": "#EBF0F5",
@@ -2009,8 +1927,10 @@ exports[`Asset renders the Asset correctly 1`] = `
                               "smartWalletSurface": "#f3f7ff",
                               "smartWalletText": "#1D24D8",
                               "surface": "#007AFF",
+                              "synthetic": "#2329d6",
                               "tertiary": "#EBF0F6",
                               "text": "#FCFDFF",
+                              "transactionReceivedIcon": "#497391",
                               "userAvatar": "#d1d9e4",
                               "warning": "#ECA93A",
                             },
@@ -2021,6 +1941,46 @@ exports[`Asset renders the Asset correctly 1`] = `
                         Share Address
                       </Text>
                     </View>
+                  </View>
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "flexDirection": "row",
+                          "justifyContent": "center",
+                          "marginBottom": 0,
+                          "marginLeft": 16,
+                          "marginRight": 16,
+                          "marginTop": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Image
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/visa.png",
+                        }
+                      }
+                    />
+                    <View
+                      style={
+                        Array [
+                          Object {
+                            "width": 8,
+                          },
+                          undefined,
+                        ]
+                      }
+                    />
+                    <Image
+                      source={
+                        Object {
+                          "testUri": "../../../src/assets/icons/mastercard.png",
+                        }
+                      }
+                    />
                   </View>
                 </View>
               </View>
@@ -2173,7 +2133,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -2228,7 +2190,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2246,7 +2210,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -2257,7 +2223,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Object {
                     "backgroundColor": "#fff",
                     "elevation": 4,
-                    "height": NaN,
                     "maxHeight": 667,
                     "minHeight": 56,
                     "opacity": 1,
@@ -2287,10 +2252,14 @@ exports[`Asset renders the Asset correctly 1`] = `
                   scrollEventThrottle={50}
                   stickyHeaderIndices={Array []}
                   style={
-                    Object {
-                      "marginHorizontal": -15,
-                      "marginTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "marginHorizontal": -15,
+                      },
+                      Object {
+                        "marginTop": 0,
+                      },
+                    ]
                   }
                   updateCellsBatchingPeriod={50}
                   viewabilityConfigCallbackPairs={Array []}
@@ -2329,6 +2298,8 @@ exports[`Asset renders the Asset correctly 1`] = `
     >
       <View
         accessible={true}
+        focusable={true}
+        onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
         onResponderRelease={[Function]}
@@ -2417,6 +2388,8 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2437,7 +2410,7 @@ exports[`Asset renders the Asset correctly 1`] = `
               customTheme={
                 Object {
                   "borderRadius": "30px",
-                  "padding": "0 20px",
+                  "padding": "0 16px",
                 }
               }
               style={
@@ -2447,10 +2420,12 @@ exports[`Asset renders the Asset correctly 1`] = `
                     "borderTopLeftRadius": 30,
                     "borderTopRightRadius": 30,
                     "elevation": 1,
+                    "marginHorizontal": 0,
                     "marginTop": "auto",
+                    "overflow": "hidden",
                     "paddingBottom": 0,
-                    "paddingLeft": 20,
-                    "paddingRight": 20,
+                    "paddingLeft": 16,
+                    "paddingRight": 16,
                     "paddingTop": 0,
                     "shadowColor": "rgba(0,0,0,.1)",
                     "shadowOffset": Object {
@@ -2466,184 +2441,139 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 style={
-                  Array [
-                    Object {
-                      "width": "100%",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "backgroundColor": "#FFFFFF",
+                    "borderBottomWidth": 1,
+                    "borderColor": "transparent",
+                    "width": "100%",
+                  }
                 }
               >
                 <View
-                  noPadding={true}
+                  androidStatusbarHeight={42}
+                  noPaddingTop={true}
+                  onLayout={[Function]}
+                  pointerEvents="box-none"
                   style={
-                    Array [
-                      Object {
-                        "borderBottomWidth": 0,
-                        "paddingBottom": 0,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
-                        "paddingTop": 0,
-                        "zIndex": 10,
-                      },
-                      undefined,
-                    ]
+                    Object {
+                      "paddingBottom": 0,
+                      "paddingLeft": 0,
+                      "paddingRight": 0,
+                      "paddingTop": 0,
+                    }
                   }
                 >
                   <View
+                    noHorizonatalPadding={true}
                     style={
                       Array [
                         Object {
-                          "alignItems": "flex-end",
-                          "flexDirection": "row",
-                          "height": 50,
-                          "justifyContent": "flex-end",
-                          "marginBottom": 4,
-                          "marginTop": 20,
+                          "minHeight": 58,
+                          "paddingVertical": 15,
+                          "width": "100%",
                         },
                         undefined,
                       ]
                     }
                   >
                     <View
-                      flex={[Function]}
-                      showTitleLeft={true}
                       style={
                         Array [
                           Object {
-                            "alignItems": "flex-start",
-                            "alignSelf": "center",
-                            "flex": 1,
-                          },
-                          Object {
-                            "alignItems": "flex-end",
-                            "flexBasis": 0,
-                            "flexGrow": 2,
-                            "flexShrink": 1,
-                            "justifyContent": "flex-start",
+                            "alignItems": "center",
+                            "flexDirection": "row",
+                            "justifyContent": "space-between",
+                            "width": "100%",
                           },
                           undefined,
                         ]
                       }
                     >
                       <View
-                        noMargin={true}
+                        sideFlex={4}
                         style={
                           Array [
                             Object {
-                              "alignSelf": "flex-start",
-                              "marginBottom": 0,
-                              "marginLeft": 0,
-                              "marginRight": 0,
-                              "marginTop": 0,
-                              "position": "relative",
-                              "top": 0,
+                              "alignItems": "center",
+                              "flexBasis": 0,
+                              "flexDirection": "row",
+                              "flexGrow": 4,
+                              "flexShrink": 1,
+                              "flexWrap": "wrap",
+                              "justifyContent": "flex-start",
+                              "minHeight": 28,
                             },
-                            undefined,
+                            Object {},
                           ]
                         }
-                      >
-                        <Text
-                          ellipsizeMode="middle"
-                          numberOfLines={1}
-                          style={
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Medium",
-                                  "textAlignVertical": "center",
-                                },
-                                Array [
-                                  Object {
-                                    "fontSize": 18,
-                                    "lineHeight": 28,
-                                  },
-                                  Object {},
-                                ],
-                              ],
-                            ]
-                          }
-                        />
-                      </View>
-                    </View>
-                    <View
-                      flex={[Function]}
-                      onClose={[Function]}
-                      style={
-                        Array [
-                          Object {
-                            "alignItems": "flex-end",
-                            "alignSelf": "center",
-                            "flex": 1,
-                          },
-                          Object {
-                            "alignItems": "flex-end",
-                            "flexBasis": 44,
-                            "flexDirection": "row",
-                            "flexGrow": 0,
-                            "flexShrink": 0,
-                            "justifyContent": "flex-end",
-                          },
-                          undefined,
-                        ]
-                      }
-                    >
+                      />
                       <View
                         style={
                           Array [
                             Object {
                               "alignItems": "center",
+                              "flexBasis": 0,
                               "flexDirection": "row",
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "flexWrap": "wrap",
                               "justifyContent": "flex-end",
+                              "minHeight": 28,
                             },
                             undefined,
                           ]
                         }
                       >
                         <View
-                          accessible={true}
-                          isTVSelectable={true}
-                          onResponderGrant={[Function]}
-                          onResponderMove={[Function]}
-                          onResponderRelease={[Function]}
-                          onResponderTerminate={[Function]}
-                          onResponderTerminationRequest={[Function]}
-                          onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "alignItems": "center",
-                              "height": 44,
-                              "justifyContent": "center",
+                              "marginBottom": -20,
+                              "marginLeft": -12,
                               "marginRight": -20,
-                              "opacity": 1,
-                              "paddingBottom": 0,
-                              "paddingLeft": 0,
-                              "paddingRight": 0,
-                              "paddingTop": 0,
-                              "width": 58,
+                              "marginTop": -20,
                             }
                           }
                         >
                           <View
-                            name="close"
+                            accessible={true}
+                            focusable={true}
+                            isTVSelectable={true}
+                            onClick={[Function]}
+                            onResponderGrant={[Function]}
+                            onResponderMove={[Function]}
+                            onResponderRelease={[Function]}
+                            onResponderTerminate={[Function]}
+                            onResponderTerminationRequest={[Function]}
+                            onStartShouldSetResponder={[Function]}
                             style={
                               Object {
-                                "color": "#0A1427",
-                                "fontSize": 16,
-                                "marginBottom": undefined,
-                                "marginLeft": undefined,
-                                "marginRight": undefined,
-                                "marginTop": undefined,
-                                "paddingTop": 0,
+                                "alignItems": "flex-end",
+                                "alignSelf": "center",
+                                "justifyContent": "center",
+                                "opacity": 1,
+                                "paddingBottom": 20,
+                                "paddingLeft": 20,
+                                "paddingRight": 20,
+                                "paddingTop": 20,
+                                "position": "relative",
                               }
                             }
-                          />
+                          >
+                            <View
+                              name="close"
+                              style={
+                                Object {
+                                  "color": "#0A1427",
+                                  "fontSize": 14,
+                                  "marginBottom": undefined,
+                                  "marginLeft": undefined,
+                                  "marginRight": undefined,
+                                  "marginTop": undefined,
+                                  "paddingTop": 0,
+                                }
+                              }
+                            />
+                          </View>
                         </View>
                       </View>
                     </View>
@@ -2668,6 +2598,8 @@ exports[`Asset renders the Asset correctly 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 12,
+                        "lineHeight": 18,
                         "textAlignVertical": "center",
                       },
                       Array [
@@ -2839,7 +2771,9 @@ exports[`Asset renders the Asset correctly 1`] = `
                 </View>
                 <View
                   accessible={true}
+                  focusable={true}
                   isTVSelectable={true}
+                  onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -2894,7 +2828,9 @@ exports[`Asset renders the Asset correctly 1`] = `
           >
             <View
               accessible={true}
+              focusable={true}
               isTVSelectable={true}
+              onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -2912,7 +2848,9 @@ exports[`Asset renders the Asset correctly 1`] = `
             >
               <View
                 accessible={true}
+                focusable={false}
                 isTVSelectable={true}
+                onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
                 onResponderRelease={[Function]}
@@ -2923,7 +2861,6 @@ exports[`Asset renders the Asset correctly 1`] = `
                   Object {
                     "backgroundColor": "#fff",
                     "elevation": 4,
-                    "height": NaN,
                     "maxHeight": 667,
                     "minHeight": 56,
                     "opacity": 1,
@@ -2953,10 +2890,14 @@ exports[`Asset renders the Asset correctly 1`] = `
                   scrollEventThrottle={50}
                   stickyHeaderIndices={Array []}
                   style={
-                    Object {
-                      "marginHorizontal": -15,
-                      "marginTop": 0,
-                    }
+                    Array [
+                      Object {
+                        "marginHorizontal": -15,
+                      },
+                      Object {
+                        "marginTop": 0,
+                      },
+                    ]
                   }
                   updateCellsBatchingPeriod={50}
                   viewabilityConfigCallbackPairs={Array []}

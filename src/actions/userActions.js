@@ -17,58 +17,105 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
+import {
+  SENDING_OTP,
+  OTP_SENT,
+  RESET_OTP_STATUS,
+  VERIFICATION_FAILED,
+  UPDATE_USER,
+  REGISTERED,
+  USER_PHONE_VERIFIED,
+  USER_EMAIL_VERIFIED,
+} from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { logEventAction } from 'actions/analyticsActions';
+import { completeReferralsEventAction } from 'actions/referralsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
+
+const sendingOneTimePasswordAction = () => ({
+  type: SENDING_OTP,
+});
+
+const verificationFailedAction = () => ({
+  type: VERIFICATION_FAILED,
+});
+
+const verificationSucceededAction = (message: string) => ({
+  type: ADD_NOTIFICATION,
+  payload: {
+    message,
+    title: 'Validation successful',
+    messageType: 'success',
+    autoClose: false,
+  },
+});
+
+const oneTimePasswordSentAction = () => ({
+  type: OTP_SENT,
+});
+
+export const resetOneTimePasswordAction = () => ({
+  type: RESET_OTP_STATUS,
+});
 
 export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const response = await api.updateUser({ walletId, ...field });
-    const { responseStatus, ...user } = response;
+    const { responseStatus, message, ...user } = response;
 
-    if (responseStatus === 200) {
-      const updatedUser = { ...user, lastUpdateTime: +new Date() };
-
-      dispatch(saveDbAction('user', { user: updatedUser }, true));
-      dispatch({
-        type: UPDATE_USER,
-        payload: { user: updatedUser, state: REGISTERED },
-      });
-
-      dispatch(logEventAction('user_profile_updated'));
-      if (callback) callback();
-    } else {
+    if (responseStatus !== 200) {
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: 'Please try again later',
+          message: message || 'Please try again later',
           title: 'Changes have not been saved',
           messageType: 'warning',
         },
       });
+
+      return;
     }
+
+    const updatedUser = { ...user, lastUpdateTime: +new Date() };
+
+    dispatch(saveDbAction('user', { user: updatedUser }, true));
+    dispatch({
+      type: UPDATE_USER,
+      payload: { user: updatedUser, state: REGISTERED },
+    });
+
+    dispatch(logEventAction('user_profile_updated'));
+    if (callback) callback();
   };
 };
 
-export const createOneTimePasswordAction = (walletId: string, field: Object, callback?: Function) => {
+export const createOneTimePasswordAction = (
+  walletId: string,
+  field: Object,
+  callback?: () => void, // TODO: remove this callback
+) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch(sendingOneTimePasswordAction());
+
     const response = await api.createOneTimePassword({ walletId, ...field });
     const { responseStatus } = response;
 
     if (responseStatus === 200) {
       dispatch(logEventAction('one_time_password_created'));
 
+      dispatch(oneTimePasswordSentAction());
       if (callback) callback();
     } else {
+      dispatch(resetOneTimePasswordAction());
+      const fieldName = field.smsNotification ? 'phone' : 'email';
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
           message: 'Please try again later',
-          title: 'We can\'t verify your phone at this time',
+          title: `We can't verify your ${fieldName} at this time`,
           messageType: 'warning',
         },
       });
@@ -76,41 +123,95 @@ export const createOneTimePasswordAction = (walletId: string, field: Object, cal
   };
 };
 
-export type VerificationPhoneAction = {
-  wallet: string,
-  phone: string,
-  oneTimePassword: string,
-}
-
-export const verifyPhoneAction = (props: VerificationPhoneAction, callback?: Function) => {
+export const verifyEmailAction = (walletId: string, code: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const response = await api.verifyPhone(props);
+    dispatch(sendingOneTimePasswordAction());
+
+    const response = await api.verifyEmail({
+      walletId,
+      oneTimePassword: code,
+    });
+
     const { responseStatus } = response;
 
-    if (responseStatus === 200) {
-      dispatch(logEventAction('phone_verified'));
-
-      dispatch({ type: USER_PHONE_VERIFIED });
-      dispatch({
-        type: ADD_NOTIFICATION,
-        payload: {
-          message: 'Phone verification was successful',
-          title: 'Validation successful',
-          messageType: 'success',
-        },
-      });
-
-      if (callback) callback();
-    } else {
-      dispatch({
-        type: ADD_NOTIFICATION,
-        payload: {
-          message: 'Please try again later',
-          title: 'We can\'t verify your phone at this time',
-          messageType: 'warning',
-        },
-      });
+    if (responseStatus !== 200) {
+      dispatch(verificationFailedAction());
+      return;
     }
+
+    dispatch(logEventAction('email_verified'));
+    dispatch({ type: USER_EMAIL_VERIFIED });
+
+    const {
+      referrals: {
+        referralToken,
+        isRewardClaimed,
+        referredEmail,
+      },
+      user: {
+        data: { email },
+      },
+    } = getState();
+
+    let message = 'Email verification was successful';
+
+    if (referralToken && !isRewardClaimed && referredEmail === email) {
+      dispatch(completeReferralsEventAction());
+      message = 'Thank you for verifying your information, ' +
+                'we are currently processing your reward tokens.';
+    }
+
+    dispatch(verificationSucceededAction(message));
+  };
+};
+
+export const verifyPhoneAction = (
+  walletId: string,
+  code: string,
+  // FIXME: remove callback.
+  // Callback is being used on screens/OTP/OTP
+  callback?: () => void,
+) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch(sendingOneTimePasswordAction());
+
+    const response = await api.verifyPhone({
+      walletId,
+      oneTimePassword: code,
+    });
+
+    const { responseStatus } = response;
+
+    if (responseStatus !== 200) {
+      dispatch(verificationFailedAction());
+      return;
+    }
+
+    dispatch(logEventAction('phone_verified'));
+    dispatch({ type: USER_PHONE_VERIFIED });
+
+    const {
+      referrals: {
+        referralToken,
+        isRewardClaimed,
+        referredPhone,
+      },
+      user: {
+        data: { phone },
+      },
+    } = getState();
+
+    let message = 'Phone verification was successful';
+
+    if (referralToken && !isRewardClaimed && referredPhone === phone) {
+      dispatch(completeReferralsEventAction());
+      message = 'Thank you for verifying your information, ' +
+                'we are currently processing your reward tokens.';
+    }
+
+    dispatch(verificationSucceededAction(message));
+
+    if (callback) callback();
   };
 };
 

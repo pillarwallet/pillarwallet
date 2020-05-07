@@ -24,7 +24,7 @@ platform :android do
     )
     upload_to_play_store(
       track: 'internal',
-      apk: 'app/build/outputs/apk/prod/staging/app-prod-staging.apk',
+      apk: 'app/build/outputs/apk/staging/app-staging.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
       version_code: ENV['APP_BUILD_NUMBER'],
       package_name: 'com.pillarproject.wallet.staging',
@@ -42,7 +42,7 @@ platform :android do
     )
     upload_to_play_store(
       track: 'internal',
-      apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
+      apk: 'app/build/outputs/apk/release/app-release.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
       version_code: ENV['APP_BUILD_NUMBER'],
       package_name: 'com.pillarproject.wallet',
@@ -60,7 +60,7 @@ platform :android do
   )
 	upload_to_play_store(
 		track: "alpha",
-    apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
+    apk: 'app/build/outputs/apk/release/app-release.apk',
     json_key_data: ENV['GOOGLE_JSON_DATA'],
     version_code: ENV['APP_BUILD_NUMBER'],
     package_name: 'com.pillarproject.wallet',
@@ -71,30 +71,11 @@ platform :android do
 	)
   end
 
-  desc "Deploy a new beta version to the Google Play Store Beta Track"
-  lane :deploy_beta do
-  changelog_from_git_commits(
-   merge_commit_filtering: 'exclude_merges'
-  )
-  upload_to_play_store(
-    track: "beta",
-    apk: 'app/build/outputs/apk/prod/release/app-prod-release.apk',
-    json_key_data: ENV['GOOGLE_JSON_DATA'],
-    version_code: ENV['APP_BUILD_NUMBER'],
-    package_name: 'com.pillarproject.wallet',
-    skip_upload_aab: true,
-    skip_upload_images: true,
-    skip_upload_screenshots: true,
-    skip_upload_changelogs: true
-  )
-  end
-
   desc "Deploy staging development build to hockeyapp"
-  lane :deploy_android_hockeyapp do
+  lane :deploy_android_appcenter do
     buildApp(
-      flavorName: 'prod',
-      hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN"],
-      apkName: 'app-prod-staging.apk'
+      hockeyAppToken: ENV["APPCENTER_ANDROID_TOKEN"],
+      apkName: 'app-staging.apk'
     )
   end
 
@@ -102,7 +83,7 @@ platform :android do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "500"
+      commits_count: "50"
     )
 
     custom_changelog = ""
@@ -162,12 +143,14 @@ platform :android do
 
     lastCommit = last_git_commit
 
-    hockey(
+    appcenter_upload(
       api_token: options[:hockeyAppToken],
-      notes: changelog,
-      commit_sha: lastCommit[:commit_hash],
-      notify: "1",
-      apk: "app/build/outputs/apk/prod/staging/#{options[:apkName]}"
+      owner_name: "antonioned",
+      owner_type: "user",
+      app_name: "Pillar-Wallet-Staging",
+      file: "app/build/outputs/apk/staging/#{options[:apkName]}",
+      notify_testers: true,
+      release_notes: changelog
     )
 
   end

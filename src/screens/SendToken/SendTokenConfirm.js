@@ -22,19 +22,28 @@ import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
+
+// constants
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+
+// components
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import TextInput from 'components/TextInput';
+
+// utils
 import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { formatTransactionFee } from 'utils/common';
+
+// types
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -100,11 +109,14 @@ class SendTokenConfirm extends React.Component<Props, State> {
     const {
       amount,
       to,
+      receiverEnsName,
       txFeeInWei,
       symbol,
+      gasToken,
     } = navigation.getParam('transactionPayload', {});
 
     const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
+    const feeDisplayValue = txFeeInWei === 0 ? 'free' : formatTransactionFee(txFeeInWei, gasToken);
 
     const recipientUsername = getUserName(contact);
     const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
@@ -131,10 +143,16 @@ class SendTokenConfirm extends React.Component<Props, State> {
             <Value>{recipientUsername}</Value>
           </LabeledRow>
           }
+          {!!receiverEnsName &&
+          <LabeledRow>
+            <Label>Recipient ENS name</Label>
+            <Value>{receiverEnsName}</Value>
+          </LabeledRow>
+          }
           {!!userAccount &&
           <LabeledRow>
             <Label>Recipient</Label>
-            <Value>{getAccountName(userAccount.type, accounts)}</Value>
+            <Value>{getAccountName(userAccount.type)}</Value>
           </LabeledRow>
           }
           <LabeledRow>
@@ -143,7 +161,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
           </LabeledRow>
           <LabeledRow>
             <Label>Est. Network Fee</Label>
-            <Value>{txFeeInWei === 0 ? 'free' : `${utils.formatEther(txFeeInWei.toString())} ETH`}</Value>
+            <Value>{feeDisplayValue}</Value>
           </LabeledRow>
           {session.isOnline && !!recipientUsername &&
             <TextInput

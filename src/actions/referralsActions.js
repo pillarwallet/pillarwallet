@@ -17,15 +17,247 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import branch, { BranchEvent } from 'react-native-branch';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
+import { format as formatDate } from 'date-fns';
+import { NavigationActions } from 'react-navigation';
+
+// types
+import type SDKWrapper from 'services/api';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type {
+  ReferralsSendingInviteAction,
+  ReferralContact,
+  InviteSentPayload,
+  ReferralsTokenReceived,
+} from 'reducers/referralsReducer';
+
+// constants
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import {
+  SENDING_INVITE,
+  INVITE_SENT,
+  SET_CONTACTS_FOR_REFERRAL,
+  REMOVE_CONTACT_FOR_REFERRAL,
+  REFERRAL_INVITE_ERROR,
+  ALLOW_ACCESS_PHONE_CONTACTS,
+  CLAIM_REWARD,
+  SET_REFERRAL_REWARD_AMOUNT,
+  SET_ALREADY_INVITED_CONTACTS,
+} from 'constants/referralsConstants';
+import { ADD_EDIT_USER, APP_FLOW, REFER_FLOW, REFERRAL_SENT } from 'constants/navigationConstants';
+
+// components
+import Toast from 'components/Toast';
+
+// services
+import { logEvent, getUserReferralLink } from 'services/branchIo';
+import { navigate } from 'services/navigation';
+
+// utils
+import { noop, reportLog } from 'utils/common';
 
 export type ClaimTokenAction = {
   walletId: string,
   code: string,
-}
+};
 
+export type ReferralInvitation = {|
+  email?: string,
+  phone?: string,
+|};
+
+let branchIoSubscription;
+
+const referralsTokenReceivedAction = (
+  token: string,
+  email: ?string,
+  phone: ?string,
+): ReferralsTokenReceived => ({
+  type: 'RECEIVED_REFERRAL_TOKEN',
+  payload: {
+    token,
+    email,
+    phone,
+  },
+});
+
+const sendingInviteAction = (): ReferralsSendingInviteAction => ({
+  type: SENDING_INVITE,
+});
+
+const inviteSentAction = (payload: InviteSentPayload) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: INVITE_SENT,
+      payload,
+    });
+  };
+};
+
+const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: errorMessage || 'Please try again later',
+        title: `${isAllInvitesNotSent ? 'Invites' : 'Some invites'} have not been sent`,
+        messageType: 'warning',
+        autoClose: false,
+      },
+    });
+    dispatch({
+      type: REFERRAL_INVITE_ERROR,
+    });
+  };
+};
+
+export const completeReferralsEventAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      user: { data: { walletId } },
+      referrals: { referralToken, isRewardClaimed },
+    } = getState();
+
+    if (!referralToken || isRewardClaimed) {
+      return;
+    }
+
+    await logEvent(BranchEvent.CompleteRegistration, {
+      walletId,
+      securityToken: referralToken,
+    });
+
+    dispatch({
+      type: CLAIM_REWARD,
+    });
+
+    Toast.show({
+      message: 'You are gonna receive your rewards soon!',
+      type: 'info',
+      title: 'Rewards on their way',
+      autoClose: false,
+    });
+  };
+};
+
+export const sendReferralInvitationsAction = (invitationContacts: ReferralContact[]) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const walletId = get(getState(), 'user.data.walletId');
+    const sentInvitationsCount = get(getState(), 'referrals.sentInvitationsCount');
+    const { count, date } = sentInvitationsCount;
+    dispatch(sendingInviteAction());
+
+    const invitations = invitationContacts.map(({ email, phone }) => ({ email, phone }));
+
+    const unsentInvitations = [];
+    let errorMessage;
+    let rewardToStore = {};
+
+    await Promise.all(invitations.map(async (invitation) => {
+      const { email, phone } = invitation;
+      const token = await api.generateReferralToken(walletId);
+
+      if (token.result !== 'success') {
+        unsentInvitations.push(invitation);
+        return;
+      }
+
+      const referralLink = await getUserReferralLink(walletId, {
+        email,
+        phone,
+        token: token.token,
+      });
+
+      const { error, reward } = await api.sendReferralInvitation({
+        token: token.token,
+        walletId,
+        referralLink,
+        email,
+        phone,
+      });
+
+      if (error) {
+        errorMessage = get(error, 'response.data.message');
+        unsentInvitations.push(invitation);
+        return;
+      }
+
+      let updatedInvitationCount = count + invitationContacts.length;
+      const currentDate = formatDate(new Date(), 'YYYY-MM-DD');
+      if (date !== currentDate) {
+        updatedInvitationCount = invitationContacts.length;
+      }
+      dispatch(inviteSentAction({
+        alreadyInvitedContacts: invitationContacts,
+        sentInvitationsCount: { count: updatedInvitationCount, date: currentDate },
+      }));
+
+      if (!isEmpty(reward)) {
+        rewardToStore = reward;
+      }
+    }));
+    if (unsentInvitations.length < invitations.length) {
+      if (!isEmpty(rewardToStore)) {
+        navigate(REFERRAL_SENT);
+      } else {
+        // if no reward is being issued - show simple toast
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            message: 'Success',
+            title: `${!unsentInvitations.length ? 'Invites' : 'Some invites'} have been sent`,
+            messageType: 'success',
+          },
+        });
+      }
+    }
+    if (unsentInvitations.length) {
+      dispatch(inviteErrorAction(errorMessage, unsentInvitations.length === invitations.length));
+    }
+    // to override reward if it is not returned because no reward is being issued
+    dispatch({
+      type: SET_REFERRAL_REWARD_AMOUNT,
+      payload: rewardToStore,
+    });
+  };
+};
+
+export const startReferralsListenerAction = () => {
+  return (dispatch: Dispatch) => {
+    if (branchIoSubscription) return;
+
+    branchIoSubscription = branch.subscribe(({ error, params }) => {
+      if (!isEmpty(error)) {
+        reportLog('Branch.io Subscribe error', error, 'error');
+        return;
+      }
+      if (!params['+clicked_branch_link']) return;
+
+      const { token, phone, email } = params;
+
+      dispatch(referralsTokenReceivedAction(
+        token,
+        email,
+        phone,
+      ));
+    });
+  };
+};
+
+export const stopReferralsListenerAction = () => {
+  return async () => {
+    if (!branchIoSubscription) return;
+    // per Branch.io docs – branch.subscribe returns a function that cancels subscription once called
+    branchIoSubscription();
+    branchIoSubscription = null;
+  };
+};
+
+// TODO: old one?
 export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const response = await api.claimTokens(props);
     const { responseStatus } = response;
 
@@ -42,5 +274,73 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
         },
       });
     }
+  };
+};
+
+export const setContactsForReferralAction = (contacts: ReferralContact[]) => ({
+  type: SET_CONTACTS_FOR_REFERRAL,
+  payload: contacts,
+});
+
+export const removeContactForReferralAction = (id: string) => ({
+  type: REMOVE_CONTACT_FOR_REFERRAL,
+  payload: id,
+});
+
+export const allowToAccessPhoneContactsAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch({
+      type: ALLOW_ACCESS_PHONE_CONTACTS,
+    });
+  };
+};
+
+export const goToInvitationFlowAction = (onNavigationCallback?: (() => void) = noop) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      user: { data: { isEmailVerified, isPhoneVerified } },
+    } = getState();
+
+    if (isEmailVerified || isPhoneVerified) {
+      const navigateToReferFlow = NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: REFER_FLOW }),
+      });
+      onNavigationCallback();
+      navigate(navigateToReferFlow);
+    } else {
+      const navigateToUserSettings = NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: ADD_EDIT_USER }),
+      });
+
+      Toast.show({
+        message: 'Please add and verify your email address or phone number to proceed',
+        type: 'warning',
+        title: 'Phone or Email verification needed',
+        autoClose: false,
+        onPress: () => {
+          onNavigationCallback();
+          navigate(navigateToUserSettings);
+        },
+      });
+    }
+  };
+};
+
+export const fetchSentReferralInvitationsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+    } = getState();
+
+    const sentInvitations = await api.getSentReferralInvites(walletId);
+
+    dispatch({
+      type: SET_ALREADY_INVITED_CONTACTS,
+      payload: sentInvitations,
+    });
   };
 };

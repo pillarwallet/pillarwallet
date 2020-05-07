@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import type { TransactionPayload } from 'models/Transaction';
+
 type ExchangeOfferAsset = {
   code: string,
   decimals: string,
@@ -34,6 +36,7 @@ export type Offer = {
   minQuantity: number,
   maxQuantity: number,
   allowanceSet: boolean,
+  trackId: string,
 }
 
 export type FiatOffer = {
@@ -54,12 +57,14 @@ export type OfferRequest = {
   provider: string,
   fromAssetAddress: string,
   toAssetAddress: string,
+  walletId: ?string,
 }
 
 export type TokenAllowanceRequest = {
   fromAssetAddress: string,
   toAssetAddress: string,
   provider: string,
+  walletId: ?string,
 }
 
 export type OfferOrder = {
@@ -74,7 +79,7 @@ export type OfferOrder = {
   },
   setTokenAllowance?: boolean,
   provider?: string,
-  gasLimit: number,
+  transactionPayload: TransactionPayload,
 }
 
 export type ExchangeSearchRequest = {

@@ -35,8 +35,8 @@ describe('Chat Actions', () => {
   });
 
   afterEach(() => {
-    dispatchMock.mockClear();
-    getState.mockClear();
+    (dispatchMock: any).mockClear();
+    (getState: any).mockClear();
   });
 
   describe('sendMessageByContactAction()', () => {
@@ -44,24 +44,16 @@ describe('Chat Actions', () => {
       let contact;
       let message;
       let timestamp;
-      let contactConnectionIdentityKeys;
 
       beforeEach(async () => {
         contact = {
           username: 'test-username',
           id: 'user-id',
         };
-        contactConnectionIdentityKeys = {
-          userId: 'self-id',
-          targetUserId: 'user-id',
-          sourceIdentityKey: 'source-identity-key',
-          targetIdentityKey: 'target-identity-key',
-        };
-        getState.mockImplementation(() => ({
-          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
+        (getState: any).mockImplementation(() => ({
           contacts: { data: [contact] },
-          connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
           session: { data: { isOnline: true } },
+          user: { data: { id: 'self-id' } },
         }));
         message = {
           text: 'lorem',
@@ -72,12 +64,12 @@ describe('Chat Actions', () => {
 
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.resolve());
 
-        await sendMessageByContactAction(contact.username, message)(dispatchMock, getState);
+        await sendMessageByContactAction(contact.username, contact.id, message)(dispatchMock, getState);
       });
 
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
-        getState.mockRestore();
+        (getState: any).mockRestore();
       });
 
       it('should call the chatService.client.sendMessageByContact function', () => {
@@ -85,8 +77,6 @@ describe('Chat Actions', () => {
           username: contact.username,
           userId: 'self-id',
           targetUserId: 'user-id',
-          sourceIdentityKey: 'source-identity-key',
-          targetIdentityKey: 'target-identity-key',
           message: message.text,
         });
       });
@@ -111,35 +101,27 @@ describe('Chat Actions', () => {
 
     describe('when sendMessageByContact throws the exception', () => {
       let contact;
-      let contactConnectionIdentityKeys;
 
       beforeEach(async () => {
         contact = {
           username: 'test-username',
           id: 'user-id',
         };
-        contactConnectionIdentityKeys = {
-          userId: 'self-id',
-          targetUserId: 'user-id',
-          sourceIdentityKey: 'source-identity-key',
-          targetIdentityKey: 'target-identity-key',
-        };
-        getState.mockImplementation(() => ({
-          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
+        (getState: any).mockImplementation(() => ({
           contacts: { data: [contact] },
-          connectionIdentityKeys: { data: [contactConnectionIdentityKeys] },
           session: { data: { isOnline: true } },
+          user: { data: { id: 'self-id' } },
         }));
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.reject());
         jest.spyOn(Toast, 'show');
 
-        await sendMessageByContactAction(contact.username, {})(dispatchMock, getState);
+        await sendMessageByContactAction(contact.username, contact.id, {})(dispatchMock, getState);
       });
 
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
         Toast.show.mockRestore();
-        getState.mockRestore();
+        (getState: any).mockRestore();
       });
 
       it('should call the Toast.show function', () => {

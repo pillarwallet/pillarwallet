@@ -18,8 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import { Sentry } from 'react-native-sentry';
-import get from 'lodash.get';
+import * as Sentry from '@sentry/react-native';
 
 // services
 import Storage from 'services/storage';
@@ -36,12 +35,9 @@ import {
 } from 'constants/assetsConstants';
 import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
-import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
-import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES, SET_CONTACTS_BADGES, SET_BADGE_AWARD_EVENTS } from 'constants/badgesConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -55,7 +51,6 @@ import {
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
-  DISMISS_SMART_WALLET_UPGRADE,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -63,6 +58,7 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
   SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
 } from 'constants/smartWalletConstants';
+import { SET_INSIGHTS_STATE } from 'constants/insightsConstants';
 import {
   UPDATE_PAYMENT_NETWORK_BALANCES,
   UPDATE_PAYMENT_NETWORK_STAKED,
@@ -74,14 +70,15 @@ import {
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
+
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
 
 // actions
-import { loadBitcoinAddressesAction } from './bitcoinActions';
-import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from './appSettingsActions';
+import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from './bitcoinActions';
 
 
 const storage = Storage.getInstance('db');
@@ -132,20 +129,11 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { invitations = [] } = await storage.get('invitations');
       dispatch({ type: UPDATE_INVITATIONS, payload: invitations });
 
-      const { accessTokens = [] } = await storage.get('accessTokens');
-      dispatch({ type: UPDATE_ACCESS_TOKENS, payload: accessTokens });
-
       const { oAuthTokens = {} } = await storage.get('oAuthTokens');
       dispatch({ type: UPDATE_OAUTH_TOKENS, payload: oAuthTokens });
 
       const { txCount = {} } = await storage.get('txCount');
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
-
-      const { connectionKeyPairs = [] } = await storage.get('connectionKeyPairs');
-      dispatch({ type: UPDATE_CONNECTION_KEY_PAIRS, payload: connectionKeyPairs });
-
-      const { connectionIdentityKeys = [] } = await storage.get('connectionIdentityKeys');
-      dispatch({ type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: connectionIdentityKeys });
 
       const collectibles = await loadAndMigrate('collectibles', dispatch, getState);
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
@@ -196,6 +184,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { removingConnectedDeviceAddress } = await storage.get('connectedDevices');
       dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: removingConnectedDeviceAddress });
 
+      const { insights = {} } = await storage.get('insights');
+      dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
+
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
@@ -209,9 +200,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       dispatch(loadBitcoinAddressesAction());
 
-      if (appSettings.smartWalletUpgradeDismissed) {
-        dispatch({ type: DISMISS_SMART_WALLET_UPGRADE });
-      }
+      dispatch(loadBitcoinBalancesAction());
 
       const {
         upgradeTransferTransactions = [],
@@ -228,21 +217,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
       dispatch({ type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
 
+      const { ensRegistry = {} } = await storage.get('ensRegistry');
+      dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
+
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-
-      // check if current user has theme set and set it to default if
-      const hasTheme = get(appSettings, 'themeType');
-
-      if (!hasTheme) {
-        dispatch(setAppThemeAction());
-      }
-
-      // check if theme is set to system's default
-      const isThemeSetAsSystemDefault = get(appSettings, 'isSetAsSystemPrefTheme');
-
-      if (isThemeSetAsSystemDefault) {
-        dispatch(handleSystemDefaultThemeChangeAction());
-      }
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 
@@ -250,8 +228,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    dispatch(setAppThemeAction());
-
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };
@@ -260,8 +236,8 @@ export const setupSentryAction = (user: Object, wallet: Object) => {
   return async () => {
     const { id, username, walletId = '' } = user;
     const { address } = wallet;
-    Sentry.setUserContext({
-      userID: id,
+    Sentry.setUser({
+      id,
       username,
       extra: {
         walletId,

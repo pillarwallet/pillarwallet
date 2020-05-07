@@ -17,14 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
-import { View } from 'react-native';
 import styled from 'styled-components/native';
 
-import { BaseText } from 'components/Typography';
-import { formatFiat } from 'utils/common';
-import { fontSizes, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { MediumText } from 'components/Typography';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
+
 
 type Props = {
   balance: number,
@@ -33,41 +33,38 @@ type Props = {
   style: Object,
 };
 
-const LabelText = styled(BaseText)`
-  color: ${themedColors.secondaryText};
-  font-size: ${fontSizes.medium}px;
-  padding: 10px 0;
+
+const BalanceText = styled(MediumText)`
+  font-size: 36px;
+  line-height: 36px;
 `;
 
-const BalanceText = styled(BaseText)`
-  color: ${themedColors.text};
-  font-size: ${fontSizes.giant}px;
+const CurrencyText = styled(MediumText)`
+  font-size: 20px;
+  line-height: 20px;
+  margin-top: 2px;
+  margin-right: 6px;
 `;
 
 const BalanceWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.layoutSides}px;
-  width: 100%;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.border};
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
 `;
+
 
 class BalanceView extends React.PureComponent<Props> {
   render() {
-    const {
-      style,
-      fiatCurrency,
-      label,
-      balance,
-    } = this.props;
+    const { style, fiatCurrency, balance } = this.props;
 
-    const portfolioBalance = formatFiat(balance, fiatCurrency);
+    const portfolioBalance = formatMoney(balance, 2, 3, ',', '.', false);
+    const currency = fiatCurrency || defaultFiatCurrency;
+    const currencySymbol = getCurrencySymbol(currency);
 
     return (
-      <BalanceWrapper>
-        <View style={style}>
-          {!!label && <LabelText>{label}</LabelText>}
-          <BalanceText>{portfolioBalance}</BalanceText>
-        </View>
+      <BalanceWrapper style={style}>
+        <CurrencyText>{currencySymbol}</CurrencyText>
+        <BalanceText>{portfolioBalance}</BalanceText>
       </BalanceWrapper>
     );
   }

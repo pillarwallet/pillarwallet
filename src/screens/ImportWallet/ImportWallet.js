@@ -28,7 +28,6 @@ import type { Input } from 'native-base';
 // actions
 import {
   importWalletFromTWordsPhraseAction,
-  importWalletFromPrivateKeyAction,
   resetWalletErrorAction,
 } from 'actions/walletActions';
 
@@ -37,23 +36,22 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
-import QRCodeScanner from 'components/QRCodeScanner';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
-import Icon from 'components/Icon';
+import QRCodeScanner from 'components/QRCodeScanner';
 
 // constants
 import {
   WALLET_ERROR,
   IMPORT_ERROR,
-  IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
   TWORDSPHRASE,
-  PRIVATEKEY,
+  IMPORTING,
+  IMPORTED,
 } from 'constants/walletConstants';
 
 // utils
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // types
@@ -62,23 +60,21 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => void,
-  importWalletFromPrivateKey: (privateKey: string) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   resetWalletError: Function,
 };
 
 type State = {
-  privateKey: string,
   tWordsPhrase: string,
   errorMessage: string,
   errorField: string,
-  isScanning: boolean,
   activeTab: string,
   inputEnabled: boolean,
   backupPhrase: Object,
   currentWordIndex: number,
   currentBPWord: string,
+  isImporting: boolean,
 };
 
 const DEV = 'DEV';
@@ -133,42 +129,6 @@ const BackupWordText = styled(BaseText)`
   color: ${themedColors.secondaryText};
 `;
 
-const ScannerButton = styled.TouchableOpacity`
-  margin-top: 16px;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const ButtonText = styled(BaseText)`
-  color: ${themedColors.primary};
-  font-size: ${fontSizes.medium}px;
-`;
-
-const ButtonIcon = styled(CachedImage)`
-  height: 24px;
-  width: 24px;
-  justify-content: center;
-  margin-right: 8px;
-`;
-
-const ButtonInner = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const ButtonLabel = styled(MediumText)`
-  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
-  font-size: ${fontSizes.big}px;
-  margin-bottom: 2px;
-`;
-
-const ButtonIconArrow = styled(Icon)`
-  font-size: ${fontSizes.big}px;
-  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.control};
-  ${props => props.isOnLeft ? 'margin-right: 5px;' : 'margin-left: 5px;'}
-  ${props => props.flip ? 'transform: rotate(180deg);' : ''}
-`;
-
 const getButtonLabel = (currentWordIndex, error) => {
   if (error && currentWordIndex === 12) {
     return { text: 'Try again', showArrow: false };
@@ -178,34 +138,42 @@ const getButtonLabel = (currentWordIndex, error) => {
   return { text: 'Finish', showArrow: false };
 };
 
-const iconReceive = require('assets/icons/icon_receive.png');
-
 class ImportWallet extends React.Component<Props, State> {
-  currentInputRef: Input;
+  backupPhraseInput: Object;
+  devPhraseInput: Object;
 
   state = {
-    privateKey: '',
     tWordsPhrase: '',
     backupPhrase: {},
     currentBPWord: '',
     currentWordIndex: 1,
     errorMessage: '',
     errorField: '',
-    isScanning: false,
     activeTab: TWORDSPHRASE,
     inputEnabled: false,
+    isImporting: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { activeTab } = prevState;
     const { walletState, error } = nextProps.wallet;
 
     if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
-      const errorMessage = activeTab === PRIVATEKEY ? 'Incorrect private key' : 'Incorrect backup phrase';
+      const errorMessage = 'Incorrect backup phrase';
       return {
         ...prevState,
         errorMessage,
         errorField: error.field,
+        isImporting: false,
+      };
+    } else if (walletState === IMPORTING) {
+      return {
+        ...prevState,
+        isImporting: true,
+      };
+    } else if (walletState === IMPORTED) {
+      return {
+        ...prevState,
+        isImporting: false,
       };
     } else if (walletState !== WALLET_ERROR) {
       return {
@@ -218,41 +186,26 @@ class ImportWallet extends React.Component<Props, State> {
   }
 
   handleImportSubmit = () => {
-    Keyboard.dismiss();
-    const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    const {
-      privateKey,
-      tWordsPhrase,
-      activeTab,
-      backupPhrase,
-    } = this.state;
+    this.setState({ isImporting: true });
+    requestAnimationFrame(() => {
+      Keyboard.dismiss();
+      const { importWalletFromTWordsPhrase } = this.props;
+      const {
+        tWordsPhrase,
+        activeTab,
+        backupPhrase,
+      } = this.state;
 
-    if (activeTab === PRIVATEKEY) {
-      importWalletFromPrivateKey(privateKey);
-    } else if (activeTab === TWORDSPHRASE) {
-      const trimmedPhrase = Object.values(backupPhrase).join(' ');
-      importWalletFromTWordsPhrase(trimmedPhrase);
-    } else if (activeTab === DEV) {
-      const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
-      importWalletFromTWordsPhrase(trimmedPhrase);
-    } else {
-      this.setState({ errorField: '' });
-    }
-  };
-
-  handleQRScannerOpen = async () => {
-    this.setState({ isScanning: !this.state.isScanning },
-      () => {
-        if (this.state.isScanning) {
-          Keyboard.dismiss();
-        }
-      });
-  };
-
-  handleQRScannerClose = () => this.setState({ isScanning: false });
-
-  handleQRRead = (privateKey: string) => {
-    this.setState({ privateKey, isScanning: false });
+      if (activeTab === TWORDSPHRASE) {
+        const trimmedPhrase = Object.values(backupPhrase).join(' ');
+        importWalletFromTWordsPhrase(trimmedPhrase);
+      } else if (activeTab === DEV) {
+        const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
+        importWalletFromTWordsPhrase(trimmedPhrase);
+      } else {
+        this.setState({ errorField: '' });
+      }
+    });
   };
 
   getError = (errorField: string) => {
@@ -266,7 +219,9 @@ class ImportWallet extends React.Component<Props, State> {
     if (field === 'currentBPWord') {
       this.onBackupPhraseWordChange(value);
     } else {
-      this.setState({ [field]: value });
+      this.setState({
+        [field]: value,
+      });
     }
     this.props.resetWalletError();
   };
@@ -277,18 +232,8 @@ class ImportWallet extends React.Component<Props, State> {
     });
   };
 
-  setInputRef = (inputRef) => {
-    this.currentInputRef = inputRef;
-  };
-
-  focusInputOnLayout = () => {
-    if (!this.currentInputRef) return;
-    this.currentInputRef.focus();
-  };
-
   renderForm = (tabsInfo) => {
     const { activeTab, backupPhrase, currentWordIndex } = this.state;
-
     const inputProps = {
       onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
       value: tabsInfo[activeTab].value,
@@ -297,38 +242,20 @@ class ImportWallet extends React.Component<Props, State> {
       autoComplete: 'off',
     };
 
-    if (activeTab === PRIVATEKEY) {
-      return (
-        <React.Fragment>
-          <Label style={{ marginBottom: 20 }}>Paste your private key</Label>
-          <TextInput
-            getInputRef={this.setInputRef}
-            inputProps={{
-              ...inputProps,
-              multiline: true,
-              numberOfLines: 3,
-            }}
-            keyboardAvoidance
-            errorMessage={tabsInfo[activeTab].errorMessage}
-            additionalStyle={{ textAlign: 'center' }}
-            errorMessageStyle={{ textAlign: 'center' }}
-            onLayout={this.focusInputOnLayout}
-          />
-        </React.Fragment>
-      );
-    }
-
     if (activeTab === DEV) {
       return (
         <TextInput
-          getInputRef={this.setInputRef}
+          getInputRef={(ref) => { this.devPhraseInput = ref; }}
           inputProps={{
             ...inputProps,
             multiline: true,
             numberOfLines: 2,
           }}
           errorMessage={tabsInfo[activeTab].errorMessage}
-          onLayout={this.focusInputOnLayout}
+          onLayout={() => {
+            if (!this.devPhraseInput) return;
+            this.devPhraseInput.focus();
+          }}
         />
       );
     }
@@ -342,67 +269,58 @@ class ImportWallet extends React.Component<Props, State> {
         </Row>
         <Label>{`Word ${currentWordIndex}`}</Label>
         <TextInput
-          getInputRef={this.setInputRef}
+          getInputRef={(ref) => { this.backupPhraseInput = ref; }}
           inputProps={inputProps}
           additionalStyle={{ textAlign: 'center' }}
           errorMessage={tabsInfo[activeTab].errorMessage}
-          onLayout={this.focusInputOnLayout}
+          onLayout={() => {
+            if (!this.backupPhraseInput) return;
+            this.backupPhraseInput.focus();
+          }}
         />
       </React.Fragment>
     );
   };
 
   renderFooterButtons = (tabsInfo) => {
-    const { activeTab, currentBPWord, currentWordIndex } = this.state;
+    const {
+      activeTab,
+      currentBPWord,
+      currentWordIndex,
+      isImporting,
+    } = this.state;
 
     if (activeTab === TWORDSPHRASE) {
       const { errorMessage } = tabsInfo[activeTab];
-      const showPrev = currentWordIndex > 1;
+      const showPrev = currentWordIndex > 1 && !isImporting;
       const { text: nextButtonText, showArrow: showBackArrow } = getButtonLabel(currentWordIndex, errorMessage);
       return (
         <ButtonsWrapper isRow>
-          {!!showPrev &&
-          <StyledButton
-            primaryInverted
+          {!!showPrev && <StyledButton
+            title="Prev"
             onPress={this.showPrevWord}
-          >
-            <ButtonInner>
-              <ButtonIconArrow name="back" primary isOnLeft />
-              <ButtonLabel primary>Prev</ButtonLabel>
-            </ButtonInner>
-          </StyledButton>}
+            leftIconName="back"
+            disabled={isImporting}
+            secondary
+          />}
           <StyledButton
-            disabled={!currentBPWord}
+            title={nextButtonText}
             onPress={this.showNextWord}
-          >
-            <ButtonInner>
-              <ButtonLabel>{nextButtonText}</ButtonLabel>
-              {!!showBackArrow && <ButtonIconArrow name="back" flip />}
-            </ButtonInner>
-          </StyledButton>
-        </ButtonsWrapper>
-      );
-    } else if (activeTab === PRIVATEKEY) {
-      return (
-        <ButtonsWrapper>
-          <Button
-            disabled={!tabsInfo[activeTab].value}
-            title="Re-import"
-            onPress={this.handleImportSubmit}
+            rightIconName={showBackArrow ? 'back' : null}
+            rightIconStyle={{ transform: [{ rotate: '180deg' }] }}
+            disabled={!currentBPWord || isImporting}
+            isLoading={isImporting}
           />
-          <ScannerButton onPress={this.handleQRScannerOpen}>
-            <ButtonIcon source={iconReceive} />
-            <ButtonText>QR code scan</ButtonText>
-          </ScannerButton>
         </ButtonsWrapper>
       );
     }
 
     return (
       <Button
-        disabled={!tabsInfo[activeTab].value}
+        disabled={!tabsInfo[activeTab].value || isImporting}
         title="Re-import"
         onPress={this.handleImportSubmit}
+        isLoading={isImporting}
       />
     );
   };
@@ -441,9 +359,7 @@ class ImportWallet extends React.Component<Props, State> {
 
   render() {
     const {
-      privateKey,
       tWordsPhrase,
-      isScanning,
       currentBPWord,
       activeTab,
     } = this.state;
@@ -453,11 +369,6 @@ class ImportWallet extends React.Component<Props, State> {
         id: TWORDSPHRASE,
         name: 'Backup phrase',
         onPress: () => this.setActiveTab(TWORDSPHRASE),
-      },
-      {
-        id: PRIVATEKEY,
-        name: 'Private key',
-        onPress: () => this.setActiveTab(PRIVATEKEY),
       },
     ];
 
@@ -475,12 +386,6 @@ class ImportWallet extends React.Component<Props, State> {
         changeName: 'currentBPWord',
         value: currentBPWord,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
-      },
-      PRIVATEKEY: {
-        inputLabel: 'Private key',
-        changeName: 'privateKey',
-        value: privateKey,
-        errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
       },
       DEV: {
         inputLabel: 'Backup phrase',
@@ -501,21 +406,19 @@ class ImportWallet extends React.Component<Props, State> {
       >
         <ScrollWrapper
           contentContainerStyle={{ flex: 1 }}
-          keyboardShouldPersistTaps="always"
           disableAutomaticScroll
+          keyboardShouldPersistTaps="always"
         >
-          <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
+          {__DEV__ && <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />}
           <Wrapper regularPadding>
+            {!__DEV__ && <MediumText center style={{ marginTop: spacing.large }}>Enter your 12 words</MediumText>}
             <InputWrapper>
-              <FormWrapper>{this.renderForm(tabsInfo)}</FormWrapper>
+              <FormWrapper>
+                {this.renderForm(tabsInfo)}
+              </FormWrapper>
             </InputWrapper>
           </Wrapper>
         </ScrollWrapper>
-        <QRCodeScanner
-          isActive={isScanning}
-          onCancel={this.handleQRScannerClose}
-          onRead={this.handleQRRead}
-        />
       </ContainerWithHeader>
     );
   }
@@ -526,9 +429,6 @@ const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wall
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   importWalletFromTWordsPhrase: (tWordsPhrase) => {
     dispatch(importWalletFromTWordsPhraseAction(tWordsPhrase));
-  },
-  importWalletFromPrivateKey: (privateKey) => {
-    dispatch(importWalletFromPrivateKeyAction(privateKey));
   },
   resetWalletError: () => {
     dispatch(resetWalletErrorAction());

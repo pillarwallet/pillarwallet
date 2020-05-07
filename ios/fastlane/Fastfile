@@ -30,10 +30,10 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Release",
       scheme: "pillarwallet",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "BUNDLE_IDENTIFIER='com.pillarproject.wallet' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "app-store",
       export_options: {
-        provisioningProfiles: { 
+        provisioningProfiles: {
             MY_APP_ID => MY_PROFILE
         }
       },
@@ -89,10 +89,10 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Staging.Release",
       scheme: "Staging",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "xBUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "app-store",
       export_options: {
-        provisioningProfiles: { 
+        provisioningProfiles: {
             MY_APP_ID => MY_PROFILE
         }
       },
@@ -132,7 +132,7 @@ platform :ios do
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges",
-      commits_count: "500"
+      commits_count: "50"
     )
     custom_changelog = ""
     pr_merges = changelog_notes.split(/Merge/)
@@ -158,7 +158,7 @@ platform :ios do
   end
 
   desc "Release to adhoc TestFlight"
-  lane :deploy_ios_hockeyapp do |options|
+  lane :deploy_ios_appcenter do |options|
 
     MY_APP_ID = "com.pillarproject.wallet.staging"
     MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging"
@@ -197,10 +197,10 @@ platform :ios do
       workspace: "pillarwallet.xcworkspace",
       configuration: "Staging.Release",
       scheme: "Staging",
-      xcargs: "-UseModernBuildSystem='NO' BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "BUNDLE_IDENTIFIER='com.pillarproject.wallet.staging' PROVISIONING_PROFILE_SPECIFIER='match AdHoc com.pillarproject.wallet.staging' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "ad-hoc",
       export_options: {
-        provisioningProfiles: { 
+        provisioningProfiles: {
             MY_APP_ID => MY_PROFILE
         }
       },
@@ -229,12 +229,14 @@ platform :ios do
     changelog = build_custom_changelog
     commit = last_git_commit
 
-    hockey(
-      api_token: ENV["HOCKEY_APP_TOKEN"],
-      notes: changelog,
-      commit_sha: commit[:commit_hash],
-      notify: "1",
-      ipa: "./output/gym/pillarwallet-staging.ipa"
+    appcenter_upload(
+      api_token: ENV["APPCENTER_IOS_TOKEN"],
+      owner_name: "brent-2",
+      owner_type: "user",
+      app_name: "Pillar-Wallet-Staging",
+      file: "./output/gym/pillarwallet-staging.ipa",
+      notify_testers: true,
+      release_notes: changelog
     )
 
   end

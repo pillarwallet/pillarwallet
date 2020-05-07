@@ -67,10 +67,10 @@ class ForgotPin extends React.Component<Props, {}> {
         footer={(
           <FooterWrapper>
             <FooterParagraph>
-              It is impossible to restore your wallet without the backup, be careful.
+              It is impossible to restore your wallet without the backup phrase, be careful.
             </FooterParagraph>
             <Button
-              icon="down-arrow"
+              leftIconName="down-arrow"
               block
               danger
               marginBottom={`${spacing.rhythm}px`}
@@ -83,11 +83,10 @@ class ForgotPin extends React.Component<Props, {}> {
       >
         <Wrapper regularPadding style={{ marginTop: spacing.layoutSides }}>
           <Paragraph>You can restore access to your wallet by re-importing
-            it using 12-word backup phrase (private key)
-            generated for you during the wallet creation.
+            it using 12-word backup phrase generated for you during the wallet creation.
           </Paragraph>
           <Paragraph light>
-            Please have the backup phrase or private key ready and re-import your wallet.
+            Please have the backup phrase ready and re-import your wallet.
           </Paragraph>
         </Wrapper>
       </ContainerWithHeader>

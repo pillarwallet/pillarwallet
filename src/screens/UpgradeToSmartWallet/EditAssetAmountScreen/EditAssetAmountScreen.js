@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Keyboard, TextInput, View, ScrollView } from 'react-native';
+import { FlatList, Keyboard, View, ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -31,6 +31,7 @@ import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { BaseText } from 'components/Typography';
+import TextInput from 'components/Input';
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -42,6 +43,7 @@ import assetsConfig from 'configs/assetsConfig';
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,6 +62,7 @@ type State = {
   disableScroll: boolean,
 };
 
+
 const ErrorHolder = styled.View`
   width: 100%;
   justify-content: flex-end;
@@ -74,7 +77,6 @@ const ErrorText = styled(BaseText)`
   text-align: right;
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 class EditAssetAmountScreen extends React.Component<Props, State> {
   state = {
@@ -137,8 +139,8 @@ class EditAssetAmountScreen extends React.Component<Props, State> {
     return (
       <ListItemWithImage
         label={item.name}
-        itemImageUrl={fullIconUrl || genericToken}
-        fallbackSource={genericToken}
+        itemImageUrl={fullIconUrl}
+        fallbackToGenericToken
         rightColumnInnerStyle={{ flex: 1, justifyContent: 'center' }}
         customAddon={
           <View style={{ height: 70, justifyContent: 'center', minWidth: 180 }}>

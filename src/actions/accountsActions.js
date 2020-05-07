@@ -23,6 +23,7 @@ import {
   ADD_ACCOUNT,
   UPDATE_ACCOUNTS,
   ACCOUNT_TYPES,
+  CHANGING_ACCOUNT,
 } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -38,19 +39,23 @@ import {
 import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
+import { PIN_CODE } from 'constants/navigationConstants';
 import Storage from 'services/storage';
 import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances';
 import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
-import { getActiveAccountType, getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountId, getActiveAccountType } from 'utils/accounts';
+import { printLog } from 'utils/common';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { navigate } from 'services/navigation';
 
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+import { setUserEnsIfEmptyAction } from './ensRegistryActions';
 
 const storage = Storage.getInstance('db');
 
@@ -178,6 +183,22 @@ export const addAccountAction = (
   };
 };
 
+export const removeAccountAction = (accountAddress: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+
+    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    if (accounts.length === updatedAccounts.length) {
+      return;
+    }
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: updatedAccounts,
+    });
+    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
 export const setActiveAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -189,10 +210,12 @@ export const setActiveAccountAction = (accountId: string) => {
         },
       },
     } = getState();
+
+
     const account = accounts.find(acc => acc.id === accountId);
     if (!account) {
       // TODO: account not found in storage
-      console.log('setActiveAccountAction account not found by id: ', accountId);
+      printLog('setActiveAccountAction account not found by id: ', accountId);
       return;
     }
     const updatedAccounts = accounts.map(acc => ({ ...acc, isActive: acc.id === accountId }));
@@ -220,19 +243,27 @@ export const setActiveAccountAction = (accountId: string) => {
   };
 };
 
-export const switchAccountAction = (accountId: string, privateKey?: string) => {
+export const switchAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
+      smartWallet: { sdkInitialized },
     } = getState();
     const account = accounts.find(_acc => _acc.id === accountId) || {};
 
+    dispatch({ type: CHANGING_ACCOUNT, payload: true });
+
     if (account.type === ACCOUNT_TYPES.KEY_BASED) {
       await dispatch(setActiveAccountAction(accountId));
-    } else if (account.type === ACCOUNT_TYPES.SMART_WALLET && privateKey) {
-      await dispatch(initSmartWalletSdkAction(privateKey));
-      await dispatch(connectSmartWalletAccountAction(accountId));
-      await dispatch(setActiveAccountAction(accountId));
+    } else if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
+      if (sdkInitialized) {
+        await dispatch(connectSmartWalletAccountAction(accountId));
+        await dispatch(setActiveAccountAction(accountId));
+        dispatch(setUserEnsIfEmptyAction());
+      } else {
+        navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
+        return;
+      }
     }
 
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
@@ -240,6 +271,7 @@ export const switchAccountAction = (accountId: string, privateKey?: string) => {
     dispatch(fetchCollectiblesAction());
     dispatch(fetchTransactionsHistoryAction());
     dispatch(checkForMissedAssetsAction());
+    dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };
 
@@ -247,30 +279,15 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
-      accounts: {
-        data: accounts,
-      },
-      smartWallet: {
-        upgrade: {
-          status: upgradeStatus,
-        },
-      },
+      accounts: { data: accounts },
     } = getState();
 
     const activeAccountId = getActiveAccountId(accounts);
     const activeAccountType = getActiveAccountType(accounts);
-
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
-      if ([
-        SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      ].includes(upgradeStatus)) {
-        await dispatch(initSmartWalletSdkAction(privateKey));
-      }
-      return;
-    }
-
     await dispatch(initSmartWalletSdkAction(privateKey));
+
+    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
+
     await dispatch(connectSmartWalletAccountAction(activeAccountId));
     dispatch(fetchVirtualAccountBalanceAction());
 
@@ -280,5 +297,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
         payload: blockchainNetwork,
       });
     }
+
+    dispatch(setUserEnsIfEmptyAction());
   };
 };

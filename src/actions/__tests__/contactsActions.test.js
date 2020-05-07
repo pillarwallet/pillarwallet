@@ -18,12 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  UPDATE_SEARCH_RESULTS,
-  FETCHING,
-  UPDATE_CONTACTS_STATE,
+  START_SEARCH,
+  FINISH_SEARCH,
+  RESET_SEARCH_RESULTS,
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
-import Toast from 'components/Toast';
 import { initialState } from 'reducers/rootReducer';
 import * as chatActions from '../chatActions';
 import * as dbActions from '../dbActions';
@@ -49,42 +48,6 @@ describe('Contacts Actions', () => {
     },
   ];
 
-  const accessTokens = {
-    data: [
-      {
-        userId: 'user-foo-bar',
-        myAccessToken: 'my-personal-access-token',
-        userAccessKey: 'user-foo-bar-access-token',
-      },
-      {
-        userId: 'user-lorem-ipsum',
-        myAccessToken: 'my-personal-access-token-2',
-        userAccessKey: 'user-foo-bar-access-token-2',
-      },
-    ],
-  };
-
-  const connectionIdentityKeys = {
-    data: [
-      {
-        targetUserId: 'user-foo-bar',
-        sourceIdentityKey: 'my-personal-access-token',
-        targetIdentityKey: 'user-foo-bar-access-token',
-        targetUserInfo: {
-          ...mockLocalContacts[0],
-        },
-      },
-      {
-        targetUserId: 'user-lorem-ipsum',
-        sourceIdentityKey: 'my-personal-access-token-2',
-        targetIdentityKey: 'user-foo-bar-access-token-2',
-        targetUserInfo: {
-          ...mockLocalContacts[1],
-        },
-      },
-    ],
-  };
-
   const getStateMock = () => {
     return {
       ...initialState,
@@ -95,25 +58,6 @@ describe('Contacts Actions', () => {
       },
       invitations: { data: [] },
       contacts: { data: mockLocalContacts },
-      accessTokens,
-      connectionIdentityKeys,
-    };
-  };
-
-  const getStateMockNoAccessToken = () => {
-    return {
-      ...initialState,
-      user: {
-        data: {
-          id: 'current-user-id',
-          username: 'current-user',
-          walletId: 'some-wallet-current-user',
-        },
-      },
-      invitations: { data: [] },
-      contacts: { data: mockLocalContacts },
-      accessTokens: { data: [] },
-      connectionIdentityKeys: { data: [] },
     };
   };
 
@@ -144,12 +88,12 @@ describe('Contacts Actions', () => {
       await actions.searchContactsAction('')(dispatchMock, getStateMock, apiMock);
 
       expect(dispatchMock).toBeCalledWith({
-        type: UPDATE_CONTACTS_STATE,
-        payload: FETCHING,
+        type: START_SEARCH,
+        payload: { localContacts: mockLocalContacts, apiUsers: [] },
       });
 
       expect(dispatchMock).toBeCalledWith({
-        type: UPDATE_SEARCH_RESULTS,
+        type: FINISH_SEARCH,
         payload: {
           apiUsers: [],
           localContacts: mockLocalContacts,
@@ -161,26 +105,23 @@ describe('Contacts Actions', () => {
       await actions.resetSearchContactsStateAction()(dispatchMock);
 
       expect(dispatchMock).toBeCalledWith({
-        type: UPDATE_CONTACTS_STATE,
-        payload: null,
+        type: RESET_SEARCH_RESULTS,
       });
     });
   });
 
   describe('Sync', () => {
-    const RealDate = Date;
-
     beforeEach(() => {
-      global.Date = class extends RealDate {
+      global.Date = class extends Date {
         constructor() {
-          return new RealDate('2017-11-25T12:34:56z');
+          super('2017-11-25T12:34:56z');
         }
       };
       jest.spyOn(dbActions, 'saveDbAction').mockImplementation(() => Promise.resolve());
     });
 
     afterEach(() => {
-      global.Date = RealDate;
+      global.Date = Date;
     });
 
     it('should sync contacts', async () => {
@@ -195,29 +136,6 @@ describe('Contacts Actions', () => {
         type: UPDATE_CONTACTS,
         payload: [updateContactSecond, updateContactFirst],
       });
-    });
-
-    xit('should return and do nothing if accessToken does not exist', async () => {
-      const stateWithNoAccessToken = () => {
-        return {
-          ...initialState,
-          user: { data: { walletId: 'some-wallet-id' } },
-          contacts: { data: mockLocalContacts },
-          accessTokens: {
-            data: [
-              {
-                userId: 'user-inexistent',
-                myAccessToken: 'my-personal-access-token',
-                userAccessKey: 'user-foo-bar-access-token',
-              },
-            ],
-          },
-        };
-      };
-
-      const action = await actions.syncContactAction(mockLocalContacts[0].id)(
-        dispatchMock, stateWithNoAccessToken, apiMock);
-      expect(action).toBe(undefined);
     });
   });
 
@@ -248,18 +166,6 @@ describe('Contacts Actions', () => {
           payload: mockLocalContacts[0],
         });
       });
-    });
-
-    xit('should not allow to disconnect if accessToken is not present (reimport wallet)', async () => {
-      jest.spyOn(Toast, 'show');
-      await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMockNoAccessToken, apiMock);
-
-      expect(Toast.show).toBeCalledWith({
-        message: 'Successfully Disconnected',
-        type: 'info',
-      });
-
-      Toast.show.mockRestore();
     });
   });
 });

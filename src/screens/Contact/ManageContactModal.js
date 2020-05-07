@@ -33,6 +33,8 @@ import {
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
+import { fontSizes } from 'utils/variables';
+
 
 type Props = {
   onModalHide: Function,
@@ -50,21 +52,21 @@ const manageModalButtons = [
     manageType: MUTE,
     primaryInverted: true,
     title: 'Mute',
-    icon: 'mute',
+    leftIconName: 'mute',
     style: { ...buttonStyle, marginTop: 12 },
   },
   {
     manageType: DISCONNECT,
     primaryInverted: true,
     title: 'Disconnect',
-    icon: 'remove',
+    leftIconName: 'remove',
     style: { ...buttonStyle },
   },
   {
     manageType: BLOCK,
     dangerInverted: true,
     title: 'Report / Block',
-    icon: 'warning',
+    leftIconName: 'warning',
     style: { ...buttonStyle, marginBottom: 58 },
   },
 ];
@@ -77,7 +79,6 @@ const ManageConnectionModal = (props: Props) => {
     contactStatus,
   } = props;
 
-  const iconSize = 'small';
 
   const manageContactButtons = manageModalButtons.map((manageButton) => {
     const { manageType, ...manageButtonProps } = manageButton;
@@ -90,7 +91,7 @@ const ManageConnectionModal = (props: Props) => {
     return (
       <Button
         key={`modalButton-${manageType}`}
-        iconSize={iconSize}
+        leftIconStyle={{ fontSize: fontSizes.small }}
         onPress={() => onManageContact(manageType)}
         {...manageButtonProps}
         title={title}

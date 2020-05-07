@@ -42,6 +42,7 @@ import { isIphoneX } from 'utils/common';
 import { fontSizes, spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountHistorySelector } from 'selectors/history';
@@ -51,6 +52,7 @@ import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme, ThemeColors } from 'models/Theme';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -66,6 +68,7 @@ type Props = {
 type State = {|
   isImageViewVisible: boolean,
 |};
+
 
 const ActionButtonsWrapper = styled.View`
   flex: 1;
@@ -127,8 +130,6 @@ const ImageCloseIcon = (props: { onPress: () => void, colors: ThemeColors }) => 
   );
 };
 
-const iconSend = require('assets/icons/icon_send.png');
-const genericCollectible = require('assets/images/no_logo.png');
 
 class CollectibleScreen extends React.Component<Props, State> {
   forceRender = false;
@@ -159,11 +160,11 @@ class CollectibleScreen extends React.Component<Props, State> {
 
   onTouchImage = () => {
     this.setState({ isImageViewVisible: true });
-  }
+  };
 
   onCloseImageView = () => {
     this.setState({ isImageViewVisible: false });
-  }
+  };
 
   renderImageView(collectible: Collectible) {
     const { isImageViewVisible } = this.state;
@@ -198,6 +199,7 @@ class CollectibleScreen extends React.Component<Props, State> {
       history,
       contactsSmartAddresses,
       accounts,
+      theme,
     } = this.props;
     const { assetData } = navigation.state.params;
     const {
@@ -223,6 +225,7 @@ class CollectibleScreen extends React.Component<Props, State> {
     );
     const relatedCollectibleTransactions = mappedCTransactions.filter(({ assetData: thisAssetData }) =>
       !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id);
+    const { towellie: genericCollectible } = images(theme);
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
@@ -245,7 +248,7 @@ class CollectibleScreen extends React.Component<Props, State> {
             <CircleButtonsWrapper center horizontal>
               <CircleButton
                 label="Send"
-                icon={iconSend}
+                fontIcon="paperPlane"
                 onPress={() => this.goToSendTokenFlow(assetData)}
                 disabled={!isOwned}
               />

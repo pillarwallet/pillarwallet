@@ -21,11 +21,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import get from 'lodash.get';
 import type { Dispatch } from 'reducers/rootReducer';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
-import CheckPin from 'components/CheckPin';
+import CheckAuth from 'components/CheckAuth';
 import Header from 'components/Header';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { themedColors } from 'utils/themes';
@@ -51,10 +52,14 @@ const PrivateKeyWrapper = styled(Paragraph)`
 `;
 
 class RevealBackupPhrase extends React.Component<Props, State> {
-  state = {
-    pinIsValid: false,
-    wallet: {},
-  };
+  constructor(props) {
+    super(props);
+    const wallet = get(props, 'navigation.state.params.wallet', null);
+    this.state = {
+      pinIsValid: !!wallet,
+      wallet: wallet || {},
+    };
+  }
 
   handleScreenDismissal = () => {
     this.props.resetIncorrectPassword();
@@ -67,17 +72,18 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
   render() {
     const { pinIsValid, wallet } = this.state;
-
+    const showPrivateKey = get(this.props, 'navigation.state.params.showPrivateKey', false);
     if (!pinIsValid) {
       return (
-        <Container>
-          <Header title="Enter pincode" centerTitle onClose={this.handleScreenDismissal} />
-          <CheckPin revealMnemonic onPinValid={(pin, walletObj) => this.onPinValid(walletObj)} />
-        </Container>
+        <CheckAuth
+          revealMnemonic
+          onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
+          headerProps={{ onClose: this.handleScreenDismissal }}
+        />
       );
     }
 
-    if (wallet.mnemonic) {
+    if (wallet.mnemonic && !showPrivateKey) {
       return (
         <Container>
           <Header title="Backup phrase" onClose={this.handleScreenDismissal} />
@@ -95,7 +101,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="backup phrase" onClose={this.handleScreenDismissal} />
+        <Header title="Private key" onClose={this.handleScreenDismissal} />
         <Wrapper regularPadding>
           <Paragraph>Please use this private key in order to restore the wallet.</Paragraph>
           <Paragraph light>

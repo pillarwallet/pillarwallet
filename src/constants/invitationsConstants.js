@@ -18,9 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const ADD_INVITATION = 'ADD_INVITATION';
 export const UPDATE_INVITATIONS = 'UPDATE_INVITATIONS';
-export const UPDATE_INVITATIONS_STATE = 'UPDATE_INVITATIONS_STATE';
 export const TYPE_SENT = 'TYPE_SENT';
 export const TYPE_INVITE = 'TYPE_INVITE';
 

@@ -17,12 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { FlatList, Keyboard, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
+import { connect } from 'react-redux';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, Wrapper } from 'components/Layout';
@@ -34,12 +36,14 @@ import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Tabs from 'components/Tabs';
 import Toast from 'components/Toast';
+
 import { spacing } from 'utils/variables';
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { EDIT_ASSET_AMOUNT_TO_TRANSFER, UPGRADE_REVIEW } from 'constants/navigationConstants';
-import { connect } from 'react-redux';
+
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+
 import {
   addAssetsToSmartWalletUpgradeAction,
   addCollectiblesToSmartWalletUpgradeAction,
@@ -47,11 +51,14 @@ import {
 import { formatAmount } from 'utils/common';
 import { getAssetsAsList, getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
+
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
+import { accountAssetsSelector } from 'selectors/assets';
+
 import type { AssetTransfer, Assets, Balances } from 'models/Asset';
 import type { Collectible, CollectibleTransfer } from 'models/Collectible';
-import { accountAssetsSelector } from 'selectors/assets';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -74,6 +81,7 @@ type State = {
   disableScroll: boolean,
 };
 
+
 const FooterInner = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -81,7 +89,6 @@ const FooterInner = styled.View`
   width: 100%;
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 class ChooseAssetsScreen extends React.Component<Props, State> {
   state = {
@@ -127,9 +134,9 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     return (
       <ListItemWithImage
         label={item.name}
-        itemImageUrl={fullIconUrl || genericToken}
+        itemImageUrl={fullIconUrl}
         itemValue={`${formattedAmount} ${item.symbol}`}
-        fallbackSource={genericToken}
+        fallbackToGenericToken
         onPress={() => this.toggleAssetInTransferList(item.name, item.amount)}
         customAddon={
           <View style={{
@@ -159,8 +166,8 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
     return (
       <ListItemWithImage
         label={item.name}
-        itemImageUrl={item.icon || genericToken}
-        fallbackSource={genericToken}
+        itemImageUrl={item.icon}
+        fallbackToGenericToken
         onPress={() => this.toggleCollectiblesInTransferList(collectibleKey)}
         customAddon={
           <Checkbox
@@ -293,7 +300,7 @@ class ChooseAssetsScreen extends React.Component<Props, State> {
       // mock
       navigation.goBack(null);
       Toast.show({
-        message: 'Your Smart wallet has been funded',
+        message: 'Your Smart Wallet has been funded',
         type: 'success',
         title: 'Success',
         autoClose: true,

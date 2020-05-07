@@ -23,14 +23,15 @@ import { CachedImage } from 'react-native-cached-image';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
-import { fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
+import { LabelBadge } from 'components/LabelBadge';
 
 type Props = {
   iconSource?: string,
   fallbackIcon?: string,
-  title: string,
+  title: string | (string | React.Node)[],
   subtitle?: string,
   action?: Function,
   note?: Object,
@@ -39,6 +40,11 @@ type Props = {
   contentWrapperStyle?: Object,
   disabled?: boolean,
   children?: React.Node,
+  labelBadge?: {
+    label: string,
+    color?: string,
+  },
+  customIcon?: React.Node,
 }
 
 const CardRow = styled.View`
@@ -55,14 +61,11 @@ const CardImage = styled(CachedImage)`
   margin-right: 20px;
 `;
 
-const ContentWrapper = styled.View`
-  flex: 1;
-`;
-
 const CardContent = styled.View`
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
+  flex: 1;
 `;
 
 const CardTitle = styled(MediumText)`
@@ -70,10 +73,26 @@ const CardTitle = styled(MediumText)`
   ${fontStyles.big};
 `;
 
+const CardSubtitleView = styled.View`
+  padding-right: 10%;
+`;
+
 const CardSubtitle = styled(BaseText)`
   color: ${themedColors.secondaryText};
-  ${fontStyles.medium};
-  padding-right: 10%;
+  ${fontStyles.regular};
+  padding-right: 25%;
+`;
+
+const TitleWithImagesWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  color: ${themedColors.text};
+  ${fontStyles.big};
+`;
+
+const ImageWrapper = styled.View`
+  height: 16;
+  justify-content: flex-end;
 `;
 
 const TitleWrapper = styled.View`
@@ -83,7 +102,7 @@ const TitleWrapper = styled.View`
 `;
 
 const Label = styled(BaseText)`
-  color: ${themedColors.primary};
+  color: ${themedColors.link};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
@@ -102,28 +121,54 @@ export const ListCard = (props: Props) => {
     contentWrapperStyle,
     disabled,
     children,
+    labelBadge,
+    customIcon,
   } = props;
 
   const wrapperStyle = { padding: 20, justifyContent: 'center' };
 
+  const getTitle = () => {
+    if (typeof title === 'string') return <CardTitle style={titleStyle}>{title}</CardTitle>;
+    // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
+    return (
+      <TitleWithImagesWrapper>
+        {title.map((item, idx) => {
+          if (typeof item === 'string') return <CardTitle key={idx}>{item}</CardTitle>;
+        return <ImageWrapper key={idx}>{item}</ImageWrapper>;
+        })}
+      </TitleWithImagesWrapper>
+    );
+  };
+
   return (
     <ShadowedCard
-      wrapperStyle={{ marginBottom: 10, width: '100%' }}
+      wrapperStyle={{ marginBottom: 16, width: '100%' }}
       contentWrapperStyle={{ ...wrapperStyle, ...contentWrapperStyle }}
       onPress={action}
       disabled={disabled}
+      noShadow
     >
       <CardRow>
         {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
-        <ContentWrapper>
-          <CardContent>
-            <TitleWrapper>
-              <CardTitle style={titleStyle}>{title}</CardTitle>
-              {!!label && <Label>{label}</Label>}
-            </TitleWrapper>
-            {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
-          </CardContent>
-        </ContentWrapper>
+        {customIcon}
+        <CardContent>
+          <TitleWrapper>
+            {getTitle()}
+            {!!label && <Label>{label}</Label>}
+            {!!labelBadge && (
+              <LabelBadge
+                label={labelBadge.label}
+                labelStyle={{ fontSize: fontSizes.regular }}
+                color={labelBadge.color}
+              />
+            )}
+          </TitleWrapper>
+          {!!subtitle && (
+            <CardSubtitleView>
+              <CardSubtitle>{subtitle}</CardSubtitle>
+            </CardSubtitleView>
+          )}
+        </CardContent>
       </CardRow>
       {!!note &&
       <Note {...note} containerStyle={{ marginTop: 14 }} />

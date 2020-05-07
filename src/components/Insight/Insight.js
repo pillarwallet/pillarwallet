@@ -30,6 +30,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 
+
 type InsightChecklistItem = {
   status?: boolean,
   title: string,
@@ -42,19 +43,23 @@ type InsightNumberedListItem = {
 };
 
 type Props = {
-  title: string,
-  onClose: Function,
+  title?: string,
+  onClose?: () => void,
   insightChecklist: InsightChecklistItem[],
   insightNumberedList: InsightNumberedListItem[],
   children?: React.Node,
   isVisible: boolean,
   onLayout?: Function,
   wrapperStyle?: Object,
+  wrapperPadding?: number | string,
   theme: Theme,
-}
+};
+
 
 const Wrapper = styled.View`
-  padding: 16px 20px 6px 20px;
+  padding: 16px ${({ wrapperPadding }) => !!wrapperPadding || wrapperPadding === 0
+    ? wrapperPadding
+    : `${spacing.layoutSides}px 6px ${spacing.layoutSides}px`};
 `;
 
 const CardRow = styled.View`
@@ -118,6 +123,7 @@ const NumberedListItem = styled.View`
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
+  margin-bottom: 8px;
 `;
 
 const ListNumberWrapper = styled.View`
@@ -135,8 +141,13 @@ const ListNumberWrapper = styled.View`
 `;
 
 const TextWrapper = styled.View`
-  max-width: 80%;
   flex-wrap: wrap;
+  flex-grow: 1;
+`;
+
+const TextRow = styled.View`
+  flex-direction: row;
+  width: 90%;
 `;
 
 const ListNumber = styled(BaseText)`
@@ -153,6 +164,8 @@ const ListTitle = styled(MediumText)`
 const ListBody = styled(BaseText)`
   color: ${themedColors.accent};
   ${fontStyles.regular};
+  flex-wrap: wrap;
+  flex: 1;
 `;
 
 const StatusIcon = ({ isDone }) => {
@@ -176,6 +189,7 @@ const Insight = (props: Props) => {
     isVisible,
     onLayout,
     wrapperStyle,
+    wrapperPadding,
     theme,
   } = props;
 
@@ -183,21 +197,22 @@ const Insight = (props: Props) => {
 
   if (!isVisible) return null;
   return (
-    <Wrapper onLayout={onLayout} style={wrapperStyle}>
+    <Wrapper onLayout={onLayout} style={wrapperStyle} wrapperPadding={wrapperPadding}>
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10, width: '100%' }}
         contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40 }}
       >
+        {!!onClose &&
         <Close
           icon="close"
           color={colors.secondaryText}
           onPress={onClose}
           fontSize={fontSizes.small}
           horizontalAlign="flex-end"
-        />
+        />}
         <CardRow>
           <ContentWrapper>
-            <CardTitle>{title}</CardTitle>
+            {!!title && <CardTitle>{title}</CardTitle>}
             {!!insightChecklist && <FlatList
               data={insightChecklist}
               extraData={props}
@@ -226,8 +241,12 @@ const Insight = (props: Props) => {
                       <ListNumber>{index + 1}</ListNumber>
                     </ListNumberWrapper>
                     <TextWrapper>
-                      <ListTitle>{itemTitle}</ListTitle>
-                      <ListBody>{body}</ListBody>
+                      <TextRow>
+                        <ListTitle>{itemTitle}</ListTitle>
+                      </TextRow>
+                      <TextRow>
+                        <ListBody>{body}</ListBody>
+                      </TextRow>
                     </TextWrapper>
                   </NumberedListItem>
                 );

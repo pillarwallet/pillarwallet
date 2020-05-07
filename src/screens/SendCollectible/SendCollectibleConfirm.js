@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { BackHandler, Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -13,7 +13,11 @@ import type { GasInfo } from 'models/GasInfo';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import {
+  SEND_COLLECTIBLE_CONTACTS,
+  SEND_TOKEN_ASSETS,
+  SEND_TOKEN_PIN_CONFIRM,
+} from 'constants/navigationConstants';
 import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -27,6 +31,7 @@ import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
 import { calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 import { activeAccountAddressSelector } from 'selectors';
+
 
 const NORMAL = 'avg';
 
@@ -66,6 +71,7 @@ const Value = styled(MediumText)`
 class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
   receiver: string;
+  receiverEnsName: string;
   source: string;
 
   constructor(props) {
@@ -73,6 +79,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');
+    this.receiverEnsName = this.props.navigation.getParam('receiverEnsName');
 
     this.state = {
       note: null,
@@ -86,6 +93,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       activeAccountAddress,
       fetchGasInfo,
     } = this.props;
+    if (Platform.OS === 'android') BackHandler.addEventListener('hardwareBackPress', this.handleBackAction);
     fetchGasInfo();
     this.fetchETHBalanceInRinkeby();
     const {
@@ -108,6 +116,31 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     }
   }
 
+  componentWillUnmount() {
+    if (Platform.OS === 'android') BackHandler.removeEventListener('hardwareBackPress', this.handleBackAction);
+  }
+
+  handleBackAction = () => {
+    const { navigation, contacts } = this.props;
+    const backTo = navigation.getParam('backTo');
+    switch (backTo) {
+      case SEND_COLLECTIBLE_CONTACTS:
+        navigation.navigate(SEND_COLLECTIBLE_CONTACTS, { assetData: this.assetData });
+        break;
+      case SEND_TOKEN_ASSETS:
+        const contact = contacts.find(({ ethAddress }) => addressesEqual(this.receiver, ethAddress));
+        if (!contact) {
+          // this is impossible, but rather dismiss whole flow than follow faulty
+          navigation.dismiss();
+          break;
+        }
+        navigation.navigate(SEND_TOKEN_ASSETS, { contact });
+        break;
+      default:
+        navigation.goBack();
+    }
+  };
+
   fetchETHBalanceInRinkeby = async () => {
     const { wallet } = this.props;
     const rinkebyETHBlanace = await fetchRinkebyETHBalance(wallet.address);
@@ -117,7 +150,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const { note } = this.state;
+    const { note, gasLimit } = this.state;
     const {
       name,
       tokenType,
@@ -125,13 +158,20 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       contractAddress,
     } = this.assetData;
 
+    const gasPrice = this.getGasPriceInWei().toNumber();
+    const txFeeInWei = this.getTxFeeInWei();
+
     const transactionPayload: CollectibleTransactionPayload = {
       to: this.receiver,
+      receiverEnsName: this.receiverEnsName,
       name,
       contractAddress,
       tokenType,
       tokenId,
       note,
+      gasLimit,
+      gasPrice,
+      txFeeInWei,
     };
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
@@ -144,11 +184,15 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.setState({ note: text });
   }
 
-  getTxFeeInWei = () => {
+  getGasPriceInWei = () => {
     const { gasInfo } = this.props;
-    const { gasLimit } = this.state;
     const gasPrice = gasInfo.gasPrice[NORMAL] || 0;
-    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return utils.parseUnits(gasPrice.toString(), 'gwei');
+  };
+
+  getTxFeeInWei = () => {
+    const { gasLimit } = this.state;
+    const gasPriceWei = this.getGasPriceInWei();
     return gasPriceWei.mul(gasLimit);
   };
 
@@ -171,7 +215,10 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
+        headerProps={{
+          centerItems: [{ title: 'Review and confirm' }],
+          customOnBack: this.handleBackAction,
+        }}
         footer={(
           <FooterWrapper>
             <Button
@@ -196,10 +243,16 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             <Value>{recipientUsername}</Value>
           </LabeledRow>
           }
+          {!!this.receiverEnsName &&
+          <LabeledRow>
+            <Label>Recipient ENS name</Label>
+            <Value>{this.receiverEnsName}</Value>
+          </LabeledRow>
+          }
           {!!userAccount &&
           <LabeledRow>
             <Label>Recipient</Label>
-            <Value>{getAccountName(userAccount.type, accounts)}</Value>
+            <Value>{getAccountName(userAccount.type)}</Value>
           </LabeledRow>
           }
           <LabeledRow>

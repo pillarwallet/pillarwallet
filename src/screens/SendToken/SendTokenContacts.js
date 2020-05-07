@@ -19,18 +19,20 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Alert, FlatList } from 'react-native';
 import isEmpty from 'lodash.isempty';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
+import get from 'lodash.get';
+import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
 import Separator from 'components/Separator';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Container, Footer } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -39,7 +41,12 @@ import Spinner from 'components/Spinner';
 
 // constants
 import { COLLECTIBLES, BTC } from 'constants/assetsConstants';
-import { ACCOUNTS, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import {
+  ACCOUNTS,
+  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
+  SEND_COLLECTIBLE_CONTACTS,
+  SEND_TOKEN_ASSETS,
+} from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -48,11 +55,13 @@ import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
 // utils
-import { addressValidator } from 'utils/validators';
-import { isCaseInsensitiveMatch } from 'utils/common';
+import { addressValidator, isEnsName } from 'utils/validators';
+import { resolveEnsName, isCaseInsensitiveMatch } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { themedColors, getThemeColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -64,7 +73,8 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
 import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { themedColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+import { findMatchingContact } from 'utils/contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -78,18 +88,20 @@ type Props = {
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
   activeAccount: ?Account,
+  theme: Theme,
+  isChanging: boolean
 };
 
 type State = {
   isScanning: boolean,
+  isValidatingEns: boolean,
   value: {
     address: string,
   },
   formStructure: t.struct,
+  formOptions: Object,
 };
 
-const keyWalletIcon = require('assets/icons/icon_ethereum_network.png');
-const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');
 
 const FormWrapper = styled.View`
@@ -102,6 +114,12 @@ const FormWrapper = styled.View`
 const ImageIcon = styled(CachedImage)`
   width: 6px;
   height: 12px;
+  tint-color: ${themedColors.primary};
+`;
+
+const ButtonWrapper = styled.View`
+  width: 100%;
+  padding: 0 20px 16px;
 `;
 
 const { Form } = t.form;
@@ -118,6 +136,7 @@ function AddressInputTemplate(locals) {
     maxLength: 42,
     letterSpacing: 0.1,
     fontSize: fontSizes.medium,
+    autoCapitalize: 'none',
   };
 
   return (
@@ -167,18 +186,21 @@ class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
   assetData: AssetData;
   isPPNTransaction: boolean;
+  isSendingFromHomeFlow: boolean;
 
   constructor(props: Props) {
     super(props);
-    const { navigation, blockchainNetworks } = this.props;
-    this.assetData = navigation.getParam('assetData', {});
+    const { blockchainNetworks, navigation } = this.props;
     this.isPPNTransaction = isPillarPaymentNetworkActive(blockchainNetworks);
-    const { token } = this.assetData;
+    this.isSendingFromHomeFlow = navigation.getParam('sendFromHomeFlow');
 
+    this.updateAssetData();
     this.state = {
       isScanning: false,
+      isValidatingEns: false,
       value: { address: '' },
-      formStructure: getFormStructure(this.props.wallet.address, token),
+      formStructure: getFormStructure(this.props.wallet.address, get(this.assetData, 'token')),
+      formOptions: generateFormOptions({ onIconPress: this.handleQRScannerOpen }),
     };
   }
 
@@ -189,14 +211,67 @@ class SendTokenContacts extends React.Component<Props, State> {
     }
   }
 
+  componentDidUpdate() {
+    const navigationAssetData = this.props.navigation.getParam('assetData');
+    if (navigationAssetData && !isEqual(navigationAssetData, this.assetData)) {
+      /**
+       * if nav stack is restored after app unlock then this view constructor is already initiated
+       * with empty values, when navigating back to this view in restored stack let's update with
+       * actual values if present (added on back from upper level screen)
+       */
+      this.updateAssetData();
+      this.updateFormStructure();
+    }
+  }
+
+  updateAssetData = () => {
+    this.assetData = this.props.navigation.getParam('assetData', {});
+  };
+
+  updateFormStructure = () => this.setState({
+    formStructure: getFormStructure(this.props.wallet.address, get(this.assetData, 'token')),
+  });
+
   handleChange = (value: Object) => {
     this.setState({ value });
+  };
+
+  validateAndNavigate = async (address: string) => {
+    const { token } = this.assetData;
+    let ensName = '';
+    let receiverAddress = address;
+
+    if (isEnsName(address) && token !== BTC) {
+      this.setState({ isValidatingEns: true });
+      const resolvedAddress = await resolveEnsName(address);
+      if (!resolvedAddress) {
+        this.setInvalidEns();
+        return;
+      }
+      ensName = address;
+      receiverAddress = resolvedAddress;
+    }
+
+    this.setState({ isValidatingEns: false }, () => this.navigateToNextScreen(receiverAddress, ensName));
   };
 
   handleFormSubmit = () => {
     const value = this._form.getValue();
     if (!value) return;
-    this.navigateToNextScreen(value.address);
+
+    this.validateAndNavigate(value.address);
+  };
+
+  setInvalidEns = () => {
+    const options = t.update(this.state.formOptions, {
+      fields: {
+        address: {
+          hasError: { $set: true },
+          error: { $set: 'Address not found' },
+        },
+      },
+    });
+    this.setState({ isValidatingEns: false, formOptions: options });
   };
 
   handleQRScannerOpen = async () => {
@@ -217,7 +292,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   handleQRRead = (address: string) => {
     this.setState({ value: { ...this.state.value, address }, isScanning: false }, () => {
-      this.navigateToNextScreen(address);
+      this.validateAndNavigate(address);
     });
   };
 
@@ -245,6 +320,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
+    const { theme } = this.props;
+    const { keyWalletIcon, smartWalletIcon } = images(theme);
+
     const {
       username,
       hasSmartWallet,
@@ -271,14 +349,34 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
   };
 
-  navigateToNextScreen(receiverAddress) {
-    const { navigation, navigateToSendTokenAmount } = this.props;
+  navigateToNextScreen(receiverAddress: string, receiverEnsName?: string) {
+    const {
+      navigation,
+      navigateToSendTokenAmount,
+      localContacts,
+      contactsSmartAddresses,
+      accounts,
+    } = this.props;
 
     if (this.assetData.tokenType === COLLECTIBLES) {
-      navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+      navigation.navigate(SEND_COLLECTIBLE_CONTACTS_CONFIRM, {
         assetData: this.assetData,
         receiver: receiverAddress,
         source: 'Contact',
+        receiverEnsName,
+        backTo: SEND_COLLECTIBLE_CONTACTS,
+      });
+      return;
+    }
+    if (this.isSendingFromHomeFlow) {
+      const { username } = findMatchingContact(receiverAddress, localContacts, contactsSmartAddresses) || {};
+      const userWallet = accounts.find(({ id }) => id === receiverAddress) || {};
+      const userWalletName = getAccountName(userWallet.type);
+      navigation.navigate(SEND_TOKEN_ASSETS, {
+        contact: {
+          ethAddress: receiverAddress,
+          username: username || userWalletName || receiverAddress,
+        },
       });
       return;
     }
@@ -286,22 +384,19 @@ class SendTokenContacts extends React.Component<Props, State> {
       assetData: this.assetData,
       receiver: receiverAddress,
       source: 'Contact',
+      receiverEnsName,
     });
   }
 
   renderContacts() {
-    const {
-      localContacts = [],
-      contactsSmartAddresses,
-      accounts,
-    } = this.props;
+    const { localContacts = [], contactsSmartAddresses, accounts } = this.props;
     const { value } = this.state;
 
     const isSearchQueryProvided = !!(value && value.address.length);
     const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
       ...account,
       ethAddress: getAccountAddress(account),
-      username: getAccountName(account.type, accounts),
+      username: getAccountName(account.type),
       sortToTop: true,
       isUserAccount: true,
     }));
@@ -358,37 +453,72 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
   }
 
+  getHeaderItems = () => {
+    const { theme } = this.props;
+    const { tokenType, name, token } = this.assetData;
+    const colors = getThemeColors(theme);
+
+    const tokenName = (tokenType === COLLECTIBLES ? (name || token) : token) || 'asset';
+
+    if (this.isPPNTransaction) {
+      return [
+        { title: 'Send' },
+        { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
+        { title: tokenName, color: colors.primary },
+      ];
+    } else if (this.isSendingFromHomeFlow) {
+      return [{ title: 'Choose recipient' }];
+    }
+    return [{ title: `Send ${tokenName}` }];
+  };
+
+  renderFooter = () => {
+    const { value, isValidatingEns } = this.state;
+    const isSearchQueryProvided = !!(value && value.address.length);
+    const submitDisabled = !value.address.length || isValidatingEns;
+    if (!isSearchQueryProvided) return <></>;
+    return (
+      <ButtonWrapper>
+        <Button
+          regularText
+          textStyle={fontStyles.medium}
+          disabled={submitDisabled}
+          title="Next"
+          onPress={this.handleFormSubmit}
+        />
+      </ButtonWrapper>
+    );
+  };
+
   render() {
     const {
       localContacts = [],
       contactsSmartAddressesSynced,
       isOnline,
+      isChanging,
     } = this.props;
-    const { tokenType, name, token } = this.assetData;
+    const {
+      isScanning,
+      formStructure,
+      formOptions,
+      value,
+    } = this.state;
+
+    const { tokenType, token } = this.assetData;
     const isCollectible = tokenType === COLLECTIBLES;
 
-    const { isScanning, formStructure, value } = this.state;
-    const isSearchQueryProvided = !!(value && value.address.length);
-    const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
+    const showContacts = !isChanging && (isCollectible || token !== BTC);
+    const headerTitleItems = this.getHeaderItems();
 
-    const showContacts = isCollectible || token !== BTC;
-    const tokenName = (isCollectible ? (name || token) : token) || 'asset';
-
-    const headerTitleItems = this.isPPNTransaction
-      ? [
-        { title: 'Send' },
-        { custom: <ImageIcon source={lightningIcon} />, style: { marginHorizontal: 5 } },
-        { title: tokenName, color: baseColors.electricBlueIntense },
-      ]
-      : [{ title: `Send ${tokenName}` }];
-
-    const showSpinner = isOnline && !contactsSmartAddressesSynced && !isEmpty(localContacts);
+    const showSpinner = isOnline && ((!contactsSmartAddressesSynced && !isEmpty(localContacts)) || isChanging);
 
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: headerTitleItems }}
         inset={{ bottom: 0 }}
+        footer={this.renderFooter()}
       >
+        {!isChanging &&
         <FormWrapper>
           <Form
             ref={node => {
@@ -400,7 +530,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBlur={this.handleChange}
             value={value}
           />
-        </FormWrapper>
+        </FormWrapper>}
         {showSpinner && <Container center><Spinner /></Container>}
         {showContacts && this.renderContacts()}
         <AddressScanner
@@ -408,18 +538,13 @@ class SendTokenContacts extends React.Component<Props, State> {
           onCancel={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        {isSearchQueryProvided &&
-          <Footer keyboardVerticalOffset={35}>
-            <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
-          </Footer>
-        }
       </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  accounts: { data: accounts },
+  accounts: { data: accounts, isChanging },
   contacts: { data: localContacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   wallet: { data: wallet },
   session: { data: { contactsSmartAddressesSynced, isOnline } },
@@ -432,6 +557,7 @@ const mapStateToProps = ({
   contactsSmartAddressesSynced,
   isOnline,
   blockchainNetworks,
+  isChanging,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -448,4 +574,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts));

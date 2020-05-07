@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Share, RefreshControl } from 'react-native';
+import { RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -35,7 +35,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
-import DeploymentView from 'components/DeploymentView';
+import SWActivationCard from 'components/SWActivationCard';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -44,7 +44,7 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SMART_WALLET_INTRO } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
@@ -80,7 +80,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
-
 
 const RECEIVE = 'RECEIVE';
 
@@ -185,12 +184,15 @@ const SyntheticAssetIcon = styled(CachedImage)`
   height: 24px;
   margin-right: 4px;
   margin-top: 1px;
+  tint-color: ${themedColors.primary};
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props, State> {
   forceRender = false;
+  isNavigatingToExchangeFlow = false;
+
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
@@ -228,16 +230,12 @@ class AssetScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  handleOpenShareDialog = (address: string) => {
-    Share.share({ title: 'Public address', message: address });
-  };
-
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
-  goToExchangeFlow = (fromAssetCode: string) => {
-    this.props.navigation.navigate(EXCHANGE, { fromAssetCode });
+  goToExchangeFlow = (fromAssetCode: string, toAssetCode?: string) => {
+    this.props.navigation.navigate(EXCHANGE, { fromAssetCode, toAssetCode });
   };
 
   openReceiveTokenModal = assetData => {
@@ -263,6 +261,22 @@ class AssetScreen extends React.Component<Props, State> {
       fetchAssetTransactions(token, indexFrom);
     }
   };
+
+  handleBuyTokens = () => {
+    // wait for the modal to be completely hidden and then navigate to exchange
+    // navigating while the modal is hiding leads to keyboard flickering etc.
+    this.isNavigatingToExchangeFlow = true;
+    this.setState({ activeModal: activeModalResetState });
+  };
+
+  handleModalHidden = () => {
+    if (this.isNavigatingToExchangeFlow) {
+      this.isNavigatingToExchangeFlow = false;
+      const fiatCurrency = this.props.baseFiatCurrency || defaultFiatCurrency;
+      const { assetData: { token } } = this.props.navigation.state.params;
+      this.goToExchangeFlow(fiatCurrency, token);
+    }
+  }
 
   render() {
     const {
@@ -390,11 +404,7 @@ class AssetScreen extends React.Component<Props, State> {
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
             {!isSendActive &&
-            <DeploymentView
-              message={sendingBlockedMessage}
-              buttonLabel="Deploy Smart Wallet"
-              buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-            />
+              <SWActivationCard />
             }
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
@@ -416,7 +426,10 @@ class AssetScreen extends React.Component<Props, State> {
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
-          handleOpenShareDialog={this.handleOpenShareDialog}
+          showBuyTokensButton
+          handleBuyTokens={this.handleBuyTokens}
+          onModalHidden={this.handleModalHidden}
+          showErc20Note
         />
         <SlideModal
           title={assetData.name}

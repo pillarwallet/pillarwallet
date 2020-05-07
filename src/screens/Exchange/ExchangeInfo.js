@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { FlatList, RefreshControl } from 'react-native';
@@ -56,6 +57,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
@@ -69,6 +71,7 @@ type Props = {
 type State = {
   openCollapseKey: string,
 };
+
 
 const SectionTitle = styled(MediumText)`
   ${fontStyles.medium};
@@ -103,7 +106,6 @@ const DisconnectButtonLabel = styled(BaseText)`
   color: ${themedColors.negative};
 `;
 
-const genericToken = require('assets/images/tokens/genericToken.png');
 
 class ExchangeInfo extends React.Component<Props, State> {
   state = {
@@ -152,6 +154,7 @@ class ExchangeInfo extends React.Component<Props, State> {
     const { openCollapseKey } = this.state;
     const fullIconUrl = `${SDK_PROVIDER}/${token.iconUrl}?size=3`;
     const tokenAllowances = exchangeAllowances.filter(({ fromAssetCode }) => fromAssetCode === token.symbol);
+
     return (
       <CollapsibleListItem
         label={token.symbol}
@@ -160,8 +163,8 @@ class ExchangeInfo extends React.Component<Props, State> {
         customToggle={(
           <ListItemWithImage
             label={token.name}
-            itemImageUrl={fullIconUrl || genericToken}
-            fallbackSource={genericToken}
+            itemImageUrl={fullIconUrl}
+            fallbackToGenericToken
           />
         )}
         collapseContent={
@@ -192,7 +195,7 @@ class ExchangeInfo extends React.Component<Props, State> {
       <ListItemWithImage
         label={providerName}
         itemImageUrl={providerLogoUri}
-        fallbackSource={genericToken}
+        fallbackToGenericToken
         imageDiameter={48}
         subtext={`Connected ${dateToShow}`}
         customAddon={(

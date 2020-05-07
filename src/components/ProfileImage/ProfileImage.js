@@ -43,8 +43,7 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${({ needBackground, theme }) =>
-    needBackground ? theme.colors.userAvatar : theme.colors.secondaryAccent};
+  ${({ needBackground, theme }) => needBackground && `background-color: ${theme.colors.userAvatar}`};
   ${props => (props.additionalContainerStyle)};
   position: relative;
   border: ${({ borderWidth, borderColor, theme }) => `${borderWidth}px solid ${borderColor || theme.colors.card}`};
@@ -66,7 +65,7 @@ const InnerUsername = styled(MediumText)`
   color: ${themedColors.control};
 `;
 
-type Props = {
+export type ExternalProfileImageProps = {
   uri?: string,
   userName?: string,
   containerStyle?: Object,
@@ -81,6 +80,10 @@ type Props = {
   initialsSize?: number,
   noShadow?: boolean,
   showProfileImage?: boolean,
+  fallbackImage?: string,
+}
+
+type Props = ExternalProfileImageProps & {
   theme: Theme,
 }
 
@@ -146,14 +149,18 @@ const ProfileImage = (props: Props) => {
     noShadow,
     showProfileImage = true,
     theme,
+    fallbackImage,
   } = props;
 
   const themeType = getThemeType(theme);
   const diameterWithBorder = diameter + (borderWidth * 2) + (borderSpacing * 2);
 
-  const renderDefaultImage = () => (
-    <DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />
-  );
+  const renderDefaultImage = () => {
+    if (fallbackImage) {
+      return (<CircleImage source={fallbackImage} />);
+    }
+    return (<DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />);
+  };
 
   const renderImage = (data: Object) => {
     if (data.source === IMAGE_LOAD_FAILED) {

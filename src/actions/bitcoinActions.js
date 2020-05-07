@@ -137,12 +137,12 @@ import {
   UPDATE_BITCOIN_BALANCE,
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
-  BITCOIN_WALLET_CREATION_FAILED,
+  SET_BITCOIN_BALANCES,
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { ETHEREUM_PATH, NON_STANDARD_ETHEREUM_PATH } from 'constants/derivationPathConstants';
 import {
   keyPairAddress,
   getAddressUtxos,
@@ -151,6 +151,7 @@ import {
   transactionFromPlan,
   sendRawTransaction,
   getBTCTransactions,
+  rootFromPrivateKey,
 } from 'services/bitcoin';
 import Storage from 'services/storage';
 
@@ -158,9 +159,9 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
   BitcoinReducerAction,
   SetBitcoinAddressesAction,
+  SetBitcoinBalancesAction,
   UpdateBitcoinBalanceAction,
   UpdateUnspentTransactionsAction,
-  BitcoinWalletCreationFailedAction,
   UpdateBTCTransactionsAction,
 } from 'reducers/bitcoinReducer';
 import type { EthereumWallet } from 'models/Wallet';
@@ -171,11 +172,12 @@ import type {
   BitcoinStore,
   BTCBalance,
   BTCTransaction,
+  BitcoinBalance,
 } from 'models/Bitcoin';
 
 import { initialAssets } from 'fixtures/assets';
 
-import { addAccountAction } from 'actions/accountsActions';
+import { removeAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
@@ -191,6 +193,11 @@ const loadDb = (): Promise<BitcoinStore> => {
 const setBitcoinAddressesAction = (addresses: string[]): SetBitcoinAddressesAction => ({
   type: SET_BITCOIN_ADDRESSES,
   addresses,
+});
+
+const setBitcoinBalancesAction = (balances: BitcoinBalance): SetBitcoinBalancesAction => ({
+  type: SET_BITCOIN_BALANCES,
+  balances,
 });
 
 const updateBitcoinBalance = (
@@ -220,26 +227,23 @@ const updateBTCTransactions = (
   transactions: transactions.filter(tx => !!tx.details),
 });
 
-const bitcoinWalletCreationFailed = (): BitcoinWalletCreationFailedAction => ({
-  type: BITCOIN_WALLET_CREATION_FAILED,
-});
+const getKeyPairFromWallet = async (wallet: EthereumWallet) => {
+  const { mnemonic, privateKey } = wallet;
+  let root;
+  let useStandardPath = true;
+  if (mnemonic && mnemonic !== 'ENCRYPTED') {
+    root = await rootFromMnemonic(mnemonic);
+  } else {
+    useStandardPath = false;
+    root = await rootFromPrivateKey(privateKey);
+  }
+  const finalPath = useStandardPath ? ETHEREUM_PATH : NON_STANDARD_ETHEREUM_PATH;
+  return root.derivePath(finalPath);
+};
 
 export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   return async (dispatch: Dispatch) => {
-    const { mnemonic, privateKey, path } = wallet;
-
-    if (!mnemonic && !privateKey) {
-      await dispatch(bitcoinWalletCreationFailed());
-      return;
-    }
-
-    let seed = privateKey;
-    if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      seed = mnemonic;
-    }
-    const root = await rootFromMnemonic(seed);
-    const keyPair = root.derivePath(path);
-
+    const keyPair = await getKeyPairFromWallet(wallet);
     const address = keyPairAddress(keyPair);
     if (!address) {
       Toast.show({
@@ -260,6 +264,16 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
   };
 };
 
+export const loadBitcoinBalancesAction = () => {
+  return async (dispatch: Dispatch) => {
+    const { balances = {} } = await storage.get('bitcoinBalances');
+
+    if (Object.keys(balances).length > 0) {
+      dispatch(setBitcoinBalancesAction(balances));
+    }
+  };
+};
+
 export const loadBitcoinAddressesAction = () => {
   return async (dispatch: Dispatch) => {
     const { addresses = [], keys = {} } = await loadDb();
@@ -272,7 +286,7 @@ export const loadBitcoinAddressesAction = () => {
 
     if (loaded.length) {
       dispatch(setBitcoinAddressesAction(loaded));
-      dispatch(addAccountAction(loaded[0], ACCOUNT_TYPES.BITCOIN_WALLET));
+      dispatch(removeAccountAction(loaded[0]));
     }
   };
 };
@@ -345,15 +359,7 @@ const transactionSent = () => {
 
 export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTransactionPlan, callback: Function) => {
   return async () => {
-    const { mnemonic, privateKey, path } = wallet;
-
-    let seed = privateKey;
-    if (mnemonic && mnemonic !== 'ENCRYPTED') {
-      seed = mnemonic;
-    }
-
-    const root = await rootFromMnemonic(seed);
-    const keyPair = root.derivePath(path);
+    const keyPair = await getKeyPairFromWallet(wallet);
 
     // TODO: Multiple Paths support should map an address to a custom path
     const rawTransaction = transactionFromPlan(
@@ -411,6 +417,9 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
         .then(action => dispatch(action))
         .catch(fetchBalanceFailed);
     }));
+
+    const { bitcoin: { data: { balances } } } = getState();
+    dispatch(saveDbAction('bitcoinBalances', { balances }, true));
   };
 };
 

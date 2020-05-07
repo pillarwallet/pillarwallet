@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
 import debounce from 'lodash.debounce';
@@ -29,8 +29,10 @@ import { fontSizes, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import type { Theme } from 'models/Theme';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
-export type Props = {
+
+export type ExternalButtonProps = {
   children?: React.Node,
   title: string,
   onPress?: Function,
@@ -41,6 +43,7 @@ export type Props = {
   danger?: boolean,
   primaryInverted?: boolean,
   dangerInverted?: boolean,
+  positive?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,
@@ -52,8 +55,6 @@ export type Props = {
   flexRight?: boolean,
   small?: boolean,
   extraSmall?: boolean,
-  icon?: string,
-  iconSize?: string,
   listItemButton?: boolean,
   height?: number,
   debounceTime?: number,
@@ -61,6 +62,15 @@ export type Props = {
   style?: Object,
   isLoading?: boolean,
   regularText?: boolean,
+  leftIconName?: string,
+  leftIconStyle?: Object,
+  rightIconName?: string,
+  rightIconStyle?: Object,
+  horizontalPaddings?: number,
+  card?: boolean,
+};
+
+export type Props = ExternalButtonProps & {
   theme: Theme,
 };
 
@@ -82,9 +92,6 @@ const themes = {
     borderWidth: '1px',
   },
   dangerInverted: {
-    borderWidth: '1px',
-  },
-  secondary: {
     borderWidth: '1px',
   },
   secondaryTransparent: {
@@ -122,10 +129,28 @@ const themes = {
     borderRadius: 0,
     iconHorizontalMargin: 0,
   },
+  positive: {
+    borderWidth: 0,
+  },
+  secondary: {
+    borderWidth: 0,
+    shadow: false,
+  },
+  secondaryDisabled: {
+    borderWidth: 0,
+    opacity: 0.5,
+    shadow: false,
+  },
+  positiveDisabled: {
+    opacity: 0.5,
+    shadow: false,
+  },
 };
 
-const themeColors = (theme) => {
+const themeColors = (theme: Theme) => {
   const colors = getThemeColors(theme);
+  const isDarkTheme = theme.current === DARK_THEME;
+
   return ({
     primary: {
       surface: colors.primary,
@@ -134,24 +159,21 @@ const themeColors = (theme) => {
     },
     primaryInverted: {
       surface: 'transparent',
-      text: colors.primary,
+      text: isDarkTheme ? colors.text : colors.primary,
+      border: isDarkTheme ? colors.tertiary : colors.secondaryAccent,
     },
     dangerInverted: {
       surface: 'transparent',
       text: colors.negative,
       border: colors.negative,
     },
-    secondary: {
-      surface: 'transparent',
-      text: colors.primary,
-    },
     secondaryTransparent: {
-      background: 'transparent',
+      surface: 'transparent',
       text: colors.control,
       border: colors.primary,
     },
     secondaryTransparentDisabled: {
-      background: 'transparent',
+      surface: 'transparent',
       text: colors.secondaryText,
     },
     secondaryDanger: {
@@ -159,12 +181,11 @@ const themeColors = (theme) => {
       text: colors.negative,
     },
     danger: {
-      background: colors.negative,
       surface: colors.danger,
       text: colors.control,
     },
     dark: {
-      background: colors.tertiary,
+      surface: colors.tertiary,
       color: colors.control,
       borderColor: colors.tertiary,
     },
@@ -180,7 +201,7 @@ const themeColors = (theme) => {
     },
     squarePrimary: {
       surface: 'transparent',
-      text: colors.primary,
+      text: isDarkTheme ? colors.link : colors.primary,
       border: 'transparent',
     },
     squareDanger: {
@@ -188,25 +209,52 @@ const themeColors = (theme) => {
       text: colors.negative,
       border: 'transparent',
     },
+    positive: {
+      surface: colors.positive,
+      text: colors.control,
+    },
+    card: {
+      surface: colors.card,
+      text: colors.primary,
+      border: colors.card,
+    },
+    secondary: {
+      surface: colors.buttonSecondaryBackground,
+      text: isDarkTheme ? colors.link : colors.primary,
+    },
+    secondaryDisabled: {
+      surface: colors.buttonSecondaryBackground,
+      text: isDarkTheme ? colors.link : colors.primary,
+    },
+    positiveDisabled: {
+      surface: colors.positive,
+      text: colors.control,
+    },
   });
 };
 
 const getButtonHeight = (props) => {
   if (props.height) {
     return `${props.height}px`;
-  } else if (props.small) {
-    return '34px';
   }
 
-  return '56px';
+  if (props.small) {
+    return '32px';
+  }
+
+  return '48px';
 };
 
 const getButtonWidth = (props) => {
   if (props.square) {
     return getButtonHeight(props);
-  } else if (props.block) {
+  }
+
+  if (props.block) {
     return '100%';
-  } else if (props.width) {
+  }
+
+  if (props.width) {
     return props.width;
   }
 
@@ -214,34 +262,52 @@ const getButtonWidth = (props) => {
 };
 
 const getButtonPadding = (props) => {
+  if (props.horizontalPaddings) {
+    return `${props.horizontalPaddings}px`;
+  }
+
   if (props.noPadding) {
     return '0';
-  } else if (props.small || props.block) {
+  }
+
+  if (props.listItemButton) {
+    return '9px';
+  }
+
+  if (props.small || props.block) {
     return `${spacing.rhythm}px`;
-  } else if (props.square) {
+  }
+
+  if (props.square) {
     return '4px';
   }
-  return `${spacing.rhythm * 1.5}px`;
+  return '19px';
 };
 
 const getButtonFontSize = (props) => {
   if (props.listItemButton) {
-    return `${fontSizes.regular}px`;
-  } else if (props.small) {
-    return `${fontSizes.regular}px`;
-  } else if (props.extraSmall) {
-    return `${fontSizes.small}px`;
+    return fontSizes.regular;
   }
-  return `${fontSizes.big}px`;
+
+  if (props.small) {
+    return fontSizes.regular;
+  }
+
+  if (props.extraSmall) {
+    return fontSizes.small;
+  }
+  return fontSizes.big;
+};
+
+const getLabelTopMargin = (props) => {
+  return getButtonFontSize(props) * 0.18;
 };
 
 const ButtonIcon = styled(Icon)`
-  font-size: ${({ iconSize = 'medium' }) => fontSizes[iconSize]};
-  margin-horizontal: ${props => props.customTheme.iconHorizontalMargin || props.customTheme.iconHorizontalMargin === 0
-    ? props.customTheme.iconHorizontalMargin
-    : props.marginRight || 8}px;
+  font-size: ${(props) => getButtonFontSize(props)}px;
+  ${({ isOnLeft }) => isOnLeft ? 'margin-right: 6px;' : 'margin-left: 6px;'}
   color: ${({ theme }) => theme.colors.text};
-  line-height: ${props => getButtonFontSize(props)};
+  line-height: ${props => getButtonFontSize(props)}px;
 `;
 
 const ButtonWrapper = styled.TouchableOpacity`
@@ -260,7 +326,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
   border-color: ${({ theme }) => theme.colors.border};
-  border-width: ${props => props.customTheme.borderWidth};
+  border-width: ${props => props.customTheme.borderWidth || '0'};
   border-style: solid;
   flex-direction: ${props => props.customTheme.flexDirection ? props.customTheme.flexDirection : 'row'}
   ${props => props.customTheme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
@@ -269,8 +335,11 @@ const ButtonWrapper = styled.TouchableOpacity`
 
 const buttonTextStyle = (props) => `
   color: ${props.theme.colors.text};
-  font-size: ${getButtonFontSize(props)};
-  margin-bottom: ${props.extraSmall ? '2px' : 0};`;
+  font-size: ${getButtonFontSize(props)}px;
+  line-height: ${getButtonFontSize(props)}px;
+  margin-bottom: ${props.extraSmall ? '2px' : 0};
+  margin-top: ${getLabelTopMargin(props)}px;
+`;
 
 const ButtonText = styled(MediumText)`
   ${props => buttonTextStyle(props)};
@@ -311,13 +380,21 @@ const NextIcon = styled(Icon)`
   transform: rotate(180deg);
 `;
 
-const getThemeType = (props: Props, isForColors) => {
+const getThemeType = (props: Props, isForColors?: boolean) => {
   if (props.secondary && props.danger) {
     return 'secondaryDanger';
   }
 
   if (props.secondaryTransparent && props.disabled) {
     return 'secondaryTransparentDisabled';
+  }
+
+  if (props.secondary && props.disabled) {
+    return 'secondaryDisabled';
+  }
+
+  if (props.positive && props.disabled) {
+    return 'positiveDisabled';
   }
 
   const propsKeys = Object.keys(props);
@@ -386,6 +463,30 @@ class Button extends React.Component<Props, State> {
     );
   };
 
+  renderButtonContent = ({ customTheme, updatedTheme }) => {
+    const {
+      isLoading,
+      title,
+      leftIconName,
+      leftIconStyle,
+      rightIconName,
+      rightIconStyle,
+    } = this.props;
+
+    if (isLoading) {
+      return (
+        <Spinner width={20} height={20} />
+      );
+    }
+    return (
+      <React.Fragment>
+        {!!leftIconName && <ButtonIcon name={leftIconName} theme={updatedTheme} isOnLeft style={leftIconStyle} />}
+        {!!title && this.renderButtonText(customTheme, updatedTheme)}
+        {!!rightIconName && <ButtonIcon name={rightIconName} theme={updatedTheme} style={rightIconStyle} />}
+      </React.Fragment>
+    );
+  };
+
   render() {
     const customTheme = themes[getThemeType(this.props)];
     const {
@@ -393,8 +494,9 @@ class Button extends React.Component<Props, State> {
       disabledTransparent,
       children,
       isLoading,
-      style = {},
+      style,
       theme,
+      listItemButton,
     } = this.props;
 
     const updatedColors = themeColors(theme)[getThemeType(this.props, true)];
@@ -408,20 +510,10 @@ class Button extends React.Component<Props, State> {
         onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
         disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap || isLoading}
         borderRadius={this.props.small ? 3 : 6}
-        style={isLoading ? { ...style, backgroundColor: 'transparent' } : style}
-
+        style={style}
+        listItemButton={listItemButton}
       >
-        {!!isLoading && <Spinner width={20} height={20} />}
-        {!!this.props.icon && !isLoading &&
-          <ButtonIcon
-            marginRight={this.props.marginRight}
-            iconSize={this.props.iconSize}
-            name={this.props.icon}
-            customTheme={customTheme}
-            theme={updatedTheme}
-          />
-        }
-        {!!this.props.title && !isLoading && this.renderButtonText(customTheme, updatedTheme)}
+        {this.renderButtonContent({ customTheme, updatedTheme })}
         {children}
       </ButtonWrapper>
     );
@@ -454,7 +546,8 @@ export const ButtonNext = (props: ButtonNextProps) => {
 };
 
 type TooltipButtonProps = {
-  onPress: Function,
+  onPress: () => void,
+  style?: Object,
 };
 
 const TooltipButtonWrapper = styled(BaseText)`
@@ -473,8 +566,10 @@ const TooltipButtonWrapper = styled(BaseText)`
   border-width: 1px;
 `;
 
-export const TooltipButton = ({ onPress }: TooltipButtonProps) => (
-  <TouchableOpacity onPress={onPress}>
-    <TooltipButtonWrapper>?</TooltipButtonWrapper>
-  </TouchableOpacity>
+export const TooltipButton = ({ onPress, style }: TooltipButtonProps) => (
+  <View style={style}>
+    <TouchableOpacity onPress={onPress}>
+      <TooltipButtonWrapper>?</TooltipButtonWrapper>
+    </TouchableOpacity>
+  </View>
 );

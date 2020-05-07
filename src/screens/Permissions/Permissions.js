@@ -184,12 +184,12 @@ const sections = [
         ],
       },
       {
-        key: 'FABRIC',
-        title: 'Fabric',
+        key: 'FIREBASE',
+        title: 'Firebase',
         paragraphs: (
           <Paragraph light small>
             used to track application issues and errors. More on their privacy policy –
-            <TextLink onPress={() => handleUrlPress('https://docs.fabric.io/android/fabric/data-privacy.html')}> https://docs.fabric.io/android/fabric/data-privacy.html</TextLink>
+            <TextLink onPress={() => handleUrlPress('https://firebase.google.com/policies/analytics')}> https://firebase.google.com/policies/analytics</TextLink>
           </Paragraph>
         ),
       },
@@ -327,7 +327,7 @@ class Permissions extends React.Component<Props, State> {
           }}
           collapseContent={
             <View style={{
-              flexDirection: 'column',
+              flexDirection: 'row',
               flexWrap: 'wrap',
               flex: 1,
               marginRight: 30,
@@ -378,7 +378,6 @@ class Permissions extends React.Component<Props, State> {
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'space-between',
-            paddingTop: '10%',
           }}
         >
           <StyledFlatList
@@ -400,6 +399,7 @@ class Permissions extends React.Component<Props, State> {
               onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
               small
               lightText
+              checked={hasAgreedToTerms}
             >
               I have read, understand, and agree to these Terms of Use
             </Checkbox>

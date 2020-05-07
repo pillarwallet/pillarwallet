@@ -15,47 +15,73 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { Input } from 'native-base';
 
+// utils
 import { fontSizes, spacing, fontStyles, appFont } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
+// types
+import type { Event } from 'react-native';
+
+// components
 import { BaseText, MediumText } from 'components/Typography';
-import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import Switcher from 'components/Switcher';
+import LabeledWrapper from 'components/Input/LabeledWrapper';
+import VerifyView from 'components/Input/VerifyView';
+import Input from 'components/Input';
+
+// partials
 import SelectList from './SelectList';
+
+
+type InputProps = {
+  fieldName: string,
+  value?: string,
+  onChange?: (value: any) => void,
+  onSelect?: (value: any) => void,
+  onBlur?: (field: string, value: ?string) => void,
+};
+
+type Option = {
+  name: string,
+};
+
+type Props = {
+  hasVerification?: boolean,
+  isModified?: boolean,
+  isVerified?: boolean,
+  disabledInput?: ?boolean,
+  inputType?: string,
+  errorMessage?: ?string,
+  inputProps: InputProps,
+  hasSwitch?: boolean,
+  label: string,
+  wrapperStyle?: Object,
+  options?: Option[],
+  optionsTitle?: string,
+  onPressVerify?: () => void,
+};
+
+type State = {
+  showModal: boolean,
+};
+
 
 const StyledItemView = styled.View`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 9px ${spacing.large}px 0;
-  background-color: ${themedColors.card};
-  border-bottom-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
-  border-top-color: ${({ hasErrors, theme }) => hasErrors ? theme.colors.negative : theme.colors.border};
-  border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-top-width: ${StyleSheet.hairlineWidth}px;
-  height: 60px;
+  align-content: center;
+  padding: 0 ${spacing.layoutSides}px 0;
+  border-bottom-color: ${({ hasErrors }) => hasErrors ? themedColors.negative : themedColors.tertiary};
+  border-bottom-width: 1px;
 `;
 
 const Wrapper = styled.View`
   width: 100%;
-`;
-
-const ItemLabelHolder = styled.View`
-  height: 100%;
-  flex: 1;
-`;
-
-const ItemLabel = styled(MediumText)`
-  ${fontStyles.small};
-  color: ${themedColors.secondaryText};
-  flex-wrap: wrap;
-  width: 100%;
-  margin-bottom: 6px;
 `;
 
 const ErrorMessage = styled(BaseText)`
@@ -68,34 +94,20 @@ const ErrorMessage = styled(BaseText)`
 
 const ItemValue = styled(Input)`
   color: ${themedColors.text};
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   flex-wrap: wrap;
   width:100%;
   padding: 0 0 9px;
   font-family: ${appFont.medium};
 `;
 
-const SelectedOption = styled(BaseText)`
-  ${fontStyles.medium};
+const SelectedOption = styled(MediumText)`
+  ${fontStyles.big};
   flex-wrap: wrap;
   flex: 1;
   padding: 0 0 9px;
-  width:100%;
-`;
-
-const VerifyView = styled.View`
-  align-items: center;
-  flex-direction: row;
-`;
-
-const VerifyLabel = styled(BaseText)`
-  color: ${({ isVerified, theme }) => isVerified ? theme.colors.positive : theme.colors.primary};
-  ${fontStyles.regular};
-  margin: 0 4px 0;
-`;
-
-const ItemSelectHolder = styled.TouchableOpacity`
-  flex: 1;
+  width: 100%;
+  min-height: 50px;
 `;
 
 const ItemAddon = styled.View`
@@ -110,74 +122,43 @@ const ModalTitle = styled(MediumText)`
   margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
-const CheckIcon = styled(Icon)`
-  color: ${themedColors.positive};
-  font-size: 8px;
-  margin-left: 4px;
-`;
-
-type InputProps = {
-  fieldName: string,
-  value?: string,
-  onChange?: Function,
-  onSelect?: Function,
-  onBlur?: Function,
-};
-
-type Option = {
-  name: string
-};
-
-type Props = {
-  hasVerification?: ?boolean,
-  isVerified?: ?boolean,
-  disabledInput?: ?boolean,
-  inputType?: string,
-  errorMessage?: ?string,
-  inputProps: InputProps,
-  hasSwitch?: boolean,
-  label: string,
-  wrapperStyle?: Object,
-  options?: Option[],
-  optionsTitle?: string,
-};
-
-type State = {
-  showModal: boolean,
-};
-
-type EventLike = {
-  nativeEvent: Object,
-};
 
 export default class InputWithSwitch extends React.Component<Props, State> {
-  fieldValue: string = '';
-
   state = {
     showModal: false,
   };
 
   handleBlur = () => {
-    const { inputProps: { onBlur, fieldName } } = this.props;
-    const value = {};
-    value[fieldName] = this.fieldValue;
+    const {
+      inputProps: {
+        value,
+        onBlur,
+        fieldName,
+      },
+    } = this.props;
 
     if (onBlur) {
-      onBlur(value);
+      onBlur(fieldName, value);
     }
   };
 
-  handleChange = (e: EventLike) => {
+  handleChange = (e: Event) => {
     const { inputProps: { onChange } } = this.props;
-    this.fieldValue = e.nativeEvent.text;
+    const { nativeEvent: { text } } = e;
 
     if (onChange) {
-      onChange(this.fieldValue);
+      onChange(text);
     }
   };
 
   selectOption = (value: string) => {
-    const { inputProps: { onChange, onSelect, fieldName } } = this.props;
+    const {
+      inputProps: {
+        onChange,
+        onSelect,
+        fieldName,
+      },
+    } = this.props;
 
     if (onChange) {
       onChange(value);
@@ -202,57 +183,49 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     const {
       disabledInput,
       errorMessage,
-      hasVerification = false,
-      hasSwitch = false,
+      hasVerification,
+      hasSwitch,
       isVerified,
       inputProps,
       label,
       wrapperStyle,
-      options = [],
+      options,
       optionsTitle,
+      onPressVerify,
+      isModified,
     } = this.props;
     const { value = '' } = inputProps;
     const hasErrors = !!errorMessage;
 
-    const inputSection = options.length ? (
-      <ItemSelectHolder
+    const isValueEmpty = !value || value.trim() === '';
+    const showVerification = !!hasVerification && !hasErrors && !isValueEmpty && !isModified;
+
+    const inputSection = options ? (
+      <LabeledWrapper
+        label={label}
         onPress={this.toggleModal}
       >
-        <ItemLabel>
-          {label}
-        </ItemLabel>
         <SelectedOption>{value}</SelectedOption>
-      </ItemSelectHolder>
+      </LabeledWrapper>
     ) : (
-      <ItemLabelHolder>
-        <ItemLabel>
-          {label}
-        </ItemLabel>
+      <LabeledWrapper label={label}>
         <ItemValue
+          {...inputProps}
           disabled={disabledInput}
           onChange={this.handleChange}
           onBlur={this.handleBlur}
           numberOfLines={1}
           value={value}
         />
-      </ItemLabelHolder>
+      </LabeledWrapper>
     );
 
     return (
       <Wrapper style={wrapperStyle}>
-        <StyledItemView
-          hasErrors={hasErrors}
-        >
+        <StyledItemView hasErrors={hasErrors}>
           {inputSection}
-          {hasVerification &&
-          <VerifyView>
-            <VerifyLabel isVerified={isVerified}>
-              {isVerified ? 'Verified' : 'Verify'}
-            </VerifyLabel>
-            {isVerified && <CheckIcon name="check" />}
-          </VerifyView>
-          }
-
+          {showVerification &&
+            <VerifyView isVerified={!!isVerified} onPress={onPressVerify} />}
           {!!hasSwitch &&
           <ItemAddon>
             <Switcher
@@ -272,16 +245,16 @@ export default class InputWithSwitch extends React.Component<Props, State> {
           showHeader
           onModalHide={this.toggleModal}
           avoidKeyboard
+          noSwipeToDismiss
         >
           <Wrapper flex={1}>
             {!!optionsTitle &&
             <ModalTitle extraHorizontalSpacing>
               {optionsTitle}
             </ModalTitle>}
-            <SelectList options={options} onSelect={this.selectOption} />
+            <SelectList options={options || []} onSelect={this.selectOption} />
           </Wrapper>
         </SlideModal>
-
       </Wrapper>
     );
   }

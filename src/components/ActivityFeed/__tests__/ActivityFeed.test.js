@@ -33,6 +33,9 @@ import { initialState as contactsState } from 'reducers/contactsReducer';
 import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as txNotesState } from 'reducers/txNoteReducer';
+import { initialState as ensRegistryState } from 'reducers/ensRegistryReducer';
+import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
+
 
 const mockStore = configureMockStore([thunk]);
 
@@ -42,6 +45,8 @@ const initialStore = mockStore({
   accounts: accountsState,
   history: historyState,
   txNotes: txNotesState,
+  ensRegistry: ensRegistryState,
+  smartWallet: smartWalletState,
 });
 
 const Component = (store, children) => (
@@ -60,10 +65,6 @@ const transaction = (attrs = {}) => {
 };
 
 describe('ActivityFeed', () => {
-  const navigation = {
-    navigate: () => jest.fn(),
-  };
-
   it('renders the Asset correctly', () => {
     const transactions = [
       transaction(),
@@ -73,7 +74,7 @@ describe('ActivityFeed', () => {
 
     const component = Component(initialStore,
       <ThemeProvider theme={defaultTheme}>
-        <ActivityFeed tabs={tabs} navigation={navigation} />
+        <ActivityFeed tabs={tabs} />
       </ThemeProvider>).toJSON();
 
     expect(component).toMatchSnapshot();
@@ -88,7 +89,7 @@ describe('ActivityFeed', () => {
 
     const component = Component(initialStore,
       <ThemeProvider theme={defaultTheme}>
-        <ActivityFeed tabs={tabs} navigation={navigation} />
+        <ActivityFeed tabs={tabs} />
       </ThemeProvider>).toJSON();
 
     expect(component).toMatchSnapshot();

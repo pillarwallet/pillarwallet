@@ -66,7 +66,6 @@ const CheckboxText = styled(BaseText)`
 
 const StyledTextLink = styled(TextLink)`
   ${fontStyles.regular};
-  color: ${themedColors.primary};
 `;
 
 const StyledButton = styled(Button)`
@@ -138,6 +137,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               small
               lightText
               wrapperStyle={{ marginBottom: 16 }}
+              checked={hasAgreedToTerms}
             >
               <CheckboxText>
                 {'I have read, understand, and agree to the '}
@@ -152,6 +152,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
               small
               lightText
+              checked={hasAgreedToPolicy}
             >
               <CheckboxText>
                 {'I have read, understand, and agree to the '}

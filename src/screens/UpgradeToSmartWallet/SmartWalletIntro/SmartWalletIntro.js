@@ -19,45 +19,49 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { StyleSheet } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
-// import { utils } from 'ethers';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
+import { ScrollWrapper, Wrapper, Container } from 'components/Layout';
 import { MediumText, BoldText } from 'components/Typography';
-import { ListItemChevron } from 'components/ListItem/ListItemChevron';
-import { LabelBadge } from 'components/LabelBadge';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal';
+import CheckAuth from 'components/CheckAuth';
+import Loader from 'components/Loader';
 
 import { fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { getThemeColors, themedColors } from 'utils/themes';
-// import { formatAmount, getCurrencySymbol, getGasPriceWei } from 'utils/common';
-// import { getRate } from 'utils/assets';
 
-import { CHOOSE_ASSETS_TO_TRANSFER, EXCHANGE, ASSETS } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { ASSETS } from 'constants/navigationConstants';
+import {
+  importSmartWalletAccountsAction,
+  initSmartWalletSdkAction,
+} from 'actions/smartWalletActions';
+import { switchAccountAction } from 'actions/accountsActions';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 import type { Theme } from 'models/Theme';
-// import smartWalletService from 'services/smartWallet';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Accounts } from 'models/Account';
+import type { Assets } from 'models/Asset';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  addNetwork: Function,
-  baseFiatCurrency: ?string,
-  deploySmartWallet: Function,
   theme: Theme,
-}
+  accounts: Accounts,
+  initSmartWalletSdk: (privateKey: string) => void,
+  importSmartWalletAccounts: (privateKey: string, createNewAccount: boolean, initAssets: Assets) => void,
+  switchAccount: (accountId: string) => void,
+};
 
 type State = {
-  showDeployPayOptions: boolean,
-}
+  showPinModal: boolean,
+  showLoader: boolean,
+};
+
 
 const CustomWrapper = styled.View`
   flex: 1;
@@ -75,25 +79,10 @@ const BodyText = styled(MediumText)`
   margin-top: ${responsiveSize(26)}px;
 `;
 
-// const FeeText = styled(MediumText)`
-//   color: ${themedColors.secondaryText};
-//   font-size: ${fontSizes.rMedium}px;
-//   line-height: ${responsiveSize(22)}px;
-//   margin-top: ${responsiveSize(16)}px;
-// `;
-
 const ButtonWrapper = styled(Wrapper)`
   margin: 30px 0 50px;
   padding: 0 46px;
 `;
-
-const ActionsWrapper = styled(Wrapper)`
-  margin: 10px -20px 50px;
-  border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${themedColors.border};
-`;
-
 
 const FeatureIcon = styled(CachedImage)`
   height: 124px;
@@ -103,33 +92,40 @@ const FeatureIcon = styled(CachedImage)`
 
 const smartWalletIcon = require('assets/images/logo_smart_wallet.png');
 
+
 class SmartWalletIntro extends React.PureComponent<Props, State> {
   state = {
-    showDeployPayOptions: false,
+    showPinModal: false,
+    showLoader: false,
+  };
+
+  proceed = async (_, wallet) => {
+    const {
+      importSmartWalletAccounts, initSmartWalletSdk, switchAccount, navigation,
+    } = this.props;
+    this.setState({ showLoader: true });
+    await initSmartWalletSdk(wallet.privateKey);
+    await importSmartWalletAccounts(wallet.privateKey, true, {});
+    const { accounts } = this.props;
+    const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
+    await switchAccount(smartAccount.id);
+    navigation.navigate(ASSETS);
   };
 
   render() {
-    const { showDeployPayOptions } = this.state;
+    const { showPinModal, showLoader } = this.state;
     const {
-      navigation,
-      baseFiatCurrency,
-      deploySmartWallet,
-      // gasInfo,
-      // rates,
       theme,
     } = this.props;
     const colors = getThemeColors(theme);
-    const isDeploy = navigation.getParam('deploy', false);
 
-    // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    // const gasPriceWei = getGasPriceWei(gasInfo);
-    // const deployEstimate = smartWalletService.getDeployEstimate(gasPriceWei);
-    // const feeSmartContractDeployEth = formatAmount(utils.formatEther(deployEstimate));
-    // const feeSmartContractDeployFiat = parseFloat(feeSmartContractDeployEth) * getRate(rates, ETH, fiatCurrency);
-    // const fiatSymbol = getCurrencySymbol(fiatCurrency);
-    //
-    // const smartContractDeployFee =
-    //   `~${feeSmartContractDeployEth} ETH (${fiatSymbol}${feeSmartContractDeployFiat.toFixed(2)})`;
+    if (showLoader) {
+      return (
+        <Container center>
+          <Loader />
+        </Container>
+      );
+    }
 
     return (
       <ContainerWithHeader
@@ -153,13 +149,12 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
               Pillar also recommends that you transfer most of your assets to your Smart Wallet due to the benefits
               listed.
             </BodyText>
-            { /* <FeeText>{smartContractDeployFee}</FeeText> */ }
           </CustomWrapper>
           <ButtonWrapper>
             <Button
               block
-              title={isDeploy ? 'Deploy' : 'Proceed'}
-              onPress={() => { this.setState({ showDeployPayOptions: true }); }}
+              title="Proceed"
+              onPress={() => this.setState({ showPinModal: true })}
               style={{
                 backgroundColor: colors.smartWalletText,
                 marginTop: 40,
@@ -168,71 +163,32 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
               }}
               textStyle={{ color: colors.control }}
             />
-            { /* <ListItemChevron
-              label="Enable with PLR available"
-              onPress={() => () => navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER)}
-              color={colors.smartWalletText}
-              bordered
-            /> */ }
           </ButtonWrapper>
-          <SlideModal
-            // title={}
-            isVisible={showDeployPayOptions}
-            onModalHide={() => { this.setState({ showDeployPayOptions: false }); }}
-          >
-            <ActionsWrapper>
-              <ListItemChevron
-                label="I don't have tokens"
-                subtext="Buy ETH with credit card"
-                onPress={() => {
-                  this.setState({ showDeployPayOptions: false }, () => {
-                    navigation.navigate(EXCHANGE, {
-                      fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
-                      toAssetCode: 'ETH',
-                    });
-                  });
-                }}
-                color={colors.smartWalletText}
-                bordered
-                subtextAddon={(<LabelBadge label="NEW" />)}
-              />
-              <ListItemChevron
-                label="I have tokens"
-                subtext="Use ETH to deploy contract"
-                onPress={() => {
-                  this.setState({ showDeployPayOptions: false }, () => {
-                    if (isDeploy) {
-                      deploySmartWallet();
-                      navigation.navigate(ASSETS);
-                    } else {
-                      navigation.navigate(CHOOSE_ASSETS_TO_TRANSFER);
-                    }
-                  });
-                }}
-                color={colors.smartWalletText}
-                bordered
-              />
-            </ActionsWrapper>
-          </SlideModal>
         </ScrollWrapper>
+        <CheckAuth
+          onPinValid={this.proceed}
+          revealMnemonic
+          modalProps={{
+            isVisible: showPinModal,
+            onModalHide: () => this.setState({ showPinModal: false }),
+          }}
+        />
       </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
-  // history: { gasInfo },
-  // rates: { data: rates },
-}) => ({
-  baseFiatCurrency,
-  // gasInfo,
-  // rates,
+  accounts: { data: accounts },
+}: RootReducerState): $Shape<Props> => ({
+  accounts,
 });
 
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
+  importSmartWalletAccounts: (privateKey: string, createNewAccount: boolean, initAssets: Assets) =>
+    dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initAssets)),
+  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(SmartWalletIntro));

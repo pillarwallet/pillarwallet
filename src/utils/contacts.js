@@ -18,47 +18,76 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import orderBy from 'lodash.orderby';
+import get from 'lodash.get';
 import { STATUS_BLOCKED } from 'constants/connectionsConstants';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import { addressesEqual } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 
-export function excludeLocalContacts(globalContacts: ApiUser[] = [], localContacts: Object[] = []): Object[] {
+export const sortLocalContacts = (contacts: Object[], chats: Object[]) => {
+  const localContactsWithUnreads = contacts.map((contact) => {
+    const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
+    return {
+      ...contact,
+      unread: chatWithUserInfo.unread || 0,
+      lastMessage: chatWithUserInfo.lastMessage || null,
+    };
+  });
+
+  return orderBy(
+    localContactsWithUnreads,
+    [(user) => {
+      if (user.lastMessage) {
+        return user.lastMessage.serverTimestamp;
+      }
+
+      return user.createdAt * 1000;
+    }],
+    'desc');
+};
+
+export const excludeLocalContacts = (globalContacts: ApiUser[] = [], localContacts: Object[] = []): Object[] => {
   const localContactsIds = localContacts.map(contact => contact.id);
 
   return globalContacts.filter((globalContact) => {
     return !localContactsIds.includes(globalContact.id);
   });
-}
+};
 
-export function getUserName(contact: ?Object) {
+export const getUserName = (contact: ?Object) => {
   if (!contact || !contact.username) {
     return '';
   }
   return contact.username;
-}
+};
 
-export function getInitials(fullName: string = '') {
+export const getInitials = (fullName: string = '') => {
   return fullName
     .split(' ')
     .map(name => name.substring(0, 1))
     .join('')
     .toUpperCase();
-}
+};
 
-export function findMatchingContact(
+export const findMatchingContact = (
   address: string,
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
-) {
+) => {
   return contacts.find(({ id: contactId, ethAddress }) =>
     addressesEqual(address, ethAddress) || !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
       isCaseInsensitiveMatch(userId, contactId) && addressesEqual(address, smartWallets[0] || ''),
     ),
   );
-}
+};
 
-export function isContactAvailable(contact: ApiUser) {
+export const isContactAvailable = (contact: ApiUser) => {
   // if no contact status at all then it means disconnected status
   return !!contact.status && contact.status !== STATUS_BLOCKED;
-}
+};
+
+export const findContactIdByUsername = (contacts: ApiUser[], username: string): string => {
+  const foundContact = contacts.find(contact => isCaseInsensitiveMatch(contact.username, username));
+  return get(foundContact, 'id', '');
+};

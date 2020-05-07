@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
@@ -35,22 +35,68 @@ import {
 } from 'react-native';
 import { providers, utils } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
-import { INFURA_PROJECT_ID } from 'react-native-dotenv';
-import type { GasInfo } from 'models/GasInfo';
+import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
+
+// constants
 import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
+import * as NAVSCREENS from 'constants/navigationConstants';
+
+// types
+import type { GasInfo } from 'models/GasInfo';
+import type { GasToken } from 'models/Transaction';
+
+// local
+import { isProdEnv, isTest } from './environment';
+
 
 const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(
   `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
 );
+
+export const printLog = (...params: any) => {
+  if ((isProdEnv && !__DEV__) || isTest) return;
+  console.log(...params);
+};
+
+export const reportLog = (
+  message: string,
+  extra?: Object,
+  level: Sentry.Severity = Sentry.Severity.Info,
+) => {
+  Sentry.withScope((scope) => {
+    if (level === Sentry.Severity.Info) {
+      if (!isEmpty(extra)) scope.setExtras(extra);
+      Sentry.captureMessage(message, Sentry.Severity.Info);
+    } else {
+      Sentry.captureException({ message, level, extra });
+    }
+  });
+  printLog(`${level}: ${message}`, extra);
+};
+
+export const reportOrWarn = (
+  message: string,
+  extra?: Object,
+  level: Sentry.Severity = Sentry.Severity.Info,
+) => {
+  if (__DEV__) {
+    console.error(message, extra); // eslint-disable-line no-console
+    return;
+  }
+  reportLog(message, extra, level);
+};
+
+export const stringWithoutSpaces = (s: string): string => {
+  return s.replace(/\s/g, '');
+};
 
 export const delay = async (ms: number) => {
   return new Promise(resolve => {
@@ -241,7 +287,16 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
-const DEFAULT_TRANSITION_SCREENS = [MANAGE_USERS_FLOW];
+const DEFAULT_TRANSITION_SCREENS = [
+  NAVSCREENS.MANAGE_USERS_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_TOKEN_FROM_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
+  NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
+  NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
+  NAVSCREENS.SEND_BITCOIN_FLOW,
+];
 
 const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
   return DEFAULT_TRANSITION_SCREENS.some(
@@ -340,6 +395,22 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
+export const resolveEnsName = (ensName: string): Promise<?string> => {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  return provider.resolveName(ensName);
+};
+
+export const lookupAddress = async (address: string): Promise<?string> => {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let ensName;
+  try {
+    ensName = await provider.lookupAddress(address);
+  } catch (_) {
+    //
+  }
+  return ensName;
+};
+
 export const padWithZeroes = (value: string, length: number): string => {
   let myString = value;
 
@@ -350,7 +421,13 @@ export const padWithZeroes = (value: string, length: number): string => {
   return myString;
 };
 
-export const concatSig = ({ v, r, s }): string => {
+type ConcatSigParams = {
+  v: Buffer | Uint8Array,
+  r: Buffer | Uint8Array,
+  s: Buffer | Uint8Array,
+};
+
+export const concatSig = ({ v, r, s }: ConcatSigParams): string => {
   const rSig = ethUtil.fromSigned(r);
   const sSig = ethUtil.fromSigned(s);
   const vSig = ethUtil.bufferToInt(v);
@@ -410,25 +487,22 @@ export const formatUnits = (val: string = '0', decimals: number) => {
     }
     formattedUnits = utils.formatUnits(valueWithoutDecimals, decimals);
   } catch (e) {
-    Sentry.captureMessage(e.message, {
-      level: 'info',
-      extra: {
-        sourceFunction: 'formatUnits(value,decimals)',
-        inputValue: val,
-        preparedValue,
-        valueWithoutDecimals,
-        decimals,
-      },
+    reportLog(e.message, {
+      sourceFunction: 'formatUnits(value,decimals)',
+      inputValue: val,
+      preparedValue,
+      valueWithoutDecimals,
+      decimals,
     });
   }
   return formattedUnits;
 };
 
-type GroupedAndSortedData = {
+type GroupedAndSortedData = {|
   title: string,
   date: string,
   data: any[],
-};
+|};
 
 export const humanizeDateString = (date: Date): string => {
   // by default don't show the year if the event happened this year
@@ -443,9 +517,9 @@ export const humanizeDateString = (date: Date): string => {
 // all default values makes common sense and usage
 export const groupAndSortByDate = (
   data: any[],
-  timestampMultiplier?: number = 1000,
-  dateField?: string = 'createdAt',
-  sortDirection?: string = 'desc',
+  timestampMultiplier: number = 1000,
+  dateField: string = 'createdAt',
+  sortDirection: string = 'desc',
 ): GroupedAndSortedData[] => {
   const grouped = [];
   orderBy(data, [dateField], [sortDirection]).forEach(listItem => {
@@ -490,4 +564,23 @@ export const formatAmountDisplay = (value: number | string) => {
     return formatMoney(amount, 2);
   }
   return amount > 0.00001 ? formatMoney(amount, 5) : '<0.00001';
+};
+
+export const getDeviceHeight = () => {
+  return Dimensions.get('window').height;
+};
+
+export const getDeviceWidth = () => {
+  return Dimensions.get('window').width;
+};
+
+export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken) => {
+  if (!feeInWei) return '';
+
+  if (gasToken && !isEmpty(gasToken)) {
+    const { symbol, decimals } = gasToken;
+    return `${formatAmount(utils.formatUnits(feeInWei.toString(), decimals), 2)} ${symbol}`;
+  }
+
+  return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
 };

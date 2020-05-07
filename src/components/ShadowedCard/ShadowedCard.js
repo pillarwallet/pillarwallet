@@ -20,24 +20,34 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, TouchableWithoutFeedback, View } from 'react-native';
+import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import { Shadow } from 'components/Shadow';
 import { themedColors, getThemeType } from 'utils/themes';
+import { noop } from 'utils/common';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
 
 const CardOutter = styled.View`
   position: relative;
+  opacity: ${({ disabled }) => disabled ? 0.6 : 1};
 `;
 
 const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
-  border-radius: 6px;
+  border-radius: ${({ borderRadius }) => borderRadius}px;
   background: ${themedColors.card};
   width: 100%;
-  opacity: ${props => props.disabled ? 0.6 : 1};
+  opacity: ${({ opacity }) => opacity};
+  ${({ isAnimated }) => isAnimated && `
+    position: absolute;
+    top: 0;
+    left: 0;
+  `}
 `;
+
+const AnimatedCardOutter = Animated.createAnimatedComponent(CardOutter);
 
 type Props = {
   children: React.Node,
@@ -47,21 +57,33 @@ type Props = {
   onPress?: ?Function,
   disabled?: boolean,
   theme: Theme,
-}
+  isAnimated?: boolean,
+  spacingAfterAnimation?: number,
+  borderRadius?: number,
+  noShadow?: boolean
+};
 
 type State = {
   cardHeight: ?number,
   cardWidth: ?number,
   allowRerenderShadow: boolean,
-}
+  scaleValue: Animated.Value,
+  finishedAnimating: boolean,
+  isAnimating: boolean,
+};
 
 const SHADOW_LENGTH = 3;
 
-class ShadowedCard extends React.PureComponent<Props, State> {
+class ShadowedCard extends React.Component<Props, State> {
+  cardOutterRef: View;
+
   state = {
     cardHeight: null,
     cardWidth: null,
     allowRerenderShadow: false,
+    scaleValue: new Animated.Value(0.1),
+    finishedAnimating: false,
+    isAnimating: false,
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -69,25 +91,67 @@ class ShadowedCard extends React.PureComponent<Props, State> {
       this.allowToRerenderShadow();
     }
   }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const { isAnimated } = this.props;
+    const { isAnimating } = nextState;
+    return !isAnimated || !isAnimating;
+  }
+
   allowToRerenderShadow = () => {
     this.setState({ allowRerenderShadow: true });
   };
 
+  animate = () => {
+    const { cardHeight } = this.state;
+    const { spacingAfterAnimation = 0 } = this.props;
+    this.cardOutterRef.setNativeProps({ height: cardHeight + spacingAfterAnimation });
+
+    this.setState({ isAnimating: true });
+    Animated.spring(this.state.scaleValue, { toValue: 1, useNativeDriver: true }).start(() => {
+      this.setState({ isAnimating: false, finishedAnimating: true });
+    });
+  };
+
+  handleContentLayout = (e: LayoutEvent) => {
+    const { isAnimated } = this.props;
+    const { cardHeight, cardWidth, allowRerenderShadow } = this.state;
+    if ((!cardHeight && !cardWidth) || allowRerenderShadow) {
+      this.setState({
+        cardHeight: e.nativeEvent.layout.height + SHADOW_LENGTH,
+        cardWidth: e.nativeEvent.layout.width + SHADOW_LENGTH,
+        allowRerenderShadow: false,
+      }, () => isAnimated ? this.animate() : noop());
+    }
+  }
+
   render() {
     const {
-      wrapperStyle,
+      wrapperStyle = {},
       contentWrapperStyle,
       children,
       onPress,
       disabled,
-      upperContentWrapperStyle,
+      upperContentWrapperStyle = {},
       theme,
+      isAnimated,
+      borderRadius,
+      noShadow,
     } = this.props;
     const currentTheme = getThemeType(theme);
-    const { cardHeight, cardWidth, allowRerenderShadow } = this.state;
+    const {
+      cardHeight, cardWidth, finishedAnimating, scaleValue,
+    } = this.state;
+    const readyToRenderShadow = finishedAnimating || !isAnimated;
+    const animatedContentOpacity = !cardHeight ? 0 : 1;
+    const contentOpacity = isAnimated ? animatedContentOpacity : 1;
     return (
-      <CardOutter style={wrapperStyle}>
-        {!!(cardHeight && cardWidth) && currentTheme !== DARK_THEME &&
+      <AnimatedCardOutter
+        style={{ ...wrapperStyle, transform: [{ scaleY: isAnimated ? scaleValue : 1 }] }}
+        ref={ref => { this.cardOutterRef = ref; }}
+        disabled={disabled}
+      >
+        {!noShadow && !!(cardHeight && cardWidth) && readyToRenderShadow && currentTheme !== DARK_THEME &&
         <Shadow
           heightAndroid={cardHeight}
           heightIOS={cardHeight}
@@ -100,27 +164,21 @@ class ShadowedCard extends React.PureComponent<Props, State> {
             left: -(SHADOW_LENGTH / 2),
             opacity: disabled ? 0.4 : 0.8,
           }}
-          shadowRadius={4}
+          shadowRadius={(borderRadius || 6) - 2}
         />}
         <TouchableWithoutFeedback onPress={onPress}>
-          <ContentWrapper disabled={disabled} style={upperContentWrapperStyle}>
-            <View
-              style={contentWrapperStyle}
-              onLayout={(e) => {
-                if ((!cardHeight && !cardWidth) || allowRerenderShadow) {
-                  this.setState({
-                    cardHeight: e.nativeEvent.layout.height + SHADOW_LENGTH,
-                    cardWidth: e.nativeEvent.layout.width + SHADOW_LENGTH,
-                    allowRerenderShadow: false,
-                  });
-                }
-              }}
-            >
+          <ContentWrapper
+            style={upperContentWrapperStyle}
+            isAnimated={isAnimated}
+            opacity={contentOpacity}
+            borderRadius={borderRadius || 6}
+          >
+            <View style={contentWrapperStyle} onLayout={this.handleContentLayout}>
               {children}
             </View>
           </ContentWrapper>
         </TouchableWithoutFeedback>
-      </CardOutter>
+      </AnimatedCardOutter>
     );
   }
 }

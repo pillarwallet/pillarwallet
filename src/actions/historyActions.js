@@ -20,7 +20,6 @@
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
 import isEmpty from 'lodash.isempty';
-import { Sentry } from 'react-native-sentry';
 import { sdkConstants } from '@smartwallet/sdk';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
@@ -34,6 +33,7 @@ import {
   TX_CONFIRMED_STATUS,
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
+  ADD_TRANSACTION,
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
@@ -56,7 +56,7 @@ import {
   getActiveAccountId,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
-import { getEthereumProvider, uniqBy } from 'utils/common';
+import { getEthereumProvider, reportLog, uniqBy } from 'utils/common';
 import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
 
@@ -66,6 +66,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
+import type { Transaction } from 'models/Transaction';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -80,6 +81,7 @@ import {
 } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
+import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -176,7 +178,7 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId },
+      smartWallet: { lastSyncedTransactionId, connectedAccount },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -191,7 +193,12 @@ export const fetchSmartWalletTransactionsAction = () => {
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = accountAssetsSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
-    const history = parseSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
+    const history = parseSmartWalletTransactions(
+      smartWalletTransactions,
+      supportedAssets,
+      assetsList,
+      connectedAccount,
+    );
 
     if (!history.length) return;
 
@@ -206,6 +213,7 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     dispatch(getExistingTxNotesAction());
     syncAccountHistory(history, accountId, dispatch, getState);
+    dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
   };
 };
 
@@ -274,13 +282,20 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         return memo;
       }, {});
 
+    // Flow doesn't allow Object.values
+    const minedTransactionsValues = Object.keys(minedTransactions).map(key => minedTransactions[key]);
+
     const pendingTransactions = mappedHistoryNotifications
       .filter(tx => tx.status === TX_PENDING_STATUS);
 
     // add new records & update data for mined transactions
     const { history: { data: currentHistory } } = getState();
     const accountHistory = (currentHistory[accountId] || []).filter(tx => !!tx.createdAt);
-    const updatedAccountHistory = uniqBy([...accountHistory, ...pendingTransactions], 'hash')
+    const updatedAccountHistory = uniqBy([
+      ...accountHistory,
+      ...pendingTransactions,
+      ...minedTransactionsValues,
+    ], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
         const {
@@ -354,14 +369,10 @@ export const updateTransactionStatusAction = (hash: string) => {
       // TODO: add support for failed transactions
       const sdkStatus = sdkRawStatus === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
       if (sdkStatus !== status) {
-        console.log('Wrong transaction status');
-        Sentry.captureMessage('Wrong transaction status', {
-          level: 'info',
-          extra: {
-            hash,
-            sdkStatus,
-            blockchainStatus: status,
-          },
+        reportLog('Wrong transaction status', {
+          hash,
+          sdkStatus,
+          blockchainStatus: status,
         });
       }
       return;
@@ -411,7 +422,7 @@ export const restoreTransactionHistoryAction = () => {
     if (!allAssets || !allAssets.length) return;
     if (!Array.isArray(allAssets)) {
       // sentry issue ID 1308336621
-      Sentry.captureMessage('Wrong allAssets type received from back-end', { extra: { allAssets } });
+      reportLog('Wrong allAssets type received from back-end', { allAssets });
       return;
     }
 
@@ -595,5 +606,21 @@ export const patchSmartWalletSentSignedTransactionsAction = () => {
     });
 
     dispatch(setAssetsTransferTransactionsAction(patchedTransferTransactions));
+  };
+};
+
+export const insertTransactionAction = (historyTx: Transaction, accountId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({
+      type: ADD_TRANSACTION,
+      payload: {
+        accountId,
+        historyTx,
+      },
+    });
+
+    // get the updated state and save it into the storage
+    const { history: { data: currentHistory } } = getState();
+    await dispatch(saveDbAction('history', { history: currentHistory }, true));
   };
 };

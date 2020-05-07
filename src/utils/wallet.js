@@ -17,16 +17,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { ethers, utils, providers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
-import { Sentry } from 'react-native-sentry';
+import get from 'lodash.get';
+import * as Sentry from '@sentry/react-native';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import { getRandomInt, ethSign, getEthereumProvider } from 'utils/common';
+import {
+  getRandomInt,
+  ethSign,
+  getEthereumProvider,
+  printLog,
+  reportLog,
+} from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 import { WALLET_STORAGE_BACKUP_KEY } from 'constants/walletConstants';
@@ -52,7 +59,7 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
 export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
   let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
   if (!deviceUniqueId) {
-    deviceUniqueId = DeviceInfo.getUniqueID();
+    deviceUniqueId = DeviceInfo.getUniqueId();
     await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
   }
   return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
@@ -66,33 +73,37 @@ export function normalizeWalletAddress(walletAddress: string): string {
 }
 
 export function catchTransactionError(e: Object, type: string, tx: Object) {
-  Sentry.captureException({
+  reportLog('Exception in wallet transaction', {
     tx,
     type,
     error: e.message,
-  });
+  }, Sentry.Severity.Error);
   return { error: e.message };
 }
 
 // handle eth_signTransaction
-export function signTransaction(trx: Object, wallet: Object): Promise<string> {
-  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
-  if (trx && trx.from) {
-    delete trx.from;
+export function signTransaction(trx: Object, walletInstance: Object): Promise<string> {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const wallet = walletInstance.connect(provider);
+  const signTx = trx ? { ...trx } : trx;
+  if (signTx && signTx.from) {
+    delete signTx.from;
   }
-  return wallet.sign(trx);
+  return wallet.sign(signTx);
 }
 
 // handle eth_sign
-export function signMessage(message: any, wallet: Object): string {
-  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
+export function signMessage(message: any, walletInstance: Object): string {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const wallet = walletInstance.connect(provider);
   // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
   return ethSign(message, wallet.privateKey);
 }
 
 // handle personal_sign
-export function signPersonalMessage(message: string, wallet: Object): Promise<string> {
-  wallet.connect(providers.getDefaultProvider(NETWORK_PROVIDER));
+export function signPersonalMessage(message: string, walletInstance: Object): Promise<string> {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const wallet = walletInstance.connect(provider);
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
 
@@ -104,18 +115,16 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
   let walletTimestamp = appSettings.wallet;
-  const reportToSentry = (message, data = {}) => Sentry.captureMessage(message, {
-    extra: {
-      walletHadBackup: !!walletBackup,
-      isWalletEmpty,
-      walletCreationTimestamp: appSettings.wallet,
-      isAppSettingsEmpty: isEmpty(appSettings),
-      ...data,
-    },
+  const reportToSentry = (message, data = {}) => reportLog(message, {
+    walletHadBackup: !!walletBackup,
+    isWalletEmpty,
+    walletCreationTimestamp: appSettings.wallet,
+    isAppSettingsEmpty: isEmpty(appSettings),
+    ...data,
   });
   // restore wallet if one is empty and backup is present
   if (isWalletEmpty && walletBackup) {
-    console.log('RESTORING WALLET FROM BACKUP');
+    printLog('RESTORING WALLET FROM BACKUP');
     // restore wallet to storage
     try {
       wallet = JSON.parse(walletBackup);
@@ -130,7 +139,7 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   // we can only set new timestamp if any wallet is present (existing or backup)
   if (!walletTimestamp && (!isWalletEmpty || walletBackup)) {
     walletTimestamp = +new Date();
-    console.log('SETTING NEW WALLET TIMESTAMP');
+    printLog('SETTING NEW WALLET TIMESTAMP');
     // only wallet timestamp was missing, let's update it to storage
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
   }
@@ -143,9 +152,9 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
   }
 
   if (isEmpty(user) || !user.username || !user.walletId) {
-    console.log('EMPTY USER OBJECT DETECTED');
+    printLog('EMPTY USER OBJECT DETECTED');
     if (!isEmpty(wallet)) {
-      console.log('RESTORING USER FROM API');
+      printLog('RESTORING USER FROM API');
       api.init();
       const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
       if (apiUser.walletId) {
@@ -156,12 +165,12 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
           profileLargeImage: apiUser.profileImage,
         };
         await dispatch(saveDbAction('user', { user: restoredUser }, true));
-        console.log('USER RESTORED FROM API');
+        printLog('USER RESTORED FROM API');
       } else {
-        console.log('UNABLE TO RESTORE USER FROM API');
+        printLog('UNABLE TO RESTORE USER FROM API');
       }
     } else {
-      console.log('WALLET OBJECT IS STILL EMPTY');
+      printLog('WALLET OBJECT IS STILL EMPTY');
     }
   }
 
@@ -184,4 +193,29 @@ export async function decryptWallet(encryptedWallet: Object, saltedPin: string, 
     wallet = wallet.connect(provider);
   }
   return wallet;
+}
+
+export function constructWalletFromPrivateKey(privateKey: string): Object {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = new ethers.Wallet(privateKey);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
+  return wallet;
+}
+
+export function constructWalletFromMnemonic(mnemonic: string): Object {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = ethers.Wallet.fromMnemonic(mnemonic);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
+  return wallet;
+}
+
+export async function getPrivateKeyFromPin(pin: string, dispatch: Dispatch) {
+  const { wallet: encryptedWallet } = await storage.get('wallet');
+  const saltedPin = await getSaltedPin(pin, dispatch);
+  const wallet = await decryptWallet(encryptedWallet, saltedPin);
+  return get(wallet, 'signingKey.privateKey');
 }

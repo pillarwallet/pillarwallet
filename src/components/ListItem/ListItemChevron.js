@@ -62,7 +62,7 @@ const ListItem = styled.View`
 
 const ItemLabel = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${({ color, theme }) => color || theme.colors.primary};
+  color: ${({ color, theme }) => color || theme.colors.link};
 `;
 
 const SubText = styled(BaseText)`
@@ -85,7 +85,7 @@ const Row = styled.View`
 `;
 
 const ChevronIcon = styled(Icon)`
-  color: ${({ color, theme }) => color || theme.colors.primary};
+  color: ${({ color, theme }) => color || theme.colors.link};
   font-size: ${fontSizes.small}px;
 `;
 
@@ -101,6 +101,7 @@ type Props = {
   wrapperStyle?: Object,
   chevronStyle?: Object,
   rightAddon?: React.Node,
+  disabled?: boolean,
 }
 
 export const ListItemChevron = (props: Props) => {
@@ -116,10 +117,11 @@ export const ListItemChevron = (props: Props) => {
     wrapperStyle,
     chevronStyle,
     rightAddon,
+    disabled,
   } = props;
   return (
     <ListItem bordered={bordered} style={wrapperStyle}>
-      <NativeTouchable onPress={onPress}>
+      <NativeTouchable onPress={onPress} disabled={disabled}>
         <ItemRow>
           <ContentWrapper>
             <TextWrapper>

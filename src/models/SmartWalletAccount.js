@@ -32,3 +32,8 @@ export type ConnectedSmartWalletAccount = {
 
 
 export type SmartWalletDeploymentError = $Keys<typeof SMART_WALLET_DEPLOYMENT_ERRORS>;
+
+export type InitSmartWalletProps = {
+  privateKey?: string,
+  pin?: string,
+}

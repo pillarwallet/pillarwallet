@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
@@ -33,7 +33,7 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { fontSizes } from 'utils/variables';
+import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // actions
@@ -42,6 +42,7 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 // constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
+import { EXCHANGE } from 'constants/exchangeConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -52,8 +53,6 @@ type Props = {
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
-const transactionSuccessText =
-  'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
 
 const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
@@ -66,9 +65,41 @@ const getTransactionErrorMessage = (error: string): string => {
   return TRANSACTION_ERRORS[error] || transactionFailureText;
 };
 
+const getTransactionSuccessMessage = (transactionType: ?string) => {
+  if (transactionType === EXCHANGE) {
+    return 'It may take some time for this transaction to complete';
+  }
+  return 'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
+};
+
+const getTransactionSuccessTitle = (props) => {
+  const { transactionTokenType, transactionType, isAllowanceTransaction } = props;
+  if (transactionType === EXCHANGE) {
+    if (isAllowanceTransaction) {
+      return 'Transaction is on its way';
+    }
+    return 'Swapping tokens...';
+  } else if (transactionTokenType === COLLECTIBLES) {
+    return 'Collectible is on its way';
+  }
+  return 'Tokens are on their way';
+};
+
 const CancelText = styled(MediumText)`
   color: ${themedColors.negative};
   font-size: ${fontSizes.medium}px;
+`;
+
+const ButtonWrapper = styled.View`
+  width: 100%;
+  margin: 0px ${spacing.layoutSides}px 20px;
+`;
+
+const FailureButtonsWrapper = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `;
 
 class SendTokenTransaction extends React.Component<Props> {
@@ -105,6 +136,32 @@ class SendTokenTransaction extends React.Component<Props> {
     navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 
+  renderSuccessButton = () => {
+    const { transactionType } = this.props.navigation.state.params;
+    const successButtonText = transactionType === EXCHANGE ? 'Finish' : 'Magic!';
+    return (
+      <ButtonWrapper>
+        <Button onPress={this.handleDismissal} title={successButtonText} />
+      </ButtonWrapper>
+    );
+  }
+
+  renderFailureButtons = () => {
+    const { noRetry } = this.props.navigation.state.params;
+    return (
+      <FailureButtonsWrapper>
+        {!noRetry && (
+          <ButtonWrapper>
+            <Button onPress={this.handleNavigationBack} title="Retry" />
+          </ButtonWrapper>
+        )}
+        <TouchableOpacity onPress={this.handleDismissal}>
+          <CancelText>Cancel</CancelText>
+        </TouchableOpacity>
+      </FailureButtonsWrapper>
+    );
+  }
+
   render() {
     const { navigation } = this.props;
     const {
@@ -116,38 +173,26 @@ class SendTokenTransaction extends React.Component<Props> {
           allowance = {},
         } = {},
       },
-      noRetry,
+      transactionType,
     } = navigation.state.params;
 
     const animationSource = isSuccess ? animationSuccess : animationFailure;
-    const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
-
-    let successText;
+    const transactionStatusText = isSuccess
+      ? getTransactionSuccessMessage(transactionType)
+      : getTransactionErrorMessage(error);
     const isAllowanceTransaction = Object.keys(allowance).length;
-    if (transactionTokenType === COLLECTIBLES) {
-      successText = 'Collectible is on its way';
-    } else {
-      successText = isAllowanceTransaction
-        ? 'Transaction is on it\'s way'
-        : 'Tokens are on their way';
-    }
-    const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
-
+    const transactionStatusTitle = isSuccess
+      ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
+      : 'Transaction failed';
+    const titleStyle = { ...fontStyles.large, marginTop: 16, marginBottom: 7 };
+    const textStyle = { ...fontStyles.regular, marginBottom: 75 };
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
           <Animation source={animationSource} />
-          <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot />
-          <Paragraph small light center style={{ marginBottom: 40 }}>{transactionStatusText}</Paragraph>
-          {isSuccess ?
-            <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" /> :
-            <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-              {!noRetry && <Button marginBottom="20px" onPress={this.handleNavigationBack} title="Retry" />}
-              <TouchableOpacity onPress={this.handleDismissal}>
-                <CancelText>Cancel</CancelText>
-              </TouchableOpacity>
-            </View>
-          }
+          <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot titleStyles={titleStyle} noMargin />
+          <Paragraph light center style={textStyle}>{transactionStatusText}</Paragraph>
+          {isSuccess ? this.renderSuccessButton() : this.renderFailureButtons()}
         </Wrapper>
         {/*
         {isSuccess &&

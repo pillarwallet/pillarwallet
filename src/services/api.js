@@ -21,7 +21,7 @@ import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
 import { Platform } from 'react-native';
-import { Sentry } from 'react-native-sentry';
+import * as Sentry from '@sentry/react-native';
 import {
   SDK_PROVIDER,
   BCX_URL,
@@ -36,6 +36,7 @@ import {
   MOONPAY_KEY,
 } from 'react-native-dotenv';
 import axios, { AxiosResponse } from 'axios';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -44,23 +45,15 @@ import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { uniqBy } from 'utils/common';
+import { reportLog, uniqBy } from 'utils/common';
 
 // models, types
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import type { ApiNotification } from 'models/Notification';
-import type {
-  ConnectionIdentityKeyMap,
-  ConnectionUpdateIdentityKeys,
-  ConnectionPatchIdentityKeys,
-} from 'models/Connections';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
-
-// other
-import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos'; // temporary here
 
 // services
 import {
@@ -90,12 +83,6 @@ type BalancePayload = {
   assets: Asset[],
 };
 
-type UserInfoByIdPayload = {
-  walletId: string,
-  userAccessKey: string,
-  targetUserAccessKey: string,
-};
-
 type RegisterSmartWalletPayload = {
   walletId: string,
   privateKey: string,
@@ -105,248 +92,20 @@ type RegisterSmartWalletPayload = {
 
 type MapContactsAddresses = Array<{
   contactId: string,
-  accessKeys?: {
-    userAccessKey: string,
-    contactAccessKey: string,
-  },
-  connectionKeys?: {
-    sourceIdentityKey: string,
-    targetIdentityKey: string,
-  },
 }>;
 
-const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
+type VerifyEmail = {|
+  walletId: string,
+  oneTimePassword: string,
+|};
 
-export default function SDKWrapper() {
-  this.BCXSdk = null;
-  this.pillarWalletSdk = null;
-}
-
-SDKWrapper.prototype.init = function (
-  updateOAuth?: ?Function,
-  oAuthTokensStored?: ?OAuthTokens,
-  onOAuthTokensFailed?: ?Function,
-) {
-  this.BCXSdk = new BCX({ apiUrl: BCX_URL });
-  this.pillarWalletSdk = new PillarSdk({
-    apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
-    notificationsUrl: NOTIFICATIONS_URL,
-    investmentsUrl: INVESTMENTS_URL,
-    updateOAuthFn: updateOAuth,
-    oAuthTokens: oAuthTokensStored,
-    tokensFailedCallbackFn: onOAuthTokensFailed,
-  });
-  this.pillarWalletSdk.configuration.setRequestTimeout(API_REQUEST_TIMEOUT);
-};
-
-SDKWrapper.prototype.supportHmac = function (): string {
-  return this.pillarWalletSdk.user.supportHmac({ project: Platform.OS })
-    .then(({ data }) => data.hmac || '')
-    .catch(() => '');
-};
-
-SDKWrapper.prototype.listAccounts = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId }))
-    .then(({ data }) => data.wallets || [])
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username }))
-    .then(({ data }) => data)
-    .catch((e = {}) => {
-      const status = get(e, 'response.status');
-      if (status === USERNAME_EXISTS_ERROR_CODE) {
-        return {
-          error: true,
-          reason: USERNAME_EXISTS,
-        };
-      }
-      return {
-        error: true,
-        reason: REGISTRATION_FAILED,
-      };
-    });
-};
-
-SDKWrapper.prototype.registerSmartWallet = function (payload: RegisterSmartWalletPayload) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.wallet.registerSmartWallet(payload))
-    .then(({ data }) => data)
-    .catch(e => ({
-      error: true,
-      reason: e,
-    }));
-};
-
-SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, fcm: string, username: string) {
-  const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
-  return Promise.resolve()
-    .then(() => {
-      return this.pillarWalletSdk.wallet.registerAuthServer({
-        privateKey,
-        fcmToken: fcm,
-        username,
-      });
-    })
-    .then(({ data }) => data)
-    .catch((error) => {
-      Sentry.captureException({ type: 'Registration error', error });
-      const responseStatus = get(error, 'response.status');
-      const reason = responseStatus === USERNAME_EXISTS_ERROR_CODE
-        ? USERNAME_EXISTS
-        : REGISTRATION_FAILED;
-      return { error: true, reason };
-    });
-};
-
-SDKWrapper.prototype.updateFCMToken = function (walletId: string, fcmToken: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.wallet.update({ walletId, fcmToken }))
-    .then(({ data }) => data)
-    .catch(() => ({}));
-};
-
-SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
-    .then(({ data }) => data)
-    .catch(() => [])
-    .then(transformAssetsToObject);
-};
-
-SDKWrapper.prototype.updateUser = function (user: Object) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.update(user))
-    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
-    .catch(error => {
-      const status = get(error, 'response.status');
-      const message = get(error, 'response.data.message');
-
-      Sentry.captureException({
-        error: 'Failed to update user',
-        walletId: user.walletId,
-        user,
-        status,
-        message,
-      });
-      return { responseStatus: status, message };
-    });
-};
-
-SDKWrapper.prototype.createOneTimePassword = function (user: Object) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.createOneTimePassword(user))
-    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
-    .catch(error => {
-      const status = get(error, 'response.status');
-      const message = get(error, 'response.data.message');
-
-      Sentry.captureException({
-        error: 'Failed to send text',
-        walletId: user.walletId,
-        user,
-        status,
-        message,
-      });
-      return { responseStatus: status, message };
-    });
-};
-
-SDKWrapper.prototype.verifyPhone = function (user: Object) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.validatePhone(user))
-    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
-    .catch(error => {
-      const status = get(error, 'response.status');
-      const message = get(error, 'response.data.message');
-
-      Sentry.captureException({
-        error: 'Can\'t verify code',
-        walletId: user.walletId,
-        user,
-        status,
-        message,
-      });
-      return { responseStatus: status, message };
-    });
-};
-
-SDKWrapper.prototype.claimTokens = function ({ walletId, code }: ClaimTokenAction) {
-  return Promise.resolve()
-    // TODO update pillarWalletSdk
-    // .then(() => this.pillarWalletSdk.referral.claimTokens({ walletId, code }))
-    // TODO return just 200
-    .then(() => ({ responseStatus: 200, walletId, code }))
-    .catch(error => {
-      const status = get(error, 'response.status');
-      const message = get(error, 'response.data.message');
-
-      Sentry.captureException({
-        error: 'Can\'t claim referral code',
-        walletId,
-        code,
-        status,
-        message,
-      });
-      return { responseStatus: status, message };
-    });
-};
-
-SDKWrapper.prototype.updateUserAvatar = function (walletId: string, formData: Object) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
-    .then(({ data }) => ({ profileImage: data.profileImage, walletId }))
-    .catch(() => ({}));
-};
-
-SDKWrapper.prototype.getUserAvatar = function (userId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.userInfo = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.info({ walletId }))
-    .then(({ data }) => ({ ...data, walletId }))
-    .catch(() => ({}));
-};
-
-SDKWrapper.prototype.userInfoById = function (targetUserId: string, params: UserInfoByIdPayload) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.infoById(targetUserId, params))
-    .then(({ data }) => ({ ...data }))
-    .catch(() => ({}));
-};
-
-SDKWrapper.prototype.userSearch = function (query: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.search({ query, walletId }))
-    .then(({ data }) => data)
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.usernameSearch = function (username: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
-    .then(({ data }) => data)
-    .catch(error => {
-      const status = get(error, 'response.status');
-      const message = get(error, 'response.data.message');
-
-      switch (status) {
-        case 400:
-          return { status, message };
-        default:
-          return {};
-      }
-    });
-
-  // TODO: handle 404 and other errors in different ways (e.response.status === 404)
-};
+type SendReferralInvitationParams = {|
+  walletId: string,
+  token: string,
+  referralLink: string,
+  email?: string,
+  phone?: string,
+|};
 
 type ValidatedUserResponse = $Shape<{
   id: string,
@@ -357,557 +116,695 @@ type ValidatedUserResponse = $Shape<{
   error: boolean,
 }>;
 
-SDKWrapper.prototype.validateAddress = function (
-  blockchainAddress: string,
-): Promise<ValidatedUserResponse> {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
-    .then(({ data }) => data)
-    .catch(error => {
-      Sentry.captureMessage('Unable to restore user wallet', {
-        level: 'info',
-        extra: {
-          blockchainAddress,
-          error,
-        },
-      });
-      return { error: true };
+const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
+
+class SDKWrapper {
+  BCXSdk: BCX = null;
+  pillarWalletSdk: PillarSdk = null;
+
+  init(
+    updateOAuth?: ?Function,
+    oAuthTokensStored?: ?OAuthTokens,
+    onOAuthTokensFailed?: ?Function,
+  ) {
+    this.BCXSdk = new BCX({ apiUrl: BCX_URL });
+    this.pillarWalletSdk = new PillarSdk({
+      apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
+      notificationsUrl: NOTIFICATIONS_URL,
+      investmentsUrl: INVESTMENTS_URL,
+      updateOAuthFn: updateOAuth,
+      oAuthTokens: oAuthTokensStored,
+      tokensFailedCallbackFn: onOAuthTokensFailed,
     });
-};
+    this.pillarWalletSdk.configuration.setRequestTimeout(API_REQUEST_TIMEOUT);
+  }
 
-SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.asset.list({ walletId }))
-    .then(({ data }) => data)
-    .catch(() => []);
-};
+  supportHmac(): string {
+    return this.pillarWalletSdk.user.supportHmac({ project: Platform.OS })
+      .then(({ data }) => data.hmac || '')
+      .catch(() => '');
+  }
 
-SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.asset.search({ query, walletId }))
-    .then(({ data }) => data)
-    .catch(() => []);
-};
+  listAccounts(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId }))
+      .then(({ data }) => data.wallets || [])
+      .catch(() => []);
+  }
 
-SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
-  if (!walletAddress) return Promise.resolve({ assets: [] });
-  const url = `${OPEN_SEA_API}/assets/?owner=${walletAddress}` +
-    '&exclude_currencies=true&order_by=listing_date&order_direction=asc';
-  return new Promise((resolve, reject) => {
-    getLimitedData(url, [], 300, 0, 'assets', resolve, reject);
-  })
-    .then(response => ({ assets: response }))
-    .catch(() => ({ error: true }));
-};
-
-SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
-  const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
-  return Promise.resolve()
-    .then(() => axios.get(url, {
-      ...defaultAxiosRequestConfig,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-API-KEY': OPEN_SEA_API_KEY,
-      },
-    }))
-    .then(({ data }: AxiosResponse) => data)
-    .catch(() => ({ error: true }));
-};
-
-SDKWrapper.prototype.fetchNotifications = function (
-  walletId: string,
-  type: string,
-  fromTimestamp?: string,
-): Promise<ApiNotification[]> {
-  if (!walletId) return Promise.resolve([]);
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.notification.list({
-      walletId,
-      fromTimestamp,
-      type,
-    }))
-    .then(({ data }) => data)
-    .then(({ notifications }) => notifications || [])
-    .then(notifications => {
-      return notifications.map(notification => {
-        if (!isTransactionEvent(notification.type)) return notification;
-
-        const {
-          type: notificationType,
-          payload: {
-            fromAddress,
-            toAddress,
-            txHash,
-            ...restPayload
-          },
-          ...rest
-        } = notification;
-
+  registerOnBackend(fcmToken: ?string, username: string) {
+    let requestPayload = { username };
+    if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.wallet.register(requestPayload))
+      .then(({ data }) => data)
+      .catch((e = {}) => {
+        const status = get(e, 'response.status');
+        if (status === USERNAME_EXISTS_ERROR_CODE) {
+          return {
+            error: true,
+            reason: USERNAME_EXISTS,
+          };
+        }
         return {
-          type: notificationType,
-          payload: {
-            to: toAddress,
-            from: fromAddress,
-            hash: txHash,
-            ...restPayload,
-          },
-          ...rest,
+          error: true,
+          reason: REGISTRATION_FAILED,
         };
       });
-    })
-    .catch(() => []);
-};
+  }
 
-SDKWrapper.prototype.fetchICOs = function (userId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
-    .then(({ data }) => data.data)
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.fetchICOFundingInstructions = function (walletId, currency) {
-  const cryptos = ['ETH', 'BTC', 'LTC']; // mock purposes;
-  const fixtures = {
-    ...icoFundingInstructionsFixtures,
-    currency,
-    paymentType: cryptos.includes(currency) ? 'crypto_currency' : 'bank_transfer',
-  };
-  return Promise.resolve(fixtures);
-};
-
-SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
-  return this.BCXSdk.txHistory(payload)
-    .then(({ txHistory: { txHistory } }) => txHistory)
-    .then(history => {
-      return history.map(({
-        fromAddress,
-        toAddress,
-        txHash,
-        timestamp,
-        ...rest
-      }): Transaction => ({
-        to: toAddress,
-        from: fromAddress,
-        hash: txHash,
-        createdAt: timestamp || 0,
-        ...rest,
+  registerSmartWallet(payload: RegisterSmartWalletPayload) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.wallet.registerSmartWallet(payload))
+      .then(({ data }) => data)
+      .catch(e => ({
+        error: true,
+        reason: e,
       }));
-    })
-    .catch(() => []);
-};
+  }
 
-SDKWrapper.prototype.fetchGasInfo = function () {
-  return this.BCXSdk.gasStation()
-    .then(data => ({
-      min: data.safeLow,
-      avg: data.standard,
-      max: data.fast,
-    }))
-    .catch(() => ({}));
-};
-
-SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
-  return fetchTransactionInfo(hash);
-};
-
-SDKWrapper.prototype.fetchTransactionReceipt = function (hash: string) {
-  return fetchTransactionReceipt(hash);
-};
-
-SDKWrapper.prototype.fetchLastBlockNumber = function () {
-  return fetchLastBlockNumber();
-};
-
-SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
-  // TEMPORARY FETCH FROM BLOCKCHAIN DIRECTLY
-  return fetchAssetBalances(assets, address);
-  // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
-  //   const payload = { contractAddress, address, asset: symbol };
-  //   const { balance: response } = await this.BCXSdk.getBalance(payload);
-  //   return { balance: response.balance, symbol: response.ticker };
-  // });
-  // return Promise.all(promises).catch(() => []);
-};
-
-SDKWrapper.prototype.fetchBadges = function (walletId: string): Promise<UserBadgesResponse> {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.badge.my({ walletId }))
-    .then(({ data }) => data)
-    .then(data => uniqBy(data, 'id'))
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.fetchContactBadges = function (walletId: string, userId: string): Promise<Badges> {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.badge.get({ walletId, userId }))
-    .then(({ data }) => data)
-    .then(data => uniqBy(data, 'id'))
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.badge.selfAward({ walletId, event }))
-    .then(({ data }) => data)
-    .catch(() => ({}));
-};
-
-SDKWrapper.prototype.sendOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.invite({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.cancelOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.cancel({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.acceptOldInvitation = function (
-  targetUserId: string,
-  targetUserAccessKey: string,
-  accessKey: string,
-  sourceIdentityKey: ?string,
-  targetIdentityKey: ?string,
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.accept({
-      sourceUserAccessKey: accessKey,
-      targetUserId,
-      targetUserAccessKey,
-      sourceUserIdentityKeys: {
-        sourceIdentityKey,
-        targetIdentityKey,
-      },
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.rejectOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.reject({
-      accessKey,
-      targetUserId,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.sendInvitation = function (
-  targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connectionV2.invite({
-      targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.cancelInvitation = function (
-  targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connectionV2.cancel({
-      targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.acceptInvitation = function (
-  targetUserId: string,
-  sourceUserIdentityKeys: {
-    sourceIdentityKey: string;
-    targetIdentityKey: string;
-  },
-  targetUserIdentityKeys: {
-    sourceIdentityKey: string;
-    targetIdentityKey: string;
-  },
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connectionV2.accept({
-      targetUserId,
-      sourceUserIdentityKeys,
-      targetUserIdentityKeys,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.rejectInvitation = function (
-  targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connectionV2.reject({
-      targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.disconnectUser = function (
-  targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
-  walletId: string,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connectionV2.disconnect({
-      targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.muteUser = function (
-  targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
-  walletId: string,
-  mute: boolean,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connectionV2.mute({
-      targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-      mute,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.blockUser = function (
-  targetUserId: string,
-  sourceIdentityKey: string,
-  targetIdentityKey: string,
-  walletId: string,
-  block: boolean,
-) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connectionV2.block({
-      targetUserId,
-      sourceIdentityKey,
-      targetIdentityKey,
-      walletId,
-      block,
-    }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
-    .then(({ data }) => data)
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.setUsername = function (username: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.configuration.setUsername(username))
-    .catch(() => null);
-};
-
-SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.register.approveExternalLogin({ loginToken }))
-    .catch(error => {
-      Sentry.captureException({
-        type: 'External login approve error',
-        error,
+  registerOnAuthServer(walletPrivateKey: string, fcmToken: ?string, username: string) {
+    const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
+    let requestPayload = { privateKey, username };
+    if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
+    return Promise.resolve()
+      .then(() => {
+        return this.pillarWalletSdk.wallet.registerAuthServer(requestPayload);
+      })
+      .then(({ data }) => data)
+      .catch((error) => {
+        reportLog('Registration error', { error }, Sentry.Severity.Error);
+        const responseStatus = get(error, 'response.status');
+        const reason = responseStatus === USERNAME_EXISTS_ERROR_CODE
+          ? USERNAME_EXISTS
+          : REGISTRATION_FAILED;
+        return { error: true, reason };
       });
-      return { error };
-    });
-};
+  }
 
-SDKWrapper.prototype.connectionsCount = function (walletId: string) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.count({ walletId }))
-    .then(({ data }) => data)
-    .catch(() => null);
-};
+  updateFCMToken(walletId: string, fcmToken: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.wallet.update({ walletId, fcmToken }))
+      .then(({ data }) => data)
+      .catch(() => ({}));
+  }
 
-SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
-    .then(({ data }) => data)
-    .catch(() => []);
-};
+  fetchInitialAssets(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
+      .then(({ data }) => data)
+      .catch(() => [])
+      .then(transformAssetsToObject);
+  }
 
-SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
-    .catch(() => false);
-};
+  updateUser(user: Object) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.update(user))
+      .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
+      .catch(error => {
+        const status = get(error, 'response.status');
+        const message = get(error, 'response.data.message');
 
-SDKWrapper.prototype.patchIdentityKeys = function (updatedIdentityKeys: ConnectionPatchIdentityKeys) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.patchIdentityKeys(updatedIdentityKeys))
-    .then(({ data }) => data)
-    .catch(() => false);
-};
+        reportLog('updateUser: Failed to update user', {
+          walletId: user.walletId,
+          user,
+          status,
+          message,
+        }, Sentry.Severity.Error);
+        return { responseStatus: status, message };
+      });
+  }
 
-SDKWrapper.prototype.getContactsSmartAddresses = function (walletId: string, contacts: MapContactsAddresses) {
-  return Promise.resolve()
-    .then(() => this.pillarWalletSdk.user.mapContactsAddresses({ walletId, contacts }))
-    .then(({ data }) => data)
-    .catch(() => false);
-};
+  createOneTimePassword(user: Object) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.createOneTimePassword(user))
+      .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
+      .catch(error => {
+        const status = get(error, 'response.status');
+        const message = get(error, 'response.data.message');
 
-SDKWrapper.prototype.importedEthTransactionHistory = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
-  return Promise.resolve()
-    .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
-    .then(data => Array.isArray(data) ? data : [])
-    .catch(() => []);
-};
+        reportLog('createOneTimePassword: Failed to send text', {
+          walletId: user.walletId,
+          user,
+          status,
+          message,
+        }, Sentry.Severity.Error);
+        return { responseStatus: status, message };
+      });
+  }
 
-SDKWrapper.prototype.importedErc20TransactionHistory = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
-  return Promise.resolve()
-    .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
-    .then(data => get(data, 'operations', []))
-    .catch(() => []);
-};
+  verifyEmail(params: VerifyEmail) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.validateEmail(params))
+      .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: params.walletId }))
+      .catch(error => {
+        const status = get(error, 'response.status');
+        const message = get(error, 'response.data.message');
 
-SDKWrapper.prototype.getAddressErc20TokensInfo = function (walletAddress: string) {
-  if (NETWORK_PROVIDER !== 'homestead') {
-    const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
+        reportLog('Can\'t verify code', {
+          walletId: params.walletId,
+          user: params,
+          status,
+          message,
+        }, Sentry.Severity.Error);
+        return { responseStatus: status, message };
+      });
+  }
+
+  verifyPhone(user: Object) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.validatePhone(user))
+      .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
+      .catch(error => {
+        const status = get(error, 'response.status');
+        const message = get(error, 'response.data.message');
+
+        reportLog('verifyPhone: Can\'t verify code', {
+          walletId: user.walletId,
+          user,
+          status,
+          message,
+        }, Sentry.Severity.Error);
+        return { responseStatus: status, message };
+      });
+  }
+
+  generateReferralToken(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.generateToken({
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => ({ result: 'error' }));
+  }
+
+  sendReferralInvitation(params: SendReferralInvitationParams) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
+      .then(({ data }) => data)
+      .catch((error) => ({ result: 'error', reward: null, error }));
+  }
+
+  claimTokens({ walletId, code }: ClaimTokenAction) {
+    return Promise.resolve()
+      // TODO update pillarWalletSdk
+      // .then(() => this.pillarWalletSdk.referral.claimTokens({ walletId, code }))
+      // TODO return just 200
+      .then(() => ({ responseStatus: 200, walletId, code }))
+      .catch(error => {
+        const status = get(error, 'response.status');
+        const message = get(error, 'response.data.message');
+
+        reportLog('claimTokens: Can\'t claim referral code', {
+          walletId,
+          code,
+          status,
+          message,
+        }, Sentry.Severity.Error);
+        return { responseStatus: status, message };
+      });
+  }
+
+  getSentReferralInvites(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.list({ walletId }))
+      .then(({ data }) => data.data)
+      .catch(() => []);
+  }
+
+  updateUserAvatar(walletId: string, formData: Object) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
+      .then(({ data }) => ({ profileImage: data.profileImage, walletId }))
+      .catch(() => ({}));
+  }
+
+  getUserAvatar(userId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
+      .catch(() => null);
+  }
+
+  userInfo(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.info({ walletId }))
+      .then(({ data }) => ({ ...data, walletId }))
+      .catch(() => ({}));
+  }
+
+  userInfoById(targetUserId: string, myWalletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.infoById(targetUserId, { walletId: myWalletId }))
+      .then(({ data }) => ({ ...data }))
+      .catch(() => ({}));
+  }
+
+  userSearch(query: string, walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.search({ query, walletId }))
+      .then(({ data }) => data)
+      .catch(() => []);
+  }
+
+  usernameSearch(username: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
+      .then(({ data }) => data)
+      .catch(error => {
+        const status = get(error, 'response.status');
+        const message = get(error, 'response.data.message');
+
+        switch (status) {
+          case 400:
+            return { status, message };
+          default:
+            return {};
+        }
+      });
+
+    // TODO: handle 404 and other errors in different ways (e.response.status === 404)
+  }
+
+  validateAddress(blockchainAddress: string): Promise<ValidatedUserResponse> {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
+      .then(({ data }) => data)
+      .catch(error => {
+        reportLog('Unable to restore user wallet', { blockchainAddress, error });
+        return { error: true };
+      });
+  }
+
+  fetchSupportedAssets(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.asset.list({ walletId }))
+      .then(({ data }) => {
+        if (!Array.isArray(data)) {
+          reportLog('Wrong supported assets received', { data });
+          return [];
+        }
+        return data;
+      })
+      .catch(() => []);
+  }
+
+  assetsSearch(query: string, walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.asset.search({ query, walletId }))
+      .then(({ data }) => data)
+      .catch(() => []);
+  }
+
+  fetchCollectibles(walletAddress: string) {
+    if (!walletAddress) return Promise.resolve({ assets: [] });
+    const url = `${OPEN_SEA_API}/assets/?owner=${walletAddress}` +
+      '&exclude_currencies=true&order_by=listing_date&order_direction=asc';
+    return new Promise((resolve, reject) => {
+      getLimitedData(url, [], 300, 0, 'assets', resolve, reject);
+    })
+      .then(response => ({ assets: response }))
+      .catch(() => ({ error: true }));
+  }
+
+  fetchCollectiblesTransactionHistory(walletAddress: string) {
+    const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
+    return Promise.resolve()
+      .then(() => axios.get(url, {
+        ...defaultAxiosRequestConfig,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-API-KEY': OPEN_SEA_API_KEY,
+        },
+      }))
+      .then(({ data }: AxiosResponse) => data)
+      .catch(() => ({ error: true }));
+  }
+
+  fetchNotifications(
+    walletId: string,
+    type: string,
+    fromTimestamp?: string,
+  ): Promise<ApiNotification[]> {
+    if (!walletId) return Promise.resolve([]);
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.notification.list({
+        walletId,
+        fromTimestamp,
+        type,
+      }))
+      .then(({ data }) => data)
+      .then(({ notifications }) => notifications || [])
+      .then(notifications => {
+        return notifications.map(notification => {
+          if (!isTransactionEvent(notification.type)) return notification;
+
+          const {
+            type: notificationType,
+            payload: {
+              fromAddress,
+              toAddress,
+              txHash,
+              ...restPayload
+            },
+            ...rest
+          } = notification;
+
+          return {
+            type: notificationType,
+            payload: {
+              to: toAddress,
+              from: fromAddress,
+              hash: txHash,
+              ...restPayload,
+            },
+            ...rest,
+          };
+        });
+      })
+      .catch(() => []);
+  }
+
+  fetchGasInfo() {
+    return this.BCXSdk.gasStation()
+      .then(data => ({
+        min: data.safeLow,
+        avg: data.standard,
+        max: data.fast,
+      }))
+      .catch(() => ({}));
+  }
+
+  fetchTxInfo(hash: string) {
+    return fetchTransactionInfo(hash);
+  }
+
+  fetchHistory(payload: HistoryPayload) {
+    return this.BCXSdk.txHistory(payload)
+      .then(({ txHistory: { txHistory } }) => txHistory)
+      .then(history => {
+        return history.map(({
+          fromAddress,
+          toAddress,
+          txHash,
+          timestamp,
+          ...rest
+        }): Transaction => ({
+          to: toAddress,
+          from: fromAddress,
+          hash: txHash,
+          createdAt: timestamp || 0,
+          ...rest,
+        }));
+      })
+      .catch(() => []);
+  }
+
+  fetchTransactionReceipt(hash: string) {
+    return fetchTransactionReceipt(hash);
+  }
+
+  fetchLastBlockNumber() {
+    return fetchLastBlockNumber();
+  }
+
+  fetchBalances({ address, assets }: BalancePayload) {
+    // TEMPORARY FETCH FROM BLOCKCHAIN DIRECTLY
+    return fetchAssetBalances(assets, address);
+    // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
+    //   const payload = { contractAddress, address, asset: symbol };
+    //   const { balance: response } = await this.BCXSdk.getBalance(payload);
+    //   return { balance: response.balance, symbol: response.ticker };
+    // });
+    // return Promise.all(promises).catch(() => []);
+  }
+
+  fetchBadges(walletId: string): Promise<UserBadgesResponse> {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.badge.my({ walletId }))
+      .then(({ data }) => data)
+      .then(data => uniqBy(data, 'id'))
+      .catch(() => []);
+  }
+
+  fetchContactBadges(walletId: string, userId: string): Promise<Badges> {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.badge.get({ walletId, userId }))
+      .then(({ data }) => data)
+      .then(data => uniqBy(data, 'id'))
+      .catch(() => []);
+  }
+
+  selfAwardBadge(walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.badge.selfAward({ walletId, event }))
+      .then(({ data }) => data)
+      .catch(() => ({}));
+  }
+
+  setUsername(username: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.configuration.setUsername(username))
+      .catch(() => null);
+  }
+
+  approveLoginToExternalResource(loginToken: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.register.approveExternalLogin({ loginToken }))
+      .catch(error => {
+        reportLog('approveLoginToExternalResource: External login approve error', { error }, Sentry.Severity.Error);
+        return { error };
+      });
+  }
+
+  sendInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.invite({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  cancelInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.cancel({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  acceptInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.accept({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  rejectInvitation(
+    targetUserId: string,
+    walletId: string,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.reject({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  disconnectUser(
+    targetUserId: string,
+    walletId: string,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.disconnect({
+        targetUserId,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  muteUser(
+    targetUserId: string,
+    walletId: string,
+    mute: boolean,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.mute({
+        targetUserId,
+        walletId,
+        mute,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  blockUser(
+    targetUserId: string,
+    walletId: string,
+    block: boolean,
+  ) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.block({
+        targetUserId,
+        walletId,
+        block,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  }
+
+  getContactsSmartAddresses(walletId: string, contacts: MapContactsAddresses) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.mapContactsAddresses({ walletId, contacts }))
+      .then(({ data }) => data)
+      .catch(() => false);
+  }
+
+  importedEthTransactionHistory(walletAddress: string) {
+    if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+    return Promise.resolve()
+      .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
+      .then(data => Array.isArray(data) ? data : [])
+      .catch(() => []);
+  }
+
+  importedErc20TransactionHistory(walletAddress: string) {
+    if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+    return Promise.resolve()
+      .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
+      .then(data => get(data, 'operations', []))
+      .catch(() => []);
+  }
+
+  getContacts(walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connectionV2.list({ walletId }))
+      .then(({ data }) => {
+        if (!Array.isArray(data)) {
+          reportLog('Wrong connections received', { data });
+          return [];
+        }
+        return data;
+      })
+      .catch(() => []);
+  }
+
+  getAddressErc20TokensInfo(walletAddress: string) {
+    if (NETWORK_PROVIDER !== 'homestead') {
+      const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
+      return Promise.resolve()
+        .then(() => axios.get(url, defaultAxiosRequestConfig))
+        .then(({ data }: AxiosResponse) => data)
+        .catch(() => []);
+    }
+    return Promise.resolve()
+      .then(() => ethplorerSdk.getAddressInfo(walletAddress))
+      .then(data => get(data, 'tokens', []))
+      .catch(() => []);
+  }
+
+  fetchMoonPayOffers(fromAsset: string, toAsset: string, amount: number) {
+    const amountToGetOffer = amount < MIN_MOONPAY_FIAT_VALUE ? MIN_MOONPAY_FIAT_VALUE : amount;
+    const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
+    + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
+
     return Promise.resolve()
       .then(() => axios.get(url, defaultAxiosRequestConfig))
       .then(({ data }: AxiosResponse) => data)
+      .then(data => {
+        if (data.totalAmount) {
+          const {
+            feeAmount,
+            extraFeeAmount,
+            quoteCurrencyAmount,
+          } = data;
+
+          const extraFeeAmountForAmountProvided = (extraFeeAmount / amountToGetOffer) * amount;
+          const totalAmount = amount + feeAmount + extraFeeAmountForAmountProvided;
+
+          return {
+            provider: 'MoonPay',
+            askRate: totalAmount,
+            fromAsset: { code: fromAsset },
+            toAsset: { code: toAsset },
+            feeAmount,
+            extraFeeAmount: extraFeeAmountForAmountProvided,
+            quoteCurrencyAmount,
+            _id: 'moonpay',
+            minQuantity: MIN_MOONPAY_FIAT_VALUE,
+            maxQuantity: 9999999,
+          };
+        }
+        return { error: true };
+      })
+      .catch(() => ({ error: true }));
+  }
+
+  fetchMoonPaySupportedAssetsTickers() {
+    const url = `${MOONPAY_API_URL}/v3/currencies`;
+    return axios.get(url, defaultAxiosRequestConfig)
+      .then(({ data }: AxiosResponse) => data)
+      .then(data => {
+        return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
+      })
       .catch(() => []);
   }
-  return Promise.resolve()
-    .then(() => ethplorerSdk.getAddressInfo(walletAddress))
-    .then(data => get(data, 'tokens', []))
-    .catch(() => []);
-};
 
-SDKWrapper.prototype.fetchMoonPayOffers = function (fromAsset: string, toAsset: string, amount: number) {
-  const amountToGetOffer = amount < MIN_MOONPAY_FIAT_VALUE ? MIN_MOONPAY_FIAT_VALUE : amount;
-  const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
-  + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
+  fetchSendWyreOffers(fromAsset: string, toAsset: string, amount: number) {
+    return Promise.resolve()
+      .then(() => axios.get(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`, defaultAxiosRequestConfig))
+      .then(({ data }: AxiosResponse) => data)
+      .then(data => {
+        if (data[fromAsset + toAsset]) {
+          return {
+            provider: 'SendWyre',
+            askRate: amount,
+            fromAsset: { code: fromAsset },
+            toAsset: { code: toAsset },
+            feeAmount: '',
+            extraFeeAmount: '',
+            quoteCurrencyAmount: amount * data[fromAsset + toAsset],
+            _id: 'sendwyre',
+            minQuantity: 0.01,
+            maxQuantity: 9999999,
+          };
+        }
+        return { error: true };
+      })
+      .catch(() => ({ error: true }));
+  }
 
-  return Promise.resolve()
-    .then(() => axios.get(url, defaultAxiosRequestConfig))
-    .then(({ data }: AxiosResponse) => data)
-    .then(data => {
-      if (data.totalAmount) {
-        const {
-          feeAmount,
-          extraFeeAmount,
-          quoteCurrencyAmount,
-        } = data;
+  fetchSendWyreSupportedAssetsTickers() {
+    return axios.get(`${SENDWYRE_API_URL}/v3/rates`, defaultAxiosRequestConfig)
+      .then(({ data }: AxiosResponse) => data)
+      .then(data => {
+        const exchangePairs = Object.keys(data);
+        const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>
+          (pair.startsWith('USD') && !pair.startsWith('USDC')) || pair.startsWith('EUR') || pair.startsWith('GBP'));
 
-        const extraFeeAmountForAmountProvided = (extraFeeAmount / amountToGetOffer) * amount;
-        const totalAmount = amount + feeAmount + extraFeeAmountForAmountProvided;
+        return exchangePairsWithSupportedFiatAsFirstItem.map((key) => key.substring(3));
+      })
+      .catch(() => []);
+  }
+}
 
-        return {
-          provider: 'MoonPay',
-          askRate: totalAmount,
-          fromAsset: { code: fromAsset },
-          toAsset: { code: toAsset },
-          feeAmount,
-          extraFeeAmount: extraFeeAmountForAmountProvided,
-          quoteCurrencyAmount,
-          _id: 'moonpay',
-          minQuantity: MIN_MOONPAY_FIAT_VALUE,
-          maxQuantity: 9999999,
-        };
-      }
-      return { error: true };
-    })
-    .catch(() => ({ error: true }));
-};
-
-SDKWrapper.prototype.fetchMoonPaySupportedAssetsTickers = function () {
-  const url = `${MOONPAY_API_URL}/v3/currencies`;
-  return axios.get(url, defaultAxiosRequestConfig)
-    .then(({ data }: AxiosResponse) => data)
-    .then(data => {
-      return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
-    })
-    .catch(() => []);
-};
-
-SDKWrapper.prototype.fetchSendWyreOffers = function (fromAsset: string, toAsset: string, amount: number) {
-  return Promise.resolve()
-    .then(() => axios.get(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`, defaultAxiosRequestConfig))
-    .then(({ data }: AxiosResponse) => data)
-    .then(data => {
-      if (data[fromAsset + toAsset]) {
-        return {
-          provider: 'SendWyre',
-          askRate: amount,
-          fromAsset: { code: fromAsset },
-          toAsset: { code: toAsset },
-          feeAmount: '',
-          extraFeeAmount: '',
-          quoteCurrencyAmount: amount * data[fromAsset + toAsset],
-          _id: 'sendwyre',
-          minQuantity: 0.01,
-          maxQuantity: 9999999,
-        };
-      }
-      return { error: true };
-    })
-    .catch(() => ({ error: true }));
-};
-
-SDKWrapper.prototype.fetchSendWyreSupportedAssetsTickers = function () {
-  return axios.get(`${SENDWYRE_API_URL}/v3/rates`, defaultAxiosRequestConfig)
-    .then(({ data }: AxiosResponse) => data)
-    .then(data => {
-      const exchangePairs = Object.keys(data);
-      const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>
-        (pair.startsWith('USD') && !pair.startsWith('USDC')) || pair.startsWith('EUR') || pair.startsWith('GBP'));
-
-      return exchangePairsWithSupportedFiatAsFirstItem.map((key) => key.substring(3));
-    })
-    .catch(() => []);
-};
+export default SDKWrapper;

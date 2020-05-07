@@ -46,6 +46,16 @@ export const lightThemeColors = {
   smartWalletText: '#1D24D8',
   smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
+  helpIcon: '#f7931a',
+  popularSwaps: '#d08cb1',
+  notice: '#ea480e',
+  activeTabBarIcon: '#007AFF',
+  inactiveTabBarIcon: '#D4D9DB',
+  buttonSecondaryBackground: '#e6f1f9',
+  synthetic: '#2329d6',
+  transactionReceivedIcon: '#497391',
+  iconBackground: '#ebf0f5',
+  link: '#007aff',
 };
 
 export const darkThemeColors = {
@@ -73,6 +83,16 @@ export const darkThemeColors = {
   smartWalletText: '#1D24D8',
   smartWalletSurface: '#f3f7ff',
   danger: '#ff0005',
+  helpIcon: '#f7931a',
+  popularSwaps: '#d08cb1',
+  notice: '#ea480e',
+  activeTabBarIcon: '#FFFFFF',
+  inactiveTabBarIcon: '#818eb3',
+  buttonSecondaryBackground: '#102132',
+  synthetic: '#9396ff',
+  transactionReceivedIcon: '#00E097',
+  iconBackground: '#222c46',
+  link: '#fcfdff',
 };
 
 export const themedColors = {
@@ -172,6 +192,46 @@ export const themedColors = {
     lightTheme: lightThemeColors.danger,
     darkTheme: darkThemeColors.danger,
   }),
+  helpIcon: theme('current', {
+    lightTheme: lightThemeColors.helpIcon,
+    darkTheme: darkThemeColors.helpIcon,
+  }),
+  popularSwaps: theme('current', {
+    lightTheme: lightThemeColors.popularSwaps,
+    darkTheme: darkThemeColors.popularSwaps,
+  }),
+  notice: theme('current', {
+    lightTheme: lightThemeColors.notice,
+    darkTheme: darkThemeColors.notice,
+  }),
+  activeTabBarIcon: theme('current', {
+    lightTheme: lightThemeColors.activeTabBarIcon,
+    darkTheme: darkThemeColors.activeTabBarIcon,
+  }),
+  inactiveTabBarIcon: theme('current', {
+    lightTheme: lightThemeColors.inactiveTabBarIcon,
+    darkTheme: darkThemeColors.inactiveTabBarIcon,
+  }),
+  buttonSecondaryBackground: theme('current', {
+    lightTheme: lightThemeColors.buttonSecondaryBackground,
+    darkTheme: darkThemeColors.buttonSecondaryBackground,
+  }),
+  synthetic: theme('current', {
+    lightTheme: lightThemeColors.synthetic,
+    darkTheme: darkThemeColors.synthetic,
+  }),
+  transactionReceivedIcon: theme('current', {
+    lightTheme: lightThemeColors.transactionReceivedIcon,
+    darkTheme: darkThemeColors.transactionReceivedIcon,
+  }),
+  iconBackground: theme('current', {
+    lightTheme: lightThemeColors.iconBackground,
+    darkTheme: darkThemeColors.iconBackground,
+  }),
+  link: theme('current', {
+    lightTheme: lightThemeColors.link,
+    darkTheme: darkThemeColors.link,
+  }),
 };
 
 export const defaultTheme = {
@@ -199,4 +259,8 @@ export function getThemeColors(currentTheme: Theme = defaultTheme) {
 
 export function getThemeType(currentTheme: Theme = defaultTheme) {
   return currentTheme.current;
+}
+
+export function getThemeName(currentTheme: Theme = defaultTheme) {
+  return currentTheme.current.replace('Theme', '');
 }

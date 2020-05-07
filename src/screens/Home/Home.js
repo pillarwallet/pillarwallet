@@ -2,54 +2,50 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
-import { Animated, RefreshControl, Platform, View, ScrollView, FlatList } from 'react-native';
+import { RefreshControl, View, FlatList, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
-import firebase from 'react-native-firebase';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
 import styled, { withTheme } from 'styled-components/native';
-import { MediumText } from 'components/Typography';
 import Tabs from 'components/Tabs';
-import QRCodeScanner from 'components/QRCodeScanner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
-import PortfolioBalance from 'components/PortfolioBalance';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Toast from 'components/Toast';
+import { Banner } from 'components/Banner';
+import IconButton from 'components/IconButton';
+import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
+import Loader from 'components/Loader';
+import CollapsibleSection from 'components/CollapsibleSection';
+import ButtonText from 'components/ButtonText';
+import Requests from 'screens/WalletConnect/Requests';
+import UserNameAndImage from 'components/UserNameAndImage';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-import {
-  MANAGE_DETAILS_SESSIONS,
-  BADGE,
-  SETTINGS,
-} from 'constants/navigationConstants';
+import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import {
@@ -65,12 +61,9 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
-import {
-  requestSessionAction,
-  cancelWaitingRequestAction,
-} from 'actions/walletConnectActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { toggleBadgesAction } from 'actions/appSettingsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -78,25 +71,29 @@ import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
 import { activeBlockchainSelector } from 'selectors/selectors';
 
 // utils
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
-import { filterSessionsByUrl } from 'screens/ManageDetailsSessions';
+import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
 import type { ContactSmartAddressData } from 'models/Contacts';
-import type { Connector } from 'models/WalletConnect';
+import type { CallRequest, Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { User } from 'models/User';
+
+// partials
+import WalletsPart from './WalletsPart';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   invitations: Object[],
-  user: Object,
+  user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -109,9 +106,6 @@ type Props = {
   fetchAllCollectiblesData: Function,
   openSeaTxHistory: Object[],
   history: Object[],
-  requestWalletConnectSession: (uri: string) => void,
-  executeDeepLink: (uri: string) => void,
-  cancelWaitingRequest: () => void,
   badges: Badges,
   fetchBadges: Function,
   connectors: Connector[],
@@ -120,66 +114,65 @@ type Props = {
   activeAccount: ?Account,
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
-  isOnline: boolean,
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
   baseFiatCurrency: ?string,
   activeBlockchainNetwork: ?string,
+  goToInvitationFlow: () => void,
+  hideBadges: boolean,
+  toggleBadges: () => void,
+  walletConnectRequests: CallRequest[],
 };
 
 type State = {
-  showCamera: boolean,
-  usernameWidth: number,
   activeTab: string,
-  permissionsGranted: boolean,
-  scrollY: Animated.Value,
-  isScanning: boolean,
+  isReferralBannerVisible: boolean,
+  showRewardModal: boolean,
+  loaderMessage: string,
 };
 
-const WalletConnectWrapper = styled.View`
-  padding: ${spacing.medium}px ${spacing.layoutSides}px 0;
-  background-color: ${themedColors.surface};
-  width: 100%;
-`;
 
-const ListHeader = styled(MediumText)`
-  color: ${themedColors.accent};
-  ${fontStyles.regular};
-  margin: ${spacing.medium}px ${spacing.layoutSides}px ${spacing.small}px;
-`;
+const {
+  width: SCREEN_WIDTH,
+  height: SCREEN_HEIGHT,
+} = Dimensions.get('window');
 
-const BadgesWrapper = styled.View`
-  padding-top: ${spacing.medium}px;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${themedColors.border};
+
+const RequestsWrapper = styled.View`
+  margin-top: ${({ marginOnTop }) => marginOnTop ? 18 : 2}px;
+  align-items: flex-end;
 `;
 
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
 `;
 
-const allIconNormal = require('assets/icons/all_normal.png');
-const allIconActive = require('assets/icons/all_active.png');
-const socialIconNormal = require('assets/icons/social_normal.png');
-const socialIconActive = require('assets/icons/social_active.png');
-const transactionsIconNormal = require('assets/icons/transactions_normal.png');
-const transactionsIconActive = require('assets/icons/transactions_active.png');
-const iconConnect = require('assets/icons/icon_receive.png');
+const LoaderWrapper = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  height: ${SCREEN_HEIGHT}px;
+  width: ${SCREEN_WIDTH}px;
+  background-color: ${themedColors.surface};
+  z-index: 99999;
+`;
+
+const referralImage = require('assets/images/referral_gift.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
 
   state = {
-    showCamera: false,
-    permissionsGranted: false,
-    scrollY: new Animated.Value(0),
     activeTab: ALL,
-    usernameWidth: 0,
-    isScanning: false,
+    isReferralBannerVisible: true,
+    showRewardModal: false,
+    loaderMessage: '',
+    isBadgesCollapsed: false,
   };
 
   componentDidMount() {
@@ -191,9 +184,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     logScreenView('View home', 'Home');
 
-    if (Platform.OS === 'ios') {
-      firebase.notifications().setBadge(0);
-    }
+    resetAppNotificationsBadgeNumber();
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
@@ -223,8 +214,6 @@ class HomeScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  closeCamera = () => this.setState({ showCamera: false });
-
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -247,56 +236,25 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ activeTab });
   };
 
-  openQRScanner = () => {
-    const { isOnline } = this.props;
-    if (!isOnline) {
-      Toast.show({
-        message: 'Cannot use Connect while offline',
-        type: 'warning',
-        title: 'Warning',
-      });
-      return;
-    }
-    this.setState({ isScanning: true });
-  };
-
-  closeQRScanner = () => this.setState({
-    isScanning: false,
-  });
-
-  // START OF Wallet connect related methods
-  validateQRCode = (uri: string): boolean => {
-    return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
-  };
-
-  handleQRRead = (uri: string) => {
-    const {
-      requestWalletConnectSession,
-      executeDeepLink,
-    } = this.props;
-
-    this.closeQRScanner();
-
-    if (uri.startsWith('wc:')) {
-      requestWalletConnectSession(uri);
-    } else {
-      executeDeepLink(uri);
-    }
-  };
-
-  cancelWaiting = () => {
-    this.props.cancelWaitingRequest();
-  };
-  // END OF Wallet connect related methods
-
   renderBadge = ({ item }) => {
     const { navigation } = this.props;
     return (
       <BadgeTouchableItem
         data={item}
         onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
+        style={{ paddingHorizontal: 8 }}
       />
     );
+  };
+
+  handleModalHide = (callback: () => void) => {
+    this.setState({ showRewardModal: false }, () => {
+      if (callback) callback();
+    });
+  };
+
+  handleWalletChange = (loaderMessage: string) => {
+    this.setState({ loaderMessage });
   };
 
   render() {
@@ -310,39 +268,50 @@ class HomeScreen extends React.Component<Props, State> {
       openSeaTxHistory,
       contacts,
       invitations,
-      pendingConnector,
       badges,
-      connectors,
       contactsSmartAddresses,
       accounts,
       userEvents,
       badgesEvents,
       theme,
-      baseFiatCurrency,
       activeBlockchainNetwork,
+      hideBadges,
+      toggleBadges,
+      walletConnectRequests,
+      user,
+      goToInvitationFlow,
     } = this.props;
-    const colors = getThemeColors(theme);
 
-    const { activeTab, isScanning } = this.state;
+    const {
+      activeTab,
+      showRewardModal,
+      loaderMessage,
+      isReferralBannerVisible,
+    } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = activeBlockchainNetwork === 'BITCOIN' ? history : mapTransactionsHistory(
-      tokenTxHistory,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      TRANSACTION_EVENT,
-    );
+    const transactionsOnMainnet = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? history
+      : mapTransactionsHistory(
+        tokenTxHistory,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        TRANSACTION_EVENT,
+      );
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
-    const mappedCTransactions = mapTransactionsHistory(
-      collectiblesTransactions,
-      contacts,
-      contactsSmartAddresses,
-      accounts,
-      COLLECTIBLE_TRANSACTION,
-    );
+
+    const mappedCTransactions = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
+      ? []
+      : mapTransactionsHistory(
+        collectiblesTransactions,
+        contacts,
+        contactsSmartAddresses,
+        accounts,
+        COLLECTIBLE_TRANSACTION,
+      );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 
@@ -350,8 +319,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: ALL,
         name: 'All',
-        tabImageNormal: allIconNormal,
-        tabImageActive: allIconActive,
+        icon: 'cube',
         onPress: () => this.setActiveTab(ALL),
         data: [
           ...transactionsOnMainnet,
@@ -369,8 +337,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: TRANSACTIONS,
         name: 'Transactions',
-        tabImageNormal: transactionsIconNormal,
-        tabImageActive: transactionsIconActive,
+        icon: 'paperPlane',
         onPress: () => this.setActiveTab(TRANSACTIONS),
         data: [...transactionsOnMainnet, ...mappedCTransactions],
         emptyState: {
@@ -381,8 +348,7 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: SOCIAL,
         name: 'Social',
-        tabImageNormal: socialIconNormal,
-        tabImageActive: socialIconActive,
+        icon: 'cup',
         onPress: () => this.setActiveTab(SOCIAL),
         data: [...mappedContacts, ...invitations],
         emptyState: {
@@ -394,111 +360,148 @@ class HomeScreen extends React.Component<Props, State> {
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
 
-    const sessionsCount = filterSessionsByUrl(connectors).length;
-    const sessionsLabelPart = sessionsCount < 2 ? 'session' : 'sessions';
-    const sessionsLabel = sessionsCount ? `${sessionsCount} ${sessionsLabelPart}` : '';
-
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const colors = getThemeColors(theme);
 
     return (
-      <ContainerWithHeader
-        backgroundColor={colors.card}
-        headerProps={{
-          leftItems: [{ user: true }],
-          rightItems: [
-            {
-              link: 'Settings',
-              onPress: () => { navigation.navigate(SETTINGS); },
-            },
-            {
-              link: 'Support',
-              onPress: () => Intercom.displayMessenger(),
-              withBackground: true,
-              addon: hasIntercomNotifications && (
-                <View
-                  style={{
-                    width: 8,
-                    height: 8,
-                    backgroundColor: colors.indicator,
-                    borderRadius: 4,
-                    marginLeft: 4,
-                    marginRight: -6,
-                  }}
-                />
-              ),
-            },
-          ],
-        }}
-        inset={{ bottom: 0 }}
-      >
-        <ScrollView
-          style={{ width: '100%', flex: 1 }}
-          stickyHeaderIndices={[3]}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={this.refreshScreenData}
-            />}
-        >
-          <PortfolioBalance fiatCurrency={fiatCurrency} />
-          <WalletConnectWrapper>
-            <SettingsItemCarded
-              title="Manage Sessions"
-              subtitle={sessionsLabel}
-              onMainPress={() => navigation.navigate(MANAGE_DETAILS_SESSIONS)}
-              onSettingsPress={this.openQRScanner}
-              onSettingsLoadingPress={this.cancelWaiting}
-              isLoading={!!pendingConnector}
-              settingsIconSource={iconConnect}
-              settingsLabel="Connect"
-            />
-          </WalletConnectWrapper>
-          <BadgesWrapper>
-            <ListHeader>Game of badges</ListHeader>
-            <FlatList
-              data={badges}
-              horizontal
-              keyExtractor={(item) => (item.id.toString())}
-              renderItem={this.renderBadge}
-              style={{ width: '100%', paddingBottom: spacing.medium }}
-              contentContainerStyle={{ paddingHorizontal: 6, ...badgesContainerStyle }}
-              initialNumToRender={5}
-              ListEmptyComponent={(
-                <EmptyStateWrapper>
-                  <EmptyStateParagraph
-                    title="No badges"
-                    bodyText="You do not have badges yet"
+      <React.Fragment>
+        <ContainerWithHeader
+          headerProps={{
+            leftItems: [
+              {
+                custom: (
+                  <IconButton
+                    icon="hamburger"
+                    onPress={() => navigation.navigate(MENU)}
+                    fontSize={fontSizes.large}
+                    secondary
+                    style={{
+                      width: 40,
+                      height: 40,
+                      marginLeft: -10,
+                      marginTop: -6,
+                    }}
                   />
-                </EmptyStateWrapper>
+                ),
+              },
+            ],
+            centerItems: [{ custom: <UserNameAndImage user={user} /> }],
+            rightItems: [
+              {
+                link: 'Support',
+                onPress: () => Intercom.displayMessenger(),
+                addon: hasIntercomNotifications && (
+                  <View
+                    style={{
+                      width: 8,
+                      height: 8,
+                      backgroundColor: colors.indicator,
+                      borderRadius: 4,
+                      marginLeft: 4,
+                      marginRight: -6,
+                    }}
+                  />
+                ),
+              },
+            ],
+            sideFlex: '25px',
+          }}
+          inset={{ bottom: 0 }}
+          tab
+        >
+          {onScroll => (
+            <ActivityFeed
+              onCancelInvitation={cancelInvitation}
+              onRejectInvitation={rejectInvitation}
+              onAcceptInvitation={acceptInvitation}
+              navigation={navigation}
+              tabs={activityFeedTabs}
+              activeTab={activeTab}
+              hideTabs
+              initialNumToRender={8}
+              wrapperStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}
+              headerComponent={(
+                <React.Fragment>
+                  <WalletsPart handleWalletChange={this.handleWalletChange} />
+                  {!!walletConnectRequests &&
+                  <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
+                    {walletConnectRequests.length > 1 &&
+                    <ButtonText
+                      onPress={() => navigation.navigate(WALLETCONNECT)}
+                      buttonText={`View all ${walletConnectRequests.length}`}
+                      wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
+                    />}
+                    <Requests showLastOneOnly />
+                  </RequestsWrapper>}
+                  <Banner
+                    isVisible={isReferralBannerVisible}
+                    onPress={goToInvitationFlow}
+                    bannerText="Refer friends and earn rewards, free PLR and more."
+                    imageProps={{
+                      style: {
+                        width: 96,
+                        height: 60,
+                        marginRight: -4,
+                      },
+                      source: referralImage,
+                    }}
+                    onClose={() => this.setState({ isReferralBannerVisible: false })}
+                  />
+                  <CollapsibleSection
+                    label="Game of badges"
+                    collapseContent={
+                      <FlatList
+                        data={badges}
+                        horizontal
+                        keyExtractor={(item) => (item.id.toString())}
+                        renderItem={this.renderBadge}
+                        style={{ width: '100%', paddingBottom: spacing.medium }}
+                        contentContainerStyle={{ paddingHorizontal: 2, paddingTop: 26, ...badgesContainerStyle }}
+                        initialNumToRender={5}
+                        ListEmptyComponent={(
+                          <EmptyStateWrapper>
+                            <EmptyStateParagraph
+                              title="No badges"
+                              bodyText="You do not have badges yet"
+                            />
+                          </EmptyStateWrapper>
+                        )}
+                      />
+                    }
+                    onPress={toggleBadges}
+                    open={!hideBadges}
+                  />
+                </React.Fragment>
               )}
+              tabsComponent={(
+                <Tabs
+                  tabs={activityFeedTabs}
+                  wrapperStyle={{ paddingTop: 16 }}
+                  activeTab={activeTab}
+                />
+              )}
+              flatListProps={{
+                refreshControl: (
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={this.refreshScreenData}
+                  />
+                ),
+                onScroll,
+                scrollEventThrottle: 16,
+              }}
             />
-          </BadgesWrapper>
-          <Tabs
-            tabs={activityFeedTabs}
-            wrapperStyle={{ paddingTop: 16 }}
-            activeTab={activeTab}
-          />
-          <ActivityFeed
-            onCancelInvitation={cancelInvitation}
-            onRejectInvitation={rejectInvitation}
-            onAcceptInvitation={acceptInvitation}
-            navigation={navigation}
-            tabs={activityFeedTabs}
-            activeTab={activeTab}
-            hideTabs
-            initialNumToRender={8}
-            wrapperStyle={{ flexGrow: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
-          />
-        </ScrollView>
-        <QRCodeScanner
-          validator={this.validateQRCode}
-          isActive={isScanning}
-          onCancel={this.closeQRScanner}
-          onRead={this.handleQRRead}
+          )}
+        </ContainerWithHeader>
+        {!!loaderMessage &&
+          <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
+        }
+        <ReferralModalReward
+          isVisible={showRewardModal}
+          onModalHide={this.handleModalHide}
         />
-      </ContainerWithHeader>
+      </React.Fragment>
     );
   }
 }
@@ -509,11 +512,10 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
   badges: { data: badges, badgesEvents },
-  walletConnect: { connectors, pendingConnector },
   accounts: { data: accounts },
-  session: { data: { isOnline } },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, hideBadges } },
+  walletConnect: { requests: walletConnectRequests },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -521,13 +523,12 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   badges,
   badgesEvents,
-  connectors,
-  pendingConnector,
   contactsSmartAddresses,
   accounts,
-  isOnline,
   userEvents,
   baseFiatCurrency,
+  hideBadges,
+  walletConnectRequests,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -550,12 +551,11 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  requestWalletConnectSession: uri => dispatch(requestSessionAction(uri)),
-  executeDeepLink: uri => dispatch(executeDeepLinkAction(uri)),
-  cancelWaitingRequest: () => dispatch(cancelWaitingRequestAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  toggleBadges: () => dispatch(toggleBadgesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

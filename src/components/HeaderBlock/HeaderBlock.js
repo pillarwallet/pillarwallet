@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StatusBar, View, TouchableOpacity } from 'react-native';
+import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -28,9 +28,6 @@ import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
-import { connect } from 'react-redux';
-import ProfileImage from 'components/ProfileImage';
-import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { responsiveSize } from 'utils/ui';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
@@ -43,12 +40,11 @@ type NavItem = {
   [string]: any,
 };
 
-type Props = {
+export type Props = {
   rightItems?: NavItem[],
   leftItems?: NavItem[],
   centerItems?: NavItem[],
   sideFlex?: number,
-  user: Object,
   navigation: NavigationScreenProp<*>,
   background?: string,
   floating?: boolean,
@@ -60,15 +56,16 @@ type Props = {
   noPaddingTop?: boolean,
   noBottomBorder?: boolean,
   onClose?: () => void,
-}
+  leftSideFlex?: number,
+  wrapperStyle?: Object,
+  noHorizonatalPadding?: boolean,
+  forceInsetTop?: string,
+  bottomBorderAnimationValue?: Animated.Value,
+};
 
-const Wrapper = styled.View`
+const Wrapper = styled(Animated.View)`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.card};
-  ${({ noBottomBorder, theme }) => !noBottomBorder && `
-    border-bottom-width: 1;
-    border-bottom-color: ${theme.colors.border};
-  `}
+  border-bottom-width: 1;
   ${({ floating }) => floating && `
     position: absolute;
     top: 0;
@@ -78,7 +75,8 @@ const Wrapper = styled.View`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding: 15px ${spacing.layoutSides}px;
+  padding-vertical: 15px;
+  ${({ noHorizonatalPadding }) => !noHorizonatalPadding && `padding-horizontal: ${spacing.layoutSides}px;`}
   width: 100%;
   min-height: 58px;
 `;
@@ -94,13 +92,6 @@ const HeaderRow = styled.View`
   width: 100%;
   align-items: center;
   justify-content: space-between;
-`;
-
-const HeaderProfileImage = styled(ProfileImage)``;
-
-const UserButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
 `;
 
 const CenterItems = styled.View`
@@ -132,7 +123,7 @@ const RightItems = styled.View`
 
 const BackIcon = styled(IconButton)`
   position: relative;
-  height: 24px;
+  height: 34px;
   width: 44px;
   padding-left: 10px;
   margin-left: -12px;
@@ -167,7 +158,7 @@ const TextButton = styled.TouchableOpacity`
 
 const ButtonLabel = styled(BaseText)`
   ${fontStyles.regular}px;
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.link};
 `;
 
 const Indicator = styled.View`
@@ -185,16 +176,15 @@ const IconImage = styled(CachedImage)`
   height: 24px;
 `;
 
-const profileImageWidth = 24;
-
 const LEFT = 'LEFT';
 const CENTER = 'CENTER';
 const RIGHT = 'RIGHT';
+const animatedValueZero = new Animated.Value(0);
 
 const getCloseAction = (props, navigation) => {
   if (props.onClose) return () => props.onClose();
   if (props.dismiss) return () => navigation.dismiss();
-  return () => navigation.goBack();
+  return () => navigation.goBack(null);
 };
 
 class HeaderBlock extends React.Component<Props> {
@@ -209,22 +199,27 @@ class HeaderBlock extends React.Component<Props> {
       customOnBack,
       theme,
       transparent,
+      leftSideFlex,
     } = this.props;
     const colors = getThemeColors(theme);
 
     return (
       <HeaderRow>
-        <LeftItems sideFlex={sideFlex} style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}>
+        <LeftItems
+          sideFlex={sideFlex || leftSideFlex}
+          style={!centerItems.length && !rightItems.length && !leftSideFlex ? { flexGrow: 2 } : {}}
+        >
           {(leftItems.length || !!noBack)
             ? leftItems.map((item) => this.renderSideItems(item, LEFT))
             : (
               <BackIcon
                 icon="back"
                 color={transparent ? colors.control : colors.text}
-                onPress={customOnBack ? () => customOnBack() : () => { navigation.goBack(null); }}
+                onPress={customOnBack || (() => navigation.goBack(null))}
                 fontSize={fontSizes.large}
                 horizontalAlign="flex-start"
-              />)
+              />
+            )
           }
         </LeftItems>
         {!!centerItems.length &&
@@ -247,9 +242,6 @@ class HeaderBlock extends React.Component<Props> {
     const { style: itemStyle = {} } = item;
     const commonStyle = {};
     if (type === RIGHT) commonStyle.marginLeft = spacing.small;
-    if (item.user || item.userIcon) {
-      return this.renderUser(!item.userIcon);
-    }
     if (item.title) {
       return (
         <View
@@ -350,39 +342,16 @@ class HeaderBlock extends React.Component<Props> {
     return null;
   };
 
-  renderUser = (showName: boolean) => {
-    const { user, navigation } = this.props;
-    const userImageUri = user.profileImage ? `${user.profileImage}?t=${user.lastUpdateTime || 0}` : null;
-    return (
-      <UserButton key="user" onPress={() => { navigation.navigate(MANAGE_USERS_FLOW); }}>
-        <HeaderProfileImage
-          uri={userImageUri}
-          userName={user.username}
-          diameter={profileImageWidth}
-          noShadow
-          borderWidth={0}
-        />
-        {showName &&
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            marginRight: spacing.medium,
-          }}
-        >
-          <HeaderTitleText style={{ marginLeft: 8 }}>{user.username}</HeaderTitleText>
-        </View>}
-      </UserButton>
-    );
-  };
-
   render() {
     const {
       floating,
       theme,
       light,
       noPaddingTop,
+      wrapperStyle,
+      noHorizonatalPadding,
+      forceInsetTop = 'always',
+      bottomBorderAnimationValue = animatedValueZero,
       noBottomBorder,
     } = this.props;
     const updatedColors = {};
@@ -396,18 +365,39 @@ class HeaderBlock extends React.Component<Props> {
     }
     const updatedTheme = { ...theme, colors: { ...theme.colors, ...updatedColors } };
 
+    let backgroundColor;
+    let borderColor;
+
+    if (noBottomBorder || floating) {
+      backgroundColor = floating ? 'transparent' : updatedTheme.colors.card;
+      borderColor = 'transparent';
+    } else {
+      backgroundColor = bottomBorderAnimationValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [theme.colors.surface, theme.colors.card],
+        extrapolate: 'clamp',
+      });
+
+      borderColor = bottomBorderAnimationValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [`${theme.colors.border}00`, theme.colors.border],
+        extrapolate: 'clamp',
+      });
+    }
+
+
     return (
       <ThemeProvider theme={updatedTheme}>
         <Wrapper
           floating={floating}
-          noBottomBorder={noBottomBorder}
+          style={{ ...wrapperStyle, backgroundColor, borderColor }}
         >
           <SafeArea
-            forceInset={{ bottom: 'never', top: 'always' }}
+            forceInset={{ bottom: 'never', top: forceInsetTop }}
             noPaddingTop={noPaddingTop}
             androidStatusbarHeight={StatusBar.currentHeight}
           >
-            <HeaderContentWrapper>
+            <HeaderContentWrapper noHorizonatalPadding={noHorizonatalPadding}>
               {this.renderHeaderContent()}
             </HeaderContentWrapper>
           </SafeArea>
@@ -417,10 +407,4 @@ class HeaderBlock extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  user: { data: user },
-}) => ({
-  user,
-});
-
-export default withTheme(connect(mapStateToProps)(HeaderBlock));
+export default withTheme(HeaderBlock);

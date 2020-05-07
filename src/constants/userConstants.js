@@ -18,7 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export const SET_USERNAME = 'SET_USERNAME';
+export const SET_USER = 'SET_USER';
 export const UPDATE_USER = 'UPDATE_USER';
 export const USER_PHONE_VERIFIED = 'USER_PHONE_VERIFIED';
+export const USER_EMAIL_VERIFIED = 'USER_EMAIL_VERIFIED';
 export const REGISTERED = 'REGISTERED';
 export const PENDING = 'PENDING';
+export const SENDING_OTP = 'SENDING_OTP';
+export const OTP_SENT = 'OTP_SENT';
+export const RESET_OTP_STATUS = 'RESET_OTP_STATUS';
+export const VERIFICATION_FAILED = 'VERIFICATION_FAILED';

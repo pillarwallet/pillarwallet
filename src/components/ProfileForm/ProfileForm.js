@@ -28,6 +28,9 @@ export const InputTemplate = (locals: Object) => {
     additionalProps.loading = config.isLoading;
   }
 
+  if (config.rightPlaceholder) {
+    additionalProps.rightPlaceholder = config.rightPlaceholder;
+  }
 
   if (config.statusIcon || config.statusIconColor) {
     additionalProps.iconProps = {

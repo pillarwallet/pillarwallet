@@ -18,57 +18,117 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, TouchableOpacity, TouchableNativeFeedback, View } from 'react-native';
+import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native';
+import Icon from 'components/Icon';
+import Spinner from 'components/Spinner';
+import type { IconProps } from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
 import { fontSizes } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
-
-type Props = {
-  buttonText: string,
-  onPress?: Function,
-  fontSize?: number,
-  wrapperStyle?: Object,
-  medium?: boolean,
+type CommonProps = {
+  disabled?: boolean,
+  isLoading?: boolean,
 };
 
-const ButtonLabelRegular = styled(BaseText)`
-  font-size: ${({ fontSize }) => fontSize || fontSizes.regular}px;
-  color: rgb(32,119,253);
+type WrapperProps = CommonProps & {
+  onPress?: () => void,
+  wrapperStyle?: Object,
+};
+
+type TouchableProps = CommonProps & WrapperProps & {
+  children: React.Node,
+};
+
+type ContentProps = CommonProps & {
+  buttonText?: string,
+  fontSize?: number,
+  secondary?: boolean,
+};
+
+type Props = WrapperProps & ContentProps & {
+  leftIconProps?: IconProps,
+  rightIconProps?: IconProps,
+};
+
+const Wrapper = styled.View`
+  align-self: center;
+  margin: 0;
+  flex-direction: row;
+  align-items: center;
 `;
 
-const ButtonLabelMedium = styled(MediumText)`
-  font-size: ${({ fontSize }) => fontSize || fontSizes.regular}px;
+const ButtonLabel = styled(BaseText)`
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.regular}px;
   color: rgb(32,119,253);
 `;
-
-const renderButtonLabel = ({ fontSize, medium, buttonText }: Props) => !medium
-  ? <ButtonLabelRegular fontSize={fontSize}>{buttonText}</ButtonLabelRegular>
-  : <ButtonLabelMedium fontSize={fontSize}>{buttonText}</ButtonLabelMedium>;
 
 const ButtonText = (props: Props) => {
-  const { onPress, wrapperStyle } = props;
-
+  const {
+    buttonText,
+    onPress,
+    fontSize,
+    wrapperStyle,
+  } = props;
   if (Platform.OS === 'ios') {
     return (
       <TouchableOpacity onPress={onPress} style={wrapperStyle}>
-        {renderButtonLabel(props)}
+        <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
       </TouchableOpacity>
     );
   }
-
-  const defaultViewStyle = { alignSelf: 'center', margin: 0 };
-  const combinedViewStyles = [defaultViewStyle, wrapperStyle];
-
   return (
     <TouchableNativeFeedback
       onPress={onPress}
+      disabled={disabled}
       background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
     >
-      <View style={combinedViewStyles}>
-        {renderButtonLabel(props)}
+      <View style={[{
+        alignSelf: 'center',
+        margin: 0,
+      }, wrapperStyle]}
+      >
+        <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
       </View>
     </TouchableNativeFeedback>
+  );
+};
+
+const ButtonContent = (props: ContentProps) => {
+  const {
+    isLoading,
+    buttonText,
+    fontSize,
+    secondary,
+  } = props;
+  if (isLoading) {
+    return <Spinner width={20} height={20} />;
+  } else if (buttonText) {
+    return <ButtonLabel fontSize={fontSize} secondary={secondary}>{buttonText}</ButtonLabel>;
+  }
+  return null;
+};
+
+const ButtonText = (props: Props) => {
+  const {
+    buttonText,
+    onPress,
+    fontSize,
+    wrapperStyle,
+    leftIconProps,
+    rightIconProps,
+    secondary,
+    disabled,
+    isLoading,
+  } = props;
+
+  return (
+    <Touchable onPress={onPress} wrapperStyle={wrapperStyle} disabled={disabled || isLoading}>
+      {!!leftIconProps && <StyledIcon {...leftIconProps} isLeft />}
+      <ButtonContent buttonText={buttonText} fontSize={fontSize} secondary={secondary} />
+      {!!rightIconProps && <StyledIcon {...rightIconProps} />}
+    </Touchable>
   );
 };
 

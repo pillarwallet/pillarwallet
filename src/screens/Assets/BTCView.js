@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Share, RefreshControl, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -51,6 +51,7 @@ import type { Rates, Asset, AssetData } from 'models/Asset';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { satoshisToBtc, extractBitcoinTransactions } from 'utils/bitcoin';
+import { reportOrWarn } from 'utils/common';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -64,6 +65,7 @@ type Props = {
   transactions: BTCTransaction[],
   refreshBitcoinTransactions: () => void,
   refreshBitcoinUnspentTx: () => void,
+  onScroll: (event: Object) => void,
 };
 
 type State = {
@@ -92,7 +94,7 @@ class BTCView extends React.Component<Props, State> {
     const btcToken = supportedAssets.find(e => e.symbol === BTC);
 
     if (!btcToken) {
-      console.error('BTC token not found'); // eslint-disable-line no-console
+      reportOrWarn('BTC token not found', null, 'error');
       return;
     }
 
@@ -123,10 +125,6 @@ class BTCView extends React.Component<Props, State> {
     this.props.refreshBitcoinUnspentTx();
   };
 
-  handleOpenShareDialog = (address: string) => {
-    Share.share({ title: 'Public address', message: address });
-  };
-
   render() {
     const {
       navigation,
@@ -135,6 +133,7 @@ class BTCView extends React.Component<Props, State> {
       transactions = [],
       baseFiatCurrency,
       rates,
+      onScroll,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -153,6 +152,8 @@ class BTCView extends React.Component<Props, State> {
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refreshBalance} />
           }
+          onScroll={onScroll}
+          scrollEventThrottle={16}
         >
           <AssetPattern
             token="BTC"
@@ -190,9 +191,6 @@ class BTCView extends React.Component<Props, State> {
           isVisible={this.state.showReceive}
           onModalHide={this.hideReceive}
           address={address}
-          token="BTC"
-          tokenName="Bitcoin"
-          handleOpenShareDialog={this.handleOpenShareDialog}
         />
       </View>
     );

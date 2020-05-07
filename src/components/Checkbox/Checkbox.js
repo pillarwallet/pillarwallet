@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Animated, TouchableHighlight } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { BaseText } from 'components/Typography';
 import styled, { withTheme } from 'styled-components/native';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
@@ -27,18 +27,42 @@ import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
 import { getThemeColors } from 'utils/themes';
 
+
+type Props = {
+  text?: string,
+  onPress?: () => void,
+  disabled?: boolean,
+  checked: boolean,
+  children?: React.Node,
+  wrapperStyle?: Object,
+  rounded?: boolean,
+  lightText?: boolean,
+  small?: boolean,
+  theme: Theme,
+  positive?: boolean,
+};
+
+const getCheckboxBorderColor = (theme: Theme, active: boolean, positive: boolean) => {
+  const colors = getThemeColors(theme);
+  if (active) {
+    if (positive) return colors.positive;
+    return colors.primary;
+  }
+  return colors.border;
+};
+
 const CheckboxBox = styled.View`
   width: 24;
   height: 24;
   margin-right: ${spacing.mediumLarge}px;
-  border-radius: ${props => props.rounded ? 12 : 2}px;
+  border-radius: ${({ rounded }) => rounded ? 12 : 2}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${({ theme, active }) => active ? theme.colors.primary : theme.colors.border};
+  border-color: ${({ theme, active, positive }) => getCheckboxBorderColor(theme, active, positive)};
   justify-content: center;
   align-items: center;
   ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};
-  ${({ rounded, active, theme }) => rounded && active && theme.current === LIGHT_THEME
+  ${({ rounded, clickable, theme }) => rounded && clickable && theme.current === LIGHT_THEME
     ? `
       shadow-color: #000000;
       shadow-radius: 3px;
@@ -67,128 +91,49 @@ const CheckboxWrapper = styled.View`
   opacity: ${props => props.disabled ? 0.5 : 1};
 `;
 
-type Props = {
-  text?: string,
-  onPress: Function,
-  disabled?: boolean,
-  checked?: boolean,
-  children?: React.Node,
-  wrapperStyle?: Object,
-  rounded?: boolean,
-  lightText?: boolean,
-  small?: boolean,
-  theme: Theme,
+const Checkbox = (props: Props) => {
+  const {
+    disabled,
+    text,
+    children,
+    rounded,
+    wrapperStyle,
+    small,
+    lightText,
+    theme,
+    checked,
+    onPress,
+    positive,
+  } = props;
+
+  const colors = getThemeColors(theme);
+
+  return (
+    <TouchableOpacity
+      onPress={!disabled ? onPress : null}
+      style={wrapperStyle}
+      disabled={!onPress}
+    >
+      <CheckboxWrapper disabled={disabled}>
+        <CheckboxBox active={checked} rounded={rounded} positive={positive} clickable={!disabled}>
+          {!!checked &&
+          <Icon
+            name="check"
+            style={{
+              color: positive ? colors.positive : colors.primary,
+              fontSize: fontSizes.tiny,
+            }}
+          />
+          }
+        </CheckboxBox>
+        {!!text && <CheckboxText small={small} light={lightText}>{text}</CheckboxText>}
+        {!!children &&
+        <TextWrapper>
+          <CheckboxText small={small} light={lightText}>{children}</CheckboxText>
+        </TextWrapper>}
+      </CheckboxWrapper>
+    </TouchableOpacity>
+  );
 };
-
-type State = {
-  checked: boolean,
-  animateActive: Animated.Value,
-};
-
-class Checkbox extends React.Component<Props, State> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      checked: !!props.checked,
-      animateActive: new Animated.Value(props.checked ? 12 : 4),
-    };
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.disabled !== this.props.disabled && this.props.disabled) {
-      this.toggleCheckBox(false);
-    }
-    if (prevProps.checked !== this.props.checked) {
-      this.toggleCheckBoxWithoutCallback(this.props.checked);
-    }
-  }
-
-  animateCheckBox = (checked: boolean) => {
-    const { animateActive } = this.state;
-    if (!checked) {
-      Animated.spring(animateActive, {
-        toValue: 1,
-        duration: 600,
-      }).start();
-    } else {
-      Animated.spring(animateActive, {
-        toValue: 12,
-        duration: 600,
-      }).start();
-    }
-  };
-
-  toggleOnPress = (checkedStatus: boolean) => {
-    if (!this.props.disabled) {
-      this.props.onPress(checkedStatus);
-    }
-  };
-
-  toggleCheckBox = (status?: boolean, callCallback?: boolean = true) => {
-    const { checked } = this.state;
-    const { disabled } = this.props;
-
-    let checkedStatus;
-    if (disabled) {
-      checkedStatus = false;
-    } else if (status !== undefined) {
-      checkedStatus = status;
-    } else {
-      checkedStatus = !checked;
-    }
-
-    this.setState({ checked: checkedStatus }, () => {
-      if (callCallback) this.toggleOnPress(checkedStatus);
-    });
-    this.animateCheckBox(checkedStatus);
-  };
-
-  toggleCheckBoxWithoutCallback = (status?: boolean) => {
-    this.toggleCheckBox(status, false);
-  };
-
-  render() {
-    const { checked } = this.state;
-    const {
-      disabled,
-      text,
-      children,
-      rounded,
-      wrapperStyle,
-      small,
-      lightText,
-      theme,
-    } = this.props;
-
-    const colors = getThemeColors(theme);
-
-    return (
-      <TouchableHighlight
-        onPress={() => this.toggleCheckBox()}
-        underlayColor="transparent"
-        style={wrapperStyle}
-      >
-        <CheckboxWrapper disabled={disabled}>
-          <CheckboxBox active={disabled ? false : checked} rounded={rounded}>
-            {!!checked &&
-            <Icon
-              name="check"
-              style={{
-                color: colors.primary,
-                fontSize: fontSizes.tiny,
-              }}
-            />
-            }
-          </CheckboxBox>
-          {!!text && <CheckboxText small={small} light={lightText}>{text}</CheckboxText>}
-          {!!children &&
-          <TextWrapper>
-            <CheckboxText small={small} light={lightText}>{children}</CheckboxText>
-          </TextWrapper>}
-        </CheckboxWrapper>
-      </TouchableHighlight>
-    );
-  }
-}
 
 export default withTheme(Checkbox);

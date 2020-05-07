@@ -18,173 +18,175 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
+import BigNumber from 'bignumber.js';
+import isEqual from 'lodash.isequal';
+import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
+import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
 
 // components
-import { Footer, ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { BaseText, Label, MediumText, Paragraph, TextLink } from 'components/Typography';
+import { MediumText, Paragraph, BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
-import Icon from 'components/Icon';
+import HyperLink from 'components/HyperLink';
+import SelectorList from 'components/SelectorList';
+import TitleWithIcon from 'components/Title/TitleWithIcon';
+import Spinner from 'components/Spinner';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, SPEED_TYPE_LABELS, SPEED_TYPES } from 'constants/assetsConstants';
 import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE, NORMAL } from 'constants/exchangeConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
-import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import { formatAmount, formatAmountDisplay, getCurrencySymbol } from 'utils/common';
-import { getBalance, getRate } from 'utils/assets';
-import { getProviderDisplayName, getOfferProviderLogo } from 'utils/exchange';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { fontSizes, spacing } from 'utils/variables';
+import {
+  formatAmount,
+  formatAmountDisplay,
+  formatTransactionFee,
+  getCurrencySymbol,
+} from 'utils/common';
+import {
+  isEnoughBalanceForTransactionFee,
+  getAssetDataByAddress,
+  getAssetsAsList,
+  getRate,
+} from 'utils/assets';
+import { userHasSmartWallet } from 'utils/smartWallet';
+import { getOfferProviderLogo } from 'utils/exchange';
+import { themedColors } from 'utils/themes';
+import { checkIfSmartWalletAccount, getAccountName } from 'utils/accounts';
 
-// models, types
+// services
+import { calculateGasEstimate } from 'services/assets';
+import smartWalletService from 'services/smartWallet';
+
+// types
 import type { GasInfo } from 'models/GasInfo';
-import type { Asset, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { OfferOrder, ProvidersMeta } from 'models/Offer';
-import type { TokenTransactionPayload } from 'models/Transaction';
+import type { GasToken, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { SessionData } from 'models/Session';
+import type { Account, Accounts } from 'models/Account';
 import type { Theme } from 'models/Theme';
 
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
-  width: 100%;
-`;
+// selectors
+import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
+import { accountBalancesSelector } from 'selectors/balances';
 
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
+// partials
+import ExchangeScheme from './ExchangeScheme';
 
-const ValueWrapper = styled.View`
-  flex: 1;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
-
-const LabelSub = styled(BaseText)`
-  margin-top: 5px;
-  ${fontStyles.regular};
-`;
-
-const SpeedButton = styled(Button)`
-  margin-top: 14px;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ButtonWrapper = styled.View`
-  margin-top: ${spacing.rhythm / 2}px;
-  margin-bottom: ${spacing.rhythm + 10}px;
-`;
-
-const WarningMessage = styled(Paragraph)`
-  text-align: center;
-  color: ${themedColors.negative};
-  padding-bottom: ${spacing.rhythm}px;
-`;
-
-const ProviderWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-top: 6px;
-`;
-
-const ProviderIcon = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
-  margin-right: 4px;
-`;
-
-const WalletSwitcher = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const SeparatorValue = styled(Value)`
-  color: ${themedColors.secondaryText};
-  margin: 0px 8px;
-`;
-
-const ChevronWrapper = styled.View`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-left: 8px;
-`;
-
-const SelectorChevron = styled(Icon)`
-  font-size: 8px;
-  color: ${themedColors.primary};
-`;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  session: Object,
-  fetchGasInfo: Function,
+  session: SessionData,
+  fetchGasInfo: () => void,
   gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: ?string,
   exchangeSupportedAssets: Asset[],
   balances: Balances,
   executingExchangeTransaction: boolean,
-  setDismissTransaction: Function,
+  setDismissTransaction: () => void,
   providersMeta: ProvidersMeta,
+  accounts: Accounts,
   theme: Theme,
+  activeAccountAddress: string,
+  activeAccount: ?Account,
+  accountAssets: Assets,
+  supportedAssets: Asset[],
 };
 
 type State = {
   showFeeModal: boolean,
   transactionSpeed: string,
   gasLimit: number,
-}
-
-const SLOW = 'min';
-const NORMAL = 'avg';
-const FAST = 'max';
-
-// do not add exchange provider to speed types list as it might not always be present
-const SPEED_TYPES = {
-  [SLOW]: 'Slow',
-  [NORMAL]: 'Normal',
-  [FAST]: 'Fast',
+  txFeeInWei: BigNumber,
+  gettingFee: boolean,
+  feeByGasToken: boolean,
 };
 
+
+const MainWrapper = styled.View`
+  background-color: ${themedColors.card};
+  padding: 55px 0 64px;
+  flex: 1;
+  justify-content: center;
+`;
+
+const FooterWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: 54px ${spacing.layoutSides}px 36px;
+  width: 100%;
+  background-color: ${themedColors.surface};
+  border-top-color: ${themedColors.border};
+  border-top-width: 1px;
+`;
+
+const LabeledRow = styled.View`
+  margin: 10px 0;
+`;
+
+const AllowanceWrapper = styled.View`
+  flex: 1;
+  padding: ${spacing.large}px ${spacing.layoutSides}px;
+`;
+
+const SettingsWrapper = styled.View`
+  padding: 32px ${spacing.layoutSides}px 0;
+  justify-content: center;
+`;
+
+const SliderContentWrapper = styled.View`
+  margin: 30px 0;
+`;
+
 class ExchangeConfirmScreen extends React.Component<Props, State> {
-  constructor(props) {
+  transactionPayload: TokenTransactionPayload;
+  gasToken: ?GasToken;
+
+  state = {
+    showFeeModal: false,
+    transactionSpeed: NORMAL,
+    txFeeInWei: new BigNumber(0),
+    gasLimit: 0,
+    gettingFee: true,
+    feeByGasToken: true,
+  };
+
+  constructor(props: Props) {
     super(props);
-    const { navigation } = this.props;
-    const { gasLimit }: OfferOrder = navigation.getParam('offerOrder', {});
-    this.state = {
-      showFeeModal: false,
-      transactionSpeed: NORMAL,
-      gasLimit,
-    };
+    const { transactionPayload } = props.navigation.getParam('offerOrder');
+    this.transactionPayload = transactionPayload;
+
+    const { accountAssets, supportedAssets } = props;
+    const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
+    if (!isEmpty(gasTokenData)) {
+      const { decimals, address, symbol } = gasTokenData;
+      this.gasToken = { decimals, address, symbol };
+    }
   }
 
   componentDidMount() {
-    const { fetchGasInfo } = this.props;
-    fetchGasInfo();
+    this.props.fetchGasInfo();
+    this.fetchTransactionEstimate();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -193,6 +195,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       navigation,
       fetchGasInfo,
       session: { isOnline },
+      gasInfo,
     } = this.props;
     if (!executingExchangeTransaction) {
       navigation.goBack();
@@ -201,41 +204,118 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     if (prevProps.session.isOnline !== isOnline && isOnline) {
       fetchGasInfo();
     }
+    if (!isEqual(prevProps.gasInfo, gasInfo)) {
+      this.fetchTransactionEstimate();
+    }
   }
 
-  getGasPriceWei = (txSpeed?: string) => {
-    const { transactionSpeed } = this.state;
-    txSpeed = txSpeed || transactionSpeed;
-    const { gasInfo } = this.props;
-    const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
-    return utils.parseUnits(gasPrice.toString(), 'gwei');
+  fetchTransactionEstimate = () => {
+    const { activeAccountAddress, activeAccount } = this.props;
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
+      this.updateTxFee();
+    } else {
+      calculateGasEstimate({ ...this.transactionPayload, from: activeAccountAddress })
+        .then(gasLimit => this.setState({ gasLimit }, () => this.updateTxFee()))
+        .catch(() => null);
+    }
   };
 
-  getTxFeeInWei = (txSpeed?: string) => {
-    const { gasLimit } = this.state;
-    const gasPriceWei = this.getGasPriceWei(txSpeed);
+  updateTxFee = async () => {
+    const txFeeInWei = await this.getTxFeeInWei();
+    this.setState({ txFeeInWei, gettingFee: false });
+  };
+
+  getSmartWalletTxFeeInWei = async (): BigNumber => {
+    const { gasInfo, accountAssets, supportedAssets } = this.props;
+    const { feeByGasToken } = this.state;
+
+    const {
+      amount,
+      to: recipient,
+      contractAddress,
+      data,
+    } = this.transactionPayload;
+    const value = Number(amount || 0);
+
+    const {
+      symbol,
+      decimals,
+    } = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddress);
+    const assetData = {
+      contractAddress,
+      token: symbol,
+      decimals,
+    };
+
+    let transaction = {
+      recipient,
+      value,
+      gasToken: this.gasToken,
+    };
+
+    if (data) transaction = { ...transaction, data };
+
+    const { gasTokenCost, cost: defaultCost } = await smartWalletService
+      .estimateAccountTransaction(transaction, gasInfo, assetData)
+      .catch(() => ({}));
+
+    // check gas token used for estimation is present, otherwise fallback to ETH
+    if (gasTokenCost && gasTokenCost.gt(0)) {
+      // set that calculated by gas token if was reset
+      if (!feeByGasToken) this.setState({ feeByGasToken: true });
+      return gasTokenCost;
+    }
+
+    // reset to fee by eth because calculating failed
+    if (feeByGasToken) this.setState({ feeByGasToken: false });
+
+    return defaultCost;
+  };
+
+  getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
+    const { gasInfo, activeAccount } = this.props;
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
+      return this.getSmartWalletTxFeeInWei();
+    }
+    txSpeed = txSpeed || SPEED_TYPES.NORMAL;
+    // calculate either with gasLimit in state or provided as param
+    if (!gasLimit) {
+      ({ gasLimit } = this.state);
+    }
+    const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
+    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
     return gasPriceWei.mul(gasLimit);
   };
 
   renderTxSpeedButtons = () => {
-    const { rates, baseFiatCurrency } = this.props;
+    const { rates, baseFiatCurrency, activeAccount } = this.props;
+
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) return null;
+
+    const { transactionSpeed } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(SPEED_TYPES).map(txSpeed => {
+
+    const speedOptions = Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-      // $FlowFixMe
-      const speedTitle = SPEED_TYPES[txSpeed];
-      return (
-        <SpeedButton
-          key={txSpeed}
-          primaryInverted
-          onPress={() => this.handleGasPriceChange(txSpeed)}
-        >
-          <TextLink>{speedTitle} - {feeInEth} ETH</TextLink>
-          <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
-        </SpeedButton>
-      );
+      const speedTitle = SPEED_TYPE_LABELS[txSpeed];
+      return {
+        id: speedTitle,
+        label: speedTitle,
+        valueToShow: `${feeInEth} ETH (${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)})`,
+        value: txSpeed,
+      };
     });
+
+    return (
+      <SelectorList
+        onSelect={(selectedValue) => this.handleGasPriceChange(selectedValue.toString())}
+        options={speedOptions}
+        selectedValue={transactionSpeed}
+        numColumns={3}
+        minItemWidth={90}
+      />
+    );
   };
 
   handleGasPriceChange = (txSpeed: string) => {
@@ -245,56 +325,49 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     });
   };
 
-  onConfirmTransactionPress = (offerOrder: OfferOrder) => {
-    const {
-      navigation,
-    } = this.props;
-    const {
-      transactionSpeed,
-      gasLimit,
-    } = this.state;
+  onConfirmTransactionPress = (offerOrder) => {
+    const { navigation, activeAccount } = this.props;
+    const { txFeeInWei, feeByGasToken } = this.state;
 
     const {
-      payQuantity,
       fromAsset,
       toAsset,
-      payToAddress,
-      transactionObj: {
-        data,
-      } = {},
       setTokenAllowance,
       provider,
     } = offerOrder;
 
-    const { code: fromAssetCode, decimals, address: fromAssetAddress } = fromAsset;
-    const { code: toAssetCode } = toAsset;
+    let { transactionPayload } = this;
 
-    const gasPrice = this.getGasPriceWei(transactionSpeed);
-    const txFeeInWei = gasPrice.mul(gasLimit);
+    transactionPayload.txFeeInWei = txFeeInWei;
 
-    const transactionPayload: TokenTransactionPayload = {
-      gasLimit,
-      txFeeInWei,
-      gasPrice,
-      amount: setTokenAllowance ? 0 : payQuantity,
-      to: payToAddress,
-      symbol: fromAssetCode,
-      contractAddress: fromAssetAddress || '',
-      decimals: parseInt(decimals, 10) || 18,
-      data,
-    };
+    if (feeByGasToken) transactionPayload.gasToken = this.gasToken;
+
+    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
+      const { gasLimit, transactionSpeed } = this.state;
+      const gasPrice = txFeeInWei.div(gasLimit).toNumber();
+      transactionPayload = {
+        ...transactionPayload,
+        gasPrice,
+        gasLimit,
+        txSpeed: transactionSpeed,
+      };
+    }
 
     if (setTokenAllowance) {
       transactionPayload.extra = {
         allowance: {
           provider,
-          fromAssetCode,
-          toAssetCode,
+          fromAssetCode: fromAsset.code,
+          toAssetCode: toAsset.code,
         },
       };
     }
 
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload, goBackDismiss: true });
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
+      transactionPayload,
+      goBackDismiss: true,
+      transactionType: EXCHANGE,
+    });
   };
 
 
@@ -312,15 +385,26 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { showFeeModal, transactionSpeed } = this.state;
+    const {
+      showFeeModal,
+      txFeeInWei,
+      gettingFee,
+      feeByGasToken,
+    } = this.state;
     const {
       navigation,
       session,
       balances,
       providersMeta,
+      baseFiatCurrency,
+      rates,
+      accounts,
       theme,
+      activeAccount,
     } = this.props;
-    const colors = getThemeColors(theme);
+
+    const hasSmartWallet = userHasSmartWallet(accounts);
+    const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
 
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const {
@@ -335,113 +419,123 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const { code: fromAssetCode } = fromAsset;
     const { code: toAssetCode } = toAsset;
 
+    const parsedGasToken = feeByGasToken && !isEmpty(this.gasToken) ? this.gasToken : null;
+    const feeSymbol = get(parsedGasToken, 'symbol', ETH);
 
-    const txFeeInWei = this.getTxFeeInWei(transactionSpeed);
-    const ethBalance = getBalance(balances, ETH);
-    const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
-    const enoughBalance = fromAssetCode === ETH
-      ? balanceInWei.sub(utils.parseUnits(payQuantity.toString(), 'ether')).gte(txFeeInWei)
-      : balanceInWei.gte(txFeeInWei);
-    const errorMessage = !enoughBalance && 'Not enough ETH for transaction fee';
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);
+    const feeInFiat = parseFloat(feeDisplayValue) * getRate(rates, feeSymbol, fiatCurrency);
 
-    const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
-    const { name } = providerInfo;
-    const providerName = name || getProviderDisplayName(provider);
-    const providerLogo = getOfferProviderLogo(providersMeta, provider);
+    const { decimals, amount, symbol } = this.transactionPayload;
+    const enoughBalance = isEnoughBalanceForTransactionFee(balances, {
+      amount,
+      decimals,
+      symbol,
+      txFeeInWei,
+      gasToken: parsedGasToken,
+    });
+
+    const errorMessage = !enoughBalance && `Not enough ${feeSymbol} for transaction fee`;
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
+
+    const providerLogo = getOfferProviderLogo(providersMeta, provider, theme, 'vertical');
+    const confirmButtonTitleDefault = setTokenAllowance ? 'Enable Asset' : 'Confirm';
+    const confirmButtonTitle = gettingFee ? 'Getting the fee..' : confirmButtonTitleDefault;
 
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Confirm exchange' }],
+          centerItems: [{ title: 'Details' }],
           customOnBack: this.handleBack,
         }}
       >
-        <ScrollWrapper regularPadding>
-          <Paragraph small style={{ marginBottom: spacing.medium, paddingTop: spacing.medium }}>
-            {setTokenAllowance
-              ? 'Review the details and enable asset as well as confirm the cost of data transaction.'
-              : 'Review the details and confirm the exchange as well as the cost of transaction.'
-            }
-          </Paragraph>
-          {setTokenAllowance &&
-            <LabeledRow>
-              <Label>Asset to enable</Label>
-              <Value>{fromAssetCode}</Value>
-            </LabeledRow>
-          }
-          {!setTokenAllowance &&
-            <View>
-              <LabeledRow>
-                <Label>You will receive</Label>
-                <ValueWrapper>
-                  <Value>{`${formattedReceiveAmount} ${toAssetCode}`}</Value>
-                  <SeparatorValue>&rarr;</SeparatorValue>
-                  <WalletSwitcher onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}>
-                    <TextLink style={{ ...fontStyles.big }}>Legacy Wallet</TextLink>
-                    <ChevronWrapper>
-                      <SelectorChevron
-                        name="chevron-right"
-                        style={{ transform: [{ rotate: '-90deg' }] }}
-                      />
-                      <SelectorChevron
-                        name="chevron-right"
-                        style={{
-                          transform: [{ rotate: '90deg' }],
-                          marginTop: 2,
-                        }}
-                      />
-                    </ChevronWrapper>
-                  </WalletSwitcher>
-                </ValueWrapper>
-                <LabelSub>
-                  Final amount may be higher or lower than expected at the end of a transaction.
-                  Crypto is volatile, the rate fluctuates.
-                </LabelSub>
-              </LabeledRow>
-              <LabeledRow>
-                <Label>You will pay</Label>
-                <Value>{`${payQuantity} ${fromAssetCode}`}</Value>
-              </LabeledRow>
-              <LabeledRow>
-                <Label>Exchange</Label>
-                <ProviderWrapper>
-                  {!!providerLogo && <ProviderIcon source={providerLogo} resizeMode="contain" />}
-                  <Value>{providerName}</Value>
-                </ProviderWrapper>
-              </LabeledRow>
-            </View>
-          }
-          <LabeledRow>
-            <Label>Transaction fee</Label>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-              <Value>{formatAmount(utils.formatEther(txFeeInWei))} ETH</Value>
-              <ButtonText
-                buttonText="Change"
-                onPress={() => this.setState({ showFeeModal: true })}
-                wrapperStyle={{ marginLeft: 8, marginBottom: Platform.OS === 'ios' ? 2 : -1 }}
+        <ScrollWrapper contentContainerStyle={{ minHeight: '100%' }}>
+          <MainWrapper>
+            {!setTokenAllowance &&
+              <ExchangeScheme
+                fromValue={payQuantity}
+                fromAssetCode={fromAssetCode}
+                toValue={formattedReceiveAmount}
+                toAssetCode={toAssetCode}
+                imageSource={providerLogo}
               />
-            </View>
-          </LabeledRow>
-        </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
-          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
+            }
+            {!!setTokenAllowance &&
+              <AllowanceWrapper>
+                <Paragraph small style={{ marginVertical: spacing.medium }}>
+                  Review the details and enable asset as well as confirm the cost of data transaction.
+                </Paragraph>
+                <LabeledRow>
+                  <BaseText medium secondary>Asset to enable</BaseText>
+                  <MediumText big>{fromAssetCode}</MediumText>
+                </LabeledRow>
+
+              </AllowanceWrapper>
+            }
+            {!hasSmartWallet && <ButtonText
+              buttonText={getAccountName(ACCOUNT_TYPES.KEY_BASED)}
+              rightIconProps={{ name: 'selector', style: { fontSize: 16 } }}
+              onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}
+              wrapperStyle={{ marginTop: 0 }}
+            />}
+            {!!hasSmartWallet &&
+              <SettingsWrapper>
+                <BaseText secondary regular center style={{ marginBottom: 0 }}>
+                  The assets will be transferred to your Smart Wallet.
+                </BaseText>
+              </SettingsWrapper>
+            }
+            <SettingsWrapper>
+              {!gettingFee &&
+                <BaseText secondary regular center style={{ marginBottom: 4 }}>
+                  Transaction fee {feeDisplayValue} ({getCurrencySymbol(fiatCurrency)}{feeInFiat.toFixed(2)})
+                </BaseText>
+              }
+              {!!gettingFee && <Spinner style={{ marginTop: 5, alignSelf: 'center' }} width={20} height={20} />}
+              {!!errorMessage &&
+                <BaseText negative regular center style={{ marginBottom: 4 }}>
+                  {errorMessage}
+                </BaseText>
+              }
+              {!gettingFee && !isSmartAccount &&
+                <ButtonText
+                  buttonText="Speed settings"
+                  leftIconProps={{ name: 'options', style: { fontSize: 16 } }}
+                  onPress={() => this.setState({ showFeeModal: true })}
+                />
+              }
+            </SettingsWrapper>
+          </MainWrapper>
           <FooterWrapper>
             <Button
-              disabled={!session.isOnline || !!errorMessage}
+              block
+              disabled={!session.isOnline || !!errorMessage || gettingFee}
               onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={setTokenAllowance ? 'Enable Asset' : 'Confirm Exchange'}
+              title={confirmButtonTitle}
             />
+            {!setTokenAllowance &&
+            <React.Fragment>
+              <BaseText small center style={{ maxWidth: 242, marginTop: 24 }}>
+                Final rate may be slightly higher or lower at the end of the transaction.
+              </BaseText>
+              <HyperLink
+                style={{ fontSize: fontSizes.small }}
+                url="https://help.pillarproject.io/en/articles/3487702-why-did-i-receive-less-tokens"
+              >
+                Read more
+              </HyperLink>
+            </React.Fragment>}
           </FooterWrapper>
-        </Footer>
+        </ScrollWrapper>
         <SlideModal
           isVisible={showFeeModal}
-          title="Transaction speed"
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
+          hideHeader
         >
-          <Label>Choose your gas price.</Label>
-          <Label>Faster transaction requires more fee.</Label>
-          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+          <SliderContentWrapper>
+            <TitleWithIcon iconName="lightning" title="Speed" />
+            {this.renderTxSpeedButtons()}
+          </SliderContentWrapper>
         </SlideModal>
       </ContainerWithHeader>
     );
@@ -454,6 +548,8 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
   exchange: { data: { executingTransaction: executingExchangeTransaction }, providersMeta, exchangeSupportedAssets },
+  accounts: { data: accounts },
+  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   session,
   rates,
@@ -462,10 +558,15 @@ const mapStateToProps = ({
   executingExchangeTransaction,
   providersMeta,
   exchangeSupportedAssets,
+  accounts,
+  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
+  accountAssets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -17,8 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import branchIo from 'react-native-branch';
+import set from 'lodash.set';
 import { Appearance } from 'react-native-appearance';
 
+// constants
 import {
   DARK_PREFERENCE,
   DARK_THEME,
@@ -29,32 +32,41 @@ import {
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import set from 'lodash.set';
-
+// components
 import Toast from 'components/Toast';
-import { logUserPropertyAction, logEventAction } from 'actions/analyticsActions';
-import {
-  setKeychainDataObject,
-  resetKeychainDataObject,
-} from 'utils/keychain';
 
-import SDKWrapper from 'services/api';
+// services
+import { firebaseAnalytics } from 'services/firebase';
 
+// utils
+import { setKeychainDataObject } from 'utils/keychain';
+
+// types
+import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { KeyChainData } from 'utils/keychain';
 
+// actions
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { switchAccountAction } from './accountsActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
+import { logUserPropertyAction, logEventAction } from './analyticsActions';
+
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
     const settings = { optOutTracking: status };
-
     if (status) {
       dispatch(logEventAction('tracking_opted_out'));
     } else {
       dispatch(logEventAction('tracking_opted_in'));
+    }
+    await firebaseAnalytics.setAnalyticsCollectionEnabled(status);
+    try {
+      await branchIo.disableTracking(status);
+    } catch (e) {
+      // catch exception if native module failed by any reason
     }
     dispatch(saveDbAction('app_settings', { appSettings: settings }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
@@ -109,16 +121,10 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
   },
 });
 
-export const changeUseBiometricsAction = (value: boolean, privateKey?: string, noToast?: boolean) => {
+export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, noToast?: boolean) => {
   return async (dispatch: Dispatch) => {
-    let message;
-    if (value) {
-      await setKeychainDataObject({ privateKey });
-      message = 'Biometric login enabled';
-    } else {
-      await resetKeychainDataObject();
-      message = 'Biometric login disabled';
-    }
+    await setKeychainDataObject(data, value);
+    const message = `Biometric login ${value ? 'enabled' : 'disabled'}`;
     dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
@@ -180,52 +186,67 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   };
 };
 
+export const setAppThemeAction = (themeType: string, isManualThemeSelection?: boolean) => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isManualThemeSelection } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { themeType, isManualThemeSelection },
+    });
+  };
+};
+
+// set theme based on selected mode on users devices
+// (unless they have other theme option selected manually)
 export const handleSystemDefaultThemeChangeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { themeType, isSetAsSystemPrefTheme } },
+      appSettings: { data: { themeType, isManualThemeSelection } },
     } = getState();
 
-    if (!isSetAsSystemPrefTheme) return;
-    const defaultThemePreference = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
-    if (defaultThemePreference === themeType) return;
+    if (isManualThemeSelection) return;
+    const themeToSet = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+    if (themeToSet === themeType) return;
 
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType: defaultThemePreference } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType: defaultThemePreference },
-    });
+    dispatch(setAppThemeAction(themeToSet));
   };
 };
 
-export const changeAppThemeAction = (themeType: string, setAsPreferred?: boolean) => {
+export const hasSeenExchangeIntroAction = () => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType, isSetAsSystemPrefTheme: !!setAsPreferred },
-    });
+    dispatch(saveDbAction('app_settings', { appSettings: { hasSeenExchangeIntro: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenExchangeIntro: true } });
   };
 };
 
-export const setAppThemeAction = (theme?: string) => {
-  return (dispatch: Dispatch) => {
-    const themeType = theme || LIGHT_THEME;
+export const toggleBalanceAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideBalance } },
+    } = getState();
 
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { themeType },
-    });
+    const newBalanceVisibilityState = !hideBalance;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideBalance: newBalanceVisibilityState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideBalance: newBalanceVisibilityState } });
   };
 };
 
-export const markThemeAlertAsShownAction = () => {
+export const toggleBadgesAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideBadges } },
+    } = getState();
+    const newBadgesState = !hideBadges;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideBadges: newBadgesState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideBadges: newBadgesState } });
+  };
+};
+
+export const dismissConnectAppsIntroAction = () => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { seenThemeAlert: true } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { seenThemeAlert: true },
-    });
+    dispatch(saveDbAction('app_settings', { appSettings: { hasDismissedConnectAppsIntro: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasDismissedConnectAppsIntro: true } });
   };
 };

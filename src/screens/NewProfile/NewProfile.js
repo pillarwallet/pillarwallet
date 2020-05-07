@@ -87,7 +87,6 @@ const CheckboxText = styled(BaseText)`
 
 const StyledTextLink = styled(TextLink)`
   ${fontStyles.regular};
-  color: ${themedColors.primary};
 `;
 
 const Label = styled(MediumText)`
@@ -102,7 +101,7 @@ const formStructure = t.struct({
 
 const PROFILE_IMAGE_WIDTH = 144;
 
-const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => ({
+const getDefaultFormOptions = (inputDisabled: boolean, showRightPlaceholder?: boolean) => ({
   fields: {
     username: {
       auto: 'placeholders',
@@ -110,7 +109,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
       template: InputTemplate,
       maxLength: MAX_USERNAME_LENGTH,
       config: {
-        isLoading,
+        isLoading: false,
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
@@ -119,6 +118,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
         statusIcon: null,
         statusIconColor: null,
         inputType: 'bigText',
+        rightPlaceholder: showRightPlaceholder ? '.pillar.eth' : null,
       },
     },
   },
@@ -156,12 +156,13 @@ class NewProfile extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { apiUser } = props;
+    const { apiUser, importedWallet } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
     const inputDisabled = !!(apiUser && apiUser.id);
+    const showRightPlaceholder = !importedWallet;
     this.state = {
       value,
-      formOptions: getDefaultFormOptions(inputDisabled),
+      formOptions: getDefaultFormOptions(inputDisabled, showRightPlaceholder),
       hasAgreedToTerms: false,
       hasAgreedToPolicy: false,
       isPendingCheck: false,
@@ -401,11 +402,11 @@ class NewProfile extends React.Component<Props, State> {
         noBack={!!retry}
         headerProps={headerProps}
         putContentInScrollView={!apiUser.walletId}
+        keyboardShouldPersistTaps="always"
         footer={!apiUser.walletId && (
           <NextFooter
             onNextPress={this.handleSubmit}
             nextDisabled={!allowNext}
-            wrapperStyle={{ paddingBottom: 15, paddingTop: 15 }}
           >
             {!importedWallet &&
             <React.Fragment>
@@ -414,6 +415,7 @@ class NewProfile extends React.Component<Props, State> {
                 small
                 lightText
                 wrapperStyle={{ marginBottom: 16 }}
+                checked={hasAgreedToTerms}
               >
                 <CheckboxText>
                   {'I have read, understand, and agree to the '}
@@ -428,6 +430,7 @@ class NewProfile extends React.Component<Props, State> {
                 onPress={() => { this.setState({ hasAgreedToPolicy: !hasAgreedToPolicy }); }}
                 small
                 lightText
+                checked={hasAgreedToPolicy}
               >
                 <CheckboxText>
                   {'I have read, understand, and agree to the '}

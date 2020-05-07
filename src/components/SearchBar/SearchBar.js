@@ -19,14 +19,15 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Animated, Dimensions, Keyboard } from 'react-native';
+import { Animated, Dimensions, Keyboard, TextInput as RNTextInput } from 'react-native';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+import TextInput from 'components/Input';
 
 import { fontSizes, appFont, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 
-import type { Theme } from 'models/Theme';
+import type { Theme, ThemeColors } from 'models/Theme';
 
 const { width } = Dimensions.get('window');
 const componentWidth = width - (spacing.large * 2);
@@ -49,13 +50,7 @@ const CancelButton = styled.TouchableOpacity`
   margin-right: -${spacing.large}px;
 `;
 
-const animatedInputFieldStyles = {
-  height: 40,
-  borderWidth: 1,
-  borderRadius: 20,
-};
-
-const InputField = styled.TextInput`
+const InputField = styled(TextInput)`
   flex: 1;
   height: 42px;
   padding-left: 14px;
@@ -71,26 +66,40 @@ const InputIcon = styled(IconButton)`
   top: 7px;
 `;
 
-type inputPropsType = {
+const InputWrapper = styled.View`
+  height: 40px;
+  border-width: 1px;
+  border-color: ${({ borderColor }) => borderColor};
+  border-radius: 20px;
+  background-color: ${({ backgroundColor }) => backgroundColor};
+  width: 100%;
+`;
+
+type Value = ?string;
+
+type InputPropsType = {
   placeholder?: string,
   backgroundColor?: string,
-  onChange: Function,
-  onBlur?: Function,
-  onFocus?: Function,
-  value: ?string,
+  onChange: (Value) => void,
+  onBlur?: (Value) => void,
+  onFocus?: () => void,
+  value: Value,
 };
 
-type Props = {
-  errorMessage?: string,
-  inputProps: inputPropsType,
+type CommonComponentsProps = {
+  inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
+  inputRef?: RNTextInput,
+};
+
+type Props = CommonComponentsProps & {
   marginTop?: number,
   marginBottom?: number | string, // if '0'
-  inputRef?: Object,
   customCloseAction?: Function,
   forceShowCloseButton?: boolean,
   theme: Theme,
+  noClose?: boolean,
 };
 
 type State = {
@@ -100,6 +109,61 @@ type State = {
 
 type EventLike = {
   nativeEvent: Object,
+};
+
+type SearchInputProps = CommonComponentsProps & {
+  isFocused: boolean,
+  colors: ThemeColors,
+  value: ?string,
+  onFocus: () => void,
+  onChange: (e: EventLike) => void,
+  onBlur: () => void,
+  handleSubmit: () => void,
+};
+
+const SearchInput = (props: SearchInputProps) => {
+  const {
+    inputProps,
+    isFocused,
+    colors,
+    backgroundColor,
+    value,
+    placeholder,
+    inputRef,
+    onFocus,
+    onChange,
+    onBlur,
+    handleSubmit,
+  } = props;
+  return (
+    <InputWrapper
+      borderColor={isFocused ? colors.primary : colors.tertiary}
+      backgroundColor={backgroundColor || colors.tertiary}
+    >
+      <InputField
+        {...inputProps}
+        onFocus={onFocus}
+        onChange={onChange}
+        onBlur={onBlur}
+        value={value}
+        placeholder={placeholder}
+        placeholderTextColor={colors.secondaryText}
+        underlineColorAndroid="transparent"
+        autoCorrect={false}
+        innerRef={inputRef}
+      />
+      <InputIcon
+        icon="search"
+        onPress={isFocused ? handleSubmit : onFocus}
+        iconStyle={{
+          width: 24,
+          height: 24,
+          color: colors.primary,
+          fontSize: 24,
+        }}
+      />
+    </InputWrapper>
+  );
 };
 
 class SearchBar extends React.Component<Props, State> {
@@ -124,7 +188,7 @@ class SearchBar extends React.Component<Props, State> {
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
     this.value = e.nativeEvent.text;
-    onChange(this.value);
+    if (onChange) onChange(this.value);
   };
 
   handleBlur = () => {
@@ -189,6 +253,7 @@ class SearchBar extends React.Component<Props, State> {
       customCloseAction,
       forceShowCloseButton,
       theme,
+      noClose,
     } = this.props;
     const {
       animShrink,
@@ -197,45 +262,43 @@ class SearchBar extends React.Component<Props, State> {
     const { value = '' } = inputProps;
     const colors = getThemeColors(theme);
 
+    const customInputProps = {
+      inputProps,
+      isFocused,
+      colors,
+      backgroundColor,
+      value,
+      placeholder,
+      inputRef,
+      onFocus: this.handleFocus,
+      onChange: this.handleChange,
+      onBlur: this.handleBlur,
+      handleSubmit: this.handleSubmit,
+    };
+
+    if (noClose) {
+      return (
+        <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
+          <SearchInput {...customInputProps} />
+        </SearchHolder>
+      );
+    }
+
     return (
       <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
         <Animated.View
           style={{
-            ...animatedInputFieldStyles,
-            borderColor: isFocused ? colors.primary : colors.tertiary,
             width: animShrink.interpolate({
               inputRange: [0, 1],
               outputRange: ['0%', '1%'],
             }),
-            backgroundColor: backgroundColor || colors.tertiary,
           }}
         >
-          <InputField
-            {...inputProps}
-            onFocus={this.handleFocus}
-            onChange={this.handleChange}
-            onBlur={this.handleBlur}
-            value={value}
-            placeholder={placeholder}
-            placeholderTextColor={colors.secondaryText}
-            underlineColorAndroid="transparent"
-            autoCorrect={false}
-            innerRef={inputRef}
-          />
-          <InputIcon
-            icon="search"
-            onPress={isFocused ? this.handleSubmit : this.handleFocus}
-            iconStyle={{
-              width: 24,
-              height: 24,
-              color: colors.primary,
-              fontSize: 24,
-            }}
-          />
+          <SearchInput {...customInputProps} />
         </Animated.View>
         {(isFocused || !!value || forceShowCloseButton) &&
         <CancelButton onPress={customCloseAction || this.handleCancel}>
-          <BaseText style={{ color: colors.primary }}>Close</BaseText>
+          <BaseText style={{ color: colors.link }}>Close</BaseText>
         </CancelButton>
         }
       </SearchHolder>

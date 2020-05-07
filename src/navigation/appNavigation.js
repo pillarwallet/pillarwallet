@@ -26,9 +26,6 @@ import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
 
-// services
-import { updateNavigationLastScreenState } from 'services/navigation';
-
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
@@ -39,7 +36,6 @@ import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
 import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
 import ContactScreen from 'screens/Contact';
-import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -60,6 +56,7 @@ import LoginScreen from 'screens/Home/Login';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import WalletConnectScreen from 'screens/WalletConnect';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
@@ -83,9 +80,7 @@ import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
-import UserSettingsScreen from 'screens/Users/UserSettings';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import SettingsScreen from 'screens/Settings';
 import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
@@ -96,6 +91,20 @@ import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfi
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
+import ReferFriendsScreen from 'screens/ReferFriends';
+import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
+import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
+import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
+import ServicesScreen from 'screens/Services';
+import StorybookScreen from 'screens/Storybook';
+import MenuScreen from 'screens/Menu';
+import AppSettingsScreen from 'screens/Menu/AppSettings';
+import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
+import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
+import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
+import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
+import ExploreAppsScreen from 'screens/ExploreApps';
+import WalletActivatedScreen from 'screens/WalletActivated';
 import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
 import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
 import RecoveryPortalSetupConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalSetupConnectDevice';
@@ -121,7 +130,7 @@ import {
   stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
   startListeningForBalanceChangeAction,
@@ -139,7 +148,7 @@ import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions
 import {
   ASSETS,
   ASSET,
-  EXCHANGE_TAB,
+  SERVICES_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
@@ -150,7 +159,6 @@ import {
   HOME,
   HOME_TAB,
   LOGIN,
-  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -169,14 +177,15 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
-  AUTH_FLOW,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
+  SEND_COLLECTIBLE_CONTACTS,
   WALLETCONNECT_FLOW,
+  WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
@@ -203,9 +212,8 @@ import {
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
-  USER_SETTINGS,
   ADD_EDIT_USER,
-  SETTINGS,
+  MENU,
   CHAT,
   FIAT_EXCHANGE,
   FIAT_CRYPTO,
@@ -223,6 +231,24 @@ import {
   SEND_SYNTHETIC_UNAVAILABLE,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
+  REFER_FLOW,
+  SERVICES,
+  STORYBOOK,
+  SECURITY_SETTINGS,
+  RECOVERY_SETTINGS,
+  COMMUNITY_SETTINGS,
+  APP_SETTINGS,
+  MENU_FLOW,
+  REFER_MAIN_SCREEN,
+  ADDRESS_BOOK_PERMISSION,
+  REFERRAL_CONTACTS,
+  CONNECT_TAB,
+  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
+  SEND_TOKEN_FROM_HOME_FLOW,
+  PIN_CODE,
+  EXPLORE_APPS,
+  WALLET_ACTIVATED,
+  REFERRAL_SENT,
   RECOVERY_PORTAL_SETUP_FLOW,
   RECOVERY_PORTAL_RECOVERY_FLOW,
   RECOVERY_PORTAL_SETUP_INTRO,
@@ -243,7 +269,7 @@ import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from '
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
 
@@ -252,14 +278,16 @@ const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
-const iconWallet = require('assets/icons/icon_wallet_new_light.png');
-const iconExchange = require('assets/icons/icon_services.png');
+const iconWallet = require('assets/icons/icon_wallet_outline.png');
+const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
+const iconConnect = require('assets/icons/icon_connect.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
-const iconExchangeActive = require('assets/icons/icon_services_active.png');
+const iconServicesActive = require('assets/icons/icon_services_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
 const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
+const iconConnectActive = require('assets/icons/icon_connect_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
@@ -281,6 +309,12 @@ const StackNavigatorConfig = {
     header: null,
     gesturesEnabled: true,
   },
+  cardStyle: {
+    backgroundColor: {
+      dark: darkThemeColors.surface,
+      light: lightThemeColors.surface,
+    },
+  },
 };
 
 const hideTabNavigatorOnChildView = ({ navigation }) => {
@@ -298,15 +332,19 @@ const assetsFlow = createStackNavigator(
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
-    [SETTINGS]: SettingsScreen,
+    [EXCHANGE]: ExchangeScreen,
+    [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+    [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [CHAT]: ChatScreen,
   },
   StackNavigatorConfig,
 );
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// EXCHANGE FLOW
-const exchangeFlow = createStackNavigator({
+// SERVICES FLOW
+const servicesFlow = createStackNavigator({
+  [SERVICES]: ServicesScreen,
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
@@ -315,16 +353,28 @@ const exchangeFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
 }, StackNavigatorConfig);
 
-exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+
+// REFER FLOW
+const referFlow = createStackNavigator({
+  [REFER_MAIN_SCREEN]: ReferFriendsScreen,
+  [ADDRESS_BOOK_PERMISSION]: AccessToAddressBookScreen,
+  [REFERRAL_CONTACTS]: ReferralContactsScreen,
+}, StackNavigatorConfig);
+
+referFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
-  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [CHAT]: ChatScreen,
+  [REFER_FLOW]: referFlow,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -332,17 +382,20 @@ peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
+    [WALLETCONNECT]: WalletConnectScreen,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+    [EXPLORE_APPS]: ExploreAppsScreen,
   },
-  StackNavigatorModalConfig,
+  StackNavigatorConfig,
 );
+walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 
 // HOME FLOW
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
-  [SETTINGS]: SettingsScreen,
   [LOGIN]: LoginScreen,
   [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
@@ -352,6 +405,12 @@ const homeFlow = createStackNavigator({
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [CHAT]: ChatScreen,
+  [REFER_FLOW]: referFlow,
+  [STORYBOOK]: StorybookScreen,
+  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [EXCHANGE]: ExchangeScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -370,7 +429,7 @@ const tabBarIcon = ({
         style={{
           width: 24,
           height: 24,
-          tintColor: focused ? colors.primary : colors.secondaryText,
+          tintColor: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
         }}
         resizeMode="contain"
         source={focused ? iconActive : icon}
@@ -398,7 +457,7 @@ const tabBarLabel = ({ text, theme }) => ({ focused }) => {
     <BaseText
       style={{
         fontSize: fontSizes.regular,
-        color: focused ? colors.primary : colors.secondaryText,
+        color: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
         textAlign: 'center',
       }}
       numberOfLines={1}
@@ -436,6 +495,18 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel({ text: 'Assets', theme: screenProps.theme }),
       }),
     },
+    [CONNECT_TAB]: {
+      screen: walletConnectFlow,
+      navigationOptions: ({ screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          iconActive: iconConnectActive,
+          icon: iconConnect,
+          hasIndicator: false,
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
+      }),
+    },
     [PEOPLE]: {
       screen: peopleFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
@@ -448,16 +519,16 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel({ text: 'People', theme: screenProps.theme }),
       }),
     },
-    [EXCHANGE_TAB]: {
-      screen: exchangeFlow,
+    [SERVICES_TAB]: {
+      screen: servicesFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: tabBarIcon({
-          iconActive: iconExchangeActive,
-          icon: iconExchange,
+          iconActive: iconServicesActive,
+          icon: iconServices,
           hasIndicator: false,
           theme: screenProps.theme,
         }),
-        tabBarLabel: tabBarLabel({ text: 'Exchange', theme: screenProps.theme }),
+        tabBarLabel: tabBarLabel({ text: 'Services', theme: screenProps.theme }),
       }),
     },
   }, {
@@ -495,36 +566,44 @@ const sendTokenFromAssetFlow = createStackNavigator(
   StackNavigatorModalConfig,
 );
 
-// SEND BITCOIN FROM ASSET FLOW
-const sendBitcoinFromAssetFlow = createStackNavigator(
+// SEND TOKEN FROM HOME FLOW
+const sendTokenFromHomeFlow = createStackNavigator(
   {
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_TOKEN_CONTACTS]: { screen: SendTokenContactsScreen, params: { sendFromHomeFlow: true } },
+    [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
-    [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
-    [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
+    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [CHAT]: ChatScreen,
+    [CONTACT]: ContactScreen,
   },
   StackNavigatorModalConfig,
 );
 
-// SEND ASSETS FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-  // tokens
+// SEND BITCOIN FROM ASSET FLOW
+const sendBitcoinFromAssetFlow = createStackNavigator({
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  // collectibles
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
+  [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
+  [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
 }, StackNavigatorModalConfig);
 
 // SEND COLLECTIBLE FROM ASSET FLOW
 const sendCollectibleFromAssetFlow = createStackNavigator({
-  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONTACTS_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
+// SEND TOKEN FROM CONTACT FLOW
+const sendTokenFromContactFlow = createStackNavigator({
+  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
   [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
@@ -543,13 +622,13 @@ const backupWalletFlow = createStackNavigator({
 
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
+  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
   [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
-  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
 }, StackNavigatorConfig);
 
 smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -593,7 +672,6 @@ manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // MANAGE USERS FLOW
 const manageUsersFlow = createStackNavigator({
-  [USER_SETTINGS]: UserSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
@@ -629,6 +707,15 @@ const tankWithdrawalFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const menuFlow = createStackNavigator({
+  [MENU]: MenuScreen,
+  [SECURITY_SETTINGS]: SecuritySettingsScreen,
+  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
+  [APP_SETTINGS]: AppSettingsScreen,
+  [ADD_EDIT_USER]: AddOrEditUserScreen,
+}, StackNavigatorConfig);
 
 const recoveryPortalSetupFlow = createStackNavigator({
   [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
@@ -681,6 +768,11 @@ const AppFlowNavigation = createStackNavigator(
     [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
+    [MENU_FLOW]: menuFlow,
+    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
+    [PIN_CODE]: PinCodeUnlockScreen,
+    [WALLET_ACTIVATED]: WalletActivatedScreen,
+    [REFERRAL_SENT]: ReferralSentScreen,
   },
   modalTransition,
 );
@@ -696,7 +788,7 @@ type Props = {
   startListeningChatWebSocket: Function,
   stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
-  fetchAssetsBalances: () => Function,
+  fetchAllAccountsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -740,7 +832,7 @@ class AppFlow extends React.Component<Props, State> {
       startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
-      fetchAssetsBalances,
+      fetchAllAccountsBalances,
       getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
@@ -759,7 +851,7 @@ class AppFlow extends React.Component<Props, State> {
 
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchAssetsBalances();
+    fetchAllAccountsBalances();
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
@@ -841,7 +933,6 @@ class AppFlow extends React.Component<Props, State> {
       startListeningChatWebSocket,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
-      navigation,
       isPickingImage,
       isBrowsingWebView,
       stopListeningForBalanceChange,
@@ -858,11 +949,6 @@ class AppFlow extends React.Component<Props, State> {
       // close walkthrough shade or tooltips
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
-        const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
-        const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
-        const lastActiveScreenParams = pathAndParams.params;
-        updateNavigationLastScreenState({ lastActiveScreen, lastActiveScreenParams });
-        navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
@@ -954,7 +1040,7 @@ const mapDispatchToProps = dispatch => ({
   stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
   startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
+  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },

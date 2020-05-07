@@ -18,17 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, StatusBar, View, Dimensions, ScrollView } from 'react-native';
+import { Platform, StatusBar, View, Dimensions, ScrollView, Animated } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { withNavigation, SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import isEqual from 'lodash.isequal';
+import isEmpty from 'lodash.isempty';
 
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { isIphoneX } from 'utils/common';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
+
+import { DARK_THEME, LIGHT_CONTENT, DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import { ScrollWrapper } from './Layout';
 
@@ -43,6 +46,16 @@ type Props = {
   theme: Theme,
   putContentInScrollView?: boolean,
   shouldFooterAvoidKeyboard?: boolean,
+  tab?: boolean,
+  statusbarColor?: {
+    darkTheme?: string,
+    lightTheme?: string
+  },
+  keyboardShouldPersistTaps?: string,
+};
+
+type State = {
+  scrollY: Animated.Value,
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
@@ -62,55 +75,79 @@ const Footer = styled.KeyboardAvoidingView`
 
 const { height: screenHeight } = Dimensions.get('window');
 
-class ContainerWithHeader extends React.Component<Props> {
-  focusSubscriptions: NavigationEventSubscription[];
-  shouldComponentUpdate(nextProps: Props) {
-    const isEq = isEqual(this.props, nextProps);
+const animatedValueOne = new Animated.Value(1);
+
+class ContainerWithHeader extends React.Component<Props, State> {
+  focusSubscription: NavigationEventSubscription;
+
+  state = {
+    scrollY: new Animated.Value(0),
+  };
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.focusSubscriptions = [
-      navigation.addListener('didFocus', this.setStatusBarStyleForView),
-      navigation.addListener('willBlur', this.resetStatusBarStyle),
-    ];
+    this.focusSubscription = navigation.addListener('didFocus', this.setStatusBarStyleForView);
   }
 
   componentWillUnmount() {
-    this.resetStatusBarStyle();
-    this.focusSubscriptions.forEach(sub => sub.remove());
+    if (this.focusSubscription) this.focusSubscription.remove();
   }
 
+  getStatusBarColor = (themeType) => {
+    const { statusbarColor = {} } = this.props;
+    if (themeType === DARK_THEME) {
+      if (statusbarColor[DARK_THEME]) return statusbarColor[DARK_THEME];
+      return LIGHT_CONTENT;
+    }
+    return statusbarColor[LIGHT_THEME] || DARK_CONTENT;
+  };
+
   setStatusBarStyleForView = () => {
-    const { headerProps = {} } = this.props;
-    const { color } = headerProps;
-    let statusBarStyle = 'dark-content';
-    if (color && isColorDark(color)) {
-      statusBarStyle = 'light-content';
+    const {
+      headerProps = {},
+      theme,
+      backgroundColor,
+      statusbarColor,
+    } = this.props;
+    const { transparent, floating } = headerProps;
+    const themeType = getThemeType(theme);
+    let statusBarStyle = this.getStatusBarColor(themeType);
+
+    if ((!!transparent || !!floating) && backgroundColor && !statusbarColor) {
+      statusBarStyle = isColorDark(backgroundColor)
+        ? this.getStatusBarColor(DARK_THEME)
+        : this.getStatusBarColor(LIGHT_THEME);
     }
     StatusBar.setBarStyle(statusBarStyle);
   };
 
-  resetStatusBarStyle = () => {
-    StatusBar.setBarStyle('dark-content');
-  };
-
   renderContent = (shouldRenderFooter, shouldRenderChildrenInScrollView) => {
-    const { children, footer } = this.props;
+    const { children, footer, keyboardShouldPersistTaps = 'never' } = this.props;
     if (!shouldRenderFooter) {
       if (!shouldRenderChildrenInScrollView) {
+        if (typeof children === 'function') {
+          return children(this.onScroll());
+        }
         return children;
       }
 
       return (
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps={keyboardShouldPersistTaps}>
           {children}
         </ScrollView>
       );
     }
     return (
-      <ScrollWrapper style={{ flex: 1 }} contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
+      <ScrollWrapper
+        style={{ flex: 1 }}
+        contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      >
         <ContentWrapper>
           {children}
         </ContentWrapper>
@@ -118,6 +155,12 @@ class ContainerWithHeader extends React.Component<Props> {
       </ScrollWrapper>
     );
   };
+
+  onScroll = () => {
+    return Animated.event(
+      [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+    );
+  }
 
   render() {
     const {
@@ -130,7 +173,9 @@ class ContainerWithHeader extends React.Component<Props> {
       theme,
       putContentInScrollView,
       shouldFooterAvoidKeyboard = true,
+      tab,
     } = this.props;
+
     const colors = getThemeColors(theme);
 
     const topInset = headerProps.floating ? 'always' : 'never';
@@ -139,9 +184,27 @@ class ContainerWithHeader extends React.Component<Props> {
     const isScreenBigEnoughToAvoidKeyboard = screenHeight > minAvoidHeight;
     const shouldRenderKbAvoidingFooter = isScreenBigEnoughToAvoidKeyboard && shouldFooterAvoidKeyboard;
 
+    let bottomBorderAnimationValue;
+
+    if (!tab) {
+      // if this is no tab, we don't animate anything and the border is all the time
+      bottomBorderAnimationValue = animatedValueOne;
+    } else {
+      bottomBorderAnimationValue = this.state.scrollY.interpolate({
+        inputRange: [0, 20],
+        outputRange: [0, 1],
+        extrapolate: 'clamp',
+      });
+    }
+
     return (
       <View style={{ flex: 1 }}>
-        <HeaderBlock {...headerProps} navigation={navigation} />
+        {!isEmpty(headerProps) &&
+          <HeaderBlock
+            {...headerProps}
+            navigation={navigation}
+            bottomBorderAnimationValue={bottomBorderAnimationValue}
+          />}
         <StyledSafeAreaView
           forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
           androidStatusbarHeight={androidStatusBarSpacing}

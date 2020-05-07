@@ -174,7 +174,7 @@ describe('Assets actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
-    const updateBalancesPayload = { [mockAccounts[0].id]: { ETH: { balance: 1, symbol: 'ETH' } } };
+    const updateBalancesPayload = { [mockAccounts[0].id]: { ETH: { balance: '0.000000000000000001', symbol: 'ETH' } } };
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
       { payload: updateBalancesPayload, type: UPDATE_BALANCES },

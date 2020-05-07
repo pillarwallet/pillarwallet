@@ -20,7 +20,8 @@
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
-import { Sentry } from 'react-native-sentry';
+import { toChecksumAddress } from '@netgum/utils';
+
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
@@ -59,9 +60,16 @@ import type {
 import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { getAssetsAsList, transformAssetsToObject } from 'utils/assets';
-import { delay, noop, parseTokenAmount, uniqBy } from 'utils/common';
-import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
+import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
+import {
+  delay,
+  noop,
+  parseTokenAmount,
+  printLog,
+  reportLog,
+  uniqBy,
+} from 'utils/common';
+import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
   getActiveAccount,
@@ -76,14 +84,15 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
-import SDKWrapper from 'services/api';
+import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
-import { fetchAccountAssetsRatesAction } from './ratesActions';
+import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
+import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -179,7 +188,7 @@ export const sendSignedAssetTransactionAction = (transaction: any) => {
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
     } catch (e) {
-      console.log({ e });
+      printLog({ e });
     }
 
     return transactionHash;
@@ -277,6 +286,7 @@ export const sendAssetAction = (
     const symbol = get(transaction, 'symbol', '');
     const allowancePayload = get(transaction, 'extra.allowance', {});
     const usePPN = get(transaction, 'usePPN', false);
+    const receiverEnsName = get(transaction, 'receiverEnsName');
 
     if (tokenType === COLLECTIBLES) {
       await dispatch(fetchCollectiblesAction());
@@ -301,11 +311,17 @@ export const sendAssetAction = (
     let historyTx;
     const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-    const { to, note } = transaction;
+    const to = toChecksumAddress(transaction.to);
+    const { note, gasToken, txFeeInWei } = transaction;
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
     const walletProvider = await cryptoWallet.getProvider();
+
+    // build fee with gas token if present
+    const feeWithGasToken = !isEmpty(gasToken)
+      ? parseFeeWithGasToken(gasToken, txFeeInWei)
+      : null;
 
     // send collectible
     if (tokenType === COLLECTIBLES) {
@@ -327,12 +343,14 @@ export const sendAssetAction = (
           getState(),
         );
 
+        // $FlowFixMe
         if (tokenTx.hash) {
           historyTx = {
             ...buildHistoryTransaction({
               ...tokenTx,
               asset: transaction.name,
               note,
+              feeWithGasToken,
             }),
             to,
             from: accountAddress,
@@ -362,6 +380,7 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          feeWithGasToken,
         });
       }
     // send ERC20 token
@@ -392,6 +411,7 @@ export const sendAssetAction = (
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
           extra: transaction.extra || null,
+          feeWithGasToken,
         });
       }
     }
@@ -435,10 +455,7 @@ export const sendAssetAction = (
             // change history receiver address to actual receiver address rather than synthetics service address
             historyTx = { ...historyTx, to: toAddress };
           } else {
-            Sentry.captureMessage(
-              'Failed to get transactionId during synthetics exchange.',
-              { extra: { hash: historyTx.hash } },
-            );
+            reportLog('Failed to get transactionId during synthetics exchange.', { hash: historyTx.hash });
           }
         }
 
@@ -449,6 +466,10 @@ export const sendAssetAction = (
         const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
         const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      }
+
+      if (receiverEnsName) {
+        dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
       }
     }
 
@@ -507,21 +528,28 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
   }
 }
 
-export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      accounts: { data: accounts },
-      balances: { data: balances },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
+export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const allBalances = getState().balances.data;
+    const updatedBalances = {
+      ...allBalances,
+      [accountId]: balances,
+    };
+    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+    dispatch({
+      type: UPDATE_BALANCES,
+      payload: updatedBalances,
+    });
+  };
+};
 
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
-    const walletAddress = getAccountAddress(activeAccount);
-    const accountId = getAccountId(activeAccount);
+export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIncreased?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const walletAddress = getAccountAddress(account);
+    const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
     const accountAssets = accountAssetsSelector(getState());
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
+    const isSmartWalletAccount = checkIfSmartWalletAccount(account);
 
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -534,24 +562,52 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
     });
 
     if (!isEmpty(newBalances)) {
-      const transformedBalances = transformAssetsToObject(newBalances);
-      const updatedBalances = {
-        ...balances,
-        [accountId]: transformedBalances,
-      };
+      await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
       if (showToastIfIncreased && !isSmartWalletAccount) {
         const currentBalances = accountBalancesSelector(getState());
         notifyAboutIncreasedBalance(newBalances, currentBalances);
       }
-      dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
-      dispatch({
-        type: UPDATE_BALANCES,
-        payload: updatedBalances,
-      });
     }
+  };
+};
 
+export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+    } = getState();
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
+
+    await dispatch(fetchAccountAssetsBalancesAction(activeAccount, showToastIfIncreased));
     dispatch(fetchAccountAssetsRatesAction());
 
+    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
+      dispatch(fetchVirtualAccountBalanceAction());
+    }
+  };
+};
+
+export const fetchAllAccountsBalancesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
+    } = getState();
+
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) return;
+
+    const promises = accounts.map(async account => {
+      await dispatch(fetchAccountAssetsBalancesAction(account));
+    });
+    await Promise.all(promises).catch(_ => _);
+    dispatch(fetchAllAccountsAssetsRatesAction());
+
+    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
     if (smartWalletFeatureEnabled && isSmartWalletAccount) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
@@ -631,13 +687,30 @@ export const startAssetsSearchAction = () => ({
 
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { assets: { supportedAssets } } = getState();
+    const search = query.toUpperCase();
+
+    const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
+      return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
+    });
+
+    if (filteredAssets.length > 0) {
+      dispatch({
+        type: UPDATE_ASSETS_SEARCH_RESULT,
+        payload: filteredAssets,
+      });
+
+      return;
+    }
+
     const { user: { data: { walletId } } } = getState();
 
-    const assets = await api.assetsSearch(query, walletId);
+    dispatch(startAssetsSearchAction());
 
+    const apiAssets = await api.assetsSearch(query, walletId);
     dispatch({
       type: UPDATE_ASSETS_SEARCH_RESULT,
-      payload: assets,
+      payload: apiAssets,
     });
   };
 };
@@ -654,12 +727,6 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
-
-  // TODO: remove when we find an issue with supported assets
-  if (!supportedAssets || !supportedAssets.length) {
-    Sentry.captureMessage('Wrong supported assets received', { level: 'info', extra: { supportedAssets } });
-    return { id: accountId };
-  }
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))
