@@ -10,6 +10,7 @@ import { COLLECTIBLES_NETWORK, GAS_TOKEN_ADDRESS, NETWORK_PROVIDER } from 'react
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
+import isEqual from 'lodash.isequal';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -99,6 +100,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   receiverEnsName: string;
   source: string;
   gasToken: ?GasToken;
+  isRopstenNetwork: string;
 
   constructor(props) {
     super(props);
@@ -106,6 +108,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');
     this.receiverEnsName = this.props.navigation.getParam('receiverEnsName');
+    this.isRopstenNetwork = NETWORK_PROVIDER === 'ropsten';
     let feeByGasToken = false;
 
     const {
@@ -143,8 +146,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
+    const { gasInfo, session } = this.props;
+    if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
       this.props.fetchGasInfo();
+    }
+    if (!isEqual(prevProps.gasInfo, gasInfo)) {
+      this.updateTransactionFee();
     }
   }
 
@@ -173,6 +180,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       txFeeInWei,
       note,
     };
+  };
+
+  updateTransactionFee = async () => {
+    this.setState({ gettingFee: true }, () => {
+      this.calculateTransactionFee();
+    });
   };
 
   calculateTransactionFee = async () => {
@@ -219,9 +232,16 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   };
 
   fetchETHBalanceInRinkeby = async () => {
+    /**
+     * we're fetching Rinkeby ETH if current network is Ropsten because
+     * our used collectibles in testnets are sent only using Rinkeby
+     * so if we're not on Rinkeby itself we can only check Rinkeby balance
+     * using this additional call
+     */
+    if (!this.isRopstenNetwork) return;
     const { wallet } = this.props;
-    const rinkebyETHBlanace = await fetchRinkebyETHBalance(wallet.address);
-    this.setState({ rinkebyETH: rinkebyETHBlanace });
+    const rinkebyETH = await fetchRinkebyETHBalance(wallet.address);
+    this.setState({ rinkebyETH });
   };
 
   getSmartWalletTxFeeInWei = async (transaction: CollectibleTransactionPayload): BigNumber => {
@@ -384,11 +404,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             {!gettingFee && <Value>{feeDisplayValue}</Value>}
             {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           </LabeledRow>
-          {NETWORK_PROVIDER === 'ropsten' &&
-          <LabeledRow>
-            <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
-            <Value>{rinkebyETH} ETH</Value>
-          </LabeledRow>}
+          {this.isRopstenNetwork &&
+            <LabeledRow>
+              <Label>Balance in Rinkeby ETH (visible in dev and staging while on Ropsten)</Label>
+              <Value>{rinkebyETH} ETH</Value>
+            </LabeledRow>
+          }
           {session.isOnline && !!recipientUsername &&
             <TextInput
               inputProps={{
