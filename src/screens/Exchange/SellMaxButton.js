@@ -38,6 +38,9 @@ const SellMaxButton = (props: Props) => (
   <TouchableOpacity
     style={{ position: 'absolute', right: 0, top: 0 }}
     onPress={props.onPress}
+    hitSlop={{
+      top: 10, bottom: 10, left: 10, right: 10,
+    }}
   >
     <Text>Sell max</Text>
   </TouchableOpacity>

@@ -346,7 +346,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               displayFiatOptionsFirst: get(props, 'navigation.state.params.displayFiatOptionsFirst'),
               inputWrapperStyle: { width: '100%' },
               onSellMaxPress: this.handleSellMax,
-              showSellMax: this.shouldShowSellMax,
+              showSellMax: this.shouldShowSellMax(),
             },
             transformer: {
               parse: (value) => {
@@ -459,6 +459,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   shouldShowSellMax = () => {
     //
+    return true;
   }
 
   resetSearch = () => {
