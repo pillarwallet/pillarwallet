@@ -400,8 +400,11 @@ class TextInput extends React.Component<Props, State> {
   };
 
   renderHorizontalOption = ({ item }) => {
+    const { theme } = this.props;
     const { symbol, iconUrl } = item;
-    const iconUri = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const iconUri = iconUrl && `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const { genericToken } = images(theme);
+
     return (
       <HorizontalOptionItem
         key={symbol}
@@ -414,6 +417,7 @@ class TextInput extends React.Component<Props, State> {
           textStyle={{ fontSize: fontSizes.medium }}
           noShadow
           borderWidth={0}
+          fallbackImage={genericToken}
         />
         <HorizontalOptionItemName numberOfLines={1}>{symbol}</HorizontalOptionItemName>
       </HorizontalOptionItem>
@@ -495,7 +499,8 @@ class TextInput extends React.Component<Props, State> {
     } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
-    if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
+    const { genericToken } = images(theme);
+    if (fallbackToGenericToken) fallbackSource = genericToken;
 
     let inputHeight = 54;
     if (multiline) {
@@ -591,13 +596,12 @@ class TextInput extends React.Component<Props, State> {
                 {selector.value
                   ? (
                     <ValueWrapper>
-                      {(selectedOptionIcon || selectedOptionFallback) && (
-                        <Image
-                          key={selectedValue}
-                          source={optionImageSource}
-                          fallbackSource={!selectedOptionIcon ? selectedOptionFallback : optionImageSource}
-                          resizeMode="contain"
-                        />)}
+                      <Image
+                        key={selectedValue}
+                        source={optionImageSource}
+                        fallbackSource={selectedOptionFallback || genericToken}
+                        resizeMode="contain"
+                      />
                       <SelectorValue>{selectedValue}</SelectorValue>
                     </ValueWrapper>
                     )
