@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import AsyncStorage from '@react-native-community/async-storage';
+import get from 'lodash.get';
 import merge from 'lodash.merge';
 import * as Sentry from '@sentry/react-native';
 import { printLog, reportLog } from 'utils/common';
@@ -96,8 +97,8 @@ Storage.prototype.removeAll = async function () {
   return AsyncStorage.multiRemove(keys);
 };
 
-Storage.prototype.migrateFromPouchDB = async function () {
-  const { storageSettings = {} } = await this.get(STORAGE_SETTINGS_KEY);
+Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
+  const { storageSettings = {} } = get(storageData, STORAGE_SETTINGS_KEY, {});
   if (storageSettings.pouchDBMigrated) return Promise.resolve();
 
   try {

@@ -24,7 +24,7 @@ import get from 'lodash.get';
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { loadAndMigrate } from 'services/dataMigration';
+import { migrate } from 'services/dataMigration';
 
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
@@ -88,20 +88,28 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
-    await storage.migrateFromPouchDB();
+    let storageData = await storage.getAll();
+    await storage.migrateFromPouchDB(storageData);
 
-    const storageData = await storage.getAll();
+    storageData = await migrate('app_settings', storageData, dispatch, getState);
+    const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
-    const appSettings = await loadAndMigrate('app_settings', storageData, dispatch, getState);
-    // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(dispatch, appSettings, api);
+    const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
 
     if (walletTimestamp) {
-      const accounts = await loadAndMigrate('accounts', storageData, dispatch, getState);
+      // migrations
+      storageData = await migrate('accounts', storageData, dispatch, getState);
+      storageData = await migrate('assets', storageData, dispatch, getState);
+      storageData = await migrate('balances', storageData, dispatch, getState);
+      storageData = await migrate('collectibles', storageData, dispatch, getState);
+      storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
+      storageData = await migrate('history', storageData, dispatch, getState);
+
+      const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
-      const assets = await loadAndMigrate('assets', storageData, dispatch, getState);
+      const { assets = {} } = get(storageData, 'assets', {});
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
       const { supportedAssets = [] } = storageData.supportedAssets;
@@ -113,7 +121,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { fiatExchangeSupportedAssets = [] } = get(storageData, 'fiatExchangeSupportedAssets', {});
       dispatch({ type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS, payload: fiatExchangeSupportedAssets });
 
-      const balances = await loadAndMigrate('balances', storageData, dispatch, getState);
+      const { balances = {} } = get(storageData, 'balances', {});
       dispatch({ type: UPDATE_BALANCES, payload: balances });
 
       const { rates = {} } = get(storageData, 'rates', {});
@@ -134,10 +142,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { txCount = {} } = get(storageData, 'txCount', {});
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
 
-      const collectibles = await loadAndMigrate('collectibles', storageData, dispatch, getState);
+      const { collectibles = {} } = get(storageData, 'collectibles', {});
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
 
-      const collectiblesHistory = await loadAndMigrate('collectiblesHistory', storageData, dispatch, getState);
+      const { collectiblesHistory = {} } = get(storageData, 'collectiblesHistory', {});
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
       const { badges = [] } = get(storageData, 'badges', {});
@@ -191,8 +199,6 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
           lastPinAttempt,
         },
       });
-
-      await loadAndMigrate('history', storageData, dispatch, getState);
 
       dispatch(loadBitcoinAddressesAction());
 
