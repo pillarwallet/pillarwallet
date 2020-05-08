@@ -36,7 +36,9 @@ const Text = styled(BaseText)`
 
 const SellMaxButton = (props: Props) => (
   <TouchableOpacity
-    style={{ position: 'absolute', right: 0, top: 0 }}
+    style={{
+      position: 'absolute', right: 16, top: 16, zIndex: 1000,
+    }}
     onPress={props.onPress}
     hitSlop={{
       top: 10, bottom: 10, left: 10, right: 10,
