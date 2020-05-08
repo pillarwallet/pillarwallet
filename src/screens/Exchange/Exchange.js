@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -82,6 +82,7 @@ import { HotSwapsHorizontalList } from './HotSwapsList';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import { calculateMaxAmount, getFormattedBalanceInFiat } from './utils';
+import SellMaxButton from './SellMaxButton';
 
 
 type Props = {
@@ -243,6 +244,8 @@ function SelectorInputTemplate(locals) {
       fiatOptions,
       fiatOptionsTitle,
       displayFiatOptionsFirst,
+      onSellMaxPress,
+      showSellMax,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -269,28 +272,32 @@ function SelectorInputTemplate(locals) {
   };
 
   return (
-    <TextInput
-      errorMessage={errorMessage}
-      inputProps={inputProps}
-      leftSideText={inputAddonText}
-      numeric
-      selectorOptions={{
-        options,
-        horizontalOptions,
-        showOptionsTitles: !isEmpty(horizontalOptions),
-        optionsTitle,
-        horizontalOptionsTitle,
-        fiatOptions,
-        fiatOptionsTitle,
-        fullWidth: !hasInput,
-        selectorModalTitle: label,
-        selectorPlaceholder: placeholderSelector,
-        optionsSearchPlaceholder: 'Asset search',
-        displayFiatOptionsFirst,
-      }}
-      getInputRef={inputRef}
-      inputWrapperStyle={inputWrapperStyle}
-    />
+    <View style={{ flexDirection: 'row', flex: 1 }}>
+      <TextInput
+        style={{ width: '100%' }}
+        errorMessage={errorMessage}
+        inputProps={inputProps}
+        leftSideText={inputAddonText}
+        numeric
+        selectorOptions={{
+          options,
+          horizontalOptions,
+          showOptionsTitles: !isEmpty(horizontalOptions),
+          optionsTitle,
+          horizontalOptionsTitle,
+          fiatOptions,
+          fiatOptionsTitle,
+          fullWidth: !hasInput,
+          selectorModalTitle: label,
+          selectorPlaceholder: placeholderSelector,
+          optionsSearchPlaceholder: 'Asset search',
+          displayFiatOptionsFirst,
+        }}
+        getInputRef={inputRef}
+        inputWrapperStyle={inputWrapperStyle}
+      />
+      {showSellMax && <SellMaxButton onPress={onSellMaxPress} />}
+    </View>
   );
 }
 
@@ -337,6 +344,9 @@ class ExchangeScreen extends React.Component<Props, State> {
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
               displayFiatOptionsFirst: get(props, 'navigation.state.params.displayFiatOptionsFirst'),
+              inputWrapperStyle: { width: '100%' },
+              onSellMaxPress: this.handleSellMax,
+              showSellMax: this.shouldShowSellMax,
             },
             transformer: {
               parse: (value) => {
@@ -362,7 +372,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'Select asset',
               onSelectorOpen: this.blurFromInput,
-              inputWrapperStyle: { marginTop: 6 },
+              inputWrapperStyle: { marginTop: 6, width: '100%' },
             },
           },
         },
@@ -441,6 +451,14 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (!prevProps.hasSeenExchangeIntro && this.props.hasSeenExchangeIntro) {
       setTimeout(this.focusInputWithKeyboard, 300);
     }
+  }
+
+  handleSellMax = () => {
+    //
+  }
+
+  shouldShowSellMax = () => {
+    //
   }
 
   resetSearch = () => {
