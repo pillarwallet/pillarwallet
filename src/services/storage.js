@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import AsyncStorage from '@react-native-community/async-storage';
+import get from 'lodash.get';
 import merge from 'lodash.merge';
 import * as Sentry from '@sentry/react-native';
 import { printLog, reportLog } from 'utils/common';
@@ -78,8 +79,16 @@ Storage.prototype.getAllKeys = function () {
 Storage.prototype.getAll = function () {
   return this.getAllKeys()
     .then(keys => AsyncStorage.multiGet(keys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
-    .then(values => values.map(([_key, _value]) => ({ [_key]: JSON.parse(_value) }))) // [{ user: 'userValue' }, ...]
-    .catch(() => []);
+    .then(values => {
+      return values.reduce((memo, [_key, _value]) => {
+        const key = _key.replace(this.prefix, '');
+        return {
+          ...memo,
+          [key]: JSON.parse(_value),
+        };
+      }, {});
+    }) // { user: 'userValue', ... }
+    .catch(() => ({}));
 };
 
 Storage.prototype.removeAll = async function () {
@@ -88,8 +97,8 @@ Storage.prototype.removeAll = async function () {
   return AsyncStorage.multiRemove(keys);
 };
 
-Storage.prototype.migrateFromPouchDB = async function () {
-  const { storageSettings = {} } = await this.get(STORAGE_SETTINGS_KEY);
+Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
+  const { storageSettings = {} } = get(storageData, STORAGE_SETTINGS_KEY, {});
   if (storageSettings.pouchDBMigrated) return Promise.resolve();
 
   try {
