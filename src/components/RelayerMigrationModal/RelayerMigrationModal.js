@@ -37,6 +37,7 @@ import Button from 'components/Button';
 // constants
 import { PLR } from 'constants/assetsConstants';
 import { SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
+import { TX_PENDING_STATUS } from 'constants/historyConstants';
 
 // utils
 import { spacing } from 'utils/variables';
@@ -85,7 +86,9 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
     } = this.props;
     const { switchPressed } = this.state;
     const { iconUrl } = accountAssets[PLR] || {};
-    const isSwitchPending = accountHistory.some(({ tag }) => tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER);
+    const isSwitchPending = accountHistory.some(({
+      tag, status,
+    }) => tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS);
     const buttonTitle = switchPressed || isSwitchPending
       ? 'Waiting for confirmation..'
       : 'Switch';
