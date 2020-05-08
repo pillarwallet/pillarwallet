@@ -78,8 +78,16 @@ Storage.prototype.getAllKeys = function () {
 Storage.prototype.getAll = function () {
   return this.getAllKeys()
     .then(keys => AsyncStorage.multiGet(keys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
-    .then(values => values.map(([_key, _value]) => ({ [_key]: JSON.parse(_value) }))) // [{ user: 'userValue' }, ...]
-    .catch(() => []);
+    .then(values => {
+      return values.reduce((memo, [_key, _value]) => {
+        const key = _key.replace(this.prefix, '');
+        return {
+          ...memo,
+          [key]: JSON.parse(_value),
+        };
+      }, {});
+    }) // { user: 'userValue', ... }
+    .catch(() => ({}));
 };
 
 Storage.prototype.removeAll = async function () {

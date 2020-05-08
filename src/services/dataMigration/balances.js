@@ -1,12 +1,11 @@
 // @flow
+import get from 'lodash.get';
 import { saveDbAction } from 'actions/dbActions';
 import { ETH } from 'constants/assetsConstants';
 import type { Balances, BalancesStore } from 'models/Asset';
 import type { Accounts } from 'models/Account';
-import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
 
-const storage = Storage.getInstance('db');
 
 export function migrateBalancesToAccountsFormat(balances: Balances, accounts: Accounts): ?BalancesStore {
   const keyBasedAccount = findKeyBasedAccount(accounts);
@@ -18,9 +17,9 @@ export function migrateBalancesToAccountsFormat(balances: Balances, accounts: Ac
   };
 }
 
-export default async function (dispatch: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { balances = {} } = await storage.get('balances');
+export default async function (storageData: Object, dispatch: Function) {
+  const { accounts = [] } = get(storageData, 'accounts', {});
+  const { balances = {} } = get(storageData, 'balances', {});
 
   if (balances[ETH] && accounts.length) {
     const migratedBalances = migrateBalancesToAccountsFormat(balances, accounts);

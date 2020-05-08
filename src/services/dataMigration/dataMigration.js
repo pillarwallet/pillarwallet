@@ -7,15 +7,15 @@ import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
 import loadAndMigrateAssets from './assets';
 
-export function loadAndMigrate(collection: string, dispatch: Function, getState: Function) {
+export function loadAndMigrate(collection: string, storageData: Object, dispatch: Function, getState: Function) {
   switch (collection) {
-    case 'app_settings': return loadAndMigrateAppSettings(dispatch);
-    case 'accounts': return loadAndMigrateAccounts(dispatch, getState);
-    case 'balances': return loadAndMigrateBalances(dispatch);
-    case 'history': return loadAndMigrateHistory(dispatch, getState);
-    case 'collectibles': return loadAndMigrateCollectibles(dispatch);
-    case 'collectiblesHistory': return loadAndMigrateCollectiblesHistory(dispatch);
-    case 'assets': return loadAndMigrateAssets(dispatch);
+    case 'app_settings': return loadAndMigrateAppSettings(storageData, dispatch);
+    case 'accounts': return loadAndMigrateAccounts(storageData, dispatch, getState);
+    case 'balances': return loadAndMigrateBalances(storageData, dispatch);
+    case 'history': return loadAndMigrateHistory(storageData, dispatch, getState);
+    case 'collectibles': return loadAndMigrateCollectibles(storageData, dispatch);
+    case 'collectiblesHistory': return loadAndMigrateCollectiblesHistory(storageData, dispatch);
+    case 'assets': return loadAndMigrateAssets(storageData, dispatch);
     default: return null;
   }
 }
