@@ -40,6 +40,8 @@ export async function migrate(collection: string, storageData: Object, dispatch:
     case 'collectiblesHistory':
       data = await loadAndMigrateCollectiblesHistory(storageData, dispatch);
       break;
+
+    default: break;
   }
 
   return {
