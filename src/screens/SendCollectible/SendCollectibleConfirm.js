@@ -306,7 +306,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const recipientUsername = getUserName(contact);
     const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
 
-    // rinkeby testing check
+    // rinkeby testnet fee check
     const txFee = utils.formatEther(txFeeInWei.toString());
     const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee);
 
