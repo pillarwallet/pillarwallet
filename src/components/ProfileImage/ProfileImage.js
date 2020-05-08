@@ -157,7 +157,7 @@ const ProfileImage = (props: Props) => {
 
   const renderDefaultImage = () => {
     if (fallbackImage) {
-      return (<CircleImage source={fallbackImage} />);
+      return (<CircleImage source={fallbackImage} diameter={diameter} />);
     }
     return (<DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />);
   };
