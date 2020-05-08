@@ -100,7 +100,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   receiverEnsName: string;
   source: string;
   gasToken: ?GasToken;
-  isRopstenNetwork: string;
+  isRopstenNetwork: boolean;
 
   constructor(props) {
     super(props);
