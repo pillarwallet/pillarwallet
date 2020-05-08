@@ -1,13 +1,12 @@
 // @flow
+import get from 'lodash.get';
 import { saveDbAction } from 'actions/dbActions';
 import type { Accounts } from 'models/Account';
-import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
 import { normalizeWalletAddress } from 'utils/wallet';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-const storage = Storage.getInstance('db');
 
 function addWalletIdToKeyBasedAccount(accounts: Accounts, walletId: string): Accounts {
   return accounts.map(account => {
@@ -19,10 +18,10 @@ function addWalletIdToKeyBasedAccount(accounts: Accounts, walletId: string): Acc
   });
 }
 
-export default async function (dispatch: Function, getState: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { wallet } = await storage.get('wallet');
-  const { user = {} } = await storage.get('user');
+export default async function (storageData: Object, dispatch: Function, getState: Function) {
+  const { accounts = [] } = get(storageData, 'accounts', {});
+  const { wallet } = get(storageData, 'wallet', {});
+  const { user = {} } = get(storageData, 'user', {});
 
   // wallet is not registered yet
   if (!user.walletId) return accounts;
