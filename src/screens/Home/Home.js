@@ -32,7 +32,6 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
-import ReferralModalReward from 'components/ReferralRewardModal/ReferralModalReward';
 import Loader from 'components/Loader';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
@@ -129,7 +128,6 @@ type Props = {
 type State = {
   activeTab: string,
   isReferralBannerVisible: boolean,
-  showRewardModal: boolean,
   loaderMessage: string,
 };
 
@@ -170,7 +168,6 @@ class HomeScreen extends React.Component<Props, State> {
   state = {
     activeTab: ALL,
     isReferralBannerVisible: true,
-    showRewardModal: false,
     loaderMessage: '',
     isBadgesCollapsed: false,
   };
@@ -247,12 +244,6 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  handleModalHide = (callback: () => void) => {
-    this.setState({ showRewardModal: false }, () => {
-      if (callback) callback();
-    });
-  };
-
   handleWalletChange = (loaderMessage: string) => {
     this.setState({ loaderMessage });
   };
@@ -282,12 +273,7 @@ class HomeScreen extends React.Component<Props, State> {
       goToInvitationFlow,
     } = this.props;
 
-    const {
-      activeTab,
-      showRewardModal,
-      loaderMessage,
-      isReferralBannerVisible,
-    } = this.state;
+    const { activeTab, loaderMessage, isReferralBannerVisible } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
@@ -497,10 +483,6 @@ class HomeScreen extends React.Component<Props, State> {
         {!!loaderMessage &&
           <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
         }
-        <ReferralModalReward
-          isVisible={showRewardModal}
-          onModalHide={this.handleModalHide}
-        />
       </React.Fragment>
     );
   }

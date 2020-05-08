@@ -150,13 +150,13 @@ export const calculateMaxAmount = (
 
 export const isEnoughBalanceForTransactionFee = (
   balances: Balances,
-  transaction: $Shape<{
+  transaction: {
     txFeeInWei: number,
     gasToken?: ?GasToken,
     amount?: any,
     decimals?: number,
     symbol?: string,
-  }>,
+  },
 ): boolean => {
   const {
     txFeeInWei,

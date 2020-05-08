@@ -374,7 +374,7 @@ class TextInput extends React.Component<Props, State> {
       formattedBalanceInFiat,
       paymentNetworkBalance,
     } = option;
-    const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
+    const iconUrl = option.icon ? `${SDK_PROVIDER}/${option.icon}?size=3` : null;
     const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
 
     return (
@@ -400,8 +400,11 @@ class TextInput extends React.Component<Props, State> {
   };
 
   renderHorizontalOption = ({ item }) => {
+    const { theme } = this.props;
     const { symbol, iconUrl } = item;
-    const iconUri = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const iconUri = iconUrl && `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const { genericToken } = images(theme);
+
     return (
       <HorizontalOptionItem
         key={symbol}
@@ -414,6 +417,7 @@ class TextInput extends React.Component<Props, State> {
           textStyle={{ fontSize: fontSizes.medium }}
           noShadow
           borderWidth={0}
+          fallbackImage={genericToken}
         />
         <HorizontalOptionItemName numberOfLines={1}>{symbol}</HorizontalOptionItemName>
       </HorizontalOptionItem>
@@ -495,7 +499,8 @@ class TextInput extends React.Component<Props, State> {
     } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
-    if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
+    const { genericToken } = images(theme);
+    if (fallbackToGenericToken) fallbackSource = genericToken;
 
     let inputHeight = 54;
     if (multiline) {
@@ -594,7 +599,7 @@ class TextInput extends React.Component<Props, State> {
                       <Image
                         key={selectedValue}
                         source={optionImageSource}
-                        fallbackSource={optionImageSource ? selectedOptionFallback : optionImageSource}
+                        fallbackSource={selectedOptionFallback || genericToken}
                         resizeMode="contain"
                       />
                       <SelectorValue>{selectedValue}</SelectorValue>

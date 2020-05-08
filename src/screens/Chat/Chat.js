@@ -21,7 +21,6 @@
 import * as React from 'react';
 import { Alert, Platform, Linking, AppState, BackHandler, View } from 'react-native';
 import { connect } from 'react-redux';
-import { SafeAreaView as RNSafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import {
@@ -124,10 +123,6 @@ const TimeWrapper = styled.View`
   flex-direction: row;
   justify-content: flex-end;
   margin-bottom: 2px;
-`;
-
-const SafeAreaView = styled(RNSafeAreaView)`
-  flex: 1;
 `;
 
 // chat elements
@@ -420,27 +415,23 @@ class Chat extends React.Component<Props, State> {
 
   renderComposer = (props: ComposerProps, colors) => {
     return (
-      <SafeAreaView
-        forceInset={{ top: 'never', bottom: 'always' }}
-      >
-        <Composer
-          {...props}
-          textInputStyle={{
-            width: '100%',
-            marginTop: Platform.select({
-              ios: 12,
-              android: 8,
-            }),
-            marginBottom: 5,
-            fontSize: fontSizes.regular,
-            lineHeight: lineHeights.regular,
-            fontFamily: appFont.regular,
-            color: colors.text,
-          }}
-          placeholder="Type your message here"
-          placeholderTextColor={colors.secondaryText}
-        />
-      </SafeAreaView>
+      <Composer
+        {...props}
+        textInputStyle={{
+          width: '100%',
+          marginTop: Platform.select({
+            ios: 12,
+            android: 8,
+          }),
+          marginBottom: 5,
+          fontSize: fontSizes.regular,
+          lineHeight: lineHeights.regular,
+          fontFamily: appFont.regular,
+          color: colors.text,
+        }}
+        placeholder="Type your message here"
+        placeholderTextColor={colors.secondaryText}
+      />
     );
   };
 
@@ -611,7 +602,6 @@ class Chat extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        inset={{ bottom: 'never' }}
         headerProps={{
           centerItems: [{ title, onPress: this.handleOnContactPress }],
           rightItems: [{
@@ -628,6 +618,7 @@ class Chat extends React.Component<Props, State> {
           }],
         }}
         customOnBack={this.handleChatDismissal}
+        backgroundColor={colors.card}
       >
         <Wrapper fullScreen flex={1}>
           {!renderChat &&
@@ -653,13 +644,15 @@ class Chat extends React.Component<Props, State> {
               renderLoadEarlier={renderLoadEarlier}
               renderMessage={renderMessage}
               renderTime={renderTime}
-              minInputToolbarHeight={INPUT_HEIGHT}
               parsePatterns={(props) => parsePatterns(props, colors)}
               renderSystemMessage={this.renderCustomSystemMessage}
               listViewProps={{
                 contentContainerStyle: {
                   justifyContent: 'flex-end',
                   paddingTop: 20,
+                },
+                style: {
+                  backgroundColor: colors.surface,
                 },
               }}
             />

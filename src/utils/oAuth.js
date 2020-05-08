@@ -21,13 +21,13 @@ import isEmpty from 'lodash.isempty';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from 'actions/dbActions';
-import { lockScreenAction, loginAction } from 'actions/authActions';
+import { lockScreenAction } from 'actions/authActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
-import { getKeychainDataObject, getPrivateKeyFromKeychainData } from './keychain';
+
 
 export type OAuthTokens = {
   refreshToken: ?string,
@@ -49,17 +49,11 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
-    // try to get the private key from the keychain first
-    const keychainData = await getKeychainDataObject().catch(() => null);
-    const privateKey = getPrivateKeyFromKeychainData(keychainData);
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
-    if (privateKey) {
-      dispatch(loginAction(null, privateKey, refreshTokensCallback));
-      return;
-    }
-    // send user to the Auth flow
-    const errorMessage = 'Authentication tokens expired, please enter your PIN to proceed.';
-    dispatch(lockScreenAction(refreshTokensCallback, errorMessage));
+    dispatch(lockScreenAction(
+      refreshTokensCallback,
+      'Login session expired, please enter your PIN to proceed.',
+    ));
   };
 };

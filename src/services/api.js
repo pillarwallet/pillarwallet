@@ -203,7 +203,13 @@ class SDKWrapper {
   fetchInitialAssets(walletId: string) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
-      .then(({ data }) => data)
+      .then(({ data }) => {
+        if (!Array.isArray(data)) {
+          reportLog('Wrong initial assets received', { data });
+          return [];
+        }
+        return data;
+      })
       .catch(() => [])
       .then(transformAssetsToObject);
   }
@@ -293,7 +299,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
       .then(({ data }) => data)
-      .catch((error) => ({ result: 'error', reward: null, error }));
+      .catch((error) => ({ result: 'error', error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {
@@ -321,6 +327,14 @@ class SDKWrapper {
       .then(() => this.pillarWalletSdk.referral.list({ walletId }))
       .then(({ data }) => data.data)
       .catch(() => []);
+  }
+
+  getReferralRewardValue(walletId: string, referralToken: ?string) {
+    const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
+      .then(({ data }) => get(data, 'campaigns', {}))
+      .catch(() => ({}));
   }
 
   updateUserAvatar(walletId: string, formData: Object) {

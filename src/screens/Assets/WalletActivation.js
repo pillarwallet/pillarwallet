@@ -44,7 +44,7 @@ const ButtonsWrapper = styled.View`
 `;
 
 type Props = {
-  deploymentHash: ?string,
+  deploymentHash: string,
 }
 
 class WalletActivation extends React.PureComponent<Props> {

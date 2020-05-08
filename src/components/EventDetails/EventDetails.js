@@ -150,7 +150,7 @@ type Props = {
   activeBlockchainNetwork: string,
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
-  goToInvitationFlow: (onNavigationCallback: () => void) => void,
+  goToInvitationFlow: () => void,
   isPPNActivated: boolean,
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
@@ -357,17 +357,17 @@ class EventDetail extends React.Component<Props, State> {
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
     const feeLabel = `Fee ${formattedFee} ETH (${formattedFiatValue})`;
     return feeLabel;
-  }
+  };
 
   messageContact = (contact: ApiUser) => {
     this.props.navigation.navigate(CHAT, { username: contact.username });
     this.props.onClose();
-  }
+  };
 
   sendTokensToContact = (contact: ApiUser) => {
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
     this.props.onClose();
-  }
+  };
 
   sendTokensToAddress = (address: string) => {
     const { ensRegistry } = this.props;
@@ -378,13 +378,13 @@ class EventDetail extends React.Component<Props, State> {
       },
     });
     this.props.onClose();
-  }
+  };
 
   acceptInvitation = () => {
     const { event, onClose, acceptInvitation } = this.props;
     onClose();
     acceptInvitation(event);
-  }
+  };
 
   rejectInvitation = () => {
     const { event, onClose, rejectInvitation } = this.props;
@@ -392,7 +392,7 @@ class EventDetail extends React.Component<Props, State> {
       onClose();
       rejectInvitation(event);
     });
-  }
+  };
 
   viewOnTheBlockchain = () => {
     const { hash, asset } = this.props.event;
@@ -408,7 +408,7 @@ class EventDetail extends React.Component<Props, State> {
     const { badgeId } = event;
     onClose();
     navigation.navigate(BADGE, { badgeId });
-  }
+  };
 
   switchToKW = async () => {
     const {
@@ -419,7 +419,7 @@ class EventDetail extends React.Component<Props, State> {
     if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
       await switchAccount(keyBasedAccount.id);
     }
-  }
+  };
 
   switchToSW = async () => {
     const {
@@ -430,29 +430,31 @@ class EventDetail extends React.Component<Props, State> {
     if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
       await switchAccount(swAccount.id);
     }
-  }
+  };
 
   showReceiveModal = () => {
     this.props.onClose(() => this.setState({ isReceiveModalVisible: true }));
-  }
+  };
 
   topUpKeyWallet = async () => {
     await this.switchToKW();
     this.showReceiveModal();
-  }
+  };
 
   topUpSW = async () => {
     await this.switchToSW();
     this.showReceiveModal();
-  }
+  };
 
   referFriends = () => {
-    this.props.goToInvitationFlow(this.props.onClose);
-  }
+    const { onClose, goToInvitationFlow } = this.props;
+    onClose();
+    goToInvitationFlow();
+  };
 
   activateSW = () => {
     this.props.onClose(() => this.setState({ SWActivationModalVisible: true }));
-  }
+  };
 
   sendETHFromKWToSW = async () => {
     const {
@@ -480,37 +482,37 @@ class EventDetail extends React.Component<Props, State> {
     onClose();
     await this.switchToKW();
     navigation.navigate(SEND_TOKEN_AMOUNT, params);
-  }
+  };
 
   topUpPillarNetwork = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(TANK_FUND_FLOW);
-  }
+  };
 
   PPNwithdraw = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(TANK_WITHDRAWAL_FLOW);
-  }
+  };
 
   send = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
-  }
+  };
 
   sendSynthetic = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(SEND_SYNTHETIC_ASSET);
-  }
+  };
 
   settle = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(SETTLE_BALANCE);
-  }
+  };
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { theme, isSmartWalletActivated } = this.props;
@@ -573,7 +575,7 @@ class EventDetail extends React.Component<Props, State> {
       default:
         return null;
     }
-  }
+  };
 
   getUserEventData = (event: Object): ?EventData => {
     const { theme, isPPNActivated } = this.props;
@@ -967,7 +969,7 @@ class EventDetail extends React.Component<Props, State> {
       eventData.actionIcon = 'pending';
     }
     return eventData;
-  }
+  };
 
   getCollectibleTransactionEventData = (event: Object): EventData => {
     const { contacts } = this.props;
@@ -1009,7 +1011,7 @@ class EventDetail extends React.Component<Props, State> {
     }
 
     return eventData;
-  }
+  };
 
   getBadgeRewardEventData = (event: Object): EventData => {
     const { name, imageUrl } = event;
@@ -1036,7 +1038,7 @@ class EventDetail extends React.Component<Props, State> {
       actionIcon: isPending ? 'pending' : null,
       buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
     };
-  }
+  };
 
   getSocialEventData = (event: Object): ?EventData => {
     const { contacts } = this.props;
@@ -1088,7 +1090,7 @@ class EventDetail extends React.Component<Props, State> {
     }
 
     return null;
-  }
+  };
 
   getEventData = (event: Object): ?EventData => {
     let eventData = null;
@@ -1120,7 +1122,7 @@ class EventDetail extends React.Component<Props, State> {
       };
     }
     return eventData;
-  }
+  };
 
   renderImage = (eventData) => {
     const { theme } = this.props;
@@ -1155,14 +1157,14 @@ class EventDetail extends React.Component<Props, State> {
         diameter={64}
       />
     );
-  }
+  };
 
   getColor = (color: ?string): ?string => {
     if (!color) return null;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
     return colors[color] || color;
-  }
+  };
 
   renderSettle = (settleEventData) => {
     const { PPNTransactions } = this.props;
@@ -1336,7 +1338,7 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
-  goToInvitationFlow: (onNavigationCallback: () => void) => dispatch(goToInvitationFlowAction(onNavigationCallback)),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
