@@ -112,7 +112,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { assets = {} } = get(storageData, 'assets', {});
       dispatch({ type: UPDATE_ASSETS, payload: assets });
 
-      const { supportedAssets = [] } = storageData.supportedAssets;
+      const { supportedAssets = [] } = get(storageData, 'supportedAssets', {});
       dispatch({ type: UPDATE_SUPPORTED_ASSETS, payload: supportedAssets });
 
       const { exchangeSupportedAssets = [] } = get(storageData, 'exchangeSupportedAssets', {});
