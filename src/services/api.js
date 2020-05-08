@@ -299,7 +299,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
       .then(({ data }) => data)
-      .catch((error) => ({ result: 'error', reward: null, error }));
+      .catch((error) => ({ result: 'error', error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {
@@ -327,6 +327,14 @@ class SDKWrapper {
       .then(() => this.pillarWalletSdk.referral.list({ walletId }))
       .then(({ data }) => data.data)
       .catch(() => []);
+  }
+
+  getReferralRewardValue(walletId: string, referralToken: ?string) {
+    const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
+      .then(({ data }) => get(data, 'campaigns', {}))
+      .catch(() => ({}));
   }
 
   updateUserAvatar(walletId: string, formData: Object) {
