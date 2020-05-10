@@ -123,11 +123,13 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
 
     const gasToken = get(this.props, 'settleTxFee.feeInfo.gasToken');
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const payForGasWithToken = !isEmpty(gasToken);
+    const feeSymbol = get(gasToken, 'symbol', ETH);
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei,
       gasToken,
     });
+
     if (!isEnoughForFee) {
       Toast.show({
         message: `Not enough ${feeSymbol} to cover the withdrawal transaction fee`,
@@ -138,9 +140,10 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       return;
     }
 
-    this.setState({ settleButtonSubmitted: true });
-    await settleTransactions(this.txToSettle);
-    this.setState({ settleButtonSubmitted: false }, () => navigation.dismiss());
+    this.setState({ settleButtonSubmitted: true }, async () => {
+      await settleTransactions(this.txToSettle, payForGasWithToken);
+      this.setState({ settleButtonSubmitted: false }, () => navigation.dismiss());
+    });
   };
 
   getTxFeeInWei = (): BigNumber => {
