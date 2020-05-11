@@ -40,7 +40,7 @@ import {
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
-import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { resetAppLoadedAction, setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -69,6 +69,9 @@ import configureStore from './src/configureStore';
 
 const { store, persistor } = configureStore();
 
+const BACKGROUND = 'background';
+const ANDROID = 'android';
+
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
   align-items: center;
@@ -91,6 +94,7 @@ type Props = {
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
+  resetAppLoaded: () => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -127,6 +131,8 @@ class App extends React.Component<Props, *> {
       startListeningOnOpenNotification,
       executeDeepLink,
       startReferralsListener,
+      isFetched,
+      resetAppLoaded,
     } = this.props;
     NetInfo.fetch()
       .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
@@ -146,6 +152,9 @@ class App extends React.Component<Props, *> {
       .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
+    if (AppState.currentState === BACKGROUND && Platform.OS === ANDROID && isFetched) {
+      resetAppLoaded();
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -267,6 +276,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
+  resetAppLoaded: () => dispatch(resetAppLoadedAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
