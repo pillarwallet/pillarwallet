@@ -351,10 +351,11 @@ class SendETHTokens extends React.Component<Props, State> {
       assetData,
       gasToken,
     } = this.props;
-    const { feeByGasToken } = this.state;
+    const { feeByGasToken, inputHasError } = this.state;
+
     const value = Number(amount || get(this.state, 'value.amount', 0));
 
-    if (!value) return new BigNumber(0);
+    if (!value || inputHasError) return new BigNumber(0);
 
     const transaction = { recipient: receiver, value, gasToken };
     const { gasTokenCost, cost: ethCost } = await smartWalletService
