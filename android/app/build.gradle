@@ -83,10 +83,13 @@ project.ext.react = [
     bundleInDebug: false,
     bundleInRelease: true,
     bundleInStaging: true,
-    devDisabledInStaging: true
+    devDisabledInStaging: true,
+    // bundle in multiple files, ref – https://reactnative.dev/docs/ram-bundles-inline-requires#enable-the-ram-format
+    bundleCommand: "ram-bundle",
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -240,6 +243,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.github.devlight.shadowlayout:library:1.0.2' // custom shadows
     implementation 'io.intercom.android:intercom-sdk-base:5.+' // react-native-intercom to override for Intercom PN handler implementation
+    implementation 'io.intercom.android:intercom-sdk-fcm:5.+' // react-native-intercom
 
     // branch.io
     implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching

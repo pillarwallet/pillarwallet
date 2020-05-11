@@ -602,7 +602,6 @@ class Chat extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        inset={{ bottom: 'never' }}
         headerProps={{
           centerItems: [{ title, onPress: this.handleOnContactPress }],
           rightItems: [{
@@ -619,6 +618,7 @@ class Chat extends React.Component<Props, State> {
           }],
         }}
         customOnBack={this.handleChatDismissal}
+        backgroundColor={colors.card}
       >
         <Wrapper fullScreen flex={1}>
           {!renderChat &&
@@ -644,13 +644,15 @@ class Chat extends React.Component<Props, State> {
               renderLoadEarlier={renderLoadEarlier}
               renderMessage={renderMessage}
               renderTime={renderTime}
-              minInputToolbarHeight={INPUT_HEIGHT}
               parsePatterns={(props) => parsePatterns(props, colors)}
               renderSystemMessage={this.renderCustomSystemMessage}
               listViewProps={{
                 contentContainerStyle: {
                   justifyContent: 'flex-end',
                   paddingTop: 20,
+                },
+                style: {
+                  backgroundColor: colors.surface,
                 },
               }}
             />

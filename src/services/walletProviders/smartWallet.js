@@ -7,16 +7,25 @@ import abi from 'ethjs-abi';
 import { sdkConstants } from '@smartwallet/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
-
-import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
-import type { Account } from 'models/Account';
-import type { CollectibleTransactionPayload, SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+// services
 import { buildERC721TransactionData } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
+
+// constants
+import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
+
+// utils
 import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
+
+// assets
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
+// types
+import type { Account } from 'models/Account';
+import type { CollectibleTransactionPayload, SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+
 
 const {
   GasPriceStrategies: {
@@ -34,7 +43,9 @@ export default class SmartWalletProvider {
     this.sdkInitPromise = smartWalletService
       .init(privateKey)
       .then(() => smartWalletService.connectAccount(account.id))
-      .then(() => { this.sdkInitialized = true; })
+      .then((connectedAccount) => {
+        if (connectedAccount) this.sdkInitialized = true;
+      })
       .catch(() => null);
   }
 
@@ -47,7 +58,12 @@ export default class SmartWalletProvider {
       return Promise.reject(new Error('SDK is not initialized'));
     }
 
-    const { to, amount, data: transactionData } = transaction;
+    const {
+      to,
+      amount,
+      gasToken,
+      data: transactionData,
+    } = transaction;
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);
     const value = ethToWei(amount);
@@ -58,6 +74,7 @@ export default class SmartWalletProvider {
         value,
         data: transactionData || '',
         transactionSpeed,
+        gasToken,
       })
       .then(hash => ({
         from,
@@ -83,6 +100,7 @@ export default class SmartWalletProvider {
       decimals = 18,
       usePPN,
       extra,
+      gasToken,
     } = transaction;
     let { data, to: recipient } = transaction;
     const from = getAccountAddress(account);
@@ -130,9 +148,10 @@ export default class SmartWalletProvider {
       .transferAsset({
         // $FlowFixMe
         recipient,
-        value,
+        value: 0, // value is in encoded transfer method as data
         data,
         transactionSpeed,
+        gasToken,
       })
       .then(hash => ({
         from,
@@ -155,7 +174,12 @@ export default class SmartWalletProvider {
       return Promise.reject(new Error('SDK is not initialized'));
     }
 
-    const { to, contractAddress, tokenId } = transaction;
+    const {
+      to,
+      contractAddress,
+      tokenId,
+      gasToken,
+    } = transaction;
     const from = getAccountAddress(account);
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
@@ -169,6 +193,7 @@ export default class SmartWalletProvider {
         value: 0,
         data,
         transactionSpeed,
+        gasToken,
       })
       .then(hash => ({
         from,

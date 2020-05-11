@@ -69,7 +69,7 @@ import {
   reportLog,
   uniqBy,
 } from 'utils/common';
-import { buildHistoryTransaction, updateAccountHistory } from 'utils/history';
+import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
   getActiveAccount,
@@ -312,11 +312,16 @@ export const sendAssetAction = (
     const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
     const to = toChecksumAddress(transaction.to);
-    const { note } = transaction;
+    const { note, gasToken, txFeeInWei } = transaction;
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
     const walletProvider = await cryptoWallet.getProvider();
+
+    // build fee with gas token if present
+    const feeWithGasToken = !isEmpty(gasToken)
+      ? parseFeeWithGasToken(gasToken, txFeeInWei)
+      : null;
 
     // send collectible
     if (tokenType === COLLECTIBLES) {
@@ -345,6 +350,7 @@ export const sendAssetAction = (
               ...tokenTx,
               asset: transaction.name,
               note,
+              feeWithGasToken,
             }),
             to,
             from: accountAddress,
@@ -374,6 +380,7 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          feeWithGasToken,
         });
       }
     // send ERC20 token
@@ -404,6 +411,7 @@ export const sendAssetAction = (
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
           extra: transaction.extra || null,
+          feeWithGasToken,
         });
       }
     }
@@ -620,7 +628,7 @@ export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) 
     } = getState();
 
     const initialAssets = await api.fetchInitialAssets(walletId);
-    if (!Object.keys(initialAssets).length) {
+    if (isEmpty(initialAssets)) {
       dispatch({
         type: UPDATE_ASSETS_STATE,
         payload: FETCH_INITIAL_FAILED,
@@ -753,15 +761,15 @@ export const loadSupportedAssetsAction = () => {
 
     const supportedAssets = await api.fetchSupportedAssets(walletId);
 
-    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+    // nothing to do if returned empty
+    if (isEmpty(supportedAssets)) return;
+
+    if (!supportedAssets.some(e => e.symbol === 'BTC')) {
       const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
       if (btcAsset) {
         supportedAssets.push(btcAsset);
       }
     }
-
-    // nothing to do if returned empty
-    if (isEmpty(supportedAssets)) return;
 
     dispatch({
       type: UPDATE_SUPPORTED_ASSETS,

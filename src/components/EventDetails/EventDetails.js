@@ -27,6 +27,7 @@ import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
@@ -44,7 +45,12 @@ import SWActivationModal from 'components/SWActivationModal';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
 import { getRate, addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
-import { formatFiat, formatAmount, formatUnits } from 'utils/common';
+import {
+  formatFiat,
+  formatAmount,
+  formatUnits,
+  formatTransactionFee,
+} from 'utils/common';
 import {
   groupPPNTransactions, elipsizeAddress, isPendingTransaction, isSWAddress, isKWAddress, getUsernameOrAddress,
 } from 'utils/feedData';
@@ -62,7 +68,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -72,7 +78,10 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import {
+  SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
@@ -102,6 +111,8 @@ import { activeBlockchainSelector } from 'selectors/selectors';
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { updateTransactionStatusAction } from 'actions/historyActions';
+import { lookupAddressAction } from 'actions/ensRegistryActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -139,9 +150,11 @@ type Props = {
   activeBlockchainNetwork: string,
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
-  goToInvitationFlow: (onNavigationCallback: () => void) => void,
-  referralsFeatureEnabled: boolean,
+  goToInvitationFlow: () => void,
   isPPNActivated: boolean,
+  updateTransactionStatus: (hash: string) => void,
+  lookupAddress: (address: string) => void,
+  history: {[string]: Object[]},
 };
 
 type State = {
@@ -194,7 +207,7 @@ const IconCircle = styled.View`
   justify-content: center;
   text-align: center;
   ${({ border, theme }) => border &&
-    `border-color: ${theme.colors.border};
+  `border-color: ${theme.colors.border};
     border-width: 1px;`};
 `;
 
@@ -235,14 +248,83 @@ const Divider = styled.View`
 
 
 class EventDetail extends React.Component<Props, State> {
+  timer: ?IntervalID;
+  timeout: ?TimeoutID;
+
   state = {
     isReceiveModalVisible: false,
     SWActivationModalVisible: false,
   };
 
-  isReceived = ({ to: address }: Object): boolean => {
+  componentDidMount() {
+    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const txInfo = this.findTxInfo();
+    this.syncEnsRegistry(txInfo);
+    this.syncTxStatus(txInfo);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const txInfo = this.findTxInfo();
+    if (!prevProps.isVisible && this.props.isVisible) {
+      this.syncEnsRegistry(txInfo);
+      this.syncTxStatus(txInfo);
+    }
+    if (prevProps.isVisible && !this.props.isVisible) {
+      this.cleanup();
+    }
+    if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  componentWillUnmount() {
+    this.cleanup();
+  }
+
+  cleanup() {
+    if (this.timer) clearInterval(this.timer);
+    if (this.timeout) clearTimeout(this.timeout);
+  }
+
+  findTxInfo = () => {
+    const { history, event } = this.props;
+    const accountsHistory: Object[] = Object.values(history);
+    return accountsHistory
+      .map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
+      .find(tx => tx) || {};
+  }
+
+  syncEnsRegistry = (txInfo) => {
+    const { ensRegistry, lookupAddress } = this.props;
+    const relatedAddress = this.getRelevantAddress(txInfo);
+
+    if (!ensRegistry[relatedAddress]) {
+      lookupAddress(relatedAddress);
+    }
+  }
+
+  syncTxStatus = (txInfo) => {
+    const {
+      event,
+      updateTransactionStatus,
+    } = this.props;
+    if (txInfo.status === TX_PENDING_STATUS) {
+      this.timeout = setTimeout(() => updateTransactionStatus(event.hash), 500);
+      this.timer = setInterval(() => updateTransactionStatus(event.hash), 10000);
+    }
+
+    if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
+      updateTransactionStatus(event.hash);
+    }
+  }
+
+  isReceived = ({ to: address, tag }: Object): boolean => {
     const { activeAccountAddress, bitcoinAddresses } = this.props;
-    return addressesEqual(address, activeAccountAddress) || bitcoinAddresses.some(e => e.address === address);
+    return addressesEqual(address, activeAccountAddress)
+      || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+      || bitcoinAddresses.some(e => e.address === address);
   };
 
   getRelevantAddress = (event: Object): string => {
@@ -255,11 +337,15 @@ class EventDetail extends React.Component<Props, State> {
       event, baseFiatCurrency, rates, assetDecimals,
     } = this.props;
     const {
-      gasUsed, gasPrice, btcFee,
+      gasUsed, gasPrice, btcFee, feeWithGasToken,
     } = event;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     let formattedFee;
+
+    if (!isEmpty(feeWithGasToken)) {
+      return `Fee ${formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken'))}`;
+    }
 
     if (gasUsed) {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
@@ -271,17 +357,17 @@ class EventDetail extends React.Component<Props, State> {
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
     const feeLabel = `Fee ${formattedFee} ETH (${formattedFiatValue})`;
     return feeLabel;
-  }
+  };
 
   messageContact = (contact: ApiUser) => {
     this.props.navigation.navigate(CHAT, { username: contact.username });
     this.props.onClose();
-  }
+  };
 
   sendTokensToContact = (contact: ApiUser) => {
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
     this.props.onClose();
-  }
+  };
 
   sendTokensToAddress = (address: string) => {
     const { ensRegistry } = this.props;
@@ -292,13 +378,13 @@ class EventDetail extends React.Component<Props, State> {
       },
     });
     this.props.onClose();
-  }
+  };
 
   acceptInvitation = () => {
     const { event, onClose, acceptInvitation } = this.props;
     onClose();
     acceptInvitation(event);
-  }
+  };
 
   rejectInvitation = () => {
     const { event, onClose, rejectInvitation } = this.props;
@@ -306,7 +392,7 @@ class EventDetail extends React.Component<Props, State> {
       onClose();
       rejectInvitation(event);
     });
-  }
+  };
 
   viewOnTheBlockchain = () => {
     const { hash, asset } = this.props.event;
@@ -322,7 +408,7 @@ class EventDetail extends React.Component<Props, State> {
     const { badgeId } = event;
     onClose();
     navigation.navigate(BADGE, { badgeId });
-  }
+  };
 
   switchToKW = async () => {
     const {
@@ -333,7 +419,7 @@ class EventDetail extends React.Component<Props, State> {
     if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
       await switchAccount(keyBasedAccount.id);
     }
-  }
+  };
 
   switchToSW = async () => {
     const {
@@ -344,29 +430,31 @@ class EventDetail extends React.Component<Props, State> {
     if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
       await switchAccount(swAccount.id);
     }
-  }
+  };
 
   showReceiveModal = () => {
     this.props.onClose(() => this.setState({ isReceiveModalVisible: true }));
-  }
+  };
 
   topUpKeyWallet = async () => {
     await this.switchToKW();
     this.showReceiveModal();
-  }
+  };
 
   topUpSW = async () => {
     await this.switchToSW();
     this.showReceiveModal();
-  }
+  };
 
   referFriends = () => {
-    this.props.goToInvitationFlow(this.props.onClose);
-  }
+    const { onClose, goToInvitationFlow } = this.props;
+    onClose();
+    goToInvitationFlow();
+  };
 
   activateSW = () => {
     this.props.onClose(() => this.setState({ SWActivationModalVisible: true }));
-  }
+  };
 
   sendETHFromKWToSW = async () => {
     const {
@@ -394,37 +482,37 @@ class EventDetail extends React.Component<Props, State> {
     onClose();
     await this.switchToKW();
     navigation.navigate(SEND_TOKEN_AMOUNT, params);
-  }
+  };
 
   topUpPillarNetwork = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(TANK_FUND_FLOW);
-  }
+  };
 
   PPNwithdraw = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(TANK_WITHDRAWAL_FLOW);
-  }
+  };
 
   send = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
-  }
+  };
 
   sendSynthetic = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(SEND_SYNTHETIC_ASSET);
-  }
+  };
 
   settle = () => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(SETTLE_BALANCE);
-  }
+  };
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { theme, isSmartWalletActivated } = this.props;
@@ -487,7 +575,7 @@ class EventDetail extends React.Component<Props, State> {
       default:
         return null;
     }
-  }
+  };
 
   getUserEventData = (event: Object): ?EventData => {
     const { theme, isPPNActivated } = this.props;
@@ -602,27 +690,34 @@ class EventDetail extends React.Component<Props, State> {
           squarePrimary: true,
         };
 
-        return {
+        eventData = {
           name: 'Smart Wallet',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Activated',
           actionSubtitle: this.getFeeLabel(),
           buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
+        break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
-          return {
+          eventData = {
             name: 'Pillar Network',
             itemImageSource: PPNIcon,
             actionTitle: `+ ${formattedValue} ${event.asset}`,
             actionColor: this.getColor('positive'),
             actionSubtitle: 'Top up',
             buttons: [
-              {
-                title: 'Send',
-                onPress: this.sendSynthetic,
-                secondary: true,
-              },
+              isPending ?
+                {
+                  title: 'View on the blockchain',
+                  onPress: this.viewOnTheBlockchain,
+                  secondary: true,
+                } :
+                {
+                  title: 'Send',
+                  onPress: this.sendSynthetic,
+                  secondary: true,
+                },
               {
                 title: 'Top up more',
                 onPress: this.topUpPillarNetwork,
@@ -630,24 +725,25 @@ class EventDetail extends React.Component<Props, State> {
               },
             ],
           };
+        } else {
+          eventData = {
+            name: 'Pillar Network',
+            iconName: 'sent',
+            iconColor: this.getColor('negative'),
+            actionTitle: `- ${formattedValue} ${event.asset}`,
+            actionSubtitle: 'from Smart Wallet',
+            buttons: [
+              {
+                title: 'Top up more',
+                onPress: this.topUpPillarNetwork,
+                secondary: true,
+              },
+            ],
+          };
         }
-        return {
-          name: 'Pillar Network',
-          iconName: 'sent',
-          iconColor: this.getColor('negative'),
-          actionTitle: `- ${formattedValue} ${event.asset}`,
-          actionSubtitle: 'from Smart Wallet',
-          buttons: [
-            {
-              title: 'Top up more',
-              onPress: this.topUpPillarNetwork,
-              secondary: true,
-            },
-          ],
-        };
-
+        break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
-        return {
+        eventData = {
           name: 'ENS name',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Registered',
@@ -660,8 +756,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
-        return {
+        eventData = {
           name: 'Smart Wallet',
           iconName: 'sent',
           iconColor: this.getColor('negative'),
@@ -675,8 +772,9 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
-        return {
+        eventData = {
           name: 'Settle',
           itemImageSource: PPNIcon,
           settleEventData: event,
@@ -688,21 +786,36 @@ class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
+      case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
+        eventData = {
+          name: 'Smart Wallet fees with PLR',
+          itemImageSource: smartWalletIcon,
+          actionTitle: 'Enabled',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
       default:
         const usernameOrAddress = event.username
-            || ensRegistry[relevantAddress]
-            || elipsizeAddress(relevantAddress);
+          || ensRegistry[relevantAddress]
+          || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         let subtext = getAccountName(event.accountType);
         const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
         const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
-        if (isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
+        if (isReceived && isKWAddress(event.to, accounts)) {
           subtext = `to ${keyWallet}`;
-        } else if (isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
+        } else if (isReceived && isSWAddress(event.to, accounts)) {
           subtext = `to ${smartWallet}`;
-        } else if (!isReceived && isSWAddress(event.from, accounts) && isKWAddress(event.to, accounts)) {
+        } else if (!isReceived && isSWAddress(event.from, accounts)) {
           subtext = `from ${smartWallet}`;
-        } else if (!isReceived && isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
+        } else if (!isReceived && isKWAddress(event.from, accounts)) {
           subtext = `from ${keyWallet}`;
         }
 
@@ -848,15 +961,15 @@ class EventDetail extends React.Component<Props, State> {
             eventData.fee = this.getFeeLabel();
           }
         }
-        if (isPending) {
-          eventData.actionIcon = 'pending';
-        }
         if (activeBlockchainNetwork === 'BITCOIN') {
           eventData.actionSubtitle = isReceived ? 'to Bitcoin wallet' : 'from Bitcoin wallet';
         }
-        return eventData;
     }
-  }
+    if (isPending) {
+      eventData.actionIcon = 'pending';
+    }
+    return eventData;
+  };
 
   getCollectibleTransactionEventData = (event: Object): EventData => {
     const { contacts } = this.props;
@@ -898,7 +1011,7 @@ class EventDetail extends React.Component<Props, State> {
     }
 
     return eventData;
-  }
+  };
 
   getBadgeRewardEventData = (event: Object): EventData => {
     const { name, imageUrl } = event;
@@ -925,7 +1038,7 @@ class EventDetail extends React.Component<Props, State> {
       actionIcon: isPending ? 'pending' : null,
       buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
     };
-  }
+  };
 
   getSocialEventData = (event: Object): ?EventData => {
     const { contacts } = this.props;
@@ -977,7 +1090,7 @@ class EventDetail extends React.Component<Props, State> {
     }
 
     return null;
-  }
+  };
 
   getEventData = (event: Object): ?EventData => {
     let eventData = null;
@@ -1009,7 +1122,7 @@ class EventDetail extends React.Component<Props, State> {
       };
     }
     return eventData;
-  }
+  };
 
   renderImage = (eventData) => {
     const { theme } = this.props;
@@ -1044,14 +1157,14 @@ class EventDetail extends React.Component<Props, State> {
         diameter={64}
       />
     );
-  }
+  };
 
   getColor = (color: ?string): ?string => {
     if (!color) return null;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
     return colors[color] || color;
-  }
+  };
 
   renderSettle = (settleEventData) => {
     const { PPNTransactions } = this.props;
@@ -1099,13 +1212,19 @@ class EventDetail extends React.Component<Props, State> {
 
   render() {
     const {
-      isVisible, onClose, event, activeAccountAddress, navigation, referralsFeatureEnabled,
+      isVisible, onClose, activeAccountAddress, navigation,
     } = this.props;
     const {
       isReceiveModalVisible,
       SWActivationModalVisible,
     } = this.state;
 
+    let { event } = this.props;
+
+    if (event.type === TRANSACTION_EVENT) {
+      const txInfo = this.findTxInfo();
+      event = { ...event, ...txInfo };
+    }
     const eventData = this.getEventData(event);
     if (!eventData) return null;
     const {
@@ -1113,10 +1232,6 @@ class EventDetail extends React.Component<Props, State> {
       actionTitle, actionSubtitle, actionIcon, actionColor, customActionTitle,
       buttons = [], settleEventData, fee,
     } = eventData;
-
-    const filteredButtons = referralsFeatureEnabled ?
-      buttons :
-      buttons.filter(button => button.onPress !== this.referFriends);
 
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
 
@@ -1156,11 +1271,11 @@ class EventDetail extends React.Component<Props, State> {
                     <BaseText regular secondary>{fee}</BaseText>
                     <Spacing h={32} />
                   </React.Fragment>
-              )}
+                )}
               </React.Fragment>
             )}
             <ButtonsContainer>
-              {filteredButtons.map(buttonProps => (
+              {buttons.map(buttonProps => (
                 <React.Fragment key={buttonProps.title} >
                   <Button regularText {...buttonProps} />
                   <Spacing h={4} />
@@ -1192,7 +1307,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
-  featureFlags: { data: { REFERRALS_ENABLED: referralsFeatureEnabled } },
+  history: { data: history },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1202,7 +1317,7 @@ const mapStateToProps = ({
   accounts,
   ensRegistry,
   supportedAssets,
-  referralsFeatureEnabled,
+  history,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1223,7 +1338,9 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
-  goToInvitationFlow: (onNavigationCallback: () => void) => dispatch(goToInvitationFlowAction(onNavigationCallback)),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
+  lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));

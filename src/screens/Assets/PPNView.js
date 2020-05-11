@@ -54,9 +54,13 @@ import {
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
-  PAYMENT_PROCESSED,
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
+import {
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+} from 'constants/paymentNetworkConstants';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -68,10 +72,10 @@ import type { Theme } from 'models/Theme';
 import type { Balances, BalancesStore, Rates } from 'models/Asset';
 
 // utils
-import { getRate } from 'utils/assets';
+import { getRate, addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus, isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { findFirstSmartAccount, getAccountId } from 'utils/accounts';
@@ -83,6 +87,7 @@ import {
   PPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
+import { activeAccountAddressSelector } from 'selectors';
 
 
 type Props = {
@@ -101,6 +106,7 @@ type Props = {
   fetchTransactionsHistory: () => void,
   theme: Theme,
   onScroll: (event: Object) => void,
+  activeAccountAddress: string,
   balances: BalancesStore,
 };
 
@@ -143,16 +149,18 @@ const FloatingButtonView = styled.View`
   width: 100%;
 `;
 
-const UNSETTLED = 'UNSETTLED';
+const INCOMING = 'INCOMING';
+const SENT = 'SENT';
 const SETTLED = 'SETTLED';
+
 const insightItemsList = [
-  'Instant, gas-free and private transactions',
+  'Instant, gas-free and private transactions.',
   'A single token experience including the ability to send/spend tokens you don’t already own through real-time swaps.',
 ];
 
 class PPNView extends React.Component<Props, State> {
   state = {
-    activeTab: UNSETTLED,
+    activeTab: INCOMING,
     isInitSmartWalletModalVisible: false,
   };
 
@@ -171,48 +179,79 @@ class PPNView extends React.Component<Props, State> {
     navigation.navigate(FUND_TANK);
   };
 
-  renderInsight = (isSmartWalletInitialised) => {
-    const { availableStake, accounts, balances } = this.props;
+  renderInsight = () => {
+    const {
+      availableStake,
+      accounts,
+      balances,
+      smartWalletState,
+    } = this.props;
     const smartWalletAccount = findFirstSmartAccount(accounts);
 
-    if (isSmartWalletInitialised && smartWalletAccount) {
+    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+    if (isDeploying) {
+      return (
+        <InsightWithButton
+          spinner
+          footerChildren={
+            <BaseText
+              medium
+              center
+              style={{ marginTop: 20 }}
+            >
+              Activating your Smart Wallet. It will be ready shortly
+            </BaseText>
+          }
+        />
+      );
+    }
+
+    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+
+    if (smartWalletAccount && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       const smartWalletAccountId = getAccountId(smartWalletAccount);
       const accountBalances: Balances = balances[smartWalletAccountId];
       const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
 
       if (!availableStake) {
+        const insightProps = {};
         if (!hasPLRInSmartWallet) {
-          return (
-            <InsightWithButton
-              title="Activate Pillar Network"
-              description="To send any token you need to top up Pillar Tank with PLR first"
-              buttonTitle="Not enough PLR"
-              buttonProps={{ disabled: true, secondary: true }}
-              footerChildren={(
-                <Button title="Buy PLR" small marginTop={12} onPress={this.navigateToBuyPillar} regularText />
-              )}
-            />
-          );
+          insightProps.buttonTitle = 'Not enough PLR';
+          insightProps.buttonProps = { disabled: true, secondary: true };
+          insightProps.footerChildren = (
+            <Button
+              title="Buy PLR"
+              small
+              marginTop={12}
+              onPress={this.navigateToBuyPillar}
+              regularText
+            />);
+        } else {
+          insightProps.buttonTitle = 'Top up PLR Tank';
+          insightProps.onButtonPress = this.navigateToFundTank;
         }
         return (
           <InsightWithButton
             title="Activate Pillar Network"
             description="To send any token you need to top up Pillar Tank with PLR first"
-            buttonTitle="Top up PLR Tank"
-            onButtonPress={this.navigateToFundTank}
+            {...insightProps}
           />
         );
       }
+
+      return null;
+    } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
+      return (
+        <InsightWithButton
+          title="Unique benefits of Pillar Payment Network for PLR users"
+          itemsList={insightItemsList}
+          buttonTitle="Activate Pillar Network"
+          onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
+        />
+      );
     }
 
-    return (
-      <InsightWithButton
-        title="Unique benefits of Pillar Payment Network for PLR users"
-        itemsList={insightItemsList}
-        buttonTitle="Activate Pillar Network"
-        onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
-      />
-    );
+    return null;
   };
 
   closeSmartWalletModal = () => {
@@ -237,6 +276,7 @@ class PPNView extends React.Component<Props, State> {
       fetchTransactionsHistory,
       theme,
       onScroll,
+      activeAccountAddress,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -272,29 +312,52 @@ class PPNView extends React.Component<Props, State> {
     );
 
     const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
-      const { stateInPPN, hash } = transaction;
-      const { settled, unsettled } = filtered;
-      switch (stateInPPN) {
-        case PAYMENT_PROCESSED:
+      const {
+        stateInPPN, hash, tag, from,
+      } = transaction;
+      const {
+        settled, incoming, sent,
+      } = filtered;
+      switch (tag) {
+        case PAYMENT_NETWORK_ACCOUNT_TOPUP:
+          filtered.incoming = incoming.concat(transaction);
+          break;
+        case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
+          filtered.sent = sent.concat(transaction);
+          break;
+        case PAYMENT_NETWORK_TX_SETTLEMENT:
           filtered.settled = settled.concat(transaction);
           break;
-        case PAYMENT_COMPLETED:
-          if (!isHiddenUnsettledTransaction(hash, history)) filtered.unsettled = unsettled.concat(transaction);
-          break;
         default:
-          break;
+          if (addressesEqual(from, activeAccountAddress)) {
+            filtered.sent = sent.concat(transaction);
+          } else if (stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history)) {
+            filtered.incoming = incoming.concat(transaction);
+            filtered.unsettledCount += 1;
+          }
       }
       return filtered;
-    }, { settled: [], unsettled: [] });
+    }, {
+      settled: [], incoming: [], sent: [], unsettledCount: 0,
+    });
 
     const historyTabs = [
       {
-        id: UNSETTLED,
-        name: 'Unsettled',
-        onPress: () => this.setActiveTab(UNSETTLED),
-        data: PPNTransactionsGrouped.unsettled,
+        id: INCOMING,
+        name: 'Incoming',
+        onPress: () => this.setActiveTab(INCOMING),
+        data: PPNTransactionsGrouped.incoming,
         emptyState: {
-          title: 'No unsettled transactions',
+          title: 'No incoming transactions',
+        },
+      },
+      {
+        id: SENT,
+        name: 'Sent',
+        onPress: () => this.setActiveTab(SENT),
+        data: PPNTransactionsGrouped.sent,
+        emptyState: {
+          title: 'No sent transactions',
         },
       },
       {
@@ -308,7 +371,7 @@ class PPNView extends React.Component<Props, State> {
       },
     ];
 
-    const showSettleButton = activeTab !== SETTLED && !!PPNTransactionsGrouped.unsettled.length;
+    const showSettleButton = activeTab === INCOMING && !!PPNTransactionsGrouped.unsettledCount;
 
     return (
       <View style={{ flex: 1 }}>
@@ -329,7 +392,7 @@ class PPNView extends React.Component<Props, State> {
           onScroll={onScroll}
           scrollEventThrottle={16}
         >
-          {this.renderInsight(!disableTopUpAndSettle)}
+          {this.renderInsight()}
           <TopPartWrapper>
             <TankBalanceWrapper>
               <TankBalance>
@@ -365,6 +428,7 @@ class PPNView extends React.Component<Props, State> {
               borderTopWidth: 0,
               borderBottomWidth: 1,
               borderColor: colors.border,
+              opacity: disableTopUpAndSettle ? 0.5 : 1,
             }}
             chevronStyle={{ color: colors.secondaryText }}
             label="Incoming balance"
@@ -372,6 +436,7 @@ class PPNView extends React.Component<Props, State> {
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
             color={colors.text}
             bordered
+            disabled={!!disableTopUpAndSettle}
           />}
           {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
@@ -389,6 +454,7 @@ class PPNView extends React.Component<Props, State> {
             initialNumToRender={6}
             wrapperStyle={{ flexGrow: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
+            isPPNView
           />
           }
         </ScrollView>
@@ -399,6 +465,7 @@ class PPNView extends React.Component<Props, State> {
               width="auto"
               title="Settle transactions"
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
+              disabled={disableTopUpAndSettle}
             />
           </FloatingButtonView>
         }
@@ -434,6 +501,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   PPNTransactions: PPNTransactionsSelector,
   history: accountHistorySelector,
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

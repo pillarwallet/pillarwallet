@@ -32,6 +32,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getKeychainDataObject } from 'utils/keychain';
+import { constructWalletFromMnemonic } from 'utils/wallet';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import type { EthereumWallet } from 'models/Wallet';
@@ -157,8 +158,10 @@ class CheckAuth extends React.Component<Props, State> {
       if (keychainData) {
         const { privateKey, mnemonic } = keychainData;
         removeAppStateChangeListener(this.handleAppStateChange);
-        checkPrivateKey(privateKey, (_, wallet) => onPinValid(_,
-          revealMnemonic ? { ...wallet, mnemonic } : wallet));
+        checkPrivateKey(
+          privateKey,
+          (_, wallet) => onPinValid(_, revealMnemonic ? constructWalletFromMnemonic(mnemonic) : wallet),
+        );
         this.hideModal(modalProps);
       } else {
         if (errorHandler) errorHandler();

@@ -28,6 +28,7 @@ import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 import type { Dispatch } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 
+
 export type OAuthTokens = {
   refreshToken: ?string,
   accessToken: ?string,
@@ -47,9 +48,12 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 };
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
-  return async (callback: () => void) => {
+  return async (refreshTokensCallback: (privateKey: string) => void) => {
     dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
-    dispatch(lockScreenAction(callback, 'Authentication tokens expired, please enter your PIN to proceed.'));
+    dispatch(lockScreenAction(
+      refreshTokensCallback,
+      'Login session expired, please enter your PIN to proceed.',
+    ));
   };
 };

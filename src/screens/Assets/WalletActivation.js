@@ -20,15 +20,12 @@
 import * as React from 'react';
 import { ScrollView, Linking } from 'react-native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
-import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
-import InviteBanner from 'screens/People/InviteBanner';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { Spacing } from 'components/Layout';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
@@ -47,9 +44,7 @@ const ButtonsWrapper = styled.View`
 `;
 
 type Props = {
-  referralsFeatureEnabled: boolean,
-  goToInvitationFlow: () => void,
-  deploymentHash: ?string,
+  deploymentHash: string,
 }
 
 class WalletActivation extends React.PureComponent<Props> {
@@ -65,12 +60,12 @@ class WalletActivation extends React.PureComponent<Props> {
   };
 
   render() {
-    const { referralsFeatureEnabled, goToInvitationFlow } = this.props;
-
     return (
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 20 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16, paddingVertical: 20, justifyContent: 'center', flexGrow: 1,
+        }}
         showsVerticalScrollIndicator={false}
       >
         <Title>Smart Wallet is being activated</Title>
@@ -80,7 +75,6 @@ class WalletActivation extends React.PureComponent<Props> {
         </Text>
         <ButtonsWrapper>
           <Button
-            height={48}
             title="Smart Wallet FAQ"
             onPress={this.handleFaq}
             textStyle={fontStyles.medium}
@@ -88,31 +82,14 @@ class WalletActivation extends React.PureComponent<Props> {
           <Spacing h={4} />
           <Button
             primaryInverted
-            height={48}
             title="See on Etherscan"
             onPress={this.handleEtherscan}
             textStyle={fontStyles.medium}
             style={{ borderColor: 'transparent' }}
           />
         </ButtonsWrapper>
-        {referralsFeatureEnabled && (
-          <InviteBanner title="Invite friends" onInvitePress={goToInvitationFlow} />
-        )}
       </ScrollView>
     );
   }
 }
-
-const mapStateToProps = ({
-  featureFlags: {
-    data: { REFERRALS_ENABLED: referralsFeatureEnabled },
-  },
-}: RootReducerState): $Shape<Props> => ({
-  referralsFeatureEnabled,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(WalletActivation);
+export default WalletActivation;

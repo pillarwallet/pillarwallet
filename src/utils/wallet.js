@@ -82,34 +82,36 @@ export function catchTransactionError(e: Object, type: string, tx: Object) {
 }
 
 // handle eth_signTransaction
-export function signTransaction(trx: Object, wallet: Object): Promise<string> {
+export function signTransaction(trx: Object, walletInstance: Object): Promise<string> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
-  wallet.connect(provider);
-  if (trx && trx.from) {
-    delete trx.from;
+  const wallet = walletInstance.connect(provider);
+  const signTx = trx ? { ...trx } : trx;
+  if (signTx && signTx.from) {
+    delete signTx.from;
   }
-  return wallet.sign(trx);
+  return wallet.sign(signTx);
 }
 
 // handle eth_sign
-export function signMessage(message: any, wallet: Object): string {
+export function signMessage(message: any, walletInstance: Object): string {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
-  wallet.connect(provider);
+  const wallet = walletInstance.connect(provider);
   // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
   return ethSign(message, wallet.privateKey);
 }
 
 // handle personal_sign
-export function signPersonalMessage(message: string, wallet: Object): Promise<string> {
+export function signPersonalMessage(message: string, walletInstance: Object): Promise<string> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
-  wallet.connect(provider);
+  const wallet = walletInstance.connect(provider);
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
 
 // we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object, api: Object) {
-  let { wallet = {} } = await storage.get('wallet');
-  const { user = {} } = await storage.get('user');
+export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch, api: Object) {
+  let { wallet = {} } = get(storageData, 'wallet', {});
+  const { appSettings = {} } = get(storageData, 'app_settings', {});
+  const { user = {} } = get(storageData, 'user', {});
   const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
   const isWalletEmpty = isEmpty(wallet);
   // wallet timestamp missing causes welcome screen
@@ -188,6 +190,24 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
 export async function decryptWallet(encryptedWallet: Object, saltedPin: string, options?: Object) {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   let wallet = await ethers.Wallet.RNfromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
+  return wallet;
+}
+
+export function constructWalletFromPrivateKey(privateKey: string): Object {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = new ethers.Wallet(privateKey);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
+  return wallet;
+}
+
+export function constructWalletFromMnemonic(mnemonic: string): Object {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = ethers.Wallet.fromMnemonic(mnemonic);
   if (wallet) {
     wallet = wallet.connect(provider);
   }

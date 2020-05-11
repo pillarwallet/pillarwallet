@@ -73,6 +73,7 @@ type Props = {
   sideMargins?: number,
   noTopPadding?: boolean,
   headerProps?: HeaderProps,
+  insetTop?: boolean,
 };
 
 const themes = {
@@ -215,6 +216,7 @@ class SlideModal extends React.Component<Props, *> {
       sideMargins,
       noTopPadding,
       headerProps = {},
+      insetTop,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -248,7 +250,7 @@ class SlideModal extends React.Component<Props, *> {
             noHorizonatalPadding={!fullScreen && !noPadding}
             leftSideFlex={centerTitle ? null : 4}
             noBack
-            forceInsetTop="never"
+            forceInsetTop={insetTop ? 'always' : 'never'}
             {...headerProps}
           />
         }

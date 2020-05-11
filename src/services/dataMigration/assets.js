@@ -3,11 +3,8 @@ import get from 'lodash.get';
 import { saveDbAction } from 'actions/dbActions';
 import type { Accounts } from 'models/Account';
 import type { Assets, AssetsStore } from 'models/Asset';
-
-import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
 
-const storage = Storage.getInstance('db');
 
 export function migrateAssetsToAccountsFormat(
   assets: Assets,
@@ -23,9 +20,9 @@ export function migrateAssetsToAccountsFormat(
   return assetsByAcc;
 }
 
-export default async function (dispatch: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { assets = {} } = await storage.get('assets');
+export default async function (storageData: Object, dispatch: Function) {
+  const { accounts = [] } = get(storageData, 'accounts', {});
+  const { assets = {} } = get(storageData, 'assets', {});
   const keyBasedAccount = findKeyBasedAccount(accounts);
   const keyBasedAccountId = get(keyBasedAccount, 'id', null);
 

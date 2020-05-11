@@ -168,12 +168,12 @@ const themeColors = (theme: Theme) => {
       border: colors.negative,
     },
     secondaryTransparent: {
-      background: 'transparent',
+      surface: 'transparent',
       text: colors.control,
       border: colors.primary,
     },
     secondaryTransparentDisabled: {
-      background: 'transparent',
+      surface: 'transparent',
       text: colors.secondaryText,
     },
     secondaryDanger: {
@@ -181,11 +181,11 @@ const themeColors = (theme: Theme) => {
       text: colors.negative,
     },
     danger: {
-      background: colors.negative,
+      surface: colors.danger,
       text: colors.control,
     },
     dark: {
-      background: colors.tertiary,
+      surface: colors.tertiary,
       color: colors.control,
       borderColor: colors.tertiary,
     },
@@ -239,10 +239,10 @@ const getButtonHeight = (props) => {
   }
 
   if (props.small) {
-    return '34px';
+    return '32px';
   }
 
-  return '56px';
+  return '48px';
 };
 
 const getButtonWidth = (props) => {
@@ -286,24 +286,28 @@ const getButtonPadding = (props) => {
 
 const getButtonFontSize = (props) => {
   if (props.listItemButton) {
-    return `${fontSizes.regular}px`;
+    return fontSizes.regular;
   }
 
   if (props.small) {
-    return `${fontSizes.regular}px`;
+    return fontSizes.regular;
   }
 
   if (props.extraSmall) {
-    return `${fontSizes.small}px`;
+    return fontSizes.small;
   }
-  return `${fontSizes.big}px`;
+  return fontSizes.big;
+};
+
+const getLabelTopMargin = (props) => {
+  return getButtonFontSize(props) * 0.18;
 };
 
 const ButtonIcon = styled(Icon)`
-  font-size: ${(props) => getButtonFontSize(props)};
+  font-size: ${(props) => getButtonFontSize(props)}px;
   ${({ isOnLeft }) => isOnLeft ? 'margin-right: 6px;' : 'margin-left: 6px;'}
   color: ${({ theme }) => theme.colors.text};
-  line-height: ${props => getButtonFontSize(props)};
+  line-height: ${props => getButtonFontSize(props)}px;
 `;
 
 const ButtonWrapper = styled.TouchableOpacity`
@@ -331,8 +335,11 @@ const ButtonWrapper = styled.TouchableOpacity`
 
 const buttonTextStyle = (props) => `
   color: ${props.theme.colors.text};
-  font-size: ${getButtonFontSize(props)};
-  margin-bottom: ${props.extraSmall ? '2px' : 0};`;
+  font-size: ${getButtonFontSize(props)}px;
+  line-height: ${getButtonFontSize(props)}px;
+  margin-bottom: ${props.extraSmall ? '2px' : 0};
+  margin-top: ${getLabelTopMargin(props)}px;
+`;
 
 const ButtonText = styled(MediumText)`
   ${props => buttonTextStyle(props)};

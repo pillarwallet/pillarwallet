@@ -46,10 +46,10 @@ export const getAccountId = (account: Account): string => {
   return get(account, 'id', '');
 };
 
-export const getActiveAccountType = (accounts: Accounts): string => {
+export const getActiveAccountType = (accounts: Accounts): ?AccountTypes => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
-    return '';
+    return null;
   }
 
   return activeAccount.type;

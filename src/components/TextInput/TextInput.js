@@ -27,7 +27,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   FlatList,
-  ScrollView,
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -365,6 +364,9 @@ class TextInput extends React.Component<Props, State> {
   };
 
   renderOption = ({ item: option }: Object) => {
+    if (option.value === 'extendedHeaderItems') {
+      return option.component;
+    }
     const {
       name,
       symbol,
@@ -372,7 +374,7 @@ class TextInput extends React.Component<Props, State> {
       formattedBalanceInFiat,
       paymentNetworkBalance,
     } = option;
-    const iconUrl = `${SDK_PROVIDER}/${option.icon}?size=3`;
+    const iconUrl = option.icon ? `${SDK_PROVIDER}/${option.icon}?size=3` : null;
     const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
 
     return (
@@ -398,8 +400,11 @@ class TextInput extends React.Component<Props, State> {
   };
 
   renderHorizontalOption = ({ item }) => {
+    const { theme } = this.props;
     const { symbol, iconUrl } = item;
-    const iconUri = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const iconUri = iconUrl && `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const { genericToken } = images(theme);
+
     return (
       <HorizontalOptionItem
         key={symbol}
@@ -412,6 +417,7 @@ class TextInput extends React.Component<Props, State> {
           textStyle={{ fontSize: fontSizes.medium }}
           noShadow
           borderWidth={0}
+          fallbackImage={genericToken}
         />
         <HorizontalOptionItemName numberOfLines={1}>{symbol}</HorizontalOptionItemName>
       </HorizontalOptionItem>
@@ -493,7 +499,8 @@ class TextInput extends React.Component<Props, State> {
     } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
-    if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
+    const { genericToken } = images(theme);
+    if (fallbackToGenericToken) fallbackSource = genericToken;
 
     let inputHeight = 54;
     if (multiline) {
@@ -541,6 +548,30 @@ class TextInput extends React.Component<Props, State> {
 
     const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
 
+    const renderedHorizontalOptions = this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle);
+
+    const extendedHeaderItems = {
+      value: 'extendedHeaderItems',
+      component: (
+        <>
+          {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
+          {!!filteredHorizontalListData && renderedHorizontalOptions}
+          {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
+          {(showOptionsTitles && !!optionsTitle) && !!filteredListData.length &&
+          <OptionsHeader>{optionsTitle}</OptionsHeader>}
+          {(!filteredListData.length && !filteredHorizontalListData.length) &&
+          <EmptyStateWrapper fullScreen>
+            <EmptyStateParagraph title="Nothing found" />
+          </EmptyStateWrapper>
+          }
+        </>),
+    };
+
+    let allFeedListData = [extendedHeaderItems];
+    if (filteredListData.length) {
+      allFeedListData = [extendedHeaderItems, ...filteredListData];
+    }
+
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
         {!!errorMessage && !!errorMessageOnTop &&
@@ -568,7 +599,7 @@ class TextInput extends React.Component<Props, State> {
                       <Image
                         key={selectedValue}
                         source={optionImageSource}
-                        fallbackSource={optionImageSource ? selectedOptionFallback : optionImageSource}
+                        fallbackSource={selectedOptionFallback || genericToken}
                         resizeMode="contain"
                       />
                       <SelectorValue>{selectedValue}</SelectorValue>
@@ -626,7 +657,7 @@ class TextInput extends React.Component<Props, State> {
               </RightSideWrapper>}
               {!!buttonProps &&
               <ButtonWrapper>
-                <Button height={48} {...buttonProps} />
+                <Button {...buttonProps} />
               </ButtonWrapper>}
             </Item>
             {Platform.OS === 'ios' && <IosFocusInput
@@ -664,55 +695,36 @@ class TextInput extends React.Component<Props, State> {
               centerItems: [{ title: selectorModalTitle }],
             }}
           >
-            <ScrollView
-              contentContainerStyle={{ paddingBottom: 30 }}
+            <FlatList
               stickyHeaderIndices={[0]}
-              onScroll={() => Keyboard.dismiss()}
+              data={allFeedListData}
+              renderItem={this.renderOption}
+              keyExtractor={({ value: val }) => val}
               keyboardShouldPersistTaps="always"
-            >
-              <SearchBarWrapper>
-                <SearchBar
-                  inputProps={{
-                    onChange: this.handleSearch,
-                    value: query,
-                    autoCapitalize: 'none',
-                  }}
-                  placeholder={optionsSearchPlaceholder}
-                  inputRef={ref => { this.searchInput = ref; }}
-                  noClose
-                  marginBottom="0"
-                />
-              </SearchBarWrapper>
-              {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
-              {this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle)}
-              {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
-              {!!filteredListData.length &&
-              <FlatList
-                data={filteredListData}
-                renderItem={this.renderOption}
-                keyExtractor={({ value: val }) => val}
-                keyboardShouldPersistTaps="always"
-                initialNumToRender={10}
-                viewabilityConfig={viewConfig}
-                ListHeaderComponent={
-                  (showOptionsTitles && !!optionsTitle) && filteredListData.length &&
-                  <OptionsHeader>{optionsTitle}</OptionsHeader>
-                }
-                getItemLayout={(data, index) => ({
-                  length: 70,
-                  offset: 70 * index,
-                  index,
-                })}
-                windowSize={10}
-                hideModalContentWhileAnimating
-              />
-              }
-              {(!filteredListData.length && !filteredHorizontalListData.length) &&
-              <EmptyStateWrapper fullScreen>
-                <EmptyStateParagraph title="Nothing found" />
-              </EmptyStateWrapper>
-              }
-            </ScrollView>
+              initialNumToRender={10}
+              viewabilityConfig={viewConfig}
+              ListHeaderComponent={
+                <SearchBarWrapper>
+                  <SearchBar
+                    inputProps={{
+                      onChange: this.handleSearch,
+                      value: query,
+                      autoCapitalize: 'none',
+                    }}
+                    placeholder={optionsSearchPlaceholder}
+                    inputRef={ref => { this.searchInput = ref; }}
+                    noClose
+                    marginBottom="0"
+                  />
+                </SearchBarWrapper>}
+              getItemLayout={(data, index) => ({
+                length: 70,
+                offset: 70 * index,
+                index,
+              })}
+              windowSize={10}
+              hideModalContentWhileAnimating
+            />
           </ContainerWithHeader>
         </SlideModal>
       </View>

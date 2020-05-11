@@ -22,7 +22,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
+import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
 import { withTheme } from 'styled-components/native';
 
 // components
@@ -276,9 +276,12 @@ class AssetsScreen extends React.Component<Props, State> {
 
     if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
       const deploymentHash = getDeploymentHash(smartWalletState);
-      return (
-        <WalletActivation deploymentHash={deploymentHash} />
-      );
+
+      if (deploymentHash) {
+        return (
+          <WalletActivation deploymentHash={deploymentHash} />
+        );
+      }
     }
 
     switch (viewType) {
@@ -369,7 +372,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   availableStake: availableStakeSelector,
-  PPNTransactions: PPNTransactionsSelector,
+  PPNTransactions: PPNIncomingTransactionsSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

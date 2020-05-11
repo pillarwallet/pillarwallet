@@ -480,7 +480,6 @@ class SendTokenContacts extends React.Component<Props, State> {
     return (
       <ButtonWrapper>
         <Button
-          height={48}
           regularText
           textStyle={fontStyles.medium}
           disabled={submitDisabled}

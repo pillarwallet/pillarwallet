@@ -178,7 +178,7 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId },
+      smartWallet: { lastSyncedTransactionId, connectedAccount },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -193,7 +193,12 @@ export const fetchSmartWalletTransactionsAction = () => {
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = accountAssetsSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
-    const history = parseSmartWalletTransactions(smartWalletTransactions, supportedAssets, assetsList);
+    const history = parseSmartWalletTransactions(
+      smartWalletTransactions,
+      supportedAssets,
+      assetsList,
+      connectedAccount,
+    );
 
     if (!history.length) return;
 
@@ -414,12 +419,7 @@ export const restoreTransactionHistoryAction = () => {
       api.importedEthTransactionHistory(walletAddress),
     ]);
 
-    if (!allAssets || !allAssets.length) return;
-    if (!Array.isArray(allAssets)) {
-      // sentry issue ID 1308336621
-      reportLog('Wrong allAssets type received from back-end', { allAssets });
-      return;
-    }
+    if (isEmpty(allAssets)) return;
 
     const erc20History = _erc20History.filter(tx => {
       const hashExists = ethHistory.find(el => el.hash === tx.transactionHash);

@@ -21,8 +21,11 @@ import { Linking } from 'react-native';
 import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import ExchangeService from 'services/exchange';
+
+// components
 import Toast from 'components/Toast';
+
+// constants
 import {
   RESET_OFFERS,
   ADD_OFFER,
@@ -41,16 +44,22 @@ import {
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
-import { calculateGasEstimate } from 'services/assets';
+// utils
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
 import { isFiatCurrency } from 'utils/exchange';
 
+// services
+import ExchangeService from 'services/exchange';
+
+// types
 import type SDKWrapper from 'services/api';
 import type { Offer, OfferOrder } from 'models/Offer';
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 
+// actions
 import { saveDbAction } from './dbActions';
+
 
 const exchangeService = new ExchangeService();
 
@@ -146,7 +155,7 @@ export const takeOfferAction = (
     const transactionDataString = get(offerOrderData, 'transactionObj.data');
 
     const from = getActiveAccountAddress(accounts);
-    const gasLimit = await calculateGasEstimate({
+    const transactionPayload = {
       from,
       to: payToAddress,
       data: transactionDataString,
@@ -154,10 +163,10 @@ export const takeOfferAction = (
       symbol: fromAssetCode,
       contractAddress: fromAssetAddress || '',
       decimals: parseInt(fromAssetDecimals, 10) || 18,
-    });
+    };
     callback({
       ...offerOrderData,
-      gasLimit,
+      transactionPayload,
     });
   };
 };
@@ -400,24 +409,26 @@ export const setTokenAllowanceAction = (
       callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    const { data: { to: payToAddress, data } } = response;
+    const { data: { to: payToAddress, data, gasLimit } } = response;
     const asset = supportedAssets.find(a => a.symbol === formAssetCode);
     const from = getActiveAccountAddress(accounts);
-    const gasLimit = await calculateGasEstimate({
+    const transactionPayload = {
       from,
       to: payToAddress,
       data,
       symbol: formAssetCode,
       contractAddress: asset ? asset.address : '',
       decimals: asset ? asset.decimals : 18,
-    });
+      amount: 0,
+    };
     callback({
+      gasLimit,
       data,
       payToAddress,
       transactionObj: {
         data,
       },
-      gasLimit,
+      transactionPayload,
     });
   };
 };

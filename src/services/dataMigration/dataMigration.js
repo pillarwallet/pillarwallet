@@ -7,15 +7,45 @@ import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
 import loadAndMigrateAssets from './assets';
 
-export function loadAndMigrate(collection: string, dispatch: Function, getState: Function) {
+export async function migrate(collection: string, storageData: Object, dispatch: Function, getState: Function) {
+  let key = collection;
+  let data;
+
   switch (collection) {
-    case 'app_settings': return loadAndMigrateAppSettings(dispatch);
-    case 'accounts': return loadAndMigrateAccounts(dispatch, getState);
-    case 'balances': return loadAndMigrateBalances(dispatch);
-    case 'history': return loadAndMigrateHistory(dispatch, getState);
-    case 'collectibles': return loadAndMigrateCollectibles(dispatch);
-    case 'collectiblesHistory': return loadAndMigrateCollectiblesHistory(dispatch);
-    case 'assets': return loadAndMigrateAssets(dispatch);
-    default: return null;
+    case 'app_settings':
+      data = await loadAndMigrateAppSettings(storageData, dispatch);
+      key = 'appSettings';
+      break;
+
+    case 'accounts':
+      data = await loadAndMigrateAccounts(storageData, dispatch, getState);
+      break;
+
+    case 'assets':
+      data = await loadAndMigrateAssets(storageData, dispatch);
+      break;
+
+    case 'balances':
+      data = await loadAndMigrateBalances(storageData, dispatch);
+      break;
+
+    case 'history':
+      await loadAndMigrateHistory(storageData, dispatch, getState);
+      return storageData;
+
+    case 'collectibles':
+      data = await loadAndMigrateCollectibles(storageData, dispatch);
+      break;
+
+    case 'collectiblesHistory':
+      data = await loadAndMigrateCollectiblesHistory(storageData, dispatch);
+      break;
+
+    default: break;
   }
+
+  return {
+    ...storageData,
+    [collection]: { [key]: data },
+  };
 }

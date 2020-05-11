@@ -31,7 +31,7 @@ import type { Props as ButtonProps } from 'components/Button';
 type Props = {
   title?: string,
   itemsList?: string[],
-  buttonTitle: string,
+  buttonTitle?: string,
   description?: string,
   buttonProps?: $Shape<ButtonProps>,
   onButtonPress?: () => void,
@@ -52,7 +52,6 @@ const ItemContainer = styled.View`
 const ItemText = styled(BaseText)`
   flex: 1;
   color: ${themedColors.secondaryText};
-  max-width: 80%;
 `;
 
 const CheckIcon = styled(Icon)`

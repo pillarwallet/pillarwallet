@@ -1,10 +1,10 @@
 // @flow
+import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { saveDbAction } from 'actions/dbActions';
 import { SET_HISTORY } from 'constants/historyConstants';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
-import Storage from 'services/storage';
 import {
   checkIfSmartWalletAccount,
   findKeyBasedAccount,
@@ -16,8 +16,6 @@ import { addressesEqual } from 'utils/assets';
 import { updateAccountHistory } from 'utils/history';
 import { reportLog } from 'utils/common';
 
-
-const storage = Storage.getInstance('db');
 
 export function migrateTxHistoryToAccountsFormat(history: Transaction[], accounts: Accounts): ?TransactionsStore {
   const keyBasedAccount = findKeyBasedAccount(accounts);
@@ -33,10 +31,10 @@ export function migrateTxHistoryToAccountsFormat(history: Transaction[], account
   };
 }
 
-export default async function (dispatch: Function, getState: Function) {
-  const { migratedToReduxPersist = {} } = await storage.get('dataMigration');
-  const { accounts = [] } = await storage.get('accounts');
-  let { history = {} } = await storage.get('history');
+export default async function (storageData: Object, dispatch: Function, getState: Function) {
+  const { migratedToReduxPersist = {} } = get(storageData, 'dataMigration', {});
+  const { accounts = [] } = get(storageData, 'accounts', {});
+  let { history = {} } = get(storageData, 'history', {});
   const { history: { data: stateHistory } } = getState();
   const activeAccount = getActiveAccount(accounts || []);
 
