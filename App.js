@@ -40,7 +40,11 @@ import {
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
-import { resetAppLoadedAction, setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import {
+  resetAppLoadedAction,
+  setAppThemeAction,
+  handleSystemDefaultThemeChangeAction,
+} from 'actions/appSettingsActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -81,7 +85,7 @@ export const LoadingSpinner = styled(Spinner)`
 type Props = {
   dispatch: Dispatch,
   isFetched: boolean,
-  fetchAppSettingsAndRedirect: (appState: string, platform: string) => void,
+  fetchAppSettingsAndRedirect: () => void,
   updateSessionNetworkStatus: (isOnline: boolean) => void,
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => void,
   startListeningOnOpenNotification: () => void,
@@ -139,7 +143,7 @@ class App extends React.Component<Props, *> {
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
     startReferralsListener();
-    fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
+    fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
       StatusBar.setTranslucent(true);
@@ -265,8 +269,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
-    dispatch(initAppAndRedirectAction(appState, platform)),
+  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),

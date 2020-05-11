@@ -40,7 +40,7 @@ describe('App actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: {} },
     ];
 
-    return store.dispatch(initAppAndRedirectAction('active', 'ios'))
+    return store.dispatch(initAppAndRedirectAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

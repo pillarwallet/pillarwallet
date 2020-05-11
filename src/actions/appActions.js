@@ -80,7 +80,7 @@ import { getWalletFromStorage } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
 
-export const initAppAndRedirectAction = (appState: string, platform: string) => {
+export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
