@@ -1028,7 +1028,7 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
     const tokenAddress = getPPNTokenAddress(PPN_TOKEN, accountAssets);
     if (!tokenAddress) return;
 
-    const balance = getBalance(balances, tokenAddress);
+    const balance = getBalance(balances, PPN_TOKEN);
     if (balance < +amount) return;
 
     const response = await smartWalletService

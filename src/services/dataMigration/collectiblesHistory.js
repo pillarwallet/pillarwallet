@@ -1,11 +1,10 @@
 // @flow
+import get from 'lodash.get';
 import { saveDbAction } from 'actions/dbActions';
 import type { Accounts } from 'models/Account';
 import type { CollectiblesHistoryStore } from 'models/Collectible';
-import Storage from 'services/storage';
 import { findKeyBasedAccount } from 'utils/accounts';
 
-const storage = Storage.getInstance('db');
 
 export function migrateCollectiblesHistoryToAccountsFormat(
   history: Object[],
@@ -20,9 +19,9 @@ export function migrateCollectiblesHistoryToAccountsFormat(
   };
 }
 
-export default async function (dispatch: Function) {
-  const { accounts = [] } = await storage.get('accounts');
-  const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
+export default async function (storageData: Object, dispatch: Function) {
+  const { accounts = [] } = get(storageData, 'accounts', {});
+  const { collectiblesHistory = {} } = get(storageData, 'collectiblesHistory', {});
 
   if (Array.isArray(collectiblesHistory) && accounts.length) {
     const migratedCollectiblesHistory = migrateCollectiblesHistoryToAccountsFormat(collectiblesHistory, accounts);

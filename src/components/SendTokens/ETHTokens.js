@@ -27,6 +27,7 @@ import styled from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import isEqual from 'lodash.isequal';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -166,12 +167,14 @@ class SendETHTokens extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { session, gasToken } = this.props;
+    const { session, gasToken, gasInfo } = this.props;
     if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
       this.props.fetchGasInfo();
     }
-    // if gas token was updated after switching to gas token relayer
-    if (isEmpty(prevProps.gasToken) && !isEmpty(gasToken)) {
+
+    // if gas token was updated after switching to gas token relayer or gasInfo updated
+    if ((isEmpty(prevProps.gasToken) && !isEmpty(gasToken))
+      || !isEqual(prevProps.gasInfo, gasInfo)) {
       this.handleAmountChange();
     }
   }
