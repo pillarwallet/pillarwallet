@@ -80,14 +80,8 @@ import { getWalletFromStorage } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
 
-const BACKGROUND = 'background';
-const ANDROID = 'android';
-
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    // Appears that android back-handler on exit causes the app to mount once again.
-    if (appState === BACKGROUND && platform === ANDROID) return;
-
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
 

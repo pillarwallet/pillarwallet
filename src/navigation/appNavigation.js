@@ -136,7 +136,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
-import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { resetAppLoadedAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 // constants
 import {
@@ -765,6 +765,7 @@ type Props = {
   endWalkthrough: () => void,
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
+  resetAppLoaded: () => void,
 }
 
 type State = {
@@ -854,12 +855,14 @@ class AppFlow extends React.Component<Props, State> {
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
       stopListeningForBalanceChange,
+      resetAppLoaded,
     } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     stopListeningChatWebSocket();
     updateSignalInitiatedState(false);
     stopListeningForBalanceChange();
+    resetAppLoaded();
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -991,6 +994,7 @@ const mapDispatchToProps = dispatch => ({
   initSignal: () => dispatch(signalInitAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
+  resetAppLoaded: () => dispatch(resetAppLoadedAction()),
 });
 
 const ConnectedAppFlow = connect(
