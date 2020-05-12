@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BigNumber } from 'bignumber.js';
@@ -34,14 +33,9 @@ import {
 import { ASSETS } from 'constants/navigationConstants';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
-import { Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
-import Spinner from 'components/Spinner';
+import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // utils
-import { fontSizes, spacing } from 'utils/variables';
 import { formatTransactionFee } from 'utils/common';
 
 // types
@@ -63,21 +57,6 @@ type State = {
   buttonSubmitted: boolean,
 };
 
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
 
 class TankWithdrawalConfirm extends React.Component<Props, State> {
   state = {
@@ -126,38 +105,29 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
       ? 'Processing...'
       : 'Withdraw from PLR tank';
 
+    const reviewData = [
+      {
+        label: 'Amount',
+        value: `${amount} ${PPN_TOKEN}`,
+      },
+      {
+        label: 'Recipient',
+        value: 'Main Account',
+      },
+      {
+        label: 'Transaction fee',
+        value: feeDisplayValue,
+        isLoading: !withdrawalFee.isFetched,
+      },
+    ];
+
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        footer={(
-          <FooterWrapper>
-            <Button
-              disabled={!session.isOnline || !withdrawalFee.isFetched || buttonSubmitted}
-              onPress={this.handleFormSubmit}
-              title={submitButtonTitle}
-            />
-          </FooterWrapper>
-        )}
-      >
-        <ScrollWrapper
-          regularPadding
-          contentContainerStyle={{ marginTop: 40 }}
-        >
-          <LabeledRow>
-            <Label>Amount</Label>
-            <Value>{amount} {PPN_TOKEN}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Recipient</Label>
-            <Value>Main Account</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Transaction fee</Label>
-            {!withdrawalFee.isFetched && <Spinner width={20} height={20} />}
-            {withdrawalFee.isFetched && <Value>{feeDisplayValue}</Value>}
-          </LabeledRow>
-        </ScrollWrapper>
-      </ContainerWithHeader>
+      <ReviewAndConfirm
+        reviewData={reviewData}
+        isConfirmDisabled={!session.isOnline || !withdrawalFee.isFetched || buttonSubmitted}
+        onConfirm={this.handleFormSubmit}
+        submitButtonTitle={submitButtonTitle}
+      />
     );
   }
 }

@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { BackHandler, Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -16,23 +15,17 @@ import isEqual from 'lodash.isequal';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
-import { ScrollWrapper } from 'components/Layout';
-import { BaseText, Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import TextInput from 'components/TextInput';
-import Spinner from 'components/Spinner';
+import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // constants
 import { SEND_COLLECTIBLE_CONTACTS, SEND_TOKEN_ASSETS, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
-import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual, getAssetDataByAddress, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { checkIfSmartWalletAccount, getAccountName } from 'utils/accounts';
-import { formatTransactionFee, getEthereumProvider } from 'utils/common';
+import { formatTransactionFee, getEthereumProvider, noop } from 'utils/common';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -78,21 +71,6 @@ type State = {
   txFeeInWei: BigNumber,
 };
 
-const FooterWrapper = styled.View`
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
 
 class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
@@ -299,9 +277,9 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     });
   };
 
-  handleNoteChange(text) {
+  handleNoteChange = (text) => {
     this.setState({ note: text });
-  }
+  };
 
   render() {
     const {
@@ -317,6 +295,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       gettingFee,
       txFeeInWei,
       feeByGasToken,
+      note,
     } = this.state;
     const { name } = this.assetData;
 
@@ -340,7 +319,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const isEnoughForFee = canProceedTesting || isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
     const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);
     const feeSymbol = get(parsedGasToken, 'symbol', ETH);
-    const errorMessage = !isEnoughForFee && `Not enough ${feeSymbol} for transaction fee`;
+    const errorMessage = !isEnoughForFee ? `Not enough ${feeSymbol} for transaction fee` : '';
 
     // confirm button
     const isConfirmDisabled = gettingFee || !session.isOnline || !gasInfo.isFetched || !isEnoughForFee;
@@ -348,84 +327,72 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       ? 'Getting the fee..'
       : 'Confirm Transaction';
 
+    const reviewData = [
+      {
+        label: 'Collectible',
+        value: name,
+      },
+    ];
+
+    if (recipientUsername) {
+      reviewData.push({
+        label: 'Recipient Username',
+        value: recipientUsername,
+      });
+    }
+
+    if (this.receiverEnsName) {
+      reviewData.push({
+        label: 'Recipient ENS name',
+        value: this.receiverEnsName,
+      });
+    }
+
+    if (userAccount) {
+      reviewData.push({
+        label: 'Recipient',
+        value: getAccountName(userAccount.type),
+      });
+    }
+
+    if (userAccount) {
+      reviewData.push({
+        label: 'Recipient',
+        value: getAccountName(userAccount.type),
+      });
+    }
+
+    reviewData.push(
+      {
+        label: 'Recipient Address',
+        value: to,
+      },
+      {
+        label: 'Est. Network Fee',
+        value: feeDisplayValue,
+        isLoading: gettingFee,
+      },
+    );
+
+    if (this.isRopstenNetwork) {
+      reviewData.push({
+        label: 'Balance in Rinkeby ETH (visible in dev and staging while on Ropsten)',
+        value: `${rinkebyETH} ETH`,
+      });
+    }
+
     return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Review and confirm' }],
-          customOnBack: this.handleBackAction,
-        }}
-        footer={(
-          <FooterWrapper>
-            {!!errorMessage &&
-            <BaseText negative regular center style={{ marginBottom: 15 }}>
-              {errorMessage}
-            </BaseText>
-            }
-            <Button
-              disabled={isConfirmDisabled}
-              onPress={this.handleFormSubmit}
-              title={confirmButtonTitle}
-            />
-          </FooterWrapper>
-        )}
-      >
-        <ScrollWrapper
-          regularPadding
-          disableAutomaticScroll
-        >
-          <LabeledRow>
-            <Label>Collectible</Label>
-            <Value>{name}</Value>
-          </LabeledRow>
-          {!!recipientUsername &&
-          <LabeledRow>
-            <Label>Recipient Username</Label>
-            <Value>{recipientUsername}</Value>
-          </LabeledRow>
-          }
-          {!!this.receiverEnsName &&
-          <LabeledRow>
-            <Label>Recipient ENS name</Label>
-            <Value>{this.receiverEnsName}</Value>
-          </LabeledRow>
-          }
-          {!!userAccount &&
-          <LabeledRow>
-            <Label>Recipient</Label>
-            <Value>{getAccountName(userAccount.type)}</Value>
-          </LabeledRow>
-          }
-          <LabeledRow>
-            <Label>Recipient Address</Label>
-            <Value>{to}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Est. Network Fee</Label>
-            {!gettingFee && <Value>{feeDisplayValue}</Value>}
-            {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
-          </LabeledRow>
-          {this.isRopstenNetwork &&
-            <LabeledRow>
-              <Label>Balance in Rinkeby ETH (visible in dev and staging while on Ropsten)</Label>
-              <Value>{rinkebyETH} ETH</Value>
-            </LabeledRow>
-          }
-          {session.isOnline && !!recipientUsername &&
-            <TextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              keyboardAvoidance
-              inputWrapperStyle={{ marginTop: spacing.medium }}
-            />
-          }
-        </ScrollWrapper>
-      </ContainerWithHeader>
+      <ReviewAndConfirm
+        reviewData={reviewData}
+        isConfirmDisabled={isConfirmDisabled}
+        onConfirm={this.handleFormSubmit}
+        submitButtonTitle={confirmButtonTitle}
+        contentContainerStyle={{ marginTop: 40 }}
+        customOnBack={this.handleBackAction}
+        errorMessage={errorMessage}
+        onTextChange={session.isOnline && !!recipientUsername ? this.handleNoteChange : noop}
+        textInputValue={note}
+      />
     );
   }
 }

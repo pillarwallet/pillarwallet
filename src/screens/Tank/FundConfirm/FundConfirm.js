@@ -17,9 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -31,14 +31,8 @@ import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'ac
 import { ASSETS } from 'constants/navigationConstants';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
-import { Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
-import Spinner from 'components/Spinner';
+import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
-// utils
-import { fontSizes, spacing } from 'utils/variables';
 import { formatTransactionFee } from 'utils/common';
 
 // types
@@ -61,21 +55,6 @@ type State = {
   topUpButtonSubmitted: boolean,
 };
 
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
 
 class FundConfirm extends React.Component<Props, State> {
   state = {
@@ -121,38 +100,29 @@ class FundConfirm extends React.Component<Props, State> {
     const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
     const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
+    const reviewData = [
+      {
+        label: 'Amount',
+        value: `${amount} ${PPN_TOKEN}`,
+      },
+      {
+        label: 'Recipient',
+        value: 'Pillar Tank',
+      },
+      {
+        label: 'Transaction fee',
+        value: feeDisplayValue,
+        isLoading: !topUpFee.isFetched,
+      },
+    ];
+
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        footer={(
-          <FooterWrapper>
-            <Button
-              disabled={!session.isOnline || !topUpFee.isFetched || topUpButtonSubmitted}
-              onPress={this.handleFormSubmit}
-              title={submitButtonTitle}
-            />
-          </FooterWrapper>
-        )}
-      >
-        <ScrollWrapper
-          regularPadding
-          contentContainerStyle={{ marginTop: 40 }}
-        >
-          <LabeledRow>
-            <Label>Amount</Label>
-            <Value>{amount} {PPN_TOKEN}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Recipient</Label>
-            <Value>Pillar Tank</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Transaction fee</Label>
-            {!topUpFee.isFetched && <Spinner width={20} height={20} />}
-            {topUpFee.isFetched && <Value>{feeDisplayValue}</Value>}
-          </LabeledRow>
-        </ScrollWrapper>
-      </ContainerWithHeader>
+      <ReviewAndConfirm
+        reviewData={reviewData}
+        isConfirmDisabled={!session.isOnline || !topUpFee.isFetched || topUpButtonSubmitted}
+        onConfirm={this.handleFormSubmit}
+        submitButtonTitle={submitButtonTitle}
+      />
     );
   }
 }
