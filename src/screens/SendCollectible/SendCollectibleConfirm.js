@@ -355,13 +355,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       });
     }
 
-    if (userAccount) {
-      reviewData.push({
-        label: 'Recipient',
-        value: getAccountName(userAccount.type),
-      });
-    }
-
     reviewData.push(
       {
         label: 'Recipient Address',
