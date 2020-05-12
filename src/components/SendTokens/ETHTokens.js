@@ -168,9 +168,13 @@ class SendETHTokens extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { session, gasToken, gasInfo } = this.props;
+
     if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
       this.props.fetchGasInfo();
     }
+
+    // do nothing if value is not set yet
+    if (this.state.value === null) return;
 
     // if gas token was updated after switching to gas token relayer or gasInfo updated
     if ((isEmpty(prevProps.gasToken) && !isEmpty(gasToken))
@@ -267,29 +271,32 @@ class SendETHTokens extends React.Component<Props, State> {
       gasToken,
     } = this.props;
     const { calculatingMaxValue, feeByGasToken } = this.state;
+
     if (calculatingMaxValue) return;
-    this.setState({ calculatingMaxValue: true, gettingFee: true });
-    const { token } = assetData;
-    const balance = getBalance(balances, token);
-    const updatedState = {};
-    let txFeeInWei;
-    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
-      txFeeInWei = await this.getSmartWalletTxFeeInWei(balance);
-    } else {
-      updatedState.gasLimit = await this.getGasLimit(balance); // calculate gas limit for max available balance
-      const transactionSpeed = this.getTxSpeed();
-      txFeeInWei = this.getTxFeeInWei(transactionSpeed, updatedState.gasLimit);
-    }
-    const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, parsedGasToken);
-    const amount = formatAmount(maxAmount);
-    this.setState({
-      ...updatedState,
-      value: { amount },
-      gettingFee: false,
-      calculatingMaxValue: false,
-      txFeeInWei,
-    }, () => this.checkFormInputErrors());
+
+    this.setState({ calculatingMaxValue: true, gettingFee: true, inputHasError: false }, async () => {
+      const { token } = assetData;
+      const balance = getBalance(balances, token);
+      const updatedState = {};
+      let txFeeInWei;
+      if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
+        txFeeInWei = await this.getSmartWalletTxFeeInWei(balance);
+      } else {
+        updatedState.gasLimit = await this.getGasLimit(balance); // calculate gas limit for max available balance
+        const transactionSpeed = this.getTxSpeed();
+        txFeeInWei = this.getTxFeeInWei(transactionSpeed, updatedState.gasLimit);
+      }
+      const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
+      const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, parsedGasToken);
+      const amount = formatAmount(maxAmount);
+      this.setState({
+        ...updatedState,
+        value: { amount },
+        gettingFee: false,
+        calculatingMaxValue: false,
+        txFeeInWei,
+      }, () => this.checkFormInputErrors());
+    });
   };
 
   getGasLimit = (amount: number) => {
@@ -351,10 +358,11 @@ class SendETHTokens extends React.Component<Props, State> {
       assetData,
       gasToken,
     } = this.props;
-    const { feeByGasToken } = this.state;
+    const { feeByGasToken, inputHasError } = this.state;
+
     const value = Number(amount || get(this.state, 'value.amount', 0));
 
-    if (!value) return new BigNumber(0);
+    if (inputHasError || !value) return new BigNumber(0);
 
     const transaction = { recipient: receiver, value, gasToken };
     const { gasTokenCost, cost: ethCost } = await smartWalletService
