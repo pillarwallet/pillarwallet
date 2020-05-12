@@ -168,9 +168,13 @@ class SendETHTokens extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { session, gasToken, gasInfo } = this.props;
+
     if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
       this.props.fetchGasInfo();
     }
+
+    // do nothing if value is not set yet
+    if (this.state.value === null) return;
 
     // if gas token was updated after switching to gas token relayer or gasInfo updated
     if ((isEmpty(prevProps.gasToken) && !isEmpty(gasToken))
