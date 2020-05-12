@@ -165,7 +165,7 @@ class FundTank extends React.Component<Props, State> {
   getTxFeeInWei = (): BigNumber => {
     const gasTokenCost = get(this.props, 'topUpFee.feeInfo.gasTokenCost');
     if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
-    return get(this.props, 'topUpFee.feeInfo.totalCost', new BigNumber(0));
+    return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
   };
 
   getGasToken = () => {
