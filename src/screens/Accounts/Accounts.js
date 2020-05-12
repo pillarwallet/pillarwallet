@@ -38,7 +38,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { getAccountName, getActiveAccount, getActiveAccountType, hasLegacyAccountBalance } from 'utils/accounts';
-import { formatFiat, formatMoney } from 'utils/common';
+import { formatFiat, formatMoney, noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
@@ -139,7 +139,7 @@ type State = {|
   showPinModal: boolean,
   isLegacyWalletVisible: boolean,
   onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
-  switchingToWalletId: string,
+  switchingToWalletId: ?string,
 |};
 
 const IconImage = styled(CachedImage)`
@@ -169,7 +169,7 @@ class AccountsScreen extends React.Component<Props, State> {
       showPinModal: false,
       isLegacyWalletVisible: forceShowLegacyWallet,
       onPinValidAction: null,
-      switchingToWalletId: '',
+      switchingToWalletId: null,
     };
   }
 
@@ -244,8 +244,9 @@ class AccountsScreen extends React.Component<Props, State> {
         subtitle={balance}
         onMainPress={() => {
           this.setState({ switchingToWalletId: id }, isInitialised ?
-            mainAction || (() => {}) :
-            initialiseAction || (() => {}));
+            mainAction || noop :
+            initialiseAction || noop,
+          );
         }}
         isActive={isActive}
         customIcon={<IconImage source={iconSource} />}
@@ -451,7 +452,7 @@ class AccountsScreen extends React.Component<Props, State> {
             title={title}
             subtitle={balance}
             isSwitching={this.state.switchingToWalletId === item.id}
-            onMainPress={() => { this.setState({ switchingToWalletId: item.id }, mainAction || (() => {})); }}
+            onMainPress={() => { this.setState({ switchingToWalletId: item.id }, mainAction || noop); }}
             isActive={isActive}
             sidePaddingsForWidth={40}
             customIcon={<IconImage source={iconSource} />}
