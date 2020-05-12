@@ -20,6 +20,7 @@
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
+import SplashScreen from 'react-native-splash-screen';
 
 // services
 import Storage from 'services/storage';
@@ -28,7 +29,7 @@ import { migrate } from 'services/dataMigration';
 
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   UPDATE_ASSETS,
   UPDATE_BALANCES,
@@ -82,6 +83,8 @@ const storage = Storage.getInstance('db');
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
+    dispatch({ type: RESET_APP_LOADED });
+
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
 
@@ -221,10 +224,12 @@ export const initAppAndRedirectAction = () => {
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
 
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
+      SplashScreen.hide();
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    SplashScreen.hide();
   };
 };
 

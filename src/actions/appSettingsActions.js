@@ -28,7 +28,6 @@ import {
   LIGHT_THEME,
   UPDATE_APP_SETTINGS,
   USER_JOINED_BETA_SETTING,
-  RESET_APP_LOADED,
 } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -251,7 +250,3 @@ export const dismissConnectAppsIntroAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasDismissedConnectAppsIntro: true } });
   };
 };
-
-export const resetAppLoadedAction = () => ({
-  type: RESET_APP_LOADED,
-});

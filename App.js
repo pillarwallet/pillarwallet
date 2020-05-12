@@ -20,8 +20,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
-import SplashScreen from 'react-native-splash-screen';
+import { StatusBar, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -40,11 +39,7 @@ import {
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
-import {
-  resetAppLoadedAction,
-  setAppThemeAction,
-  handleSystemDefaultThemeChangeAction,
-} from 'actions/appSettingsActions';
+import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -73,9 +68,6 @@ import configureStore from './src/configureStore';
 
 const { store, persistor } = configureStore();
 
-const BACKGROUND = 'background';
-const ANDROID = 'android';
-
 export const LoadingSpinner = styled(Spinner)`
   padding: 10px;
   align-items: center;
@@ -98,7 +90,6 @@ type Props = {
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
-  resetAppLoaded: () => void,
 }
 
 class App extends React.Component<Props, *> {
@@ -135,8 +126,6 @@ class App extends React.Component<Props, *> {
       startListeningOnOpenNotification,
       executeDeepLink,
       startReferralsListener,
-      isFetched,
-      resetAppLoaded,
     } = this.props;
     NetInfo.fetch()
       .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
@@ -156,16 +145,12 @@ class App extends React.Component<Props, *> {
       .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
-    if (AppState.currentState === BACKGROUND && Platform.OS === ANDROID && isFetched) {
-      resetAppLoaded();
-    }
   }
 
   componentDidUpdate(prevProps: Props) {
     const { isFetched, handleSystemDefaultThemeChange, themeType } = this.props;
     const { isFetched: prevIsFetched, themeType: prevThemeType } = prevProps;
     if (isFetched && !prevIsFetched) {
-      SplashScreen.hide();
       handleSystemDefaultThemeChange();
     }
 
@@ -279,7 +264,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
-  resetAppLoaded: () => dispatch(resetAppLoadedAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
