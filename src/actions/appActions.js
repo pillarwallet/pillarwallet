@@ -93,6 +93,7 @@ export const initAppAndRedirectAction = () => {
 
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
+    const navigateRouteOnFinish = walletTimestamp ? AUTH_FLOW : ONBOARDING_FLOW;
 
     if (walletTimestamp) {
       // migrations
@@ -219,16 +220,11 @@ export const initAppAndRedirectAction = () => {
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
-      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
-
-      navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
-      SplashScreen.hide();
-      return;
     }
+
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    navigate(NavigationActions.navigate({ routeName: navigateRouteOnFinish }));
     SplashScreen.hide();
   };
 };
