@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { FlatList, Platform } from 'react-native';
+import { FlatList } from 'react-native';
 import isEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -28,7 +28,6 @@ import { CachedImage } from 'react-native-cached-image';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import CheckAuth from 'components/CheckAuth';
-import Loader from 'components/Loader';
 import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
 import { BaseText } from 'components/Typography';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
@@ -39,7 +38,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
 import { getAccountName, getActiveAccount, getActiveAccountType, hasLegacyAccountBalance } from 'utils/accounts';
-import { formatFiat, formatMoney } from 'utils/common';
+import { formatFiat, formatMoney, noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
@@ -56,6 +55,7 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { EthereumWallet } from 'models/Wallet';
 import type { Theme } from 'models/Theme';
+import type { User } from 'models/User';
 
 // constants
 import {
@@ -127,33 +127,20 @@ type Props = {|
   switchAccount: (accountId: string) => void,
   balances: BalancesStore,
   rates: Rates,
-  user: Object,
+  user: User,
   bitcoinAddresses: BitcoinAddress[],
   bitcoinBalances: BitcoinBalance,
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
-  isChanging: boolean,
   theme: Theme,
 |};
 
 type State = {|
   showPinModal: boolean,
-  changingAccount: boolean,
   isLegacyWalletVisible: boolean,
   onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
+  switchingToWalletId: ?string,
 |};
-
-const Wrapper = styled.View`
-  flex: 1;
-  position: relative;
-  margin: 5px 20px 20px;
-  padding-top: ${Platform.select({
-    ios: '20px',
-    android: '14px',
-  })};
-  justify-content: center;
-  align-items: center;
-`;
 
 const IconImage = styled(CachedImage)`
   height: 52px;
@@ -180,9 +167,9 @@ class AccountsScreen extends React.Component<Props, State> {
         (!user.isLegacyUser && isActiveKeyWallet) || hasLegacyBalance;
     this.state = {
       showPinModal: false,
-      changingAccount: false,
       isLegacyWalletVisible: forceShowLegacyWallet,
       onPinValidAction: null,
+      switchingToWalletId: null,
     };
   }
 
@@ -248,12 +235,19 @@ class AccountsScreen extends React.Component<Props, State> {
       initialiseAction,
       isActive,
       iconSource,
+      id,
     } = item;
     return (
       <SettingsItemCarded
+        isSwitching={id === this.state.switchingToWalletId}
         title={title}
         subtitle={balance}
-        onMainPress={isInitialised ? mainAction : initialiseAction}
+        onMainPress={() => {
+          this.setState({ switchingToWalletId: id }, isInitialised ?
+            mainAction || noop :
+            initialiseAction || noop,
+          );
+        }}
         isActive={isActive}
         customIcon={<IconImage source={iconSource} />}
       />
@@ -350,10 +344,9 @@ class AccountsScreen extends React.Component<Props, State> {
 
   initialiseBTC = async (_: string, wallet: EthereumWallet) => {
     const { navigation, setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
-    this.setState({ changingAccount: true, showPinModal: false });
+    this.setState({ showPinModal: false });
     await initializeBitcoinWallet(wallet);
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-    this.setState({ changingAccount: false });
     navigation.navigate(ASSETS);
   };
 
@@ -458,7 +451,8 @@ class AccountsScreen extends React.Component<Props, State> {
           <SettingsItemCarded
             title={title}
             subtitle={balance}
-            onMainPress={mainAction}
+            isSwitching={this.state.switchingToWalletId === item.id}
+            onMainPress={() => { this.setState({ switchingToWalletId: item.id }, mainAction || noop); }}
             isActive={isActive}
             sidePaddingsForWidth={40}
             customIcon={<IconImage source={iconSource} />}
@@ -469,13 +463,8 @@ class AccountsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      showPinModal,
-      changingAccount,
-      isLegacyWalletVisible,
-      onPinValidAction,
-    } = this.state;
-    const { blockchainNetworks, user, isChanging } = this.props;
+    const { showPinModal, isLegacyWalletVisible, onPinValidAction } = this.state;
+    const { blockchainNetworks, user } = this.props;
     const { isLegacyUser } = user;
 
     const activeNetwork = blockchainNetworks.find((net) => net.isActive);
@@ -490,8 +479,6 @@ class AccountsScreen extends React.Component<Props, State> {
 
     const accountsList = [...walletsInList, ...networksToShow];
 
-    const showLoader = changingAccount || isChanging;
-
     return (
       <ContainerWithHeader
         headerProps={{
@@ -499,7 +486,6 @@ class AccountsScreen extends React.Component<Props, State> {
           leftItems: [{ close: true, dismiss: true }],
         }}
       >
-        {!showLoader &&
         <ScrollWrapper
           contentContainerStyle={{ flexGrow: 1 }}
         >
@@ -511,16 +497,12 @@ class AccountsScreen extends React.Component<Props, State> {
             renderItem={this.renderListItem}
           />
           {!isLegacyUser && legacyAccountCard && this.renderKeyWallet(legacyAccountCard, isLegacyWalletVisible)}
-        </ScrollWrapper>}
-
-        {showLoader &&
-        <Wrapper>
-          <Loader noMessages />
-        </Wrapper>}
+        </ScrollWrapper>
 
         <CheckAuth
           onPinValid={onPinValidAction}
           revealMnemonic
+          hideLoader
           modalProps={{
             isVisible: showPinModal,
             onModalHide: this.handleCheckPinModalClose,
@@ -532,7 +514,7 @@ class AccountsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  accounts: { data: accounts, isChanging },
+  accounts: { data: accounts },
   blockchainNetwork: { data: blockchainNetworks },
   paymentNetwork: { isTankInitialised },
   featureFlags: {
@@ -548,7 +530,6 @@ const mapStateToProps = ({
   bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
-  isChanging,
   blockchainNetworks,
   isTankInitialised,
   smartWalletFeatureEnabled,
