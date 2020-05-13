@@ -47,7 +47,6 @@ import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/coll
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
 import { getActiveAccountId, getActiveAccountType } from 'utils/accounts';
-import { printLog } from 'utils/common';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { navigate } from 'services/navigation';
 
@@ -213,17 +212,14 @@ export const setActiveAccountAction = (accountId: string) => {
 
 
     const account = accounts.find(acc => acc.id === accountId);
-    if (!account) {
-      // TODO: account not found in storage
-      printLog('setActiveAccountAction account not found by id: ', accountId);
-      return;
-    }
+    if (!account) return;
+
     const updatedAccounts = accounts.map(acc => ({ ...acc, isActive: acc.id === accountId }));
     dispatch({
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,
     });
-    await dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+    dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
 
     if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
 
@@ -254,11 +250,10 @@ export const switchAccountAction = (accountId: string) => {
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
     if (account.type === ACCOUNT_TYPES.KEY_BASED) {
-      await dispatch(setActiveAccountAction(accountId));
+      dispatch(setActiveAccountAction(accountId));
     } else if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
       if (sdkInitialized) {
         await dispatch(connectSmartWalletAccountAction(accountId));
-        await dispatch(setActiveAccountAction(accountId));
         dispatch(setUserEnsIfEmptyAction());
       } else {
         navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
