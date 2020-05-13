@@ -19,6 +19,16 @@ export const accountAssetsSelector = createSelector(
   },
 );
 
+export const makeAccountEnabledAssetsSelector = (accountId: string) => createSelector(
+  assetsSelector,
+  hiddenAssetsSelector,
+  (assets, hiddenAssets) => {
+    const accountAssets = get(assets, accountId, {});
+    const accountHiddenAssets = get(hiddenAssets, accountId, []);
+    return getEnabledAssets(accountAssets, accountHiddenAssets);
+  },
+);
+
 export const allAccountsAssetsSelector = createSelector(
   assetsSelector,
   hiddenAssetsSelector,
