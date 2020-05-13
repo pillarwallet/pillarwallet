@@ -68,7 +68,12 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import {
+  TRANSACTION_EVENT,
+  TRANSACTION_PENDING_EVENT,
+  TX_PENDING_STATUS,
+  TX_CONFIRMED_STATUS,
+} from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -125,6 +130,7 @@ import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 
 type Props = {
   theme: Theme,
@@ -155,6 +161,7 @@ type Props = {
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
   history: {[string]: Object[]},
+  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
 };
 
 type State = {
@@ -649,7 +656,9 @@ class EventDetail extends React.Component<Props, State> {
       contactsSmartAddresses,
       theme,
       isPPNActivated,
+      referralRewardIssuersAddresses,
     } = this.props;
+
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
@@ -819,6 +828,8 @@ class EventDetail extends React.Component<Props, State> {
           subtext = `from ${keyWallet}`;
         }
 
+        const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
+
         if (isPPNTransaction) {
           eventData = {
             name: usernameOrAddress,
@@ -858,7 +869,7 @@ class EventDetail extends React.Component<Props, State> {
           }
         } else {
           eventData = {
-            name: usernameOrAddress,
+            name: isReferralRewardTransaction ? 'Referral reward' : usernameOrAddress,
             iconName: !avatarUrl ? directionIcon : null,
             iconColor: this.getColor(isReceived ? 'transactionReceivedIcon' : 'negative'),
             profileImage: avatarUrl,
@@ -931,7 +942,9 @@ class EventDetail extends React.Component<Props, State> {
             squarePrimary: true,
           };
 
-          if (isReceived) {
+          if (isReferralRewardTransaction) {
+            eventData.buttons = [];
+          } else if (isReceived) {
             if (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
               buttons = [send, topUpMore];
             } else if (contactFound) {
@@ -1099,6 +1112,7 @@ class EventDetail extends React.Component<Props, State> {
         eventData = this.getUserEventData(event);
         break;
       case TRANSACTION_EVENT:
+      case TRANSACTION_PENDING_EVENT:
         eventData = this.getTransactionEventData(event);
         break;
       case COLLECTIBLE_TRANSACTION:
@@ -1225,7 +1239,9 @@ class EventDetail extends React.Component<Props, State> {
       const txInfo = this.findTxInfo();
       event = { ...event, ...txInfo };
     }
+
     const eventData = this.getEventData(event);
+
     if (!eventData) return null;
     const {
       date, name,
@@ -1308,6 +1324,7 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history },
+  referrals: { referralRewardIssuersAddresses },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1318,6 +1335,7 @@ const mapStateToProps = ({
   ensRegistry,
   supportedAssets,
   history,
+  referralRewardIssuersAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
