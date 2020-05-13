@@ -102,6 +102,7 @@ type Props = {
   topUpFee: TopUpFee,
   rates: Rates,
   baseFiatCurrency: ?string,
+  smartWalletAccountSupportsGasToken: boolean,
 };
 
 type State = {
@@ -152,7 +153,7 @@ class FundTank extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const token = PPN_TOKEN;
     const balance = getBalance(balances, token);
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
     this.setState({
       value: {
@@ -162,8 +163,15 @@ class FundTank extends React.Component<Props, State> {
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.gasTokenCost')
-      || get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+    const gasTokenCost = get(this.props, 'topUpFee.feeInfo.gasTokenCost');
+    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
+    return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+  };
+
+  getGasToken = () => {
+    return this.props.smartWalletAccountSupportsGasToken
+      ? get(this.props, 'topUpFee.feeInfo.gasToken')
+      : null;
   };
 
   checkFormInputErrors = () => {
@@ -205,7 +213,7 @@ class FundTank extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // fee
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const txFeeInWei = this.getTxFeeInWei();
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
       amount: currentValue,
@@ -214,7 +222,7 @@ class FundTank extends React.Component<Props, State> {
       txFeeInWei,
       gasToken,
     });
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
     const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
@@ -295,11 +303,13 @@ const mapStateToProps = ({
   rates: { data: rates },
   paymentNetwork: { topUpFee },
   appSettings: { data: { baseFiatCurrency } },
+  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   topUpFee,
   baseFiatCurrency,
+  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({

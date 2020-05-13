@@ -93,6 +93,7 @@ type Props = {
   badge?: string,
   iconBackgroundColor?: string,
   iconBorder?: boolean,
+  address?: string,
 }
 
 type AddonProps = {
