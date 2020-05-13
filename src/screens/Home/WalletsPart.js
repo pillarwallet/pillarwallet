@@ -25,7 +25,6 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 
 // components
-import CheckAuth from 'components/CheckAuth';
 import PortfolioBalance from 'components/PortfolioBalance';
 import SimpleSwitcher from 'components/Switcher/SimpleSwitcher';
 
@@ -35,7 +34,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
-import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
@@ -49,7 +47,6 @@ import { noop } from 'utils/common';
 // models, types
 import type { Account } from 'models/Account';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { EthereumWallet } from 'models/Wallet';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // selectors
@@ -63,7 +60,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   switchAccount: (accountId: string) => void,
-  resetIncorrectPassword: () => void,
   activeWallet: Account,
   availableWallets: Account[],
   setActiveBlockchainNetwork: (id: string) => void,
@@ -71,12 +67,9 @@ type Props = {
   hideBalance: boolean,
   toggleBalance: () => void,
   handleWalletChange: (message: string) => void,
-  isChangingAccount: boolean,
 };
 
 type State = {
-  showPinModal: boolean,
-  onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
   isChangingAccount: boolean,
 };
 
@@ -89,8 +82,6 @@ const Wrapper = styled.View`
 
 class WalletsPart extends React.Component<Props, State> {
   state = {
-    showPinModal: false,
-    onPinValidAction: null,
     isChangingAccount: false,
   };
 
@@ -108,16 +99,10 @@ class WalletsPart extends React.Component<Props, State> {
     this.setState({ isChangingAccount: false });
   };
 
-  handleAuthModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
-    resetIncorrectPassword();
-    this.setState({ showPinModal: false });
-    this.endChanging();
-  };
-
   getWalletTitle = () => {
-    const { activeWallet } = this.props;
-    const { type: activeWalletType } = activeWallet;
+    const { availableWallets } = this.props;
+    const activeWalletType = getActiveAccountType(availableWallets);
+    if (!activeWalletType) return '';
 
     switch (activeWalletType) {
       case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
@@ -171,7 +156,7 @@ class WalletsPart extends React.Component<Props, State> {
   };
 
   render() {
-    const { showPinModal, onPinValidAction, isChangingAccount } = this.state;
+    const { isChangingAccount } = this.state;
     const {
       availableWallets,
       baseFiatCurrency,
@@ -201,14 +186,6 @@ class WalletsPart extends React.Component<Props, State> {
           changeWalletAction={this.changeAcc}
           activeWallet={activeWallet}
         />
-        <CheckAuth
-          onPinValid={onPinValidAction}
-          revealMnemonic
-          modalProps={{
-            isVisible: showPinModal,
-            onModalHide: this.handleAuthModalClose,
-          }}
-        />
       </Wrapper>
     );
   }
@@ -233,7 +210,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),

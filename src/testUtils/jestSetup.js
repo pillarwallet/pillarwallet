@@ -277,6 +277,7 @@ jest.setMock('@smartwallet/sdk', {
     initialize: () => Promise.resolve(),
     getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccount] }),
     createAccount: () => Promise.resolve(mockSmartWalletAccount),
+    connectAccount: () => Promise.resolve(),
     event$: {
       subscribe: jest.fn(),
     },

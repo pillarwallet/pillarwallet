@@ -127,8 +127,6 @@ export const loginAction = (
       session: { data: { isOnline } },
     } = getState();
 
-    const generateNewConnKeys = connectionKeyPairs.length <= PRE_KEY_THRESHOLD || lastConnectionKeyIndex === -1;
-
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
@@ -150,6 +148,18 @@ export const loginAction = (
       } else {
         // nothing provided, invalid login
         throw new Error();
+      }
+
+      const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
+      if (isWalletRecoveryPending) {
+        api.init();
+        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
+        await smartWalletService.init(
+          wallet.privateKey,
+          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
+        );
+        dispatch(checkIfRecoveredSmartWalletFinishedAction());
+        return;
       }
 
       let { user = {} } = await storage.get('user');
@@ -246,6 +256,8 @@ export const loginAction = (
         api.init();
       }
 
+      dispatch(updatePinAttemptsAction(false));
+
       const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
@@ -254,14 +266,6 @@ export const loginAction = (
           privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
         },
       });
-      dispatch(updatePinAttemptsAction(false));
-
-      if (isWalletRecoveryPending) {
-        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await smartWalletService.init(wallet.privateKey, dispatch, checkRecoveredSmartWalletStateAction);
-        dispatch(checkIfRecoveredSmartWalletFinishedAction());
-        return;
-      }
 
       // re-fetch accounts as they might change at this point
       accounts = getState().accounts.data;
@@ -274,11 +278,6 @@ export const loginAction = (
 
       if (userState === REGISTERED) {
         dispatch(labelUserAsLegacyAction());
-      }
-
-      // migrate older users for keychain access with biometrics
-      if (wallet.privateKey && updateKeychain) {
-        await setKeychainDataObject({ privateKey: wallet.privateKey });
       }
 
       if (!__DEV__) {

@@ -28,20 +28,18 @@ import { executeDeepLinkAction } from 'actions/deepLinkActions';
 
 // constants
 import { RECOVERY_PORTAL_URL_PATHS } from 'constants/recoveryPortalConstants';
-import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // components
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
-import DeploymentView from 'components/DeploymentView';
 
 // util
 import { validateDeepLink } from 'utils/deepLink';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 
-// models, types
+// types
 import type { Accounts } from 'models/Account';
 import type { ConnectedSmartWalletAccount } from 'models/SmartWalletAccount';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -133,7 +131,6 @@ class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
       },
       accounts,
       smartWalletState,
-      navigation,
     } = this.props;
 
     const signUpUrl = [
@@ -161,13 +158,6 @@ class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
         }}
       >
         <Wrapper style={{ flex: 1 }}>
-          {!!isRecoveryDisabled &&
-            <DeploymentView
-              message={sendingBlockedMessage}
-              buttonLabel="Deploy Smart Wallet"
-              buttonAction={() => navigation.navigate(SMART_WALLET_INTRO, { deploy: true })}
-            />
-          }
           {!isRecoveryDisabled &&
             <WebView
               ref={(ref) => { this.webViewRef = ref; }}

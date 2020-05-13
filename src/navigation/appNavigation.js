@@ -113,6 +113,8 @@ import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnect
 import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
 import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryPending';
 import RecoveryPortalWalletRecoveryCompleteSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryComplete';
+import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
+import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -260,6 +262,8 @@ import {
   REMOVE_SMART_WALLET_CONNECTED_DEVICE,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
+  REFERRAL_CONTACT_INFO_MISSING,
+  REFERRAL_INCOMING_REWARD,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -283,11 +287,6 @@ const iconServices = require('assets/icons/icon_services.png');
 const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
-const iconWalletActive = require('assets/icons/icon_wallet_active_smrt.png');
-const iconServicesActive = require('assets/icons/icon_services_active.png');
-const iconPeopleActive = require('assets/icons/icon_people_active_smrt.png');
-const iconHomeActive = require('assets/icons/icon_home_active_smrt.png');
-const iconConnectActive = require('assets/icons/icon_connect_active.png');
 
 const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
@@ -333,6 +332,7 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [EXCHANGE]: ExchangeScreen,
+    [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
     [CHAT]: ChatScreen,
@@ -409,6 +409,7 @@ const homeFlow = createStackNavigator({
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [EXCHANGE]: ExchangeScreen,
+  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
@@ -416,12 +417,12 @@ const homeFlow = createStackNavigator({
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = ({
-  iconActive,
   icon,
   hasIndicator,
   theme,
 }) => ({ focused }) => {
   const colors = getThemeColors(theme);
+  const tintColor = focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon;
 
   return (
     <View style={{ padding: 4 }}>
@@ -429,10 +430,10 @@ const tabBarIcon = ({
         style={{
           width: 24,
           height: 24,
-          tintColor: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
+          tintColor,
         }}
         resizeMode="contain"
-        source={focused ? iconActive : icon}
+        source={icon}
       />
       {!!hasIndicator && (
         <View
@@ -474,7 +475,6 @@ const tabNavigation = createBottomTabNavigator(
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: tabBarIcon({
-          iconActive: iconHomeActive,
           icon: iconHome,
           hasIndicator: !navigation.isFocused() && (screenProps.hasUnreadNotifications
             || !!screenProps.intercomNotificationsCount),
@@ -487,7 +487,6 @@ const tabNavigation = createBottomTabNavigator(
       screen: assetsFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: tabBarIcon({
-          iconActive: iconWalletActive,
           icon: iconWallet,
           hasIndicator: false,
           theme: screenProps.theme,
@@ -499,7 +498,6 @@ const tabNavigation = createBottomTabNavigator(
       screen: walletConnectFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: tabBarIcon({
-          iconActive: iconConnectActive,
           icon: iconConnect,
           hasIndicator: false,
           theme: screenProps.theme,
@@ -511,7 +509,6 @@ const tabNavigation = createBottomTabNavigator(
       screen: peopleFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: tabBarIcon({
-          iconActive: iconPeopleActive,
           icon: iconPeople,
           hasIndicator: !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
           theme: screenProps.theme,
@@ -523,7 +520,6 @@ const tabNavigation = createBottomTabNavigator(
       screen: servicesFlow,
       navigationOptions: ({ screenProps }) => ({
         tabBarIcon: tabBarIcon({
-          iconActive: iconServicesActive,
           icon: iconServices,
           hasIndicator: false,
           theme: screenProps.theme,
@@ -773,6 +769,8 @@ const AppFlowNavigation = createStackNavigator(
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
     [REFERRAL_SENT]: ReferralSentScreen,
+    [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
+    [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
   },
   modalTransition,
 );

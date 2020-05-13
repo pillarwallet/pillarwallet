@@ -81,7 +81,7 @@ import {
 } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import type SDKWrapper from 'services/api';
@@ -548,7 +548,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
     const isSmartWalletAccount = checkIfSmartWalletAccount(account);
 
     dispatch({
@@ -628,7 +628,7 @@ export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) 
     } = getState();
 
     const initialAssets = await api.fetchInitialAssets(walletId);
-    if (!Object.keys(initialAssets).length) {
+    if (isEmpty(initialAssets)) {
       dispatch({
         type: UPDATE_ASSETS_STATE,
         payload: FETCH_INITIAL_FAILED,
@@ -761,15 +761,15 @@ export const loadSupportedAssetsAction = () => {
 
     const supportedAssets = await api.fetchSupportedAssets(walletId);
 
-    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
+    // nothing to do if returned empty
+    if (isEmpty(supportedAssets)) return;
+
+    if (!supportedAssets.some(e => e.symbol === 'BTC')) {
       const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
       if (btcAsset) {
         supportedAssets.push(btcAsset);
       }
     }
-
-    // nothing to do if returned empty
-    if (isEmpty(supportedAssets)) return;
 
     dispatch({
       type: UPDATE_SUPPORTED_ASSETS,

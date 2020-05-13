@@ -21,15 +21,13 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import get from 'lodash.get';
 import { connect } from 'react-redux';
+import get from 'lodash.get';
 
-import { REFER_MAIN_SCREEN, REFERRAL_CONTACTS } from 'constants/navigationConstants';
-import { DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
-import ConfettiBackground from 'components/ConfettiBackground';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import LoadingParagraph from 'components/LoadingParagraph';
@@ -44,6 +42,7 @@ import type { RewardsByCompany } from 'reducers/referralsReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  referrals: RewardsByCompany,
   rewards: RewardsByCompany,
   isFetchingRewards: boolean,
   fetchReferralReward: () => void,
@@ -63,7 +62,7 @@ const Title = styled(MediumText)`
 
 const rewardBadge = require('assets/images/referralBadge.png');
 
-class ReferralSent extends React.PureComponent<Props> {
+class EmailPhoneMissing extends React.PureComponent<Props> {
   componentDidMount() {
     const { fetchReferralReward } = this.props;
     fetchReferralReward();
@@ -73,50 +72,44 @@ class ReferralSent extends React.PureComponent<Props> {
     const { navigation, rewards, isFetchingRewards } = this.props;
     const { asset, amount } = get(rewards, 'pillar', {});
     const rewardText = asset && amount ? `${amount} ${asset} and a badge` : 'a badge';
+
     return (
-      <ConfettiBackground>
-        <ContainerWithHeader
-          backgroundColor="transparent"
-          statusbarColor={{
-            [LIGHT_THEME]: DARK_CONTENT,
-          }}
-        >
-          <Wrapper flex={1} center>
-            <RewardBadge source={rewardBadge} />
-            <Title>Your reward is on the way</Title>
-            <LoadingParagraph
-              isLoading={isFetchingRewards}
-              text={'Thank you for spreading the word about Pillar.\n' +
-              `You will receive ${rewardText} for each friend installed the app with your referral link. ` +
-              'You both should have verified your details in order to be eligible.'}
-              paragraphProps={{
-                center: true,
-                style: {
-                  paddingHorizontal: 14,
-                  marginBottom: 30,
-                },
-              }}
-            />
-            <Button
-              title="Invite more friends"
-              block
-              regularText
-              onPress={() => navigation.navigate(REFERRAL_CONTACTS)}
-            />
-            <Button
-              title="Close"
-              secondary
-              block
-              marginTop={12}
-              onPress={() => navigation.navigate(REFER_MAIN_SCREEN)}
-            />
-          </Wrapper>
-        </ContainerWithHeader>
-      </ConfettiBackground>
+      <ContainerWithHeader
+        headerProps={{
+          rightItems: [{ close: true }],
+          noBack: true,
+          floating: true,
+        }}
+      >
+        <Wrapper flex={1} center regularPadding>
+          <RewardBadge source={rewardBadge} />
+          <Title>Invite and get rewarded</Title>
+          <LoadingParagraph
+            isLoading={isFetchingRewards}
+            text={
+              `You will receive ${rewardText} for each friend installed the app with your referral link.` +
+              '\n To enable referral system we need to make sure you\'re a genuine user. We care for our users ' +
+              'privacy and never share your data.'
+            }
+            paragraphProps={{
+              center: true,
+              style: {
+                paddingHorizontal: 14,
+                marginBottom: 30,
+              },
+            }}
+          />
+          <Button
+            title="Verify email or phone"
+            block
+            regularText
+            onPress={() => navigation.navigate(ADD_EDIT_USER)}
+          />
+        </Wrapper>
+      </ContainerWithHeader>
     );
   }
 }
-
 
 const mapStateToProps = ({
   referrals: { rewards, isFetchingRewards },
@@ -130,4 +123,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReferralSent);
+export default connect(mapStateToProps, mapDispatchToProps)(EmailPhoneMissing);

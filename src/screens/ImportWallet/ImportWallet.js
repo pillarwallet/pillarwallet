@@ -21,9 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Input } from 'native-base';
 
 // actions
 import {
@@ -38,7 +36,6 @@ import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import Tabs from 'components/Tabs';
 import Button from 'components/Button';
-import QRCodeScanner from 'components/QRCodeScanner';
 
 // constants
 import {

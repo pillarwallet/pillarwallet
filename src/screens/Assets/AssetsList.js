@@ -254,6 +254,7 @@ class AssetsList extends React.Component<Props, State> {
               },
             );
           }}
+          address={props.address}
           label={name}
           avatarUrl={fullIconUrl}
           balance={{

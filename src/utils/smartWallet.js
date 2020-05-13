@@ -386,6 +386,6 @@ export const buildSmartWalletTransactionEstimate = (
 };
 
 export const isSmartWalletDeviceDeployed = (
-  device: $Shape<{ state: ?string, nextState: ?string }>,
+  device: ?$Shape<{ state: ?string, nextState: ?string }>,
 ): boolean => [get(device, 'state'), get(device, 'nextState')]
   .includes(sdkConstants.AccountDeviceStates.Deployed);

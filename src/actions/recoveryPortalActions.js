@@ -140,7 +140,7 @@ export const initRecoveryPortalWalletRecoverAction = () => {
     };
 
     // set temporary smart wallet and subscribe for events
-    await smartWalletService.init(wallet.privateKey, dispatch, checkRecoveredSmartWalletStateAction);
+    await smartWalletService.init(wallet.privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
     dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
   };
 };

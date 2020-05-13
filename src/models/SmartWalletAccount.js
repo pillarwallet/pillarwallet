@@ -26,8 +26,8 @@ export type SmartWalletAccountDevice = IAccountDevice;
 
 export type ConnectedSmartWalletAccount = {
   ...SmartWalletAccount,
-  activeDeviceAddress: string,
-  devices: SmartWalletAccountDevice[],
+  activeDeviceAddress: ?string,
+  devices: ?SmartWalletAccountDevice[],
 };
 
 

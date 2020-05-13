@@ -41,6 +41,7 @@ import {
   APP_FLOW,
   NEW_WALLET,
   HOME,
+  REFERRAL_INCOMING_REWARD,
   RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
 } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -80,7 +81,6 @@ import {
   managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { encryptAndSaveWalletAction, generateWalletMnemonicAction } from 'actions/walletActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -246,15 +246,26 @@ const finishRegistration = async ({
   }
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean) => {
+const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
   toastWalletBackup(isWalletBackedUp);
 
-  const navigateToAssetsAction = NavigationActions.navigate({
+  const navigateToHomeScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: HOME }),
   });
-  navigate(navigateToAssetsAction);
+
+  const navigateToIncommingRewardScreen = NavigationActions.navigate({
+    routeName: APP_FLOW,
+    params: {},
+    action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
+  });
+
+  if (showIncomingReward) {
+    navigate(navigateToIncommingRewardScreen);
+  } else {
+    navigate(navigateToHomeScreen);
+  }
 };
 
 export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
@@ -267,7 +278,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       apiUser,
     } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
-    const { isBackedUp, isImported } = currentState.wallet.backupStatus;
+    const { isBackedUp, isImported, isRecoveryPending }: BackupStatus = currentState.wallet.backupStatus;
 
     // STEP 0: Clear local storage and reset app state
     if (isImported) {
@@ -295,16 +306,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch({ type: SET_USER_SETTINGS, payload: {} });
     dispatch({ type: SET_FEATURE_FLAGS, payload: {} });
     dispatch({ type: SET_USER_EVENTS, payload: [] });
-
-    const {
-      mnemonic,
-      pin,
-      importedWallet,
-      apiUser,
-    } = currentState.wallet.onboarding;
-
-    const mnemonicPhrase = mnemonic.original;
-    const { isBackedUp, isImported, isRecoveryPending }: BackupStatus = currentState.wallet.backupStatus;
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -387,9 +388,12 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
-    // STEP 7: all done, navigate to the home screen
+    // STEP 7: check if user ir referred to install the app
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    // STEP 8: all done, navigate to the home screen or incoming reward screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+    navigateToAppFlow(isWalletBackedUp, !!referralToken);
   };
 };
 
@@ -447,7 +451,10 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    navigateToAppFlow(isWalletBackedUp, !!referralToken);
   };
 };
 

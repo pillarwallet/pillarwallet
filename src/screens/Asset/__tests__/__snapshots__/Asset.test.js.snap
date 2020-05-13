@@ -1335,7 +1335,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               <View
                 style={
                   Object {
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderBottomWidth": 1,
                     "borderColor": "transparent",
                     "width": "100%",
@@ -1600,59 +1600,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     }
                   }
                 >
-                  <View
-                    rounded={true}
-                    small={true}
-                    style={
-                      Array [
-                        Object {
-                          "backgroundColor": "#BD573A",
-                          "borderRadius": 8,
-                          "justifyContent": "center",
-                          "paddingBottom": 8,
-                          "paddingLeft": 8,
-                          "paddingRight": 8,
-                          "paddingTop": 8,
-                          "width": "100%",
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <Text
-                      small={true}
-                      style={
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Regular",
-                            "fontSize": 12,
-                            "lineHeight": 18,
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Medium",
-                              "fontSize": 12,
-                              "lineHeight": 18,
-                              "textAlignVertical": "center",
-                            },
-                            Array [
-                              Object {
-                                "color": "#FCFDFF",
-                                "fontSize": 14,
-                                "lineHeight": 22,
-                              },
-                              undefined,
-                            ],
-                          ],
-                        ]
-                      }
-                    >
-                      Do not send real ETH or ERC20 tokens.
-                    </Text>
-                  </View>
                   <View
                     style={
                       Array [
@@ -2442,7 +2389,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               <View
                 style={
                   Object {
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "transparent",
                     "borderBottomWidth": 1,
                     "borderColor": "transparent",
                     "width": "100%",

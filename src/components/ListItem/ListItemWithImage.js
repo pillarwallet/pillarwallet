@@ -95,6 +95,7 @@ type Props = {
   iconBackgroundColor?: string,
   iconBorder?: boolean,
   iconImageAutoWidth?: boolean,
+  address?: string,
 }
 
 type AddonProps = {

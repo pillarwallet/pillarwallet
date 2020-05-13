@@ -37,7 +37,6 @@ import type { ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 
 // utils
-import { getCurrencySymbol } from 'utils/common';
 import { images } from 'utils/images';
 
 import type { EnableData } from './ExchangeOffers';
@@ -88,8 +87,7 @@ const AssetEnableModal = (props: Props) => {
 
   const {
     providerName,
-    fiatCurrency,
-    feeInEth,
+    feeDisplayValue,
     feeInFiat,
     assetSymbol,
     assetIcon,
@@ -128,7 +126,7 @@ const AssetEnableModal = (props: Props) => {
           disabled={isDisabled}
         />
         <BaseText secondary>
-          {`Fee ${feeInEth} ETH (${getCurrencySymbol(fiatCurrency)}${feeInFiat})`}
+          {`Fee ${feeDisplayValue} (${feeInFiat})`}
         </BaseText>
       </ContentWrapper>
     </SlideModal>

@@ -47,7 +47,10 @@ import { DEFAULT_GAS_LIMIT } from 'services/assets';
 
 // types
 import type { GasInfo } from 'models/GasInfo';
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
+import type {
+  ConnectedSmartWalletAccount,
+  SmartWalletAccount,
+} from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
@@ -233,7 +236,7 @@ class SmartWallet {
   }
 
   async connectAccount(address: string) {
-    if (!this.sdk.state.account) {
+    if (!get(this.sdk, 'state.account')) {
       await this.sdk.connectAccount(address).catch(this.handleError);
     }
 
@@ -337,7 +340,7 @@ class SmartWallet {
       });
   }
 
-  async fetchConnectedAccount() {
+  async fetchConnectedAccount(): Promise<ConnectedSmartWalletAccount> {
     try {
       const { state: { account: accountData } } = this.sdk;
       const devices = await this.getConnectedAccountDevices();
@@ -346,7 +349,7 @@ class SmartWallet {
     } catch (e) {
       this.handleError(e);
     }
-    return null;
+    return {};
   }
 
   async transferAsset(transaction: AccountTransaction) {
@@ -481,11 +484,13 @@ class SmartWallet {
   async estimateAccountTransaction(
     transaction: AccountTransaction,
     gasInfo: GasInfo,
-    assetData: AssetData,
+    assetData?: AssetData,
   ): Promise<{ gasTokenCost: BigNumber, cost: BigNumber }> {
     const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG], gasToken } = transaction;
     let { data, recipient } = transaction;
-    const { decimals, contractAddress, token: assetSymbol } = assetData;
+    const decimals = get(assetData, 'decimals');
+    const assetSymbol = get(assetData, 'token');
+    const contractAddress = get(assetData, 'contractAddress');
 
     let value;
 

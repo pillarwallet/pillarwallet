@@ -23,38 +23,18 @@
 		696ACF5824049EBC009B0BEC /* EuclidCircularB-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */; };
 		696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5124049C74009B0BEC /* PillarIcons.ttf */; };
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
+		69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */; };
 		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
 		DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 834179E4DB574F6C94CF4839 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		69D278B624633E680054B2EE /* PBXContainerItemProxy */ = {
+		69E6D3ED240465C000CF4B51 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 958BF8F920F3CAD8003CF3A0;
 			remoteInfo = SignalMessagingSwift;
-		};
-		69D45C7D241AB1CA0008AEE9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 63AA759B1EB8AEF500D153DE;
-			remoteInfo = Sentry;
-		};
-		69D45C7F241AB1CA0008AEE9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 63AA76651EB8CB2F00D153DE;
-			remoteInfo = SentryTests;
-		};
-		69D45C81241AB1CA0008AEE9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6387B7C21ED84F910045A84C;
-			remoteInfo = SentryStatic;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -94,13 +74,14 @@
 		696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Medium.otf"; path = "../src/assets/fonts/EuclidCircularB-Medium.otf"; sourceTree = "<group>"; };
 		69D2EB02240865F50039EA75 /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		69D2EB03240865F60039EA75 /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
-		69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sentry.xcodeproj; path = "../node_modules/@sentry/react-native/ios/Sentry/Sentry.xcodeproj"; sourceTree = "<group>"; };
 		7981F34B57593772B61C067A /* Pods-pillarwallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.release.xcconfig"; sourceTree = "<group>"; };
 		7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SignalMessagingSwift.xcodeproj; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift.xcodeproj"; sourceTree = "<group>"; };
 		7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		834179E4DB574F6C94CF4839 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69F4F7F12419E4C30091BBB2 /* libSignalMessagingSwift.a in Frameworks */,
 				694B06AE243925A200ADCEE9 /* SignalProtocol.framework in Frameworks */,
 				13FAE2EB91C1247DE731171C /* libPods-pillarwallet.a in Frameworks */,
 				DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */,
@@ -148,26 +130,18 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				694B06AD243925A200ADCEE9 /* SignalProtocol.framework */,
+				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
+				AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */,
+				834179E4DB574F6C94CF4839 /* libz.tbd */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		69D45C77241AB1CA0008AEE9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				69D45C7E241AB1CA0008AEE9 /* Sentry.framework */,
-				69D45C80241AB1CA0008AEE9 /* SentryTests.xctest */,
-				69D45C82241AB1CA0008AEE9 /* libSentryStatic.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		69E6D369240465A700CF4B51 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				694B06AD243925A200ADCEE9 /* SignalProtocol.framework */,
-				AFC040487F79887282BC73E3 /* libPods-pillarwallet.a */,
-				834179E4DB574F6C94CF4839 /* libz.tbd */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -175,12 +149,12 @@
 		69E6D3E7240465C000CF4B51 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				69D278B724633E680054B2EE /* libSignalMessagingSwift.a */,
+				69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6D470BCE655F453BAB6C6EC2 /* Products */ = {
+		6D470BCE655F453BAB6C6EC2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */,
@@ -192,13 +166,12 @@
 				7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */,
 				7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */,
 			);
-			name = Products;
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */,
 				7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */,
 			);
 			name = Libraries;
@@ -213,7 +186,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				25F423CA29839054F25D8839 /* Pods */,
 				69E6D369240465A700CF4B51 /* Recovered References */,
-				6D470BCE655F453BAB6C6EC2 /* Products */,
+				6D470BCE655F453BAB6C6EC2 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -294,10 +267,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 69D45C77241AB1CA0008AEE9 /* Products */;
-					ProjectRef = 69D45C76241AB1CA0008AEE9 /* Sentry.xcodeproj */;
-				},
-				{
 					ProductGroup = 69E6D3E7240465C000CF4B51 /* Products */;
 					ProjectRef = 7DCDB414306E46D69CED631C /* SignalMessagingSwift.xcodeproj */;
 				},
@@ -310,32 +279,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		69D278B724633E680054B2EE /* libSignalMessagingSwift.a */ = {
+		69E6D3EE240465C000CF4B51 /* libSignalMessagingSwift.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libSignalMessagingSwift.a;
-			remoteRef = 69D278B624633E680054B2EE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		69D45C7E241AB1CA0008AEE9 /* Sentry.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Sentry.framework;
-			remoteRef = 69D45C7D241AB1CA0008AEE9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		69D45C80241AB1CA0008AEE9 /* SentryTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SentryTests.xctest;
-			remoteRef = 69D45C7F241AB1CA0008AEE9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		69D45C82241AB1CA0008AEE9 /* libSentryStatic.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSentryStatic.a;
-			remoteRef = 69D45C81241AB1CA0008AEE9 /* PBXContainerItemProxy */;
+			remoteRef = 69E6D3ED240465C000CF4B51 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
