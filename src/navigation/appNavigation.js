@@ -182,7 +182,6 @@ import {
   OTP,
   CONFIRM_CLAIM,
   UPGRADE_TO_SMART_WALLET_FLOW,
-  UPGRADE_INFO,
   SMART_WALLET_UNLOCK,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
@@ -590,7 +589,6 @@ const backupWalletFlow = createStackNavigator({
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
-  [UPGRADE_INFO]: UpgradeInfoScreen,
 }, StackNavigatorConfig);
 
 smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
