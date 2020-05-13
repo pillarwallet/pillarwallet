@@ -110,7 +110,7 @@
     "react-native-gifted-chat": "https://github.com/FaridSafi/react-native-gifted-chat#v0.7.3",
     "react-native-htmlview": "^0.13.0",
     "react-native-image-crop-picker": "^0.26.2",
-    "react-native-image-view": "^2.1.6",
+    "react-native-image-zoom-viewer": "^3.0.0",
     "react-native-intercom": "^13.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-keychain": "^6.0.0",
@@ -182,6 +182,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "^1.5.1",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "eslint": "^6.5.1",
@@ -212,8 +213,7 @@
     "react-native-storybook-loader": "^1.8.1",
     "react-test-renderer": "16.9.0",
     "redux-mock-store": "^1.5.1",
-    "util-deprecate": "^1.0.2",
-    "babel-plugin-transform-remove-console": "^6.9.4"
+    "util-deprecate": "^1.0.2"
   },
   "jest": {
     "preset": "react-native",

@@ -24,25 +24,25 @@ import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
-import ImageView from 'react-native-image-view';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
-import IconButton from 'components/IconButton';
 import ActivityFeed from 'components/ActivityFeed';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
+import CollectibleImage from 'components/CollectibleImage';
+import SlideModal from 'components/Modals/SlideModal';
 
-import { isIphoneX } from 'utils/common';
-import { fontSizes, spacing } from 'utils/variables';
+import { getDeviceHeight, getDeviceWidth } from 'utils/common';
+import { spacing } from 'utils/variables';
 import { mapOpenSeaAndBCXTransactionsHistory, mapTransactionsHistory } from 'utils/feedData';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { images } from 'utils/images';
+import { images, isSvgImage } from 'utils/images';
 
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountHistorySelector } from 'selectors/history';
@@ -51,7 +51,7 @@ import type { Collectible } from 'models/Collectible';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Theme, ThemeColors } from 'models/Theme';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
@@ -95,40 +95,12 @@ const CircleButtonsWrapper = styled(Wrapper)`
   })};
 `;
 
-const CollectibleImage = styled(CachedImage)`
+const StyledCollectibleImage = styled(CollectibleImage)`
   align-self: center;
   height: 180px;
   width: 180px;
   margin-top: 30px;
 `;
-
-const IconWrapper = styled.View`
-  ${isIphoneX() && 'margin-top: 30px;'}
-  margin-right: 6px;
-  padding: 6px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const CloseIcon = styled(IconButton)`
-  height: 44px;
-  width: 58px;
-`;
-
-const ImageCloseIcon = (props: { onPress: () => void, colors: ThemeColors }) => {
-  return (
-    <IconWrapper>
-      <CloseIcon
-        icon="close"
-        color={props.colors.control}
-        onPress={props.onPress}
-        fontSize={fontSizes.medium}
-        horizontalAlign="center"
-      />
-    </IconWrapper>
-  );
-};
 
 
 class CollectibleScreen extends React.Component<Props, State> {
@@ -168,25 +140,41 @@ class CollectibleScreen extends React.Component<Props, State> {
 
   renderImageView(collectible: Collectible) {
     const { isImageViewVisible } = this.state;
-    const { image, name } = collectible;
+    const { image } = collectible;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
 
-    const imageViewImages = [
-      {
-        source: { uri: image },
-        title: name,
-      },
-    ];
+    const imageViewImage = {
+      url: image,
+      width: null,
+      height: null,
+    };
+
+    if (isSvgImage(image)) {
+      imageViewImage.width = getDeviceWidth();
+      imageViewImage.height = getDeviceHeight();
+    }
+
+    const imageViewImages = [imageViewImage];
 
     return (
-      <ImageView
-        images={imageViewImages}
-        imageIndex={0}
+      <SlideModal
         isVisible={isImageViewVisible}
-        onClose={this.onCloseImageView}
-        controls={{ close: (props) => <ImageCloseIcon {...props} colors={colors} /> }}
-      />
+        onModalHide={this.onCloseImageView}
+        fullScreen
+        showHeader
+      >
+        <ImageViewer
+          imageUrls={imageViewImages}
+          renderImage={(props) => {
+            return <CollectibleImage {...props} />;
+          }}
+          renderIndicator={() => null}
+          backgroundColor={colors.surface}
+          saveToLocalByLongPress={false}
+          menus={() => null}
+        />
+      </SlideModal>
     );
   }
 
@@ -232,11 +220,13 @@ class CollectibleScreen extends React.Component<Props, State> {
         {this.renderImageView(assetData)}
         <ScrollWrapper>
           <TouchableOpacity onPress={this.onTouchImage}>
-            <CollectibleImage
+            <StyledCollectibleImage
               key={id.toString()}
               source={{ uri: image }}
               fallbackSource={genericCollectible}
               resizeMode="contain"
+              width={180}
+              height={180}
             />
           </TouchableOpacity>
           <DataWrapper>
