@@ -35,7 +35,6 @@ import {
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
   SET_SMART_WALLET_ACCOUNT_ENS,
   ADD_SMART_WALLET_UPGRADE_ASSETS,
-  ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
@@ -119,7 +118,6 @@ import { fetchSmartWalletTransactionsAction, insertTransactionAction } from 'act
 
 // types
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
-import type { CollectibleTransfer } from 'models/Collectible';
 import type { SmartWalletDeploymentError, InitSmartWalletProps } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -346,11 +344,6 @@ export const deploySmartWalletAction = () => {
 export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => ({
   type: ADD_SMART_WALLET_UPGRADE_ASSETS,
   payload: assets,
-});
-
-export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: CollectibleTransfer[]) => ({
-  type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
-  payload: collectibles,
 });
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {

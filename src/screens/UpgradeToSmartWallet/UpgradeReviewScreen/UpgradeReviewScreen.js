@@ -50,7 +50,6 @@ import assetsConfig from 'configs/assetsConfig';
 
 // constants
 import {
-  CHOOSE_ASSETS_TO_TRANSFER,
   CONTACT,
   UPGRADE_CONFIRM,
 } from 'constants/navigationConstants';
@@ -247,14 +246,12 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       sections.push({
         title: 'TOKENS',
         data: detailedAssets,
-        toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
     if (detailedCollectibles.length) {
       sections.push({
         title: 'COLLECTIBLES',
         data: detailedCollectibles,
-        toEdit: CHOOSE_ASSETS_TO_TRANSFER,
       });
     }
 

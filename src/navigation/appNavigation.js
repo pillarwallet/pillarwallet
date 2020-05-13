@@ -65,7 +65,6 @@ import OTPScreen from 'screens/OTP';
 import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
-import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
 import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
 import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
 import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
@@ -187,7 +186,6 @@ import {
   CONFIRM_CLAIM,
   UPGRADE_TO_SMART_WALLET_FLOW,
   UPGRADE_INFO,
-  CHOOSE_ASSETS_TO_TRANSFER,
   EDIT_ASSET_AMOUNT_TO_TRANSFER,
   UPGRADE_REVIEW,
   UPGRADE_CONFIRM,
@@ -598,7 +596,6 @@ const backupWalletFlow = createStackNavigator({
 // UPGRADE TO SMART WALLET FLOW
 const smartWalletUpgradeFlow = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
-  [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
