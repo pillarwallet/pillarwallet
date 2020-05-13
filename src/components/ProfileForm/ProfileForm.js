@@ -39,6 +39,10 @@ export const InputTemplate = (locals: Object) => {
     };
   }
 
+  if (config.additionalStyle) {
+    additionalProps.additionalStyle = config.additionalStyle;
+  }
+
   return (
     <TextInput
       errorMessage={errorMessage}
