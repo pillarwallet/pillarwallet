@@ -39,7 +39,6 @@ import {
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
-  ADD_SMART_WALLET_RECOVERY_AGENTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SMART_WALLET_DEPLOYMENT_ERRORS,
   SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
@@ -121,7 +120,6 @@ import { fetchSmartWalletTransactionsAction, insertTransactionAction } from 'act
 // types
 import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
 import type { CollectibleTransfer } from 'models/Collectible';
-import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { SmartWalletDeploymentError, InitSmartWalletProps } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -353,11 +351,6 @@ export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => 
 export const addCollectiblesToSmartWalletUpgradeAction = (collectibles: CollectibleTransfer[]) => ({
   type: ADD_SMART_WALLET_UPGRADE_COLLECTIBLES,
   payload: collectibles,
-});
-
-export const addRecoveryAgentsToSmartWalletUpgradeAction = (recoveryAgents: RecoveryAgent[]) => ({
-  type: ADD_SMART_WALLET_RECOVERY_AGENTS,
-  payload: recoveryAgents,
 });
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {

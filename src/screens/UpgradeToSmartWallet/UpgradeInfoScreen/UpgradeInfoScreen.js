@@ -27,7 +27,6 @@ import Button from 'components/Button';
 import { Paragraph, MediumText, BaseText } from 'components/Typography';
 import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { RECOVERY_AGENTS } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -140,7 +139,7 @@ class UpgradeInfoScreen extends React.PureComponent<Props> {
             </TextWrapper>
           </ExplanationRow>
           <Footer>
-            <Button small title="Next" onPress={() => navigation.navigate(RECOVERY_AGENTS)} />
+            <Button small title="Next" onPress={() => navigation.navigate()} />
           </Footer>
         </ScrollWrapper>
       </Container>

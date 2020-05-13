@@ -65,7 +65,6 @@ import OTPScreen from 'screens/OTP';
 import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
-import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScreen';
 import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
 import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
 import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
@@ -188,7 +187,6 @@ import {
   CONFIRM_CLAIM,
   UPGRADE_TO_SMART_WALLET_FLOW,
   UPGRADE_INFO,
-  RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
   EDIT_ASSET_AMOUNT_TO_TRANSFER,
   UPGRADE_REVIEW,
@@ -602,7 +600,6 @@ const smartWalletUpgradeFlow = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
   [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
-  [RECOVERY_AGENTS]: RecoveryAgentsScreen,
   [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
   [UPGRADE_REVIEW]: UpgradeReviewScreen,
   [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
@@ -642,7 +639,6 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
-  [RECOVERY_AGENTS]: RecoveryAgentsScreen,
 }, StackNavigatorConfig);
 
 manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;

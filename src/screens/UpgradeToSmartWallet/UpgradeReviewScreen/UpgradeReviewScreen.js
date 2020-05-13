@@ -50,7 +50,6 @@ import assetsConfig from 'configs/assetsConfig';
 
 // constants
 import {
-  RECOVERY_AGENTS,
   CHOOSE_ASSETS_TO_TRANSFER,
   CONTACT,
   UPGRADE_CONFIRM,
@@ -64,7 +63,6 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 // types
 import type { Assets, Balances, AssetTransfer } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
-import type { RecoveryAgent } from 'models/RecoveryAgents';
 import type { Collectible } from 'models/Collectible';
 
 // utils
@@ -79,7 +77,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
   balances: Balances,
-  recoveryAgents: RecoveryAgent[],
   transferAssets: AssetTransfer[],
   transferCollectibles: AssetTransfer[],
   fetchGasInfo: Function,
@@ -220,7 +217,6 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
       transferCollectibles,
       assets,
       collectibles,
-      recoveryAgents,
     } = this.props;
     const assetsArray = getAssetsAsList(assets);
     const detailedAssets = transferAssets.map((transferAsset: any) => {
@@ -247,13 +243,6 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
     });
 
     const sections = [];
-    if (recoveryAgents.length) {
-      sections.push({
-        title: 'RECOVERY AGENTS',
-        data: recoveryAgents,
-        toEdit: RECOVERY_AGENTS,
-      });
-    }
     if (detailedAssets.length) {
       sections.push({
         title: 'TOKENS',
@@ -340,7 +329,6 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 const mapStateToProps = ({
   smartWallet: {
     upgrade: {
-      recoveryAgents,
       transfer: {
         assets: transferAssets,
         collectibles: transferCollectibles,
@@ -350,7 +338,6 @@ const mapStateToProps = ({
   session: { data: session },
   history: { gasInfo },
 }) => ({
-  recoveryAgents,
   transferAssets,
   transferCollectibles,
   session,
