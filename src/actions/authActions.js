@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import AsyncStorage from '@react-native-community/async-storage';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
@@ -34,7 +33,6 @@ import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
-  WALLET_STORAGE_BACKUP_KEY,
 } from 'constants/walletConstants';
 import {
   APP_FLOW,
@@ -429,7 +427,6 @@ export const resetAppState = async (dispatch: Dispatch, getState: GetState) => {
   Intercom.logout();
   await firebaseIid.delete().catch(() => {});
   await chat.client.resetAccount().catch(() => null);
-  await AsyncStorage.removeItem(WALLET_STORAGE_BACKUP_KEY);
   await storage.removeAll();
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
   if (smartWalletFeatureEnabled) await smartWalletService.reset();
