@@ -51,7 +51,6 @@ import assetsConfig from 'configs/assetsConfig';
 // constants
 import {
   CONTACT,
-  UPGRADE_CONFIRM,
 } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 
@@ -199,7 +198,7 @@ class UpgradeReviewScreen extends React.PureComponent<Props> {
 
   onNextClick = () => {
     const { navigation } = this.props;
-    navigation.navigate(UPGRADE_CONFIRM, { gasLimit: 0 });
+    navigation.navigate('', { gasLimit: 0 });
   };
 
   calculateTransferFee = (gasLimit) => {
