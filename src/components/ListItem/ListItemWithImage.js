@@ -32,6 +32,7 @@ import { Shadow } from 'components/Shadow';
 import { Wrapper, Spacing } from 'components/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { LabelBadge } from 'components/LabelBadge/LabelBadge';
+import CollectibleImage from 'components/CollectibleImage';
 
 import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
@@ -94,6 +95,7 @@ type Props = {
   iconBackgroundColor?: string,
   iconBorder?: boolean,
   address?: string,
+  collectibleUrl?: string,
 }
 
 type AddonProps = {
@@ -192,6 +194,7 @@ const IconCircle = styled.View`
   ${({ border, theme }) => border &&
     `border-color: ${theme.colors.border};
     border-width: 1px;`};
+  overflow: hidden;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -205,6 +208,12 @@ const IconImage = styled(CachedImage)`
 `;
 
 const TokenImage = styled(CachedImage)`
+  width: ${props => props.diameter || 54}px;
+  height: ${props => props.diameter || 54}px;
+  border-radius: ${props => props.diameter / 2 || 27}px;
+`;
+
+const StyledCollectibleImage = styled(CollectibleImage)`
   width: ${props => props.diameter || 54}px;
   height: ${props => props.diameter || 54}px;
   border-radius: ${props => props.diameter / 2 || 27}px;
@@ -358,6 +367,7 @@ const ItemImage = (props: Props) => {
     theme,
     iconBackgroundColor,
     iconBorder,
+    collectibleUrl,
   } = props;
 
   let { fallbackSource } = props;
@@ -385,6 +395,19 @@ const ItemImage = (props: Props) => {
     return (
       <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
         <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
+      </IconCircle>
+    );
+  }
+
+  if (collectibleUrl) {
+    return (
+      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+        <StyledCollectibleImage
+          width={diameter}
+          height={diameter}
+          diameter={diameter}
+          source={{ uri: collectibleUrl }}
+        />
       </IconCircle>
     );
   }
