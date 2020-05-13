@@ -120,7 +120,8 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
               isLoading={isFetchingRewards}
               text={'Thanks for joining Pillar.\n' +
               `To celebrate this, we also give you ${rewardText}.\n` +
-              'You need to add and verify your email or phone in order to receive the reward.'}
+              'You need to add and verify your email or phone in order to receive the reward. ' +
+              'Reward will be issued to new user only.'}
               paragraphProps={{
                 center: true,
                 style: {
