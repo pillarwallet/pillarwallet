@@ -65,7 +65,6 @@ import OTPScreen from 'screens/OTP';
 import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
-import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
 import SmartWalletUnlockScreen from 'screens/UpgradeToSmartWallet/SmartWalletUnlock';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
@@ -184,7 +183,6 @@ import {
   CONFIRM_CLAIM,
   UPGRADE_TO_SMART_WALLET_FLOW,
   UPGRADE_INFO,
-  UPGRADE_REVIEW,
   SMART_WALLET_UNLOCK,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
@@ -593,7 +591,6 @@ const backupWalletFlow = createStackNavigator({
 const smartWalletUpgradeFlow = createStackNavigator({
   [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
   [UPGRADE_INFO]: UpgradeInfoScreen,
-  [UPGRADE_REVIEW]: UpgradeReviewScreen,
 }, StackNavigatorConfig);
 
 smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;

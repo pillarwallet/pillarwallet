@@ -43,8 +43,6 @@ import {
   RESET_SMART_WALLET,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
-  SET_ASSET_TRANSFER_GAS_LIMIT,
-  SET_COLLECTIBLE_TRANSFER_GAS_LIMIT,
   PAYMENT_COMPLETED,
   PAYMENT_PROCESSED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
@@ -94,7 +92,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { calculateGasEstimate, waitForTransaction } from 'services/assets';
+import { waitForTransaction } from 'services/assets';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -116,7 +114,7 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchSmartWalletTransactionsAction, insertTransactionAction } from 'actions/historyActions';
 
 // types
-import type { AssetTransfer, BalancesStore, Assets } from 'models/Asset';
+import type { BalancesStore, Assets } from 'models/Asset';
 import type { SmartWalletDeploymentError, InitSmartWalletProps } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -1548,107 +1546,6 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
       dispatch(fetchAssetsBalancesAction());
       dispatch(fetchCollectiblesAction());
     }
-  };
-};
-
-export const getAssetTransferGasLimitsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      assets: { supportedAssets },
-      collectibles: { data: collectiblesByAccount },
-      smartWallet: {
-        upgrade: {
-          transfer: {
-            assets: transferAssets,
-            collectibles: transferCollectibles,
-          },
-        },
-      },
-      user: {
-        data: user,
-      },
-    } = getState();
-
-    let to;
-    const from = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
-    const collectibles = collectiblesByAccount[accountId];
-    const smartWalletSdkInitialized = smartWalletService.sdkInitialized;
-
-    /**
-     * if sdk was initialized then it was initialized with wallet's PK
-     * and if not, let's make a temporary init and re-init will happen later
-     */
-    if (!smartWalletSdkInitialized) {
-      await smartWalletService.sdk.initialize().catch(() => null);
-    }
-
-    const smartAccounts = await smartWalletService.getAccounts();
-    if (!smartAccounts.length) {
-      /**
-       * let's create an account, it will be fetched later or a new one will be created if the re-init happens
-       * we need the smart wallet account address for the precise gas limit calculation
-       */
-      let tempAccount;
-      if (smartWalletSdkInitialized) {
-        // FIXME: reducer has username as optional, we should handle that here
-        tempAccount = await smartWalletService.createAccount(user.username || '');
-      } else {
-        tempAccount = await smartWalletService.sdk.createAccount().catch(() => null);
-      }
-
-      if (!tempAccount) {
-        Toast.show({
-          message: 'Failed to create Smart Wallet account',
-          type: 'warning',
-          title: 'Unable to calculate fees',
-          autoClose: false,
-        });
-        return;
-      }
-      ({ address: to } = tempAccount);
-    } else {
-      // init already contains smart accounts, let's grab address from first one
-      ([{ address: to }] = smartAccounts); // first account address
-    }
-
-    // $FlowFixMe
-    [...transferAssets, ...transferCollectibles].forEach(({ name, key, amount }) => {
-      let dispatchType: string;
-      let estimateTransaction = { from, to };
-
-      if (key) { // send collectible
-        const collectible = collectibles
-          .find(({ assetContract, name: contractName }) => `${assetContract}${contractName}` === key);
-        if (!collectible) return null;
-
-        const { id: tokenId, contractAddress } = collectible;
-        estimateTransaction = { ...estimateTransaction, tokenId, contractAddress };
-        dispatchType = SET_COLLECTIBLE_TRANSFER_GAS_LIMIT;
-      } else { // send asset
-        const asset = supportedAssets.find(a => a.name === name);
-        estimateTransaction = {
-          ...estimateTransaction,
-          symbol: name,
-          contractAddress: asset ? asset.address : '',
-          decimals: asset ? asset.decimals : 18,
-          amount,
-        };
-        dispatchType = SET_ASSET_TRANSFER_GAS_LIMIT;
-      }
-
-      return calculateGasEstimate(estimateTransaction)
-        .then(gasLimit =>
-          dispatch({
-            type: dispatchType,
-            payload: {
-              gasLimit,
-              key: name || key,
-            },
-          }),
-        );
-    });
   };
 };
 
