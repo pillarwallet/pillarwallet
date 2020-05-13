@@ -34,7 +34,6 @@ import {
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
   SET_SMART_WALLET_ACCOUNT_ENS,
-  ADD_SMART_WALLET_UPGRADE_ASSETS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
@@ -340,11 +339,6 @@ export const deploySmartWalletAction = () => {
     }
   };
 };
-
-export const addAssetsToSmartWalletUpgradeAction = (assets: AssetTransfer[]) => ({
-  type: ADD_SMART_WALLET_UPGRADE_ASSETS,
-  payload: assets,
-});
 
 export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
   return async (dispatch: Dispatch) => {

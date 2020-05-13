@@ -21,7 +21,6 @@ import {
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
-  ADD_SMART_WALLET_UPGRADE_ASSETS,
   SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -103,17 +102,6 @@ export default function smartWalletReducer(
       return {
         ...state,
         connectedAccount: action.payload,
-      };
-    case ADD_SMART_WALLET_UPGRADE_ASSETS:
-      return {
-        ...state,
-        upgrade: {
-          ...state.upgrade,
-          transfer: {
-            ...state.upgrade.transfer,
-            assets: action.payload,
-          },
-        },
       };
     case SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS:
       return {
