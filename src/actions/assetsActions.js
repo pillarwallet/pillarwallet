@@ -81,7 +81,7 @@ import {
 } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import type SDKWrapper from 'services/api';
@@ -548,7 +548,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
     const isSmartWalletAccount = checkIfSmartWalletAccount(account);
 
     dispatch({
