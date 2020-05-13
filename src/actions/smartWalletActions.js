@@ -75,7 +75,6 @@ import {
   RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
 import {
-  SMART_WALLET_UNLOCK,
   ASSETS,
   SEND_TOKEN_AMOUNT,
   ACCOUNTS,
@@ -151,7 +150,6 @@ import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getPrivateKeyFromPin } from 'utils/wallet';
 
 // actions
-import { getWalletsCreationEventsAction } from './userEventsActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 
@@ -487,63 +485,13 @@ export const checkAssetTransferTransactionsAction = () => {
   };
 };
 
-export const upgradeToSmartWalletAction = (wallet: Object, transferTransactions: Object[]) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { smartWallet: { sdkInitialized } } = getState();
-    if (!sdkInitialized) {
-      Toast.show({
-        message: 'Failed to load Smart Wallet SDK',
-        type: 'warning',
-        title: 'Unable to upgrade',
-        autoClose: false,
-      });
-      return Promise.reject();
-    }
-    await dispatch(loadSmartWalletAccountsAction(wallet.privateKey));
-
-    const { smartWallet: { accounts } } = getState();
-    if (!accounts.length) {
-      Toast.show({
-        message: 'Failed to load Smart Wallet account',
-        type: 'warning',
-        title: 'Unable to upgrade',
-        autoClose: false,
-      });
-      return Promise.reject();
-    }
-
-    dispatch(getWalletsCreationEventsAction());
-
-    const { address } = accounts[0];
-    const addressedTransferTransactions = transferTransactions.map(transaction => {
-      return { ...transaction, to: address };
-    });
-    await dispatch(createAssetsTransferTransactionsAction(
-      wallet,
-      addressedTransferTransactions,
-    ));
-    dispatch(checkAssetTransferTransactionsAction());
-    return Promise.resolve(true);
-  };
-};
-
 export const fetchVirtualAccountBalanceAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       session: { data: { isOnline } },
-      smartWallet: { connectedAccount, sdkInitialized },
+      smartWallet: { connectedAccount },
     } = getState();
-
-    if ((!smartWalletService.sdkInitialized || !sdkInitialized) && isOnline) {
-      navigate(NavigationActions.navigate({
-        routeName: SMART_WALLET_UNLOCK,
-        params: {
-          successNavigateScreen: ASSETS,
-        },
-      }));
-      return;
-    }
 
     if (!isConnectedToSmartAccount(connectedAccount) || !isOnline) return;
 

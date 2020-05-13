@@ -64,8 +64,6 @@ import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
-import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
-import SmartWalletUnlockScreen from 'screens/UpgradeToSmartWallet/SmartWalletUnlock';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
@@ -181,8 +179,6 @@ import {
   BADGE,
   OTP,
   CONFIRM_CLAIM,
-  UPGRADE_TO_SMART_WALLET_FLOW,
-  SMART_WALLET_UNLOCK,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
   FUND_TANK,
@@ -586,13 +582,6 @@ const backupWalletFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
 }, StackNavigatorModalConfig);
 
-// UPGRADE TO SMART WALLET FLOW
-const smartWalletUpgradeFlow = createStackNavigator({
-  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
-}, StackNavigatorConfig);
-
-smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // PPN SEND TOKEN FROM ASSET FLOW
 const ppnSendTokenFromAssetFlow = createStackNavigator(
   {
@@ -689,7 +678,6 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
-    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletUpgradeFlow,
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_SETTLE_FLOW]: tankSettleFlow,
     [UNSETTLED_ASSETS_FLOW]: unsettledAssetsFlow,
