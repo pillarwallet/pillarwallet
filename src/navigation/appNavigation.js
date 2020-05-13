@@ -77,7 +77,7 @@ import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
-import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
+import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticAssetScreen from 'screens/SendSynthetic/SendSyntheticAsset';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
