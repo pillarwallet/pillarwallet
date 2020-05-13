@@ -31,7 +31,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
 import { images } from 'utils/images';
-import { isProdEnv, isTest } from 'utils/environment';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -115,23 +114,12 @@ const LogoutIcon = styled(Icon)`
   margin-right: 5px;
 `;
 
-const CrashAppIcon = styled(Icon)`
-  color: ${themedColors.orange};
-  ${fontStyles.regular};
-  margin-right: 5px;
-`;
-
 const LegalTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
 const LogoutTextLink = styled(TextLink)`
   color: ${themedColors.negative};
-  ${fontStyles.regular};
-`;
-
-const CrashAppTextLink = styled(TextLink)`
-  color: ${themedColors.orange};
   ${fontStyles.regular};
 `;
 
@@ -326,15 +314,6 @@ class Menu extends React.Component<Props, State> {
                   Lock wallet
                 </LockScreenTextLink>
               </LockScreenSection>
-              {(!!__DEV__ || !isProdEnv) && !isTest && (
-                <LogoutSection>
-                  <CrashAppIcon name="close" />
-                  {/* $FlowFixMe – intentional bug to have actual crash */}
-                  <CrashAppTextLink onPress={() => undefined.crash()}>
-                    Crash App (visible in staging/dev env only)
-                  </CrashAppTextLink>
-                </LogoutSection>
-              )}
               <LogoutSection>
                 <LogoutIcon name="signout" />
                 <LogoutTextLink onPress={this.deleteWallet}>
