@@ -20,6 +20,7 @@
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
+import SplashScreen from 'react-native-splash-screen';
 
 // services
 import Storage from 'services/storage';
@@ -28,7 +29,7 @@ import { migrate } from 'services/dataMigration';
 
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   UPDATE_ASSETS,
   UPDATE_BALANCES,
@@ -80,13 +81,9 @@ import { getWalletFromStorage } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
 
-const BACKGROUND = 'background';
-const ANDROID = 'android';
-
-export const initAppAndRedirectAction = (appState: string, platform: string) => {
+export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    // Appears that android back-handler on exit causes the app to mount once again.
-    if (appState === BACKGROUND && platform === ANDROID) return;
+    dispatch({ type: RESET_APP_LOADED });
 
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
@@ -96,6 +93,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
+    const navigateRouteOnFinish = walletTimestamp ? AUTH_FLOW : ONBOARDING_FLOW;
 
     if (walletTimestamp) {
       // migrations
@@ -222,15 +220,12 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
-      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
-
-      navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
-      return;
     }
+
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    navigate(NavigationActions.navigate({ routeName: navigateRouteOnFinish }));
+    SplashScreen.hide();
   };
 };
 

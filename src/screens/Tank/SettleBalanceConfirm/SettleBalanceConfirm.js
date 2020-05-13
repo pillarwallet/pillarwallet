@@ -23,7 +23,6 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
@@ -60,6 +59,7 @@ type Props = {
   settleTxFee: SettleTxFee,
   balances: Balances,
   estimateSettleBalance: Function,
+  smartWalletAccountSupportsGasToken: boolean,
 };
 
 type State = {
@@ -119,15 +119,21 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
   }
 
   handleFormSubmit = async () => {
-    const { navigation, settleTransactions, balances } = this.props;
+    const {
+      navigation,
+      settleTransactions,
+      balances,
+    } = this.props;
     const txFeeInWei = this.getTxFeeInWei();
 
-    const gasToken = get(this.props, 'settleTxFee.feeInfo.gasToken');
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const gasToken = this.getGasToken();
+    const payForGasWithToken = !!gasToken;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei,
       gasToken,
     });
+
     if (!isEnoughForFee) {
       Toast.show({
         message: `Not enough ${feeSymbol} to cover the withdrawal transaction fee`,
@@ -138,14 +144,22 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       return;
     }
 
-    this.setState({ settleButtonSubmitted: true });
-    await settleTransactions(this.txToSettle);
-    this.setState({ settleButtonSubmitted: false }, () => navigation.dismiss());
+    this.setState({ settleButtonSubmitted: true }, async () => {
+      await settleTransactions(this.txToSettle, payForGasWithToken);
+      this.setState({ settleButtonSubmitted: false }, () => navigation.dismiss());
+    });
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'settleTxFee.feeInfo.gasTokenCost')
-      || get(this.props, 'settleTxFee.feeInfo.totalCost', 0);
+    const gasTokenCost = get(this.props, 'settleTxFee.feeInfo.gasTokenCost');
+    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
+    return get(this.props, 'settleTxFee.feeInfo.totalCost', 0);
+  };
+
+  getGasToken = () => {
+    return this.props.smartWalletAccountSupportsGasToken
+      ? get(this.props, 'settleTxFee.feeInfo.gasToken')
+      : null;
   };
 
   render() {
@@ -163,7 +177,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       || !settleTxFee.isFetched
       || settleButtonSubmitted;
 
-    const gasToken = get(this.props, 'settleTxFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     return (
@@ -206,9 +220,11 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   paymentNetwork: { settleTxFee },
+  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }) => ({
   session,
   settleTxFee,
+  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({

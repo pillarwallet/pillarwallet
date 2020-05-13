@@ -25,11 +25,15 @@ import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 
+// utils
 import { getThemeColors, themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
 import { images } from 'utils/images';
+import { isProdEnv, isTest } from 'utils/environment';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import { ListCard } from 'components/ListItem/ListCard';
@@ -37,6 +41,7 @@ import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
+// constants
 import {
   SECURITY_SETTINGS,
   RECOVERY_SETTINGS,
@@ -46,12 +51,14 @@ import {
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
+
+// actions
 import { lockScreenAction, logoutAction } from 'actions/authActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 
+// types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { NavigationScreenProp } from 'react-navigation';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { User } from 'models/User';
 
@@ -108,12 +115,23 @@ const LogoutIcon = styled(Icon)`
   margin-right: 5px;
 `;
 
+const CrashAppIcon = styled(Icon)`
+  color: ${themedColors.orange};
+  ${fontStyles.regular};
+  margin-right: 5px;
+`;
+
 const LegalTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
 const LogoutTextLink = styled(TextLink)`
   color: ${themedColors.negative};
+  ${fontStyles.regular};
+`;
+
+const CrashAppTextLink = styled(TextLink)`
+  color: ${themedColors.orange};
   ${fontStyles.regular};
 `;
 
@@ -308,6 +326,15 @@ class Menu extends React.Component<Props, State> {
                   Lock wallet
                 </LockScreenTextLink>
               </LockScreenSection>
+              {(!!__DEV__ || !isProdEnv) && !isTest && (
+                <LogoutSection>
+                  <CrashAppIcon name="close" />
+                  {/* $FlowFixMe – intentional bug to have actual crash */}
+                  <CrashAppTextLink onPress={() => undefined.crash()}>
+                    Crash App (visible in staging/dev env only)
+                  </CrashAppTextLink>
+                </LogoutSection>
+              )}
               <LogoutSection>
                 <LogoutIcon name="signout" />
                 <LogoutTextLink onPress={this.deleteWallet}>
