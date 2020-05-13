@@ -114,7 +114,12 @@ storiesOf('ActivityFeedItem', module)
     <ActivityFeedItem
       {...reduxData}
       event={{
-        type: COLLECTIBLE_TRANSACTION, to: '0x000000', from: '', icon: placeholderImage, asset: 'CryptoKitty', assetData: { image: placeholderImage },
+        type: COLLECTIBLE_TRANSACTION,
+        to: '0x000000',
+        from: '',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        assetData: { image: placeholderImage },
       }}
     />
   ))
