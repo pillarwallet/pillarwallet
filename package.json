@@ -151,7 +151,7 @@
     "reselect": "^4.0.0",
     "rn-fetch-blob": "^0.12.0",
     "rn-nodeify": "^10.0.1",
-    "rn-signal-protocol-messaging": "1.0.216",
+    "rn-signal-protocol-messaging": "1.0.218",
     "shuffle-array": "^1.0.1",
     "socket.io-client": "^2.2.0",
     "stream-browserify": "^1.0.0",
