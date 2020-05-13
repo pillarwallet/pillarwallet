@@ -55,6 +55,7 @@ type Props = {
   topUpFee: TopUpFee,
   estimateTopUpVirtualAccount: (amount: string) => void,
   topUpVirtualAccount: (amount: string, payForGasWithToken: boolean) => void,
+  smartWalletAccountSupportsGasToken: boolean,
 };
 
 type State = {
@@ -102,14 +103,21 @@ class FundConfirm extends React.Component<Props, State> {
     const { navigation, topUpVirtualAccount } = this.props;
     this.setState({ topUpButtonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
-    const payForGasWithToken = !!get(this.props, 'topUpFee.feeInfo.gasTokenCost');
+    const payForGasWithToken = !!this.getGasToken();
     await topUpVirtualAccount(amount, payForGasWithToken);
     this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.gasTokenCost')
-      || get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+    const gasTokenCost = get(this.props, 'topUpFee.feeInfo.gasTokenCost');
+    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
+    return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+  };
+
+  getGasToken = () => {
+    return this.props.smartWalletAccountSupportsGasToken
+      ? get(this.props, 'topUpFee.feeInfo.gasToken')
+      : null;
   };
 
   render() {
@@ -118,7 +126,7 @@ class FundConfirm extends React.Component<Props, State> {
     const amount = navigation.getParam('amount', '0');
     const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
 
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     return (
@@ -160,9 +168,11 @@ class FundConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   paymentNetwork: { topUpFee },
+  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   session,
   topUpFee,
+  smartWalletAccountSupportsGasToken,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
