@@ -943,7 +943,7 @@ class EventDetail extends React.Component<Props, State> {
           };
 
           if (isReferralRewardTransaction) {
-            eventData.buttons = [];
+            buttons = [];
           } else if (isReceived) {
             if (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
               buttons = [send, topUpMore];
