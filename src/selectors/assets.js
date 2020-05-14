@@ -3,7 +3,12 @@ import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnabledAssets } from 'utils/accounts';
 import { getAssetData, getAssetsAsList } from 'utils/assets';
-import { assetsSelector, activeAccountIdSelector, hiddenAssetsSelector, supportedAssetsSelector } from './selectors';
+import {
+  assetsSelector,
+  activeAccountIdSelector,
+  hiddenAssetsSelector,
+  supportedAssetsSelector,
+} from './selectors';
 
 
 export const accountAssetsSelector = createSelector(
@@ -33,20 +38,13 @@ export const allAccountsAssetsSelector = createSelector(
   assetsSelector,
   hiddenAssetsSelector,
   (assets, hiddenAssets) => {
-    const uniqueAssets = [];
-
-    Object.keys(assets).forEach(accountId => {
+    return Object.keys(assets).reduce((memo, accountId) => {
       const accountAssets = get(assets, accountId, {});
       const accountHiddenAssets = get(hiddenAssets, accountId, []);
       const enabledAssets = getEnabledAssets(accountAssets, accountHiddenAssets);
-
-      Object.keys(enabledAssets).forEach(asset => {
-        if (!uniqueAssets.includes(asset)) return;
-        uniqueAssets.push(asset);
-      });
-    });
-
-    return uniqueAssets;
+      const newAssets = Object.keys(enabledAssets).filter((asset) => !memo.includes(asset));
+      return [...memo, ...newAssets];
+    }, []);
   },
 );
 
