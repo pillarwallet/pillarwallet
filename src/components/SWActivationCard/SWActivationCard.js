@@ -100,8 +100,6 @@ class SWActivationCard extends React.Component<Props, State> {
     let showMessage = message;
     if (deploymentStarted) {
       showMessage = 'Activating your account';
-    } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS) {
-      showMessage = 'Transferring assets';
     }
 
     return (

@@ -21,7 +21,6 @@ import {
   SET_SMART_WALLET_SDK_INIT,
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
-  SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   RESET_SMART_WALLET,
@@ -32,8 +31,6 @@ import {
   SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
-import type { AssetTransfer } from 'models/Asset';
-import type { SmartWalletTransferTransaction } from 'models/Transaction';
 
 export type SmartWalletReducerState = {
   sdkInitialized: boolean,
@@ -42,10 +39,6 @@ export type SmartWalletReducerState = {
   upgrade: {
     status: ?string,
     deploymentStarted: boolean,
-    transfer: {
-      transactions: SmartWalletTransferTransaction[],
-      assets: AssetTransfer[],
-    },
     deploymentData: {
       hash: ?string,
       error: ?SmartWalletDeploymentError,
@@ -67,11 +60,6 @@ export const initialState = {
   upgrade: {
     status: null,
     deploymentStarted: false,
-    transfer: {
-      transactions: [],
-      assets: [],
-      collectibles: [],
-    },
     deploymentData: {
       hash: null,
       error: null,
@@ -100,17 +88,6 @@ export default function smartWalletReducer(
       return {
         ...state,
         connectedAccount: action.payload,
-      };
-    case SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS:
-      return {
-        ...state,
-        upgrade: {
-          ...state.upgrade,
-          transfer: {
-            ...state.upgrade.transfer,
-            transactions: action.payload,
-          },
-        },
       };
     case SET_SMART_WALLET_UPGRADE_STATUS:
       return {

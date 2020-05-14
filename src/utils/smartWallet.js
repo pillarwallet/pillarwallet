@@ -70,7 +70,6 @@ const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 const getMessage = (
   status: ?string,
   isSmartWalletActive: boolean,
-  smartWalletState: SmartWalletReducerState,
 ) => {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
@@ -86,16 +85,6 @@ const getMessage = (
         title: 'Smart Wallet is being deployed now',
         message: 'You will be able to send assets once it\'s deployed.' +
           '\nCurrent average waiting time is 4 mins',
-      };
-    case SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS:
-      const { upgrade: { transfer: { transactions } } } = smartWalletState;
-      const total = transactions.length;
-      const complete = transactions.filter(tx => tx.status === TX_CONFIRMED_STATUS).length;
-      return {
-        title: 'Assets are being transferred to Smart Wallet',
-        message: 'You will be able to send assets once submitted transfer is complete' +
-          `${isSmartWalletActive ? ' and Smart Wallet is deployed' : ''}.` +
-          `\nCurrently ${complete} of ${total} assets are transferred.`,
       };
     default:
       return {};
@@ -124,7 +113,7 @@ export const getSmartWalletStatus = (
   const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
 
   const { upgrade: { status } } = smartWalletState;
-  const sendingBlockedMessage = getMessage(status, isSmartWalletActive, smartWalletState);
+  const sendingBlockedMessage = getMessage(status, isSmartWalletActive);
   return {
     hasAccount,
     status,
@@ -329,11 +318,7 @@ export const isHiddenUnsettledTransaction = (
 export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
   const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
   const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  return !error && (deploymentStarted
-    || [
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ].includes(smartWalletStatus.status));
+  return !error && (deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING);
 };
 
 export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {

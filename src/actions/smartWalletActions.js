@@ -34,7 +34,6 @@ import {
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
   SET_SMART_WALLET_ACCOUNT_ENS,
-  SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SMART_WALLET_UPGRADE_STATUSES,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -51,7 +50,6 @@ import {
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import {
-  TX_PENDING_STATUS,
   TX_CONFIRMED_STATUS,
   SET_HISTORY,
   ADD_TRANSACTION,
@@ -75,7 +73,6 @@ import {
   RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
 import {
-  ASSETS,
   SEND_TOKEN_AMOUNT,
   ACCOUNTS,
   SEND_SYNTHETIC_AMOUNT,
@@ -91,7 +88,6 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { waitForTransaction } from 'services/assets';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -103,9 +99,6 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { addAccountAction, setActiveAccountAction, switchAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 import {
-  signAssetTransactionAction,
-  sendSignedAssetTransactionAction,
-  resetLocalNonceToTransactionCountAction,
   fetchAssetsBalancesAction,
   fetchInitialAssetsAction,
 } from 'actions/assetsActions';
@@ -333,155 +326,6 @@ export const deploySmartWalletAction = () => {
         payload: account,
       });
     }
-  };
-};
-
-export const setAssetsTransferTransactionsAction = (transactions: Object[]) => {
-  return async (dispatch: Dispatch) => {
-    await dispatch(saveDbAction('smartWallet', { upgradeTransferTransactions: transactions }));
-    dispatch({
-      type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
-      payload: transactions,
-    });
-  };
-};
-
-export const createAssetsTransferTransactionsAction = (wallet: Object, transactions: Object[]) => {
-  return async (dispatch: Dispatch) => {
-    // reset local nonce to transaction count
-    await dispatch(resetLocalNonceToTransactionCountAction(wallet));
-    dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS));
-    const signedTransactions = [];
-    // we need this to wait for each to complete because of local nonce increment
-    for (const transaction of transactions) { // eslint-disable-line
-      const signedTransaction = await dispatch(signAssetTransactionAction(transaction, wallet)); // eslint-disable-line
-      signedTransactions.push({
-        transaction,
-        signedTransaction,
-      });
-    }
-    // filter out if any of the signed transactions got empty object or error
-    const signedTransactionsFixed = signedTransactions.filter(tx =>
-      !!tx && !!tx.signedTransaction && Object.keys(tx.signedTransaction),
-    );
-    dispatch(setAssetsTransferTransactionsAction(signedTransactionsFixed));
-  };
-};
-
-export const checkAssetTransferTransactionsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      history: {
-        data: transactionsHistory,
-      },
-      collectibles: { transactionHistory: collectiblesHistory = {} },
-      smartWallet: {
-        upgrade: {
-          status: upgradeStatus,
-          transfer: {
-            transactions: transferTransactions = [],
-          },
-        },
-      },
-    } = getState();
-    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS) return;
-    if (!transferTransactions.length) {
-      // TODO: no transactions at all?
-      return;
-    }
-
-    // update with statuses from history
-    // TODO: visit current workaround to get history from all wallets
-    const accountIds = Object.keys(transactionsHistory);
-    const allHistory = accountIds.reduce(
-      // $FlowFixMe
-      (existing = [], accountId) => {
-        const walletCollectiblesHistory = collectiblesHistory[accountId] || [];
-        const walletAssetsHistory = transactionsHistory[accountId] || [];
-        return [...existing, ...walletAssetsHistory, ...walletCollectiblesHistory];
-      },
-      [],
-    );
-
-    // $FlowFixMe
-    let updatedTransactions = transferTransactions.map(transaction => {
-      const { transactionHash } = transaction;
-      if (!transactionHash || transaction.status === TX_CONFIRMED_STATUS) {
-        return transaction;
-      }
-
-      const minedTx = allHistory.find(_transaction => _transaction.hash === transactionHash);
-      if (!minedTx) return transaction;
-
-      return { ...transaction, status: minedTx.status };
-    });
-
-    // if any is still pending then don't do anything
-    const pendingTransactions = updatedTransactions.filter(transaction => transaction.status === TX_PENDING_STATUS);
-    if (pendingTransactions.length) return;
-
-    const _unsentTransactions = updatedTransactions.filter(transaction => transaction.status !== TX_CONFIRMED_STATUS);
-    if (!_unsentTransactions.length) {
-      const accounts = get(getState(), 'smartWallet.accounts');
-      // account should be already created by this step
-      await dispatch(setSmartWalletUpgradeStatusAction(
-        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      ));
-      const { address } = accounts[0];
-      navigate(NavigationActions.navigate({ routeName: ASSETS }));
-      await dispatch(connectSmartWalletAccountAction(address));
-      await dispatch(fetchAssetsBalancesAction());
-      dispatch(fetchCollectiblesAction());
-      await dispatch(deploySmartWalletAction());
-    } else {
-      const unsentTransactions = _unsentTransactions.sort(
-        // $FlowFixMe
-        (_a, _b) => _a.signedTransaction.nonce - _b.signedTransaction.nonce,
-      );
-      // grab first in queue
-      const unsentTransaction = unsentTransactions[0];
-      const transactionHash = await dispatch(sendSignedAssetTransactionAction(unsentTransaction));
-      if (!transactionHash) {
-        Toast.show({
-          message: 'Failed to send signed asset',
-          type: 'warning',
-          title: 'Unable to upgrade',
-          autoClose: false,
-        });
-        return;
-      }
-      printLog('sent new asset transfer transaction: ', transactionHash);
-      // $FlowFixMe
-      const { signedTransaction: { signedHash } } = unsentTransaction;
-      const assetTransferTransaction = {
-        ...unsentTransaction,
-        transactionHash,
-      };
-      updatedTransactions = updatedTransactions
-        .filter(
-          // $FlowFixMe
-          transaction => transaction.signedTransaction.signedHash !== signedHash,
-        )
-        .concat({
-          ...assetTransferTransaction,
-          status: TX_PENDING_STATUS,
-        });
-      waitForTransaction(transactionHash)
-        .then(async () => {
-          const _updatedTransactions = updatedTransactions
-            .filter(
-              // $FlowFixMe
-              _transaction => _transaction.transactionHash !== transactionHash,
-            ).concat({
-              ...assetTransferTransaction,
-              status: TX_CONFIRMED_STATUS,
-            });
-          await dispatch(setAssetsTransferTransactionsAction(_updatedTransactions));
-          dispatch(checkAssetTransferTransactionsAction());
-        })
-        .catch(() => null);
-    }
-    dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
   };
 };
 
@@ -729,44 +573,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txType = get(event, 'payload.transactionType', '');
       const txFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
-
-      // check status for assets transfer during migration
-      const transferTransactions = get(getState(), 'smartWallet.upgrade.transfer.transactions', []);
-      if (!isEmpty(transferTransactions) && txStatus === TRANSACTION_COMPLETED) {
-        const transferTxFound = transferTransactions.find(
-          ({ transactionHash }) => isCaseInsensitiveMatch(transactionHash, txHash),
-        );
-        if (transferTxFound) {
-          const updatedTransactions = transferTransactions.filter(
-            ({ transactionHash }) => transactionHash !== transferTxFound.transactionHash,
-          );
-          updatedTransactions.push({
-            ...transferTxFound,
-            status: TX_CONFIRMED_STATUS,
-          });
-          await dispatch(setAssetsTransferTransactionsAction(updatedTransactions));
-
-          const { txUpdated, updatedHistory } = updateHistoryRecord(
-            currentHistory,
-            txHash,
-            (transaction) => ({
-              ...transaction,
-              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
-              gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-              status: TX_CONFIRMED_STATUS,
-            }));
-
-          if (txUpdated) {
-            dispatch(saveDbAction('history', { history: updatedHistory }, true));
-            dispatch({
-              type: SET_HISTORY,
-              payload: updatedHistory,
-            });
-            currentHistory = getState().history.data;
-          }
-        }
-        dispatch(checkAssetTransferTransactionsAction());
-      }
 
       if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
         let notificationMessage;

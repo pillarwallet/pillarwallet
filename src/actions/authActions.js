@@ -79,7 +79,7 @@ import { setupSentryAction } from './appActions';
 import { signalInitAction } from './signalClientActions';
 import { initOnLoginSmartWalletAccountAction, switchAccountAction } from './accountsActions';
 import { updatePinAttemptsAction } from './walletActions';
-import { fetchTransactionsHistoryAction, patchSmartWalletSentSignedTransactionsAction } from './historyActions';
+import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
@@ -231,9 +231,6 @@ export const loginAction = (
           const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
           if (keyBasedAccount) dispatch(switchAccountAction(keyBasedAccount.id));
         }
-
-        // patch after moved to ethers v4 and signed transaction result was providing new results
-        if (smartWalletFeatureEnabled) dispatch(patchSmartWalletSentSignedTransactionsAction());
       } else {
         api.init();
       }
