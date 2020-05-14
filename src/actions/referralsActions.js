@@ -54,7 +54,6 @@ import {
   REFER_FLOW,
   REFERRAL_SENT,
   REFERRAL_CONTACT_INFO_MISSING,
-  REFERRAL_INCOMING_REWARD,
 } from 'constants/navigationConstants';
 
 // components
@@ -216,6 +215,7 @@ export const startReferralsListenerAction = () => {
   return (dispatch: Dispatch) => {
     if (branchIoSubscription) return;
 
+
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) {
         reportLog('Branch.io Subscribe error', error, 'error');
@@ -230,10 +230,6 @@ export const startReferralsListenerAction = () => {
         email,
         phone,
       ));
-
-      if (token) {
-        navigate(REFERRAL_INCOMING_REWARD);
-      }
     });
   };
 };

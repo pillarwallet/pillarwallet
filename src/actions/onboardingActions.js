@@ -39,7 +39,7 @@ import {
   INVALID_USERNAME,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, HOME } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, HOME, REFERRAL_INCOMING_REWARD } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -240,15 +240,26 @@ const finishRegistration = async ({
   }
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean) => {
+const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
   toastWalletBackup(isWalletBackedUp);
 
-  const navigateToAssetsAction = NavigationActions.navigate({
+  const navigateToHomeScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: HOME }),
   });
-  navigate(navigateToAssetsAction);
+
+  const navigateToIncommingRewardScreen = NavigationActions.navigate({
+    routeName: APP_FLOW,
+    params: {},
+    action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
+  });
+
+  if (showIncomingReward) {
+    navigate(navigateToIncommingRewardScreen);
+  } else {
+    navigate(navigateToHomeScreen);
+  }
 };
 
 export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
@@ -381,9 +392,12 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
-    // STEP 7: all done, navigate to the home screen
+    // STEP 7: check if user ir referred to install the app
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    // STEP 8: all done, navigate to the home screen or incoming reward screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+    navigateToAppFlow(isWalletBackedUp, !!referralToken);
   };
 };
 
@@ -441,7 +455,10 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    navigateToAppFlow(isWalletBackedUp, !!referralToken);
   };
 };
 

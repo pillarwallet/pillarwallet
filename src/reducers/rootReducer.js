@@ -137,7 +137,6 @@ export type RootReducerState = {|
   ensRegistry: EnsRegistryReducerState,
   referrals: ReferralsReducerState,
   insights: InsightsReducerState,
-  referrals: ReferralsReducerState,
   phoneContacts: PhoneContactsReducerState,
 |};
 

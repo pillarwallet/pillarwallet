@@ -26,7 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { Wrapper } from 'components/Layout';
+import { Wrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText, Paragraph, TextLink } from 'components/Typography';
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -35,10 +35,9 @@ import ProfileImage from 'components/ProfileImage';
 import { InputTemplate, Form } from 'components/ProfileForm';
 import { Username, MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
 import Checkbox from 'components/Checkbox';
-import { NextFooter } from 'components/Layout/NextFooter';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
-import { fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing, appFont, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
 
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
@@ -73,11 +72,7 @@ const ContentWrapper = styled.View`
 
 const StyledWrapper = styled.View`
   flex-grow: 1;
-  padding: ${spacing.layoutSides}px;
-`;
-
-const InnerWrapper = styled.View`
-  padding: 0 4px;
+  padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -89,10 +84,9 @@ const StyledTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
-const Label = styled(MediumText)`
-  ${fontStyles.medium};
-  margin-top: 30px;
-  margin-bottom: ${spacing.large}px;
+const FooterWrapper = styled.View`
+  padding: 0 ${spacing.layoutSides}px 20px;
+  width: 100%;
 `;
 
 const formStructure = t.struct({
@@ -113,12 +107,16 @@ const getDefaultFormOptions = (inputDisabled: boolean, showRightPlaceholder?: bo
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
-          autoFocus: false,
+          autoFocus: true,
         },
         statusIcon: null,
         statusIconColor: null,
         inputType: 'bigText',
         rightPlaceholder: showRightPlaceholder ? '.pillar.eth' : null,
+        additionalStyle: {
+          fontSize: fontSizes.large,
+          fontFamily: appFont.medium,
+        },
       },
     },
   },
@@ -307,12 +305,6 @@ class NewProfile extends React.Component<Props, State> {
     const { value, formOptions } = this.state;
     return (
       <StyledWrapper>
-        <InnerWrapper>
-          { /* <Paragraph>
-            Pillar is next generation smart wallet, payment network and identity manager.
-          </Paragraph> */ }
-          <Label>Please choose a username</Label>
-        </InnerWrapper>
         <LoginForm
           innerRef={node => { this._form = node; }}
           type={formStructure}
@@ -320,11 +312,7 @@ class NewProfile extends React.Component<Props, State> {
           value={value}
           onChange={this.handleChange}
         />
-        <InnerWrapper>
-          <Paragraph>
-            This is how other people will find and recognize you on the Pillar platform.
-          </Paragraph>
-        </InnerWrapper>
+        <BaseText regular>This cannot be changed later</BaseText>
       </StyledWrapper>
     );
   }
@@ -387,7 +375,7 @@ class NewProfile extends React.Component<Props, State> {
       ? {
         centerItems: [
           {
-            title: 'Choose username',
+            title: 'Choose a username',
           },
         ],
       }
@@ -404,10 +392,7 @@ class NewProfile extends React.Component<Props, State> {
         putContentInScrollView={!apiUser.walletId}
         keyboardShouldPersistTaps="always"
         footer={!apiUser.walletId && (
-          <NextFooter
-            onNextPress={this.handleSubmit}
-            nextDisabled={!allowNext}
-          >
+          <FooterWrapper>
             {!importedWallet &&
             <React.Fragment>
               <Checkbox
@@ -442,9 +427,14 @@ class NewProfile extends React.Component<Props, State> {
                 </CheckboxText>
               </Checkbox>
             </React.Fragment>}
-          </NextFooter>
+            <Spacing h={22} />
+            <Button
+              title="Next"
+              onPress={this.handleSubmit}
+              disabled={!allowNext}
+            />
+          </FooterWrapper>
         )}
-        shouldFooterAvoidKeyboard={false}
       >
         <ContentWrapper>
           {!apiUser.walletId && this.renderChooseUsernameScreen()}
