@@ -47,6 +47,7 @@ import {
   SET_REFERRAL_REWARD_AMOUNT,
   SET_ALREADY_INVITED_CONTACTS,
   FETCHING_REFERRAL_REWARD_AMOUNT,
+  SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
 } from 'constants/referralsConstants';
 import {
   APP_FLOW,
@@ -64,6 +65,7 @@ import { navigate } from 'services/navigation';
 
 // utils
 import { reportLog } from 'utils/common';
+
 
 export type ClaimTokenAction = {
   walletId: string,
@@ -332,6 +334,22 @@ export const fetchReferralRewardAction = () => {
     dispatch({
       type: SET_REFERRAL_REWARD_AMOUNT,
       payload: referralRewards,
+    });
+  };
+};
+
+export const fetchReferralRewardsIssuerAddressesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+      referrals: { referralToken },
+    } = getState();
+
+    const addresses = await api.getReferralRewardIssuerAddress(walletId, referralToken);
+
+    dispatch({
+      type: SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
+      payload: addresses,
     });
   };
 };

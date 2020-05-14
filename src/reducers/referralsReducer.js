@@ -30,6 +30,7 @@ import {
   CLAIM_REWARD,
   SET_REFERRAL_REWARD_AMOUNT,
   FETCHING_REFERRAL_REWARD_AMOUNT,
+  SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
 } from 'constants/referralsConstants';
 
 export type SentInvitationsCount = {
@@ -58,6 +59,8 @@ export type InviteSentPayload = {
   alreadyInvitedContacts: ReferralContact[],
   sentInvitationsCount: SentInvitationsCount,
 };
+
+export type ReferralRewardsIssuersAddresses = string[];
 
 type ReferralsAllowPhoneContactsAccess = {|
   type: 'ALLOW_ACCESS_PHONE_CONTACTS',
@@ -128,6 +131,7 @@ export type ReferralsReducerState = {|
   isRewardClaimed: boolean,
   rewards: RewardsByCompany,
   isFetchingRewards: boolean,
+  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
 |};
 
 export const initialState: ReferralsReducerState = {
@@ -145,6 +149,7 @@ export const initialState: ReferralsReducerState = {
   isRewardClaimed: false,
   rewards: {},
   isFetchingRewards: false,
+  referralRewardIssuersAddresses: [],
 };
 
 
@@ -243,6 +248,9 @@ export default function referralsReducer(
 
     case SET_REFERRAL_REWARD_AMOUNT:
       return { ...state, rewards: { ...state.rewards, ...action.payload }, isFetchingRewards: false };
+
+    case SET_REFERRAL_REWARD_ISSUER_ADDRESSES:
+      return { ...state, referralRewardIssuersAddresses: action.payload };
 
     default:
       return state;

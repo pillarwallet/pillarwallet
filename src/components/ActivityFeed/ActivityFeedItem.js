@@ -93,6 +93,7 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 
 
 type Props = {
@@ -115,6 +116,7 @@ type Props = {
   assetDecimals: number,
   bitcoinAddresses: BitcoinAddress[],
   isPPNView?: boolean,
+  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
 };
 
 type EventData = {
@@ -168,6 +170,7 @@ const ItemValue = styled(BaseText)`
   color: ${themedColors.positive};
   text-align: right;
 `;
+
 
 export class ActivityFeedItem extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -301,8 +304,17 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   getTransactionEventData = (event: Object) => {
     const {
-      ensRegistry, activeBlockchainNetwork, assetDecimals, accounts, contacts, contactsSmartAddresses, theme, isPPNView,
+      ensRegistry,
+      activeBlockchainNetwork,
+      assetDecimals,
+      accounts,
+      contacts,
+      contactsSmartAddresses,
+      theme,
+      isPPNView,
+      referralRewardIssuersAddresses,
     } = this.props;
+
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
@@ -414,6 +426,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             || ensRegistry[relevantAddress]
             || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
+
         let subtext = getAccountName(event.accountType);
         const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
         const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
@@ -426,6 +439,8 @@ export class ActivityFeedItem extends React.Component<Props> {
         } else if (!isReceived && isKWAddress(event.from, accounts)) {
           subtext = `from ${keyWallet}`;
         }
+
+        const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
 
         if (isPPNTransaction) {
           data = {
@@ -454,7 +469,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           }
         } else {
           data = {
-            label: usernameOrAddress,
+            label: isReferralRewardTransaction ? 'Referral reward' : usernameOrAddress,
             subtext,
             avatarUrl,
             iconName: !avatarUrl ? directionIcon : null,
@@ -469,7 +484,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       data.subtext = 'Bitcoin wallet';
     }
     return data;
-  }
+  };
 
   getCollectibleTransactionEventData = (event: Object) => {
     const { contacts } = this.props;
@@ -587,11 +602,13 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
+  referrals: { referralRewardIssuersAddresses },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
   ensRegistry,
   accounts,
+  referralRewardIssuersAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

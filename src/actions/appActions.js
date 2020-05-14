@@ -54,7 +54,6 @@ import {
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   SET_SMART_WALLET_ACCOUNTS,
-  SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SET_SMART_WALLET_UPGRADE_STATUS,
   SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
@@ -210,14 +209,12 @@ export const initAppAndRedirectAction = () => {
       dispatch(loadBitcoinBalancesAction());
 
       const {
-        upgradeTransferTransactions = [],
         upgradeStatus = null,
         accounts: smartAccounts = [],
         deploymentData = {},
         lastSyncedPaymentId = null,
         lastSyncedTransactionId = null,
       } = get(storageData, 'smartWallet', {});
-      dispatch({ type: SET_SMART_WALLET_ASSETS_TRANSFER_TRANSACTIONS, payload: upgradeTransferTransactions });
       dispatch({ type: SET_SMART_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
       dispatch({ type: SET_SMART_WALLET_ACCOUNTS, payload: smartAccounts });
       dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_DATA, payload: deploymentData });

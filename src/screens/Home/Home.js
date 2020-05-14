@@ -61,7 +61,7 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { goToInvitationFlowAction, fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
 
 // selectors
@@ -123,6 +123,7 @@ type Props = {
   hideBadges: boolean,
   toggleBadges: () => void,
   walletConnectRequests: CallRequest[],
+  fetchReferralRewardsIssuerAddresses: () => void,
 };
 
 type State = {
@@ -177,6 +178,7 @@ class HomeScreen extends React.Component<Props, State> {
       logScreenView,
       fetchBadges,
       fetchBadgeAwardHistory,
+      fetchReferralRewardsIssuerAddresses,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -188,6 +190,7 @@ class HomeScreen extends React.Component<Props, State> {
     });
     fetchBadges();
     fetchBadgeAwardHistory();
+    fetchReferralRewardsIssuerAddresses();
   }
 
   componentWillUnmount() {
@@ -218,12 +221,15 @@ class HomeScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
+      fetchReferralRewardsIssuerAddresses,
     } = this.props;
+
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
     fetchTransactionsHistory();
+    fetchReferralRewardsIssuerAddresses();
   };
 
   setActiveTab = (activeTab) => {
@@ -538,6 +544,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
+  fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
