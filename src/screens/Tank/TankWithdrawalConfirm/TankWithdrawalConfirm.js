@@ -57,6 +57,7 @@ type Props = {
   withdrawalFee: WithdrawalFee,
   estimateWithdrawFromVirtualAccount: Function,
   withdrawFromVirtualAccount: Function,
+  smartWalletAccountSupportsGasToken: boolean,
 };
 
 type State = {
@@ -104,14 +105,21 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const { navigation, withdrawFromVirtualAccount } = this.props;
     this.setState({ buttonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
-    const payForGasWithToken = !!get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
+    const payForGasWithToken = !!this.getGasToken();
     await withdrawFromVirtualAccount(amount, payForGasWithToken);
     this.setState({ buttonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'withdrawalFee.feeInfo.gasTokenCost')
-      || get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
+    const gasTokenCost = get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
+    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
+    return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
+  };
+
+  getGasToken = () => {
+    return this.props.smartWalletAccountSupportsGasToken
+      ? get(this.props, 'withdrawalFee.feeInfo.gasToken')
+      : null;
   };
 
   render() {
@@ -119,7 +127,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const { buttonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
 
-    const gasToken = get(this.props, 'withdrawalFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     const submitButtonTitle = buttonSubmitted
@@ -165,9 +173,11 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   paymentNetwork: { withdrawalFee },
+  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }) => ({
   session,
   withdrawalFee,
+  smartWalletAccountSupportsGasToken,
 });
 
 const mapDispatchToProps = (dispatch) => ({

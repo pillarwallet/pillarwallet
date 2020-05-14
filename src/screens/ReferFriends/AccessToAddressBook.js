@@ -60,8 +60,6 @@ class AccessToAddressBook extends React.PureComponent<Props> {
         <Wrapper flex={1} regularPadding>
           <Paragraph style={{ marginTop: spacing.layoutSides }}>
             Please grant access to your address book in order to be able to choose your phone or email contacts.
-            It is totally safe to provide this and neither Pillar nor other third parties would have access to this
-            data.
           </Paragraph>
           <ButtonWrapper>
             <Button title="Confirm" onPress={this.navigateToContactsScreen} block />
