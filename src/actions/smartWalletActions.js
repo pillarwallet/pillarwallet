@@ -212,7 +212,6 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
 
       const accountAssets = accountAssetsSelector(getState());
       if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction(false));
-      dispatch(fetchConnectedAccountAction());
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
