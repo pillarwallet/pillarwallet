@@ -379,7 +379,7 @@ jobs:
       - run:
           name: Set slack message
           command: |
-            aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
+            aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
       - run:
           name: Install coureutils
           command: |
@@ -508,7 +508,7 @@ jobs:
       - run:
           name: Set slack message
           command: |
-            aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
+            aws --region eu-west-2 s3 cp $PROD_KEYSTORE_S3_BUCKET/android_prod.txt .
       - run:
           name: Install npm latest
           command: sudo npm install -g npm@latest
