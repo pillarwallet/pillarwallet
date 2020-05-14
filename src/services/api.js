@@ -337,6 +337,20 @@ class SDKWrapper {
       .catch(() => ({}));
   }
 
+  getReferralRewardIssuerAddress(walletId: string, referralToken: ?string) {
+    const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
+      .then(({ data }) => {
+        const campaignsData = get(data, 'campaigns', {});
+        return Object.keys(campaignsData).reduce((memo, campaign) => {
+          if (!campaignsData[campaign].address) return memo;
+          return [...memo, campaignsData[campaign].address];
+        }, []);
+      })
+      .catch(() => []);
+  }
+
   updateUserAvatar(walletId: string, formData: Object) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
