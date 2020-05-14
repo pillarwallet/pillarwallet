@@ -72,12 +72,6 @@ export type Rates = {
   },
 };
 
-export type AssetTransfer = {
-  name: string,
-  amount: number,
-  gasLimit?: number,
-};
-
 export type SyntheticAsset = Asset & {
   availableBalance: number,
   exchangeRate?: number,
