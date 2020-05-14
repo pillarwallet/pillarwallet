@@ -29,17 +29,14 @@ import type {
   Rates,
 } from 'models/Asset';
 
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-
 import BalanceView from 'components/PortfolioBalance/BalanceView';
-import { MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { accountBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import { allBalancesSelector } from 'selectors/balances';
 
 
 type Props = {
@@ -48,7 +45,6 @@ type Props = {
   bitcoinBalances: BitcoinBalance,
   fiatCurrency: string,
   style: Object,
-  blockchainNetwork: ?string,
   showBalance: boolean,
   toggleBalanceVisibility: () => void,
 };
@@ -72,33 +68,33 @@ const ContentWrapper = styled.View`
 `;
 
 const ToggleIcon = styled(Icon)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${({ bigger }) => bigger ? fontSizes.large : fontSizes.medium}px;
   color: ${themedColors.accent};
   margin-left: 6px;
+  margin-bottom: 5px;
 `;
 
 const BalanceText = styled(MediumText)`
   ${fontStyles.big};
+  margin-bottom: 8px;
 `;
 
+const LabelText = styled(BaseText)`
+  color: ${themedColors.secondaryText};
+  font-size: ${fontSizes.regular}px;
+  margin-bottom: 8px;
+`;
 
-const networkBalance = (props: Props): number => {
+const getCombinedBalances = (props: Props): number => {
   const {
     balances,
     fiatCurrency,
     rates,
-    blockchainNetwork,
     bitcoinBalances,
   } = props;
 
-  switch (blockchainNetwork) {
-    case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-      return calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency);
-
-    case BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK:
-    default:
-      return calculateBalanceInFiat(rates, balances, fiatCurrency);
-  }
+  return calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency)
+    + calculateBalanceInFiat(rates, balances, fiatCurrency);
 };
 
 class PortfolioBalance extends React.PureComponent<Props> {
@@ -110,10 +106,11 @@ class PortfolioBalance extends React.PureComponent<Props> {
       toggleBalanceVisibility,
     } = this.props;
 
-    const balance = networkBalance(this.props);
+    const combinedBalance = getCombinedBalances(this.props);
 
     return (
       <BalanceWrapper>
+        <LabelText>Total balance</LabelText>
         <BalanceButton onPress={toggleBalanceVisibility}>
           <ContentWrapper>
             {!showBalance
@@ -122,11 +119,10 @@ class PortfolioBalance extends React.PureComponent<Props> {
                 <BalanceView
                   style={style}
                   fiatCurrency={fiatCurrency}
-                  balance={balance}
+                  balance={combinedBalance}
                 />)
             }
-            {showBalance && <ToggleIcon name="hidden" /> // different icon name will be passed when !showBalance
-            }
+            <ToggleIcon name={showBalance ? 'hidden' : 'visible'} bigger={!showBalance} />
           </ContentWrapper>
         </BalanceButton>
       </BalanceWrapper>
@@ -137,16 +133,13 @@ class PortfolioBalance extends React.PureComponent<Props> {
 const mapStateToProps = ({
   rates: { data: rates },
   bitcoin: { data: { balances: bitcoinBalances } },
-  appSettings: { data: { blockchainNetwork } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   bitcoinBalances,
-  blockchainNetwork,
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
-  assets: accountAssetsSelector,
+  balances: allBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
