@@ -63,6 +63,7 @@ import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesA
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -123,6 +124,7 @@ type Props = {
   hideBadges: boolean,
   toggleBadges: () => void,
   walletConnectRequests: CallRequest[],
+  fetchAllAccountsBalances: () => void,
 };
 
 type State = {
@@ -218,12 +220,14 @@ class HomeScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
+      fetchAllAccountsBalances,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
     fetchTransactionsHistory();
+    fetchAllAccountsBalances();
   };
 
   setActiveTab = (activeTab) => {
@@ -538,6 +542,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
+  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
