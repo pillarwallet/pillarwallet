@@ -237,25 +237,30 @@ export const resetSmartWalletDeploymentDataAction = () => {
 };
 
 export const connectSmartWalletAccountAction = (accountId: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-    let connectedAccount = await smartWalletService.connectAccount(accountId);
-    if (!connectedAccount) {
-      Toast.show({
-        message: 'Failed to connect to Smart Wallet account',
-        type: 'warning',
-        title: 'Unable to connect',
-        autoClose: false,
+    let { smartWallet: { connectedAccount } } = getState();
+
+    if (isEmpty(connectedAccount)) {
+      connectedAccount = await smartWalletService.connectAccount(accountId);
+      if (!connectedAccount) {
+        Toast.show({
+          message: 'Failed to connect to Smart Wallet account',
+          type: 'warning',
+          title: 'Unable to connect',
+          autoClose: false,
+        });
+        return;
+      }
+      if (accountHasGasTokenSupport(connectedAccount)) {
+        connectedAccount = { ...connectedAccount, gasTokenSupported: true };
+      }
+      dispatch({
+        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+        payload: connectedAccount,
       });
-      return;
     }
-    if (accountHasGasTokenSupport(connectedAccount)) {
-      connectedAccount = { ...connectedAccount, gasTokenSupported: true };
-    }
-    dispatch({
-      type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-      payload: connectedAccount,
-    });
+
     dispatch(setActiveAccountAction(accountId));
   };
 };
