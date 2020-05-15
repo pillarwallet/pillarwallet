@@ -43,4 +43,3 @@ export const SMART_WALLET_DEPLOYMENT_ERRORS = {
 export const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 export const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');
 export const SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER = 'SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER';
-export const SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED = 'SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED';
