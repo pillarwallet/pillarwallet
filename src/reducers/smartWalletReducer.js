@@ -28,7 +28,6 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
-  SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED,
 } from 'constants/smartWalletConstants';
 import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
 
@@ -133,14 +132,6 @@ export default function smartWalletReducer(
         upgrade: {
           ...state.upgrade,
           deploymentStarted: false,
-        },
-      };
-    case SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED:
-      return {
-        ...state,
-        connectedAccount: {
-          ...state.connectedAccount,
-          gasTokenSupported: true,
         },
       };
     default:

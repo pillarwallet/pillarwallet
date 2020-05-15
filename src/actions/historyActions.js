@@ -56,7 +56,10 @@ import { extractBitcoinTransactions } from 'utils/bitcoin';
 
 // services
 import smartWalletService from 'services/smartWallet';
+
+// selectors
 import { accountAssetsSelector } from 'selectors/assets';
+import { isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -158,7 +161,7 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId, connectedAccount },
+      smartWallet: { lastSyncedTransactionId },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -172,12 +175,13 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountId = getActiveAccountId(accounts);
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = accountAssetsSelector(getState());
+    const isSmartWalletAccountGasTokenSupported = isSmartWalletAccountGasTokenSupportedSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
     const history = parseSmartWalletTransactions(
       smartWalletTransactions,
       supportedAssets,
       assetsList,
-      connectedAccount,
+      isSmartWalletAccountGasTokenSupported,
     );
 
     if (!history.length) return;

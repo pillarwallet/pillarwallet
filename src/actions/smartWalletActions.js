@@ -45,7 +45,6 @@ import {
   PAYMENT_COMPLETED,
   PAYMENT_PROCESSED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
-  SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -98,10 +97,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 // actions
 import { addAccountAction, setActiveAccountAction, switchAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
-import {
-  fetchAssetsBalancesAction,
-  fetchInitialAssetsAction,
-} from 'actions/assetsActions';
+import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { fetchSmartWalletTransactionsAction, insertTransactionAction } from 'actions/historyActions';
 
@@ -117,9 +113,7 @@ import type { SendNavigateOptions } from 'models/Navigation';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import { getActiveAccountAddress, getActiveAccountId, normalizeForEns } from 'utils/accounts';
 import {
-  accountHasGasTokenSupport,
   buildSmartWalletTransactionEstimate,
-  deviceHasGasTokenSupport,
   isConnectedToSmartAccount,
   isHiddenUnsettledTransaction,
 } from 'utils/smartWallet';
@@ -198,6 +192,18 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
   };
 };
 
+export const fetchConnectedAccountAction = () => {
+  return async (dispatch: Dispatch) => {
+    const account = await smartWalletService.fetchConnectedAccount();
+    if (account) {
+      dispatch({
+        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
+        payload: account,
+      });
+    }
+  };
+};
+
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
@@ -206,11 +212,6 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
 
       const accountAssets = accountAssetsSelector(getState());
       if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction(false));
-
-      const { smartWallet: { connectedAccount } } = getState();
-      if (accountHasGasTokenSupport(connectedAccount)) {
-        dispatch({ type: SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED });
-      }
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
@@ -252,13 +253,12 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
         });
         return;
       }
-      if (accountHasGasTokenSupport(connectedAccount)) {
-        connectedAccount = { ...connectedAccount, gasTokenSupported: true };
-      }
       dispatch({
         type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
         payload: connectedAccount,
       });
+    } else {
+      dispatch(fetchConnectedAccountAction());
     }
 
     dispatch(setActiveAccountAction(accountId));
@@ -288,9 +288,7 @@ export const deploySmartWalletAction = () => {
     await dispatch(setActiveAccountAction(accountAddress));
 
     if (accountState === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletUpgradeStatusAction(
-        SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
-      ));
+      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       printLog('deploySmartWalletAction account is already deployed!');
       return;
     }
@@ -317,20 +315,12 @@ export const deploySmartWalletAction = () => {
 
     // depends from where it's called status might already be `deploying`
     if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYING) {
-      await dispatch(setSmartWalletUpgradeStatusAction(
-        SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      ));
+      await dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYING));
     }
 
     // update account info
     await dispatch(loadSmartWalletAccountsAction());
-    const account = await smartWalletService.fetchConnectedAccount();
-    if (account) {
-      dispatch({
-        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-        payload: account,
-      });
-    }
+    dispatch(fetchConnectedAccountAction());
   };
 };
 
@@ -552,13 +542,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
           navigate(WALLET_ACTIVATED);
         }
-
-        // smart wallet account relayer device deployment check
-        const gasTokenSupportedPrev = get(getState(), 'smartWallet.connectedAccount.gasTokenSupported');
-        const gasTokenSupportedNew = deviceHasGasTokenSupport(event.payload);
-        if (!gasTokenSupportedPrev && gasTokenSupportedNew) {
-          dispatch({ type: SET_SMART_WALLET_ACCOUNT_GAS_TOKEN_SUPPORTED });
-        }
       }
     }
 
@@ -705,13 +688,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     if (event.name === ACCOUNT_UPDATED && !event.payload.nextState) {
       // update account info
       await dispatch(loadSmartWalletAccountsAction());
-      const account = await smartWalletService.fetchConnectedAccount();
-      if (account) {
-        dispatch({
-          type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-          payload: account,
-        });
-      }
+      dispatch(fetchConnectedAccountAction());
     }
 
     printLog(event);
@@ -1361,13 +1338,6 @@ export const switchToGasTokenRelayerAction = () => {
       tag: SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
     });
     dispatch(insertTransactionAction(historyTx, accountId));
-    // get updated devices
-    const connectedAccount = await smartWalletService.fetchConnectedAccount();
-    if (connectedAccount) {
-      dispatch({
-        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-        payload: connectedAccount,
-      });
-    }
+    dispatch(fetchConnectedAccountAction());
   };
 };
