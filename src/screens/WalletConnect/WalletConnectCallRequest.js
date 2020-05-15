@@ -210,8 +210,13 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   };
 
   getGasPriceWei = () => {
-    const gasPrice = this.props.gasInfo.gasPrice.avg || 0;
-    return utils.parseUnits(gasPrice.toString(), 'gwei');
+    // use requested gasPrice if it exists and is bigger than our average
+    // which allows users/dapps to set higher gasPrices to avoid lengthy TXs
+    const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
+    const gasPriceFromRequestHex = this.getGasPriceFromRequest();
+    const gasPriceFromRequest = this.transactionHasGasInfo() ? utils.bigNumberify(gasPriceFromRequestHex) : 0;
+    if (gasPriceFromRequest >= avgGasPrice) return gasPriceFromRequestHex;
+    return utils.parseUnits(avgGasPrice.toString(), 'gwei');
   };
 
   /**
@@ -225,19 +230,40 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
    *  `gasPrice = utils.bigNumberify(gasPrice);`
    *  and both gasPrice and gasLimit is not always present from plaforms
    */
-  getTxFeeInWei = (gasLimit?: number): BigNumber => {
+  getTxFeeInWei = (): BigNumber => {
     const { activeAccount } = this.props;
     if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
       return this.getSmartWalletTxFeeInWei();
     }
 
-    // calculate either with gasLimit in state or provided as param
-    if (!gasLimit) ({ gasLimit } = this.state);
+    const gasLimit = this.getGasLimit();
 
     const gasPriceWei = this.getGasPriceWei();
 
     return gasPriceWei.mul(gasLimit);
   };
+
+  getGasLimit = () => {
+    // use requested gasLimit if it exists and is bigger than our average
+    const { gasLimit: estGasLimit } = this.state;
+    const { request: { params = [] } } = this;
+    if (!this.transactionHasGasInfo() || !params[0] || !params[0].gasLimit) return estGasLimit;
+    const gasLimitFromRequest = utils.bigNumberify(params[0].gasLimit);
+    return gasLimitFromRequest && gasLimitFromRequest > estGasLimit ? gasLimitFromRequest : estGasLimit;
+  }
+
+  transactionHasGasInfo = () => {
+    const { request: { params = [] } } = this;
+    if (!params.length) return false;
+    const { gasLimit, gasPrice } = params[0];
+    if (!(gasLimit && gasPrice)) return false;
+    return true;
+  }
+
+  getGasPriceFromRequest = () => {
+    const { request: { params = [] } } = this;
+    return params[0].gasPrice;
+  }
 
   updateTxFee = async () => {
     const txFeeInWei = await this.getTxFeeInWei();
