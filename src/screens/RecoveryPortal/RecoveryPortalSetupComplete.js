@@ -110,7 +110,7 @@ class RecoveryPortalSetupComplete extends React.PureComponent<Props> {
             {isWalletBackupNeeded &&
               <Button
                 block
-                title="Backup my Private Key"
+                title="Backup my Seed Phrase"
                 onPress={() => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW)}
                 marginTop={50}
                 marginBottom={spacing.large}

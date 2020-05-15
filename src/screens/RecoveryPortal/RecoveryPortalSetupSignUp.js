@@ -165,6 +165,7 @@ class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
               onNavigationStateChange={this.onNavigationStateChange}
               renderLoading={this.renderWebViewLoading}
               originWhitelist={['*']}
+              cacheEnabled={false}
               hideKeyboardAccessoryView
               startInLoadingState
               incognito

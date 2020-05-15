@@ -49,7 +49,11 @@ import type { Transaction } from 'models/Transaction';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
+import {
+  activeAccountAddressSelector,
+  activeAccountSelector,
+  isSmartWalletAccountGasTokenSupportedSelector,
+} from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
@@ -70,7 +74,7 @@ type Props = {
   updateAppSettings: (path: string, value: any) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  smartWalletAccountSupportsGasToken: ?boolean,
+  isSmartWalletAccountGasTokenSupported: ?boolean,
   accountHistory: Transaction[],
 };
 
@@ -114,7 +118,7 @@ class SendTokenAmount extends React.Component<Props> {
       navigation,
       accountAssets,
       supportedAssets,
-      smartWalletAccountSupportsGasToken,
+      isSmartWalletAccountGasTokenSupported,
       accountHistory,
     } = this.props;
     const { token } = this.assetData;
@@ -126,7 +130,7 @@ class SendTokenAmount extends React.Component<Props> {
     const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     if (isSmartAccount
-      && smartWalletAccountSupportsGasToken
+      && isSmartWalletAccountGasTokenSupported
       && !isEmpty(gasTokenData)) {
       const { decimals, address, symbol } = gasTokenData;
       gasToken = { decimals, address, symbol };
@@ -160,14 +164,12 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, transactionSpeed } },
   assets: { supportedAssets },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   baseFiatCurrency,
   transactionSpeed,
   supportedAssets,
-  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -176,6 +178,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
+  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

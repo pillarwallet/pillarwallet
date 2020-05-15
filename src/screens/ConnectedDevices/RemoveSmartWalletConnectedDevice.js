@@ -145,7 +145,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
     const { deployEstimateFee: currentDeployEstimateFee } = this.state;
     // set "getting fee" (fee is 0) state
     if (currentDeployEstimateFee !== 0) this.setState({ deployEstimateFee: 0 });
-    smartWalletService.estimateAccountDeviceDeployment(this.device.address, gasInfo)
+    smartWalletService.estimateAccountDeviceUnDeployment(this.device.address, gasInfo)
       .then(deployEstimateFee => this.setState({ deployEstimateFee }))
       .catch(() => {});
   };

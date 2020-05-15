@@ -29,7 +29,6 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   MANAGE_CONNECTED_DEVICES,
   RECOVERY_PORTAL_SETUP_INTRO,
-  RECOVERY_PORTAL_WALLET_RECOVERY_INTRO,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -68,7 +67,6 @@ class RecoverySettings extends React.Component<Props, State> {
         title: 'Linked devices',
         subtitle: 'Manage Smart Wallet account devices',
         onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
-        label: '(Not Set))',
       },
       {
         key: 'linkedDevices',

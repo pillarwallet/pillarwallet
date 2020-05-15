@@ -22,15 +22,15 @@ import { Alert, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
 import isEqual from 'lodash.isequal';
+import get from 'lodash.get';
+import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { addRecoveryPortalDeviceAction } from 'actions/recoveryPortalActions';
 
 // components
@@ -44,37 +44,50 @@ import ButtonText from 'components/ButtonText';
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
-import { formatAmount, getCurrencySymbol } from 'utils/common';
-import { getRate, getBalance, addressesEqual } from 'utils/assets';
+import { ETH } from 'constants/assetsConstants';
+import { formatTransactionFee } from 'utils/common';
+import { checkIfSmartWalletAccount } from 'utils/accounts';
+import {
+  addressesEqual,
+  getAssetDataByAddress,
+  getAssetsAsList,
+  isEnoughBalanceForTransactionFee,
+} from 'utils/assets';
 
 // services
 import smartWalletService from 'services/smartWallet';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { activeAccountSelector, isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
 
-// types, models
-import type { Balances, Rates } from 'models/Asset';
+// types
+import type { Asset, Assets, Balances } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
+import type { GasToken } from 'models/Transaction';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  fetchAssetsBalances: () => void,
   balances: Balances,
   fetchGasInfo: () => void,
   gasInfo: GasInfo,
   isOnline: boolean,
-  baseFiatCurrency: ?string,
-  rates: Rates,
   addRecoveryPortalDevice: (deviceAddress: string) => void,
   addingDeviceAddress: ?string,
+  activeAccount: ?Account,
+  accountAssets: Assets,
+  supportedAssets: Asset[],
+  isSmartWalletAccountGasTokenSupported: boolean,
 };
 
 type State = {
-  deployEstimateFee: BigNumber,
+  gettingFee: boolean,
+  feeByGasToken: boolean,
+  txFeeInWei: BigNumber,
 };
 
 const DetailsTitle = styled(BaseText)`
@@ -111,44 +124,74 @@ const cancelPrompt = (callback) => Alert.alert(
 );
 
 class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State> {
-  gasLimit: number = 0;
+  gasToken: ?GasToken;
   deviceAddress: string;
-  state = { deployEstimateFee: 0 };
 
   constructor(props: Props) {
     super(props);
     this.deviceAddress = props.navigation.getParam('deviceAddress', '');
+
+    const {
+      activeAccount,
+      accountAssets,
+      supportedAssets,
+      isSmartWalletAccountGasTokenSupported,
+    } = props;
+    let feeByGasToken = false;
+    const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
+    const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
+    if (isSmartAccount
+      && isSmartWalletAccountGasTokenSupported
+      && !isEmpty(gasTokenData)) {
+      const { decimals, address, symbol } = gasTokenData;
+      this.gasToken = { decimals, address, symbol };
+      feeByGasToken = true;
+    }
+
+    this.state = {
+      feeByGasToken,
+      txFeeInWei: new BigNumber(0),
+      gettingFee: true,
+    };
   }
 
   componentDidMount() {
-    this.updateGasInfoAndBalances();
+    this.props.fetchGasInfo();
     this.updateDeviceDeploymentFee();
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isOnline, gasInfo } = this.props;
+    const { isOnline, gasInfo, fetchGasInfo } = this.props;
     if (prevProps.isOnline !== isOnline && isOnline) {
-      this.updateGasInfoAndBalances();
-      this.updateDeviceDeploymentFee();
-    } else if (!isEqual(prevProps.gasInfo, gasInfo)) {
+      fetchGasInfo();
+    }
+    if (!isEqual(prevProps.gasInfo, gasInfo)) {
       this.updateDeviceDeploymentFee();
     }
   }
 
-  updateGasInfoAndBalances = () => {
-    const { fetchGasInfo, fetchAssetsBalances } = this.props;
-    fetchGasInfo();
-    fetchAssetsBalances();
-  };
-
   updateDeviceDeploymentFee = () => {
     const { gasInfo } = this.props;
-    const { deployEstimateFee: currentDeployEstimateFee } = this.state;
-    // set "getting fee" (fee is 0) state
-    if (currentDeployEstimateFee !== 0) this.setState({ deployEstimateFee: 0 });
-    smartWalletService.estimateAccountDeviceDeployment(this.deviceAddress, gasInfo)
-      .then(deployEstimateFee => this.setState({ deployEstimateFee }))
-      .catch(() => {});
+    this.setState({ gettingFee: true }, async () => {
+      const { gasTokenCost, cost: ethCost } = await smartWalletService
+        .estimateAccountDeviceDeployment(this.deviceAddress, gasInfo, this.gasToken)
+        .catch(() => {});
+
+      let txFeeInWei;
+      const feeByGasToken = gasTokenCost && gasTokenCost.gt(0);
+      if (feeByGasToken) {
+        txFeeInWei = gasTokenCost;
+      } else {
+        txFeeInWei = ethCost || new BigNumber(0);
+      }
+
+      console.log('feeByGasToken: ', feeByGasToken);
+      console.log('gasTokenCost: ', gasTokenCost);
+      console.log('ethCost: ', ethCost);
+      console.log('updateDeviceDeploymentFee: ', txFeeInWei);
+
+      this.setState({ gettingFee: false, txFeeInWei, feeByGasToken });
+    });
   };
 
   onNextClick = () => this.props.addRecoveryPortalDevice(this.deviceAddress);
@@ -158,38 +201,34 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
   renderDetails = () => {
     const {
       balances,
-      baseFiatCurrency,
-      rates,
       isOnline,
       navigation,
       addingDeviceAddress,
     } = this.props;
-    const { deployEstimateFee } = this.state;
+    const { txFeeInWei, gettingFee, feeByGasToken } = this.state;
 
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const fiatSymbol = getCurrencySymbol(fiatCurrency);
+    // fee
+    const parsedGasToken = feeByGasToken && !isEmpty(this.gasToken) ? this.gasToken : null;
+    const balanceCheckTransaction = {
+      txFeeInWei,
+      amount: 0,
+      gasToken: parsedGasToken,
+    };
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);
+    const feeSymbol = get(parsedGasToken, 'symbol', ETH);
 
-    const feeAccountDeviceDeployEthBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const feeAccountDeviceDeployFiatBN = feeAccountDeviceDeployEthBN.multipliedBy(getRate(rates, ETH, fiatCurrency));
-    const feeAccountDeviceDeployEthFormatted = formatAmount(feeAccountDeviceDeployEthBN.toString());
-    const accountDeviceDeployFee =
-      `${feeAccountDeviceDeployEthFormatted} ETH (${fiatSymbol}${feeAccountDeviceDeployFiatBN.toFixed(2)})`;
-
-    const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
-    const notEnoughEtherForContractDeployment = etherBalanceBN.lt(feeAccountDeviceDeployEthBN);
-
-    let errorMessage = '';
+    let errorMessage;
     if (!isOnline) {
       errorMessage = 'You need to be online in order to connect Recovery Portal as device.';
-    } else if (notEnoughEtherForContractDeployment) {
-      errorMessage = 'There is not enough balance.';
+    } else if (!isEnoughForFee) {
+      errorMessage = `Not enough ${feeSymbol} for transaction fee`;
     }
 
-    const isGettingDeploymentFee = isOnline && parseFloat(deployEstimateFee.toString()) <= 0;
-    const submitButtonTitle = isGettingDeploymentFee
+    const submitButtonTitle = isOnline && gettingFee
       ? 'Getting fee..'
       : 'Confirm';
-    const isSubmitDisabled = !isEmpty(errorMessage) || isGettingDeploymentFee;
+    const isSubmitDisabled = !isEmpty(errorMessage) || gettingFee;
 
     const isDeviceBeingAdded = addressesEqual(addingDeviceAddress, this.deviceAddress);
 
@@ -201,8 +240,8 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
         </DetailsLine>
         <DetailsLine>
           <DetailsTitle>Est. fee for connect transaction</DetailsTitle>
-          {isGettingDeploymentFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
-          {!isGettingDeploymentFee && <DetailsValue>{accountDeviceDeployFee}</DetailsValue>}
+          {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
+          {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>
         {!isEmpty(errorMessage) && <WarningMessage small>{errorMessage}</WarningMessage>}
         {!isDeviceBeingAdded &&
@@ -250,19 +289,20 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
 const mapStateToProps = ({
   session: { data: { isOnline } },
   history: { gasInfo },
-  appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
   connectedDevices: { addingDeviceAddress },
+  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   isOnline,
   gasInfo,
-  baseFiatCurrency,
-  rates,
   addingDeviceAddress,
+  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  activeAccount: activeAccountSelector,
+  accountAssets: accountAssetsSelector,
+  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -272,7 +312,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   addRecoveryPortalDevice: (deviceAddress: string) => dispatch(addRecoveryPortalDeviceAction(deviceAddress)),
 });
 

@@ -61,6 +61,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
 
 
 const ActionsWrapper = styled.View`
@@ -102,7 +103,7 @@ type Props = {
   topUpFee: TopUpFee,
   rates: Rates,
   baseFiatCurrency: ?string,
-  smartWalletAccountSupportsGasToken: boolean,
+  isSmartWalletAccountGasTokenSupported: boolean,
 };
 
 type State = {
@@ -164,12 +165,12 @@ class FundTank extends React.Component<Props, State> {
 
   getTxFeeInWei = (): BigNumber => {
     const gasTokenCost = get(this.props, 'topUpFee.feeInfo.gasTokenCost');
-    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
+    if (this.props.isSmartWalletAccountGasTokenSupported && gasTokenCost) return gasTokenCost;
     return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
   };
 
   getGasToken = () => {
-    return this.props.smartWalletAccountSupportsGasToken
+    return this.props.isSmartWalletAccountGasTokenSupported
       ? get(this.props, 'topUpFee.feeInfo.gasToken')
       : null;
   };
@@ -303,18 +304,17 @@ const mapStateToProps = ({
   rates: { data: rates },
   paymentNetwork: { topUpFee },
   appSettings: { data: { baseFiatCurrency } },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   topUpFee,
   baseFiatCurrency,
-  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
+  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

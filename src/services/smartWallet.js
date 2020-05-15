@@ -521,14 +521,22 @@ class SmartWallet {
     return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed, DEFAULT_GAS_LIMIT, gasToken);
   }
 
-  async estimateAccountDeviceDeployment(deviceAddress: string, gasInfo: GasInfo) {
+  async estimateAccountDeviceDeployment(
+    deviceAddress: string,
+    gasInfo: GasInfo,
+    gasToken: ?GasToken,
+  ) {
     const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(() => {});
-    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
+    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT, gasToken);
   }
 
-  async estimateAccountDeviceUnDeployment(deviceAddress: string, gasInfo: GasInfo) {
+  async estimateAccountDeviceUnDeployment(
+    deviceAddress: string,
+    gasInfo: GasInfo,
+    gasToken: ?GasToken,
+  ) {
     const unDeployEstimate = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress).catch(() => {});
-    return calculateEstimate(unDeployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
+    return calculateEstimate(unDeployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT, gasToken);
   }
 
   getTransactionStatus(hash: string) {
