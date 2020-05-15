@@ -214,7 +214,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     // which allows users/dapps to set higher gasPrices to avoid lengthy TXs
     const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
     const gasPriceFromRequestHex = this.getGasPriceFromRequest();
-    const gasPriceFromRequest = this.transactionHasGasInfo() ? utils.bigNumberify(gasPriceFromRequestHex) : 0;
+    const gasPriceFromRequest = this.transactionHasGasInfo() && gasPriceFromRequestHex ?
+      utils.bigNumberify(gasPriceFromRequestHex)
+      : 0;
     if (gasPriceFromRequest >= avgGasPrice) return gasPriceFromRequestHex;
     return utils.parseUnits(avgGasPrice.toString(), 'gwei');
   };
@@ -246,10 +248,18 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   getGasLimit = () => {
     // use requested gasLimit if it exists and is bigger than our average
     const { gasLimit: estGasLimit } = this.state;
-    const { request: { params = [] } } = this;
-    if (!this.transactionHasGasInfo() || !params[0] || !params[0].gasLimit) return estGasLimit;
-    const gasLimitFromRequest = utils.bigNumberify(params[0].gasLimit);
+    if (!this.transactionHasGasInfo()) return estGasLimit;
+    const gasLimitFromRequest = this.getGasLimitFromRequest();
     return gasLimitFromRequest && gasLimitFromRequest > estGasLimit ? gasLimitFromRequest : estGasLimit;
+  }
+
+  getGasLimitFromRequest = () => {
+    const { request: { params = [] } } = this;
+    try {
+      return utils.bigNumberify(params[0].gasLimit);
+    } catch (e) {
+      return 0;
+    }
   }
 
   transactionHasGasInfo = () => {
@@ -262,7 +272,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   getGasPriceFromRequest = () => {
     const { request: { params = [] } } = this;
-    return params[0].gasPrice;
+    try {
+      return params[0].gasPrice;
+    } catch (e) {
+      return '';
+    }
   }
 
   updateTxFee = async () => {
@@ -270,9 +284,34 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     this.setState({ txFeeInWei, gettingFee: false });
   };
 
+  getRequestGasInfoObject = (): ?GasInfo => {
+    if (!this.transactionHasGasInfo()) return null;
+    try {
+      return {
+        isFetched: false,
+        gasPrice: { avg: utils.bigNumberify(this.getGasPriceFromRequest()) },
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // to use for SW TXs
+  // compare requested gasPrice (if exists) and ours and choose higher
+  getGasInfoObjectToUse = () => {
+    const { gasInfo: historyGasInfo }: GasInfo = this.props;
+    const requestGasInfo: ?GasInfo = this.getRequestGasInfoObject();
+    if (!requestGasInfo) return historyGasInfo;
+    const { gasPrice: { avg: historyAvg } } = historyGasInfo;
+    const { gasPrice: { avg: requestAvg } } = requestGasInfo;
+    return historyAvg >= requestAvg ? historyAvg : requestAvg;
+  }
+
   getSmartWalletTxFeeInWei = async (): BigNumber => {
-    const { gasInfo, accountAssets, supportedAssets } = this.props;
+    const { accountAssets, supportedAssets } = this.props;
     const { feeByGasToken } = this.state;
+
+    const gasInfo = this.getGasInfoObjectToUse();
 
     const {
       amount,
