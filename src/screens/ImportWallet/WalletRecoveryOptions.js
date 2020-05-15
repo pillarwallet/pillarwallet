@@ -61,7 +61,7 @@ const WalletRecoveryOptions = (props: Props) => {
   };
 
   const recoveryOptions = [
-    { title: 'Enter 12 words seed phrase or private key', route: IMPORT_WALLET },
+    { title: 'Enter 12 words seed phrase', route: IMPORT_WALLET },
     { title: 'Use Recovery Portal (for Smart Wallet only)', route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO },
   ];
 

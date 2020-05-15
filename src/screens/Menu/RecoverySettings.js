@@ -25,7 +25,13 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import CheckAuth from 'components/CheckAuth';
 import { getThemeColors } from 'utils/themes';
-import { BACKUP_WALLET_IN_SETTINGS_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
+import {
+  BACKUP_WALLET_IN_SETTINGS_FLOW,
+  MANAGE_CONNECTED_DEVICES,
+  RECOVERY_PORTAL_SETUP_INTRO,
+  RECOVERY_PORTAL_WALLET_RECOVERY_INTRO,
+  REVEAL_BACKUP_PHRASE,
+} from 'constants/navigationConstants';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -55,13 +61,20 @@ class RecoverySettings extends React.Component<Props, State> {
   };
 
   getGlobalSection = () => {
+    const { navigation } = this.props;
     return [
       {
         key: 'linkedDevices',
         title: 'Linked devices',
-        subtitle: 'Assign your contacts as recovery agents for restoring the wallet',
-        disabled: true,
-        label: 'soon',
+        subtitle: 'Manage Smart Wallet account devices',
+        onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
+        label: '(Not Set))',
+      },
+      {
+        key: 'linkedDevices',
+        title: 'Recovery Portal',
+        subtitle: 'Smart Wallet accont web recovery portal',
+        onPress: () => navigation.navigate(RECOVERY_PORTAL_SETUP_INTRO),
       },
     ];
   }
