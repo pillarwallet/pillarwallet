@@ -42,7 +42,7 @@ import { buildERC721TransactionData, calculateGasEstimate, fetchRinkebyETHBalanc
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
-  isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupportedSelector,
 } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -68,7 +68,7 @@ type Props = {
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  isSmartWalletAccountGasTokenSupported: boolean,
+  isGasTokenSupported: boolean,
   balances: Balances,
   contactsSmartAddresses: ContactSmartAddressData[],
 };
@@ -119,12 +119,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       activeAccount,
       accountAssets,
       supportedAssets,
-      isSmartWalletAccountGasTokenSupported,
+      isGasTokenSupported,
     } = props;
     const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     if (isSmartAccount
-      && isSmartWalletAccountGasTokenSupported
+      && isGasTokenSupported
       && !isEmpty(gasTokenData)) {
       const { decimals, address, symbol } = gasTokenData;
       this.gasToken = { decimals, address, symbol };
@@ -459,7 +459,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
-  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

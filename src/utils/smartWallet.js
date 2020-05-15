@@ -147,7 +147,7 @@ export const parseSmartWalletTransactions = (
   smartWalletTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
   assets: Asset[],
-  isGasTokenSupportedForAccount: boolean,
+  isGasTokenSupported: boolean,
 ): Transaction[] => smartWalletTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
@@ -267,7 +267,7 @@ export const parseSmartWalletTransactions = (
       };
     } else if (transactionType === AccountTransactionTypes.AddDevice) {
       const addedDeviceAddress = get(smartWalletTransaction, 'extra.address');
-      if (!isEmpty(addedDeviceAddress) && isGasTokenSupportedForAccount) {
+      if (!isEmpty(addedDeviceAddress) && isGasTokenSupported) {
         transaction = {
           ...transaction,
           tag: SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
