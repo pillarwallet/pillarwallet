@@ -217,8 +217,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const gasPriceFromRequest = this.transactionHasGasInfo() && gasPriceFromRequestHex ?
       utils.bigNumberify(gasPriceFromRequestHex)
       : 0;
-    if (gasPriceFromRequest >= avgGasPrice) return gasPriceFromRequestHex;
-    return utils.parseUnits(avgGasPrice.toString(), 'gwei');
+    const gasPrice = gasPriceFromRequest >= avgGasPrice ? gasPriceFromRequestHex : avgGasPrice;
+    return utils.parseUnits(gasPrice.toString(), 'gwei');
   };
 
   /**
@@ -253,8 +253,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     return gasLimitFromRequest && gasLimitFromRequest > estGasLimit ? gasLimitFromRequest : estGasLimit;
   }
 
+  getRequestParams = () => get(this, 'request.params') || [];
+
   getGasLimitFromRequest = () => {
-    const { request: { params = [] } } = this;
+    const params = this.getRequestParams();
     try {
       return utils.bigNumberify(params[0].gasLimit);
     } catch (e) {
@@ -263,7 +265,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   }
 
   transactionHasGasInfo = () => {
-    const { request: { params = [] } } = this;
+    const params = this.getRequestParams();
     if (!params.length) return false;
     const { gasLimit, gasPrice } = params[0];
     if (!(gasLimit && gasPrice)) return false;
@@ -271,7 +273,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   }
 
   getGasPriceFromRequest = () => {
-    const { request: { params = [] } } = this;
+    const params = this.getRequestParams();
     try {
       return params[0].gasPrice;
     } catch (e) {
@@ -299,11 +301,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   // to use for SW TXs
   // compare requested gasPrice (if exists) and ours and choose higher
   getGasInfoObjectToUse = () => {
-    const { gasInfo: historyGasInfo }: GasInfo = this.props;
+    const historyGasInfo = this.props.gasInfo;
     const requestGasInfo: ?GasInfo = this.getRequestGasInfoObject();
     if (!requestGasInfo) return historyGasInfo;
     const { gasPrice: { avg: historyAvg } } = historyGasInfo;
     const { gasPrice: { avg: requestAvg } } = requestGasInfo;
+    if (!(requestAvg && historyAvg)) return historyGasInfo;
     return historyAvg >= requestAvg ? historyGasInfo : requestGasInfo;
   }
 
