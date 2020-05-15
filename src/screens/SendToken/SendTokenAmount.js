@@ -52,7 +52,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
-  isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupportedSelector,
 } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
@@ -74,7 +74,7 @@ type Props = {
   updateAppSettings: (path: string, value: any) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  isSmartWalletAccountGasTokenSupported: ?boolean,
+  isGasTokenSupported: ?boolean,
   accountHistory: Transaction[],
 };
 
@@ -118,7 +118,7 @@ class SendTokenAmount extends React.Component<Props> {
       navigation,
       accountAssets,
       supportedAssets,
-      isSmartWalletAccountGasTokenSupported,
+      isGasTokenSupported,
       accountHistory,
     } = this.props;
     const { token } = this.assetData;
@@ -130,7 +130,7 @@ class SendTokenAmount extends React.Component<Props> {
     const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     if (isSmartAccount
-      && isSmartWalletAccountGasTokenSupported
+      && isGasTokenSupported
       && !isEmpty(gasTokenData)) {
       const { decimals, address, symbol } = gasTokenData;
       gasToken = { decimals, address, symbol };
@@ -178,7 +178,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
-  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -65,6 +65,6 @@ export const isSmartWalletActivatedSelector = ({
   return (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
 };
 
-export const isSmartWalletAccountGasTokenSupportedSelector = ({
+export const isGasTokenSupportedSelector = ({
   smartWallet: { connectedAccount },
 }: RootReducerState) => accountHasGasTokenSupport(connectedAccount);
