@@ -68,7 +68,7 @@ import type { SessionData } from 'models/Session';
 
 //  selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountSelector } from 'selectors';
+import { activeAccountSelector, isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
@@ -130,7 +130,7 @@ type Props = {
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  smartWalletAccountSupportsGasToken: boolean,
+  isSmartWalletAccountGasTokenSupported: boolean,
 };
 
 type State = {
@@ -291,7 +291,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       activeAccount,
       accountAssets,
       supportedAssets,
-      smartWalletAccountSupportsGasToken,
+      isSmartWalletAccountGasTokenSupported,
     } = this.props;
 
     const {
@@ -341,7 +341,7 @@ class ExchangeOffers extends React.Component<Props, State> {
           },
         };
 
-        if (activeAccount && checkIfSmartWalletAccount(activeAccount) && smartWalletAccountSupportsGasToken) {
+        if (activeAccount && checkIfSmartWalletAccount(activeAccount) && isSmartWalletAccountGasTokenSupported) {
           const gasTokenData = getAssetDataByAddress(
             getAssetsAsList(accountAssets),
             supportedAssets,
@@ -722,7 +722,6 @@ const mapStateToProps = ({
   rates: { data: rates },
   session: { data: session },
   assets: { supportedAssets },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
   baseFiatCurrency,
@@ -736,13 +735,13 @@ const mapStateToProps = ({
   rates,
   session,
   supportedAssets,
-  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
+  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
