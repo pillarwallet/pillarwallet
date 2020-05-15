@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import url from 'url';
 import Toast from 'components/Toast';
@@ -25,38 +24,14 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { updateNavigationLastScreenState, navigate } from 'services/navigation';
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
-import { LOGIN, CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
-import { isNavigationAllowed } from 'utils/navigation';
+import { CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
 
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-type ApproveLoginQuery = {
-  loginToken?: string,
-};
-
 const allowedDeepLinkProtocols = [
   'pillarwallet:',
 ];
-
-const beginApproveLogin = (query: ApproveLoginQuery) => {
-  const { loginToken: loginAttemptToken } = query;
-
-  if (!isNavigationAllowed()) {
-    updateNavigationLastScreenState({
-      lastActiveScreen: LOGIN,
-      lastActiveScreenParams: { loginAttemptToken },
-    });
-    return;
-  }
-
-  const navigateToAppAction = NavigationActions.navigate({
-    routeName: LOGIN,
-    params: { loginAttemptToken },
-  });
-
-  navigate(navigateToAppAction);
-};
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
@@ -75,9 +50,6 @@ export const executeDeepLinkAction = (deepLink: string) => {
         } else {
           Alert.alert('Invalid link', 'Referral code is missing');
         }
-        break;
-      case 'approve':
-        beginApproveLogin(query);
         break;
       case 'shapeshift':
         const shapeshiftTokenHash = get(query, 'auth');
