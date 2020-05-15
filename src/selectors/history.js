@@ -21,3 +21,14 @@ export const accountHistorySelector = createSelector(
     return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
   },
 );
+
+export const combinedHistorySelector = createSelector(
+  historySelector,
+  (history) => {
+    const combinedHistory = Object.keys(history).reduce((historyArray, account) => {
+      return [...historyArray, ...history[account]];
+    }, []);
+
+    return orderBy(combinedHistory, ['createdAt'], ['desc']);
+  },
+);
