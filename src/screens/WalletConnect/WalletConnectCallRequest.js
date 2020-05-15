@@ -304,7 +304,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (!requestGasInfo) return historyGasInfo;
     const { gasPrice: { avg: historyAvg } } = historyGasInfo;
     const { gasPrice: { avg: requestAvg } } = requestGasInfo;
-    return historyAvg >= requestAvg ? historyAvg : requestAvg;
+    return historyAvg >= requestAvg ? historyGasInfo : requestGasInfo;
   }
 
   getSmartWalletTxFeeInWei = async (): BigNumber => {
