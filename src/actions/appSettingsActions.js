@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import branchIo from 'react-native-branch';
+import get from 'lodash.get';
 import set from 'lodash.set';
 import { Appearance } from 'react-native-appearance';
 
@@ -31,12 +32,16 @@ import {
 } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { ETH, PLR } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
 
 // services
 import { firebaseAnalytics } from 'services/firebase';
+
+// selectors
+import { isGasTokenSupportedSelector } from 'selectors';
 
 // utils
 import { setKeychainDataObject } from 'utils/keychain';
@@ -248,5 +253,29 @@ export const dismissConnectAppsIntroAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { hasDismissedConnectAppsIntro: true } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasDismissedConnectAppsIntro: true } });
+  };
+};
+
+export const setPreferredGasTokenAction = (preferredGasToken: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { preferredGasToken } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { preferredGasToken },
+    });
+  };
+};
+
+export const setInitialPreferredGasTokenAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
+
+    let setPreferredGasToken = ETH;
+    const isGasTokenSupported = isGasTokenSupportedSelector(getState());
+    if (smartWalletFeatureEnabled && isGasTokenSupported) {
+      setPreferredGasToken = PLR;
+    }
+
+    dispatch(setPreferredGasTokenAction(setPreferredGasToken));
   };
 };
