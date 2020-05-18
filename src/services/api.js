@@ -276,12 +276,14 @@ class SDKWrapper {
         const status = get(error, 'response.status');
         const message = get(error, 'response.data.message');
 
-        reportLog('verifyPhone: Can\'t verify code', {
-          walletId: user.walletId,
-          user,
-          status,
-          message,
-        }, Sentry.Severity.Error);
+        if (message !== 'One-time password is not valid.') {
+          reportLog('verifyPhone: Can\'t verify code', {
+            walletId: user.walletId,
+            user,
+            status,
+            message,
+          }, Sentry.Severity.Error);
+        }
         return { responseStatus: status, message };
       });
   }
