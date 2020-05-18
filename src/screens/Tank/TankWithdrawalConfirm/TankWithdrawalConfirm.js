@@ -53,7 +53,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // selectors
-import { isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors';
 
 
 type Props = {
@@ -62,7 +62,7 @@ type Props = {
   withdrawalFee: WithdrawalFee,
   estimateWithdrawFromVirtualAccount: Function,
   withdrawFromVirtualAccount: Function,
-  isSmartWalletAccountGasTokenSupported: boolean,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -117,12 +117,12 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
 
   getTxFeeInWei = (): BigNumber => {
     const gasTokenCost = get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
-    if (this.props.isSmartWalletAccountGasTokenSupported && gasTokenCost) return gasTokenCost;
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
     return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
   };
 
   getGasToken = () => {
-    return this.props.isSmartWalletAccountGasTokenSupported
+    return this.props.isGasTokenSupported
       ? get(this.props, 'withdrawalFee.feeInfo.gasToken')
       : null;
   };
@@ -184,7 +184,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -59,7 +59,7 @@ import smartWalletService from 'services/smartWallet';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -175,13 +175,13 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountId = getActiveAccountId(accounts);
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = accountAssetsSelector(getState());
-    const isSmartWalletAccountGasTokenSupported = isSmartWalletAccountGasTokenSupportedSelector(getState());
+    const isGasTokenSupported = isGasTokenSupportedSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
     const history = parseSmartWalletTransactions(
       smartWalletTransactions,
       supportedAssets,
       assetsList,
-      isSmartWalletAccountGasTokenSupported,
+      isGasTokenSupported,
     );
 
     if (!history.length) return;

@@ -172,7 +172,7 @@ class WalletView extends React.Component<Props, State> {
       hideInsightForSearch: false,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
-    this.scrollViewRef = React.createRef();
+    this.scrollViewRef = null;
   }
 
   renderFoundTokensList() {
