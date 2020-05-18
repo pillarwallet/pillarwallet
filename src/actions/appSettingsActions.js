@@ -41,7 +41,7 @@ import Toast from 'components/Toast';
 import { firebaseAnalytics } from 'services/firebase';
 
 // selectors
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // utils
 import { setKeychainDataObject } from 'utils/keychain';

@@ -53,7 +53,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // selectors
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 
 type Props = {

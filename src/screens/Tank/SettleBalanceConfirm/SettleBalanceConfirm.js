@@ -41,7 +41,7 @@ import Spinner from 'components/Spinner';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // types
 import type { Balances } from 'models/Asset';

@@ -42,7 +42,7 @@ import {
 } from 'actions/appSettingsActions';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 import { SettingsSection } from './SettingsSection';
 
 

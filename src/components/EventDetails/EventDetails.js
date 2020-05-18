@@ -107,11 +107,11 @@ import {
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
+  activeBlockchainSelector,
   bitcoinAddressSelector,
-  isSmartWalletActivatedSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { activeBlockchainSelector } from 'selectors/selectors';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';

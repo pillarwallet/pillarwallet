@@ -47,7 +47,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { TopUpFee } from 'models/PaymentNetwork';
 
 // selectors
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // other
 import { PPN_TOKEN } from 'configs/assetsConfig';

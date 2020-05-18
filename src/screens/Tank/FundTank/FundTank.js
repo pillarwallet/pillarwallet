@@ -61,7 +61,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 
 const ActionsWrapper = styled.View`

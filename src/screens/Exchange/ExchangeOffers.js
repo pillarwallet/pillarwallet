@@ -68,8 +68,9 @@ import type { SessionData } from 'models/Session';
 
 //  selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountSelector, isGasTokenSupportedSelector } from 'selectors';
+import { activeAccountSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // utils
 import { getOfferProviderLogo, isFiatProvider, getCryptoProviderName } from 'utils/exchange';

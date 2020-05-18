@@ -52,10 +52,10 @@ import { accountBalancesSelector } from 'selectors/balances';
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
-  isGasTokenSupportedSelector,
 } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // utils
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';

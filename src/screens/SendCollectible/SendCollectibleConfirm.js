@@ -42,10 +42,10 @@ import { buildERC721TransactionData, calculateGasEstimate, fetchRinkebyETHBalanc
 import {
   activeAccountAddressSelector,
   activeAccountSelector,
-  isGasTokenSupportedSelector,
 } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // types
 import type { CollectibleTransactionPayload, GasToken } from 'models/Transaction';

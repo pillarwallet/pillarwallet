@@ -61,7 +61,7 @@ import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletAct
 import { accountBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 
 const ActionsWrapper = styled.View`
