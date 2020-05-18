@@ -123,6 +123,7 @@ type Props = {
   headerComponent?: React.Node,
   flatListProps?: FlatList,
   isPPNView?: boolean,
+  isForAllAccounts?: boolean,
 };
 
 type State = {|
@@ -236,7 +237,12 @@ class ActivityFeed extends React.Component<Props, State> {
           </SectionHeaderWrapper>
         );
       default:
-        const { onRejectInvitation, onAcceptInvitation, isPPNView } = this.props;
+        const {
+          onRejectInvitation,
+          onAcceptInvitation,
+          isPPNView,
+          isForAllAccounts,
+        } = this.props;
         return (
           <ActivityFeedItem
             event={item.item}
@@ -244,6 +250,7 @@ class ActivityFeed extends React.Component<Props, State> {
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
             isPPNView={isPPNView}
+            isForAllAccounts={isForAllAccounts}
           />
         );
     }

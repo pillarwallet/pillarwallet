@@ -19,14 +19,22 @@
 */
 
 import BigNumber from 'bignumber.js';
+import orderBy from 'lodash.orderby';
+
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
+import type { BitcoinAddress } from 'models/Bitcoin';
+
+import { TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
-  TX_PENDING_STATUS,
-} from 'constants/historyConstants';
-import {
-  findAccountByAddress, checkIfSmartWalletAccount, checkIfKeyBasedAccount, getAccountName, getInactiveUserAccounts,
+  findAccountByAddress,
+  checkIfSmartWalletAccount,
+  checkIfKeyBasedAccount,
+  getAccountName,
+  getInactiveUserAccounts,
+  getAccountAddress,
+  getAccountTypeByAddress,
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
 import { findMatchingContact, getUserName } from './contacts';
@@ -39,6 +47,7 @@ export function mapTransactionsHistory(
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   eventType: string,
+  keepHashDuplicatesIfBetweenAccounts?: boolean,
 ) {
   const concatedHistory = history
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
@@ -66,6 +75,30 @@ export function mapTransactionsHistory(
         ...rest,
       };
     });
+
+  if (keepHashDuplicatesIfBetweenAccounts) {
+    const accountsAddresses = accounts.map((acc) => getAccountAddress(acc));
+    const ascendingHistory = orderBy(concatedHistory, ['createdAt'], ['asc']);
+
+    return ascendingHistory.reduce((alteredHistory, historyItem) => {
+      const { from: fromAddress, to: toAddress, hash } = historyItem;
+      if (alteredHistory.some((item) => item.hash === hash)) {
+        if (accountsAddresses.some((userAddress) => addressesEqual(fromAddress, userAddress))
+          && accountsAddresses.some((userAddress) => addressesEqual(toAddress, userAddress))) {
+          return [...alteredHistory, {
+            ...historyItem,
+            from: toAddress,
+            to: fromAddress,
+            accountType: getAccountTypeByAddress(toAddress, accounts),
+            isReceived: true,
+          }];
+        }
+        return alteredHistory;
+      }
+      return [...alteredHistory, historyItem];
+    }, []);
+  }
+
   return uniqBy(concatedHistory, 'hash');
 }
 
@@ -129,6 +162,10 @@ export const isSWAddress = (address: string, accounts: Accounts) => {
 export const isKWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
   return (account && checkIfKeyBasedAccount(account));
+};
+
+export const isBTCAddress = (address: string, bitcoinAddresses: BitcoinAddress[]) => {
+  return bitcoinAddresses.some(e => e.address === address);
 };
 
 export const getContactWithAddress = (contacts: ApiUser[], address: string) => {

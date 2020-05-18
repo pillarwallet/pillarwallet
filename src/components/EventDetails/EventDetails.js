@@ -52,7 +52,13 @@ import {
   formatTransactionFee,
 } from 'utils/common';
 import {
-  groupPPNTransactions, elipsizeAddress, isPendingTransaction, isSWAddress, isKWAddress, getUsernameOrAddress,
+  groupPPNTransactions,
+  elipsizeAddress,
+  isPendingTransaction,
+  isSWAddress,
+  isKWAddress,
+  getUsernameOrAddress,
+  isBTCAddress,
 } from 'utils/feedData';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
@@ -649,6 +655,7 @@ class EventDetail extends React.Component<Props, State> {
       contactsSmartAddresses,
       theme,
       isPPNActivated,
+      bitcoinAddresses,
     } = this.props;
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
@@ -817,6 +824,10 @@ class EventDetail extends React.Component<Props, State> {
           subtext = `from ${smartWallet}`;
         } else if (!isReceived && isKWAddress(event.from, accounts)) {
           subtext = `from ${keyWallet}`;
+        } else if (isReceived && isBTCAddress(event.to, bitcoinAddresses)) {
+          subtext = 'to Bitcoin wallet';
+        } else if (!isReceived && isBTCAddress(event.from, bitcoinAddresses)) {
+          subtext = 'from Bitcoin wallet';
         }
 
         if (isPPNTransaction) {
@@ -960,9 +971,6 @@ class EventDetail extends React.Component<Props, State> {
           if (!isReceived) {
             eventData.fee = this.getFeeLabel();
           }
-        }
-        if (activeBlockchainNetwork === 'BITCOIN') {
-          eventData.actionSubtitle = isReceived ? 'to Bitcoin wallet' : 'from Bitcoin wallet';
         }
     }
     if (isPending) {

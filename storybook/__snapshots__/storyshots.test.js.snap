@@ -998,7 +998,7 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
             undefined,
           ]
         }
-        type="ACTION"
+        type="DEFAULT"
       >
         <View
           style={
@@ -1018,7 +1018,7 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={
@@ -1060,44 +1060,11 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
                   ],
                 ]
               }
-              type="ACTION"
+              type="DEFAULT"
             >
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            Bitcoin wallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -1116,7 +1083,7 @@ exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={
@@ -1278,7 +1245,7 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
             undefined,
           ]
         }
-        type="ACTION"
+        type="DEFAULT"
       >
         <View
           style={
@@ -1298,7 +1265,7 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={
@@ -1340,44 +1307,11 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
                   ],
                 ]
               }
-              type="ACTION"
+              type="DEFAULT"
             >
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            Bitcoin wallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -1396,7 +1330,7 @@ exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={

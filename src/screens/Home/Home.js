@@ -284,7 +284,9 @@ class HomeScreen extends React.Component<Props, State> {
       contactsSmartAddresses,
       accounts,
       TRANSACTION_EVENT,
+      true,
     );
+
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
 
     const mappedCTransactions = mapTransactionsHistory(
@@ -293,6 +295,7 @@ class HomeScreen extends React.Component<Props, State> {
       contactsSmartAddresses,
       accounts,
       COLLECTIBLE_TRANSACTION,
+      true,
     );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
@@ -403,6 +406,7 @@ class HomeScreen extends React.Component<Props, State> {
               initialNumToRender={8}
               wrapperStyle={{ flexGrow: 1 }}
               contentContainerStyle={{ flexGrow: 1 }}
+              isForAllAccounts
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
