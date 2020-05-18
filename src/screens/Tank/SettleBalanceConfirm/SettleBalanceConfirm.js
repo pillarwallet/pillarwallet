@@ -41,7 +41,7 @@ import Spinner from 'components/Spinner';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors';
 
 // types
 import type { Balances } from 'models/Asset';
@@ -60,7 +60,7 @@ type Props = {
   settleTxFee: SettleTxFee,
   balances: Balances,
   estimateSettleBalance: Function,
-  isSmartWalletAccountGasTokenSupported: boolean,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -153,12 +153,12 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
   getTxFeeInWei = (): BigNumber => {
     const gasTokenCost = get(this.props, 'settleTxFee.feeInfo.gasTokenCost');
-    if (this.props.isSmartWalletAccountGasTokenSupported && gasTokenCost) return gasTokenCost;
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
     return get(this.props, 'settleTxFee.feeInfo.totalCost', 0);
   };
 
   getGasToken = () => {
-    return this.props.isSmartWalletAccountGasTokenSupported
+    return this.props.isGasTokenSupported
       ? get(this.props, 'settleTxFee.feeInfo.gasToken')
       : null;
   };
@@ -228,7 +228,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

@@ -61,7 +61,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors';
 
 
 const ActionsWrapper = styled.View`
@@ -103,7 +103,7 @@ type Props = {
   topUpFee: TopUpFee,
   rates: Rates,
   baseFiatCurrency: ?string,
-  isSmartWalletAccountGasTokenSupported: boolean,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -165,12 +165,12 @@ class FundTank extends React.Component<Props, State> {
 
   getTxFeeInWei = (): BigNumber => {
     const gasTokenCost = get(this.props, 'topUpFee.feeInfo.gasTokenCost');
-    if (this.props.isSmartWalletAccountGasTokenSupported && gasTokenCost) return gasTokenCost;
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
     return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
   };
 
   getGasToken = () => {
-    return this.props.isSmartWalletAccountGasTokenSupported
+    return this.props.isGasTokenSupported
       ? get(this.props, 'topUpFee.feeInfo.gasToken')
       : null;
   };
@@ -314,7 +314,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
-  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

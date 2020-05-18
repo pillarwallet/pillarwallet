@@ -68,7 +68,7 @@ import type { SessionData } from 'models/Session';
 
 //  selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountSelector, isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
+import { activeAccountSelector, isGasTokenSupportedSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
@@ -130,7 +130,7 @@ type Props = {
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  isSmartWalletAccountGasTokenSupported: boolean,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -291,7 +291,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       activeAccount,
       accountAssets,
       supportedAssets,
-      isSmartWalletAccountGasTokenSupported,
+      isGasTokenSupported,
     } = this.props;
 
     const {
@@ -341,7 +341,7 @@ class ExchangeOffers extends React.Component<Props, State> {
           },
         };
 
-        if (activeAccount && checkIfSmartWalletAccount(activeAccount) && isSmartWalletAccountGasTokenSupported) {
+        if (activeAccount && checkIfSmartWalletAccount(activeAccount) && isGasTokenSupported) {
           const gasTokenData = getAssetDataByAddress(
             getAssetsAsList(accountAssets),
             supportedAssets,
@@ -741,7 +741,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
-  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
