@@ -59,7 +59,7 @@ import smartWalletService from 'services/smartWallet';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountSelector, isSmartWalletAccountGasTokenSupportedSelector } from 'selectors';
+import { activeAccountSelector, isGasTokenSupportedSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // types
@@ -81,7 +81,7 @@ type Props = {
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  isSmartWalletAccountGasTokenSupported: boolean,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -135,13 +135,13 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
       activeAccount,
       accountAssets,
       supportedAssets,
-      isSmartWalletAccountGasTokenSupported,
+      isGasTokenSupported,
     } = props;
     let feeByGasToken = false;
     const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     if (isSmartAccount
-      && isSmartWalletAccountGasTokenSupported
+      && isGasTokenSupported
       && !isEmpty(gasTokenData)) {
       const { decimals, address, symbol } = gasTokenData;
       this.gasToken = { decimals, address, symbol };
@@ -302,7 +302,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
-  isSmartWalletAccountGasTokenSupported: isSmartWalletAccountGasTokenSupportedSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
