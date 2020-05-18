@@ -284,8 +284,6 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
         return;
       }
       dispatch(setSmartWalletConnectedAccount(connectedAccount));
-    } else {
-      dispatch(fetchConnectedAccountAction());
     }
     dispatch(setActiveAccountAction(accountId));
   };
