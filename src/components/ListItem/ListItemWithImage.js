@@ -35,6 +35,7 @@ import { LabelBadge } from 'components/LabelBadge/LabelBadge';
 
 import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
+import { formatAmount, getDecimalPlaces } from 'utils/common';
 import { fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { images } from 'utils/images';
@@ -542,11 +543,13 @@ const Addon = (props: AddonProps) => {
       custom,
       customOnRight,
     } = balance;
+    const decimalPlaces = getDecimalPlaces(token);
+    const roundedBalance = formatAmount(tokenBalance, decimalPlaces);
     return (
       <View style={{ flexDirection: 'row' }}>
         <Wrapper style={{ alignItems: 'flex-end' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {!!tokenBalance.toString() && <BalanceValue>{`${tokenBalance} ${token}`}</BalanceValue>}
+            {!!tokenBalance.toString() && <BalanceValue>{`${roundedBalance} ${token}`}</BalanceValue>}
             {!!syntheticBalance.toString() &&
             <TankAssetBalance
               monoColor
