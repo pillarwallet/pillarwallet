@@ -210,32 +210,37 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   };
 
   getGasPriceWei = () => {
-    // use requested gasPrice if it exists and is bigger than our average
-    // which allows users/dapps to set higher gasPrices to avoid lengthy TXs
     const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
     const gasPriceFromRequestHex = this.getGasPriceFromRequest();
     const gasPriceFromRequest = this.transactionHasGasInfo() && gasPriceFromRequestHex ?
       utils.bigNumberify(gasPriceFromRequestHex)
       : 0;
-    const gasPrice = gasPriceFromRequest >= avgGasPrice ? gasPriceFromRequestHex : avgGasPrice;
-    return utils.parseUnits(gasPrice.toString(), 'gwei');
+    const gasPrice = this.shouldUseGasInfoFromRequest() ? gasPriceFromRequest : avgGasPrice;
+    // gasPrice provided by WC is gwei in hex
+    const gasPriceWei = this.shouldUseGasInfoFromRequest() ?
+      utils.bigNumberify(gasPrice.toString()) :
+      utils.parseUnits(gasPrice.toString(), 'gwei');
+    return gasPriceWei;
   };
 
-  /**
-   *  we're using our wallet avg gas price and gas limit
-   *
-   *  the reason we're not using gas price and gas limit provided by WC since it's
-   *  optional in platform end while also gas limit and gas price values provided
-   *  by platform are not always enough to fulfill transaction
-   *
-   *  if we start using gasPrice provided by then WC incoming value is gwei in hex
-   *  `gasPrice = utils.bigNumberify(gasPrice);`
-   *  and both gasPrice and gasLimit is not always present from plaforms
-   */
-  getTxFeeInWei = (): BigNumber => {
+  // use requested gasPrice if it exists and is bigger than our average
+  // which allows users/dapps to set higher gasPrices to avoid lengthy TXs
+  shouldUseGasInfoFromRequest = () => {
+    return false;
+    if (!this.transactionHasGasInfo()) return false;
+    const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
+    const gasPriceFromRequestHex = this.getGasPriceFromRequest();
+    const gasPriceFromRequest = this.transactionHasGasInfo() && gasPriceFromRequestHex ?
+      utils.bigNumberify(gasPriceFromRequestHex)
+      : 0;
+    return gasPriceFromRequest > avgGasPrice;
+  }
+
+  getTxFeeInWei = async (): BigNumber => {
     const { activeAccount } = this.props;
-    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
-      return this.getSmartWalletTxFeeInWei();
+    if (activeAccount && checkIfSmartWalletAccount(activeAccount) && !this.shouldUseGasInfoFromRequest()) {
+      const smartWalletTxFeeInWei = await this.getSmartWalletTxFeeInWei();
+      return smartWalletTxFeeInWei;
     }
 
     const gasLimit = this.getGasLimit();
@@ -250,19 +255,15 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const { gasLimit: estGasLimit } = this.state;
     if (!this.transactionHasGasInfo()) return estGasLimit;
     const gasLimitFromRequest = this.getGasLimitFromRequest();
-    return gasLimitFromRequest && gasLimitFromRequest > estGasLimit ? gasLimitFromRequest : estGasLimit;
-  }
+    return this.shouldUseGasInfoFromRequest() ? gasLimitFromRequest : estGasLimit;
+  };
 
   getRequestParams = () => get(this, 'request.params') || [];
 
   getGasLimitFromRequest = () => {
     const params = this.getRequestParams();
-    try {
-      return utils.bigNumberify(params[0].gasLimit);
-    } catch (e) {
-      return 0;
-    }
-  }
+    return utils.bigNumberify(params[0].gasLimit);
+  };
 
   transactionHasGasInfo = () => {
     const params = this.getRequestParams();
@@ -270,7 +271,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const { gasLimit, gasPrice } = params[0];
     if (!(gasLimit && gasPrice)) return false;
     return true;
-  }
+  };
 
   getGasPriceFromRequest = () => {
     const params = this.getRequestParams();
@@ -279,7 +280,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     } catch (e) {
       return '';
     }
-  }
+  };
 
   updateTxFee = async () => {
     const txFeeInWei = await this.getTxFeeInWei();
@@ -296,19 +297,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     } catch (e) {
       return null;
     }
-  }
+  };
 
-  // to use for SW TXs
-  // compare requested gasPrice (if exists) and ours and choose higher
   getGasInfoObjectToUse = () => {
     const historyGasInfo = this.props.gasInfo;
     const requestGasInfo: ?GasInfo = this.getRequestGasInfoObject();
     if (!requestGasInfo) return historyGasInfo;
-    const { gasPrice: { avg: historyAvg } } = historyGasInfo;
-    const { gasPrice: { avg: requestAvg } } = requestGasInfo;
-    if (!(requestAvg && historyAvg)) return historyGasInfo;
-    return historyAvg >= requestAvg ? historyGasInfo : requestGasInfo;
-  }
+    return this.shouldUseGasInfoFromRequest() ? requestGasInfo : historyGasInfo;
+  };
 
   getSmartWalletTxFeeInWei = async (): BigNumber => {
     const { accountAssets, supportedAssets } = this.props;
@@ -415,7 +411,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       case 'eth_signTransaction':
         type = 'Transaction';
 
-        const gasPrice = this.getGasPriceWei().toNumber();
+        const gasPrice = this.getGasPriceWei();
         const estimatePart = {
           txFeeInWei,
           gasLimit,
