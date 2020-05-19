@@ -138,7 +138,7 @@ class FundTank extends React.Component<Props, State> {
     this.setState({ value }, () => this.checkFormInputErrors());
   };
 
-  handleFormSubmit = (isInitFlow: boolean) => {
+  handleFormSubmit = () => {
     this.formSubmitted = true;
     const { navigation } = this.props;
     const formValues = this._form.getValue();
@@ -146,7 +146,7 @@ class FundTank extends React.Component<Props, State> {
     if (!formValues) return;
 
     Keyboard.dismiss();
-    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount, isInitFlow });
+    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount });
   };
 
   useMaxValue = () => {
@@ -182,7 +182,6 @@ class FundTank extends React.Component<Props, State> {
       topUpFee,
       rates,
       baseFiatCurrency,
-      navigation,
       useGasToken,
       topUpFee: { feeInfo },
     } = this.props;
@@ -190,7 +189,6 @@ class FundTank extends React.Component<Props, State> {
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const isInitFlow = navigation.getParam('isInitFlow', false);
 
     // balance
     const balance = getBalance(balances, token);
@@ -241,7 +239,7 @@ class FundTank extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
+        headerProps={{ centerItems: [{ title: 'Fund PLR tank' }] }}
         footer={(
           <FooterInner>
             {!topUpFee.isFetched && balance > 0 && <Spinner width={20} height={20} />}
@@ -252,7 +250,7 @@ class FundTank extends React.Component<Props, State> {
               small
               flexRight
               title="Next"
-              onPress={() => this.handleFormSubmit(isInitFlow)}
+              onPress={this.handleFormSubmit}
             />
             }
           </FooterInner>
