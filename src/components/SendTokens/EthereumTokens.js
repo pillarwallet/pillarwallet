@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
@@ -28,6 +29,7 @@ import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import isEqual from 'lodash.isequal';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -45,8 +47,17 @@ import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { checkIfSmartWalletAccount } from 'utils/accounts';
+
+// services
 import { calculateGasEstimate } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
+
+// selectors
+import {
+  isActiveAccountSmartWalletSelector,
+  isGasTokenSupportedSelector,
+  useGasTokenSelector,
+} from 'selectors/smartWallet';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -114,9 +125,11 @@ type Props = {
   activeAccountAddress: string,
   activeAccount: ?Account,
   onUpdateTransactionSpeed: (speed: string) => void,
-  gasToken: ?GasToken,
   accountAssets: Assets,
   accountHistory: Transaction[],
+  isGasTokenSupported: boolean,
+  isSmartAccount: boolean,
+  useGasToken: boolean,
 };
 
 type State = {
@@ -130,16 +143,18 @@ type State = {
   inputHasError: boolean,
   txFeeInWei: BigNumber,
   submitPressed: boolean,
-  feeByGasToken: boolean,
   showRelayerMigrationModal: boolean,
 };
+
 
 const { Form } = t.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 
-class SendETHTokens extends React.Component<Props, State> {
+
+class SendEthereumTokens extends React.Component<Props, State> {
   _form: t.form;
   formSubmitted: boolean = false;
+  gasToken: ?GasToken = null;
 
   state = {
     value: null,
@@ -150,7 +165,6 @@ class SendETHTokens extends React.Component<Props, State> {
     inputHasError: false,
     txFeeInWei: new BigNumber(0),
     submitPressed: false,
-    feeByGasToken: false,
     showRelayerMigrationModal: false,
   };
 
@@ -158,18 +172,21 @@ class SendETHTokens extends React.Component<Props, State> {
     super(props);
 
     this.updateTxFee = debounce(this.updateTxFee, 500);
-    this.updateGasLimitAndTxFee = debounce(this.updateGasLimitAndTxFee, 500);
-    if (!isEmpty(props.gasToken)) this.state.feeByGasToken = true;
+    this.keyWalletUpdateGasLimitAndTxFee = debounce(this.keyWalletUpdateGasLimitAndTxFee, 500);
   }
 
   componentDidMount() {
-    this.props.fetchGasInfo();
+    if (!this.props.isSmartAccount) {
+      this.props.fetchGasInfo();
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { session, gasToken, gasInfo } = this.props;
+    const {
+      session, useGasToken, gasInfo, isSmartAccount,
+    } = this.props;
 
-    if (prevProps.session.isOnline !== session.isOnline && session.isOnline) {
+    if (prevProps.session.isOnline !== session.isOnline && session.isOnline && isSmartAccount) {
       this.props.fetchGasInfo();
     }
 
@@ -177,8 +194,7 @@ class SendETHTokens extends React.Component<Props, State> {
     if (this.state.value === null) return;
 
     // if gas token was updated after switching to gas token relayer or gasInfo updated
-    if ((isEmpty(prevProps.gasToken) && !isEmpty(gasToken))
-      || !isEqual(prevProps.gasInfo, gasInfo)) {
+    if (prevProps.useGasToken !== useGasToken || !isEqual(prevProps.gasInfo, gasInfo)) {
       this.handleAmountChange();
     }
   }
@@ -187,30 +203,30 @@ class SendETHTokens extends React.Component<Props, State> {
     return this.props.transactionSpeed || SPEED_TYPES.NORMAL;
   };
 
-  handleGasPriceChange = (txSpeed: string) => () => {
+  handleTxSpeedChange = (txSpeed: string) => () => {
     this.props.onUpdateTransactionSpeed(txSpeed);
-    this.setState({
-      showTransactionSpeedModal: false,
-    });
+    this.setState({ showTransactionSpeedModal: false });
   };
 
   handleAmountChange = (value: ?Object) => {
-    const { activeAccount } = this.props;
+    const { isSmartAccount } = this.props;
     let updateState = { gettingFee: true };
     if (!isEmpty(value)) updateState = { ...updateState, value };
+
     this.setState(updateState);
     this.checkFormInputErrors();
-    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
+
+    if (isSmartAccount) {
       this.updateTxFee();
       return;
     }
+
     const amount = parseFloat(get(value, 'amount', 0));
-    this.updateGasLimitAndTxFee(amount);
+    this.keyWalletUpdateGasLimitAndTxFee(amount);
   };
 
   handleFormSubmit = async () => {
-    const { gasToken } = this.props;
-    const { submitPressed, feeByGasToken, txFeeInWei } = this.state;
+    const { submitPressed, txFeeInWei } = this.state;
     if (submitPressed) return;
 
     this.formSubmitted = true;
@@ -225,7 +241,7 @@ class SendETHTokens extends React.Component<Props, State> {
       assetData,
       source,
       navigation,
-      activeAccount,
+      isSmartAccount,
     } = this.props;
 
     // $FlowFixMe
@@ -239,9 +255,9 @@ class SendETHTokens extends React.Component<Props, State> {
       decimals: assetData.decimals,
     };
 
-    if (feeByGasToken) transactionPayload.gasToken = gasToken;
+    if (this.gasToken) transactionPayload.gasToken = this.gasToken;
 
-    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
+    if (!isSmartAccount) {
       const { gasLimit } = this.state;
       const transactionSpeed = this.getTxSpeed();
       const gasPrice = gasLimit ? txFeeInWei.div(gasLimit).toNumber() : 0;
@@ -264,13 +280,8 @@ class SendETHTokens extends React.Component<Props, State> {
   };
 
   useMaxValue = async () => {
-    const {
-      balances,
-      activeAccount,
-      assetData,
-      gasToken,
-    } = this.props;
-    const { calculatingMaxValue, feeByGasToken } = this.state;
+    const { balances, isSmartAccount, assetData } = this.props;
+    const { calculatingMaxValue } = this.state;
 
     if (calculatingMaxValue) return;
 
@@ -279,16 +290,19 @@ class SendETHTokens extends React.Component<Props, State> {
       const balance = getBalance(balances, token);
       const updatedState = {};
       let txFeeInWei;
-      if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
+
+      if (isSmartAccount) {
         txFeeInWei = await this.getSmartWalletTxFeeInWei(balance);
       } else {
-        updatedState.gasLimit = await this.getGasLimit(balance); // calculate gas limit for max available balance
+        const gasLimit = await this.getGasLimitForKeyWallet(balance); // calculate gas limit for max available balance
         const transactionSpeed = this.getTxSpeed();
-        txFeeInWei = this.getTxFeeInWei(transactionSpeed, updatedState.gasLimit);
+        txFeeInWei = this.getTxFeeForKeyWallet(transactionSpeed, gasLimit);
+        updatedState.gasLimit = gasLimit;
       }
-      const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
-      const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, parsedGasToken);
+
+      const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, this.gasToken);
       const amount = formatAmount(maxAmount);
+
       this.setState({
         ...updatedState,
         value: { amount },
@@ -299,7 +313,7 @@ class SendETHTokens extends React.Component<Props, State> {
     });
   };
 
-  getGasLimit = (amount: number) => {
+  getGasLimitForKeyWallet = (amount: number) => {
     const {
       assetData: {
         token: symbol,
@@ -324,62 +338,57 @@ class SendETHTokens extends React.Component<Props, State> {
     });
   };
 
-  getTxFeeInWei = (txSpeed?: string, gasLimit?: number): BigNumber => {
-    const { gasInfo, activeAccount } = this.props;
-    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
-      return this.getSmartWalletTxFeeInWei();
-    }
+  getTxFeeForKeyWallet = (txSpeed?: string, gasLimit?: number): BigNumber => {
     txSpeed = txSpeed || this.getTxSpeed();
-    // calculate either with gasLimit in state or provided as param
-    if (!gasLimit) {
-      ({ gasLimit } = this.state);
-    }
+    gasLimit = gasLimit || this.state.gasLimit;
+
+    const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+
     return gasPriceWei.mul(gasLimit);
   };
 
   updateTxFee = async () => {
-    const txFeeInWei = await this.getTxFeeInWei();
+    const { isSmartAccount } = this.props;
+
+    const txFeeInWei = isSmartAccount
+      ? await this.getSmartWalletTxFeeInWei()
+      : await this.getTxFeeForKeyWallet();
+
     this.setState({ txFeeInWei, gettingFee: false });
     this.checkFormInputErrors();
   };
 
-  updateGasLimitAndTxFee = (amount: number) => {
-    this.getGasLimit(amount)
-      .then(gasLimit => this.setState({ gasLimit }, () => this.updateTxFee()))
-      .catch(() => null);
+  keyWalletUpdateGasLimitAndTxFee = async (amount: number) => {
+    const gasLimit = await this.getGasLimitForKeyWallet(amount).catch(() => null);
+    if (gasLimit) {
+      this.setState({ gasLimit }, () => this.updateTxFee());
+    }
   };
 
   getSmartWalletTxFeeInWei = async (amount?: number): BigNumber => {
-    const {
-      gasInfo,
-      receiver,
-      assetData,
-      gasToken,
-    } = this.props;
-    const { feeByGasToken, inputHasError } = this.state;
+    const { receiver, assetData, useGasToken } = this.props;
+    const { inputHasError } = this.state;
 
     const value = Number(amount || get(this.state, 'value.amount', 0));
 
     if (inputHasError || !value) return new BigNumber(0);
 
-    const transaction = { recipient: receiver, value, gasToken };
-    const { gasTokenCost, cost: ethCost } = await smartWalletService
-      .estimateAccountTransaction(transaction, gasInfo, assetData)
-      .catch(() => ({}));
+    const transaction = { recipient: receiver, value };
+    const estimated = await smartWalletService
+      .estimateAccountTransaction(transaction, assetData)
+      .catch(() => null);
+    if (!estimated) return new BigNumber(0); // TODO: maybe we should show a Toast?
 
-    // check gas token used for estimation is present, otherwise fallback to ETH
-    if (gasTokenCost && gasTokenCost.gt(0)) {
-      // set that calculated by gas token if was reset
-      if (!feeByGasToken) this.setState({ feeByGasToken: true });
-      return gasTokenCost;
+    const { gasTokenCost, gasToken, ethCost } = estimated;
+    if (!useGasToken || !gasToken) {
+      this.gasToken = null;
+      return ethCost;
     }
 
-    // reset to fee by eth because the calculation failed
-    if (feeByGasToken) this.setState({ feeByGasToken: false });
-
-    return ethCost;
+    this.gasToken = gasToken;
+    return gasTokenCost;
   };
 
   renderRelayerMigrationButton = () => {
@@ -394,17 +403,18 @@ class SendETHTokens extends React.Component<Props, State> {
   };
 
   renderTxSpeedButtons = () => {
-    const { rates, fiatCurrency, activeAccount } = this.props;
-    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) return null;
+    const { rates, fiatCurrency, isSmartAccount } = this.props;
+    if (isSmartAccount) return null;
+
     return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
-      const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
+      const feeInEth = formatAmount(utils.formatEther(this.getTxFeeForKeyWallet(txSpeed)));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
       const formattedFeeInFiat = formatFiat(feeInFiat, fiatCurrency);
       return (
         <Btn
           key={txSpeed}
           primaryInverted
-          onPress={this.handleGasPriceChange(txSpeed)}
+          onPress={this.handleTxSpeedChange(txSpeed)}
         >
           <TextLink>{SPEED_TYPE_LABELS[txSpeed]} - {feeInEth} ETH</TextLink>
           <Label>{formattedFeeInFiat}</Label>
@@ -433,7 +443,6 @@ class SendETHTokens extends React.Component<Props, State> {
       inputHasError,
       txFeeInWei,
       submitPressed,
-      feeByGasToken,
       showRelayerMigrationModal,
     } = this.state;
     const {
@@ -443,16 +452,15 @@ class SendETHTokens extends React.Component<Props, State> {
       activeAccount,
       assetData,
       fiatCurrency,
-      gasToken,
       accountAssets,
       accountHistory,
+      isGasTokenSupported,
     } = this.props;
 
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
 
     const { token, iconColor, decimals } = assetData;
-    const parsedGasToken = feeByGasToken && !isEmpty(gasToken) ? gasToken : null;
-    const feeSymbol = get(parsedGasToken, 'symbol', ETH);
+    const feeSymbol = get(this.gasToken, 'symbol', ETH);
 
     // balance
     const balance = getBalance(balances, token);
@@ -466,13 +474,13 @@ class SendETHTokens extends React.Component<Props, State> {
       amount: currentValue,
       decimals,
       symbol: token,
-      gasToken: parsedGasToken,
+      gasToken: this.gasToken,
     };
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
-    const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, this.gasToken);
 
     // max amount
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, parsedGasToken);
+    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, this.gasToken);
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
@@ -502,7 +510,7 @@ class SendETHTokens extends React.Component<Props, State> {
       ? 'Getting the fee..'
       : 'Next';
 
-    const showRelayerMigration = showFee && isSmartAccount && isEmpty(gasToken);
+    const showRelayerMigration = showFee && isSmartAccount && !isGasTokenSupported;
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
 
     return (
@@ -523,7 +531,7 @@ class SendETHTokens extends React.Component<Props, State> {
                 <Label small>Estimated fee: {feeDisplayValue}</Label>
               </SendTokenDetailsValue>
             }
-            {showFee && showRelayerMigration && this.renderRelayerMigrationButton()}
+            {showRelayerMigration && this.renderRelayerMigrationButton()}
             {!showTransactionSpeeds && !showFee && !showRelayerMigration && <Label>&nbsp;</Label>}
             {showNextButton &&
               <Button
@@ -594,8 +602,19 @@ const mapStateToProps = ({
   gasInfo,
 });
 
+const structuredSelector = createStructuredSelector({
+  isGasTokenSupported: isGasTokenSupportedSelector,
+  isSmartAccount: isActiveAccountSmartWalletSelector,
+  useGasToken: useGasTokenSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendETHTokens);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendEthereumTokens);

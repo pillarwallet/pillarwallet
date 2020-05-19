@@ -328,17 +328,13 @@ export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => 
   return get(smartWalletState, 'upgrade.deploymentData.hash', '');
 };
 
-export const buildSmartWalletTransactionEstimate = (
-  apiEstimate: EstimatePayload,
-  accountAssets: Assets,
-  supportedAssets: Asset[],
-) => {
+export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload) => {
   const {
     gasAmount,
     gasPrice,
     totalCost,
     gasTokenCost,
-    gasToken: parsedGasToken,
+    gasToken,
   } = parseEstimatePayload(apiEstimate);
 
   let estimate = {
@@ -351,14 +347,9 @@ export const buildSmartWalletTransactionEstimate = (
   const hasGasTokenSupport = get(apiEstimate, 'relayerFeatures.gasTokenSupported', false);
   if (!hasGasTokenSupport) return estimate;
 
-  const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
   const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-  const parsedGasTokenAddress = get(parsedGasToken, 'address');
 
-  if (!isEmpty(gasToken)
-    && addressesEqual(parsedGasTokenAddress, gasToken.address)
-    && gasTokenCost
-    && gasTokenCost.gt(0)) {
+  if (gasTokenCost && gasTokenCost.gt(0)) {
     estimate = {
       ...estimate,
       gasToken,

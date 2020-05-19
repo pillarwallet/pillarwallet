@@ -755,8 +755,7 @@ export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
       });
     if (isEmpty(response)) return;
 
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
+    const estimate = buildSmartWalletTransactionEstimate(response);
 
     dispatch({
       type: SET_ESTIMATED_TOPUP_FEE,
@@ -861,8 +860,7 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
       });
     if (isEmpty(response)) return;
 
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
+    const estimate = buildSmartWalletTransactionEstimate(response);
 
     dispatch({
       type: SET_ESTIMATED_WITHDRAWAL_FEE,
@@ -1001,7 +999,7 @@ export const fetchAvailableTxToSettleAction = () => {
 };
 
 export const estimateSettleBalanceAction = (txToSettle: Object) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       notifySmartWalletNotInitialized();
       return;
@@ -1022,9 +1020,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
       });
     if (isEmpty(response)) return;
 
-    const accountAssets = accountAssetsSelector(getState());
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
+    const estimate = buildSmartWalletTransactionEstimate(response);
 
     dispatch({
       type: SET_ESTIMATED_SETTLE_TX_FEE,

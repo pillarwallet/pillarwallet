@@ -20,8 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import isEmpty from 'lodash.isempty';
-import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 
 // actions
 import { updateAppSettingsAction } from 'actions/appSettingsActions';
@@ -30,7 +28,7 @@ import { updateAppSettingsAction } from 'actions/appSettingsActions';
 import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // components
-import SendETHTokens from 'components/SendTokens/ETHTokens';
+import SendEthereumTokens from 'components/SendTokens/EthereumTokens';
 import SendBTCAmount from 'components/SendTokens/BTCAmount';
 
 // types
@@ -39,7 +37,6 @@ import type {
   Balances,
   Rates,
   AssetData,
-  Asset,
   Assets,
 } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -55,11 +52,6 @@ import {
 } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
-import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
-
-// utils
-import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
-import { checkIfSmartWalletAccount } from 'utils/accounts';
 
 
 type Props = {
@@ -73,8 +65,6 @@ type Props = {
   activeAccount: ?Account,
   updateAppSettings: (path: string, value: any) => void,
   accountAssets: Assets,
-  supportedAssets: Asset[],
-  isGasTokenSupported: ?boolean,
   accountHistory: Transaction[],
 };
 
@@ -103,7 +93,7 @@ class SendTokenAmount extends React.Component<Props> {
     if (token === BTC) {
       return SendBTCAmount;
     }
-    return SendETHTokens;
+    return SendEthereumTokens;
   };
 
   render() {
@@ -117,24 +107,12 @@ class SendTokenAmount extends React.Component<Props> {
       transactionSpeed,
       navigation,
       accountAssets,
-      supportedAssets,
-      isGasTokenSupported,
       accountHistory,
     } = this.props;
     const { token } = this.assetData;
     const AmountComponent = this.selectAmountComponent(token);
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    let gasToken;
-    const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
-    const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
-    if (isSmartAccount
-      && isGasTokenSupported
-      && !isEmpty(gasTokenData)) {
-      const { decimals, address, symbol } = gasTokenData;
-      gasToken = { decimals, address, symbol };
-    }
 
     return (
       <AmountComponent
@@ -153,7 +131,6 @@ class SendTokenAmount extends React.Component<Props> {
         onUpdateTransactionSpeed={this.updateTransactionSpeed}
         accountAssets={accountAssets}
         accountHistory={accountHistory}
-        gasToken={gasToken}
       />
     );
   }
@@ -163,13 +140,11 @@ const mapStateToProps = ({
   session: { data: session },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, transactionSpeed } },
-  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   session,
   baseFiatCurrency,
   transactionSpeed,
-  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -178,7 +153,6 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
-  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

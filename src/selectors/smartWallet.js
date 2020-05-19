@@ -20,32 +20,43 @@
 
 import { createSelector } from 'reselect';
 import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
+import { checkIfSmartWalletAccount } from 'utils/accounts';
 import { ETH } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { activeAccountSelector } from 'selectors';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
+
 export const isSmartWalletActivatedSelector = ({
   accounts: { data: accounts },
   smartWallet,
-}: RootReducerState) => {
+}: RootReducerState,
+) => {
   const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWallet);
   return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };
 
-export const isGasTokenSupportedSelector = ({
-  smartWallet: { connectedAccount },
-}: RootReducerState) => accountHasGasTokenSupport(connectedAccount);
+export const isGasTokenSupportedSelector = ({ smartWallet: { connectedAccount } }: RootReducerState) => {
+  return accountHasGasTokenSupport(connectedAccount);
+};
 
-export const preferredGasTokenSelector = ({
-  appSettings: { data: { preferredGasToken } },
-}: RootReducerState): string => preferredGasToken || ETH;
+export const preferredGasTokenSelector = ({ appSettings: { data: { preferredGasToken } } }: RootReducerState) => {
+  return preferredGasToken || ETH;
+};
 
 export const useGasTokenSelector = createSelector(
   isGasTokenSupportedSelector,
   preferredGasTokenSelector,
   (isGasTokenSupported, preferredGasToken) => {
     return isGasTokenSupported && preferredGasToken !== ETH;
+  },
+);
+
+export const isActiveAccountSmartWalletSelector = createSelector(
+  activeAccountSelector,
+  (activeAccount) => {
+    return activeAccount && checkIfSmartWalletAccount(activeAccount);
   },
 );

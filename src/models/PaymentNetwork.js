@@ -25,7 +25,7 @@ export type FeeInfo = {
   gasAmount: BigNumber,
   gasPrice: BigNumber,
   totalCost: BigNumber,
-  gasToken: ?GasToken,
+  gasToken?: ?GasToken,
   gasTokenCost?: BigNumber,
 };
 

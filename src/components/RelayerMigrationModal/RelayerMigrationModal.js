@@ -86,9 +86,9 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
     } = this.props;
     const { switchPressed } = this.state;
     const { iconUrl } = accountAssets[PLR] || {};
-    const isSwitchPending = accountHistory.some(({
-      tag, status,
-    }) => tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS);
+    const isSwitchPending = accountHistory.some(({ tag, status }) => {
+      return tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
+    });
     const buttonTitle = switchPressed || isSwitchPending
       ? 'Waiting for confirmation..'
       : 'Switch';
