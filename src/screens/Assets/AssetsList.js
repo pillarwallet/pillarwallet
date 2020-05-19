@@ -194,12 +194,15 @@ class AssetsList extends React.Component<Props, State> {
     navigation.navigate(ASSETS);
   }
 
-  initialiseBTC = async (_: string, wallet: EthereumWallet) => {
-    const { setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
-    this.setState({ showPinModal: false });
-    await initializeBitcoinWallet(wallet);
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-  };
+  initialiseBTC = (assetData: Object) => {
+    return async (_: string, wallet: EthereumWallet) => {
+      const { navigation, setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
+      this.setState({ showPinModal: false });
+      await initializeBitcoinWallet(wallet);
+      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+      navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
+    };
+  }
 
   navigateToBTCAsset = (assetData: Object) => {
     const { navigation, setActiveBlockchainNetwork, bitcoinAddresses } = this.props;
@@ -209,9 +212,7 @@ class AssetsList extends React.Component<Props, State> {
       navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
       return;
     }
-    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC }, () => {
-      navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
-    });
+    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC(assetData) });
   };
 
   renderToken = ({ item: asset }) => {
