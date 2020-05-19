@@ -228,6 +228,944 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
       }
     }
   >
+    <RCTScrollView
+      automaticallyAdjustContentInsets={false}
+      contentInset={
+        Object {
+          "bottom": 0,
+        }
+      }
+      enableAutomaticScroll={true}
+      enableOnAndroid={true}
+      enableResetScrollToCoords={true}
+      extraHeight={0}
+      extraScrollHeight={0}
+      getScrollResponder={[Function]}
+      handleOnScroll={[Function]}
+      keyboardDismissMode="interactive"
+      keyboardOpeningTime={250}
+      keyboardSpace={0}
+      onScroll={[Function]}
+      refreshControl={
+        <RefreshControlMock
+          onRefresh={[Function]}
+          refreshing={false}
+        />
+      }
+      resetKeyboardSpace={[Function]}
+      scrollForExtraHeightOnAndroid={[Function]}
+      scrollIntoView={[Function]}
+      scrollToEnd={[Function]}
+      scrollToFocusedInput={[Function]}
+      scrollToPosition={[Function]}
+      showsVerticalScrollIndicator={true}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "flex": 1,
+          "height": "100%",
+          "paddingHorizontal": 0,
+        }
+      }
+      update={[Function]}
+      viewIsInsideTabBar={false}
+    >
+      <RCTRefreshControl />
+      <View>
+        <View
+          style={
+            Array [
+              Object {
+                "height": 250,
+                "justifyContent": "center",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "height": 220,
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              addShadow={false}
+              borderRadius={54}
+              diameter={108}
+              elevation={6}
+              isListed={true}
+              left={375}
+              shadowOpacity={0.15}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
+                    "borderStyle": "solid",
+                    "borderWidth": 2,
+                    "elevation": 0,
+                    "height": 108,
+                    "justifyContent": "center",
+                    "left": 375,
+                    "position": "absolute",
+                    "shadowColor": "#0A1427",
+                    "shadowOffset": Object {
+                      "height": 0,
+                      "width": 0,
+                    },
+                    "shadowOpacity": 0,
+                    "shadowRadius": 6,
+                    "top": 125.5,
+                    "width": 108,
+                    "zIndex": 3,
+                  },
+                  Object {
+                    "transform": Array [
+                      Object {
+                        "translateX": -54,
+                      },
+                      Object {
+                        "translateY": -54,
+                      },
+                    ],
+                  },
+                ]
+              }
+              top={125.5}
+              zIndex={3}
+            >
+              <CMIFColorMatrixImageFilter
+                matrix={
+                  Array [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                  ]
+                }
+                style={
+                  Array [
+                    Object {
+                      "backgroundColor": "#fff0",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Image
+                  onError={[Function]}
+                  onLoadEnd={[Function]}
+                  resizeMode="contain"
+                  source={
+                    Object {
+                      "uri": "http://icons/plr?size=3",
+                    }
+                  }
+                  style={
+                    Object {
+                      "height": 104,
+                      "opacity": 1,
+                      "width": 104,
+                    }
+                  }
+                />
+              </CMIFColorMatrixImageFilter>
+            </View>
+            <View
+              addShadow={false}
+              borderRadius={35}
+              diameter={70}
+              elevation={0}
+              isListed={true}
+              left={266.2}
+              shadowOpacity={0}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
+                    "borderStyle": "solid",
+                    "borderWidth": 2,
+                    "elevation": 0,
+                    "height": 70,
+                    "justifyContent": "center",
+                    "left": 266.2,
+                    "position": "absolute",
+                    "shadowColor": "#0A1427",
+                    "shadowOffset": Object {
+                      "height": 0,
+                      "width": 0,
+                    },
+                    "shadowOpacity": 0,
+                    "shadowRadius": 6,
+                    "top": 65.5,
+                    "width": 70,
+                    "zIndex": 1,
+                  },
+                  Object {
+                    "transform": Array [
+                      Object {
+                        "translateX": -35,
+                      },
+                      Object {
+                        "translateY": -35,
+                      },
+                    ],
+                  },
+                ]
+              }
+              top={65.5}
+              zIndex={1}
+            >
+              <CMIFColorMatrixImageFilter
+                matrix={
+                  Array [
+                    0.6065,
+                    0.3575,
+                    0.036,
+                    0,
+                    0,
+                    0.1065,
+                    0.8574999999999999,
+                    0.036,
+                    0,
+                    0,
+                    0.1065,
+                    0.3575,
+                    0.536,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                  ]
+                }
+                style={
+                  Array [
+                    Object {
+                      "backgroundColor": "#fff0",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Image
+                  onError={[Function]}
+                  onLoadEnd={[Function]}
+                  resizeMode="contain"
+                  source={
+                    Object {
+                      "uri": "http://icons/plr?size=3",
+                    }
+                  }
+                  style={
+                    Object {
+                      "height": 66,
+                      "opacity": 0.15,
+                      "width": 66,
+                    }
+                  }
+                />
+              </CMIFColorMatrixImageFilter>
+            </View>
+            <View
+              addShadow={false}
+              borderRadius={45}
+              diameter={90}
+              elevation={4}
+              isListed={true}
+              left={310.33333333333337}
+              shadowOpacity={0.05}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
+                    "borderStyle": "solid",
+                    "borderWidth": 2,
+                    "elevation": 0,
+                    "height": 90,
+                    "justifyContent": "center",
+                    "left": 310.33333333333337,
+                    "position": "absolute",
+                    "shadowColor": "#0A1427",
+                    "shadowOffset": Object {
+                      "height": 0,
+                      "width": 0,
+                    },
+                    "shadowOpacity": 0,
+                    "shadowRadius": 6,
+                    "top": 104.5,
+                    "width": 90,
+                    "zIndex": 2,
+                  },
+                  Object {
+                    "transform": Array [
+                      Object {
+                        "translateX": -45,
+                      },
+                      Object {
+                        "translateY": -45,
+                      },
+                    ],
+                  },
+                ]
+              }
+              top={104.5}
+              zIndex={2}
+            >
+              <CMIFColorMatrixImageFilter
+                matrix={
+                  Array [
+                    0.7638999999999999,
+                    0.21450000000000002,
+                    0.0216,
+                    0,
+                    0,
+                    0.06390000000000001,
+                    0.9145,
+                    0.0216,
+                    0,
+                    0,
+                    0.06390000000000001,
+                    0.21450000000000002,
+                    0.7215999999999999,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                  ]
+                }
+                style={
+                  Array [
+                    Object {
+                      "backgroundColor": "#fff0",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Image
+                  onError={[Function]}
+                  onLoadEnd={[Function]}
+                  resizeMode="contain"
+                  source={
+                    Object {
+                      "uri": "http://icons/plr?size=3",
+                    }
+                  }
+                  style={
+                    Object {
+                      "height": 86,
+                      "opacity": 0.3,
+                      "width": 86,
+                    }
+                  }
+                />
+              </CMIFColorMatrixImageFilter>
+            </View>
+            <View
+              addShadow={false}
+              borderRadius={45}
+              diameter={90}
+              elevation={4}
+              isListed={true}
+              left={439.66666666666663}
+              shadowOpacity={0.05}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
+                    "borderStyle": "solid",
+                    "borderWidth": 2,
+                    "elevation": 0,
+                    "height": 90,
+                    "justifyContent": "center",
+                    "left": 439.66666666666663,
+                    "position": "absolute",
+                    "shadowColor": "#0A1427",
+                    "shadowOffset": Object {
+                      "height": 0,
+                      "width": 0,
+                    },
+                    "shadowOpacity": 0,
+                    "shadowRadius": 6,
+                    "top": 104.5,
+                    "width": 90,
+                    "zIndex": 2,
+                  },
+                  Object {
+                    "transform": Array [
+                      Object {
+                        "translateX": -45,
+                      },
+                      Object {
+                        "translateY": -45,
+                      },
+                    ],
+                  },
+                ]
+              }
+              top={104.5}
+              zIndex={2}
+            >
+              <CMIFColorMatrixImageFilter
+                matrix={
+                  Array [
+                    0.7638999999999999,
+                    0.21450000000000002,
+                    0.0216,
+                    0,
+                    0,
+                    0.06390000000000001,
+                    0.9145,
+                    0.0216,
+                    0,
+                    0,
+                    0.06390000000000001,
+                    0.21450000000000002,
+                    0.7215999999999999,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                  ]
+                }
+                style={
+                  Array [
+                    Object {
+                      "backgroundColor": "#fff0",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Image
+                  onError={[Function]}
+                  onLoadEnd={[Function]}
+                  resizeMode="contain"
+                  source={
+                    Object {
+                      "uri": "http://icons/plr?size=3",
+                    }
+                  }
+                  style={
+                    Object {
+                      "height": 86,
+                      "opacity": 0.3,
+                      "width": 86,
+                    }
+                  }
+                />
+              </CMIFColorMatrixImageFilter>
+            </View>
+            <View
+              addShadow={false}
+              borderRadius={35}
+              diameter={70}
+              elevation={0}
+              isListed={true}
+              left={483.8}
+              shadowOpacity={0}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "backgroundColor": "#FFFFFF",
+                    "borderColor": "#FFFFFF",
+                    "borderStyle": "solid",
+                    "borderWidth": 2,
+                    "elevation": 0,
+                    "height": 70,
+                    "justifyContent": "center",
+                    "left": 483.8,
+                    "position": "absolute",
+                    "shadowColor": "#0A1427",
+                    "shadowOffset": Object {
+                      "height": 0,
+                      "width": 0,
+                    },
+                    "shadowOpacity": 0,
+                    "shadowRadius": 6,
+                    "top": 65.5,
+                    "width": 70,
+                    "zIndex": 1,
+                  },
+                  Object {
+                    "transform": Array [
+                      Object {
+                        "translateX": -35,
+                      },
+                      Object {
+                        "translateY": -35,
+                      },
+                    ],
+                  },
+                ]
+              }
+              top={65.5}
+              zIndex={1}
+            >
+              <CMIFColorMatrixImageFilter
+                matrix={
+                  Array [
+                    0.6065,
+                    0.3575,
+                    0.036,
+                    0,
+                    0,
+                    0.1065,
+                    0.8574999999999999,
+                    0.036,
+                    0,
+                    0,
+                    0.1065,
+                    0.3575,
+                    0.536,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                  ]
+                }
+                style={
+                  Array [
+                    Object {
+                      "backgroundColor": "#fff0",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Image
+                  onError={[Function]}
+                  onLoadEnd={[Function]}
+                  resizeMode="contain"
+                  source={
+                    Object {
+                      "uri": "http://icons/plr?size=3",
+                    }
+                  }
+                  style={
+                    Object {
+                      "height": 66,
+                      "opacity": 0.15,
+                      "width": 66,
+                    }
+                  }
+                />
+              </CMIFColorMatrixImageFilter>
+            </View>
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "marginBottom": 20,
+                "marginLeft": 20,
+                "marginRight": 20,
+                "marginTop": 0,
+                "paddingBottom": 8,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "center",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              isSynthetic={false}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 36,
+                        "lineHeight": 54,
+                        "textAlign": "center",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              0 PLR
+            </Text>
+          </View>
+          <View
+            style={
+              Array [
+                Object {
+                  "flexDirection": "row",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlign": "center",
+                    },
+                    undefined,
+                  ],
+                ]
+              }
+            >
+              £ 0
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "borderBottomWidth": 1,
+                "borderColor": "#EDEDED",
+                "borderTopWidth": 1,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "flex-start",
+                "marginTop": 4,
+                "paddingBottom": 30,
+                "paddingTop": 10,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "flexDirection": "row",
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "paddingBottom": 0,
+                  "paddingLeft": 10,
+                  "paddingRight": 10,
+                  "paddingTop": 0,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 4,
+                  "paddingRight": 4,
+                  "paddingTop": 8,
+                }
+              }
+            >
+              <View
+                accessibilityIgnoresInvertColors={true}
+                style={
+                  Object {
+                    "height": 92,
+                    "width": 92,
+                  }
+                }
+              >
+                <Image
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button.png",
+                    }
+                  }
+                  style={
+                    Array [
+                      Object {
+                        "bottom": 0,
+                        "left": 0,
+                        "position": "absolute",
+                        "right": 0,
+                        "top": 0,
+                      },
+                      Object {
+                        "height": 92,
+                        "width": 92,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  colors={
+                    Array [
+                      "#ffffff",
+                      "#f2f4f9",
+                    ]
+                  }
+                  disabled={false}
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "borderRadius": 46,
+                        "display": "flex",
+                        "flexDirection": "row",
+                        "height": 92,
+                        "justifyContent": "center",
+                        "width": 92,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    name="qrDetailed"
+                    style={
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 1,
+                      }
+                    }
+                  />
+                </View>
+              </View>
+              <Text
+                disabled={false}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 16,
+                        "letterSpacing": 0.1,
+                        "marginTop": -6,
+                        "opacity": 1,
+                        "textAlign": "center",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Receive
+              </Text>
+            </View>
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 4,
+                  "paddingRight": 4,
+                  "paddingTop": 8,
+                }
+              }
+            >
+              <View
+                accessibilityIgnoresInvertColors={true}
+                style={
+                  Object {
+                    "height": 92,
+                    "width": 92,
+                  }
+                }
+              >
+                <Image
+                  source={
+                    Object {
+                      "testUri": "../../../src/assets/images/bg_action_button_disabled.png",
+                    }
+                  }
+                  style={
+                    Array [
+                      Object {
+                        "bottom": 0,
+                        "left": 0,
+                        "position": "absolute",
+                        "right": 0,
+                        "top": 0,
+                      },
+                      Object {
+                        "height": 92,
+                        "width": 92,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  colors={
+                    Array [
+                      "#ffffff",
+                      "#f2f4f9",
+                    ]
+                  }
+                  disabled={true}
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "borderRadius": 46,
+                        "display": "flex",
+                        "flexDirection": "row",
+                        "height": 92,
+                        "justifyContent": "center",
+                        "width": 92,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    name="paperPlane"
+                    style={
+                      Object {
+                        "alignSelf": "center",
+                        "color": "#007AFF",
+                        "fontSize": 22,
+                        "opacity": 0.5,
+                      }
+                    }
+                  />
+                </View>
+              </View>
+              <Text
+                disabled={true}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 16,
+                        "letterSpacing": 0.1,
+                        "marginTop": -6,
+                        "opacity": 1,
+                        "textAlign": "center",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Send
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </RCTScrollView>
     <Modal
       animationType="none"
       hardwareAccelerated={false}
