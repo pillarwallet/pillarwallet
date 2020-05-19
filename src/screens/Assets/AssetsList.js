@@ -33,6 +33,7 @@ import Swipeout from 'react-native-swipeout';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { MediumText } from 'components/Typography';
 import Toast from 'components/Toast';
+import CheckAuth from 'components/CheckAuth';
 
 // constants
 import { defaultFiatCurrency, TOKENS, ETH, PLR } from 'constants/assetsConstants';
@@ -66,7 +67,6 @@ import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import HideAssetButton from './HideAssetButton';
-import CheckAuth from '../../components/CheckAuth';
 
 const IS_IOS = Platform.OS === 'ios';
 
