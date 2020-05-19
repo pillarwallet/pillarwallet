@@ -361,7 +361,7 @@ class AssetScreen extends React.Component<Props, State> {
         }}
         inset={{ bottom: 0 }}
       >
-        {!token === 'BTC' &&
+        {token !== 'BTC' &&
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
