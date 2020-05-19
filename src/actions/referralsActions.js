@@ -64,7 +64,7 @@ import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
 // utils
-import { reportLog } from 'utils/common';
+import { printLog } from 'utils/common';
 
 
 export type ClaimTokenAction = {
@@ -218,7 +218,8 @@ export const startReferralsListenerAction = () => {
 
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) {
-        reportLog('Branch.io Subscribe error', error, 'error');
+        // TODO: need to re-subscribe on fail
+        printLog('Branch.io Subscribe error', error, 'error');
         return;
       }
       if (!params['+clicked_branch_link']) return;
