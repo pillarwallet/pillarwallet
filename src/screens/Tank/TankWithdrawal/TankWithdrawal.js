@@ -61,6 +61,7 @@ import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletAct
 import { accountBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isGasTokenSupportedSelector } from 'selectors';
 
 
 const ActionsWrapper = styled.View`
@@ -103,6 +104,7 @@ type Props = {
   withdrawalFee: WithdrawalFee,
   rates: Rates,
   baseFiatCurrency: string,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -165,8 +167,15 @@ class TankWithdrawal extends React.Component<Props, State> {
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'withdrawalFee.feeInfo.gasTokenCost')
-      || get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
+    const gasTokenCost = get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
+    return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
+  };
+
+  getGasToken = () => {
+    return this.props.isGasTokenSupported
+      ? get(this.props, 'withdrawalFee.feeInfo.gasToken')
+      : null;
   };
 
   checkFormInputErrors = () => {
@@ -207,13 +216,13 @@ class TankWithdrawal extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // fee
-    const gasToken = get(this.props, 'withdrawalFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const txFeeInWei = this.getTxFeeInWei();
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei,
       gasToken,
     });
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
     const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
@@ -305,6 +314,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
   availableStake: availableStakeSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

@@ -21,7 +21,6 @@ import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
 import isEmpty from 'lodash.isempty';
 import { sdkConstants } from '@smartwallet/sdk';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
 // constants
 import {
@@ -37,11 +36,7 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
-import {
-  SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID } from 'constants/smartWalletConstants';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
@@ -52,17 +47,19 @@ import {
   getAccountId,
   getAccountWalletId,
   getActiveAccount,
-  getActiveAccountAddress,
   getActiveAccountId,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
-import { getEthereumProvider, reportLog, uniqBy } from 'utils/common';
+import { reportLog, uniqBy } from 'utils/common';
 import { parseSmartWalletTransactions } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
 
 // services
 import smartWalletService from 'services/smartWallet';
+
+// selectors
 import { accountAssetsSelector } from 'selectors/assets';
+import { isGasTokenSupportedSelector } from 'selectors';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -74,29 +71,15 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
-import {
-  checkAssetTransferTransactionsAction,
-  setAssetsTransferTransactionsAction,
-  syncVirtualAccountTransactionsAction,
-} from './smartWalletActions';
+import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
-const currentProvider = getEthereumProvider(NETWORK_PROVIDER);
-
 const afterHistoryUpdatedAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      featureFlags: {
-        data: {
-          SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-        },
-      },
-    } = getState();
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
+  return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
   };
 };
@@ -178,7 +161,7 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId, connectedAccount },
+      smartWallet: { lastSyncedTransactionId },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -192,12 +175,13 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountId = getActiveAccountId(accounts);
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = accountAssetsSelector(getState());
+    const isGasTokenSupported = isGasTokenSupportedSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
     const history = parseSmartWalletTransactions(
       smartWalletTransactions,
       supportedAssets,
       assetsList,
-      connectedAccount,
+      isGasTokenSupported,
     );
 
     if (!history.length) return;
@@ -513,94 +497,6 @@ export const fetchTransactionsHistoryAction = () => {
     }
 
     return dispatch(fetchSmartWalletTransactionsAction());
-  };
-};
-
-export const startListeningForBalanceChangeAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      smartWallet: {
-        upgrade: {
-          status: upgradeStatus,
-          transfer: {
-            transactions: transferTransactions = [],
-          },
-        },
-      },
-    } = getState();
-    if (upgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS || !transferTransactions.length) return;
-
-    const activeAccount = getActiveAccount(accounts);
-    if (activeAccount) {
-      const walletAddress = getAccountAddress(activeAccount);
-
-      currentProvider.on(walletAddress, () => {
-        dispatch(fetchAssetsBalancesAction(true));
-      });
-    }
-  };
-};
-
-export const stopListeningForBalanceChangeAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-    } = getState();
-    const walletAddress = getActiveAccountAddress(accounts);
-    if (walletAddress && currentProvider) {
-      currentProvider.removeListener(walletAddress);
-    }
-  };
-};
-
-// NOTE: use this action for key based accounts only
-export const patchSmartWalletSentSignedTransactionsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      smartWallet: {
-        upgrade: {
-          status: upgradeStatus,
-          transfer: {
-            transactions: transferTransactions = [],
-          },
-        },
-      },
-      accounts: { data: accounts },
-      history: { data: currentHistory },
-    } = getState();
-
-    if (![
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-    ].includes(upgradeStatus)) return;
-
-    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    if (!keyBasedAccount) return;
-
-    const walletAddress = getAccountAddress(keyBasedAccount);
-    const keyBasedAccountHistory = currentHistory[walletAddress] || [];
-
-    const patchedHistory = uniqBy(keyBasedAccountHistory.map((targetTx) => {
-      const extractedHash = get(targetTx, 'hash.hash');
-      if (extractedHash) return { ...targetTx, hash: extractedHash };
-      return targetTx;
-    }), 'hash');
-
-    const updatedHistory = updateAccountHistory(currentHistory, walletAddress, patchedHistory);
-
-    dispatch({ type: SET_HISTORY, payload: updatedHistory });
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-
-    if (isEmpty(transferTransactions)) return;
-
-    const patchedTransferTransactions = transferTransactions.map((targetTransferTx) => {
-      const extractedHash = get(targetTransferTx, 'transactionHash.hash');
-      if (extractedHash) return { ...targetTransferTx, transactionHash: extractedHash };
-      return targetTransferTx;
-    });
-
-    dispatch(setAssetsTransferTransactionsAction(patchedTransferTransactions));
   };
 };
 

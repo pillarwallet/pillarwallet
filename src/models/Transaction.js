@@ -140,11 +140,3 @@ export type TransactionEthers = {
   stateInPPN?: string,
   feeWithGasToken?: ?FeeWithGasToken,
 };
-
-export type SmartWalletTransferTransaction = {
-  hash: string,
-  value: Object,
-  asset: string,
-  status: string,
-  transactionHash?: string,
-};

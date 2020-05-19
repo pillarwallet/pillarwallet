@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BigNumber } from 'bignumber.js';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import {
@@ -46,9 +47,13 @@ import { formatTransactionFee } from 'utils/common';
 
 // types
 import type { WithdrawalFee } from 'models/PaymentNetwork';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 // other
 import { PPN_TOKEN } from 'configs/assetsConfig';
+
+// selectors
+import { isGasTokenSupportedSelector } from 'selectors';
 
 
 type Props = {
@@ -57,6 +62,7 @@ type Props = {
   withdrawalFee: WithdrawalFee,
   estimateWithdrawFromVirtualAccount: Function,
   withdrawFromVirtualAccount: Function,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -104,14 +110,21 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const { navigation, withdrawFromVirtualAccount } = this.props;
     this.setState({ buttonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
-    const payForGasWithToken = !!get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
+    const payForGasWithToken = !!this.getGasToken();
     await withdrawFromVirtualAccount(amount, payForGasWithToken);
     this.setState({ buttonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'withdrawalFee.feeInfo.gasTokenCost')
-      || get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
+    const gasTokenCost = get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
+    return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
+  };
+
+  getGasToken = () => {
+    return this.props.isGasTokenSupported
+      ? get(this.props, 'withdrawalFee.feeInfo.gasToken')
+      : null;
   };
 
   render() {
@@ -119,7 +132,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const { buttonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
 
-    const gasToken = get(this.props, 'withdrawalFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
 
     const submitButtonTitle = buttonSubmitted
@@ -170,6 +183,15 @@ const mapStateToProps = ({
   withdrawalFee,
 });
 
+const structuredSelector = createStructuredSelector({
+  isGasTokenSupported: isGasTokenSupportedSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch) => ({
   withdrawFromVirtualAccount: (
     amount: string,
@@ -178,4 +200,4 @@ const mapDispatchToProps = (dispatch) => ({
   estimateWithdrawFromVirtualAccount: (amount: string) => dispatch(estimateWithdrawFromVirtualAccountAction(amount)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TankWithdrawalConfirm);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(TankWithdrawalConfirm);

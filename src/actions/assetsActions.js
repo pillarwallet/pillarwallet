@@ -19,7 +19,6 @@
 */
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { BigNumber } from 'bignumber.js';
 import { toChecksumAddress } from '@netgum/utils';
 
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -48,7 +47,6 @@ import Toast from 'components/Toast';
 
 import { initialAssets as assetFixtures } from 'fixtures/assets';
 
-import { transferSigned } from 'services/assets';
 import CryptoWallet from 'services/cryptoWallet';
 
 import type {
@@ -65,7 +63,6 @@ import {
   delay,
   noop,
   parseTokenAmount,
-  printLog,
   reportLog,
   uniqBy,
 } from 'utils/common';
@@ -81,7 +78,7 @@ import {
 } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import type SDKWrapper from 'services/api';
@@ -97,183 +94,6 @@ import { addEnsRegistryRecordAction } from './ensRegistryActions';
 type TransactionStatus = {
   isSuccess: boolean,
   error: ?string,
-};
-
-export const sendSignedAssetTransactionAction = (transaction: any) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      signedTransaction: { signedHash },
-      transaction: transactionDetails,
-    } = transaction;
-    if (!signedHash) return null;
-
-    const transactionResult = await transferSigned(signedHash).catch(e => ({ error: e }));
-    if (isEmpty(transactionResult) || !transactionResult.hash) {
-      return null;
-    }
-
-    const { hash: transactionHash } = transactionResult;
-
-    // add tx to tx history
-    try {
-      const {
-        collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
-        history: { data: currentHistory },
-        accounts: { data: accounts },
-      } = getState();
-      const accountId = getActiveAccountId(accounts);
-      const accountAddress = getActiveAccountAddress(accounts);
-      const accountCollectibles = collectibles[accountId] || [];
-      const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-
-      let historyTx;
-      if (transactionDetails.tokenType === COLLECTIBLES) {
-        const collectibleInfo = accountCollectibles.find(item => item.id === transactionDetails.tokenId) || {};
-        historyTx = {
-          ...buildHistoryTransaction({
-            from: accountAddress,
-            to: transactionDetails.to,
-            hash: transactionHash,
-            asset: transactionDetails.name,
-            value: '1',
-            gasPrice: new BigNumber(transactionDetails.gasPrice),
-            gasLimit: transactionDetails.gasLimit,
-          }),
-          assetData: { ...collectibleInfo },
-          type: COLLECTIBLE_TRANSACTION,
-          icon: collectibleInfo.icon,
-        };
-
-        dispatch({
-          type: ADD_COLLECTIBLE_TRANSACTION,
-          payload: {
-            transactionData: { ...historyTx },
-            tokenId: transaction.tokenId,
-            accountId,
-          },
-        });
-        const updatedCollectiblesHistory = {
-          ...collectiblesHistory,
-          [accountId]: [...accountCollectiblesHistory, historyTx],
-        };
-        await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
-        const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
-        const updatedCollectibles = {
-          ...collectibles,
-          [accountId]: updatedAccountCollectibles,
-        };
-        dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
-      } else {
-        const value = parseTokenAmount(transactionDetails.amount, transactionDetails.decimals);
-        historyTx = buildHistoryTransaction({
-          from: accountAddress,
-          to: transactionDetails.to,
-          hash: transactionHash,
-          value: value.toString(),
-          asset: transactionDetails.symbol,
-          gasPrice: new BigNumber(transactionDetails.gasPrice),
-          gasLimit: transactionDetails.gasLimit,
-        });
-
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: {
-            accountId,
-            historyTx,
-          },
-        });
-        const accountHistory = currentHistory[accountId] || [];
-        const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
-        const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-        dispatch(saveDbAction('history', { history: updatedHistory }, true));
-      }
-    } catch (e) {
-      printLog({ e });
-    }
-
-    return transactionHash;
-  };
-};
-
-export const signAssetTransactionAction = (
-  assetTransaction: TransactionPayload,
-  wallet: Object,
-) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const tokenType = get(assetTransaction, 'tokenType', '');
-    const symbol = get(assetTransaction, 'symbol', '');
-
-    if (tokenType === COLLECTIBLES) {
-      await dispatch(fetchCollectiblesAction());
-    }
-
-    const {
-      accounts: { data: accounts },
-      collectibles: { data: collectibles },
-    } = getState();
-
-    const accountId = getActiveAccountId(accounts);
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return {};
-    const accountCollectibles = collectibles[accountId] || [];
-
-    let signedTransaction;
-
-    // get wallet provider
-    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
-    const walletProvider = await cryptoWallet.getProvider();
-
-    // get only signed transaction
-    const transaction = { ...assetTransaction, signOnly: true };
-
-    if (tokenType === COLLECTIBLES) {
-      // $FlowFixMe
-      const { tokenId } = (assetTransaction: CollectibleTransactionPayload);
-      const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
-      if (collectibleInfo) {
-        // $FlowFixMe
-        signedTransaction = await walletProvider.transferERC721(
-          activeAccount,
-          // $FlowFixMe
-          transaction,
-          getState(),
-        );
-      }
-    } else if (symbol === ETH) {
-      // $FlowFixMe
-      signedTransaction = await walletProvider.transferETH(
-        activeAccount,
-        // $FlowFixMe
-        transaction,
-        getState(),
-      );
-    } else {
-      signedTransaction = await walletProvider.transferERC20(
-        activeAccount,
-        // $FlowFixMe
-        transaction,
-        getState(),
-      );
-    }
-
-    // $FlowFixMe
-    if (signedTransaction.error) {
-      return {};
-    }
-
-    // update transaction count
-    if (signedTransaction) {
-      const { nonce: lastNonce, transactionCount: lastCount } = signedTransaction;
-      const txCountNew = { lastCount, lastNonce };
-      dispatch({
-        type: UPDATE_TX_COUNT,
-        payload: txCountNew,
-      });
-      dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
-    }
-
-    return signedTransaction;
-  };
 };
 
 export const sendAssetAction = (
@@ -548,7 +368,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
     const isSmartWalletAccount = checkIfSmartWalletAccount(account);
 
     dispatch({
@@ -779,7 +599,6 @@ export const loadSupportedAssetsAction = () => {
   };
 };
 
-
 export const checkForMissedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -814,28 +633,5 @@ export const checkForMissedAssetsAction = () => {
     });
     dispatch(fetchAssetsBalancesAction());
     dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-  };
-};
-
-export const resetLocalNonceToTransactionCountAction = (wallet: Object) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-    } = getState();
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
-    const accountAddress = getAccountAddress(activeAccount);
-    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
-    const walletProvider = await cryptoWallet.getProvider();
-    const transactionCount = await walletProvider.getTransactionCount(accountAddress);
-    const txCountNew = {
-      lastCount: transactionCount,
-      lastNonce: transactionCount - 1,
-    };
-    await dispatch({
-      type: UPDATE_TX_COUNT,
-      payload: txCountNew,
-    });
-    dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
   };
 };

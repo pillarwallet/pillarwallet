@@ -37,9 +37,11 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 
 
-export const setRatesAction = (rates: Rates) => {
-  return async (dispatch: Dispatch) => {
-    if (isEmpty(rates)) return;
+export const setRatesAction = (newRates: Rates) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    if (isEmpty(newRates)) return;
+    const { rates: { data: currentRates = {} } } = getState();
+    const rates = { ...currentRates, ...newRates };
     dispatch(saveDbAction('rates', { rates }, true));
     dispatch({ type: UPDATE_RATES, payload: rates });
   };

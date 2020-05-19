@@ -29,7 +29,6 @@ import type { Collectible } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
-import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 
 const parseCollectibleMedia = (data) => {
   const {
@@ -183,12 +182,8 @@ export const fetchCollectiblesHistoryAction = () => {
 };
 
 export const fetchAllCollectiblesDataAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
+  return async (dispatch: Dispatch) => {
     await dispatch(fetchCollectiblesAction());
     await dispatch(fetchCollectiblesHistoryAction());
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
   };
 };

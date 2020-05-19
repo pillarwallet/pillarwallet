@@ -29,7 +29,6 @@ import {
   PLR,
   UPDATE_BALANCES,
 } from 'constants/assetsConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
 import type { Assets, AssetsByAccount } from 'models/Asset';
 import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
@@ -79,14 +78,6 @@ const mockAssetsByAccount: Assets = {
 
 const mockAssets: AssetsByAccount = {
   '0x9c': mockAssetsByAccount,
-};
-
-const mockExchangeRates = {
-  ETH: {
-    EUR: 624.21,
-    GBP: 544.57,
-    USD: 748.92,
-  },
 };
 
 const mockSupportedAssets = [
@@ -178,7 +169,6 @@ describe('Assets actions', () => {
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
       { payload: updateBalancesPayload, type: UPDATE_BALANCES },
-      { payload: mockExchangeRates, type: UPDATE_RATES },
     ];
     return store.dispatch(fetchAssetsBalancesAction())
       .then(() => {

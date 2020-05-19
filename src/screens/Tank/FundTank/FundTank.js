@@ -61,6 +61,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isGasTokenSupportedSelector } from 'selectors';
 
 
 const ActionsWrapper = styled.View`
@@ -102,6 +103,7 @@ type Props = {
   topUpFee: TopUpFee,
   rates: Rates,
   baseFiatCurrency: ?string,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -152,7 +154,7 @@ class FundTank extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const token = PPN_TOKEN;
     const balance = getBalance(balances, token);
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
     this.setState({
       value: {
@@ -162,8 +164,15 @@ class FundTank extends React.Component<Props, State> {
   };
 
   getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.gasTokenCost')
-      || get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+    const gasTokenCost = get(this.props, 'topUpFee.feeInfo.gasTokenCost');
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
+    return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
+  };
+
+  getGasToken = () => {
+    return this.props.isGasTokenSupported
+      ? get(this.props, 'topUpFee.feeInfo.gasToken')
+      : null;
   };
 
   checkFormInputErrors = () => {
@@ -205,7 +214,7 @@ class FundTank extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // fee
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const gasToken = this.getGasToken();
     const txFeeInWei = this.getTxFeeInWei();
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
       amount: currentValue,
@@ -214,7 +223,7 @@ class FundTank extends React.Component<Props, State> {
       txFeeInWei,
       gasToken,
     });
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
     const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
@@ -305,6 +314,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
