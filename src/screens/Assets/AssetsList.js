@@ -36,11 +36,13 @@ import Toast from 'components/Toast';
 
 // constants
 import { defaultFiatCurrency, TOKENS, ETH, PLR } from 'constants/assetsConstants';
-import { ASSET } from 'constants/navigationConstants';
-
+import { ASSET, ASSETS } from 'constants/navigationConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 // actions
 import { hideAssetAction } from 'actions/userSettingsActions';
-
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { initializeBitcoinWalletAction } from 'actions/bitcoinActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 // utils
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
@@ -55,6 +57,8 @@ import assetsConfig from 'configs/assetsConfig';
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { EthereumWallet } from 'models/Wallet';
+import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -62,6 +66,7 @@ import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import HideAssetButton from './HideAssetButton';
+import CheckAuth from '../../components/CheckAuth';
 
 const IS_IOS = Platform.OS === 'ios';
 
@@ -79,10 +84,17 @@ type Props = {
   paymentNetworkBalances: Balances,
   hideAsset: Function,
   scrollViewRef?: Object,
+  setActiveBlockchainNetwork: (id: string) => void,
+  initializeBitcoinWallet: (wallet: EthereumWallet) => void;
+  bitcoinAddresses: BitcoinAddress[],
+  bitcoinBalances: BitcoinBalance,
+  resetIncorrectPassword: () => void,
 }
 
 type State = {
   forceHideRemoval: boolean,
+  showPinModal: boolean,
+  onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
 }
 
 const ListHeaderWrapper = styled.View`
@@ -105,6 +117,8 @@ class AssetsList extends React.Component<Props, State> {
 
   state = {
     forceHideRemoval: false,
+    showPinModal: false,
+    onPinValidAction: null,
   };
 
   componentDidMount() {
@@ -166,8 +180,42 @@ class AssetsList extends React.Component<Props, State> {
     this.setState({ forceHideRemoval: true });
   };
 
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({
+      showPinModal: false,
+    });
+  };
+
+  onBackPress = () => {
+    const { setActiveBlockchainNetwork, navigation } = this.props;
+    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
+    navigation.navigate(ASSETS);
+  }
+
+  initialiseBTC = async (_: string, wallet: EthereumWallet) => {
+    const { setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
+    this.setState({ showPinModal: false });
+    await initializeBitcoinWallet(wallet);
+    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+  };
+
+  navigateToBTCAsset = (assetData: Object) => {
+    const { navigation, setActiveBlockchainNetwork, bitcoinAddresses } = this.props;
+    const isInitialised = bitcoinAddresses.length > 0;
+    if (isInitialised) {
+      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+      navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
+      return;
+    }
+    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC }, () => {
+      navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
+    });
+  };
+
   renderToken = ({ item: asset }) => {
-    const { forceHideRemoval } = this.state;
+    const { forceHideRemoval, onPinValidAction, showPinModal } = this.state;
     const {
       activeAccount,
       baseFiatCurrency,
@@ -243,27 +291,52 @@ class AssetsList extends React.Component<Props, State> {
           if (scrollViewRef) scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
         }}
       >
-        <ListItemWithImage
-          onPress={() => {
-            navigation.navigate(ASSET,
-              {
-                assetData: {
-                  ...props,
-                  tokenType: TOKENS,
+        {symbol !== 'BTC' &&
+          <ListItemWithImage
+            onPress={() => {
+              navigation.navigate(ASSET,
+                {
+                  assetData: {
+                    ...props,
+                    tokenType: TOKENS,
+                  },
                 },
-              },
-            );
-          }}
-          address={props.address}
-          label={name}
-          avatarUrl={fullIconUrl}
-          balance={{
-            balance: formatAmount(balance),
-            value: formattedBalanceInFiat,
-            token: symbol,
-          }}
-          fallbackToGenericToken
-        />
+              );
+            }}
+            address={props.address}
+            label={name}
+            avatarUrl={fullIconUrl}
+            balance={{
+              balance: formatAmount(balance),
+              value: formattedBalanceInFiat,
+              token: symbol,
+            }}
+            fallbackToGenericToken
+          />
+        }
+        {symbol === 'BTC' &&
+          <>
+            <ListItemWithImage
+              actionLabel="BTC Wallet"
+              onPress={() => {
+              this.navigateToBTCAsset({ ...props, tokenType: TOKENS });
+            }}
+              address={props.address}
+              label={name}
+              avatarUrl={fullIconUrl}
+              fallbackToGenericToken
+            />
+            <CheckAuth
+              onPinValid={onPinValidAction}
+              revealMnemonic
+              hideLoader
+              modalProps={{
+                isVisible: showPinModal,
+                onModalHide: this.handleCheckPinModalClose,
+              }}
+            />
+          </>
+        }
       </Swipeout>
     );
   };
@@ -329,10 +402,13 @@ class AssetsList extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  bitcoinAddresses,
+  bitcoinBalances,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -349,6 +425,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
+  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
+  initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
 export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList));

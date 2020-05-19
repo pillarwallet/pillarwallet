@@ -32,6 +32,12 @@ export default {
     receive: false,
     disclaimer: 'Unsupported',
   },
+  BTC: {
+    listed: true,
+    send: true,
+    receive: true,
+    disclaimer: 'Supported',
+  },
 };
 
 export const PPN_TOKEN = PLR;

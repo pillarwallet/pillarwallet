@@ -36,6 +36,7 @@ import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
+import BTCView from 'screens/Assets/BTCView';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -356,9 +357,11 @@ class AssetScreen extends React.Component<Props, State> {
             },
           ],
           rightIconsSize: fontSizes.large,
+          customOnBack: navigation.state.params.onBackPress,
         }}
         inset={{ bottom: 0 }}
       >
+        {!token === 'BTC' &&
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
@@ -380,18 +383,18 @@ class AssetScreen extends React.Component<Props, State> {
           <DataWrapper>
             <ValueWrapper>
               {!!isSynthetic &&
-                <SyntheticAssetIcon source={lightningIcon} />
+              <SyntheticAssetIcon source={lightningIcon} />
               }
               <TokenValue isSynthetic={isSynthetic}>
                 {`${displayAmount} ${token}`}
               </TokenValue>
             </ValueWrapper>
             {!!isListed &&
-              <ValuesWrapper>
-                <ValueInFiat>
-                  {fiatAmount}
-                </ValueInFiat>
-              </ValuesWrapper>
+            <ValuesWrapper>
+              <ValueInFiat>
+                {fiatAmount}
+              </ValueInFiat>
+            </ValuesWrapper>
             }
             {!isListed &&
             <Disclaimer>
@@ -410,7 +413,7 @@ class AssetScreen extends React.Component<Props, State> {
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
             {!isSendActive &&
-              <SWActivationCard />
+            <SWActivationCard />
             }
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
@@ -423,7 +426,10 @@ class AssetScreen extends React.Component<Props, State> {
             asset={token}
           />}
         </ScrollWrapper>
-
+        }
+        {token === 'BTC' &&
+          <BTCView />
+        }
         <ReceiveModal
           isVisible={this.state.activeModal.type === RECEIVE}
           onModalHide={() => {
