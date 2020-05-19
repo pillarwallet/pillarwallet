@@ -17,34 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
-import type { Asset } from './Asset';
-import type { GasToken, TxSettlementItem } from './Transaction';
+import type { FeeInfo } from 'models/PaymentNetwork';
+import type { GasToken } from 'models/Transaction';
 
-export type FeeInfo = {
-  gasAmount: BigNumber,
-  gasPrice: BigNumber,
-  totalCost: BigNumber,
-  gasToken: ?GasToken,
-  gasTokenCost?: BigNumber,
+
+export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
+  const gasTokenCost = get(feeInfo, 'gasTokenCost');
+  if (useGasToken && gasTokenCost) return gasTokenCost;
+  return get(feeInfo, 'totalCost', 0); // TODO: return 'new BigNumber(0)' by default
 };
 
-export type TopUpFee = {
-  isFetched: boolean,
-  feeInfo: ?FeeInfo,
-};
-
-export type WithdrawalFee = {
-  isFetched: boolean,
-  feeInfo: ?FeeInfo,
-};
-
-export type SettleTxFee = {
-  isFetched: boolean,
-  feeInfo: ?FeeInfo,
-};
-
-export type TxToSettle = {
-  ...$Exact<Asset>,
-  ...$Exact<TxSettlementItem>,
+export const getGasToken = (useGasToken: boolean, feeInfo: ?FeeInfo): ?GasToken => {
+  return useGasToken ? get(feeInfo, 'gasToken', null) : null;
 };

@@ -18,7 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { createSelector } from 'reselect';
 import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
+import { ETH } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -29,9 +31,21 @@ export const isSmartWalletActivatedSelector = ({
   smartWallet,
 }: RootReducerState) => {
   const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWallet);
-  return (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
+  return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
 };
 
 export const isGasTokenSupportedSelector = ({
   smartWallet: { connectedAccount },
 }: RootReducerState) => accountHasGasTokenSupport(connectedAccount);
+
+export const preferredGasTokenSelector = ({
+  appSettings: { data: { preferredGasToken } },
+}: RootReducerState): string => preferredGasToken || ETH;
+
+export const useGasTokenSelector = createSelector(
+  isGasTokenSupportedSelector,
+  preferredGasTokenSelector,
+  (isGasTokenSupported, preferredGasToken) => {
+    return isGasTokenSupported && preferredGasToken !== ETH;
+  },
+);
