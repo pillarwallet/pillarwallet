@@ -46,6 +46,7 @@ type Props = {
   rewards: RewardsByCompany,
   isFetchingRewards: boolean,
   fetchReferralReward: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 const RewardBadge = styled(CachedImage)`
@@ -69,9 +70,17 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
   }
 
   render() {
-    const { navigation, rewards, isFetchingRewards } = this.props;
+    const {
+      navigation,
+      rewards,
+      isFetchingRewards,
+      isPillarRewardCampaignActive,
+    } = this.props;
     const { asset, amount } = get(rewards, 'pillar', {});
-    const rewardText = asset && amount ? `${amount} ${asset} and a badge` : 'a badge';
+    const modalTitle = isPillarRewardCampaignActive ? 'Invite and get rewarded' : 'Invite to Pillar';
+    const rewardParagraph = isPillarRewardCampaignActive && asset && amount
+      ? `You will receive ${amount} ${asset} for each friend installed the app with your referral link.`
+      : '';
 
     return (
       <ContainerWithHeader
@@ -82,14 +91,14 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
         }}
       >
         <Wrapper flex={1} center regularPadding>
-          <RewardBadge source={rewardBadge} />
-          <Title>Invite and get rewarded</Title>
+          {!!isPillarRewardCampaignActive && <RewardBadge source={rewardBadge} />}
+          <Title>{modalTitle}</Title>
           <LoadingParagraph
             isLoading={isFetchingRewards}
             text={
-              `You will receive ${rewardText} for each friend installed the app with your referral link.` +
-              '\n To enable referral system we need to make sure you\'re a genuine user. We care for our users ' +
-              'privacy and never share your data.'
+              `${rewardParagraph}` +
+              `\n To enable ${isPillarRewardCampaignActive ? 'referral' : 'invitation'} system we need to make sure ` +
+              'you\'re a genuine user. We care for our users\' privacy and never share your data.'
             }
             paragraphProps={{
               center: true,
@@ -112,10 +121,11 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
-  referrals: { rewards, isFetchingRewards },
+  referrals: { rewards, isFetchingRewards, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   rewards,
   isFetchingRewards,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
