@@ -37,7 +37,7 @@ const CollectibleImage = (props: Props) => {
       />
     );
   }
-  return <CachedImage {...props} />;
+  return <CachedImage {...props} style={[{ width: props.width, height: props.height }, props.style]} />;
 };
 
 export default CollectibleImage;

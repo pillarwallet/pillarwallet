@@ -106,8 +106,6 @@ class CollectiblesList extends React.PureComponent<Props> {
         >
           <CollectibleImage
             style={{
-              height: 135,
-              width: 135,
               marginBottom: spacing.mediumLarge,
             }}
             width={135}

@@ -97,8 +97,6 @@ const CircleButtonsWrapper = styled(Wrapper)`
 
 const StyledCollectibleImage = styled(CollectibleImage)`
   align-self: center;
-  height: 180px;
-  width: 180px;
   margin-top: 30px;
 `;
 
@@ -166,9 +164,7 @@ class CollectibleScreen extends React.Component<Props, State> {
       >
         <ImageViewer
           imageUrls={imageViewImages}
-          renderImage={(props) => {
-            return <CollectibleImage {...props} />;
-          }}
+          renderImage={props => <CollectibleImage {...props} />}
           renderIndicator={() => null}
           backgroundColor={colors.surface}
           saveToLocalByLongPress={false}

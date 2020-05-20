@@ -1150,7 +1150,14 @@ class EventDetail extends React.Component<Props, State> {
   renderImage = (eventData) => {
     const { theme } = this.props;
     const {
-      imageUrl, itemImageSource, profileImage, username, iconName, iconColor, imageBackground, imageBorder,
+      imageUrl,
+      itemImageSource,
+      profileImage,
+      username,
+      iconName,
+      iconColor,
+      imageBackground,
+      imageBorder,
       collectibleUrl,
     } = eventData;
     const { genericToken: fallbackSource } = images(theme);
