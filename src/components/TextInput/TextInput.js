@@ -613,7 +613,7 @@ class TextInput extends React.Component<Props, State> {
                 <LeftSideWrapper>
                   {(innerImageURI || fallbackSource) && <Image
                     source={imageSource}
-                    fallbackSource={fallbackSource}
+                    fallbackSource={typeof innerImageURI === 'number' ? imageSource : fallbackSource}
                     style={{ marginRight: 9 }}
                   />}
                   {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
