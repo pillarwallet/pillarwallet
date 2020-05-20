@@ -156,11 +156,12 @@ class ReferFriends extends React.PureComponent<Props> {
                   marginBottom={4}
                 />
               </ClosablePillList>
+              {!!isPillarRewardCampaignActive &&
               <BaseText style={{ marginTop: spacing.large }} secondary small>
                 Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after
                 confirming their phone number/email address. You will receive your reward after your contact has been
                 rewarded.
-              </BaseText>
+              </BaseText>}
             </React.Fragment>}
           <ButtonWrapper justifyCenter={hasAddedContacts}>
             <Button
