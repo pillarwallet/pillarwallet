@@ -150,6 +150,11 @@ export const loginAction = (
 
       const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
       if (isWalletRecoveryPending) {
+        const { address } = wallet;
+        dispatch({
+          type: DECRYPT_WALLET,
+          payload: { address },
+        });
         api.init();
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
         await smartWalletService.init(

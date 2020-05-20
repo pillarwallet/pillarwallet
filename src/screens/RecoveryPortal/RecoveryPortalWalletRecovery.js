@@ -73,8 +73,7 @@ class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
 
   handleNavigationBack = () => {
     const { currentWebViewUrl } = this.state;
-    if (!this.webViewRef
-      || (this.initialUrl && currentWebViewUrl && this.initialUrl.includes(currentWebViewUrl))) {
+    if (!this.webViewRef || (this.initialUrl && this.initialUrl === currentWebViewUrl)) {
       this.props.navigation.goBack();
       return;
     }
@@ -83,28 +82,16 @@ class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
 
   onNavigationStateChange = (webViewNavigationState) => {
     const { checkingNewUrl, currentWebViewUrl: lastWebViewUrl } = this.state;
-    if (checkingNewUrl) return;
+
+    if (checkingNewUrl || webViewNavigationState.loading) return;
+
     this.setState({ checkingNewUrl: true }, () => {
-      const currentWebViewUrl = get(webViewNavigationState, 'url');
+      let currentWebViewUrl = get(webViewNavigationState, 'url');
       if (!currentWebViewUrl) return;
 
       // set actual initial url
+      if (currentWebViewUrl.endsWith('/')) currentWebViewUrl = currentWebViewUrl.slice(0, -1);
       if (!this.initialUrl) this.initialUrl = currentWebViewUrl;
-
-      // if it's recovery address then inject current device address to url query param
-      const { temporaryWallet } = this.props;
-      if (temporaryWallet) {
-        const deviceAddressQuery = `?deviceAddress=${temporaryWallet.address}`;
-        if (currentWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE)
-          && !currentWebViewUrl.includes(deviceAddressQuery)
-          && this.webViewRef) {
-          this.webViewRef.stopLoading();
-          this.webViewRef.injectJavaScript(`
-          window.history.replaceState(null, null, "${RECOVERY_PORTAL_URL_PATHS.RECOVER_DEVICE}${deviceAddressQuery}");
-        `);
-          this.webViewRef.reload();
-        }
-      }
 
       // covers scenario if user logged out (sign-out) on webview and sign in becomes is present home
       if (lastWebViewUrl
@@ -115,6 +102,18 @@ class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
 
       this.setState({ currentWebViewUrl, checkingNewUrl: false });
     });
+  };
+
+  onWebViewMessage = (message) => {
+    const messageType = get(message, 'nativeEvent.data');
+    const { temporaryWallet } = this.props;
+    if (!this.webViewRef || messageType !== 'getRecoveryDeviceAddress' || !temporaryWallet) return;
+    this.webViewRef.injectJavaScript(`
+      var event = new CustomEvent("recoveryDeviceAddressAdded", {
+        detail: { address: "${temporaryWallet.address}" }
+      });
+      document.dispatchEvent(event);
+    `);
   };
 
   render() {
@@ -136,7 +135,9 @@ class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
               ref={(ref) => { this.webViewRef = ref; }}
               source={{ uri: RECOVERY_PORTAL_URL }}
               onNavigationStateChange={this.onNavigationStateChange}
+              onMessage={this.onWebViewMessage}
               renderLoading={this.renderLoading}
+              cacheEnabled={false}
               originWhitelist={['*']}
               hideKeyboardAccessoryView
               startInLoadingState

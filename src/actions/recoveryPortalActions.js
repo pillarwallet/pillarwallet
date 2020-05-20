@@ -29,16 +29,13 @@ import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 
 // constants
-import {
-  RECOVERY_PORTAL_SETUP_COMPLETE,
-  SET_WALLET_PIN_CODE,
-} from 'constants/navigationConstants';
+import { RECOVERY_PORTAL_SETUP_COMPLETE, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import {
   RESET_RECOVERY_PORTAL_TEMPORARY_WALLET,
   SET_RECOVERY_PORTAL_TEMPORARY_WALLET,
 } from 'constants/recoveryPortalConstants';
-import { SET_WALLET_RECOVERY_PENDING } from 'constants/walletConstants';
+import { SET_WALLET_RECOVERY_COMPLETE, SET_WALLET_RECOVERY_PENDING } from 'constants/walletConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
@@ -52,9 +49,10 @@ import smartWalletService from 'services/smartWallet';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { EthereumWallet } from 'models/Wallet';
 
-export const addRecoveryPortalDeviceAction = (deviceAddress: string) => {
+
+export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasToken: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    await dispatch(addConnectedDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress));
+    await dispatch(addConnectedDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress, payWithGasToken));
     const connectedDevices = get(getState(), 'connectedDevices.data', []);
     const isDeviceConnected = connectedDevices.some(({ address }) => addressesEqual(address, deviceAddress));
     if (!isDeviceConnected) return;
@@ -70,9 +68,11 @@ export const checkIfRecoveredSmartWalletFinishedAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     // in case deployment was faster than user encrypted the wallet (set pin flow)
     const encryptedWalletAddress = get(getState(), 'wallet.data.address');
+
     if (!encryptedWalletAddress) return;
 
-    if (isEmpty(smartWalletService.sdk.state.account)) {
+    const connectedAccount = get(smartWalletService, 'sdk.state.account');
+    if (isEmpty(connectedAccount)) {
       const accounts = await smartWalletService.getAccounts();
       if (isEmpty(accounts)) return;
       await smartWalletService.connectAccount(accounts[0].address);
@@ -83,7 +83,8 @@ export const checkIfRecoveredSmartWalletFinishedAction = () => {
     const thisDevice = devices.find(({ device: { address } }) => addressesEqual(activeDeviceAddress, address));
     if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
 
-    console.log('RECOVERY FINISHED!!!');
+    dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
+
     // 1. TODO: re-assign username
     // 2. TODO: fire finish registration action
   };
@@ -94,6 +95,7 @@ export const checkRecoveredSmartWalletStateAction = (event: Api.IEvent) => {
     const eventName = get(event, 'name');
     const transactionType = get(event, 'payload.state');
     const transactionHash = get(event, 'payload.hash');
+
     if (eventName === Api.EventNames.AccountTransactionUpdated
       && !isEmpty(transactionHash)
       && !isEmpty(transactionType)) {

@@ -183,10 +183,19 @@ class SDKWrapper {
       }));
   }
 
-  registerOnAuthServer(walletPrivateKey: string, fcmToken: ?string, username: string) {
+  registerOnAuthServer(
+    walletPrivateKey: string,
+    fcmToken: ?string,
+    username: string,
+    recovery: ?{
+      accountAddress: string,
+      deviceAddress: string,
+    },
+  ) {
     const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
     let requestPayload = { privateKey, username };
     if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
+    if (!isEmpty(recovery)) requestPayload = { ...requestPayload, recovery };
     return Promise.resolve()
       .then(() => {
         return this.pillarWalletSdk.wallet.registerAuthServer(requestPayload);

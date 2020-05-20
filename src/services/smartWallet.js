@@ -273,23 +273,18 @@ class SmartWallet {
     return this.sdk.deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
-        this.reportError('Unable to deploy', { e });
+        this.reportError('Unable to deploy account', { e });
         return { error: e.message };
       });
   }
 
-  async deployAccountDevice(deviceAddress: string) {
+  async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
     const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
-
-    const accountBalance = this.getAccountRealBalance();
-    const { totalCost } = parseEstimatePayload(deployEstimate);
-
-    if (totalCost && accountBalance.gte(totalCost)) {
-      return this.sdk.submitAccountTransaction(deployEstimate);
-    }
-
-    console.log('insufficient balance: ', deployEstimate, accountBalance);
-    return null;
+    return this.sdk.submitAccountTransaction(deployEstimate, payForGasWithToken)
+      .catch((e) => {
+        this.reportError('Unable to deploy device', { e });
+        return null;
+      });
   }
 
   async unDeployAccountDevice(deviceAddress: string) {

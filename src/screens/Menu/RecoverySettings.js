@@ -20,24 +20,38 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withTheme } from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import CheckAuth from 'components/CheckAuth';
+
+// utils
 import { getThemeColors } from 'utils/themes';
+
+// constants
 import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   MANAGE_CONNECTED_DEVICES,
   RECOVERY_PORTAL_SETUP_INTRO,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
+
+// actions
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
+// selectors
+import { isSmartWalletActivatedSelector } from 'selectors';
+
+// types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Theme } from 'models/Theme';
 import type { EthereumWallet } from 'models/Wallet';
 
+// local
 import { SettingsSection } from './SettingsSection';
 
 
@@ -46,6 +60,7 @@ type Props = {
   backupStatus: BackupStatus,
   theme: Theme,
   resetIncorrectPassword: () => void,
+  isSmartWalletActivated: boolean,
 };
 
 type State = {
@@ -60,7 +75,9 @@ class RecoverySettings extends React.Component<Props, State> {
   };
 
   getGlobalSection = () => {
-    const { navigation } = this.props;
+    const { navigation, isSmartWalletActivated } = this.props;
+    let recoveryPortalSubtitle = 'Smart Wallet account web recovery portal';
+    if (!isSmartWalletActivated) recoveryPortalSubtitle = `${recoveryPortalSubtitle} (requires activated Smart Wallet)`;
     return [
       {
         key: 'linkedDevices',
@@ -71,7 +88,8 @@ class RecoverySettings extends React.Component<Props, State> {
       {
         key: 'linkedDevices',
         title: 'Recovery Portal',
-        subtitle: 'Smart Wallet accont web recovery portal',
+        subtitle: recoveryPortalSubtitle,
+        disabled: !isSmartWalletActivated,
         onPress: () => navigation.navigate(RECOVERY_PORTAL_SETUP_INTRO),
       },
     ];
@@ -156,9 +174,18 @@ const mapStateToProps = ({
   backupStatus,
 });
 
+const structuredSelector = createStructuredSelector({
+  isSmartWalletActivated: isSmartWalletActivatedSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(RecoverySettings));
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(RecoverySettings));
 

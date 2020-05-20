@@ -41,6 +41,7 @@ import {
   UPDATE_PIN_ATTEMPTS,
   IMPORTED,
   SET_WALLET_RECOVERY_PENDING,
+  SET_WALLET_RECOVERY_COMPLETE,
 } from 'constants/walletConstants';
 import { SigningKey } from 'ethers/utils/signing-key';
 
@@ -177,6 +178,11 @@ const walletReducer = (
       return {
         ...state,
         backupStatus: { ...state.backupStatus, isRecoveryPending: true },
+      };
+    case SET_WALLET_RECOVERY_COMPLETE:
+      return {
+        ...state,
+        backupStatus: { ...state.backupStatus, isRecoveryPending: false },
       };
     default:
       return state;

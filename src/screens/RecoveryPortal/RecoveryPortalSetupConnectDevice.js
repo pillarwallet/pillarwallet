@@ -76,7 +76,7 @@ type Props = {
   fetchGasInfo: () => void,
   gasInfo: GasInfo,
   isOnline: boolean,
-  addRecoveryPortalDevice: (deviceAddress: string) => void,
+  addRecoveryPortalDevice: (deviceAddress: string, payWithGasToken: boolean) => void,
   addingDeviceAddress: ?string,
   activeAccount: ?Account,
   accountAssets: Assets,
@@ -194,7 +194,7 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
     });
   };
 
-  onNextClick = () => this.props.addRecoveryPortalDevice(this.deviceAddress);
+  onNextClick = () => this.props.addRecoveryPortalDevice(this.deviceAddress, this.state.feeByGasToken);
 
   renderSpinner = () => <Wrapper style={{ width: '100%', alignItems: 'center' }}><Spinner /></Wrapper>;
 
@@ -312,7 +312,10 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-  addRecoveryPortalDevice: (deviceAddress: string) => dispatch(addRecoveryPortalDeviceAction(deviceAddress)),
+  addRecoveryPortalDevice: (
+    deviceAddress: string,
+    payWithGasToken: boolean,
+  ) => dispatch(addRecoveryPortalDeviceAction(deviceAddress, payWithGasToken)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(RecoveryPortalSetupConnectDevice);

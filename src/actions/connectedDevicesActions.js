@@ -79,12 +79,16 @@ export const setConnectedDevicesAction = (devices: ConnectedDevice[]) => ({
   payload: devices,
 });
 
-export const addConnectedDeviceAction = (deviceCategory: string, deviceAddress: string) => {
+export const addConnectedDeviceAction = (
+  deviceCategory: string,
+  deviceAddress: string,
+  payWithGasToken: boolean = false,
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_ADDING_CONNECTED_DEVICE_ADDRESS, payload: deviceAddress });
     if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
       // error messages handled by smart wallet service
-      await dispatch(addSmartWalletAccountDeviceAction(deviceAddress));
+      await dispatch(addSmartWalletAccountDeviceAction(deviceAddress, payWithGasToken));
 
       // check if account was created
       const smartWalletAccountDevices = get(getState(), 'smartWallet.connectedAccount.devices', []);

@@ -1362,7 +1362,7 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
   };
 };
 
-export const addSmartWalletAccountDeviceAction = (deviceAddress: string) => {
+export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWithGasToken: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     await dispatch(fetchConnectedAccountAction());
 
@@ -1391,34 +1391,18 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string) => {
       dispatch({ type: ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
     }
 
-    // device deployment
-    await smartWalletService.addAccountDevice(deviceAddress);
-    await dispatch(fetchGasInfoAction());
-    const gasInfo = get(getState(), 'history.gasInfo', {});
-    const deployEstimateFee = await smartWalletService.estimateAccountDeviceDeployment(deviceAddress, gasInfo);
-    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const etherBalanceBN = smartWalletService.getAccountRealBalance();
-    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
-      Toast.show({
-        message: 'Not enough ETH to add device',
-        type: 'warning',
-        title: 'Unable to add device',
-        autoClose: false,
-      });
-      return;
-    }
-
-    const accountDeviceDeploymentHash = await smartWalletService.deployAccountDevice(deviceAddress);
+    const accountDeviceDeploymentHash = await smartWalletService.deployAccountDevice(deviceAddress, payWithGasToken);
     if (!accountDeviceDeploymentHash) {
       // no transaction hash, unknown error occurred
       Toast.show({
-        message: 'Failed to add device to Smart Wallet account',
+        message: 'Failed to deploy Smart Wallet account device ',
         type: 'warning',
-        title: 'Unable to add device',
+        title: 'Unable to deploy device',
         autoClose: false,
       });
     }
-    await dispatch(fetchConnectedAccountAction());
+
+    dispatch(fetchConnectedAccountAction());
   };
 };
 
