@@ -91,7 +91,7 @@ const getRewardText = (rewards: RewardsByCompany) => {
     rewardText += otherCampaignsRewardText;
   }
 
-  return rewardText ? `${rewardText} and a badge` : 'a badge';
+  return rewardText;
 };
 
 class ReferralIncomingReward extends React.PureComponent<Props> {
@@ -101,8 +101,14 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
   }
 
   render() {
-    const { navigation, rewards = {}, isFetchingRewards } = this.props;
+    const {
+      navigation,
+      rewards = {},
+      isFetchingRewards,
+    } = this.props;
     const rewardText = getRewardText(rewards);
+    const isGettingReward = rewardText;
+    const title = isGettingReward ? 'Your reward is on the way' : 'Thanks for joining Pillar';
 
     return (
       <ContainerWithHeader
@@ -114,29 +120,32 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
       >
         <ConfettiBackground>
           <Wrapper flex={1} center fullScreen>
-            <RewardBadge source={rewardBadge} />
-            <Title>Your reward is on the way</Title>
-            <LoadingParagraph
-              isLoading={isFetchingRewards}
-              text={'Thanks for joining Pillar.\n' +
-              `To celebrate this, we also give you ${rewardText}.\n` +
-              'You need to add and verify your email or phone in order to receive the reward. ' +
-              'Reward will be issued to new user only.'}
-              paragraphProps={{
-                center: true,
-                style: {
-                  paddingHorizontal: 14,
-                  marginBottom: 30,
-                },
-              }}
-            />
-            <Button
-              title="Add details"
-              onPress={() => navigation.navigate(ADD_EDIT_USER)}
-              marginBottom={spacing.mediumLarge}
-              marginTop={40}
-              block
-            />
+            {!!isGettingReward && <RewardBadge source={rewardBadge} />}
+            <Title>{title}</Title>
+            {!!isGettingReward &&
+            <>
+              <LoadingParagraph
+                isLoading={isFetchingRewards}
+                text={'Thanks for joining Pillar.\n' +
+                `To celebrate this, we also give you ${rewardText}.\n` +
+                'You need to add and verify your email or phone in order to receive the reward. ' +
+                'Reward will be issued to new user only.'}
+                paragraphProps={{
+                  center: true,
+                  style: {
+                    paddingHorizontal: 14,
+                    marginBottom: 30,
+                  },
+                }}
+              />
+              <Button
+                title="Add details"
+                onPress={() => navigation.navigate(ADD_EDIT_USER)}
+                marginBottom={spacing.mediumLarge}
+                marginTop={40}
+                block
+              />
+            </>}
           </Wrapper>
         </ConfettiBackground>
       </ContainerWithHeader>
