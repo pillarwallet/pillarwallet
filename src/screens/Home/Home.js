@@ -429,12 +429,13 @@ class HomeScreen extends React.Component<Props, State> {
                   <Banner
                     isVisible={isReferralBannerVisible}
                     onPress={goToInvitationFlow}
-                    bannerText="Refer friends and earn rewards, free PLR and more."
+                    bannerText="Invite friends to Pillar"
                     imageProps={{
                       style: {
                         width: 96,
                         height: 60,
                         marginRight: -4,
+                        marginTop: 15,
                       },
                       source: referralImage,
                     }}
