@@ -5308,6 +5308,7 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
