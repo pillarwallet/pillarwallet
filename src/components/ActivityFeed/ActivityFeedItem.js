@@ -115,7 +115,7 @@ type Props = {
   isForAllAccounts?: boolean,
 };
 
-type EventData = {
+export type EventData = {
   label?: string,
   itemImageSource?: string,
   actionLabel?: ?string,
@@ -424,6 +424,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           data = {
             label: usernameOrAddress,
             avatarUrl,
+            isReceived,
           };
 
           if (event.extra) {
@@ -446,7 +447,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             );
           }
         } else {
-          const iconData = {};
+          const additionalInfo = {};
           let itemLabel = usernameOrAddress;
           const isTrxBetweenAccounts = (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) ||
             (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts));
@@ -456,14 +457,15 @@ export class ActivityFeedItem extends React.Component<Props> {
           if (isTrxBetweenAccounts) {
             if (isForAllAccounts) {
               itemLabel = accountName || 'Unknown account';
-              iconData.itemImageSource = accountType === ACCOUNT_TYPES.KEY_BASED
+              additionalInfo.itemImageSource = accountType === ACCOUNT_TYPES.KEY_BASED
                 ? keyWalletIcon
                 : smartWalletIcon;
             } else {
-              iconData.itemImageSource = event.accountType === ACCOUNT_TYPES.KEY_BASED
+              additionalInfo.itemImageSource = event.accountType === ACCOUNT_TYPES.KEY_BASED
                 ? keyWalletIcon
                 : smartWalletIcon;
             }
+            additionalInfo.isBetweenAccounts = true;
           }
 
           let subtext = getAccountName(event.accountType);
@@ -484,8 +486,8 @@ export class ActivityFeedItem extends React.Component<Props> {
           }
 
           if (!isTrxBetweenAccounts) {
-            iconData.iconName = !avatarUrl ? directionIcon : null;
-            iconData.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
+            additionalInfo.iconName = !avatarUrl ? directionIcon : null;
+            additionalInfo.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
           }
 
           data = {
@@ -494,7 +496,8 @@ export class ActivityFeedItem extends React.Component<Props> {
             avatarUrl,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
             valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
-            ...iconData,
+            ...additionalInfo,
+            isReceived,
           };
         }
     }
@@ -519,8 +522,9 @@ export class ActivityFeedItem extends React.Component<Props> {
       iconBackgroundColor: 'card',
       iconBorder: true,
       fallbackToGenericToken: true,
+      isReceived,
     };
-  }
+  };
 
   getBadgeRewardEventData = (event: Object): EventData => {
     const { name, imageUrl } = event;
@@ -530,7 +534,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       subtext: 'Badge',
       actionLabel: STATUSES.RECEIVED,
     };
-  }
+  };
 
   getSocialEventData = (event: Object): ?EventData => {
     const { rejectInvitation, acceptInvitation } = this.props;
@@ -561,7 +565,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
 
     return data;
-  }
+  };
 
   getEventData = (event: Object): ?EventData => {
     switch (event.type) {
@@ -580,14 +584,14 @@ export class ActivityFeedItem extends React.Component<Props> {
       default:
         return null;
     }
-  }
+  };
 
   getColor = (color: ?string): ?string => {
     if (!color) return null;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
     return colors[color] || color;
-  }
+  };
 
   render() {
     const { event, selectEvent } = this.props;
@@ -604,7 +608,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     return (
       <ListItemWithImage
         {...itemData}
-        onPress={() => selectEvent(event)}
+        onPress={() => selectEvent(event, itemData)}
         actionLabelColor={this.getColor('secondaryText')}
         iconColor={this.getColor(iconColor)}
         diameter={48}

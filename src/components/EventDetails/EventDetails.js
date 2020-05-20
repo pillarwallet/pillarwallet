@@ -44,29 +44,28 @@ import SWActivationModal from 'components/SWActivationModal';
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { getRate, addressesEqual, getAssetData, getAssetsAsList } from 'utils/assets';
+import { getRate, getAssetData, getAssetsAsList } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
   formatUnits,
   formatTransactionFee,
+  reportOrWarn,
 } from 'utils/common';
 import {
   groupPPNTransactions,
-  elipsizeAddress,
   isPendingTransaction,
   isSWAddress,
   isKWAddress,
-  getUsernameOrAddress,
   isBTCAddress,
 } from 'utils/feedData';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
-import { getActiveAccount, getAccountName } from 'utils/accounts';
+import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -105,6 +104,7 @@ import {
 import {
   PPNTransactionsSelector,
   isPPNActivatedSelector,
+  combinedPPNTransactionsSelector,
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
@@ -119,10 +119,12 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset } from 'models/Asset';
+import type { Rates, Assets, Asset, AssetData } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -131,6 +133,8 @@ import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
+
 
 type Props = {
   theme: Theme,
@@ -149,6 +153,7 @@ type Props = {
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
   PPNTransactions: Transaction[],
+  mergedPPNTransactions: Transaction[],
   isSmartWalletActivated: boolean,
   assetDecimals: number,
   activeAccountAddress: string,
@@ -161,11 +166,18 @@ type Props = {
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
   history: {[string]: Object[]},
+  itemData: Object,
+  isForAllAccounts?: boolean,
+  storybook?: boolean,
+  bitcoinFeatureEnabled?: boolean,
+  setActiveBlockchainNetwork: (id: string) => void,
+  refreshBitcoinBalance: () => void,
 };
 
 type State = {
   isReceiveModalVisible: boolean,
   SWActivationModalVisible: boolean,
+  receiveWalletAddress: string,
 };
 
 type EventData = {
@@ -177,12 +189,11 @@ type EventData = {
   iconName?: ?string,
   iconColor?: ?string,
   actionTitle?: string,
-  actionSubtitle?: string,
+  actionSubtitle?: ?string,
   actionIcon?: ?string,
-  actionColor?: ?string,
   customActionTitle?: React.Node,
   buttons?: Object[],
-  fee?: string,
+  fee?: ?string,
   settleEventData?: Object,
   username?: string,
   imageBorder?: boolean,
@@ -253,13 +264,14 @@ const Divider = styled.View`
 `;
 
 
-class EventDetail extends React.Component<Props, State> {
+export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
 
   state = {
     isReceiveModalVisible: false,
     SWActivationModalVisible: false,
+    receiveWalletAddress: '',
   };
 
   componentDidMount() {
@@ -269,7 +281,7 @@ class EventDetail extends React.Component<Props, State> {
     this.syncTxStatus(txInfo);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.event.type !== TRANSACTION_EVENT) return;
     const txInfo = this.findTxInfo();
     if (!prevProps.isVisible && this.props.isVisible) {
@@ -302,7 +314,7 @@ class EventDetail extends React.Component<Props, State> {
       .find(tx => tx) || {};
   }
 
-  syncEnsRegistry = (txInfo) => {
+  syncEnsRegistry = (txInfo: Transaction) => {
     const { ensRegistry, lookupAddress } = this.props;
     const relatedAddress = this.getRelevantAddress(txInfo);
 
@@ -311,7 +323,7 @@ class EventDetail extends React.Component<Props, State> {
     }
   }
 
-  syncTxStatus = (txInfo) => {
+  syncTxStatus = (txInfo: Transaction) => {
     const {
       event,
       updateTransactionStatus,
@@ -324,17 +336,11 @@ class EventDetail extends React.Component<Props, State> {
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
       updateTransactionStatus(event.hash);
     }
-  }
-
-  isReceived = ({ to: address, tag }: Object): boolean => {
-    const { activeAccountAddress, bitcoinAddresses } = this.props;
-    return addressesEqual(address, activeAccountAddress)
-      || tag === PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-      || bitcoinAddresses.some(e => e.address === address);
   };
 
   getRelevantAddress = (event: Object): string => {
-    const isReceived = this.isReceived(event);
+    const { itemData } = this.props;
+    const { isReceived } = itemData;
     return isReceived ? event.from : event.to;
   };
 
@@ -347,7 +353,6 @@ class EventDetail extends React.Component<Props, State> {
     } = event;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    let formattedFee;
 
     if (!isEmpty(feeWithGasToken)) {
       return `Fee ${formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken'))}`;
@@ -355,14 +360,17 @@ class EventDetail extends React.Component<Props, State> {
 
     if (gasUsed) {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
-      formattedFee = parseFloat(utils.formatEther(fee.toString()));
-    } else {
-      formattedFee = parseFloat(formatUnits(btcFee, assetDecimals));
+      const formattedFee = parseFloat(utils.formatEther(fee.toString()));
+      const rate = getRate(rates, ETH, fiatCurrency);
+      const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
+      return `Fee ${formattedFee} ETH (${formattedFiatValue})`;
+    } else if (btcFee) {
+      const formattedBTCFee = parseFloat(formatUnits(btcFee, assetDecimals));
+      const btcRate = getRate(rates, BTC, fiatCurrency);
+      const formattedFiatValue = formatFiat(formattedBTCFee * btcRate, fiatCurrency);
+      return `Fee ${formattedBTCFee} BTC (${formattedFiatValue})`;
     }
-    const rate = getRate(rates, ETH, fiatCurrency);
-    const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
-    const feeLabel = `Fee ${formattedFee} ETH (${formattedFiatValue})`;
-    return feeLabel;
+    return null;
   };
 
   messageContact = (contact: ApiUser) => {
@@ -436,20 +444,35 @@ class EventDetail extends React.Component<Props, State> {
     if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
       await switchAccount(swAccount.id);
     }
+  }
+
+  switchToBTC = async () => {
+    const {
+      accounts, switchAccount,
+    } = this.props;
+    const swAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
+    const { type: activeAccType } = getActiveAccount(accounts) || {};
+    if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
+      await switchAccount(swAccount.id);
+    }
   };
 
-  showReceiveModal = () => {
-    this.props.onClose(() => this.setState({ isReceiveModalVisible: true }));
+  showReceiveModal = (receiveWalletAddress: string) => {
+    this.props.onClose(() => this.setState({ isReceiveModalVisible: true, receiveWalletAddress }));
   };
 
-  topUpKeyWallet = async () => {
-    await this.switchToKW();
-    this.showReceiveModal();
+  topUpKeyWallet = () => {
+    const { accounts } = this.props;
+    const keyWalletAddress = getKeyWalletAddress(accounts);
+    if (!keyWalletAddress) return;
+    this.showReceiveModal(keyWalletAddress);
   };
 
-  topUpSW = async () => {
-    await this.switchToSW();
-    this.showReceiveModal();
+  topUpSW = () => {
+    const { accounts } = this.props;
+    const smartWalletAddress = getSmartWalletAddress(accounts);
+    if (!smartWalletAddress) return;
+    this.showReceiveModal(smartWalletAddress);
   };
 
   referFriends = () => {
@@ -490,39 +513,83 @@ class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_AMOUNT, params);
   };
 
-  topUpPillarNetwork = () => {
+  topUpPillarNetwork = async () => {
     const { onClose, navigation } = this.props;
     onClose();
+    await this.switchToSW();
     navigation.navigate(TANK_FUND_FLOW);
   };
 
-  PPNwithdraw = () => {
+  PPNWithdraw = async () => {
     const { onClose, navigation } = this.props;
     onClose();
+    await this.switchToSW();
     navigation.navigate(TANK_WITHDRAWAL_FLOW);
   };
 
-  send = () => {
+  send = async (isFromKW?: boolean) => {
     const { onClose, navigation } = this.props;
     onClose();
+    if (!isFromKW) {
+      await this.switchToSW();
+    } else {
+      await this.switchToKW();
+    }
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
   };
 
-  sendSynthetic = () => {
+  sendSynthetic = async () => {
     const { onClose, navigation } = this.props;
     onClose();
+    await this.switchToSW();
     navigation.navigate(SEND_SYNTHETIC_ASSET);
   };
 
-  settle = () => {
+  settle = async () => {
     const { onClose, navigation } = this.props;
     onClose();
+    await this.switchToSW();
     navigation.navigate(SETTLE_BALANCE);
   };
 
+  sendToBtc = async (btcReceiverAddress: string) => {
+    const {
+      onClose,
+      navigation,
+      supportedAssets,
+      setActiveBlockchainNetwork,
+      refreshBitcoinBalance,
+    } = this.props;
+    onClose();
+    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+    refreshBitcoinBalance();
+    const btcToken = supportedAssets.find(e => e.symbol === BTC);
+
+    if (!btcToken) {
+      reportOrWarn('BTC token not found', null, 'error');
+      return;
+    }
+
+    const { symbol: token, decimals } = btcToken;
+
+    const iconUrl = `${SDK_PROVIDER}/${btcToken.iconUrl}?size=2`;
+
+    const assetData: AssetData = {
+      token,
+      decimals,
+      iconColor: iconUrl,
+    };
+
+    navigation.navigate(SEND_TOKEN_AMOUNT, {
+      assetData,
+      receiver: btcReceiverAddress,
+      source: 'Contact',
+      receiverEnsName: '',
+    });
+  };
+
   getWalletCreatedEventData = (event: Object): ?EventData => {
-    const { theme, isSmartWalletActivated } = this.props;
-    const { keyWalletIcon, smartWalletIcon } = images(theme);
+    const { isSmartWalletActivated } = this.props;
     const keyWalletButtons = [
       {
         title: 'Top up',
@@ -539,9 +606,6 @@ class EventDetail extends React.Component<Props, State> {
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
-          name: 'Key wallet',
-          itemImageSource: keyWalletIcon,
-          actionTitle: 'Created',
           buttons: keyWalletButtons,
         };
       case 'Smart Wallet created':
@@ -564,16 +628,10 @@ class EventDetail extends React.Component<Props, State> {
         };
 
         return {
-          name: 'Smart Wallet',
-          itemImageSource: smartWalletIcon,
-          actionTitle: 'Created',
           buttons: isSmartWalletActivated ? [topUpButton] : [activateButton, topUpButtonSecondary],
         };
       case 'Wallet imported':
         return {
-          name: 'Key wallet',
-          itemImageSource: keyWalletIcon,
-          actionTitle: 'Imported',
           primaryButtonTitle: 'Top up',
           secondaryButtonTitle: 'Refer friends',
           buttons: keyWalletButtons,
@@ -584,8 +642,7 @@ class EventDetail extends React.Component<Props, State> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { theme, isPPNActivated } = this.props;
-    const { PPNIcon, keyWalletIcon } = images(theme);
+    const { isPPNActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -593,8 +650,6 @@ class EventDetail extends React.Component<Props, State> {
       case PPN_INIT_EVENT:
         if (isPPNActivated) {
           return {
-            name: 'Pillar Network',
-            itemImageSource: PPNIcon,
             actionTitle: 'Activated',
             buttons: [
               {
@@ -611,8 +666,6 @@ class EventDetail extends React.Component<Props, State> {
           };
         }
         return {
-          name: 'Pillar Network',
-          itemImageSource: PPNIcon,
           actionTitle: 'Created',
           buttons: [
             {
@@ -624,9 +677,6 @@ class EventDetail extends React.Component<Props, State> {
 
       case WALLET_BACKUP_EVENT:
         return {
-          name: 'Key wallet',
-          itemImageSource: keyWalletIcon,
-          actionTitle: 'Backup secured',
           buttons: [
             {
               title: 'Top up',
@@ -647,26 +697,26 @@ class EventDetail extends React.Component<Props, State> {
 
   getTransactionEventData = (event: Object): ?EventData => {
     const {
-      ensRegistry,
-      activeBlockchainNetwork,
       assetDecimals,
       accounts,
       contacts,
       contactsSmartAddresses,
-      theme,
       isPPNActivated,
+      itemData,
       bitcoinAddresses,
+      bitcoinFeatureEnabled,
     } = this.props;
-    const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
-    const avatarUrl = contact && contact.profileImage;
-    const { smartWalletIcon, PPNIcon } = images(theme);
-
+    const {
+      itemValue,
+      subtext,
+      isBetweenAccounts,
+      isReceived,
+    } = itemData;
     const formattedValue = formatAmount(value);
 
-    const directionIcon = isReceived ? 'received' : 'sent';
     let directionSymbol = isReceived ? '+' : '-';
 
     if (formattedValue === '0') {
@@ -698,61 +748,36 @@ class EventDetail extends React.Component<Props, State> {
         };
 
         eventData = {
-          name: 'Smart Wallet',
-          itemImageSource: smartWalletIcon,
           actionTitle: 'Activated',
           actionSubtitle: this.getFeeLabel(),
           buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
-        if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
-          eventData = {
-            name: 'Pillar Network',
-            itemImageSource: PPNIcon,
-            actionTitle: `+ ${formattedValue} ${event.asset}`,
-            actionColor: this.getColor('positive'),
-            actionSubtitle: 'Top up',
-            buttons: [
-              isPending ?
-                {
-                  title: 'View on the blockchain',
-                  onPress: this.viewOnTheBlockchain,
-                  secondary: true,
-                } :
-                {
-                  title: 'Send',
-                  onPress: this.sendSynthetic,
-                  secondary: true,
-                },
+        eventData = {
+          buttons: [
+            isPending ?
               {
-                title: 'Top up more',
-                onPress: this.topUpPillarNetwork,
-                squarePrimary: true,
-              },
-            ],
-          };
-        } else {
-          eventData = {
-            name: 'Pillar Network',
-            iconName: 'sent',
-            iconColor: this.getColor('negative'),
-            actionTitle: `- ${formattedValue} ${event.asset}`,
-            actionSubtitle: 'from Smart Wallet',
-            buttons: [
+                title: 'View on the blockchain',
+                onPress: this.viewOnTheBlockchain,
+                secondary: true,
+              } :
               {
-                title: 'Top up more',
-                onPress: this.topUpPillarNetwork,
+                title: 'Send',
+                onPress: this.sendSynthetic,
                 secondary: true,
               },
-            ],
-          };
-        }
+            {
+              title: 'Top up more',
+              onPress: this.topUpPillarNetwork,
+              squarePrimary: true,
+            },
+          ],
+        };
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
         eventData = {
           name: 'ENS name',
-          itemImageSource: smartWalletIcon,
           actionTitle: 'Registered',
           actionSubtitle: event.extra.ensName,
           buttons: [
@@ -766,15 +791,10 @@ class EventDetail extends React.Component<Props, State> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         eventData = {
-          name: 'Smart Wallet',
-          iconName: 'sent',
-          iconColor: this.getColor('negative'),
-          actionTitle: `- ${formattedValue} ${event.asset}`,
-          actionSubtitle: 'from Pillar Tank',
           buttons: [
             {
               title: 'Withdraw more',
-              onPress: this.PPNwithdraw,
+              onPress: this.PPNWithdraw,
               secondary: true,
             },
           ],
@@ -782,8 +802,6 @@ class EventDetail extends React.Component<Props, State> {
         break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
         eventData = {
-          name: 'Settle',
-          itemImageSource: PPNIcon,
           settleEventData: event,
           buttons: [
             {
@@ -797,7 +815,6 @@ class EventDetail extends React.Component<Props, State> {
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
           name: 'Smart Wallet fees with PLR',
-          itemImageSource: smartWalletIcon,
           actionTitle: 'Enabled',
           buttons: [
             {
@@ -809,31 +826,10 @@ class EventDetail extends React.Component<Props, State> {
         };
         break;
       default:
-        const usernameOrAddress = event.username
-          || ensRegistry[relevantAddress]
-          || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        let subtext = getAccountName(event.accountType);
-        const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
-        const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
-        if (isReceived && isKWAddress(event.to, accounts)) {
-          subtext = `to ${keyWallet}`;
-        } else if (isReceived && isSWAddress(event.to, accounts)) {
-          subtext = `to ${smartWallet}`;
-        } else if (!isReceived && isSWAddress(event.from, accounts)) {
-          subtext = `from ${smartWallet}`;
-        } else if (!isReceived && isKWAddress(event.from, accounts)) {
-          subtext = `from ${keyWallet}`;
-        } else if (isReceived && isBTCAddress(event.to, bitcoinAddresses)) {
-          subtext = 'to Bitcoin wallet';
-        } else if (!isReceived && isBTCAddress(event.from, bitcoinAddresses)) {
-          subtext = 'from Bitcoin wallet';
-        }
 
         if (isPPNTransaction) {
           eventData = {
-            name: usernameOrAddress,
-            profileImage: avatarUrl,
             customActionTitle: (
               <TankAssetBalance
                 amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
@@ -841,8 +837,7 @@ class EventDetail extends React.Component<Props, State> {
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
             ),
-            actionSubtitle: 'Pillar Network',
-            username: usernameOrAddress,
+            actionSubtitle: `${isReceived ? 'to' : 'from'} Pillar Network`,
           };
 
           if (isReceived) {
@@ -869,18 +864,14 @@ class EventDetail extends React.Component<Props, State> {
           }
         } else {
           eventData = {
-            name: usernameOrAddress,
-            iconName: !avatarUrl ? directionIcon : null,
-            iconColor: this.getColor(isReceived ? 'transactionReceivedIcon' : 'negative'),
-            profileImage: avatarUrl,
-            username: usernameOrAddress,
-            actionTitle: `${directionSymbol} ${formattedValue} ${event.asset}`,
+            actionTitle: itemValue,
             actionSubtitle: subtext,
-            actionColor: this.getColor(isReceived && formattedValue !== '0' ? 'positive' : 'text'),
           };
 
           let buttons = [];
           const contactFound = Object.keys(contact).length > 0;
+          const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
+          const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
           const messageButton = {
             title: 'Message',
@@ -930,9 +921,15 @@ class EventDetail extends React.Component<Props, State> {
             secondary: true,
           };
 
-          const send = {
+          const sendFromKW = {
             title: 'Send',
-            onPress: this.send,
+            onPress: () => this.send(true),
+            secondary: true,
+          };
+
+          const sendFromSW = {
+            title: 'Send',
+            onPress: () => this.send(),
             secondary: true,
           };
 
@@ -942,28 +939,44 @@ class EventDetail extends React.Component<Props, State> {
             squarePrimary: true,
           };
 
+          const sendBackBtc = {
+            title: 'Send back',
+            onPress: () => this.sendToBtc(event.from),
+            secondary: true,
+          };
+
+          const sendMoreBtc = {
+            title: 'Send more',
+            onPress: () => this.sendToBtc(event.from),
+            secondary: true,
+          };
+
           if (isReceived) {
-            if (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts)) {
-              buttons = [send, topUpMore];
+            if (isFromKWToSW) {
+              buttons = [sendFromSW, topUpMore];
+            } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
+              buttons = [sendFromKW];
+            } else if (isBitcoinTrx) {
+              buttons = bitcoinFeatureEnabled ? [sendBackBtc] : [];
             } else if (contactFound) {
-              if (isPending) {
-                buttons = [messageButton, viewOnBlockchainButtonSecondary];
-              } else {
-                buttons = [messageButton, sendBackButtonSecondary];
-              }
+              buttons = isPending
+                ? [messageButton, viewOnBlockchainButtonSecondary]
+                : [messageButton, sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [viewOnBlockchainButton, inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
+          } else if (isBitcoinTrx) {
+            buttons = bitcoinFeatureEnabled ? [sendMoreBtc] : [];
           } else if (contactFound) {
-            if (isPending) {
-              buttons = [messageButton, viewOnBlockchainButtonSecondary];
-            } else {
-              buttons = [messageButton, sendMoreButtonSecondary];
-            }
+            buttons = isPending
+              ? [messageButton, viewOnBlockchainButtonSecondary]
+              : [messageButton, sendMoreButtonSecondary];
           } else if (isPending) {
             buttons = [viewOnBlockchainButton, inviteToPillarButton];
+          } else if (isBetweenAccounts) {
+            buttons = isFromKWToSW ? [topUpMore] : [sendMoreToAddress];
           } else {
             buttons = [sendMoreToAddress, inviteToPillarButton];
           }
@@ -980,24 +993,16 @@ class EventDetail extends React.Component<Props, State> {
   };
 
   getCollectibleTransactionEventData = (event: Object): EventData => {
-    const { contacts } = this.props;
-    const isReceived = this.isReceived(event);
-    const { asset, icon } = event;
-    const relevantAddress = this.getRelevantAddress(event);
-    const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
+    const { itemData } = this.props;
+    const { subtext, isReceived } = itemData;
 
     let eventData: EventData = {
-      name: asset,
-      imageUrl: icon,
-      imageBackground: this.getColor('card'),
-      imageBorder: true,
+      actionSubtitle: subtext,
     };
 
     if (isReceived) {
       eventData = {
         ...eventData,
-        actionTitle: 'Received',
-        actionSubtitle: `Collectible from ${usernameOrAddress}`,
         buttons: [
           {
             title: 'View on the Blockchain',
@@ -1005,12 +1010,6 @@ class EventDetail extends React.Component<Props, State> {
             secondary: true,
           },
         ],
-      };
-    } else {
-      eventData = {
-        ...eventData,
-        actionTitle: 'Sent',
-        actionSubtitle: `Collectible to ${usernameOrAddress}`,
       };
     }
 
@@ -1132,16 +1131,16 @@ class EventDetail extends React.Component<Props, State> {
     return eventData;
   };
 
-  renderImage = (eventData) => {
+  renderImage = (itemData: PassedEventData) => {
     const { theme } = this.props;
     const {
-      imageUrl, itemImageSource, profileImage, username, iconName, iconColor, imageBackground, imageBorder,
-    } = eventData;
+      itemImageUrl, itemImageSource, avatarUrl, label, iconName, iconColor, iconBackgroundColor, iconBorder,
+    } = itemData;
     const { genericToken: fallbackSource } = images(theme);
-    if (imageUrl) {
+    if (itemImageUrl) {
       return (
-        <IconCircle border={imageBorder} backgroundColor={imageBackground}>
-          <TokenImage source={{ uri: imageUrl }} fallbackSource={fallbackSource} />
+        <IconCircle border={iconBorder} backgroundColor={this.getColor(iconBackgroundColor)}>
+          <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
@@ -1151,15 +1150,15 @@ class EventDetail extends React.Component<Props, State> {
     if (iconName) {
       return (
         <IconCircle>
-          <ItemIcon name={iconName} iconColor={iconColor} />
+          <ItemIcon name={iconName} iconColor={this.getColor(iconColor)} />
         </IconCircle>
       );
     }
 
     return (
       <ProfileImage
-        uri={profileImage}
-        userName={username}
+        uri={avatarUrl}
+        userName={label}
         noShadow
         borderWidth={0}
         diameter={64}
@@ -1174,14 +1173,25 @@ class EventDetail extends React.Component<Props, State> {
     return colors[color] || color;
   };
 
-  renderSettle = (settleEventData) => {
-    const { PPNTransactions } = this.props;
-    const mappedTransactions = settleEventData.extra.map(({ hash }) => PPNTransactions.find(tx => tx.hash === hash));
+  renderSettle = (settleEventData: Object) => {
+    const { PPNTransactions, isForAllAccounts, mergedPPNTransactions } = this.props;
+    const mappedTransactions = isForAllAccounts
+      ? settleEventData.extra.reduce((mapped, event) => {
+        const relatedTrx = mergedPPNTransactions.find(tx => tx.hash === event.hash);
+        if (relatedTrx) return [...mapped, relatedTrx];
+        return mapped;
+      }, [])
+      : settleEventData.extra.reduce((mapped, event) => {
+        const relatedTrx = PPNTransactions.find(tx => tx.hash === event.hash);
+        if (relatedTrx) return [...mapped, relatedTrx];
+        return mapped;
+      }, []);
+
     const groupedTransactions: TransactionsGroup[] = groupPPNTransactions(mappedTransactions);
 
     return (
       <SettleWrapper>
-        {groupedTransactions.map(group => (
+        {!!groupedTransactions && groupedTransactions.map(group => (
           <React.Fragment key={group.symbol}>
             <Row marginBottom={10}>
               <BaseText regular synthetic>From Pillar Tank</BaseText>
@@ -1218,13 +1228,81 @@ class EventDetail extends React.Component<Props, State> {
     );
   };
 
+  renderContent = (eventData: EventData) => {
+    const { itemData } = this.props;
+    const {
+      date, name,
+      actionTitle, actionSubtitle, actionIcon, customActionTitle,
+      buttons = [], settleEventData, fee,
+    } = eventData;
+
+    const {
+      label: itemLabel,
+      actionLabel,
+      itemValue,
+      subtext,
+      valueColor,
+    } = itemData;
+
+    const title = actionTitle || actionLabel || itemValue;
+    const label = name || itemLabel;
+    const subtitle = (actionSubtitle || itemValue) ? actionSubtitle || subtext : null;
+    const titleColor = this.getColor(valueColor);
+
+    const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
+
+    return (
+      <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
+        <BaseText tiny secondary>{eventTime}</BaseText>
+        <Spacing h={10} />
+        <BaseText medium>{label}</BaseText>
+        <Spacing h={20} />
+        {this.renderImage(itemData)}
+        <Spacing h={20} />
+        {settleEventData ? this.renderSettle(settleEventData) : (
+          <React.Fragment>
+            <ActionWrapper>
+              {!!title && <MediumText large color={titleColor}>{title}</MediumText>}
+              {customActionTitle}
+              {!!actionIcon && <ActionIcon name={actionIcon} />}
+            </ActionWrapper>
+            {subtitle ? (
+              <React.Fragment>
+                <Spacing h={4} />
+                <BaseText regular secondary>{subtitle}</BaseText>
+                <Spacing h={24} />
+              </React.Fragment>
+            ) : (
+              <Spacing h={32} />
+            )}
+            {!!fee && (
+              <React.Fragment>
+                <BaseText regular secondary>{fee}</BaseText>
+                <Spacing h={32} />
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        )}
+        <ButtonsContainer>
+          {buttons.map(buttonProps => (
+            <React.Fragment key={buttonProps.title} >
+              <Button regularText {...buttonProps} />
+              <Spacing h={4} />
+            </React.Fragment>
+          ))}
+        </ButtonsContainer>
+      </Wrapper>
+    );
+  };
+
   render() {
     const {
-      isVisible, onClose, activeAccountAddress, navigation,
+      isVisible, onClose, navigation, storybook,
     } = this.props;
     const {
       isReceiveModalVisible,
       SWActivationModalVisible,
+      receiveWalletAddress,
     } = this.state;
 
     let { event } = this.props;
@@ -1235,13 +1313,10 @@ class EventDetail extends React.Component<Props, State> {
     }
     const eventData = this.getEventData(event);
     if (!eventData) return null;
-    const {
-      date, name,
-      actionTitle, actionSubtitle, actionIcon, actionColor, customActionTitle,
-      buttons = [], settleEventData, fee,
-    } = eventData;
 
-    const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
+    if (storybook) {
+      return this.renderContent(eventData);
+    }
 
     return (
       <React.Fragment>
@@ -1251,50 +1326,11 @@ class EventDetail extends React.Component<Props, State> {
           noClose
           hideHeader
         >
-          <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
-            <BaseText tiny secondary>{eventTime}</BaseText>
-            <Spacing h={10} />
-            <BaseText medium>{name}</BaseText>
-            <Spacing h={20} />
-            {this.renderImage(eventData)}
-            <Spacing h={20} />
-            {settleEventData ? this.renderSettle(settleEventData) : (
-              <React.Fragment>
-                <ActionWrapper>
-                  {!!actionTitle && <MediumText large color={actionColor}>{actionTitle}</MediumText>}
-                  {customActionTitle}
-                  {!!actionIcon && <ActionIcon name={actionIcon} />}
-                </ActionWrapper>
-                {actionSubtitle ? (
-                  <React.Fragment>
-                    <Spacing h={4} />
-                    <BaseText regular secondary>{actionSubtitle}</BaseText>
-                    <Spacing h={24} />
-                  </React.Fragment>
-                ) : (
-                  <Spacing h={32} />
-                )}
-                {!!fee && (
-                  <React.Fragment>
-                    <BaseText regular secondary>{fee}</BaseText>
-                    <Spacing h={32} />
-                  </React.Fragment>
-                )}
-              </React.Fragment>
-            )}
-            <ButtonsContainer>
-              {buttons.map(buttonProps => (
-                <React.Fragment key={buttonProps.title} >
-                  <Button regularText {...buttonProps} />
-                  <Spacing h={4} />
-                </React.Fragment>
-              ))}
-            </ButtonsContainer>
-          </Wrapper>
+          {this.renderContent(eventData)}
         </SlideModal>
         <ReceiveModal
           isVisible={isReceiveModalVisible}
-          address={activeAccountAddress}
+          address={receiveWalletAddress}
           onModalHide={() => this.setState({ isReceiveModalVisible: false })}
         />
         <SWActivationModal
@@ -1316,6 +1352,11 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history },
+  featureFlags: {
+    data: {
+      BITCOIN_ENABLED: bitcoinFeatureEnabled,
+    },
+  },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1326,10 +1367,12 @@ const mapStateToProps = ({
   ensRegistry,
   supportedAssets,
   history,
+  bitcoinFeatureEnabled,
 });
 
 const structuredSelector = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
+  mergedPPNTransactions: combinedPPNTransactionsSelector,
   isSmartWalletActivated: isSmartWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
@@ -1349,6 +1392,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
+  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
+  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));

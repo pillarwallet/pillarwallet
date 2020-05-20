@@ -87,10 +87,9 @@ export function mapTransactionsHistory(
           && accountsAddresses.some((userAddress) => addressesEqual(toAddress, userAddress))) {
           return [...alteredHistory, {
             ...historyItem,
-            from: toAddress,
-            to: fromAddress,
             accountType: getAccountTypeByAddress(toAddress, accounts),
             isReceived: true,
+            betweenAccTrxDuplicate: true,
           }];
         }
         return alteredHistory;
@@ -127,6 +126,7 @@ export type TransactionsGroup = {
 
 export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGroup[] {
   const transactionsByAsset: {[string]: TransactionsGroup} = {};
+  if (!ppnTransactions.length) return [];
 
   ppnTransactions.forEach((trx) => {
     const { symbol: _symbol, asset, value: rawValue } = trx;

@@ -27,6 +27,7 @@ import memoize from 'memoize-one';
 // types
 import type { Transaction } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+import type { EventData } from 'components/ActivityFeed/ActivityFeedItem';
 
 // components
 import Title from 'components/Title';
@@ -129,6 +130,7 @@ type Props = {
 type State = {|
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
+  selectedEventItemData: ?Object | ?EventData,
   tabIsChanging: boolean,
 |};
 
@@ -150,6 +152,7 @@ class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
     selectedEventData: null,
+    selectedEventItemData: null,
     tabIsChanging: false,
   };
 
@@ -203,9 +206,10 @@ class ActivityFeed extends React.Component<Props, State> {
     return !isEq;
   }
 
-  selectEvent = (eventData: Object) => {
+  selectEvent = (eventData: Object, itemData: Object) => {
     this.setState({
       selectedEventData: eventData,
+      selectedEventItemData: itemData,
       showModal: true,
     });
   };
@@ -216,7 +220,7 @@ class ActivityFeed extends React.Component<Props, State> {
       TYPE_SENT, TYPE_RECEIVED, TYPE_ACCEPTED,
     ];
     return typesThatRender.includes(item.type);
-  }
+  };
 
   renderActivityFeedItem = ({ item }) => {
     switch (item.type) {
@@ -303,12 +307,14 @@ class ActivityFeed extends React.Component<Props, State> {
       flatListProps,
       onRejectInvitation,
       onAcceptInvitation,
+      isForAllAccounts,
     } = this.props;
 
     const {
       showModal,
       selectedEventData,
       tabIsChanging,
+      selectedEventItemData,
     } = this.state;
 
     const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
@@ -351,10 +357,12 @@ class ActivityFeed extends React.Component<Props, State> {
           <EventDetails
             isVisible={showModal}
             event={selectedEventData}
+            itemData={selectedEventItemData}
             navigation={navigation}
             onClose={this.handleClose}
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
+            isForAllAccounts={isForAllAccounts}
           />
         }
       </ActivityFeedWrapper>
