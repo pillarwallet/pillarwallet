@@ -89,6 +89,7 @@ import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -238,6 +239,8 @@ const finishRegistration = async ({
   } else {
     await setKeychainDataObject(keychainData);
   }
+
+  dispatch(fetchReferralRewardAction());
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {

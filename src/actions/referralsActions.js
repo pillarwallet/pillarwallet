@@ -48,6 +48,7 @@ import {
   SET_ALREADY_INVITED_CONTACTS,
   FETCHING_REFERRAL_REWARD_AMOUNT,
   SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
+  SET_PILLAR_REWARD_CAMPAIGN_STATUS,
 } from 'constants/referralsConstants';
 import {
   APP_FLOW,
@@ -331,10 +332,16 @@ export const fetchReferralRewardAction = () => {
     });
 
     const referralRewards: RewardsByCompany = await api.getReferralRewardValue(walletId, referralToken);
+    const isPillarRewardsActive = get(referralRewards, 'pillar.amount');
 
     dispatch({
       type: SET_REFERRAL_REWARD_AMOUNT,
       payload: referralRewards,
+    });
+
+    dispatch({
+      type: SET_PILLAR_REWARD_CAMPAIGN_STATUS,
+      payload: isPillarRewardsActive,
     });
   };
 };

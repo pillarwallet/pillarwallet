@@ -61,7 +61,11 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { goToInvitationFlowAction, fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActions';
+import {
+  goToInvitationFlowAction,
+  fetchReferralRewardsIssuerAddressesAction,
+  fetchReferralRewardAction,
+} from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
 
 // selectors
@@ -124,6 +128,8 @@ type Props = {
   toggleBadges: () => void,
   walletConnectRequests: CallRequest[],
   fetchReferralRewardsIssuerAddresses: () => void,
+  fetchReferralReward: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -222,6 +228,7 @@ class HomeScreen extends React.Component<Props, State> {
       fetchTransactionsHistory,
       fetchBadges,
       fetchReferralRewardsIssuerAddresses,
+      fetchReferralReward,
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
@@ -230,6 +237,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
     fetchTransactionsHistory();
     fetchReferralRewardsIssuerAddresses();
+    fetchReferralReward();
   };
 
   setActiveTab = (activeTab) => {
@@ -277,6 +285,7 @@ class HomeScreen extends React.Component<Props, State> {
       walletConnectRequests,
       user,
       goToInvitationFlow,
+      isPillarRewardCampaignActive,
     } = this.props;
 
     const { activeTab, loaderMessage, isReferralBannerVisible } = this.state;
@@ -354,6 +363,9 @@ class HomeScreen extends React.Component<Props, State> {
 
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
     const colors = getThemeColors(theme);
+    const referralBannerText = isPillarRewardCampaignActive
+      ? 'Refer friends and earn rewards, free PLR and more.'
+      : 'Invite friends to Pillar';
 
     return (
       <React.Fragment>
@@ -429,7 +441,7 @@ class HomeScreen extends React.Component<Props, State> {
                   <Banner
                     isVisible={isReferralBannerVisible}
                     onPress={goToInvitationFlow}
-                    bannerText="Invite friends to Pillar"
+                    bannerText={referralBannerText}
                     imageProps={{
                       style: {
                         width: 96,
@@ -505,6 +517,7 @@ const mapStateToProps = ({
   userEvents: { data: userEvents },
   appSettings: { data: { baseFiatCurrency, hideBadges } },
   walletConnect: { requests: walletConnectRequests },
+  referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -518,6 +531,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   hideBadges,
   walletConnectRequests,
+  isPillarRewardCampaignActive,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -546,6 +560,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
+  fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

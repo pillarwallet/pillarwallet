@@ -86,6 +86,7 @@ import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
 import { updateConnectionsAction } from './connectionsActions';
+import { fetchReferralRewardAction } from './referralsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -197,6 +198,8 @@ export const loginAction = (
           // to get exchange supported assets in order to show only supported assets on exchange selectors
           // and show exchange button on supported asset screen only
           dispatch(getExchangeSupportedAssetsAction());
+
+          dispatch(fetchReferralRewardAction());
         }
 
         // perform signal init
