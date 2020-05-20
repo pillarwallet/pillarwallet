@@ -229,7 +229,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
   };
 
   handleFormSubmit = async () => {
-    const { submitPressed, txFeeInfo } = this.state;
+    const { submitPressed, txFeeInfo, gasLimit } = this.state;
     if (submitPressed || !txFeeInfo) return;
 
     this.formSubmitted = true;
@@ -261,7 +261,6 @@ class SendEthereumTokens extends React.Component<Props, State> {
     if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
 
     if (!isSmartAccount) {
-      const { gasLimit } = this.state;
       const transactionSpeed = this.getTxSpeed();
       const gasPrice = gasLimit ? txFeeInfo.fee.div(gasLimit).toNumber() : 0;
       transactionPayload = {
