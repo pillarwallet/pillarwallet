@@ -138,6 +138,7 @@ import { getPrivateKeyFromPin } from 'utils/wallet';
 
 // actions
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
+import { setInitialPreferredGasTokenAction } from './appSettingsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -528,17 +529,29 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       reportLog('Missing Smart Wallet SDK constant', { path });
     }
 
-    // on wallet deployed
+    // on wallet deployed or new device added
     const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     if (event.name === ACCOUNT_DEVICE_UPDATED) {
       const newAccountDeviceState = get(event, 'payload.state', '');
       const deployedAccountDeviceState = get(sdkConstants, 'AccountDeviceStates.Deployed', '');
+
       // check if new account device state updated to deployed
       if (newAccountDeviceState === deployedAccountDeviceState) {
         // smart wallet account deployment check
         if (accountState !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
           dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
           navigate(WALLET_ACTIVATED);
+        }
+
+        // gas relayer switch check
+        if (get(event, 'payload.features.gasTokenSupported')) {
+          // update connected devices
+          await dispatch(fetchConnectedAccountAction());
+
+          const { appSettings: { data: { preferredGasToken } } } = getState();
+          if (!preferredGasToken) {
+            dispatch(setInitialPreferredGasTokenAction());
+          }
         }
       }
     }
@@ -557,7 +570,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txSenderAddress = get(event, 'payload.from.account.address', '');
       const txSenderEnsName = get(event, 'payload.from.account.ensName', '');
       const txType = get(event, 'payload.transactionType', '');
-      const txFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
+      const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
       if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
@@ -583,7 +596,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           });
         }
 
-        if (txFound) {
+        if (txToListenFound) {
           const { txUpdated, updatedHistory } = updateHistoryRecord(
             currentHistory,
             txHash,
@@ -1319,10 +1332,21 @@ export const initSmartWalletSdkWithPrivateKeyOrPinAction = ({ privateKey: _priva
 export const switchToGasTokenRelayerAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
     const { accounts: { data: accounts } } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
+
     const hash = await smartWalletService.switchToGasTokenRelayer();
+    if (!hash) {
+      Toast.show({
+        message: 'Unable to update your account. Please try again later',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
     const historyTx = buildHistoryTransaction({
       from: accountAddress,
       hash,

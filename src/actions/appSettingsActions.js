@@ -32,7 +32,7 @@ import {
 } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH, PLR } from 'constants/assetsConstants';
+import { PLR } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -269,13 +269,12 @@ export const setPreferredGasTokenAction = (preferredGasToken: string) => {
 export const setInitialPreferredGasTokenAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-
-    let setPreferredGasToken = ETH;
     const isGasTokenSupported = isGasTokenSupportedSelector(getState());
-    if (smartWalletFeatureEnabled && isGasTokenSupported) {
-      setPreferredGasToken = PLR;
-    }
+    console.log('setInitialPreferredGasTokenAction');
 
-    dispatch(setPreferredGasTokenAction(setPreferredGasToken));
+    if (smartWalletFeatureEnabled && isGasTokenSupported) {
+      console.log('setting PLR value');
+      dispatch(setPreferredGasTokenAction(PLR));
+    }
   };
 };

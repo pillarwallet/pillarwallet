@@ -471,7 +471,7 @@ class SmartWallet {
   }
 
   switchToGasTokenRelayer() {
-    return this.sdk.switchToGasTokenRelayer();
+    return this.sdk.switchToGasTokenRelayer().catch(() => null);
   }
 
   handleError(error: any) {

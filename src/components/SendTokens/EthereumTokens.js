@@ -181,11 +181,16 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
-      session, useGasToken, gasInfo, isSmartAccount,
+      session, useGasToken, gasInfo, isSmartAccount, isGasTokenSupported,
     } = this.props;
+    const { showRelayerMigrationModal } = this.state;
 
     if (prevProps.session.isOnline !== session.isOnline && session.isOnline && isSmartAccount) {
       this.props.fetchGasInfo();
+    }
+
+    if (prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported && showRelayerMigrationModal) {
+      this.setState({ showRelayerMigrationModal: false }); // eslint-disable-line
     }
 
     // do nothing if value is not set yet
@@ -465,7 +470,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     const currentValue = parseFloat(get(value, 'amount', 0));
 
     // fee
-    let isEnoughForFee = false;
+    let isEnoughForFee = true;
     let feeDisplayValue = '';
     if (txFeeInfo) {
       const balanceCheckTransaction = {

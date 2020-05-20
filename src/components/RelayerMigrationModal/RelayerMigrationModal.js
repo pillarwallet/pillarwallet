@@ -94,7 +94,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
       : 'Switch';
     const subtitle = switchPressed || isSwitchPending
       ? 'Switch transaction is pending'
-      : 'Switching is free\nThis is irreversible.';
+      : 'Switching is free';
     return (
       <SlideModal
         isVisible={isVisible}
