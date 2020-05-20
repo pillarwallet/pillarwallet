@@ -35,6 +35,7 @@ import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as txNotesState } from 'reducers/txNoteReducer';
 import { initialState as ensRegistryState } from 'reducers/ensRegistryReducer';
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
+import { initialState as referralsState } from 'reducers/referralsReducer';
 
 
 const mockStore = configureMockStore([thunk]);
@@ -47,6 +48,7 @@ const initialStore = mockStore({
   txNotes: txNotesState,
   ensRegistry: ensRegistryState,
   smartWallet: smartWalletState,
+  referrals: referralsState,
 });
 
 const Component = (store, children) => (

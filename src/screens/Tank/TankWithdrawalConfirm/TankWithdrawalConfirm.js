@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BigNumber } from 'bignumber.js';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import {
@@ -46,9 +47,13 @@ import { formatTransactionFee } from 'utils/common';
 
 // types
 import type { WithdrawalFee } from 'models/PaymentNetwork';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 // other
 import { PPN_TOKEN } from 'configs/assetsConfig';
+
+// selectors
+import { isGasTokenSupportedSelector } from 'selectors';
 
 
 type Props = {
@@ -57,7 +62,7 @@ type Props = {
   withdrawalFee: WithdrawalFee,
   estimateWithdrawFromVirtualAccount: Function,
   withdrawFromVirtualAccount: Function,
-  smartWalletAccountSupportsGasToken: boolean,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -112,12 +117,12 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
 
   getTxFeeInWei = (): BigNumber => {
     const gasTokenCost = get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
-    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
     return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
   };
 
   getGasToken = () => {
-    return this.props.smartWalletAccountSupportsGasToken
+    return this.props.isGasTokenSupported
       ? get(this.props, 'withdrawalFee.feeInfo.gasToken')
       : null;
   };
@@ -173,11 +178,18 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   paymentNetwork: { withdrawalFee },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }) => ({
   session,
   withdrawalFee,
-  smartWalletAccountSupportsGasToken,
+});
+
+const structuredSelector = createStructuredSelector({
+  isGasTokenSupported: isGasTokenSupportedSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -188,4 +200,4 @@ const mapDispatchToProps = (dispatch) => ({
   estimateWithdrawFromVirtualAccount: (amount: string) => dispatch(estimateWithdrawFromVirtualAccountAction(amount)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TankWithdrawalConfirm);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(TankWithdrawalConfirm);

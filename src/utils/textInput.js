@@ -52,7 +52,6 @@ export const getLineHeight = (value: string | number, numeric?: boolean) => {
 };
 
 export const getFontFamily = (value: string | number, numeric?: boolean) => {
-  if (!(value || value === 0)) return appFont.medium;
-  if (numeric) return appFont.bold;
+  if (!(value || value === 0) || numeric) return appFont.medium;
   return appFont.regular;
 };

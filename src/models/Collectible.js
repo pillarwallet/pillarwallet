@@ -32,11 +32,6 @@ export type Collectible = {
 
 export type Collectibles = Collectible[];
 
-export type CollectibleTransfer = {
-  key: string,
-  gasLimit?: number,
-};
-
 export type CollectiblesStore = {
   [accountId: string]: Collectible[],
 };

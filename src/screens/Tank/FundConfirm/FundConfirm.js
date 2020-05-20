@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import type { NavigationScreenProp } from 'react-navigation';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
@@ -45,6 +46,9 @@ import { formatTransactionFee } from 'utils/common';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { TopUpFee } from 'models/PaymentNetwork';
 
+// selectors
+import { isGasTokenSupportedSelector } from 'selectors';
+
 // other
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
@@ -55,7 +59,7 @@ type Props = {
   topUpFee: TopUpFee,
   estimateTopUpVirtualAccount: (amount: string) => void,
   topUpVirtualAccount: (amount: string, payForGasWithToken: boolean) => void,
-  smartWalletAccountSupportsGasToken: boolean,
+  isGasTokenSupported: boolean,
 };
 
 type State = {
@@ -110,12 +114,12 @@ class FundConfirm extends React.Component<Props, State> {
 
   getTxFeeInWei = (): BigNumber => {
     const gasTokenCost = get(this.props, 'topUpFee.feeInfo.gasTokenCost');
-    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
+    if (this.props.isGasTokenSupported && gasTokenCost) return gasTokenCost;
     return get(this.props, 'topUpFee.feeInfo.totalCost', 0);
   };
 
   getGasToken = () => {
-    return this.props.smartWalletAccountSupportsGasToken
+    return this.props.isGasTokenSupported
       ? get(this.props, 'topUpFee.feeInfo.gasToken')
       : null;
   };
@@ -168,11 +172,18 @@ class FundConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   paymentNetwork: { topUpFee },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   session,
   topUpFee,
-  smartWalletAccountSupportsGasToken,
+});
+
+const structuredSelector = createStructuredSelector({
+  isGasTokenSupported: isGasTokenSupportedSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -183,4 +194,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   estimateTopUpVirtualAccount: (amount: string) => dispatch(estimateTopUpVirtualAccountAction(amount)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(FundConfirm);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(FundConfirm);

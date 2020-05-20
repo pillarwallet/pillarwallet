@@ -39,7 +39,11 @@ import smartWalletService from 'services/smartWallet';
 import { buildERC721TransactionData, calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 
 // selectors
-import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
+import {
+  activeAccountAddressSelector,
+  activeAccountSelector,
+  isGasTokenSupportedSelector,
+} from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 
@@ -64,7 +68,7 @@ type Props = {
   activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  smartWalletAccountSupportsGasToken: boolean,
+  isGasTokenSupported: boolean,
   balances: Balances,
   contactsSmartAddresses: ContactSmartAddressData[],
 };
@@ -115,12 +119,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       activeAccount,
       accountAssets,
       supportedAssets,
-      smartWalletAccountSupportsGasToken,
+      isGasTokenSupported,
     } = props;
     const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
     const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
     if (isSmartAccount
-      && smartWalletAccountSupportsGasToken
+      && isGasTokenSupported
       && !isEmpty(gasTokenData)) {
       const { decimals, address, symbol } = gasTokenData;
       this.gasToken = { decimals, address, symbol };
@@ -440,7 +444,6 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   accounts: { data: accounts },
   assets: { supportedAssets },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   session,
@@ -448,7 +451,6 @@ const mapStateToProps = ({
   wallet,
   accounts,
   supportedAssets,
-  smartWalletAccountSupportsGasToken,
   contactsSmartAddresses,
 });
 
@@ -457,6 +459,7 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
