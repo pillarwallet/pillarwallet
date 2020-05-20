@@ -270,10 +270,8 @@ export const setInitialPreferredGasTokenAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
     const isGasTokenSupported = isGasTokenSupportedSelector(getState());
-    console.log('setInitialPreferredGasTokenAction');
 
     if (smartWalletFeatureEnabled && isGasTokenSupported) {
-      console.log('setting PLR value');
       dispatch(setPreferredGasTokenAction(PLR));
     }
   };
