@@ -990,6 +990,7 @@ class EventDetail extends React.Component<Props, State> {
     const { asset, icon } = event;
     const relevantAddress = this.getRelevantAddress(event);
     const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
+    const isPending = isPendingTransaction(event);
 
     let eventData: EventData = {
       name: asset,
@@ -1008,18 +1009,18 @@ class EventDetail extends React.Component<Props, State> {
     if (isReceived) {
       eventData = {
         ...eventData,
-        actionTitle: 'Received',
+        actionTitle: isPending ? 'Receiving' : 'Received',
         actionSubtitle: `Collectible from ${usernameOrAddress}`,
       };
     } else {
       eventData = {
         ...eventData,
-        actionTitle: 'Sent',
+        actionTitle: isPending ? 'Sending' : 'Sent',
         actionSubtitle: `Collectible to ${usernameOrAddress}`,
       };
     }
 
-    if (isPendingTransaction(event)) {
+    if (isPending) {
       eventData.actionIcon = 'pending';
     }
 
@@ -1046,7 +1047,7 @@ class EventDetail extends React.Component<Props, State> {
     return {
       name,
       imageUrl,
-      actionTitle: 'Received',
+      actionTitle: isPending ? 'Receiving' : 'Received',
       actionSubtitle: 'Badge',
       actionIcon: isPending ? 'pending' : null,
       buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
