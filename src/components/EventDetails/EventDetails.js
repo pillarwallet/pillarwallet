@@ -996,6 +996,13 @@ class EventDetail extends React.Component<Props, State> {
       imageUrl: icon,
       imageBackground: this.getColor('card'),
       imageBorder: true,
+      buttons: [
+        {
+          title: 'View on the Blockchain',
+          onPress: this.viewOnTheBlockchain,
+          secondary: true,
+        },
+      ],
     };
 
     if (isReceived) {
@@ -1003,13 +1010,6 @@ class EventDetail extends React.Component<Props, State> {
         ...eventData,
         actionTitle: 'Received',
         actionSubtitle: `Collectible from ${usernameOrAddress}`,
-        buttons: [
-          {
-            title: 'View on the Blockchain',
-            onPress: this.viewOnTheBlockchain,
-            secondary: true,
-          },
-        ],
       };
     } else {
       eventData = {
