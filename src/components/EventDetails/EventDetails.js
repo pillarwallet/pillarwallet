@@ -162,6 +162,7 @@ type Props = {
   lookupAddress: (address: string) => void,
   history: {[string]: Object[]},
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -521,6 +522,12 @@ class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SETTLE_BALANCE);
   };
 
+  getReferButtonTitle = () => {
+    const { isPillarRewardCampaignActive } = this.props;
+    if (isPillarRewardCampaignActive) return 'Refer friends';
+    return 'Invite friends';
+  };
+
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { theme, isSmartWalletActivated } = this.props;
     const { keyWalletIcon, smartWalletIcon } = images(theme);
@@ -531,7 +538,7 @@ class EventDetail extends React.Component<Props, State> {
         secondary: true,
       },
       {
-        title: 'Refer friends',
+        title: this.getReferButtonTitle(),
         onPress: this.referFriends,
         squarePrimary: true,
       },
@@ -576,7 +583,7 @@ class EventDetail extends React.Component<Props, State> {
           itemImageSource: keyWalletIcon,
           actionTitle: 'Imported',
           primaryButtonTitle: 'Top up',
-          secondaryButtonTitle: 'Refer friends',
+          secondaryButtonTitle: this.getReferButtonTitle(),
           buttons: keyWalletButtons,
         };
       default:
@@ -635,7 +642,7 @@ class EventDetail extends React.Component<Props, State> {
               secondary: true,
             },
             {
-              title: 'Refer friends',
+              title: this.getReferButtonTitle(),
               onPress: this.referFriends,
               squarePrimary: true,
             },
@@ -688,13 +695,13 @@ class EventDetail extends React.Component<Props, State> {
         };
 
         const referFriendsButton = {
-          title: 'Refer friends',
+          title: this.getReferButtonTitle(),
           onPress: this.referFriends,
           secondary: true,
         };
 
         const referFriendsButtonSecondary = {
-          title: 'Refer friends',
+          title: this.getReferButtonTitle(),
           onPress: this.referFriends,
           squarePrimary: true,
         };
@@ -1324,7 +1331,7 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history },
-  referrals: { referralRewardIssuersAddresses },
+  referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1336,6 +1343,7 @@ const mapStateToProps = ({
   supportedAssets,
   history,
   referralRewardIssuersAddresses,
+  isPillarRewardCampaignActive,
 });
 
 const structuredSelector = createStructuredSelector({
