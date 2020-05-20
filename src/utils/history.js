@@ -132,3 +132,11 @@ export const parseFeeWithGasToken = (
   const feeInWei = new BigNumber(fee.toString());
   return { feeInWei, gasToken };
 };
+
+export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash: string): ?Transaction => {
+  txHash = txHash.toLowerCase();
+  const accountsHistory: Object[] = Object.values(history);
+  return accountsHistory
+    .map(accountHistory => accountHistory.find(tx => tx.hash.toLowerCase() === txHash))
+    .find(tx => tx);
+};
