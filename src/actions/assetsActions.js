@@ -378,7 +378,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
 
     const newBalances = await api.fetchBalances({
       address: walletAddress,
-      assets: getAssetsAsList(accountAssets),
+      assets: getAssetsAsList(accountAssets).filter(({ symbol }) => symbol !== 'BTC'),
     });
 
     if (!isEmpty(newBalances)) {
