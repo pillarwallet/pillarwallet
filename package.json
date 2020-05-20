@@ -158,6 +158,7 @@
     "string_decoder": "~0.10.25",
     "styled-components": "^3.2.5",
     "styled-theming": "^2.2.0",
+    "svg-country-flags": "^1.2.7",
     "tcomb-form-native": "^0.6.11",
     "timers-browserify": "^1.0.1",
     "url": "~0.10.1",
@@ -182,6 +183,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "^1.5.1",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "eslint": "^6.5.1",
@@ -212,8 +214,7 @@
     "react-native-storybook-loader": "^1.8.1",
     "react-test-renderer": "16.9.0",
     "redux-mock-store": "^1.5.1",
-    "util-deprecate": "^1.0.2",
-    "babel-plugin-transform-remove-console": "^6.9.4"
+    "util-deprecate": "^1.0.2"
   },
   "jest": {
     "preset": "react-native",
@@ -240,7 +241,11 @@
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!(react-[a-z, -]*|react-native-[a-z, -]*|native-base-[a-z, -]*|react-native|native-base|pouchdb-react-native|@react-navigation|pouchdb-adapter-asyncstorage|tcomb-form-native|concat-color-matrices|rn-color-matrices|@react-native-firebase|@expo/react-native-action-sheet)/)"
-    ]
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/mocks/fileMock.js"
+    }
   },
   "jest-html-reporter": {
     "pageTitle": "Jest results",

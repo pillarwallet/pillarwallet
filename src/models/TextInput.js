@@ -34,6 +34,7 @@ export type InputPropsType = {
   onChange: (Value | SelectorValueType) => void, onBlur?: (Value | SelectorValueType) => void,
   value: Value,
   selectorValue: SelectorValueType,
+  onSelectorClose: () => void,
   multiline?: boolean,
   onSelectorOpen?: () => void,
   onSelectorChange?: () => void,

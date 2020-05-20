@@ -18,5 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const DISMISS_SMART_WALLET_INSIGHT = 'DISMISS_SMART_WALLET_INSIGHT';
+export const DISMISS_INSIGHT = 'DISMISS_INSIGHT';
 export const SET_INSIGHTS_STATE = 'SET_INSIGHTS_STATE';
+
+export const SMART_WALLET_INSIGHT = 'SWInsightDismissed';
+export const PRIVACY_INSIGHT = 'privacyInsightDismissed';
+export const VERIFICATION_NOTE = 'verificationNoteDismissed';

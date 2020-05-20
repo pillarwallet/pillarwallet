@@ -22,10 +22,7 @@ import {
   isValidETHAddress,
   isValidBTCAddress,
   hasAllValues,
-  isValidFullname,
   isValidEmail,
-  isValidName,
-  isValidCityName,
   isValidPhone,
 } from 'utils/validators';
 
@@ -160,24 +157,6 @@ describe('Validators', () => {
     });
   });
 
-  describe('isValidFullname', () => {
-    it('should return false if fullName is not present', () => {
-      const fullName = '';
-      expect(isValidFullname(fullName)).toBeFalsy();
-    });
-
-    it('should return false if fullName has only one part', () => {
-      const fullName = 'Jon';
-      expect(isValidFullname(fullName)).toBeFalsy();
-    });
-
-    it('should return true for a valid fullname', () => {
-      // minimal critera to contain two parts
-      const fullName = 'Jon Snow';
-      expect(isValidFullname(fullName)).toBeTruthy();
-    });
-  });
-
   describe('validateEmail', () => {
     it('should return false for jon@', () => {
       const email = 'jon@';
@@ -195,39 +174,10 @@ describe('Validators', () => {
     });
   });
 
-  describe('isValidName', () => {
-    it('should return false if name isn\'t valid', () => {
-      const name = 'P1R@T3';
-      expect(isValidName(name)).toBeFalsy();
-    });
-
-    it('should return true if name is valid', () => {
-      const name = 'Jonathan';
-      expect(isValidName(name)).toBeTruthy();
-    });
-  });
-
-  describe('isValidCityName', () => {
-    it('should return false if city name isn\'t valid', () => {
-      const cityName = 'S3ct0r 9!';
-      expect(isValidCityName(cityName)).toBeFalsy();
-    });
-
-    it('should return true if city name is valid', () => {
-      const cityName = 'San Fransisco';
-      expect(isValidCityName(cityName)).toBeTruthy();
-    });
-  });
-
   describe('isValidPhone', () => {
     it('should return true as valid number', () => {
-      const phone = '+447473222885';
+      const phone = '7473222885';
       expect(isValidPhone(phone)).toBeTruthy();
-    });
-
-    it('should return false for missing +', () => {
-      const phone = '447473222885';
-      expect(isValidPhone(phone)).toBeFalsy();
     });
   });
 });

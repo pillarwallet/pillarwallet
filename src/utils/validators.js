@@ -123,33 +123,14 @@ export function hasAllValues(object: ?Object) {
   return keys.length === values.length;
 }
 
-export function isValidFullname(fullName: string): boolean {
-  if (!fullName) return false;
-  const hasMoreThanOnePart = fullName.includes(' ');
-  if (!hasMoreThanOnePart) return false;
-  return true;
-}
-
 export function isValidEmail(email: string) {
   // eslint-disable-next-line
   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 }
 
-export function isValidName(name: string) {
-  const re = (
-    /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u
-  );
-  return re.test(name);
-}
-
-export function isValidCityName(cityName: string) {
-  const re = /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/u;
-  return re.test(cityName);
-}
-
 export function isValidPhone(phone: string) {
-  const re = /^(\+\d{10,20}\b)/;
+  const re = /^(\d{0,20}\b)/;
 
   return re.test(phone);
 }

@@ -19,13 +19,17 @@
 */
 
 import {
-  DISMISS_SMART_WALLET_INSIGHT,
+  DISMISS_INSIGHT,
   SET_INSIGHTS_STATE,
+  SMART_WALLET_INSIGHT,
+  PRIVACY_INSIGHT,
+  VERIFICATION_NOTE,
 } from 'constants/insightsConstants';
 
 export type InsightsReducerState = {
   SWInsightDismissed: boolean,
-  PPNInsightDismissed: boolean,
+  privacyInsightDismissed: boolean,
+  verificationNoteDismissed: boolean,
 };
 
 export type InsightsReducerAction = {
@@ -34,8 +38,9 @@ export type InsightsReducerAction = {
 };
 
 export const initialState = {
-  SWInsightDismissed: false,
-  PPNInsightDismissed: false,
+  [SMART_WALLET_INSIGHT]: false,
+  [PRIVACY_INSIGHT]: false,
+  [VERIFICATION_NOTE]: false,
 };
 
 export default function insightsReducer(
@@ -43,10 +48,10 @@ export default function insightsReducer(
   action: InsightsReducerAction,
 ): InsightsReducerState {
   switch (action.type) {
-    case DISMISS_SMART_WALLET_INSIGHT:
+    case DISMISS_INSIGHT:
       return {
         ...state,
-        SWInsightDismissed: true,
+        [action.payload.insight]: true,
       };
     case SET_INSIGHTS_STATE:
       return {

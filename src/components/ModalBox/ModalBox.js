@@ -31,7 +31,6 @@ type Props = {
 };
 
 const Wrapper = styled.KeyboardAvoidingView`
-  flex: 1;
   flex-direction: column;
   align-items: center;
   background-color: transparent;
@@ -39,7 +38,7 @@ const Wrapper = styled.KeyboardAvoidingView`
 
 const Box = styled.View`
   flex-direction: column;
-  height: 320px;
+  min-height: 320px;
   width: 100%;
   margin: auto 0;
   align-self: center;
@@ -53,6 +52,7 @@ const ModalBox = (props: Props) => (
     hasBackdrop
     backdropOpacity={0.7}
     onModalHide={props.onModalHide}
+    onBackdropPress={props.onModalHide}
   >
     <Wrapper
       enabled
