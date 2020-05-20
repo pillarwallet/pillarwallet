@@ -21,7 +21,6 @@ import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
-import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 
 // constants
 import {
@@ -46,19 +45,14 @@ import { parseEstimatePayload } from 'services/smartWallet';
 // types
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Transaction, TransactionExtra } from 'models/Transaction';
-import type { Asset, Assets } from 'models/Asset';
+import type { TransactionFeeInfo, EstimatedTransactionFee, Transaction, TransactionExtra } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { EstimatePayload } from 'services/smartWallet';
 
 // local utils
 import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
-import {
-  addressesEqual,
-  getAssetDataByAddress,
-  getAssetsAsList,
-  getAssetSymbolByAddress,
-} from './assets';
+import { getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
@@ -358,4 +352,17 @@ export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload
   }
 
   return estimate;
+};
+
+export const buildTxFeeInfo = (estimated: EstimatedTransactionFee, useGasToken: boolean): TransactionFeeInfo => {
+  const { gasTokenCost, gasToken, ethCost } = estimated;
+
+  if (!useGasToken || !gasToken) {
+    return { fee: ethCost };
+  }
+
+  return {
+    fee: gasTokenCost,
+    gasToken,
+  };
 };

@@ -40,16 +40,11 @@ import type {
   Assets,
 } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Account } from 'models/Account';
 import type { SessionData } from 'models/Session';
 import type { Transaction } from 'models/Transaction';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import {
-  activeAccountAddressSelector,
-  activeAccountSelector,
-} from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 
@@ -61,8 +56,6 @@ type Props = {
   rates: Rates,
   baseFiatCurrency: ?string,
   transactionSpeed: ?string,
-  activeAccountAddress: string,
-  activeAccount: ?Account,
   updateAppSettings: (path: string, value: any) => void,
   accountAssets: Assets,
   accountHistory: Transaction[],
@@ -102,8 +95,6 @@ class SendTokenAmount extends React.Component<Props> {
       balances,
       rates,
       baseFiatCurrency,
-      activeAccount,
-      activeAccountAddress,
       transactionSpeed,
       navigation,
       accountAssets,
@@ -122,12 +113,10 @@ class SendTokenAmount extends React.Component<Props> {
         receiverEnsName={this.receiverEnsName}
         source={this.source}
         balances={balances}
-        activeAccount={activeAccount}
         rates={rates}
         session={session}
         fiatCurrency={fiatCurrency}
         transactionSpeed={transactionSpeed}
-        activeAccountAddress={activeAccountAddress}
         onUpdateTransactionSpeed={this.updateTransactionSpeed}
         accountAssets={accountAssets}
         accountHistory={accountHistory}
@@ -149,8 +138,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  activeAccount: activeAccountSelector,
-  activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
 });

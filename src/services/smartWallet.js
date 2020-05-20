@@ -46,7 +46,7 @@ import { printLog, reportLog, reportOrWarn } from 'utils/common';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
-import type { GasToken } from 'models/Transaction';
+import type { EstimatedTransactionFee, GasToken } from 'models/Transaction';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -405,7 +405,7 @@ class SmartWallet {
   async estimateAccountTransaction(
     transaction: AccountTransaction,
     assetData?: AssetData,
-  ): Promise<{ gasTokenCost: BigNumber, gasToken: ?GasToken, ethCost: BigNumber }> {
+  ): Promise<EstimatedTransactionFee> {
     const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
     let { data, recipient } = transaction;
     const decimals = get(assetData, 'decimals');
@@ -439,15 +439,12 @@ class SmartWallet {
     const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
 
     // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
-    gasTokenCost = new BigNumber(hasGasTokenSupport && gasTokenCost
-      ? gasTokenCost.toString()
-      : 0,
-    );
+    gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
     totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
 
     return {
       ethCost: totalCost,
-      gasTokenCost,
+      gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
       gasToken: hasGasTokenSupport ? gasToken : null,
     };
   }

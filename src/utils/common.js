@@ -568,7 +568,7 @@ export const getDeviceWidth = () => {
   return Dimensions.get('window').width;
 };
 
-export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken) => {
+export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken): string => {
   if (!feeInWei) return '';
 
   if (gasToken && !isEmpty(gasToken)) {
