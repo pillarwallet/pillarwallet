@@ -445,7 +445,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   onCloseVerification = () => {
-    this.setState({ verifyingField: null });
+    const { verifyingField } = this.state;
+    this.setState({ verifyingField: null, verifiedModalField: verifyingField });
   };
 
   getAlertData = (dataType: string) => {

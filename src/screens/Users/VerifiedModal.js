@@ -31,6 +31,7 @@ type Props = {
   isVisible: boolean,
   onModalHide: () => void,
   verifiedField: ?string,
+  onButtonPress: () => void,
 };
 
 const Wrapper = styled.View`
@@ -46,7 +47,9 @@ const LikeIcon = styled(Icon)`
 `;
 
 const VerifiedModal = (props: Props) => {
-  const { isVisible, onModalHide, verifiedField } = props;
+  const {
+    isVisible, onModalHide, verifiedField, onButtonPress,
+  } = props;
   const referralMethod = verifiedField === 'phone' ? 'text message' : 'email';
 
   return (
@@ -67,7 +70,7 @@ const VerifiedModal = (props: Props) => {
           and a badge for each friend installed the app with your referral link.
         </BaseText>
         <Spacing h={32} />
-        <Button title="Invite friends" />
+        <Button title="Invite friends" onPress={onButtonPress} />
       </Wrapper>
     </SlideModal>
   );
