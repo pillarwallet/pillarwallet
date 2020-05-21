@@ -274,6 +274,11 @@ const ProfileFormTemplate = (locals: Object) => {
             </SelectorWrapper>
           );
         }}
+        iconProps={{
+          icon: config.statusIcon,
+          color: config.statusIconColor,
+          onPress: config.onIconPress,
+        }}
       />
     </FieldWrapper>
   );
@@ -318,6 +323,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const { focusedField, value } = this.state;
     const { isPhoneVerified, isEmailVerified } = user;
     const { roundedEmailIcon, roundedPhoneIcon } = images(theme);
+    const colors = getThemeColors(theme);
 
     const formOptions = {
       fields: {
@@ -339,11 +345,13 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             fieldDisplayValue: value.email,
             isVerified: isEmailVerified,
             onSubmit: this.onFieldBlur,
+            statusIcon: 'rounded-close',
+            statusIconColor: colors.secondaryText,
+            onIconPress: this.onClear,
           },
         },
         phone: {
           keyboardType: 'phone-pad',
-          fieldName: 'phone',
           template: ProfileFormTemplate,
           config: {
             fieldName: 'phone',
@@ -368,6 +376,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             fieldDisplayValue: value.phone.input && `+${value.phone.selector.callingCode}${value.phone.input}`,
             isVerified: isPhoneVerified,
             onSubmit: this.onFieldBlur,
+            statusIcon: 'rounded-close',
+            statusIconColor: colors.secondaryText,
+            onIconPress: this.onClear,
           },
         },
       },
@@ -409,6 +420,17 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         }
       }
     }
+  }
+
+  onClear = () => {
+    const { focusedField, value } = this.state;
+    const newValue = { ...value };
+    if (focusedField === 'email') {
+      newValue.email = '';
+    } else if (focusedField === 'phone') {
+      newValue.phone.input = '';
+    }
+    this.setState({ value: newValue });
   }
 
   onFieldFocus = (fieldName) => {
