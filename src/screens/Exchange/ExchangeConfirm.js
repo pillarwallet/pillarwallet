@@ -76,7 +76,7 @@ import smartWalletService from 'services/smartWallet';
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { OfferOrder, ProvidersMeta } from 'models/Offer';
-import type { GasToken, TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Account, Accounts } from 'models/Account';
@@ -160,7 +160,6 @@ const SliderContentWrapper = styled.View`
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
   transactionPayload: TokenTransactionPayload;
-  gasToken: ?GasToken;
 
   state = {
     showFeeModal: false,
@@ -207,6 +206,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const { activeAccountAddress, isSmartAccount } = this.props;
     const { transactionSpeed } = this.state;
     const txSpeed = transactionSpeed || SPEED_TYPES.NORMAL;
+    this.setState({ gettingFee: true });
 
     let gasLimit;
     if (!isSmartAccount) {
