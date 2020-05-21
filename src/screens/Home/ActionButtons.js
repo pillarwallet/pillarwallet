@@ -45,6 +45,7 @@ import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActio
 import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
+import { findFirstSmartAccount } from 'utils/accounts';
 
 // models, types
 import type { Account } from 'models/Account';
@@ -234,6 +235,7 @@ class ActionButtons extends React.Component<Props, State> {
       changeWalletAction,
       blockchainNetwork,
       setActiveBlockchainNetwork,
+      wallets,
     } = this.props;
     const { type: walletType } = acc;
     const { type: activeAccType } = activeWallet;
@@ -262,7 +264,8 @@ class ActionButtons extends React.Component<Props, State> {
         break;
 
       case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        changeWalletAction(acc, () => {
+        const smartAcc = findFirstSmartAccount(wallets);
+        changeWalletAction(smartAcc || acc, () => {
           if (navigateTo === SEND_BITCOIN_FLOW) {
             const btcToken = supportedAssets.find(asset => asset.symbol === BTC);
             if (!btcToken) {

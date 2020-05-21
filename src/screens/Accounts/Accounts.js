@@ -43,7 +43,6 @@ import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { themedColors } from 'utils/themes';
-import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 import { images } from 'utils/images';
 
 // types
@@ -71,7 +70,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { initializeBitcoinWalletAction, refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -151,8 +149,6 @@ const ToggleText = styled(BaseText)`
   margin-right: -10px;
   color: ${themedColors.secondaryText};
 `;
-
-const bitcoinNetworkIcon = require('assets/icons/icon_BTC.png');
 
 class AccountsScreen extends React.Component<Props, State> {
   switchToWallet: ?Account = null;
@@ -327,29 +323,6 @@ class AccountsScreen extends React.Component<Props, State> {
     return wallets;
   }
 
-  setBTCAsActiveNetwork = () => {
-    const {
-      navigation,
-      setActiveBlockchainNetwork,
-      refreshBitcoinBalance,
-    } = this.props;
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-    refreshBitcoinBalance();
-    navigation.navigate(ASSETS);
-  };
-
-  startBTCInit = () => {
-    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC });
-  };
-
-  initialiseBTC = async (_: string, wallet: EthereumWallet) => {
-    const { navigation, setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
-    this.setState({ showPinModal: false });
-    await initializeBitcoinWallet(wallet);
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-    navigation.navigate(ASSETS);
-  };
-
   networks(): NetworkItem[] {
     const networks: NetworkItem[] = [];
 
@@ -358,12 +331,7 @@ class AccountsScreen extends React.Component<Props, State> {
       availableStake,
       isTankInitialised,
       smartWalletFeatureEnabled,
-      bitcoinFeatureEnabled,
       accounts,
-      bitcoinAddresses,
-      baseFiatCurrency,
-      rates,
-      bitcoinBalances,
       theme,
     } = this.props;
 
@@ -390,30 +358,6 @@ class AccountsScreen extends React.Component<Props, State> {
         isActive,
         iconSource: PPNIcon,
       });
-    }
-
-    if (bitcoinFeatureEnabled) {
-      const bitcoinNetwork = blockchainNetworks.find(
-        ({ id }) => id === BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
-      );
-
-      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-      const bitcoinBalance = calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency);
-      const formattedBitcoinBalance = formatFiat(bitcoinBalance, fiatCurrency);
-
-      if (bitcoinNetwork) {
-        networks.push({
-          id: 'NETWORK_BTC',
-          type: 'NETWORK',
-          title: 'Bitcoin wallet',
-          isInitialised: bitcoinAddresses.length > 0,
-          isActive: bitcoinNetwork.isActive,
-          balance: formattedBitcoinBalance,
-          iconSource: bitcoinNetworkIcon,
-          mainAction: this.setBTCAsActiveNetwork,
-          initialiseAction: this.startBTCInit,
-        });
-      }
     }
 
     return networks;
@@ -520,26 +464,21 @@ const mapStateToProps = ({
   featureFlags: {
     data: {
       SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
     },
   },
   appSettings: { data: { baseFiatCurrency } },
   balances: { data: balances },
   rates: { data: rates },
   user: { data: user },
-  bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
   blockchainNetworks,
   isTankInitialised,
   smartWalletFeatureEnabled,
-  bitcoinFeatureEnabled,
   baseFiatCurrency,
   balances,
   rates,
   user,
-  bitcoinAddresses,
-  bitcoinBalances,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -556,8 +495,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
-  initializeBitcoinWallet: (wallet: EthereumWallet) => dispatch(initializeBitcoinWalletAction(wallet)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen));
