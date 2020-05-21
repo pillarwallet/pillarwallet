@@ -24,7 +24,6 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
-import BigNumber from 'bignumber.js';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -47,6 +46,7 @@ import { images } from 'utils/images';
 import {
   formatAmount,
   formatUnits,
+  getDecimalPlaces,
 } from 'utils/common';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -202,7 +202,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const groupedPPNTransactions: TransactionsGroup[] = groupPPNTransactions(ppnTransactions);
 
     const formattedValuesArray: Object[] = groupedPPNTransactions.map(({ symbol, value }): Object => ({
-      formatted: formatAmount(formatUnits(value.toString(), assetDecimals)),
+      formatted: formatAmount(formatUnits(value.toString(), assetDecimals), getDecimalPlaces(symbol)),
       symbol,
     }));
     return formattedValuesArray;
@@ -216,38 +216,6 @@ export class ActivityFeedItem extends React.Component<Props> {
   isKWAddress = (address: string) => {
     const account = findAccountByAddress(address, this.props.accounts);
     return (account && checkIfKeyBasedAccount(account));
-  }
-
-  getFormattedSettleValues = () => {
-    const {
-      event,
-      asset,
-      assetDecimals,
-    } = this.props;
-    const settleData = event.extra;
-    const ppnTransactions = asset
-      ? settleData.filter(({ symbol }) => symbol === asset)
-      : settleData;
-
-    const valueByAsset: Object = {};
-
-    ppnTransactions.forEach((trx) => {
-      const { symbol, value: rawValue } = trx;
-      const value = new BigNumber(rawValue);
-      if (!valueByAsset[symbol]) {
-        valueByAsset[symbol] = { ...trx, value, decimals: assetDecimals };
-      } else {
-        const { value: currentValue } = valueByAsset[symbol];
-        valueByAsset[symbol].value = currentValue.plus(value);
-      }
-    });
-
-    const valuesArray = (Object.values(valueByAsset): any);
-    const formattedValuesArray: Object[] = valuesArray.map(({ symbol, value, decimals }): Object => ({
-      formatted: formatAmount(formatUnits(value.toString(), decimals)),
-      symbol,
-    }));
-    return formattedValuesArray;
   }
 
   getWalletCreatedEventData = (event: Object) => {
@@ -321,11 +289,13 @@ export class ActivityFeedItem extends React.Component<Props> {
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const avatarUrl = contact && contact.profileImage;
 
-    const formattedValue = formatAmount(value);
+    const assetSymbol = event ? event.asset : null;
+    const decimalPlaces = getDecimalPlaces(assetSymbol);
+    const formattedValue = formatAmount(value, decimalPlaces);
     const directionIcon = isReceived ? 'received' : 'sent';
     let directionSymbol = isReceived ? '+' : '-';
 
-    if (formattedValue === '0') {
+    if (value === '0.0') {
       directionSymbol = '';
     }
 
