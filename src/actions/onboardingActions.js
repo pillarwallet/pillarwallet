@@ -239,7 +239,6 @@ const finishRegistration = async ({
   } else {
     await setKeychainDataObject(keychainData);
   }
-
   dispatch(fetchReferralRewardAction());
 };
 
@@ -252,14 +251,14 @@ const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boole
     action: NavigationActions.navigate({ routeName: HOME }),
   });
 
-  const navigateToIncommingRewardScreen = NavigationActions.navigate({
+  const navigateToIncomingRewardScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
   });
 
   if (showIncomingReward) {
-    navigate(navigateToIncommingRewardScreen);
+    navigate(navigateToIncomingRewardScreen);
   } else {
     navigate(navigateToHomeScreen);
   }

@@ -198,8 +198,6 @@ export const loginAction = (
           // to get exchange supported assets in order to show only supported assets on exchange selectors
           // and show exchange button on supported asset screen only
           dispatch(getExchangeSupportedAssetsAction());
-
-          dispatch(fetchReferralRewardAction());
         }
 
         // perform signal init
@@ -267,6 +265,7 @@ export const loginAction = (
 
       dispatch(fetchTransactionsHistoryAction());
       if (user.walletId) dispatch(updateConnectionsAction());
+      dispatch(fetchReferralRewardAction());
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
