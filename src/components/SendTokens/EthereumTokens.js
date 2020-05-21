@@ -185,7 +185,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     } = this.props;
     const { showRelayerMigrationModal } = this.state;
 
-    if (prevProps.session.isOnline !== session.isOnline && session.isOnline && isSmartAccount) {
+    if (prevProps.session.isOnline !== session.isOnline && session.isOnline && !isSmartAccount) {
       this.props.fetchGasInfo();
     }
 
