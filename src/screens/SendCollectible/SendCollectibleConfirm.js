@@ -212,19 +212,25 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const { isSmartAccount } = this.props;
     const transactionPayload = this.getTransactionPayload();
 
+    let gasLimit;
+    if (!isSmartAccount) {
+      gasLimit = await calculateGasEstimate(transactionPayload);
+      this.setState({ gasLimit });
+    }
+
     const txFeeInfo = isSmartAccount
       ? await this.getSmartWalletTxFee(transactionPayload)
-      : await this.getKeyWalletTxFee(transactionPayload);
+      : this.getKeyWalletTxFee(transactionPayload, gasLimit);
 
     this.setState({ txFeeInfo, gettingFee: false });
   };
 
-  getKeyWalletTxFee = async (transaction: CollectibleTransactionPayload): Promise<TransactionFeeInfo> => {
+  getKeyWalletTxFee = (transaction: CollectibleTransactionPayload, gasLimit?: number): TransactionFeeInfo => {
     const { gasInfo } = this.props;
+    gasLimit = gasLimit || 0;
+
     const gasPrice = gasInfo.gasPrice[SPEED_TYPES.NORMAL] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-    const gasLimit = await calculateGasEstimate(transaction);
-    this.setState({ gasLimit });
 
     return {
       fee: gasPriceWei.mul(gasLimit),
