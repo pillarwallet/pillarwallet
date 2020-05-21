@@ -203,23 +203,47 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   };
 
   getGasPriceWei = () => {
-    const gasPrice = this.props.gasInfo.gasPrice.avg || 0;
-    return utils.parseUnits(gasPrice.toString(), 'gwei');
+    const useRequestPrice = this.shouldUseGasInfoFromRequest();
+    if (!useRequestPrice) {
+      const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
+      return utils.parseUnits(avgGasPrice.toString(), 'gwei');
+    }
+    const gasPriceFromRequestHex = this.getGasPriceFromRequest();
+    return utils.bigNumberify(gasPriceFromRequestHex);
   };
 
-  /**
-   *  we're using our wallet avg gas price and gas limit
-   *
-   *  the reason we're not using gas price and gas limit provided by WC since it's
-   *  optional in platform end while also gas limit and gas price values provided
-   *  by platform are not always enough to fulfill transaction
-   *
-   *  if we start using gasPrice provided by then WC incoming value is gwei in hex
-   *  `gasPrice = utils.bigNumberify(gasPrice);`
-   *  and both gasPrice and gasLimit is not always present from plaforms
-   */
+  getGasLimit = () => {
+    const { gasLimit: estGasLimit } = this.state;
+    if (!this.shouldUseGasInfoFromRequest()) return estGasLimit;
+    return this.getGasLimitFromRequest();
+  };
+
+  getRequestParams = () => get(this, 'request.params') || [];
+
+  getGasLimitFromRequest = () => {
+    const params = this.getRequestParams();
+    const requestGasLimit = params[0].gasLimit;
+    return requestGasLimit || this.state.gasLimit;
+  };
+
+  shouldUseGasInfoFromRequest = () => {
+    const params = this.getRequestParams();
+    if (!params.length || !params[0].gasPrice) return false;
+    return true;
+  };
+
+  getGasPriceFromRequest = () => {
+    const params = this.getRequestParams();
+    return params[0].gasPrice;
+  };
+
   getKeyWalletTxFee = (gasLimit?: number): TransactionFeeInfo => {
-    gasLimit = gasLimit || this.state.gasLimit || 0;
+    if (this.shouldUseGasInfoFromRequest()) {
+      // fallbacks to this.state.gasLimit if no gasLimit provided in WC request
+      gasLimit = this.getGasLimitFromRequest();
+    } else {
+      gasLimit = gasLimit || this.state.gasLimit || 0;
+    }
     const gasPriceWei = this.getGasPriceWei();
 
     return {
@@ -248,6 +272,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       value,
       data,
     };
+
+    if (this.shouldUseGasInfoFromRequest()) {
+      const gasPrice = this.getGasPriceFromRequest();
+      const gasLimit = this.getGasLimit();
+      return { fee: gasPrice.mul(gasLimit) };
+    }
 
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
@@ -316,7 +346,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       case 'eth_signTransaction':
         type = 'Transaction';
 
-        const gasPrice = this.getGasPriceWei().toNumber();
+        const gasPrice = this.getGasPriceWei();
         const estimatePart = {
           txFeeInWei,
           gasLimit,
