@@ -53,7 +53,7 @@ export type ReferralReward = {
 };
 
 export type RewardsByCompany = {
-  [campaignName: string]: ReferralReward,
+  [campaignName: string]: ReferralReward[],
 };
 
 export type InviteSentPayload = {
@@ -130,7 +130,7 @@ export type ReferralsReducerState = {|
   referredEmail: ?string,
   referredPhone: ?string,
   isRewardClaimed: boolean,
-  rewards: RewardsByCompany,
+  rewardsByCampaign: RewardsByCompany,
   isFetchingRewards: boolean,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
@@ -149,7 +149,7 @@ export const initialState: ReferralsReducerState = {
   referredEmail: null,
   referredPhone: null,
   isRewardClaimed: false,
-  rewards: {},
+  rewardsByCampaign: {},
   isFetchingRewards: false,
   referralRewardIssuersAddresses: [],
   isPillarRewardCampaignActive: false,
@@ -250,7 +250,7 @@ export default function referralsReducer(
       return { ...state, isFetchingRewards: true };
 
     case SET_REFERRAL_REWARD_AMOUNT:
-      return { ...state, rewards: { ...state.rewards, ...action.payload }, isFetchingRewards: false };
+      return { ...state, rewardsByCampaign: action.payload, isFetchingRewards: false };
 
     case SET_REFERRAL_REWARD_ISSUER_ADDRESSES:
       return { ...state, referralRewardIssuersAddresses: action.payload };

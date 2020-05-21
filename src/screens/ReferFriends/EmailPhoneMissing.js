@@ -22,7 +22,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
-import get from 'lodash.get';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -33,6 +32,7 @@ import Button from 'components/Button';
 import LoadingParagraph from 'components/LoadingParagraph';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { getCampaignRewardText } from 'utils/referrals';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 import type { NavigationScreenProp } from 'react-navigation';
@@ -43,7 +43,7 @@ import type { RewardsByCompany } from 'reducers/referralsReducer';
 type Props = {
   navigation: NavigationScreenProp<*>,
   referrals: RewardsByCompany,
-  rewards: RewardsByCompany,
+  rewardsByCampaign: RewardsByCompany,
   isFetchingRewards: boolean,
   fetchReferralReward: () => void,
   isPillarRewardCampaignActive: boolean,
@@ -72,14 +72,15 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
   render() {
     const {
       navigation,
-      rewards,
+      rewardsByCampaign,
       isFetchingRewards,
       isPillarRewardCampaignActive,
     } = this.props;
-    const { asset, amount } = get(rewards, 'pillar', {});
+
+    const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
     const modalTitle = isPillarRewardCampaignActive ? 'Invite and get rewarded' : 'Invite to Pillar';
-    const rewardParagraph = isPillarRewardCampaignActive && asset && amount
-      ? `You will receive ${amount} ${asset} for each friend installed the app with your referral link.`
+    const rewardParagraph = isPillarRewardCampaignActive && rewardText
+      ? `You will receive ${rewardText} for each friend installed the app with your referral link.`
       : '';
 
     return (
@@ -121,9 +122,9 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
-  referrals: { rewards, isFetchingRewards, isPillarRewardCampaignActive },
+  referrals: { rewardsByCampaign, isFetchingRewards, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
-  rewards,
+  rewardsByCampaign,
   isFetchingRewards,
   isPillarRewardCampaignActive,
 });

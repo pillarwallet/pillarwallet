@@ -331,13 +331,22 @@ export const fetchReferralRewardAction = () => {
       type: FETCHING_REFERRAL_REWARD_AMOUNT,
     });
 
-    const referralRewards: RewardsByCompany = await api.getReferralRewardValue(walletId, referralToken);
-    const isPillarRewardsActive = get(referralRewards, 'pillar.amount');
+    const referralCampaignsInfo = await api.getReferralCampaignsInfo(walletId, referralToken);
+    const referralRewards: RewardsByCompany = Object.keys(referralCampaignsInfo)
+      .reduce((rewardsByCampaign, campaignName) => {
+        const isCampaignActive = get(referralCampaignsInfo, `[${campaignName}].isActive`);
+        const campaignRewards = get(referralCampaignsInfo, `[${campaignName}].rewards`);
+        if (campaignRewards && isCampaignActive) rewardsByCampaign[campaignName] = campaignRewards;
+        return rewardsByCampaign;
+      },
+      {});
 
     dispatch({
       type: SET_REFERRAL_REWARD_AMOUNT,
       payload: referralRewards,
     });
+
+    const isPillarRewardsActive = get(referralCampaignsInfo, 'pillar.isActive');
 
     dispatch({
       type: SET_PILLAR_REWARD_CAMPAIGN_STATUS,

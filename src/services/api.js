@@ -331,7 +331,7 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  getReferralRewardValue(walletId: string, referralToken: ?string) {
+  getReferralCampaignsInfo(walletId: string, referralToken: ?string) {
     const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
