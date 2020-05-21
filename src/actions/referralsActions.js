@@ -144,7 +144,7 @@ export const completeReferralsEventAction = () => {
     });
 
     Toast.show({
-      message: 'You are gonna receive your rewards soon!',
+      message: 'You are going to receive your rewards soon!',
       type: 'info',
       title: 'Rewards on their way',
       autoClose: false,
