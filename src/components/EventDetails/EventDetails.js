@@ -997,36 +997,37 @@ class EventDetail extends React.Component<Props, State> {
     const { asset, icon, assetData: { image } } = event;
     const relevantAddress = this.getRelevantAddress(event);
     const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
+    const isPending = isPendingTransaction(event);
 
     let eventData: EventData = {
       name: asset,
       collectibleUrl: isSvgImage(image) ? image : icon,
       imageBackground: this.getColor('card'),
       imageBorder: true,
+      buttons: [
+        {
+          title: 'View on the Blockchain',
+          onPress: this.viewOnTheBlockchain,
+          secondary: true,
+        },
+      ],
     };
 
     if (isReceived) {
       eventData = {
         ...eventData,
-        actionTitle: 'Received',
+        actionTitle: isPending ? 'Receiving' : 'Received',
         actionSubtitle: `Collectible from ${usernameOrAddress}`,
-        buttons: [
-          {
-            title: 'View on the Blockchain',
-            onPress: this.viewOnTheBlockchain,
-            secondary: true,
-          },
-        ],
       };
     } else {
       eventData = {
         ...eventData,
-        actionTitle: 'Sent',
+        actionTitle: isPending ? 'Sending' : 'Sent',
         actionSubtitle: `Collectible to ${usernameOrAddress}`,
       };
     }
 
-    if (isPendingTransaction(event)) {
+    if (isPending) {
       eventData.actionIcon = 'pending';
     }
 
@@ -1053,7 +1054,7 @@ class EventDetail extends React.Component<Props, State> {
     return {
       name,
       imageUrl,
-      actionTitle: 'Received',
+      actionTitle: isPending ? 'Receiving' : 'Received',
       actionSubtitle: 'Badge',
       actionIcon: isPending ? 'pending' : null,
       buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
