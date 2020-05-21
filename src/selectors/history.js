@@ -17,10 +17,7 @@ export const accountHistorySelector = createSelector(
   accountAssetsSelector,
   (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses, activeAssets) => {
     let mergedHistory = [];
-    if (activeBlockchainNetwork
-      && bitcoinAddresses.length
-      && (activeAssets.BTC || activeBlockchainNetwork === 'BITCOIN')
-    ) {
+    if (bitcoinAddresses.length && (activeAssets.BTC || activeBlockchainNetwork === 'BITCOIN')) {
       mergedHistory = [...(history[bitcoinAddresses[0].address] || [])];
     }
     if (!activeAccountId) return [];

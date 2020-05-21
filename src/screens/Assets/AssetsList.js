@@ -196,19 +196,17 @@ class AssetsList extends React.Component<Props, State> {
 
   initialiseBTC = (assetData: Object) => {
     return async (_: string, wallet: EthereumWallet) => {
-      const { navigation, setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
+      const { navigation, initializeBitcoinWallet } = this.props;
       this.setState({ showPinModal: false });
       await initializeBitcoinWallet(wallet);
-      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
       navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
     };
   }
 
   navigateToBTCAsset = (assetData: Object) => {
-    const { navigation, setActiveBlockchainNetwork, bitcoinAddresses } = this.props;
+    const { navigation, bitcoinAddresses } = this.props;
     const isInitialised = bitcoinAddresses.length > 0;
     if (isInitialised) {
-      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
       navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
       return;
     }
