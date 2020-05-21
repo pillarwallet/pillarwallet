@@ -284,6 +284,12 @@ const ProfileFormTemplate = (locals: Object) => {
   );
 };
 
+const getInitialValue = (user) => {
+  const { email = '', phone = '' } = user;
+  const country = countries.find(c => phone.substring(1).startsWith(c.callingCode));
+  const phoneInput = country && phone.substring(country.callingCode.length + 1);
+  return { phone: { input: phoneInput || '', selector: country || countries.find(c => c.cca2 === 'US') }, email };
+};
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -300,23 +306,19 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   constructor(props) {
     super(props);
-    const { user } = props;
-
-    const { email = '', phone = '' } = user;
-
-    const country = countries.find(c => phone.substring(1).startsWith(c.callingCode));
-    const phoneInput = country && phone.substring(country.callingCode.length + 1);
+    const { user } = this.props;
 
     this.state = {
       verifyingField: null,
       permissionsGranted: false,
       visibleModal: '',
-      value: { phone: { input: phoneInput || '', selector: country || countries.find(c => c.cca2 === 'US') }, email },
+      value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
       verifiedModalField: null,
     };
   }
+
 
   getFormOptions = () => {
     const { theme, user } = this.props;
@@ -405,18 +407,29 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onFieldBlur = () => {
     const { updateUser, user } = this.props;
     const { focusedField, value } = this.state;
+    const { isEmailVerified, isPhoneVerified } = user;
+
     if (!focusedField || !this.formRef) return;
     const e = this.formRef.getComponent(focusedField).validate();
     const isEmpty = focusedField === 'phone' ? !value.phone.input : !value.email;
+
     if (e.isValid() || isEmpty) {
       this.setState({ focusedField: null });
       if (focusedField === 'email' && value.email !== user.email) {
-        updateUser(user.walletId, { email: value.email });
+        if (isEmailVerified) {
+          this.setState({ cautionModalField: 'email' });
+        } else {
+          updateUser(user.walletId, { email: value.email });
+        }
       } else if (focusedField === 'phone') {
         const { phone: { input, selector } } = value;
         const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
         if (formattedPhone !== user.phone) {
-          updateUser(user.walletId, { phone: formattedPhone });
+          if (isPhoneVerified) {
+            this.setState({ cautionModalField: 'phone' });
+          } else {
+            updateUser(user.walletId, { phone: formattedPhone });
+          }
         }
       }
     }
@@ -434,12 +447,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   }
 
   onFieldFocus = (fieldName) => {
-    const { isEmailVerified, isPhoneVerified } = this.props.user;
-    if ((fieldName === 'phone' && isPhoneVerified) || (fieldName === 'email' && isEmailVerified)) {
-      this.setState({ cautionModalField: fieldName });
-    } else {
-      this.setState({ focusedField: fieldName });
-    }
+    this.setState({ focusedField: fieldName });
   }
 
   onSelectorClose = () => {
@@ -475,12 +483,25 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.setState({ verifyingField: null, verifiedModalField: verifyingField });
   };
 
-  getAlertData = (dataType: string) => {
-    return ({
-      title: `Change ${dataType}`,
-      message: `You will have to re-verify your ${dataType} after changing it`,
+  changeField = () => {
+    const { updateUser, user } = this.props;
+    const { cautionModalField, value } = this.state;
+    if (cautionModalField === 'phone') {
+      const { phone: { input, selector } } = value;
+      const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
+      updateUser(user.walletId, { phone: formattedPhone });
+    } else if (cautionModalField === 'email') {
+      updateUser(user.walletId, { email: value.email });
+    }
+    this.setState({ cautionModalField: null });
+  }
+
+  onDismissCautionModal = () => {
+    this.setState({
+      cautionModalField: null,
+      value: getInitialValue(this.props.user),
     });
-  };
+  }
 
   renderInsight = () => {
     const {
@@ -608,8 +629,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         />}
         <CautionModal
           isVisible={!!cautionModalField}
-          onModalHide={() => this.setState({ cautionModalField: null })}
-          onButtonPress={() => this.setState({ cautionModalField: null, focusedField: cautionModalField })}
+          onModalHide={this.onDismissCautionModal}
+          onButtonPress={this.changeField}
           focusedField={cautionModalField}
         />
         <VerifiedModal
