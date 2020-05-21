@@ -81,7 +81,12 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction, changeUseBiometricsAction, updateAppSettingsAction } from 'actions/appSettingsActions';
+import {
+  setAppThemeAction,
+  changeUseBiometricsAction,
+  updateAppSettingsAction,
+  setInitialPreferredGasTokenAction,
+} from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -225,6 +230,9 @@ const finishRegistration = async ({
   if (smartWalletFeatureEnabled) {
     dispatch(managePPNInitFlagAction());
   }
+
+  // set initial preferredGasToken value. Should be called after we connect to Archanova
+  dispatch(setInitialPreferredGasTokenAction());
 
   await dispatch({
     type: UPDATE_WALLET_STATE,

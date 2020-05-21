@@ -79,11 +79,11 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // selectors
 import {
   activeAccountAddressSelector,
+  activeBlockchainSelector,
   bitcoinAddressSelector,
-  isSmartWalletActivatedSelector,
 } from 'selectors';
 import { assetDecimalsSelector } from 'selectors/assets';
-import { activeBlockchainSelector } from 'selectors/selectors';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';

@@ -59,6 +59,7 @@ import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getAccountName } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
+import { findTransactionAcrossAccounts } from 'utils/history';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -108,11 +109,11 @@ import {
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
+  activeBlockchainSelector,
   bitcoinAddressSelector,
-  isSmartWalletActivatedSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { activeBlockchainSelector } from 'selectors/selectors';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -127,7 +128,7 @@ import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
-import type { Transaction } from 'models/Transaction';
+import type { Transaction, TransactionsStore } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -161,7 +162,7 @@ type Props = {
   isPPNActivated: boolean,
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
-  history: {[string]: Object[]},
+  history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
 };
 
@@ -306,10 +307,7 @@ class EventDetail extends React.Component<Props, State> {
 
   findTxInfo = () => {
     const { history, event } = this.props;
-    const accountsHistory: Object[] = Object.values(history);
-    return accountsHistory
-      .map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
-      .find(tx => tx) || {};
+    return findTransactionAcrossAccounts(history, event.hash) || {};
   }
 
   syncEnsRegistry = (txInfo) => {
@@ -807,7 +805,7 @@ class EventDetail extends React.Component<Props, State> {
         break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
-          name: 'Smart Wallet fees with PLR',
+          name: 'Smart Wallet fees with PLR token',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Enabled',
           buttons: [
