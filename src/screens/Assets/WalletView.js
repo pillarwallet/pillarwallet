@@ -52,7 +52,6 @@ import {
 } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { SMART_WALLET_INSIGHT } from 'constants/insightsConstants';
 
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -82,7 +81,7 @@ import {
 import { hideAssetAction } from 'actions/userSettingsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { dismissInsight } from 'actions/insightsActions';
+import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
@@ -523,7 +522,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   smartWallet: smartWalletState,
   featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-  insights: { [SMART_WALLET_INSIGHT]: SWInsightDismissed },
+  insights: { SWInsightDismissed },
 }: RootReducerState): $Shape<Props> => ({
   assetsSearchState,
   assetsSearchResults,
@@ -555,7 +554,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction(true)),
-  dismissSmartWalletInsight: () => dispatch(dismissInsight(SMART_WALLET_INSIGHT)),
+  dismissSmartWalletInsight: () => dispatch(dismissSmartWalletInsightAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletView)));

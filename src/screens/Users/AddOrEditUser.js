@@ -55,11 +55,8 @@ import { images } from 'utils/images';
 
 // actions
 import { updateUserAction } from 'actions/userActions';
-import { dismissInsight } from 'actions/insightsActions';
+import { dismissPrivacyInsightAction, dismissVerificationNoteAction } from 'actions/insightsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
-
-// constants
-import { PRIVACY_INSIGHT, VERIFICATION_NOTE } from 'constants/insightsConstants';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -650,7 +647,7 @@ const mapStateToProps = ({
     oneTimePasswordSent,
   },
   accounts: { data: accounts },
-  insights: { [PRIVACY_INSIGHT]: privacyInsightDismissed, [VERIFICATION_NOTE]: verificationNoteDismissed },
+  insights: { privacyInsightDismissed, verificationNoteDismissed },
 }: RootReducerState): $Shape<Props> => ({
   user,
   oneTimePasswordSent,
@@ -662,8 +659,8 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateUser: (walletId: string, field: Object) =>
     dispatch(updateUserAction(walletId, field)),
-  dismissPrivacyInsight: () => dispatch(dismissInsight(PRIVACY_INSIGHT)),
-  dismissVerificationNote: () => dispatch(dismissInsight(VERIFICATION_NOTE)),
+  dismissPrivacyInsight: () => dispatch(dismissPrivacyInsightAction()),
+  dismissVerificationNote: () => dispatch(dismissVerificationNoteAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
