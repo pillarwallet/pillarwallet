@@ -207,7 +207,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
   renderAssets = () => {
     const { assets, balances } = this.props;
-    const assetsArray = getAssetsAsList(assets);
+    const assetsArray = getAssetsAsList(assets).filter(({ symbol }) => symbol !== 'BTC');
     const nonEmptyAssets = assetsArray.filter((asset: any) => {
       return getBalance(balances, asset.symbol) !== 0;
     });

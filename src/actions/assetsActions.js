@@ -77,6 +77,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
+import { satoshisToBtc } from 'utils/bitcoin';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
@@ -90,6 +91,7 @@ import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
+import { refreshBitcoinBalanceAction } from './bitcoinActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -380,6 +382,16 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
       address: walletAddress,
       assets: getAssetsAsList(accountAssets).filter(({ symbol }) => symbol !== 'BTC'),
     });
+
+    if (accountAssets.BTC) {
+      const btcBalance = await dispatch(refreshBitcoinBalanceAction(true));
+      if (btcBalance) {
+        newBalances.push({
+          balance: satoshisToBtc(btcBalance.confirmed).toString(),
+          symbol: 'BTC',
+        });
+      }
+    }
 
     if (!isEmpty(newBalances)) {
       await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));

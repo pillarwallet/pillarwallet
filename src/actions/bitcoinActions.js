@@ -409,7 +409,7 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
 
     const addressesToUpdate = force ? addresses : outdatedAddresses(addresses);
     if (!addressesToUpdate.length) {
-      return;
+      return null;
     }
 
     await Promise.all(addressesToUpdate.map(({ address }) => {
@@ -420,6 +420,7 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
 
     const { bitcoin: { data: { balances } } } = getState();
     dispatch(saveDbAction('bitcoinBalances', { balances }, true));
+    return Promise.resolve(balances[addresses[0].address]);
   };
 };
 

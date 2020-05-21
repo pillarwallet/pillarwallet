@@ -318,13 +318,17 @@ class AssetsList extends React.Component<Props, State> {
         {symbol === 'BTC' &&
           <>
             <ListItemWithImage
-              actionLabel="BTC Wallet"
               onPress={() => {
               this.navigateToBTCAsset({ ...props, tokenType: TOKENS });
             }}
               address={props.address}
               label={name}
               avatarUrl={fullIconUrl}
+              balance={{
+                balance: formatAmount(balance),
+                value: formattedBalanceInFiat,
+                token: symbol,
+              }}
               fallbackToGenericToken
             />
             <CheckAuth
@@ -369,9 +373,9 @@ class AssetsList extends React.Component<Props, State> {
       .map(id => assets[id])
       .map(({ symbol, ...rest }) => ({
         symbol,
-        balance: getBalance(balances, symbol),
         paymentNetworkBalance: getBalance(paymentNetworkBalances, symbol),
         ...rest,
+        balance: getBalance(balances, symbol),
       }))
       .map(({ balance, symbol, paymentNetworkBalance, ...rest }) => ({ // eslint-disable-line
         balance,

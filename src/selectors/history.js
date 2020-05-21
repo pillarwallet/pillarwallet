@@ -14,10 +14,12 @@ export const accountHistorySelector = createSelector(
   activeBlockchainSelector,
   bitcoinAddressSelector,
   (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses) => {
-    if (activeBlockchainNetwork && activeBlockchainNetwork === 'BITCOIN' && bitcoinAddresses.length) {
-      return orderBy(history[bitcoinAddresses[0].address] || [], ['createdAt'], ['desc']);
+    let mergedHistory = [];
+    if (activeBlockchainNetwork && bitcoinAddresses.length) {
+      mergedHistory = [...(history[bitcoinAddresses[0].address] || [])];
     }
     if (!activeAccountId) return [];
-    return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
+    mergedHistory = [...mergedHistory, ...(history[activeAccountId] || [])];
+    return orderBy(mergedHistory, ['createdAt'], ['desc']);
   },
 );
