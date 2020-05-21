@@ -255,11 +255,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   getGasPriceFromRequest = () => {
     const params = this.getRequestParams();
-    try {
-      return params[0].gasPrice;
-    } catch (e) {
-      return '';
-    }
+    return params[0].gasPrice;
   };
 
   updateTxFee = async () => {
@@ -282,8 +278,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   getGasInfoObjectToUse = () => {
     const historyGasInfo = this.props.gasInfo;
     const requestGasInfo: ?GasInfo = this.getRequestGasInfoObject();
-    if (!requestGasInfo) return historyGasInfo;
-    return this.shouldUseGasInfoFromRequest() ? requestGasInfo : historyGasInfo;
+    if (!requestGasInfo || !this.shouldUseGasInfoFromRequest()) return historyGasInfo;
+    return requestGasInfo;
   };
 
   getSmartWalletTxFeeInWei = async (): BigNumber => {
