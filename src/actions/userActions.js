@@ -160,7 +160,7 @@ export const verifyEmailAction = (walletId: string, code: string) => {
     if (isPillarRewardCampaignActive && referralToken && !isRewardClaimed && referredEmail === email) {
       dispatch(completeReferralsEventAction());
       message = 'Thank you for verifying your information, ' +
-                'we are currently processing your reward tokens.';
+                'we are currently processing your reward.';
     }
 
     dispatch(verificationSucceededAction(message));
@@ -210,7 +210,7 @@ export const verifyPhoneAction = (
     if (isPillarRewardCampaignActive && referralToken && !isRewardClaimed && referredPhone === phone) {
       dispatch(completeReferralsEventAction());
       message = 'Thank you for verifying your information, ' +
-                'we are currently processing your reward tokens.';
+                'we are currently processing your reward.';
     }
 
     dispatch(verificationSucceededAction(message));
