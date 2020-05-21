@@ -357,6 +357,11 @@ class TextInput extends React.Component<Props, State> {
     }
   };
 
+  handleSubmit = () => {
+    const { onSubmit } = this.props.inputProps;
+    if (onSubmit) onSubmit();
+  }
+
   openSelector = () => {
     Keyboard.dismiss();
     this.setState({ showOptionsSelector: true });
@@ -657,6 +662,7 @@ class TextInput extends React.Component<Props, State> {
                 onBlur={this.handleBlur}
                 onEndEditing={this.handleBlur}
                 onFocus={this.handleFocus}
+                onSubmitEditing={this.handleSubmit}
                 value={textInputValue}
                 autoCorrect={autoCorrect}
                 style={[{

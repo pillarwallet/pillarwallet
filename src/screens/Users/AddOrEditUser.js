@@ -169,6 +169,7 @@ const ProfileFormTemplate = (locals: Object) => {
     isFormFocused,
     optionsSearchPlaceholder,
     optionsTitle,
+    onSubmit,
   } = config;
   const errorMessage = locals.error;
 
@@ -189,6 +190,7 @@ const ProfileFormTemplate = (locals: Object) => {
     autoFocus: true,
     onSelectorClose,
     returnKeyType: 'done',
+    onSubmit,
     ...config.inputProps,
   };
 
@@ -336,6 +338,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             isFormFocused: !!focusedField,
             fieldDisplayValue: value.email,
             isVerified: isEmailVerified,
+            onSubmit: this.onFieldBlur,
           },
         },
         phone: {
@@ -364,6 +367,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             isFormFocused: !!focusedField,
             fieldDisplayValue: value.phone.input && `+${value.phone.selector.callingCode}${value.phone.input}`,
             isVerified: isPhoneVerified,
+            onSubmit: this.onFieldBlur,
           },
         },
       },

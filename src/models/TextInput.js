@@ -31,7 +31,9 @@ type SelectorValueType = {
 
 export type InputPropsType = {
   placeholder?: string,
-  onChange: (Value | SelectorValueType) => void, onBlur?: (Value | SelectorValueType) => void,
+  onChange: (Value | SelectorValueType) => void,
+  onBlur?: (Value | SelectorValueType) => void,
+  onSubmit?: () => void,
   value: Value,
   selectorValue: SelectorValueType,
   onSelectorClose: () => void,
