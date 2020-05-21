@@ -60,7 +60,7 @@ import { getActiveAccount, getAccountName } from 'utils/accounts';
 import { images } from 'utils/images';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -404,7 +404,7 @@ class EventDetail extends React.Component<Props, State> {
   viewOnTheBlockchain = () => {
     const { hash, asset } = this.props.event;
     let url = TX_DETAILS_URL + hash;
-    if (asset && asset === 'BTC') {
+    if (asset && asset === BTC) {
       url = BITCOIN_TX_DETAILS_URL + hash;
     }
     Linking.openURL(url);

@@ -47,7 +47,7 @@ import OfferCard from 'components/OfferCard/OfferCard';
 // constants
 import { EXCHANGE, PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { EXCHANGE_CONFIRM, FIAT_EXCHANGE, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, SPEED_TYPES } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, SPEED_TYPES, BTC } from 'constants/assetsConstants';
 
 // services
 import { wyreWidgetUrl } from 'services/sendwyre';
@@ -488,7 +488,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const { code: toAssetCode } = toAsset;
 
     let destAddress;
-    if (toAssetCode === 'BTC') {
+    if (toAssetCode === BTC) {
       destAddress = btcAddresses[0].address;
     } else {
       destAddress = getActiveAccountAddress(accounts);

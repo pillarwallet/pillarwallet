@@ -29,6 +29,7 @@ import {
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
+import { BTC } from 'constants/assetsConstants';
 import { setBrowsingWebViewAction } from 'actions/appSettingsActions';
 import { getActiveAccountAddress } from 'utils/accounts';
 
@@ -78,7 +79,7 @@ class FiatExchange extends React.Component<Props, State> {
     const { email = '' } = user;
 
     let destAddress;
-    if (destCurrency === 'BTC') {
+    if (destCurrency === BTC) {
       destAddress = btcAddresses[0].address;
     } else {
       destAddress = getActiveAccountAddress(accounts);

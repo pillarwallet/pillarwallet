@@ -33,6 +33,7 @@ import {
   FETCHING_INITIAL,
   FETCH_INITIAL_FAILED,
   ETH,
+  BTC,
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
@@ -380,7 +381,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
 
     const newBalances = await api.fetchBalances({
       address: walletAddress,
-      assets: getAssetsAsList(accountAssets).filter(({ symbol }) => symbol !== 'BTC'),
+      assets: getAssetsAsList(accountAssets).filter(({ symbol }) => symbol !== BTC),
     });
 
     if (accountAssets.BTC) {
@@ -388,7 +389,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
       if (btcBalance) {
         newBalances.push({
           balance: satoshisToBtc(btcBalance.confirmed).toString(),
-          symbol: 'BTC',
+          symbol: BTC,
         });
       }
     }
@@ -596,8 +597,8 @@ export const loadSupportedAssetsAction = () => {
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;
 
-    if (!supportedAssets.some(e => e.symbol === 'BTC')) {
-      const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
+    if (!supportedAssets.some(e => e.symbol === BTC)) {
+      const btcAsset = assetFixtures.find(e => e.symbol === BTC);
       if (btcAsset) {
         supportedAssets.push(btcAsset);
       }

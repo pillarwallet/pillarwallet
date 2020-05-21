@@ -49,7 +49,7 @@ import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS, BTC } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -619,7 +619,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   }));
 
   generateBTCAssetOption = () => {
-    const symbol = 'BTC';
+    const symbol = BTC;
     const {
       btcAddresses,
       btcBalances,
@@ -663,7 +663,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           assetBalance,
           formattedBalanceInFiat,
         };
-      }).filter(asset => asset.key !== 'BTC');
+      }).filter(asset => asset.key !== BTC);
   };
 
   handleFormChange = (value: Object) => {

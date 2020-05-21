@@ -36,7 +36,7 @@ import Toast from 'components/Toast';
 import CheckAuth from 'components/CheckAuth';
 
 // constants
-import { defaultFiatCurrency, TOKENS, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, TOKENS, ETH, PLR, BTC } from 'constants/assetsConstants';
 import { ASSET, ASSETS } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 // actions
@@ -292,7 +292,7 @@ class AssetsList extends React.Component<Props, State> {
           if (scrollViewRef) scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
         }}
       >
-        {symbol !== 'BTC' &&
+        {symbol !== BTC &&
           <ListItemWithImage
             onPress={() => {
               navigation.navigate(ASSET,
@@ -315,7 +315,7 @@ class AssetsList extends React.Component<Props, State> {
             fallbackToGenericToken
           />
         }
-        {symbol === 'BTC' &&
+        {symbol === BTC &&
           <>
             <ListItemWithImage
               onPress={() => {

@@ -141,7 +141,7 @@ import {
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
-import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS, BTC } from 'constants/assetsConstants';
 import { ETHEREUM_PATH, NON_STANDARD_ETHEREUM_PATH } from 'constants/derivationPathConstants';
 import {
   keyPairAddress,
@@ -431,8 +431,8 @@ export const addBTCAssetsAction = () => {
       assets: { data: assets, supportedAssets },
       bitcoin: { data: { addresses } },
     } = getState();
-    if (supportedAssets && !supportedAssets.some(e => e.symbol === 'BTC')) {
-      const btcAsset = initialAssets.find(e => e.symbol === 'BTC');
+    if (supportedAssets && !supportedAssets.some(e => e.symbol === BTC)) {
+      const btcAsset = initialAssets.find(e => e.symbol === BTC);
       if (btcAsset) {
         const updatedSupportedAssets = supportedAssets.concat(btcAsset);
         assets[addresses[0].address] = { BTC: btcAsset };

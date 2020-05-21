@@ -83,7 +83,7 @@ export const extractBitcoinTransactions = (address: string, transactions: BTCTra
       to: toAddress,
       from: fromAddress,
       createdAt: new Date(tx.details.blockTime).getTime() / 1000,
-      asset: 'BTC',
+      asset: BTC,
       nbConfirmations: tx.details.confirmations,
       status,
       value,
