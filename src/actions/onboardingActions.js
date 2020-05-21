@@ -85,7 +85,7 @@ import {
   setAppThemeAction,
   changeUseBiometricsAction,
   updateAppSettingsAction,
-  setInitialPreferredGasTokenAction
+  setInitialPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
