@@ -170,7 +170,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     super(props);
 
     this.updateTxFee = debounce(this.updateTxFee, 500);
-    this.keyWalletUpdateGasLimitAndTxFee = debounce(this.keyWalletUpdateGasLimitAndTxFee, 500);
+    this.updateKeyWalletGasLimitAndTxFee = debounce(this.updateKeyWalletGasLimitAndTxFee, 500);
   }
 
   componentDidMount() {
@@ -225,7 +225,18 @@ class SendEthereumTokens extends React.Component<Props, State> {
     }
 
     const amount = parseFloat(get(value, 'amount', 0));
-    this.keyWalletUpdateGasLimitAndTxFee(amount);
+    this.updateKeyWalletGasLimitAndTxFee(amount);
+  };
+
+  updateTxFee = async () => {
+    const { isSmartAccount } = this.props;
+
+    const txFeeInfo = isSmartAccount
+      ? await this.getSmartWalletTxFee()
+      : this.getKeyWalletTxFee();
+
+    this.setState({ txFeeInfo, gettingFee: false });
+    this.checkFormInputErrors();
   };
 
   handleFormSubmit = async () => {
@@ -342,7 +353,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   getKeyWalletTxFee = (txSpeed?: string, gasLimit?: number): TransactionFeeInfo => {
     txSpeed = txSpeed || this.getTxSpeed();
-    gasLimit = gasLimit || this.state.gasLimit;
+    gasLimit = gasLimit || this.state.gasLimit || 0;
 
     const { gasInfo } = this.props;
     const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
@@ -353,18 +364,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     };
   };
 
-  updateTxFee = async () => {
-    const { isSmartAccount } = this.props;
-
-    const txFeeInfo = isSmartAccount
-      ? await this.getSmartWalletTxFee()
-      : await this.getKeyWalletTxFee();
-
-    this.setState({ txFeeInfo, gettingFee: false });
-    this.checkFormInputErrors();
-  };
-
-  keyWalletUpdateGasLimitAndTxFee = async (amount: number) => {
+  updateKeyWalletGasLimitAndTxFee = async (amount: number) => {
     const gasLimit = await this.getGasLimitForKeyWallet(amount).catch(() => null);
     if (gasLimit) {
       this.setState({ gasLimit }, () => this.updateTxFee());
