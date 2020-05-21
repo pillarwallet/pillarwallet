@@ -7,15 +7,20 @@ import {
   activeBlockchainSelector,
   bitcoinAddressSelector,
 } from './selectors';
+import { accountAssetsSelector } from './assets';
 
 export const accountHistorySelector = createSelector(
   historySelector,
   activeAccountIdSelector,
   activeBlockchainSelector,
   bitcoinAddressSelector,
-  (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses) => {
+  accountAssetsSelector,
+  (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses, activeAssets) => {
     let mergedHistory = [];
-    if (activeBlockchainNetwork && bitcoinAddresses.length) {
+    if (activeBlockchainNetwork
+      && bitcoinAddresses.length
+      && (activeAssets.BTC || activeBlockchainNetwork === 'BITCOIN')
+    ) {
       mergedHistory = [...(history[bitcoinAddresses[0].address] || [])];
     }
     if (!activeAccountId) return [];
