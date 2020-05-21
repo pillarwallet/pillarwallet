@@ -39,10 +39,7 @@ import smartWalletService from 'services/smartWallet';
 import { buildERC721TransactionData, calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 
 // selectors
-import {
-  activeAccountAddressSelector,
-  activeAccountSelector,
-} from 'selectors';
+import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import {
@@ -53,7 +50,7 @@ import {
 // types
 import type { CollectibleTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
-import type { Account, Accounts } from 'models/Account';
+import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -68,7 +65,6 @@ type Props = {
   wallet: Object,
   activeAccountAddress: string,
   accounts: Accounts,
-  activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
   balances: Balances,
@@ -436,7 +432,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
