@@ -40,7 +40,7 @@ import {
   checkIfKeyBasedAccount,
   getAccountName,
 } from 'utils/accounts';
-import { images } from 'utils/images';
+import { images, isSvgImage } from 'utils/images';
 
 // components
 import {
@@ -459,7 +459,8 @@ export class ActivityFeedItem extends React.Component<Props> {
   getCollectibleTransactionEventData = (event: Object) => {
     const { contacts } = this.props;
     const isReceived = this.isReceived(event);
-    const { asset, icon } = event;
+    const { asset, assetData: { image }, icon } = event;
+
     const relevantAddress = this.getRelevantAddress(event);
 
     const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
@@ -467,7 +468,7 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     return {
       label: asset,
-      itemImageUrl: icon,
+      collectibleUrl: isSvgImage(image) ? image : icon,
       subtext,
       actionLabel: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
       iconBackgroundColor: 'card',

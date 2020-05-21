@@ -40,6 +40,7 @@ import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
+import CollectibleImage from 'components/CollectibleImage';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -57,7 +58,7 @@ import {
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getAccountName } from 'utils/accounts';
-import { images } from 'utils/images';
+import { images, isSvgImage } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 
 // constants
@@ -189,6 +190,7 @@ type EventData = {
   username?: string,
   imageBorder?: boolean,
   imageBackground?: ?string,
+  collectibleUrl?: ?string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -206,6 +208,12 @@ const TokenImage = styled(CachedImage)`
   border-radius: 64px;
 `;
 
+const StyledCollectibleImage = styled(CollectibleImage)`
+  width: 64px;
+  height: 64px;
+  border-radius: 64px;
+`;
+
 const IconCircle = styled.View`
   width: 64px;
   height: 64px;
@@ -217,6 +225,7 @@ const IconCircle = styled.View`
   ${({ border, theme }) => border &&
   `border-color: ${theme.colors.border};
     border-width: 1px;`};
+  overflow: hidden;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -985,13 +994,13 @@ class EventDetail extends React.Component<Props, State> {
   getCollectibleTransactionEventData = (event: Object): EventData => {
     const { contacts } = this.props;
     const isReceived = this.isReceived(event);
-    const { asset, icon } = event;
+    const { asset, icon, assetData: { image } } = event;
     const relevantAddress = this.getRelevantAddress(event);
     const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
 
     let eventData: EventData = {
       name: asset,
-      imageUrl: icon,
+      collectibleUrl: isSvgImage(image) ? image : icon,
       imageBackground: this.getColor('card'),
       imageBorder: true,
     };
@@ -1139,7 +1148,15 @@ class EventDetail extends React.Component<Props, State> {
   renderImage = (eventData) => {
     const { theme } = this.props;
     const {
-      imageUrl, itemImageSource, profileImage, username, iconName, iconColor, imageBackground, imageBorder,
+      imageUrl,
+      itemImageSource,
+      profileImage,
+      username,
+      iconName,
+      iconColor,
+      imageBackground,
+      imageBorder,
+      collectibleUrl,
     } = eventData;
     const { genericToken: fallbackSource } = images(theme);
     if (imageUrl) {
@@ -1156,6 +1173,14 @@ class EventDetail extends React.Component<Props, State> {
       return (
         <IconCircle>
           <ItemIcon name={iconName} iconColor={iconColor} />
+        </IconCircle>
+      );
+    }
+
+    if (collectibleUrl) {
+      return (
+        <IconCircle border={imageBorder} backgroundColor={imageBackground}>
+          <StyledCollectibleImage source={{ uri: collectibleUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
