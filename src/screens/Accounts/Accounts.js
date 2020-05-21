@@ -117,7 +117,6 @@ type Props = {|
   assets: Assets,
   baseFiatCurrency: ?string,
   smartWalletFeatureEnabled: boolean,
-  bitcoinFeatureEnabled: boolean,
   availableStake: number,
   isTankInitialised: boolean,
   accounts: Accounts,

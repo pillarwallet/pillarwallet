@@ -241,7 +241,7 @@ const getKeyPairFromWallet = async (wallet: EthereumWallet) => {
   return root.derivePath(finalPath);
 };
 
-export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
+export const initializeBitcoinWalletAction = (wallet: EthereumWallet | Object) => {
   return async (dispatch: Dispatch) => {
     const keyPair = await getKeyPairFromWallet(wallet);
     const address = keyPairAddress(keyPair);

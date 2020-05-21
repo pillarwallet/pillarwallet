@@ -70,7 +70,6 @@ export const initialAssets = [
     website: 'https://pillarproject.io/',
     whitepaper: '',
     isDefault: true,
-    balance: 0,
   },
 ];
 

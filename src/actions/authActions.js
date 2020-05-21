@@ -203,7 +203,6 @@ export const loginAction = (
         dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
 
         const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-        const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
 
         // init smart wallet
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
@@ -214,8 +213,7 @@ export const loginAction = (
         // if we disable feature flag or end beta testing program
         // while user has set PPN or BTC as active network
         const revertToDefaultNetwork =
-          (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) ||
-          (!bitcoinFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+          !smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK;
 
         let newBlockchainNetwork = blockchainNetwork;
 

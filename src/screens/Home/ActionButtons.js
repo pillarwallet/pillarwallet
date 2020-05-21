@@ -60,7 +60,6 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   balances: BalancesStore,
-  bitcoinFeatureEnabled: boolean,
   bitcoinBalances: BitcoinBalance,
   bitcoinAddresses: BitcoinAddress[],
   supportedAssets: Asset[],
@@ -299,12 +298,11 @@ class ActionButtons extends React.Component<Props, State> {
     const {
       balances,
       bitcoinBalances,
-      bitcoinFeatureEnabled,
       bitcoinAddresses,
     } = this.props;
     const modalActions = this.getModalActions();
     const isSendButtonActive = !!Object.keys(balances).length ||
-      (bitcoinFeatureEnabled && bitcoinAddresses.length > 0 && !!Object.keys(bitcoinBalances).length);
+      (bitcoinAddresses.length > 0 && !!Object.keys(bitcoinBalances).length);
 
     return (
       <React.Fragment>
@@ -347,11 +345,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, blockchainNetwork } },
   rates: { data: rates },
   balances: { data: balances },
-  featureFlags: {
-    data: {
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
-    },
-  },
   bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
   assets: {
     supportedAssets,
@@ -361,7 +354,6 @@ const mapStateToProps = ({
   blockchainNetwork,
   rates,
   balances,
-  bitcoinFeatureEnabled,
   bitcoinBalances,
   bitcoinAddresses,
   supportedAssets,

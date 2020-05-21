@@ -78,7 +78,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
-import { satoshisToBtc } from 'utils/bitcoin';
+import { satoshisToBtc, totalBitcoinBalance } from 'utils/bitcoin';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
@@ -552,7 +552,12 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
-export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: AssetsByAccount, account: Account) => {
+export const getSupportedTokens = (
+  supportedAssets: Asset[],
+  accountsAssets: AssetsByAccount,
+  account: Account,
+  isBTCEnabled: ?boolean = false,
+) => {
   const accountId = getAccountId(account);
   const accountAssets = get(accountsAssets, accountId, {});
   const accountAssetsTickers = Object.keys(accountAssets);
@@ -560,6 +565,10 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
+  // Fix BTC if Enabled
+  if (isBTCEnabled && checkIfSmartWalletAccount(account) && !accountAssetsTickers.includes(BTC)) {
+    accountAssetsTickers.push(BTC);
+  }
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))
@@ -617,13 +626,14 @@ export const checkForMissedAssetsAction = () => {
     const {
       accounts: { data: accounts },
       assets: { data: accountsAssets },
+      bitcoin: { data: { balances } },
     } = getState();
 
     await dispatch(loadSupportedAssetsAction());
     const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
-
+    const showBTC = !isEmpty(balances) && totalBitcoinBalance(balances) > 0;
     const accountUpdatedAssets = accounts
-      .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
+      .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc, showBTC))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     // check tx history if some assets are not enabled
