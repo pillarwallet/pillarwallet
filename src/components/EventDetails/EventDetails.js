@@ -166,7 +166,7 @@ type Props = {
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
   history: {[string]: Object[]},
-  itemData: Object,
+  itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
   bitcoinFeatureEnabled?: boolean,
@@ -444,17 +444,6 @@ export class EventDetail extends React.Component<Props, State> {
     if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
       await switchAccount(swAccount.id);
     }
-  }
-
-  switchToBTC = async () => {
-    const {
-      accounts, switchAccount,
-    } = this.props;
-    const swAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-    const { type: activeAccType } = getActiveAccount(accounts) || {};
-    if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
-      await switchAccount(swAccount.id);
-    }
   };
 
   showReceiveModal = (receiveWalletAddress: string) => {
@@ -571,9 +560,7 @@ export class EventDetail extends React.Component<Props, State> {
     }
 
     const { symbol: token, decimals } = btcToken;
-
     const iconUrl = `${SDK_PROVIDER}/${btcToken.iconUrl}?size=2`;
-
     const assetData: AssetData = {
       token,
       decimals,
@@ -583,7 +570,7 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_AMOUNT, {
       assetData,
       receiver: btcReceiverAddress,
-      source: 'Contact',
+      source: 'Home',
       receiverEnsName: '',
     });
   };
@@ -952,7 +939,7 @@ export class EventDetail extends React.Component<Props, State> {
 
           const sendMoreBtc = {
             title: 'Send more',
-            onPress: () => this.sendToBtc(event.from),
+            onPress: () => this.sendToBtc(event.to),
             secondary: true,
           };
 
@@ -1253,7 +1240,6 @@ export class EventDetail extends React.Component<Props, State> {
     const label = name || itemLabel;
     const subtitle = (actionSubtitle || itemValue) ? actionSubtitle || subtext : null;
     const titleColor = this.getColor(valueColor);
-
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
 
     return (

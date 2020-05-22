@@ -137,6 +137,8 @@ export type EventData = {
   fallbackToGenericToken?: boolean,
   secondaryButton?: boolean,
   buttonActionLabel?: string,
+  isReceived?: boolean,
+  isBetweenAccounts?: boolean,
 };
 
 const NAMES = {
@@ -465,18 +467,14 @@ export class ActivityFeedItem extends React.Component<Props> {
               const { syntheticTransaction: { toAmount, toAssetCode } } = event.extra;
               data.customAddon = (
                 <ListWrapper>
-                  <TankAssetBalance
-                    amount={`${directionSymbol} ${toAmount} ${toAssetCode}`}
-                  />
+                  <TankAssetBalance amount={`${directionSymbol} ${toAmount} ${toAssetCode}`} />
                   {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
                 </ListWrapper>
               );
             } else {
               data.customAddon = (
                 <ListWrapper>
-                  <TankAssetBalance
-                    amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
-                  />
+                  <TankAssetBalance amount={`${directionSymbol} ${formattedValue} ${event.asset}`} />
                 </ListWrapper>
               );
             }

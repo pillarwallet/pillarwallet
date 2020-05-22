@@ -131,7 +131,7 @@ type Props = {
 type State = {|
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
-  selectedEventItemData: ?Object | ?EventData,
+  selectedEventItemData: ?EventData,
   tabIsChanging: boolean,
 |};
 
@@ -144,8 +144,6 @@ const ITEM_TYPE = {
 };
 
 class ActivityFeed extends React.Component<Props, State> {
-  eventDetailScrollViewRef: ?Object;
-
   static defaultProps = {
     initialNumToRender: 7,
   };

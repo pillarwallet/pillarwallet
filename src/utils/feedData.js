@@ -173,12 +173,12 @@ export const isPendingTransaction = ({ status }: Object) => {
 
 export const isSWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (account && checkIfSmartWalletAccount(account));
+  return (!!account && checkIfSmartWalletAccount(account));
 };
 
 export const isKWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (account && checkIfKeyBasedAccount(account));
+  return (!!account && checkIfKeyBasedAccount(account));
 };
 
 export const isBTCAddress = (address: string, bitcoinAddresses: BitcoinAddress[]) => {

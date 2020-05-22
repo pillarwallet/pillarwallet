@@ -167,9 +167,7 @@ export const fetchCollectiblesHistoryAction = (accountToFetchFor?: Account) => {
       collectibles: { transactionHistory: collectiblesHistory },
     } = getState();
 
-
     const walletAddress = accountToFetchFor ? getAccountAddress(accountToFetchFor) : getActiveAccountAddress(accounts);
-
     const accountId = accountToFetchFor ? getAccountId(accountToFetchFor) : getActiveAccountId(accounts);
 
     if (!walletAddress || !accountId) return;
