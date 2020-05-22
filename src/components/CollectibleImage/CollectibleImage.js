@@ -18,6 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const DISMISS_SMART_WALLET_INSIGHT = 'DISMISS_SMART_WALLET_INSIGHT';
-export const SET_INSIGHTS_STATE = 'SET_INSIGHTS_STATE';
-export const DISMISS_REFER_FRIENDS_ON_HOME_SCREEN = 'DISMISS_REFER_FRIENDS_ON_HOME_SCREEN';
+import * as React from 'react';
+import { CachedImage } from 'react-native-cached-image';
+import { SvgCssUri } from 'react-native-svg';
+import { isSvgImage } from 'utils/images';
+
+type Props = CachedImage | SvgCssUri;
+
+const CollectibleImage = (props: Props) => {
+  const { uri } = props.source;
+  if (isSvgImage(uri)) {
+    return (
+      <SvgCssUri
+        uri={uri}
+        width={props.width || '100%'}
+        height={props.height || '100%'}
+        {...props}
+      />
+    );
+  }
+  return <CachedImage {...props} style={[{ width: props.width, height: props.height }, props.style]} />;
+};
+
+export default CollectibleImage;

@@ -75,6 +75,7 @@ describe('Auth actions', () => {
       featureFlags: { data: INITIAL_FEATURE_FLAGS },
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
+      smartWallet: {},
     });
   });
 

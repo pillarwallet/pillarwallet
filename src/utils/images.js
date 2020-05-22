@@ -116,3 +116,6 @@ export const images = (theme: Theme) => {
   };
 };
 
+export const isSvgImage = (uri: ?string) => {
+  return uri && uri.endsWith('.svg');
+};
