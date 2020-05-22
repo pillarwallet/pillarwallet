@@ -41,7 +41,7 @@ import {
   isBTCAddress,
 } from 'utils/feedData';
 import { findMatchingContact } from 'utils/contacts';
-import { getAccountName, getAccountTypeByAddress } from 'utils/accounts';
+import { findAccountByAddress, getAccountName } from 'utils/accounts';
 import { images } from 'utils/images';
 
 // components
@@ -74,7 +74,6 @@ import {
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // selectors
@@ -113,6 +112,7 @@ type Props = {
   bitcoinAddresses: BitcoinAddress[],
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
+  isAssetView?: boolean,
 };
 
 export type EventData = {
@@ -174,14 +174,24 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   isReceived = (event: Object): boolean => {
-    const { to: address, isReceived } = event;
-    const { bitcoinAddresses, activeAccountAddress, isForAllAccounts } = this.props;
+    const { to, isReceived, from } = event;
+    const {
+      bitcoinAddresses,
+      activeAccountAddress,
+      isForAllAccounts,
+      accounts,
+    } = this.props;
 
     if (isForAllAccounts) {
-      return isReceived || bitcoinAddresses.some(e => e.address === address);
+      const isBetweenAccounts = (isSWAddress(to, accounts) && isKWAddress(from, accounts))
+        || (isSWAddress(from, accounts) && isKWAddress(to, accounts));
+      return (isBetweenAccounts && isReceived)
+        || (!isBetweenAccounts && isKWAddress(to, accounts))
+        || (!isBetweenAccounts && isSWAddress(to, accounts))
+        || bitcoinAddresses.some(e => e.address === to);
     }
 
-    return addressesEqual(address, activeAccountAddress) || bitcoinAddresses.some(e => e.address === address);
+    return addressesEqual(to, activeAccountAddress) || bitcoinAddresses.some(e => e.address === to);
   };
 
   getRelevantAddress = (event: Object): string => {
@@ -296,7 +306,6 @@ export class ActivityFeedItem extends React.Component<Props> {
   getTransactionEventData = (event: Object) => {
     const {
       ensRegistry,
-      activeBlockchainNetwork,
       assetDecimals,
       accounts,
       contacts,
@@ -305,6 +314,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       isPPNView,
       bitcoinAddresses,
       isForAllAccounts,
+      isAssetView,
     } = this.props;
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
@@ -335,27 +345,37 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
-        if (activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) {
+        if (isAssetView) {
           data = {
+            label: NAMES.PPN_NETWORK,
+            subtext: `from ${NAMES.SMART_WALLET}`,
+            itemImageSource: PPNIcon,
+            itemValue: `- ${formattedValue} ${event.asset}`,
+            valueColor: 'text',
+          };
+        } else if (isPPNView) {
+          data = {
+            label: 'Top Up',
+            subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
-          if (isPPNView) {
-            data.label = 'Top Up';
-            data.subtext = 'from Smart Wallet';
-          } else {
-            data.label = NAMES.PPN_NETWORK;
-            data.subtext = 'Top Up';
-          }
+        } else if (event.smartWalletEvent) {
+          data = {
+            label: NAMES.SMART_WALLET,
+            subtext: 'To Pillar Network',
+            itemImageSource: smartWalletIcon,
+            itemValue: `- ${formattedValue} ${event.asset}`,
+            valueColor: 'text',
+          };
         } else {
           data = {
             label: NAMES.PPN_NETWORK,
-            subtext: 'from Smart Wallet',
-            iconName: 'sent',
-            iconColor: 'negative',
-            itemValue: `- ${formattedValue} ${event.asset}`,
-            valueColor: 'text',
+            subtext: 'Top up',
+            itemImageSource: PPNIcon,
+            itemValue: `+ ${formattedValue} ${event.asset}`,
+            valueColor: 'positive',
           };
         }
         break;
@@ -368,16 +388,18 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
-          itemImageSource: PPNIcon,
           itemValue: `- ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
         if (isPPNView) {
           data.label = 'Withdraw';
           data.subtext = 'to Smart Wallet';
+          data.iconName = 'sent';
+          data.iconColor = 'negative';
         } else {
           data.label = NAMES.PPN_NETWORK;
           data.subtext = 'Withdrawal';
+          data.itemImageSource = PPNIcon;
         }
         break;
       case PAYMENT_NETWORK_TX_SETTLEMENT:
@@ -420,44 +442,60 @@ export class ActivityFeedItem extends React.Component<Props> {
         const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
         const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
 
-        if (isPPNTransaction) {
-          data = {
-            label: usernameOrAddress,
-            avatarUrl,
-            isReceived,
-          };
+        const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
-          if (event.extra) {
-            const { syntheticTransaction: { toAmount, toAssetCode } } = event.extra;
-            data.customAddon = (
-              <ListWrapper>
-                <TankAssetBalance
-                  amount={`${directionSymbol} ${toAmount} ${toAssetCode}`}
-                />
-                {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
-              </ListWrapper>
-            );
+        if (isPPNTransaction) {
+          if (isTrxBetweenSWAccount) {
+            data = {
+              label: isAssetView ? NAMES.PPN_NETWORK : smartWallet,
+              subtext: isAssetView ? `to ${smartWallet}` : 'from Pillar Network',
+              itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
+              isReceived: true,
+              itemValue: `+ ${formattedValue} ${event.asset}`,
+              valueColor: 'positive',
+            };
           } else {
-            data.customAddon = (
-              <ListWrapper>
-                <TankAssetBalance
-                  amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
-                />
-              </ListWrapper>
-            );
+            data = {
+              label: usernameOrAddress,
+              avatarUrl,
+              isReceived,
+            };
+
+            if (event.extra) {
+              const { syntheticTransaction: { toAmount, toAssetCode } } = event.extra;
+              data.customAddon = (
+                <ListWrapper>
+                  <TankAssetBalance
+                    amount={`${directionSymbol} ${toAmount} ${toAssetCode}`}
+                  />
+                  {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
+                </ListWrapper>
+              );
+            } else {
+              data.customAddon = (
+                <ListWrapper>
+                  <TankAssetBalance
+                    amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
+                  />
+                </ListWrapper>
+              );
+            }
           }
         } else {
           const additionalInfo = {};
           let itemLabel = usernameOrAddress;
           const isTrxBetweenAccounts = (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) ||
             (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts));
-          const accountType = getAccountTypeByAddress(event.from, accounts);
-          const accountName = accountType ? getAccountName(accountType) : null;
+          let subtext = getAccountName(event.accountType);
+
+          const sendingAccountType = isReceived
+            ? (findAccountByAddress(event.to, accounts) || {}).type
+            : (findAccountByAddress(event.from, accounts) || {}).type;
 
           if (isTrxBetweenAccounts) {
             if (isForAllAccounts) {
-              itemLabel = accountName || 'Unknown account';
-              additionalInfo.itemImageSource = accountType === ACCOUNT_TYPES.KEY_BASED
+              itemLabel = getAccountName(sendingAccountType);
+              additionalInfo.itemImageSource = sendingAccountType === ACCOUNT_TYPES.KEY_BASED
                 ? keyWalletIcon
                 : smartWalletIcon;
             } else {
@@ -468,8 +506,11 @@ export class ActivityFeedItem extends React.Component<Props> {
             additionalInfo.isBetweenAccounts = true;
           }
 
-          let subtext = getAccountName(event.accountType);
           if (isTrxBetweenAccounts && isForAllAccounts) {
+            const receivingAccountType = isReceived
+              ? (findAccountByAddress(event.from, accounts) || {}).type
+              : (findAccountByAddress(event.to, accounts) || {}).type;
+            const accountName = getAccountName(receivingAccountType);
             subtext = accountName ? `${isReceived ? 'from' : 'to'} ${accountName}` : '';
           } else if (isReceived && isKWAddress(event.to, accounts)) {
             subtext = `to ${keyWallet}`;
@@ -506,12 +547,29 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   getCollectibleTransactionEventData = (event: Object) => {
-    const { contacts } = this.props;
+    const { contacts, accounts } = this.props;
     const isReceived = this.isReceived(event);
-    const { asset, icon } = event;
+    const {
+      asset,
+      icon,
+      to,
+      from,
+    } = event;
     const relevantAddress = this.getRelevantAddress(event);
 
-    const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
+    let usernameOrAddress;
+    const isBetweenAccounts = (isSWAddress(to, accounts) && isKWAddress(from, accounts))
+      || (isSWAddress(from, accounts) && isKWAddress(to, accounts));
+
+    if (isBetweenAccounts) {
+      const relatedAccountType = isReceived
+        ? (findAccountByAddress(event.from, accounts) || {}).type
+        : (findAccountByAddress(event.to, accounts) || {}).type;
+      usernameOrAddress = getAccountName(relatedAccountType);
+    } else {
+      usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
+    }
+
     const subtext = `Collectible ${isReceived ? 'from' : 'to'} ${usernameOrAddress}`;
 
     return {
@@ -523,6 +581,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       iconBorder: true,
       fallbackToGenericToken: true,
       isReceived,
+      isBetweenAccounts,
     };
   };
 

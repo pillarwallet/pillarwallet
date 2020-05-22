@@ -70,6 +70,31 @@ const reduxData = {
   bitcoinAddresses: [],
 };
 
+
+const dataForAllAccounts = {
+  ...reduxData,
+  activeAccountAddress: '0xKeyWallet',
+  accounts: [
+    {
+      id: '0xKeyWallet',
+      type: 'KEY_BASED',
+      walletId: '350145cb-b266-488e-8dda-c89d77034226',
+      isActive: true,
+    },
+    {
+      id: '0xSmartWallet',
+      type: 'SMART_WALLET',
+      walletId: 'f13c646b-435c-4bbc-ab08-4121b7319333',
+      isActive: false,
+      extra:
+        {
+          ensName: null,
+          address: '0xDb5Da19Bcf2754Acc9f706E4e75b9666D2097199',
+        },
+    },
+  ],
+};
+
 const ActivityFeedItem = withTheme(ActivityFeedItemNoTheme);
 
 storiesOf('ActivityFeedItem', module)
@@ -82,7 +107,7 @@ storiesOf('ActivityFeedItem', module)
   .add('Smart wallet created', () => (
     <ActivityFeedItem
       {...reduxData}
-      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Smart wallet created' }}
+      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Smart Wallet created' }}
     />
   ))
   .add('Key wallet imported', () => (
@@ -101,7 +126,7 @@ storiesOf('ActivityFeedItem', module)
     <ActivityFeedItem
       {...reduxData}
       event={{
-        type: COLLECTIBLE_TRANSACTION, from: '0x000000', to: '', icon: placeholderImage, asset: 'CryptoKitty',
+        type: COLLECTIBLE_TRANSACTION, to: '0x000000', from: '0x123456', icon: placeholderImage, asset: 'CryptoKitty',
       }}
     />
   ))
@@ -109,7 +134,7 @@ storiesOf('ActivityFeedItem', module)
     <ActivityFeedItem
       {...reduxData}
       event={{
-        type: COLLECTIBLE_TRANSACTION, to: '0x000000', from: '', icon: placeholderImage, asset: 'CryptoKitty',
+        type: COLLECTIBLE_TRANSACTION, from: '0x000000', to: '0x123465', icon: placeholderImage, asset: 'CryptoKitty',
       }}
     />
   ))
@@ -430,6 +455,125 @@ storiesOf('ActivityFeedItem', module)
       event={{
         type: USER_EVENT,
         subType: WALLET_BACKUP_EVENT,
+      }}
+    />
+  ))
+
+  .add('Collectible sent from KW to SW', () => (
+    <ActivityFeedItem
+      {...dataForAllAccounts}
+      isForAllAccounts
+      event={{
+        type: COLLECTIBLE_TRANSACTION,
+        from: '0xKeyWallet',
+        to: '0xSmartWallet',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+      }}
+    />
+  ))
+
+  .add('Collectible received in SW from KW', () => (
+    <ActivityFeedItem
+      {...dataForAllAccounts}
+      isForAllAccounts
+      event={{
+        type: COLLECTIBLE_TRANSACTION,
+        from: '0xKeyWallet',
+        to: '0xSmartWallet',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        isReceived: true,
+      }}
+    />
+  ))
+  .add('Collectible sent to KW when in SW asset screen', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      accounts={[
+        {
+          id: '0xKeyWallet',
+          type: 'KEY_BASED',
+          walletId: '350145cb-b266-488e-8dda-c89d77034226',
+          isActive: false,
+        },
+      ]}
+      event={{
+        type:
+        COLLECTIBLE_TRANSACTION,
+        from: '0x000000',
+        to: '0xKeyWallet',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        username: 'Key wallet',
+      }}
+    />
+  ))
+  .add('Collectible received from KW when in SW asset screen', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      accounts={[
+        {
+          id: '0xKeyWallet',
+          type: 'KEY_BASED',
+          walletId: '350145cb-b266-488e-8dda-c89d77034226',
+          isActive: false,
+        },
+      ]}
+      event={{
+        type:
+        COLLECTIBLE_TRANSACTION,
+        to: '0x000000',
+        from: '0xKeyWallet',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        username: 'Key wallet',
+      }}
+    />
+  ))
+  .add('Collectible sent to SW when in KW asset screen', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      activeAccountAddress="0xKeyWallet"
+      accounts={[
+        {
+          id: '0xSmartWallet',
+          type: 'SMART_WALLET',
+          walletId: '350145cb-b266-488e-8dda-c89d77034226',
+          isActive: false,
+        },
+      ]}
+      event={{
+        type:
+        COLLECTIBLE_TRANSACTION,
+        to: '0xSmartWallet',
+        from: '0xKeyWallet',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        username: 'Smart Wallet',
+      }}
+    />
+  ))
+  .add('Collectible received from SW when in KW asset screen', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      activeAccountAddress="0xKeyWallet"
+      accounts={[
+        {
+          id: '0xSmartWallet',
+          type: 'SMART_WALLET',
+          walletId: '350145cb-b266-488e-8dda-c89d77034226',
+          isActive: false,
+        },
+      ]}
+      event={{
+        type:
+        COLLECTIBLE_TRANSACTION,
+        from: '0xSmartWallet',
+        to: '0xKeyWallet',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        username: 'Smart Wallet',
       }}
     />
   ));

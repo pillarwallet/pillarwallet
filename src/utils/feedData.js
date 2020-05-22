@@ -20,6 +20,7 @@
 
 import BigNumber from 'bignumber.js';
 import orderBy from 'lodash.orderby';
+import get from 'lodash.get';
 
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
@@ -27,6 +28,8 @@ import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
+import { PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
+
 import {
   findAccountByAddress,
   checkIfSmartWalletAccount,
@@ -48,6 +51,7 @@ export function mapTransactionsHistory(
   accounts: Accounts,
   eventType: string,
   keepHashDuplicatesIfBetweenAccounts?: boolean,
+  duplicatePPN?: boolean,
 ) {
   const concatedHistory = history
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
@@ -80,7 +84,7 @@ export function mapTransactionsHistory(
     const accountsAddresses = accounts.map((acc) => getAccountAddress(acc));
     const ascendingHistory = orderBy(concatedHistory, ['createdAt'], ['asc']);
 
-    return ascendingHistory.reduce((alteredHistory, historyItem) => {
+    const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
       const { from: fromAddress, to: toAddress, hash } = historyItem;
       if (alteredHistory.some((item) => item.hash === hash)) {
         if (accountsAddresses.some((userAddress) => addressesEqual(fromAddress, userAddress))
@@ -93,9 +97,22 @@ export function mapTransactionsHistory(
           }];
         }
         return alteredHistory;
+      } else if (duplicatePPN) {
+        const itemTag = get(historyItem, 'tag');
+        if (itemTag && itemTag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+          const duplicate = {
+            ...historyItem,
+            smartWalletEvent: true,
+            _id: `${historyItem._id}_duplicate`,
+            createdAt: historyItem.createdAt - 1,
+          };
+          return [...alteredHistory, duplicate, historyItem];
+        }
+        return [...alteredHistory, historyItem];
       }
       return [...alteredHistory, historyItem];
     }, []);
+    return orderBy(historyWithTrxBetweenAcc, ['createdAt'], ['desc']);
   }
 
   return uniqBy(concatedHistory, 'hash');

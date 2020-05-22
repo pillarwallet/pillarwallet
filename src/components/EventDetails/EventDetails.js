@@ -827,32 +827,37 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
+        const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
         if (isPPNTransaction) {
           eventData = {
-            customActionTitle: (
+            customActionTitle: !isTrxBetweenSWAccount && (
               <TankAssetBalance
                 amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
                 textStyle={{ fontSize: fontSizes.large }}
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
             ),
-            actionSubtitle: `${isReceived ? 'to' : 'from'} Pillar Network`,
+            actionSubtitle: !isTrxBetweenSWAccount ? `${isReceived ? 'to' : 'from'} Pillar Network` : '',
           };
 
           if (isReceived) {
-            eventData.buttons = [
-              {
-                title: 'Message',
-                onPress: () => this.messageContact(contact),
-                secondary: true,
-              },
-              {
-                title: 'Send back',
-                onPress: this.sendSynthetic,
-                squarePrimary: true,
-              },
-            ];
+            if (isTrxBetweenSWAccount) {
+              eventData.buttons = [];
+            } else {
+              eventData.buttons = [
+                {
+                  title: 'Message',
+                  onPress: () => this.messageContact(contact),
+                  secondary: true,
+                },
+                {
+                  title: 'Send back',
+                  onPress: this.sendSynthetic,
+                  squarePrimary: true,
+                },
+              ];
+            }
           } else {
             eventData.buttons = [
               {

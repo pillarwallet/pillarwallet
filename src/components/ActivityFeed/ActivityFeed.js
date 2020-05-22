@@ -125,6 +125,7 @@ type Props = {
   flatListProps?: FlatList,
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
+  isAssetView?: boolean,
 };
 
 type State = {|
@@ -246,6 +247,7 @@ class ActivityFeed extends React.Component<Props, State> {
           onAcceptInvitation,
           isPPNView,
           isForAllAccounts,
+          isAssetView,
         } = this.props;
         return (
           <ActivityFeedItem
@@ -254,6 +256,7 @@ class ActivityFeed extends React.Component<Props, State> {
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
             isPPNView={isPPNView}
+            isAssetView={isAssetView}
             isForAllAccounts={isForAllAccounts}
           />
         );

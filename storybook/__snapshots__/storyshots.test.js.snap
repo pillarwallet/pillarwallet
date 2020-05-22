@@ -1583,7 +1583,7 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
               ]
             }
           >
-            Collectible to …
+            Collectible from 0x1234…123456
           </Text>
         </View>
         <View
@@ -1652,7 +1652,811 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
                   ]
                 }
               >
-                Sent
+                Received
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW asset screen 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="ACTION"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              CryptoKitty
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Collectible from Key wallet
+          </Text>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Received
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW asset screen 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="ACTION"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              CryptoKitty
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Collectible from Smart Wallet
+          </Text>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Received
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="ACTION"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              CryptoKitty
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Collectible from Key wallet
+          </Text>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Received
               </Text>
             </View>
           </View>
@@ -1851,7 +2655,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
               ]
             }
           >
-            Collectible from …
+            Collectible to 0x1234…123465
           </Text>
         </View>
         <View
@@ -1920,7 +2724,811 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
                   ]
                 }
               >
-                Received
+                Sent
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="ACTION"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              CryptoKitty
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Collectible to Smart Wallet
+          </Text>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Sent
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset screen 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="ACTION"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              CryptoKitty
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Collectible to Key wallet
+          </Text>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Sent
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset screen 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        backgroundColor="#FFFFFF"
+        border={true}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#FFFFFF",
+              "borderColor": "#EDEDED",
+              "borderRadius": 24,
+              "borderWidth": 1,
+              "height": 48,
+              "justifyContent": "center",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="ACTION"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              CryptoKitty
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Collectible to Smart Wallet
+          </Text>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Sent
               </Text>
             </View>
           </View>
@@ -5502,39 +7110,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
           undefined,
         ]
       }
-    >
-      <View
-        backgroundColor={null}
-        diameter={48}
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "backgroundColor": "#EBF0F6",
-              "borderRadius": 24,
-              "height": 48,
-              "justifyContent": "center",
-              "textAlign": "center",
-              "width": 48,
-            },
-            undefined,
-          ]
-        }
-      >
-        <View
-          name="sent"
-          style={
-            Array [
-              Object {
-                "color": "#BD573A",
-                "fontSize": 48,
-              },
-              undefined,
-            ]
-          }
-        />
-      </View>
-    </View>
+    />
     <View
       style={
         Object {
@@ -5652,7 +7228,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               ]
             }
           >
-            from Smart Wallet
+            Top up
           </Text>
         </View>
         <View
@@ -5704,19 +7280,19 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               }
             >
               <Text
-                color="#0A1427"
+                color="#2AA057"
                 ellipsizeMode="tail"
                 numberOfLines={2}
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#2AA057",
                       "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
+                        "color": "#2AA057",
                         "fontSize": 18,
                         "lineHeight": 28,
                         "textAlign": "right",
@@ -5726,7 +7302,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
                   ]
                 }
               >
-                - 1 PLR
+                + 1 PLR
               </Text>
             </View>
           </View>
@@ -6474,7 +8050,284 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
 </View>
 `;
 
-exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `null`;
+exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="DEFAULT"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="DEFAULT"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="DEFAULT"
+            >
+              Smart Wallet
+            </Text>
+          </View>
+          <View
+            h={4}
+            style={
+              Array [
+                Object {
+                  "height": 4,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <View
+            label="Need to activate"
+            labelStyle={
+              Object {
+                "fontSize": 10,
+                "lineHeight": 14,
+              }
+            }
+            primary={true}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#007AFF",
+                  "borderRadius": 12,
+                  "paddingBottom": 3,
+                  "paddingLeft": 8,
+                  "paddingRight": 8,
+                  "paddingTop": 3,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#FCFDFF",
+                        "fontSize": 8,
+                      },
+                      Object {
+                        "fontSize": 10,
+                        "lineHeight": 14,
+                      },
+                    ],
+                  ],
+                ]
+              }
+            >
+              Need to activate
+            </Text>
+          </View>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="DEFAULT"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                color="#8B939E"
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "marginBottom": 0,
+                        "marginLeft": "auto",
+                        "paddingBottom": 6,
+                        "paddingLeft": 0,
+                        "paddingRight": 0,
+                        "paddingTop": 6,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Created
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
 
 exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
 <View
@@ -9346,6 +11199,326 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
       ]
     }
   />
+</View>
+`;
+
+exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
+<View
+  onLayout={[Function]}
+  pointerEvents="box-none"
+  style={
+    Object {
+      "alignItems": "center",
+      "paddingBottom": 40,
+      "paddingLeft": 0,
+      "paddingRight": 0,
+      "paddingTop": 16,
+    }
+  }
+>
+  <Text
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 10,
+          "lineHeight": 14,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+    tiny={true}
+  />
+  <View
+    h={10}
+    style={
+      Array [
+        Object {
+          "height": 10,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    medium={true}
+    style={
+      Array [
+        Object {
+          "color": "#0A1427",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 16,
+          "lineHeight": 24,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    CryptoKitty
+  </Text>
+  <View
+    h={20}
+    style={
+      Array [
+        Object {
+          "height": 20,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <View
+    backgroundColor="#FFFFFF"
+    border={true}
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "backgroundColor": "#FFFFFF",
+          "borderColor": "#EDEDED",
+          "borderRadius": 32,
+          "borderWidth": 1,
+          "height": 64,
+          "justifyContent": "center",
+          "textAlign": "center",
+          "width": 64,
+        },
+        undefined,
+      ]
+    }
+  />
+  <View
+    h={20}
+    style={
+      Array [
+        Object {
+          "height": 20,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    <Text
+      color={null}
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      Received
+    </Text>
+  </View>
+  <View
+    h={4}
+    style={
+      Array [
+        Object {
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    Collectible from Smart Wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <View
+    style={
+      Array [
+        Object {
+          "alignSelf": "stretch",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "#e6f1f9",
+          "borderColor": "#EDEDED",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "row",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": false,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "bitcoinWallet": "#F79319",
+              "border": "#EDEDED",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#e6f1f9",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        View on the Blockchain
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
 </View>
 `;
 

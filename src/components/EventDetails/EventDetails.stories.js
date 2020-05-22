@@ -32,6 +32,7 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 
 const placeholderImage = 'https://picsum.photos/200';
@@ -529,6 +530,29 @@ storiesOf('EventDetail', module)
         isBetweenAccounts: true,
         isReceived: true,
         valueColor: 'positive',
+      }}
+    />
+  ))
+  .add('Key Wallet Collectible from SW', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: COLLECTIBLE_TRANSACTION,
+        from: '0xSmartWallet',
+        to: '0xKeyWallet',
+      }}
+      itemData={{
+        label: 'CryptoKitty',
+        itemImageUrl: placeholderImage,
+        subtext: 'Collectible from Smart Wallet',
+        actionLabel: 'Received',
+        iconBackgroundColor: 'card',
+        iconBorder: true,
+        fallbackToGenericToken: true,
+        isReceived: true,
+        isBetweenAccounts: true,
       }}
     />
   ))

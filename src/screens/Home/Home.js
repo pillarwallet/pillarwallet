@@ -285,6 +285,7 @@ class HomeScreen extends React.Component<Props, State> {
       accounts,
       TRANSACTION_EVENT,
       true,
+      true,
     );
 
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
@@ -531,7 +532,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction(true)),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
