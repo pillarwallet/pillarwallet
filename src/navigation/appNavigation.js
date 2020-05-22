@@ -105,7 +105,7 @@ import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPo
 import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
 import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
 import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryPending';
-import RecoveryPortalWalletRecoveryCompleteSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryComplete';
+import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 
@@ -242,7 +242,7 @@ import {
   CONNECTED_DEVICES_FLOW,
   REMOVE_SMART_WALLET_CONNECTED_DEVICE,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
-  RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
+  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
 } from 'constants/navigationConstants';
@@ -697,7 +697,7 @@ const connectedDevicesFlow = createStackNavigator({
 connectedDevicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const recoveryPortalRecoveryFlow = createStackNavigator({
-  [RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE]: RecoveryPortalWalletRecoveryCompleteSceeen,
+  [RECOVERY_PORTAL_WALLET_RECOVERY_STARTED]: RecoveryPortalWalletRecoveryStartedSceeen,
   [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
 }, StackNavigatorConfig);
 

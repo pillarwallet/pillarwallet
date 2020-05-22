@@ -84,6 +84,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = () => {
     if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
 
     dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
+    console.log('SET_WALLET_RECOVERY_COMPLETE');
 
     // 1. TODO: re-assign username
     // 2. TODO: fire finish registration action

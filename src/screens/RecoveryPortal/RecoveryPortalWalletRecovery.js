@@ -25,9 +25,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 // actions
 import { initRecoveryPortalWalletRecoverAction } from 'actions/recoveryPortalActions';
 
-// constants
-import { RECOVERY_PORTAL_URL_PATHS } from 'constants/recoveryPortalConstants';
-
 // components
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -45,18 +42,9 @@ type Props = {
   initRecoveryPortalWalletRecover: () => void,
 };
 
-type State = {
-  currentWebViewUrl: ?string,
-  checkingNewUrl: boolean,
-};
-
-class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
+class RecoveryPortalWalletRecovery extends React.Component<Props> {
   webViewRef: WebView;
-  initialUrl: ?string;
-  state = {
-    currentWebViewUrl: null,
-    checkingNewUrl: false,
-  };
+  canWebviewNavigateBack: boolean = false;
 
   componentDidMount() {
     this.props.initRecoveryPortalWalletRecover();
@@ -72,8 +60,7 @@ class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
   renderLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
 
   handleNavigationBack = () => {
-    const { currentWebViewUrl } = this.state;
-    if (!this.webViewRef || (this.initialUrl && this.initialUrl === currentWebViewUrl)) {
+    if (!this.webViewRef || !this.canWebviewNavigateBack) {
       this.props.navigation.goBack();
       return;
     }
@@ -81,27 +68,7 @@ class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
   };
 
   onNavigationStateChange = (webViewNavigationState) => {
-    const { checkingNewUrl, currentWebViewUrl: lastWebViewUrl } = this.state;
-
-    if (checkingNewUrl || webViewNavigationState.loading) return;
-
-    this.setState({ checkingNewUrl: true }, () => {
-      let currentWebViewUrl = get(webViewNavigationState, 'url');
-      if (!currentWebViewUrl) return;
-
-      // set actual initial url
-      if (currentWebViewUrl.endsWith('/')) currentWebViewUrl = currentWebViewUrl.slice(0, -1);
-      if (!this.initialUrl) this.initialUrl = currentWebViewUrl;
-
-      // covers scenario if user logged out (sign-out) on webview and sign in becomes is present home
-      if (lastWebViewUrl
-        && lastWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_OUT)
-        && currentWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_IN)) {
-        this.initialUrl = currentWebViewUrl;
-      }
-
-      this.setState({ currentWebViewUrl, checkingNewUrl: false });
-    });
+    this.canWebviewNavigateBack = !!webViewNavigationState.canGoBack;
   };
 
   onWebViewMessage = (message) => {
@@ -137,8 +104,10 @@ class RecoveryPortalWalletRecovery extends React.Component<Props, State> {
               onNavigationStateChange={this.onNavigationStateChange}
               onMessage={this.onWebViewMessage}
               renderLoading={this.renderLoading}
-              cacheEnabled={false}
               originWhitelist={['*']}
+              cacheEnabled={false}
+              sharedCookiesEnabled={false}
+              thirdPartyCookiesEnabled={false}
               hideKeyboardAccessoryView
               startInLoadingState
               incognito

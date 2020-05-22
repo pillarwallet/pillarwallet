@@ -42,7 +42,7 @@ import {
   NEW_WALLET,
   HOME,
   REFERRAL_INCOMING_REWARD,
-  RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE,
+  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
@@ -100,7 +100,6 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 import type { KeyChainData } from 'utils/keychain';
-import type { BackupStatus } from 'reducers/walletReducer';
 
 const storage = Storage.getInstance('db');
 
@@ -272,13 +271,18 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     const {
-      mnemonic,
-      pin,
-      importedWallet,
-      apiUser,
-    } = currentState.wallet.onboarding;
-    const mnemonicPhrase = mnemonic.original;
-    const { isBackedUp, isImported, isRecoveryPending }: BackupStatus = currentState.wallet.backupStatus;
+      onboarding: {
+        mnemonic: { original: mnemonicPhrase },
+        pin,
+        importedWallet,
+        apiUser,
+      },
+      backupStatus: {
+        isBackedUp,
+        isImported,
+        isRecoveryPending,
+      },
+    } = currentState.wallet;
 
     // STEP 0: Clear local storage and reset app state
     if (isImported) {
@@ -326,8 +330,16 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     await dispatch(encryptAndSaveWalletAction(pin, wallet, !!importedWallet, isBackedUp, isRecoveryPending));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
-    const user = apiUser.username ? { username: apiUser.username } : {};
-    dispatch(saveDbAction('user', { user }));
+    // checks if wallet import is pending and in this state we don't want to auth any users yet
+    if (isRecoveryPending) {
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
+      }));
+      dispatch(checkIfRecoveredSmartWalletFinishedAction());
+      return;
+    }
 
     // STEP 4: Initialize SDK and register user
     dispatch({
@@ -335,16 +347,8 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       payload: REGISTERING,
     });
 
-    // checks if wallet import is pending and in this state we don't want to auth any users yet
-    if (isRecoveryPending) {
-      navigate(NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_COMPLETE }),
-      }));
-      dispatch(checkIfRecoveredSmartWalletFinishedAction());
-      return;
-    }
+    const user = apiUser.username ? { username: apiUser.username } : {};
+    dispatch(saveDbAction('user', { user }));
 
     api.init();
     const {

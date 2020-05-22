@@ -55,17 +55,13 @@ type Props = {
 };
 
 type State = {
-  currentWebViewUrl: ?string,
   checkingNewUrl: boolean,
 };
 
 class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
   webViewRef: WebView;
-  initialUrl: ?string = null;
-  state = {
-    currentWebViewUrl: null,
-    checkingNewUrl: false,
-  };
+  canWebviewNavigateBack: boolean = false;
+  state = { checkingNewUrl: false };
 
   componentDidMount() {
     if (Platform.OS !== 'android') return;
@@ -80,9 +76,7 @@ class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
   renderWebViewLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
 
   handleNavigationBack = () => {
-    const { currentWebViewUrl } = this.state;
-    if (!this.webViewRef
-      || (this.initialUrl && currentWebViewUrl && this.initialUrl.includes(currentWebViewUrl))) {
+    if (!this.webViewRef || !this.canWebviewNavigateBack) {
       this.props.navigation.goBack();
       return;
     }
@@ -90,36 +84,19 @@ class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
   };
 
   onNavigationStateChange = (webViewNavigationState) => {
-    const { checkingNewUrl, currentWebViewUrl: lastWebViewUrl } = this.state;
-    if (checkingNewUrl) return;
+    const { checkingNewUrl } = this.state;
+    if (checkingNewUrl || webViewNavigationState.loading) return;
+    this.canWebviewNavigateBack = !!webViewNavigationState.canGoBack;
+
+    const currentWebViewUrl = get(webViewNavigationState, 'url');
+    if (isEmpty(validateDeepLink(currentWebViewUrl))) return;
+
     this.setState({ checkingNewUrl: true }, () => {
-      const currentWebViewUrl = get(webViewNavigationState, 'url');
-      if (!currentWebViewUrl) return;
-
-      // set actual initial url
-      if (!this.initialUrl) this.initialUrl = currentWebViewUrl;
-
-      // if previous url was set (navigation happened) then new url might be deep link, let's parse it right away
-      if (lastWebViewUrl && !isEmpty(validateDeepLink(currentWebViewUrl))) {
-        const { executeDeepLink } = this.props;
-        // redirect to last url because deep link is detected as new page
-
-        // set webview browser nav to previous http url and not follow deep link as url
-        this.webViewRef.stopLoading();
-        this.webViewRef.injectJavaScript(`window.location = "${lastWebViewUrl}";`);
-
-        this.setState({ checkingNewUrl: false }, () => executeDeepLink(currentWebViewUrl));
-        return;
-      }
-
-      // covers scenario if user logged out (sign-out) on webview and sign in becomes is present home
-      if (lastWebViewUrl
-        && lastWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_OUT)
-        && currentWebViewUrl.includes(RECOVERY_PORTAL_URL_PATHS.SIGN_IN)) {
-        this.initialUrl = currentWebViewUrl;
-      }
-
-      this.setState({ currentWebViewUrl, checkingNewUrl: false });
+      const { executeDeepLink } = this.props;
+      // go to previous webview url and not follow deep link as url
+      this.webViewRef.stopLoading();
+      this.webViewRef.goBack();
+      this.setState({ checkingNewUrl: false }, () => executeDeepLink(currentWebViewUrl));
     });
   };
 
@@ -166,6 +143,8 @@ class RecoveryPortalSetupSignUp extends React.Component<Props, State> {
               renderLoading={this.renderWebViewLoading}
               originWhitelist={['*']}
               cacheEnabled={false}
+              sharedCookiesEnabled={false}
+              thirdPartyCookiesEnabled={false}
               hideKeyboardAccessoryView
               startInLoadingState
               incognito

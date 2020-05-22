@@ -25,6 +25,7 @@ const allowedDeepLinkProtocols = [
 ];
 
 export const validateDeepLink = (url: string): { action?: string, query?: Object } => {
+  if (!url || typeof url !== 'string') return {};
   const params = urlTools.parse(url, true);
   if (isEmpty(params)) return {};
   const { protocol } = params;

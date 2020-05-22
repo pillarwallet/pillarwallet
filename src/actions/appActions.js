@@ -189,7 +189,7 @@ export const initAppAndRedirectAction = () => {
       const { userEvents = [] } = get(storageData, 'userEvents', {});
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
-      const { removingConnectedDeviceAddress } = get(storageData, 'connectedDevices', {});
+      const { removingConnectedDeviceAddress = null } = get(storageData, 'connectedDevices', {});
       dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: removingConnectedDeviceAddress });
 
       const { insights = {} } = get(storageData, 'insights', {});

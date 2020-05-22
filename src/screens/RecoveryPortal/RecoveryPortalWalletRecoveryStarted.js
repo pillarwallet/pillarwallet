@@ -22,7 +22,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { RECOVERY_PORTAL_WALLET_RECOVERY_PENDING } from 'constants/navigationConstants';
 
 // components
-import { Wrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { MediumText, Paragraph } from 'components/Typography';
 import Animation from 'components/Animation';
@@ -43,20 +43,22 @@ const Title = styled(MediumText)`
   margin-bottom: ${spacing.small}px;
 `;
 
-const RecoveryPortalWalletRecoveryComplete = (props: Props) => (
-  <Wrapper flex={1} center regularPadding>
-    <Animation source={animationSuccess} />
-    <Title center>Smart Wallet recovered successfully</Title>
-    <Paragraph small light center>
-      It will be settled in a few moments, depending on your gas price settings and Ethereum network load
-    </Paragraph>
-    <Button
-      block
-      title="Magic!"
-      onPress={() => props.navigation.navigate(RECOVERY_PORTAL_WALLET_RECOVERY_PENDING)}
-      marginTop={50}
-    />
-  </Wrapper>
+const RecoveryPortalWalletRecoveryStarted = (props: Props) => (
+  <Container>
+    <Wrapper flex={1} center regularPadding>
+      <Animation source={animationSuccess} />
+      <Title center>Smart Wallet recovered successfully</Title>
+      <Paragraph small light center>
+        It will be settled in a few moments, depending on your gas price settings and Ethereum network load
+      </Paragraph>
+      <Button
+        block
+        title="Magic!"
+        onPress={() => props.navigation.navigate(RECOVERY_PORTAL_WALLET_RECOVERY_PENDING)}
+        marginTop={50}
+      />
+    </Wrapper>
+  </Container>
 );
 
-export default RecoveryPortalWalletRecoveryComplete;
+export default RecoveryPortalWalletRecoveryStarted;

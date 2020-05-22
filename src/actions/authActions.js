@@ -148,13 +148,20 @@ export const loginAction = (
         throw new Error();
       }
 
+      let { user = {} } = await storage.get('user');
+      const userState = user.walletId ? REGISTERED : PENDING;
+
+      const { address } = wallet;
+      dispatch({
+        type: DECRYPT_WALLET,
+        payload: {
+          address,
+          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
+        },
+      });
+
       const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
       if (isWalletRecoveryPending) {
-        const { address } = wallet;
-        dispatch({
-          type: DECRYPT_WALLET,
-          payload: { address },
-        });
         api.init();
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
         await smartWalletService.init(
@@ -164,9 +171,6 @@ export const loginAction = (
         dispatch(checkIfRecoveredSmartWalletFinishedAction());
         return;
       }
-
-      let { user = {} } = await storage.get('user');
-      const userState = user.walletId ? REGISTERED : PENDING;
 
       if (user.username) {
         dispatch({ type: SET_USERNAME, payload: user.username });
@@ -257,15 +261,6 @@ export const loginAction = (
       }
 
       dispatch(updatePinAttemptsAction(false));
-
-      const { address } = wallet;
-      dispatch({
-        type: DECRYPT_WALLET,
-        payload: {
-          address,
-          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
-        },
-      });
 
       // re-fetch accounts as they might change at this point
       accounts = getState().accounts.data;
