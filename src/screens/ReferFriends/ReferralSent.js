@@ -21,7 +21,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import get from 'lodash.get';
 import { connect } from 'react-redux';
 
 import { REFER_MAIN_SCREEN, REFERRAL_CONTACTS } from 'constants/navigationConstants';
@@ -35,6 +34,7 @@ import Button from 'components/Button';
 import LoadingParagraph from 'components/LoadingParagraph';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { getCampaignRewardText } from 'utils/referrals';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 import type { NavigationScreenProp } from 'react-navigation';
@@ -44,9 +44,10 @@ import type { RewardsByCompany } from 'reducers/referralsReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  rewards: RewardsByCompany,
+  rewardsByCampaign: RewardsByCompany,
   isFetchingRewards: boolean,
   fetchReferralReward: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 const RewardBadge = styled(CachedImage)`
@@ -70,9 +71,18 @@ class ReferralSent extends React.PureComponent<Props> {
   }
 
   render() {
-    const { navigation, rewards, isFetchingRewards } = this.props;
-    const { asset, amount } = get(rewards, 'pillar', {});
-    const rewardText = asset && amount ? `${amount} ${asset} and a badge` : 'a badge';
+    const {
+      navigation,
+      rewardsByCampaign,
+      isFetchingRewards,
+      isPillarRewardCampaignActive,
+    } = this.props;
+    const titleText = isPillarRewardCampaignActive ? 'Your reward is on the way' : 'Invitations sent';
+    const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
+    const rewardParagraph = isPillarRewardCampaignActive && rewardText
+      ? `\nYou will receive ${rewardText} for each friend installed the app with your referral link. ` +
+      'You both should have verified your details in order to be eligible.'
+      : '';
     return (
       <ConfettiBackground>
         <ContainerWithHeader
@@ -82,13 +92,12 @@ class ReferralSent extends React.PureComponent<Props> {
           }}
         >
           <Wrapper flex={1} center>
-            <RewardBadge source={rewardBadge} />
-            <Title>Your reward is on the way</Title>
+            {!!isPillarRewardCampaignActive && <RewardBadge source={rewardBadge} />}
+            <Title>{titleText}</Title>
             <LoadingParagraph
               isLoading={isFetchingRewards}
-              text={'Thank you for spreading the word about Pillar.\n' +
-              `You will receive ${rewardText} for each friend installed the app with your referral link. ` +
-              'You both should have verified your details in order to be eligible.'}
+              text={`Thank you for spreading the word about Pillar. ${rewardParagraph}`
+             }
               paragraphProps={{
                 center: true,
                 style: {
@@ -119,10 +128,11 @@ class ReferralSent extends React.PureComponent<Props> {
 
 
 const mapStateToProps = ({
-  referrals: { rewards, isFetchingRewards },
+  referrals: { rewardsByCampaign, isFetchingRewards, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
-  rewards,
+  rewardsByCampaign,
   isFetchingRewards,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
