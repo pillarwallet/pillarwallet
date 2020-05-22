@@ -48,6 +48,7 @@ import {
   SET_ALREADY_INVITED_CONTACTS,
   FETCHING_REFERRAL_REWARD_AMOUNT,
   SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
+  SET_PILLAR_REWARD_CAMPAIGN_STATUS,
 } from 'constants/referralsConstants';
 import {
   APP_FLOW,
@@ -64,7 +65,7 @@ import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
 // utils
-import { reportLog } from 'utils/common';
+import { printLog } from 'utils/common';
 
 
 export type ClaimTokenAction = {
@@ -143,7 +144,7 @@ export const completeReferralsEventAction = () => {
     });
 
     Toast.show({
-      message: 'You are gonna receive your rewards soon!',
+      message: 'You are going to receive your rewards soon!',
       type: 'info',
       title: 'Rewards on their way',
       autoClose: false,
@@ -218,7 +219,8 @@ export const startReferralsListenerAction = () => {
 
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) {
-        reportLog('Branch.io Subscribe error', error, 'error');
+        // TODO: need to re-subscribe on fail
+        printLog('Branch.io Subscribe error', error, 'error');
         return;
       }
       if (!params['+clicked_branch_link']) return;
@@ -329,11 +331,26 @@ export const fetchReferralRewardAction = () => {
       type: FETCHING_REFERRAL_REWARD_AMOUNT,
     });
 
-    const referralRewards: RewardsByCompany = await api.getReferralRewardValue(walletId, referralToken);
+    const referralCampaignsInfo = await api.getReferralCampaignsInfo(walletId, referralToken);
+    const referralRewards: RewardsByCompany = Object.keys(referralCampaignsInfo)
+      .reduce((rewardsByCampaign, campaignName) => {
+        const isCampaignActive = get(referralCampaignsInfo, `[${campaignName}].isActive`);
+        const campaignRewards = get(referralCampaignsInfo, `[${campaignName}].rewards`);
+        if (campaignRewards && isCampaignActive) rewardsByCampaign[campaignName] = campaignRewards;
+        return rewardsByCampaign;
+      },
+      {});
 
     dispatch({
       type: SET_REFERRAL_REWARD_AMOUNT,
       payload: referralRewards,
+    });
+
+    const isPillarRewardsActive = get(referralCampaignsInfo, 'pillar.isActive');
+
+    dispatch({
+      type: SET_PILLAR_REWARD_CAMPAIGN_STATUS,
+      payload: isPillarRewardsActive,
     });
   };
 };

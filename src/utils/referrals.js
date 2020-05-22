@@ -19,7 +19,7 @@
 */
 
 import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
-import type { SentInvitationsCount, ReferralContact } from 'reducers/referralsReducer';
+import type { SentInvitationsCount, ReferralContact, ReferralReward } from 'reducers/referralsReducer';
 
 
 export const searchContacts = (contacts: ReferralContact[], _query: string): ReferralContact[] => {
@@ -74,4 +74,15 @@ export const getRemainingDailyInvitations = (sentInvitationsCount: SentInvitatio
   const currentDate = new Date().toJSON().slice(0, 10);
   if (date !== currentDate) return ALLOWED_DAILY_INVITES;
   return ALLOWED_DAILY_INVITES - count;
+};
+
+
+const getAssetRewardText = (awardInfo: ReferralReward = {}) => {
+  const { asset, amount } = awardInfo;
+  return asset && amount ? `${amount} ${asset}` : '';
+};
+
+export const getCampaignRewardText = (campaignRewards: ReferralReward[] = []) => {
+  const rewards = campaignRewards.map((reward) => getAssetRewardText(reward));
+  return rewards.join(', ');
 };

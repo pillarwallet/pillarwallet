@@ -151,6 +151,10 @@ import {
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getPrivateKeyFromPin } from 'utils/wallet';
 
+// actions
+import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
+import { setInitialPreferredGasTokenAction } from './appSettingsActions';
+
 
 const storage = Storage.getInstance('db');
 
@@ -570,6 +574,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       reportLog('Missing Smart Wallet SDK constant', { path });
     }
 
+    // on wallet deployed or new device added
+    const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     /**
      * This event can happen not just on single device deployment, but
      * on initial account deployment as well, this is because initial account
@@ -609,6 +615,17 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             autoClose: true,
           });
         }
+
+        // gas relayer switch check
+        if (get(event, 'payload.features.gasTokenSupported')) {
+          // update connected devices
+          await dispatch(fetchConnectedAccountAction());
+
+          const { appSettings: { data: { preferredGasToken } } } = getState();
+          if (!preferredGasToken) {
+            dispatch(setInitialPreferredGasTokenAction());
+          }
+        }
       }
 
       const removingConnectedDeviceAddress = get(getState(), 'connectedDevices.removingDeviceAddress');
@@ -636,7 +653,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txSenderAddress = get(event, 'payload.from.account.address', '');
       const txSenderEnsName = get(event, 'payload.from.account.ensName', '');
       const txType = get(event, 'payload.transactionType', '');
-      const txFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
+      const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
       if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
@@ -662,7 +679,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           });
         }
 
-        if (txFound) {
+        if (txToListenFound) {
           const { txUpdated, updatedHistory } = updateHistoryRecord(
             currentHistory,
             txHash,
@@ -834,8 +851,7 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
       });
     if (isEmpty(response)) return;
 
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
+    const estimate = buildSmartWalletTransactionEstimate(response);
 
     dispatch({
       type: SET_ESTIMATED_TOPUP_FEE,
@@ -940,8 +956,7 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
       });
     if (isEmpty(response)) return;
 
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
+    const estimate = buildSmartWalletTransactionEstimate(response);
 
     dispatch({
       type: SET_ESTIMATED_WITHDRAWAL_FEE,
@@ -1080,7 +1095,7 @@ export const fetchAvailableTxToSettleAction = () => {
 };
 
 export const estimateSettleBalanceAction = (txToSettle: Object) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       notifySmartWalletNotInitialized();
       return;
@@ -1101,9 +1116,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
       });
     if (isEmpty(response)) return;
 
-    const accountAssets = accountAssetsSelector(getState());
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-    const estimate = buildSmartWalletTransactionEstimate(response, accountAssets, supportedAssets);
+    const estimate = buildSmartWalletTransactionEstimate(response);
 
     dispatch({
       type: SET_ESTIMATED_SETTLE_TX_FEE,
@@ -1478,10 +1491,21 @@ export const initSmartWalletSdkWithPrivateKeyOrPinAction = ({ privateKey: _priva
 export const switchToGasTokenRelayerAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
+
     const { accounts: { data: accounts } } = getState();
     const accountId = getActiveAccountId(accounts);
     const accountAddress = getActiveAccountAddress(accounts);
+
     const hash = await smartWalletService.switchToGasTokenRelayer();
+    if (!hash) {
+      Toast.show({
+        message: 'Unable to update your account. Please try again later',
+        type: 'warning',
+        autoClose: false,
+      });
+      return;
+    }
+
     const historyTx = buildHistoryTransaction({
       from: accountAddress,
       hash,

@@ -19,12 +19,14 @@
 */
 import { BigNumber } from 'bignumber.js';
 import type { Asset } from './Asset';
-import type { TxSettlementItem } from './Transaction';
+import type { GasToken, TxSettlementItem } from './Transaction';
 
 export type FeeInfo = {
   gasAmount: BigNumber,
   gasPrice: BigNumber,
   totalCost: BigNumber,
+  gasToken?: ?GasToken,
+  gasTokenCost?: BigNumber,
 };
 
 export type TopUpFee = {

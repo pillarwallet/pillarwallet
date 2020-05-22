@@ -42,7 +42,7 @@ import { fetchInviteNotificationsAction,
   cancelInvitationAction,
   rejectInvitationAction } from 'actions/invitationsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { fetchReferralRewardAction, goToInvitationFlowAction } from 'actions/referralsActions';
 
 // components
 import Icon from 'components/Icon';
@@ -166,6 +166,8 @@ type Props = {
   acceptInvitation: (invitation: Object) => void,
   cancelInvitation: (invitation: Object) => void,
   rejectInvitation: (invitation: Object) => void,
+  fetchReferralReward: (invitation: Object) => void,
+  isPillarRewardCampaignActive: boolean,
 }
 
 type ConnectionStatusProps = {
@@ -224,7 +226,7 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { logScreenView, navigation } = this.props;
+    const { logScreenView, navigation, fetchReferralReward } = this.props;
     logScreenView('View people', 'People');
 
     this.willFocus = navigation.addListener(
@@ -236,6 +238,7 @@ class PeopleScreen extends React.Component<Props, State> {
       'didBlur',
       () => this.setState({ forceHideRemoval: true }),
     );
+    fetchReferralReward();
   }
 
   componentWillUnmount() {
@@ -410,13 +413,14 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderEmptyState = (inviteTitle) => {
-    const { goToInvitationFlow } = this.props;
+    const { goToInvitationFlow, isPillarRewardCampaignActive } = this.props;
 
     return (
       <Wrapper fullScreen style={{ marginTop: 8, marginBottom: spacing.large }}>
         <InviteBanner
           title={inviteTitle}
           onInvitePress={goToInvitationFlow}
+          isReferralActive={isPillarRewardCampaignActive}
         />
       </Wrapper>
     );
@@ -532,6 +536,7 @@ class PeopleScreen extends React.Component<Props, State> {
     const {
       chats,
       fetchInviteNotifications,
+      fetchReferralReward,
       searchResults: { apiUsers },
       isSearching,
     } = this.props;
@@ -558,7 +563,10 @@ class PeopleScreen extends React.Component<Props, State> {
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={fetchInviteNotifications}
+            onRefresh={() => {
+              fetchInviteNotifications();
+              fetchReferralReward();
+            }}
           />
           }
         ListEmptyComponent={
@@ -667,12 +675,14 @@ const mapStateToProps = ({
   },
   invitations: { data: invitations },
   chat: { data: { chats } },
+  referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   searchResults,
   isSearching,
   localContacts,
   invitations,
   chats,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -688,6 +698,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   acceptInvitation: (invitation: Object) => dispatch(acceptInvitationAction(invitation)),
   cancelInvitation: (invitation: Object) => dispatch(cancelInvitationAction(invitation)),
   rejectInvitation: (invitation: Object) => dispatch(rejectInvitationAction(invitation)),
+  fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(PeopleScreen));

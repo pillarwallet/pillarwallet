@@ -23,12 +23,12 @@ import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
+import CollectibleImage from 'components/CollectibleImage';
 
 // constants
 import { COLLECTIBLE } from 'constants/navigationConstants';
@@ -91,8 +91,9 @@ class CollectiblesList extends React.PureComponent<Props> {
   };
 
   renderCollectible = ({ item }: CollectibleItem) => {
-    const { name, image, icon: itemIcon } = item;
-    const icon = itemIcon || image;
+    const { name, image } = item;
+
+    const icon = image;
     const { theme } = this.props;
     const { genericToken } = images(theme);
 
@@ -103,12 +104,12 @@ class CollectiblesList extends React.PureComponent<Props> {
           contentWrapperStyle={{ padding: spacing.medium, alignItems: 'center' }}
           onPress={() => this.handleCardTap(item)}
         >
-          <CachedImage
+          <CollectibleImage
             style={{
-              height: 135,
-              width: 135,
               marginBottom: spacing.mediumLarge,
             }}
+            width={135}
+            height={135}
             source={{ uri: icon }}
             fallbackSource={genericToken}
             resizeMode="contain"

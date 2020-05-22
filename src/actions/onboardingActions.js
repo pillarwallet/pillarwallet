@@ -85,7 +85,12 @@ import { encryptAndSaveWalletAction, generateWalletMnemonicAction } from 'action
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction, changeUseBiometricsAction, updateAppSettingsAction } from 'actions/appSettingsActions';
+import {
+  setAppThemeAction,
+  changeUseBiometricsAction,
+  updateAppSettingsAction,
+  setInitialPreferredGasTokenAction,
+} from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -93,6 +98,7 @@ import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPortalActions';
 
 // types
@@ -231,6 +237,9 @@ const finishRegistration = async ({
     dispatch(managePPNInitFlagAction());
   }
 
+  // set initial preferredGasToken value. Should be called after we connect to Archanova
+  dispatch(setInitialPreferredGasTokenAction());
+
   await dispatch({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
@@ -243,6 +252,7 @@ const finishRegistration = async ({
   } else {
     await setKeychainDataObject(keychainData);
   }
+  dispatch(fetchReferralRewardAction());
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
@@ -254,14 +264,14 @@ const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boole
     action: NavigationActions.navigate({ routeName: HOME }),
   });
 
-  const navigateToIncommingRewardScreen = NavigationActions.navigate({
+  const navigateToIncomingRewardScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
   });
 
   if (showIncomingReward) {
-    navigate(navigateToIncommingRewardScreen);
+    navigate(navigateToIncomingRewardScreen);
   } else {
     navigate(navigateToHomeScreen);
   }
