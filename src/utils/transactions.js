@@ -18,25 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import orderBy from 'lodash.orderby';
-import { createSelector } from 'reselect';
-import {
-  historySelector,
-  activeAccountIdSelector,
-  activeBlockchainSelector,
-  bitcoinAddressSelector,
-} from './selectors';
+import get from 'lodash.get';
+import { BigNumber } from 'bignumber.js';
+import type { FeeInfo } from 'models/PaymentNetwork';
+import type { GasToken } from 'models/Transaction';
 
-export const accountHistorySelector = createSelector(
-  historySelector,
-  activeAccountIdSelector,
-  activeBlockchainSelector,
-  bitcoinAddressSelector,
-  (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses) => {
-    if (activeBlockchainNetwork && activeBlockchainNetwork === 'BITCOIN' && bitcoinAddresses.length) {
-      return orderBy(history[bitcoinAddresses[0].address] || [], ['createdAt'], ['desc']);
-    }
-    if (!activeAccountId) return [];
-    return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
-  },
-);
+
+export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
+  const gasTokenCost = get(feeInfo, 'gasTokenCost');
+  if (useGasToken && gasTokenCost) return gasTokenCost;
+  return get(feeInfo, 'totalCost', 0); // TODO: return 'new BigNumber(0)' by default
+};
+
+export const getGasToken = (useGasToken: boolean, feeInfo: ?FeeInfo): ?GasToken => {
+  return useGasToken ? get(feeInfo, 'gasToken', null) : null;
+};

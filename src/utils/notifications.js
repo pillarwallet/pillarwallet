@@ -65,6 +65,11 @@ const validBcxTransaction = (transaction: ?Object): boolean => {
   return true;
 };
 
+export const validEthplorerTransaction = (transaction: ?Object): boolean => {
+  if (!transaction || !transaction.from || !transaction.to) return false;
+  return true;
+};
+
 const validCollectibleTransaction = (transaction: ?Object): boolean => {
   if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
   if (!transaction.status || !transaction.contractAddress) return false;
