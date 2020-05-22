@@ -80,7 +80,7 @@ import { signalInitAction } from './signalClientActions';
 import { initOnLoginSmartWalletAccountAction, switchAccountAction } from './accountsActions';
 import { updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
-import { setAppThemeAction } from './appSettingsActions';
+import { setAppThemeAction, setInitialPreferredGasTokenAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
@@ -116,7 +116,7 @@ export const loginAction = (
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     let { accounts: { data: accounts } } = getState();
     const {
-      appSettings: { data: { blockchainNetwork = '' } },
+      appSettings: { data: { blockchainNetwork = '', preferredGasToken } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
     } = getState();
@@ -207,6 +207,11 @@ export const loginAction = (
         // init smart wallet
         if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
+        }
+
+        // set initial preferredGasToken value. Should be called after we connect to Archanova
+        if (!preferredGasToken) {
+          dispatch(setInitialPreferredGasTokenAction());
         }
 
         // set Ethereum network as active

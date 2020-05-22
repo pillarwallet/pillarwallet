@@ -161,6 +161,7 @@ describe('Wallet actions', () => {
       },
       history: { data: {} },
       appSettings: {},
+      smartWallet: {},
       bitcoin: { data: { addresses: [], balances: {} } },
     });
     const expectedActions = [
@@ -313,6 +314,7 @@ describe('Wallet actions', () => {
       history: { data: {} },
       appSettings: {},
       bitcoin: { data: { addresses: [], balances: {} } },
+      smartWallet: {},
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },

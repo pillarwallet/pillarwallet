@@ -59,7 +59,7 @@ import smartWalletService from 'services/smartWallet';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { isGasTokenSupportedSelector } from 'selectors';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';

@@ -17,26 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import smartWalletService from 'services/smartWallet';
 
-import type { AccountTransaction } from 'services/smartWallet';
-import type { AssetData } from 'models/Asset';
-import { ETH } from 'constants/assetsConstants';
+import get from 'lodash.get';
+import { BigNumber } from 'bignumber.js';
+import type { FeeInfo } from 'models/PaymentNetwork';
+import type { GasToken } from 'models/Transaction';
 
-describe('Smart Wallet service', () => {
-  const assetData: AssetData = {
-    token: ETH,
-    decimals: 18,
-  };
 
-  const accountTransaction: AccountTransaction = {
-    recipient: '0x0',
-    value: 1,
-  };
+export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
+  const gasTokenCost = get(feeInfo, 'gasTokenCost');
+  if (useGasToken && gasTokenCost) return gasTokenCost;
+  return get(feeInfo, 'totalCost', 0); // TODO: return 'new BigNumber(0)' by default
+};
 
-  it('account transaction estimate fee should be equal 350000000000000', async () => {
-    const { ethCost } = await smartWalletService.estimateAccountTransaction(accountTransaction, assetData);
-    expect(ethCost.eq(350000000000000)).toBeTruthy();
-  });
-});
-
+export const getGasToken = (useGasToken: boolean, feeInfo: ?FeeInfo): ?GasToken => {
+  return useGasToken ? get(feeInfo, 'gasToken', null) : null;
+};
