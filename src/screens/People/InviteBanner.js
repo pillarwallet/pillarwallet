@@ -35,6 +35,7 @@ import { DARK_THEME } from 'constants/appSettingsConstants';
 type Props = {
   title: string,
   onInvitePress: () => void,
+  isReferralActive: boolean,
 };
 
 
@@ -78,7 +79,7 @@ const BodyText = styled(BaseText)`
 
 
 const InviteBanner = (props: Props) => {
-  const { title, onInvitePress } = props;
+  const { title, onInvitePress, isReferralActive } = props;
   return (
     <Wrapper>
       <ShadowedCard borderRadius={30} upperContentWrapperStyle={{ overflow: 'hidden' }}>
@@ -87,13 +88,15 @@ const InviteBanner = (props: Props) => {
           <Title>{title}</Title>
         </HeaderWrapper>
         <BodyWrapper>
+          {!!isReferralActive &&
           <BodyText>
             Refer friends and earn rewards, free PLR and more.
-          </BodyText>
+          </BodyText>}
           <Button
             title="Invite friends"
             block
             onPress={onInvitePress}
+            marginTop={isReferralActive ? 0 : 14}
           />
         </BodyWrapper>
       </ShadowedCard>

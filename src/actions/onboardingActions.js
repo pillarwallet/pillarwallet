@@ -95,6 +95,7 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { initializeBitcoinWalletAction } from 'actions/bitcoinActions';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -248,6 +249,7 @@ const finishRegistration = async ({
   } else {
     await setKeychainDataObject(keychainData);
   }
+  dispatch(fetchReferralRewardAction());
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
@@ -259,14 +261,14 @@ const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boole
     action: NavigationActions.navigate({ routeName: HOME }),
   });
 
-  const navigateToIncommingRewardScreen = NavigationActions.navigate({
+  const navigateToIncomingRewardScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
   });
 
   if (showIncomingReward) {
-    navigate(navigateToIncommingRewardScreen);
+    navigate(navigateToIncomingRewardScreen);
   } else {
     navigate(navigateToHomeScreen);
   }

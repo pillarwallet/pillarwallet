@@ -86,6 +86,7 @@ import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
 import { updateConnectionsAction } from './connectionsActions';
+import { fetchReferralRewardAction } from './referralsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -267,6 +268,7 @@ export const loginAction = (
 
       dispatch(fetchTransactionsHistoryAction());
       if (user.walletId) dispatch(updateConnectionsAction());
+      dispatch(fetchReferralRewardAction());
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
