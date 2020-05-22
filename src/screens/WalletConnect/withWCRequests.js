@@ -70,7 +70,7 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
       note: null,
     };
 
-    getTransactionDetails = (request) => {
+    getTransactionDetails = (request: CallRequest) => {
       if (!request) return {};
 
       const { supportedAssets } = this.props;
@@ -122,12 +122,12 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
       return isTokenTransfer(data) && contractAddress === '';
     };
 
-    getTransactionPayload = (estimatePart, request): TokenTransactionPayload => {
+    getTransactionPayload = (estimatePart: Object, request: CallRequest): TokenTransactionPayload => {
       const transaction = this.getTransactionDetails(request);
       return { ...estimatePart, ...transaction };
     };
 
-    acceptWCRequest = (request: any, transactionPayload?: TokenTransactionPayload) => {
+    acceptWCRequest = (request: CallRequest, transactionPayload?: TokenTransactionPayload) => {
       const { navigation } = this.props;
 
       switch (request.method) {
@@ -152,7 +152,7 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
       }
     };
 
-    rejectWCRequest = request => this.props.rejectCallRequest(request.callId);
+    rejectWCRequest = (request: CallRequest) => this.props.rejectCallRequest(request.callId);
 
     handleNoteChange = (text) => this.setState({ note: text });
 

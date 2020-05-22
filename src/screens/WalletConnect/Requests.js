@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { FlatList } from 'react-native';
+import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { MediumText, BaseText } from 'components/Typography';
@@ -29,13 +30,14 @@ import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
+import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 import withWCRequests from './withWCRequests';
 
 
 type Props = {
+  navigation: NavigationScreenProp<*>,
   requests: CallRequest[],
   rejectWCRequest: (request: CallRequest) => void,
-  acceptWCRequest: (request: CallRequest) => void,
   theme: Theme,
   showLastOneOnly?: boolean,
 };
@@ -69,7 +71,7 @@ const Header = styled(MediumText)`
 
 class Requests extends React.Component<Props> {
   renderRequest = ({ item }) => {
-    const { theme, acceptWCRequest, rejectWCRequest } = this.props;
+    const { theme, rejectWCRequest, navigation } = this.props;
     const { name, icon } = item;
     const colors = getThemeColors(theme);
 
@@ -100,7 +102,7 @@ class Requests extends React.Component<Props> {
               accept
               icon="check"
               fontSize={fontSizes.small}
-              onPress={() => acceptWCRequest(item)}
+              onPress={() => navigation.navigate(WALLETCONNECT_CALL_REQUEST_SCREEN, { callId: item.callId })}
             />
           </ItemContainer>
         </ShadowedCard>
@@ -129,4 +131,4 @@ class Requests extends React.Component<Props> {
   }
 }
 
-export default withWCRequests(withTheme(Requests));
+export default withNavigation(withWCRequests(withTheme(Requests)));
