@@ -47,7 +47,11 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
+import {
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
+} from 'constants/paymentNetworkConstants';
 
 // utils
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -328,8 +332,9 @@ class AssetScreen extends React.Component<Props, State> {
       accounts,
       TRANSACTION_EVENT,
     );
-    const tokenTransactions = mappedTransactions.filter(({ asset, tag = '', extra = [] }) =>
-      asset === token || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+    const tokenTransactions = mappedTransactions
+      .filter(({ asset, tag = '', extra = [] }) => (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT)
+        || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
 
     const mainnetTransactions = tokenTransactions
       .filter(({

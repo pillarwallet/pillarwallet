@@ -313,7 +313,7 @@ class PPNView extends React.Component<Props, State> {
 
     const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
       const {
-        stateInPPN, hash, tag, from,
+        stateInPPN, hash, tag, from, to,
       } = transaction;
       const {
         settled, incoming, sent,
@@ -329,7 +329,7 @@ class PPNView extends React.Component<Props, State> {
           filtered.settled = settled.concat(transaction);
           break;
         default:
-          if (addressesEqual(from, activeAccountAddress)) {
+          if (addressesEqual(from, activeAccountAddress) && !addressesEqual(to, activeAccountAddress)) {
             filtered.sent = sent.concat(transaction);
           } else if (stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history)) {
             filtered.incoming = incoming.concat(transaction);
