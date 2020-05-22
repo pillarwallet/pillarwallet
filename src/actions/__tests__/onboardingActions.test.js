@@ -50,6 +50,7 @@ import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_BITCOIN_ADDRESSES } from 'constants/bitcoinConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
@@ -134,6 +135,10 @@ const mockBackupStatus: Object = {
   isBackedUp: false,
 };
 
+const mockGeneratedBTCAddress = {
+  addresses: ['mna1TuYntMJh74XQh6ur5DAQSFhA6fE2zA'],
+};
+
 describe('Wallet actions', () => {
   let store;
   beforeEach(() => {
@@ -156,6 +161,7 @@ describe('Wallet actions', () => {
       },
       history: { data: {} },
       appSettings: {},
+      bitcoin: { data: { addresses: [], balances: {} } },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -222,6 +228,7 @@ describe('Wallet actions', () => {
       assets: { data: {} },
       history: { data: {} },
       appSettings: {},
+      bitcoin: { data: { addresses: [], balances: {} } },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -258,6 +265,10 @@ describe('Wallet actions', () => {
       {
         type: SET_FEATURE_FLAGS,
         payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false },
+      },
+      {
+        type: SET_BITCOIN_ADDRESSES,
+        ...mockGeneratedBTCAddress,
       },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
@@ -301,6 +312,7 @@ describe('Wallet actions', () => {
       assets: { data: {} },
       history: { data: {} },
       appSettings: {},
+      bitcoin: { data: { addresses: [], balances: {} } },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },

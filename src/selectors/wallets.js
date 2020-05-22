@@ -41,7 +41,7 @@ export const availableWalletsSelector = createSelector(
   activeBlockchainSelector,
   (accounts, bitcoinAddresses, featureFlags, activeBlockchainNetwork) => {
     const isBitcoinActive = isBitcoinNetwork(activeBlockchainNetwork);
-    const { SMART_WALLET_ENABLED: smartWalletFeatureEnabled, BITCOIN_ENABLED: bitcoinFeatureEnabled } = featureFlags;
+    const { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } = featureFlags;
     const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
     const availableWallets = [{ ...keyWallet, isActive: !isBitcoinActive && keyWallet.isActive }];
 
@@ -55,7 +55,7 @@ export const availableWalletsSelector = createSelector(
       }
     }
 
-    if (bitcoinFeatureEnabled && bitcoinAddresses.length > 0) {
+    if (bitcoinAddresses.length > 0) {
       availableWallets.push(getBitcoinObject(bitcoinAddresses[0].address, isBitcoinActive));
     }
     return availableWallets;

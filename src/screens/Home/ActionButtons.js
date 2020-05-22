@@ -45,6 +45,7 @@ import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActio
 import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
 import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
+import { findFirstSmartAccount } from 'utils/accounts';
 
 // models, types
 import type { Account } from 'models/Account';
@@ -59,7 +60,6 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   balances: BalancesStore,
-  bitcoinFeatureEnabled: boolean,
   bitcoinBalances: BitcoinBalance,
   bitcoinAddresses: BitcoinAddress[],
   supportedAssets: Asset[],
@@ -234,6 +234,7 @@ class ActionButtons extends React.Component<Props, State> {
       changeWalletAction,
       blockchainNetwork,
       setActiveBlockchainNetwork,
+      wallets,
     } = this.props;
     const { type: walletType } = acc;
     const { type: activeAccType } = activeWallet;
@@ -262,7 +263,8 @@ class ActionButtons extends React.Component<Props, State> {
         break;
 
       case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        changeWalletAction(acc, () => {
+        const smartAcc = findFirstSmartAccount(wallets);
+        changeWalletAction(smartAcc || acc, () => {
           if (navigateTo === SEND_BITCOIN_FLOW) {
             const btcToken = supportedAssets.find(asset => asset.symbol === BTC);
             if (!btcToken) {
@@ -296,12 +298,11 @@ class ActionButtons extends React.Component<Props, State> {
     const {
       balances,
       bitcoinBalances,
-      bitcoinFeatureEnabled,
       bitcoinAddresses,
     } = this.props;
     const modalActions = this.getModalActions();
     const isSendButtonActive = !!Object.keys(balances).length ||
-      (bitcoinFeatureEnabled && bitcoinAddresses.length > 0 && !!Object.keys(bitcoinBalances).length);
+      (bitcoinAddresses.length > 0 && !!Object.keys(bitcoinBalances).length);
 
     return (
       <React.Fragment>
@@ -344,11 +345,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, blockchainNetwork } },
   rates: { data: rates },
   balances: { data: balances },
-  featureFlags: {
-    data: {
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
-    },
-  },
   bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
   assets: {
     supportedAssets,
@@ -358,7 +354,6 @@ const mapStateToProps = ({
   blockchainNetwork,
   rates,
   balances,
-  bitcoinFeatureEnabled,
   bitcoinBalances,
   bitcoinAddresses,
   supportedAssets,

@@ -482,12 +482,9 @@ export const fetchTransactionsHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      appSettings: { data: { blockchainNetwork } = {} },
     } = getState();
 
-    if (blockchainNetwork && blockchainNetwork === 'BITCOIN') {
-      return dispatch(fetchBTCTransactionsHistoryAction());
-    }
+    await dispatch(fetchBTCTransactionsHistoryAction());
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return Promise.resolve();

@@ -35,8 +35,6 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { toggleBalanceAction } from 'actions/appSettingsActions';
 
 // utils
@@ -117,18 +115,17 @@ class WalletsPart extends React.Component<Props, State> {
 
   getNextWalletInLine = () => {
     const { availableWallets } = this.props;
-    const currentActiveType = getActiveAccountType(availableWallets);
-    const currentWalletIndex = availableWallets.findIndex(({ type }) => type === currentActiveType);
-    const nextIndex = (currentWalletIndex + 1) % availableWallets.length;
+    const filteredWallets = availableWallets.filter(({ type }) => type !== BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
+    const currentActiveType = getActiveAccountType(filteredWallets);
+    const currentWalletIndex = filteredWallets.findIndex(({ type }) => type === currentActiveType);
+    const nextIndex = (currentWalletIndex + 1) % filteredWallets.length;
 
-    return availableWallets[nextIndex] || {};
+    return filteredWallets[nextIndex] || {};
   };
 
   changeAcc = (nextWallet: Account, callback?: () => void, noFullScreenLoader?: boolean) => {
     const {
       switchAccount,
-      setActiveBlockchainNetwork,
-      refreshBitcoinBalance,
       handleWalletChange,
     } = this.props;
 
@@ -143,11 +140,6 @@ class WalletsPart extends React.Component<Props, State> {
       case ACCOUNT_TYPES.SMART_WALLET:
       case ACCOUNT_TYPES.KEY_BASED:
         switchAccount(id);
-        if (callback) callback();
-        break;
-      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-        refreshBitcoinBalance();
         if (callback) callback();
         break;
       default:
@@ -211,8 +203,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
-  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   toggleBalance: () => dispatch(toggleBalanceAction()),
 });
 

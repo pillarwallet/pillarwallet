@@ -47,7 +47,7 @@ import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActi
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
-import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
+import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC, BTC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
 
@@ -361,7 +361,7 @@ class AssetScreen extends React.Component<Props, State> {
         }}
         inset={{ bottom: 0 }}
       >
-        {token !== 'BTC' &&
+        {token !== BTC &&
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
@@ -427,7 +427,7 @@ class AssetScreen extends React.Component<Props, State> {
           />}
         </ScrollWrapper>
         }
-        {token === 'BTC' &&
+        {token === BTC &&
           <BTCView />
         }
         <ReceiveModal

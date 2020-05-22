@@ -50,7 +50,7 @@ import {
   SEND_COLLECTIBLE_CONFIRM,
   SEND_TOKEN_ASSETS,
 } from 'constants/navigationConstants';
-import { ETH, TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
+import { ETH, TOKENS, COLLECTIBLES, BTC } from 'constants/assetsConstants';
 
 import assetsConfig from 'configs/assetsConfig';
 
@@ -208,7 +208,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
   renderAssets = () => {
     const { assets, balances } = this.props;
-    const assetsArray = getAssetsAsList(assets);
+    const assetsArray = getAssetsAsList(assets).filter(({ symbol }) => symbol !== BTC);
     const nonEmptyAssets = assetsArray.filter((asset: any) => {
       return getBalance(balances, asset.symbol) !== 0;
     });

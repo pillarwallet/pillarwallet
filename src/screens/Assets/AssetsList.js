@@ -36,7 +36,7 @@ import Toast from 'components/Toast';
 import CheckAuth from 'components/CheckAuth';
 
 // constants
-import { defaultFiatCurrency, TOKENS, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, TOKENS, ETH, PLR, BTC } from 'constants/assetsConstants';
 import { ASSET, ASSETS } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 // actions
@@ -196,19 +196,17 @@ class AssetsList extends React.Component<Props, State> {
 
   initialiseBTC = (assetData: Object) => {
     return async (_: string, wallet: EthereumWallet) => {
-      const { navigation, setActiveBlockchainNetwork, initializeBitcoinWallet } = this.props;
+      const { navigation, initializeBitcoinWallet } = this.props;
       this.setState({ showPinModal: false });
       await initializeBitcoinWallet(wallet);
-      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
       navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
     };
   }
 
   navigateToBTCAsset = (assetData: Object) => {
-    const { navigation, setActiveBlockchainNetwork, bitcoinAddresses } = this.props;
+    const { navigation, bitcoinAddresses } = this.props;
     const isInitialised = bitcoinAddresses.length > 0;
     if (isInitialised) {
-      setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
       navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
       return;
     }
@@ -292,7 +290,7 @@ class AssetsList extends React.Component<Props, State> {
           if (scrollViewRef) scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
         }}
       >
-        {symbol !== 'BTC' &&
+        {symbol !== BTC &&
           <ListItemWithImage
             onPress={() => {
               navigation.navigate(ASSET,
@@ -315,16 +313,20 @@ class AssetsList extends React.Component<Props, State> {
             fallbackToGenericToken
           />
         }
-        {symbol === 'BTC' &&
+        {symbol === BTC &&
           <>
             <ListItemWithImage
-              actionLabel="BTC Wallet"
               onPress={() => {
               this.navigateToBTCAsset({ ...props, tokenType: TOKENS });
             }}
               address={props.address}
               label={name}
               avatarUrl={fullIconUrl}
+              balance={{
+                balance: formatAmount(balance),
+                value: formattedBalanceInFiat,
+                token: symbol,
+              }}
               fallbackToGenericToken
             />
             <CheckAuth
@@ -369,9 +371,9 @@ class AssetsList extends React.Component<Props, State> {
       .map(id => assets[id])
       .map(({ symbol, ...rest }) => ({
         symbol,
-        balance: getBalance(balances, symbol),
         paymentNetworkBalance: getBalance(paymentNetworkBalances, symbol),
         ...rest,
+        balance: getBalance(balances, symbol),
       }))
       .map(({ balance, symbol, paymentNetworkBalance, ...rest }) => ({ // eslint-disable-line
         balance,

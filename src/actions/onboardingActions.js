@@ -89,6 +89,7 @@ import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import { initializeBitcoinWalletAction } from 'actions/bitcoinActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -212,6 +213,7 @@ const finishRegistration = async ({
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
+    await dispatch(initializeBitcoinWalletAction({ mnemonic, privateKey }));
     // create smart wallet account only for new wallets
     const createNewAccount = !isImported;
     await dispatch(initSmartWalletSdkAction(privateKey));

@@ -45,6 +45,8 @@ import {
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   BITCOIN_ADDRESS_PREFIX,
+  ETH,
+  BTC,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
 
@@ -207,9 +209,9 @@ export const isValidNumber = (amount: string = '0') => {
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
   switch (assetSymbol) {
-    case 'ETH':
+    case ETH:
       return 4;
-    case 'BTC':
+    case BTC:
       return 8;
     default:
       return 2;

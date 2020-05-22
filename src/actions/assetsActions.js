@@ -33,6 +33,7 @@ import {
   FETCHING_INITIAL,
   FETCH_INITIAL_FAILED,
   ETH,
+  BTC,
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
@@ -77,6 +78,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { findMatchingContact } from 'utils/contacts';
+import { satoshisToBtc, totalBitcoinBalance } from 'utils/bitcoin';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
@@ -90,6 +92,7 @@ import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
+import { refreshBitcoinBalanceAction } from './bitcoinActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -378,8 +381,18 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
 
     const newBalances = await api.fetchBalances({
       address: walletAddress,
-      assets: getAssetsAsList(accountAssets).filter(({ symbol }) => symbol !== 'BTC'),
+      assets: getAssetsAsList(accountAssets).filter(({ symbol }) => symbol !== BTC),
     });
+
+    if (accountAssets.BTC) {
+      const btcBalance = await dispatch(refreshBitcoinBalanceAction(true));
+      if (btcBalance) {
+        newBalances.push({
+          balance: satoshisToBtc(btcBalance.confirmed).toString(),
+          symbol: BTC,
+        });
+      }
+    }
 
     if (!isEmpty(newBalances)) {
       await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
@@ -539,7 +552,12 @@ export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
 
-export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: AssetsByAccount, account: Account) => {
+export const getSupportedTokens = (
+  supportedAssets: Asset[],
+  accountsAssets: AssetsByAccount,
+  account: Account,
+  isBTCEnabled: ?boolean = false,
+) => {
   const accountId = getAccountId(account);
   const accountAssets = get(accountsAssets, accountId, {});
   const accountAssetsTickers = Object.keys(accountAssets);
@@ -547,6 +565,10 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
+  // Fix BTC if Enabled
+  if (isBTCEnabled && checkIfSmartWalletAccount(account) && !accountAssetsTickers.includes(BTC)) {
+    accountAssetsTickers.push(BTC);
+  }
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))
@@ -584,8 +606,8 @@ export const loadSupportedAssetsAction = () => {
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;
 
-    if (!supportedAssets.some(e => e.symbol === 'BTC')) {
-      const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
+    if (!supportedAssets.some(e => e.symbol === BTC)) {
+      const btcAsset = assetFixtures.find(e => e.symbol === BTC);
       if (btcAsset) {
         supportedAssets.push(btcAsset);
       }
@@ -604,13 +626,14 @@ export const checkForMissedAssetsAction = () => {
     const {
       accounts: { data: accounts },
       assets: { data: accountsAssets },
+      bitcoin: { data: { balances } },
     } = getState();
 
     await dispatch(loadSupportedAssetsAction());
     const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
-
+    const showBTC = !isEmpty(balances) && totalBitcoinBalance(balances) > 0;
     const accountUpdatedAssets = accounts
-      .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
+      .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc, showBTC))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     // check tx history if some assets are not enabled

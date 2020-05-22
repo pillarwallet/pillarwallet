@@ -7,17 +7,21 @@ import {
   activeBlockchainSelector,
   bitcoinAddressSelector,
 } from './selectors';
+import { accountAssetsSelector } from './assets';
 
 export const accountHistorySelector = createSelector(
   historySelector,
   activeAccountIdSelector,
   activeBlockchainSelector,
   bitcoinAddressSelector,
-  (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses) => {
-    if (activeBlockchainNetwork && activeBlockchainNetwork === 'BITCOIN' && bitcoinAddresses.length) {
-      return orderBy(history[bitcoinAddresses[0].address] || [], ['createdAt'], ['desc']);
+  accountAssetsSelector,
+  (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses, activeAssets) => {
+    let mergedHistory = [];
+    if (bitcoinAddresses.length && (activeAssets.BTC || activeBlockchainNetwork === 'BITCOIN')) {
+      mergedHistory = [...(history[bitcoinAddresses[0].address] || [])];
     }
     if (!activeAccountId) return [];
-    return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
+    mergedHistory = [...mergedHistory, ...(history[activeAccountId] || [])];
+    return orderBy(mergedHistory, ['createdAt'], ['desc']);
   },
 );

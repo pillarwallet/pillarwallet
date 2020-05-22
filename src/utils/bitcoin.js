@@ -27,7 +27,7 @@ import { getRate } from 'utils/assets';
 export const satoshisToBtc = (satoshis: number): number => satoshis * 0.00000001;
 export const btcToSatoshis = (btc: number): number => Math.floor(btc * 100000000);
 
-const totalBitcoinBalance = (balances: BitcoinBalance) => {
+export const totalBitcoinBalance = (balances: BitcoinBalance) => {
   const addressesBalances = Object.keys(balances).map(key => balances[key]);
 
   return addressesBalances.reduce((acc, { confirmed: balance }) => acc + balance, 0);
@@ -83,7 +83,7 @@ export const extractBitcoinTransactions = (address: string, transactions: BTCTra
       to: toAddress,
       from: fromAddress,
       createdAt: new Date(tx.details.blockTime).getTime() / 1000,
-      asset: 'BTC',
+      asset: BTC,
       nbConfirmations: tx.details.confirmations,
       status,
       value,
