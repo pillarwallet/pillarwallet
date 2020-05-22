@@ -41,6 +41,7 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 
 // utils
+import { findKeyBasedAccount, getAccountAddress } from 'utils/accounts';
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { getUserName } from 'utils/contacts';
@@ -58,6 +59,7 @@ import { ETH } from 'constants/assetsConstants';
 
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
+import type { Accounts } from 'models/Account';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
@@ -97,6 +99,7 @@ type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   // isSmartAccount: boolean,
+  accounts: Accounts,
   useGasToken: boolean,
 };
 
@@ -198,13 +201,17 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     this.setState({ gettingFee: true });
 
     const {
-      activeAccountAddress,
+      accounts,
+      // activeAccountAddress,
       // isSmartAccount
     } = this.props;
 
     // let gasLimit;
     // if (!isSmartAccount) {
-    const gasLimit = await calculateGasEstimate({ ...this.transactionDetails, from: activeAccountAddress });
+    const keyBasedAccount = findKeyBasedAccount(accounts);
+    if (!keyBasedAccount) return;
+    const accountAddress = getAccountAddress(keyBasedAccount);
+    const gasLimit = await calculateGasEstimate({ ...this.transactionDetails, from: accountAddress });
     this.setState({ gasLimit });
     // }
 
@@ -549,11 +556,13 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  accounts: { data: accounts },
   contacts: { data: contacts },
   session: { data: session },
   history: { gasInfo },
   assets: { supportedAssets },
 }) => ({
+  accounts,
   contacts,
   session,
   gasInfo,
