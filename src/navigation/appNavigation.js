@@ -245,6 +245,7 @@ import {
   REFERRAL_SENT,
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
+  SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -567,6 +568,14 @@ const sendBitcoinFromAssetFlow = createStackNavigator({
   [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
 }, StackNavigatorModalConfig);
 
+// SEND BITCOIN FROM ASSET FLOW
+const sendBitcoinWhenReceiverIsKnownFlow = createStackNavigator({
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
+  [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
+  [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
+}, StackNavigatorModalConfig);
+
 // SEND COLLECTIBLE FROM ASSET FLOW
 const sendCollectibleFromAssetFlow = createStackNavigator({
   [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
@@ -700,6 +709,7 @@ const AppFlowNavigation = createStackNavigator(
     [TAB_NAVIGATION]: tabNavigation,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [SEND_BITCOIN_FLOW]: sendBitcoinFromAssetFlow,
+    [SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW]: sendBitcoinWhenReceiverIsKnownFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,

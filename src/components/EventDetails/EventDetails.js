@@ -98,6 +98,7 @@ import {
   SEND_SYNTHETIC_ASSET,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
+  SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
 } from 'constants/navigationConstants';
 
 // selectors
@@ -548,6 +549,7 @@ export class EventDetail extends React.Component<Props, State> {
       supportedAssets,
       setActiveBlockchainNetwork,
       refreshBitcoinBalance,
+      isForAllAccounts,
     } = this.props;
     onClose();
     setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
@@ -567,12 +569,21 @@ export class EventDetail extends React.Component<Props, State> {
       iconColor: iconUrl,
     };
 
-    navigation.navigate(SEND_TOKEN_AMOUNT, {
-      assetData,
-      receiver: btcReceiverAddress,
-      source: 'Home',
-      receiverEnsName: '',
-    });
+    if (isForAllAccounts) {
+      navigation.navigate(SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW, {
+        assetData,
+        receiver: btcReceiverAddress,
+        source: 'Home',
+        receiverEnsName: '',
+      });
+    } else {
+      navigation.navigate(SEND_TOKEN_AMOUNT, {
+        assetData,
+        receiver: btcReceiverAddress,
+        source: 'Home',
+        receiverEnsName: '',
+      });
+    }
   };
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
@@ -949,7 +960,11 @@ export class EventDetail extends React.Component<Props, State> {
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
             } else if (isBitcoinTrx) {
-              buttons = bitcoinFeatureEnabled ? [sendBackBtc] : [];
+              if (bitcoinFeatureEnabled) {
+                buttons = isPending ? [viewOnBlockchainButton] : [sendBackBtc];
+              } else {
+                buttons = [];
+              }
             } else if (contactFound) {
               buttons = isPending
                 ? [messageButton, viewOnBlockchainButtonSecondary]
@@ -960,15 +975,19 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
           } else if (isBitcoinTrx) {
-            buttons = bitcoinFeatureEnabled ? [sendMoreBtc] : [];
+            if (bitcoinFeatureEnabled) {
+              buttons = isPending ? [viewOnBlockchainButton] : [sendMoreBtc];
+            } else {
+              buttons = [];
+            }
           } else if (contactFound) {
             buttons = isPending
               ? [messageButton, viewOnBlockchainButtonSecondary]
               : [messageButton, sendMoreButtonSecondary];
+          } else if (isBetweenAccounts) {
+            buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
             buttons = [viewOnBlockchainButton, inviteToPillarButton];
-          } else if (isBetweenAccounts) {
-            buttons = isFromKWToSW ? [topUpMore] : [sendMoreToAddress];
           } else {
             buttons = [sendMoreToAddress, inviteToPillarButton];
           }
