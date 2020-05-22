@@ -22,10 +22,8 @@ import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
-import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
@@ -42,31 +40,26 @@ import { Paragraph, BaseText, MediumText } from 'components/Typography';
 import ButtonText from 'components/ButtonText';
 
 // utils
-import {
-  fontSizes,
-  fontStyles,
-  spacing,
-} from 'utils/variables';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
-import { formatAmount, getCurrencySymbol } from 'utils/common';
-import {
-  getRate,
-  getBalance,
-  addressesEqual,
-} from 'utils/assets';
+import { ETH } from 'constants/assetsConstants';
+import { formatTransactionFee } from 'utils/common';
+import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // services
 import smartWalletService from 'services/smartWallet';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
-// types, models
-import type { Balances, Rates } from 'models/Asset';
+// types
+import type { Balances } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
@@ -76,14 +69,14 @@ type Props = {
   fetchGasInfo: () => void,
   gasInfo: GasInfo,
   isOnline: boolean,
-  baseFiatCurrency: ?string,
-  rates: Rates,
-  removeConnectedDevice: (device: ConnectedDevice) => void,
+  removeConnectedDevice: (device: ConnectedDevice, payWithGasToken: boolean) => void,
   removingDeviceAddress: ?string,
+  useGasToken: boolean,
 };
 
 type State = {
-  deployEstimateFee: BigNumber,
+  gettingFee: boolean,
+  txFeeInfo: ?TransactionFeeInfo,
 };
 
 const DetailsTitle = styled(BaseText)`
@@ -110,9 +103,11 @@ const WarningMessage = styled(Paragraph)`
 `;
 
 class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State> {
-  gasLimit: number = 0;
   device: ConnectedDevice;
-  state = { deployEstimateFee: 0 };
+  state = {
+    txFeeInfo: null,
+    gettingFee: true,
+  };
 
   constructor(props: Props) {
     super(props);
@@ -120,39 +115,35 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
   }
 
   componentDidMount() {
-    this.updateGasInfoAndBalances();
+    this.props.fetchGasInfo();
     this.updateDeviceDeploymentFee();
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isOnline, gasInfo } = this.props;
+    const { isOnline, fetchGasInfo } = this.props;
     if (prevProps.isOnline !== isOnline && isOnline) {
-      this.updateGasInfoAndBalances();
-      this.updateDeviceDeploymentFee();
-    } else if (!isEqual(prevProps.gasInfo, gasInfo)) {
-      this.updateDeviceDeploymentFee();
+      fetchGasInfo();
     }
+    this.updateDeviceDeploymentFee();
   }
 
-  updateGasInfoAndBalances = () => {
-    const { fetchGasInfo, fetchAssetsBalances } = this.props;
-    fetchGasInfo();
-    fetchAssetsBalances();
-  };
-
   updateDeviceDeploymentFee = () => {
-    const { gasInfo } = this.props;
-    const { deployEstimateFee: currentDeployEstimateFee } = this.state;
-    // set "getting fee" (fee is 0) state
-    if (currentDeployEstimateFee !== 0) this.setState({ deployEstimateFee: 0 });
-    smartWalletService.estimateAccountDeviceUnDeployment(this.device.address, gasInfo)
-      .then(deployEstimateFee => this.setState({ deployEstimateFee }))
-      .catch(() => {});
+    let txFeeInfo = { fee: new BigNumber(0) };
+    this.setState({ gettingFee: true }, async () => {
+      const estimated = await smartWalletService
+        .estimateAccountDeviceUnDeployment(this.device.address)
+        .then(data => buildTxFeeInfo(data, this.props.useGasToken))
+        .catch(() => null);
+
+      if (estimated) txFeeInfo = estimated;
+
+      this.setState({ gettingFee: false, txFeeInfo });
+    });
   };
 
   onNextClick = () => {
-    const { navigation, removeConnectedDevice } = this.props;
-    removeConnectedDevice(this.device);
+    const { navigation, removeConnectedDevice, useGasToken } = this.props;
+    removeConnectedDevice(this.device, useGasToken);
     navigation.goBack();
   };
 
@@ -161,40 +152,36 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
   renderDetails = () => {
     const {
       balances,
-      baseFiatCurrency,
-      rates,
       isOnline,
       navigation,
       removingDeviceAddress,
     } = this.props;
-    const { deployEstimateFee } = this.state;
+    const { txFeeInfo, gettingFee } = this.state;
     const { address: deviceAddress } = this.device;
 
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const fiatSymbol = getCurrencySymbol(fiatCurrency);
+    // fee
+    const txFeeBn = txFeeInfo?.fee || new BigNumber(0);
+    const balanceCheckTransaction = {
+      txFeeInWei: txFeeBn,
+      amount: 0,
+      gasToken: txFeeInfo?.gasToken,
+    };
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
+    const feeDisplayValue = formatTransactionFee(txFeeBn, txFeeInfo?.gasToken);
+    const feeSymbol = txFeeInfo?.gasToken?.symbol || ETH;
 
-    const feeAccountDeviceDeployEthBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
-    const feeAccountDeviceDeployFiatBN = feeAccountDeviceDeployEthBN.multipliedBy(getRate(rates, ETH, fiatCurrency));
-    const feeAccountDeviceDeployEthFormatted = formatAmount(feeAccountDeviceDeployEthBN.toString());
-    const accountDeviceDeployFee =
-      `${feeAccountDeviceDeployEthFormatted} ETH (${fiatSymbol}${feeAccountDeviceDeployFiatBN.toFixed(2)})`;
-
-    const etherBalanceBN = new BigNumber(getBalance(balances, ETH));
-    const notEnoughEtherForContractDeployment = etherBalanceBN.lt(feeAccountDeviceDeployEthBN);
-
-    let errorMessage = '';
+    let errorMessage;
     if (!isOnline) {
-      errorMessage = 'You need to be online in order to remove device.';
-    } else if (notEnoughEtherForContractDeployment) {
-      errorMessage = 'There is not enough balance.';
+      errorMessage = 'You need to be online in order to remove Smart Wallet device.';
+    } else if (!isEnoughForFee) {
+      errorMessage = `Not enough ${feeSymbol} for transaction fee`;
     }
 
-    const isGettingDeploymentFee = isOnline && parseFloat(deployEstimateFee.toString()) <= 0;
-    const submitButtonTitle = isGettingDeploymentFee
+    const submitButtonTitle = isOnline && gettingFee
       ? 'Getting fee..'
-      : 'Confirm Remove';
-    const isSubmitDisabled = !isEmpty(errorMessage) || isGettingDeploymentFee;
+      : 'Confirm';
 
+    const isSubmitDisabled = !isEmpty(errorMessage) || gettingFee;
     const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, deviceAddress);
 
     return (
@@ -204,9 +191,9 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
           <DetailsValue>{deviceAddress}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
-          <DetailsTitle>Est. fee for removing device</DetailsTitle>
-          {isGettingDeploymentFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
-          {!isGettingDeploymentFee && <DetailsValue>{accountDeviceDeployFee}</DetailsValue>}
+          <DetailsTitle>Est. fee for removing transaction</DetailsTitle>
+          {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
+          {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>
         {!isEmpty(errorMessage) && <WarningMessage small>{errorMessage}</WarningMessage>}
         {!isDeviceBeingRemoved &&
@@ -254,19 +241,16 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
 const mapStateToProps = ({
   session: { data: { isOnline } },
   history: { gasInfo },
-  appSettings: { data: { baseFiatCurrency } },
-  rates: { data: rates },
   connectedDevices: { removingDeviceAddress },
 }: RootReducerState): $Shape<Props> => ({
   isOnline,
   gasInfo,
-  baseFiatCurrency,
-  rates,
   removingDeviceAddress,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

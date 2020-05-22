@@ -473,22 +473,12 @@ class SmartWallet {
     };
   }
 
-  async estimateAccountDeviceDeployment(
-    deviceAddress: string,
-    gasInfo: GasInfo,
-    gasToken: ?GasToken,
-  ) {
-    const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(() => {});
-    return calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT, gasToken);
+  estimateAccountDeviceDeployment(deviceAddress: string) {
+    return this.sdk.estimateAccountDeviceDeployment(deviceAddress);
   }
 
-  async estimateAccountDeviceUnDeployment(
-    deviceAddress: string,
-    gasInfo: GasInfo,
-    gasToken: ?GasToken,
-  ) {
-    const unDeployEstimate = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress).catch(() => {});
-    return calculateEstimate(unDeployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT, gasToken);
+  estimateAccountDeviceUnDeployment(deviceAddress: string) {
+    return this.sdk.estimateAccountDeviceUnDeployment(deviceAddress);
   }
 
   getTransactionStatus(hash: string) {

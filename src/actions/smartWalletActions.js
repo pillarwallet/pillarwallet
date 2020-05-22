@@ -96,19 +96,6 @@ import { activeAccountAddressSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
-// actions
-import { addAccountAction, setActiveAccountAction, switchAccountAction } from 'actions/accountsActions';
-import { saveDbAction } from 'actions/dbActions';
-import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from 'actions/assetsActions';
-import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import {
-  fetchGasInfoAction,
-  fetchSmartWalletTransactionsAction,
-  insertTransactionAction,
-} from 'actions/historyActions';
-import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from 'actions/connectedDevicesActions';
-import { extractEnsInfoFromTransactionsAction } from 'actions/ensRegistryActions';
-
 // types
 import type { BalancesStore, Assets } from 'models/Asset';
 import type {
@@ -152,6 +139,16 @@ import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getPrivateKeyFromPin } from 'utils/wallet';
 
 // actions
+import { addAccountAction, setActiveAccountAction, switchAccountAction } from './accountsActions';
+import { saveDbAction } from './dbActions';
+import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
+import { fetchCollectiblesAction } from './collectiblesActions';
+import {
+  fetchGasInfoAction,
+  fetchSmartWalletTransactionsAction,
+  insertTransactionAction,
+} from './historyActions';
+import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { setInitialPreferredGasTokenAction } from './appSettingsActions';
 
@@ -574,8 +571,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       reportLog('Missing Smart Wallet SDK constant', { path });
     }
 
-    // on wallet deployed or new device added
-    const accountState = get(getState(), 'smartWallet.upgrade.status', '');
     /**
      * This event can happen not just on single device deployment, but
      * on initial account deployment as well, this is because initial account
@@ -1420,11 +1415,11 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
 };
 
 export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch) => {
     await dispatch(fetchGasInfoAction());
-    const gasInfo = get(getState(), 'history.gasInfo', {});
-    const deployEstimateFee = await smartWalletService.estimateAccountDeviceUnDeployment(deviceAddress, gasInfo);
-    const deployEstimateFeeBN = new BigNumber(utils.formatEther(deployEstimateFee.toString()));
+    const estimate = await smartWalletService.estimateAccountDeviceUnDeployment(deviceAddress);
+    const estimateFeeBN = estimate?.fee || new BigNumber(0);
+    const deployEstimateFeeBN = new BigNumber(utils.formatEther(estimateFeeBN.toString()));
     const etherBalanceBN = smartWalletService.getAccountRealBalance();
     if (etherBalanceBN.lt(deployEstimateFeeBN)) {
       Toast.show({

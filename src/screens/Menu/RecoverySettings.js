@@ -43,7 +43,7 @@ import {
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // selectors
-import { isSmartWalletActivatedSelector } from 'selectors';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
