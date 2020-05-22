@@ -362,15 +362,17 @@ class EventDetail extends React.Component<Props, State> {
       return `Fee ${formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken'))}`;
     }
 
+    const asset = gasUsed ? ETH : BTC;
+
     if (gasUsed) {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       formattedFee = parseFloat(utils.formatEther(fee.toString()));
     } else {
       formattedFee = parseFloat(formatUnits(btcFee, assetDecimals));
     }
-    const rate = getRate(rates, ETH, fiatCurrency);
+    const rate = getRate(rates, asset, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
-    const feeLabel = `Fee ${formattedFee} ETH (${formattedFiatValue})`;
+    const feeLabel = `Fee ${formattedFee} ${asset} (${formattedFiatValue})`;
     return feeLabel;
   };
 
@@ -988,7 +990,7 @@ class EventDetail extends React.Component<Props, State> {
             eventData.fee = this.getFeeLabel();
           }
         }
-        if (activeBlockchainNetwork === 'BITCOIN') {
+        if (event.asset === BTC) {
           eventData.actionSubtitle = isReceived ? 'to Bitcoin wallet' : 'from Bitcoin wallet';
         }
     }

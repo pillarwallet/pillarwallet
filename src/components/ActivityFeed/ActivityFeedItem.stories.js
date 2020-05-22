@@ -321,7 +321,6 @@ storiesOf('ActivityFeedItem', module)
   .add('Bitcoin received', () => (
     <ActivityFeedItem
       {...reduxData}
-      activeBlockchainNetwork="BITCOIN"
       event={{
         type: TRANSACTION_EVENT,
         from: '0x111111',
@@ -334,7 +333,6 @@ storiesOf('ActivityFeedItem', module)
   .add('Bitcoin sent', () => (
     <ActivityFeedItem
       {...reduxData}
-      activeBlockchainNetwork="BITCOIN"
       event={{
         type: TRANSACTION_EVENT,
         to: '0x111111',

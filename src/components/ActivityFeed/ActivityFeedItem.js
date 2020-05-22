@@ -75,6 +75,7 @@ import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { BTC } from 'constants/assetsConstants';
 
 // selectors
 import {
@@ -450,7 +451,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         }
     }
     data.itemStatusIcon = isPending ? TX_PENDING_STATUS : '';
-    if (activeBlockchainNetwork === 'BITCOIN') {
+    if (event.asset === BTC) {
       data.subtext = 'Bitcoin wallet';
     }
     return data;
