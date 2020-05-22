@@ -248,7 +248,6 @@ class SlideModal extends React.Component<Props, *> {
             onClose={this.hideModal}
             wrapperStyle={{ backgroundColor: 'transparent' }}
             noHorizonatalPadding={!fullScreen && !noPadding}
-            leftSideFlex={centerTitle ? null : 4}
             noBack
             forceInsetTop={insetTop ? 'always' : 'never'}
             {...headerProps}

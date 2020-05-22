@@ -118,7 +118,6 @@ class ReferFriends extends React.PureComponent<Props> {
               onPress: () => Intercom.displayMessenger(),
             },
           ],
-          sideFlex: 2,
         }}
       >
         <ScrollView contentContainerStyle={{ paddingTop: 24, paddingHorizontal: spacing.layoutSides }}>
