@@ -332,7 +332,7 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  getReferralRewardValue(walletId: string, referralToken: ?string) {
+  getReferralCampaignsInfo(walletId: string, referralToken: ?string) {
     const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
@@ -347,8 +347,10 @@ class SDKWrapper {
       .then(({ data }) => {
         const campaignsData = get(data, 'campaigns', {});
         return Object.keys(campaignsData).reduce((memo, campaign) => {
-          if (!campaignsData[campaign].address) return memo;
-          return [...memo, campaignsData[campaign].address];
+          if (!campaignsData[campaign].rewards && !campaignsData[campaign].rewards.length) return memo;
+          const campaignsAddresses = campaignsData[campaign].rewards.map(({ rewardAddress }) => rewardAddress)
+            .filter(n => n);
+          return [...memo, ...campaignsAddresses];
         }, []);
       })
       .catch(() => []);

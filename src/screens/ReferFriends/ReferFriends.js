@@ -59,6 +59,7 @@ type Props = {
   isSendingInvite: boolean,
   hasAllowedToAccessContacts: boolean,
   sentInvitationsCount: SentInvitationsCount,
+  isPillarRewardCampaignActive: boolean,
 };
 
 const INSIGHT_ITEMS = [
@@ -69,10 +70,6 @@ const INSIGHT_ITEMS = [
   {
     title: 'Give Smart Wallet for free',
     body: 'Friends who install Pillar with your link will get free Smart Wallet activation.',
-  },
-  {
-    title: 'Get free PLR',
-    body: 'Earn meta-tokens for referring friends.',
   },
 ];
 
@@ -103,16 +100,18 @@ class ReferFriends extends React.PureComponent<Props> {
       removeContactForReferral,
       isSendingInvite,
       sentInvitationsCount,
+      isPillarRewardCampaignActive,
     } = this.props;
 
     const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
     const hasAddedContacts = !!mappedContactsToInvite.length;
     const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - mappedContactsToInvite.length;
     const availableInvitesText = !availableInvites ? 0 : `${availableInvites} more`;
+    const referralsOrInvitations = isPillarRewardCampaignActive ? 'referrals' : 'invitations';
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Refer friends' }],
+          centerItems: [{ title: isPillarRewardCampaignActive ? 'Refer friends' : 'Invite friends' }],
           rightItems: [
             {
               link: 'Support',
@@ -125,13 +124,24 @@ class ReferFriends extends React.PureComponent<Props> {
         <ScrollView contentContainerStyle={{ paddingTop: 24, paddingHorizontal: spacing.layoutSides }}>
           <Insight
             isVisible
-            insightNumberedList={INSIGHT_ITEMS}
+            insightNumberedList={isPillarRewardCampaignActive
+              ? [
+                  ...INSIGHT_ITEMS,
+                  {
+                    title: 'Get free PLR',
+                    body: 'Earn meta-tokens for referring friends.',
+                  },
+                ]
+              : INSIGHT_ITEMS
+            }
             wrapperPadding={0}
             wrapperStyle={{ marginBottom: hasAddedContacts ? 34 : 40 }}
           />
           {hasAddedContacts && !isSendingInvite &&
             <React.Fragment>
-              <MediumText accent>{`Your referrals (${availableInvitesText} available today)`}</MediumText>
+              <MediumText accent>
+                {`Your ${referralsOrInvitations} (${availableInvitesText} available today)`}
+              </MediumText>
               <ClosablePillList
                 listItems={mappedContactsToInvite}
                 onItemClose={(id) => removeContactForReferral(id)}
@@ -146,11 +156,12 @@ class ReferFriends extends React.PureComponent<Props> {
                   marginBottom={4}
                 />
               </ClosablePillList>
+              {!!isPillarRewardCampaignActive &&
               <BaseText style={{ marginTop: spacing.large }} secondary small>
                 Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after
                 confirming their phone number/email address. You will receive your reward after your contact has been
                 rewarded.
-              </BaseText>
+              </BaseText>}
             </React.Fragment>}
           <ButtonWrapper justifyCenter={hasAddedContacts}>
             <Button
@@ -174,12 +185,14 @@ const mapStateToProps = ({
     isSendingInvite,
     hasAllowedToAccessContacts,
     sentInvitationsCount,
+    isPillarRewardCampaignActive,
   },
 }: RootReducerState): $Shape<Props> => ({
   addedContactsToInvite,
   isSendingInvite,
   hasAllowedToAccessContacts,
   sentInvitationsCount,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
