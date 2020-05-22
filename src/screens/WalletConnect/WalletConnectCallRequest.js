@@ -68,7 +68,10 @@ import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transac
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector, useGasTokenSelector } from 'selectors/smartWallet';
+import {
+  // isActiveAccountSmartWalletSelector,
+  useGasTokenSelector,
+} from 'selectors/smartWallet';
 
 // local components
 import withWCRequests from './withWCRequests';
@@ -93,7 +96,7 @@ type Props = {
   acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  isSmartAccount: boolean,
+  // isSmartAccount: boolean,
   useGasToken: boolean,
 };
 
@@ -161,10 +164,17 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { fetchGasInfo, isSmartAccount } = this.props;
+    const {
+      fetchGasInfo,
+      // TODO: if we introduce both KW and SW support, we need to properly tell which account is connected
+      // (not which is active). If we drop KW, delete all the non-SW code.
+      // isSmartAccount,
+    } = this.props;
     const requestMethod = get(this.request, 'method');
     if (['eth_sendTransaction', 'eth_signTransaction'].includes(requestMethod)) {
-      if (!isSmartAccount) fetchGasInfo();
+      // if (!isSmartAccount) {
+      fetchGasInfo();
+      // }
       this.fetchTransactionEstimate();
     }
   }
@@ -187,17 +197,22 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (this.unsupportedTransaction) return;
     this.setState({ gettingFee: true });
 
-    const { activeAccountAddress, isSmartAccount } = this.props;
+    const {
+      activeAccountAddress,
+      // isSmartAccount
+    } = this.props;
 
-    let gasLimit;
-    if (!isSmartAccount) {
-      gasLimit = await calculateGasEstimate({ ...this.transactionDetails, from: activeAccountAddress });
-      this.setState({ gasLimit });
-    }
+    // let gasLimit;
+    // if (!isSmartAccount) {
+    const gasLimit = await calculateGasEstimate({ ...this.transactionDetails, from: activeAccountAddress });
+    this.setState({ gasLimit });
+    // }
 
-    const txFeeInfo = isSmartAccount
-      ? await this.getSmartWalletTxFee()
-      : this.getKeyWalletTxFee(gasLimit);
+    // const txFeeInfo = isSmartAccount
+    //   ? await this.getSmartWalletTxFee()
+    //   : this.getKeyWalletTxFee(gasLimit);
+
+    const txFeeInfo = this.getKeyWalletTxFee(gasLimit);
 
     this.setState({ txFeeInfo, gettingFee: false });
   };
@@ -549,7 +564,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
-  isSmartAccount: isActiveAccountSmartWalletSelector,
+  // isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
 });
 
