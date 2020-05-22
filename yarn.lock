@@ -1784,6 +1784,11 @@
     eslint-plugin-react-native "3.6.0"
     prettier "1.16.4"
 
+"@react-native-community/hooks@^2.5.1":
+  version "2.5.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@react-native-community/hooks/-/hooks-2.5.1.tgz#545c76d1a6203532a8e776578bbaaa64bb754cf6"
+  integrity sha1-VFx20aYgNTKo53ZXi7qqZLt1TPY=
+
 "@react-native-community/netinfo@^5.6.1":
   version "5.8.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@react-native-community/netinfo/-/netinfo-5.8.1.tgz#deeb447aa21bf040ce07f307f131e47dee7a5017"
