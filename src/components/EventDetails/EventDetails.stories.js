@@ -87,12 +87,10 @@ const reduxData = {
       asset: 'PLR',
       value: '1000000000000000000',
       hash: '0xHash1',
-      createdAt: '',
     }, {
       asset: 'ETH',
       value: '2000000000000000000',
       hash: '0xHash2',
-      createdAt: '',
     },
   ],
   accountAssets: [],
