@@ -39,7 +39,7 @@ import {
   INVALID_USERNAME,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, HOME } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, HOME, REFERRAL_INCOMING_REWARD } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -81,7 +81,12 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction, changeUseBiometricsAction, updateAppSettingsAction } from 'actions/appSettingsActions';
+import {
+  setAppThemeAction,
+  changeUseBiometricsAction,
+  updateAppSettingsAction,
+  setInitialPreferredGasTokenAction,
+} from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -89,6 +94,7 @@ import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -226,6 +232,9 @@ const finishRegistration = async ({
     dispatch(managePPNInitFlagAction());
   }
 
+  // set initial preferredGasToken value. Should be called after we connect to Archanova
+  dispatch(setInitialPreferredGasTokenAction());
+
   await dispatch({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
@@ -238,17 +247,29 @@ const finishRegistration = async ({
   } else {
     await setKeychainDataObject(keychainData);
   }
+  dispatch(fetchReferralRewardAction());
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean) => {
+const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
   toastWalletBackup(isWalletBackedUp);
 
-  const navigateToAssetsAction = NavigationActions.navigate({
+  const navigateToHomeScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: HOME }),
   });
-  navigate(navigateToAssetsAction);
+
+  const navigateToIncomingRewardScreen = NavigationActions.navigate({
+    routeName: APP_FLOW,
+    params: {},
+    action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
+  });
+
+  if (showIncomingReward) {
+    navigate(navigateToIncomingRewardScreen);
+  } else {
+    navigate(navigateToHomeScreen);
+  }
 };
 
 export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
@@ -381,9 +402,12 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
-    // STEP 7: all done, navigate to the home screen
+    // STEP 7: check if user ir referred to install the app
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    // STEP 8: all done, navigate to the home screen or incoming reward screen
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+    navigateToAppFlow(isWalletBackedUp, !!referralToken);
   };
 };
 
@@ -441,7 +465,10 @@ export const registerOnBackendAction = () => {
     });
 
     const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    navigateToAppFlow(isWalletBackedUp, !!referralToken);
   };
 };
 

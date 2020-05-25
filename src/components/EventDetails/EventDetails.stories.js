@@ -96,6 +96,8 @@ const reduxData = {
   accountAssets: [],
   isPPNActivated: true,
   history: [],
+  referralRewardIssuersAddresses: [],
+  isPillarRewardCampaignActive: true,
 };
 
 const actions = {
@@ -132,7 +134,12 @@ storiesOf('EventDetail', module)
       {...actions}
       {...commonProps}
       isSmartWalletActivated={false}
-      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Smart Wallet created' }}
+      event={{
+        type: USER_EVENT,
+        subType: WALLET_CREATE_EVENT,
+        eventTitle: 'Smart Wallet created',
+        hash: '0xHash',
+      }}
       itemData={{
         label: 'Smart wallet',
         itemImageSource: smartWalletIcon,
@@ -146,7 +153,7 @@ storiesOf('EventDetail', module)
       {...actions}
       {...commonProps}
       isPPNActivated={false}
-      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT }}
+      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT, hash: '0xHash' }}
       itemData={{
         label: 'Smart wallet',
         itemImageSource: smartWalletIcon,
@@ -159,7 +166,7 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT }}
+      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT, hash: '0xHash' }}
       itemData={{
         label: 'Smart wallet',
         itemImageSource: smartWalletIcon,
@@ -176,6 +183,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xKeyWallet',
         to: '0xSmartWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'Key wallet',
@@ -196,6 +204,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xKeyWallet',
         to: '0xSmartWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'Smart Wallet',
@@ -217,6 +226,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0x123456789123456789123456789',
         to: '0xSmartWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: '0x1234567...132456789',
@@ -240,6 +250,7 @@ storiesOf('EventDetail', module)
         from: '0x123456789123456789123456789',
         to: '0xSmartWallet',
         status: TX_PENDING_STATUS,
+        hash: '0xHash',
       }}
       itemData={{
         label: '0x1234567...132456789',
@@ -262,6 +273,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xContact',
         to: '0xSmartWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'alexander',
@@ -285,6 +297,7 @@ storiesOf('EventDetail', module)
         from: '0xContact',
         to: '0xSmartWallet',
         status: TX_PENDING_STATUS,
+        hash: '0xHash',
       }}
       itemData={{
         label: 'alexander',
@@ -307,6 +320,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xSmartWallet',
         to: '0x123456789123456789123456789',
+        hash: '0xHash',
       }}
       itemData={{
         label: '0x1234567...132456789',
@@ -329,6 +343,7 @@ storiesOf('EventDetail', module)
         from: '0xSmartWallet',
         to: '0x123456789123456789123456789',
         status: TX_PENDING_STATUS,
+        hash: '0xHash',
       }}
       itemData={{
         label: '0x1234567...132456789',
@@ -350,6 +365,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xSmartWallet',
         to: '0xContact',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'alexander',
@@ -372,6 +388,7 @@ storiesOf('EventDetail', module)
         from: '0xSmartWallet',
         to: '0xContact',
         status: TX_PENDING_STATUS,
+        hash: '0xHash',
       }}
       itemData={{
         label: 'alexander',
@@ -391,7 +408,12 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: USER_EVENT, subType: WALLET_CREATE_EVENT, eventTitle: 'Wallet created' }}
+      event={{
+        type: USER_EVENT,
+        subType: WALLET_CREATE_EVENT,
+        eventTitle: 'Wallet created',
+        hash: '0xHash',
+      }}
       itemData={{
         label: 'Key wallet',
         itemImageSource: keyWalletIcon,
@@ -434,6 +456,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0x123456789123456789123456789',
         to: 'KeyWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: '0x1234567...132456789',
@@ -456,6 +479,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xContact',
         to: '0xKeyWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'alexander',
@@ -478,6 +502,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xKeyWallet',
         to: '0x123456789123456789123456789',
+        hash: '0xHash',
       }}
       itemData={{
         label: '0x1234567...132456789',
@@ -499,6 +524,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xSmartWallet',
         to: '0xKeyWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'Smart wallet',
@@ -519,6 +545,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: '0xSmartWallet',
         to: '0xKeyWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'Key wallet',
@@ -540,6 +567,7 @@ storiesOf('EventDetail', module)
         type: COLLECTIBLE_TRANSACTION,
         from: '0xSmartWallet',
         to: '0xKeyWallet',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'CryptoKitty',
@@ -589,7 +617,7 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_TOPUP }}
+      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_TOPUP, hash: '0xHash' }}
       itemData={{
         label: 'Pillar Network',
         itemImageSource: PPNIcon,
@@ -604,7 +632,7 @@ storiesOf('EventDetail', module)
       {...reduxData}
       {...actions}
       {...commonProps}
-      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_TOPUP }}
+      event={{ type: TRANSACTION_EVENT, tag: PAYMENT_NETWORK_ACCOUNT_TOPUP, hash: '0xHash' }}
       itemData={{
         label: 'Smart Wallet',
         itemImageSource: smartWalletIcon,
@@ -626,6 +654,7 @@ storiesOf('EventDetail', module)
         to: '0xSmartWallet',
         asset: 'PLR',
         value: '1000000000000000000',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'alexander',
@@ -646,6 +675,7 @@ storiesOf('EventDetail', module)
         to: '0xContact',
         asset: 'PLR',
         value: '1000000000000000000',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'alexander',
@@ -661,6 +691,7 @@ storiesOf('EventDetail', module)
       event={{
         type: TRANSACTION_EVENT,
         tag: PAYMENT_NETWORK_TX_SETTLEMENT,
+        hash: '0xHash',
         extra: [{
           symbol: 'PLR',
           value: '1000000000000000000',
@@ -686,6 +717,7 @@ storiesOf('EventDetail', module)
       event={{
         type: TRANSACTION_EVENT,
         tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+        hash: '0xHash',
       }}
       itemData={{
         label: 'Pillar Network',
@@ -704,6 +736,7 @@ storiesOf('EventDetail', module)
       event={{
         type: TRANSACTION_EVENT,
         tag: PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+        hash: '0xHash',
       }}
       itemData={{
         label: 'Smart Wallet',
@@ -725,6 +758,7 @@ storiesOf('EventDetail', module)
         type: TRANSACTION_EVENT,
         from: 'someBitcoinAddress',
         to: 'bitcoinAddress',
+        hash: '0xHash',
       }}
       itemData={{
         label: 'someBitcoinAddress',
@@ -752,6 +786,7 @@ storiesOf('EventDetail', module)
         nbConfirmations: 25,
         status: 'confirmed',
         isPPNTransaction: false,
+        hash: '0xHash',
       }}
       itemData={{
         label: 'someBitcoinAddress',

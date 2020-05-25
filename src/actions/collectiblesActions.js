@@ -32,7 +32,6 @@ import type { Account } from 'models/Account';
 
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
-import { checkAssetTransferTransactionsAction } from './smartWalletActions';
 
 const parseCollectibleMedia = (data) => {
   const {
@@ -220,11 +219,7 @@ export const fetchAllAccountsCollectiblesHistoryAction = () => {
 
 
 export const fetchAllCollectiblesDataAction = (forAllAccounts?: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
-
+  return async (dispatch: Dispatch) => {
     if (forAllAccounts) {
       await dispatch(fetchAllAccountsCollectiblesAction());
       await dispatch(fetchAllAccountsCollectiblesHistoryAction());
@@ -232,7 +227,5 @@ export const fetchAllCollectiblesDataAction = (forAllAccounts?: boolean) => {
       await dispatch(fetchCollectiblesAction());
       await dispatch(fetchCollectiblesHistoryAction());
     }
-
-    if (smartWalletFeatureEnabled) dispatch(checkAssetTransferTransactionsAction());
   };
 };

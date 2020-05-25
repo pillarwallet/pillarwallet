@@ -21,7 +21,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import isEmpty from 'lodash.isempty';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -33,17 +32,18 @@ import Button from 'components/Button';
 import LoadingParagraph from 'components/LoadingParagraph';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { getCampaignRewardText } from 'utils/referrals';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { connect } from 'react-redux';
-import type { RewardsByCompany, ReferralReward } from 'reducers/referralsReducer';
+import type { RewardsByCompany } from 'reducers/referralsReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  rewards: RewardsByCompany,
+  rewardsByCampaign: RewardsByCompany,
   isFetchingRewards: boolean,
   fetchReferralReward: () => void,
 };
@@ -62,36 +62,10 @@ const Title = styled(MediumText)`
 
 const rewardBadge = require('assets/images/referralBadge.png');
 
-const getCampaignRewardText = (awardInfo: ReferralReward = {}) => {
-  const { asset, amount } = awardInfo;
-  return asset && amount ? `${amount} ${asset}` : '';
-};
-
-const getRewardText = (rewards: RewardsByCompany) => {
-  const { pillar, ...allOtherCampaigns } = rewards;
-  const referralCampaigns = Object.keys(allOtherCampaigns);
-  let rewardText = '';
-  let otherCampaignsRewardText = '';
-
-  if (pillar && !isEmpty(pillar)) {
-    rewardText = getCampaignRewardText(pillar);
-  }
-  if (referralCampaigns) {
-    referralCampaigns.forEach((campaign) => {
-      const text = getCampaignRewardText(allOtherCampaigns[campaign]);
-      if (!rewardText) {
-        otherCampaignsRewardText += `${text}`;
-      } else if (text) {
-        otherCampaignsRewardText += `, ${text}`;
-      }
-    });
-  }
-
-  if (otherCampaignsRewardText) {
-    rewardText += otherCampaignsRewardText;
-  }
-
-  return rewardText ? `${rewardText} and a badge` : 'a badge';
+const getRewardText = (rewards: RewardsByCompany, campaign: string) => {
+  const relatedCampaignRewards = rewards[campaign];
+  if (!relatedCampaignRewards) return '';
+  return getCampaignRewardText(relatedCampaignRewards);
 };
 
 class ReferralIncomingReward extends React.PureComponent<Props> {
@@ -101,8 +75,18 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
   }
 
   render() {
-    const { navigation, rewards = {}, isFetchingRewards } = this.props;
-    const rewardText = getRewardText(rewards);
+    const {
+      navigation,
+      rewardsByCampaign = {},
+      isFetchingRewards,
+    } = this.props;
+
+    // temp solution. Would be best to pass campaign via branch.io
+    const relatedCampaign = rewardsByCampaign['1world'] ? '1world' : 'pillar';
+
+    const rewardText = getRewardText(rewardsByCampaign, relatedCampaign);
+    const isGettingReward = rewardText;
+    const title = isGettingReward ? 'Your reward is on the way' : 'Thanks for joining Pillar';
 
     return (
       <ContainerWithHeader
@@ -114,28 +98,32 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
       >
         <ConfettiBackground>
           <Wrapper flex={1} center fullScreen>
-            <RewardBadge source={rewardBadge} />
-            <Title>Your reward is on the way</Title>
-            <LoadingParagraph
-              isLoading={isFetchingRewards}
-              text={'Thanks for joining Pillar.\n' +
-              `To celebrate this, we also give you ${rewardText}.\n` +
-              'You need to add and verify your email or phone in order to receive the reward.'}
-              paragraphProps={{
-                center: true,
-                style: {
-                  paddingHorizontal: 14,
-                  marginBottom: 30,
-                },
-              }}
-            />
-            <Button
-              title="Add details"
-              onPress={() => navigation.navigate(ADD_EDIT_USER)}
-              marginBottom={spacing.mediumLarge}
-              marginTop={40}
-              block
-            />
+            {!!isGettingReward && <RewardBadge source={rewardBadge} />}
+            <Title>{title}</Title>
+            {!!isGettingReward &&
+            <>
+              <LoadingParagraph
+                isLoading={isFetchingRewards}
+                text={'Thanks for joining Pillar.\n' +
+                `To celebrate this, we also give you ${rewardText}.\n` +
+                'You need to add and verify your email or phone in order to receive the reward. ' +
+                'Reward will be issued to new user only.'}
+                paragraphProps={{
+                  center: true,
+                  style: {
+                    paddingHorizontal: 14,
+                    marginBottom: 30,
+                  },
+                }}
+              />
+              <Button
+                title="Add details"
+                onPress={() => navigation.navigate(ADD_EDIT_USER)}
+                marginBottom={spacing.mediumLarge}
+                marginTop={40}
+                block
+              />
+            </>}
           </Wrapper>
         </ConfettiBackground>
       </ContainerWithHeader>
@@ -145,9 +133,9 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
 
 
 const mapStateToProps = ({
-  referrals: { rewards, isFetchingRewards },
+  referrals: { rewardsByCampaign, isFetchingRewards },
 }: RootReducerState): $Shape<Props> => ({
-  rewards,
+  rewardsByCampaign,
   isFetchingRewards,
 });
 

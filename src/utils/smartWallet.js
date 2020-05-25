@@ -21,7 +21,6 @@ import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
-import { GAS_TOKEN_ADDRESS } from 'react-native-dotenv';
 
 // constants
 import {
@@ -46,19 +45,14 @@ import { parseEstimatePayload } from 'services/smartWallet';
 // types
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Transaction, TransactionExtra } from 'models/Transaction';
-import type { Asset, Assets } from 'models/Asset';
+import type { TransactionFeeInfo, EstimatedTransactionFee, Transaction, TransactionExtra } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { EstimatePayload } from 'services/smartWallet';
 
 // local utils
 import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
-import {
-  addressesEqual,
-  getAssetDataByAddress,
-  getAssetsAsList,
-  getAssetSymbolByAddress,
-} from './assets';
+import { getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
@@ -70,7 +64,6 @@ const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 const getMessage = (
   status: ?string,
   isSmartWalletActive: boolean,
-  smartWalletState: SmartWalletReducerState,
 ) => {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
@@ -86,16 +79,6 @@ const getMessage = (
         title: 'Smart Wallet is being deployed now',
         message: 'You will be able to send assets once it\'s deployed.' +
           '\nCurrent average waiting time is 4 mins',
-      };
-    case SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS:
-      const { upgrade: { transfer: { transactions } } } = smartWalletState;
-      const total = transactions.length;
-      const complete = transactions.filter(tx => tx.status === TX_CONFIRMED_STATUS).length;
-      return {
-        title: 'Assets are being transferred to Smart Wallet',
-        message: 'You will be able to send assets once submitted transfer is complete' +
-          `${isSmartWalletActive ? ' and Smart Wallet is deployed' : ''}.` +
-          `\nCurrently ${complete} of ${total} assets are transferred.`,
       };
     default:
       return {};
@@ -124,7 +107,7 @@ export const getSmartWalletStatus = (
   const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
 
   const { upgrade: { status } } = smartWalletState;
-  const sendingBlockedMessage = getMessage(status, isSmartWalletActive, smartWalletState);
+  const sendingBlockedMessage = getMessage(status, isSmartWalletActive);
   return {
     hasAccount,
     status,
@@ -158,7 +141,7 @@ export const parseSmartWalletTransactions = (
   smartWalletTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
   assets: Asset[],
-  connectedAccount: ?Object,
+  isGasTokenSupported: boolean,
 ): Transaction[] => smartWalletTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
@@ -278,8 +261,7 @@ export const parseSmartWalletTransactions = (
       };
     } else if (transactionType === AccountTransactionTypes.AddDevice) {
       const addedDeviceAddress = get(smartWalletTransaction, 'extra.address');
-      const gasTokenSupported = accountHasGasTokenSupport(connectedAccount);
-      if (!isEmpty(addedDeviceAddress) && gasTokenSupported) {
+      if (!isEmpty(addedDeviceAddress) && isGasTokenSupported) {
         transaction = {
           ...transaction,
           tag: SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
@@ -329,11 +311,7 @@ export const isHiddenUnsettledTransaction = (
 export const isDeployingSmartWallet = (smartWalletState: SmartWalletReducerState, accounts: Accounts) => {
   const { upgrade: { deploymentStarted, deploymentData: { error } } } = smartWalletState;
   const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  return !error && (deploymentStarted
-    || [
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      SMART_WALLET_UPGRADE_STATUSES.TRANSFERRING_ASSETS,
-    ].includes(smartWalletStatus.status));
+  return !error && (deploymentStarted || smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYING);
 };
 
 export const getDeploymentData = (smartWalletState: SmartWalletReducerState) => {
@@ -344,17 +322,13 @@ export const getDeploymentHash = (smartWalletState: SmartWalletReducerState) => 
   return get(smartWalletState, 'upgrade.deploymentData.hash', '');
 };
 
-export const buildSmartWalletTransactionEstimate = (
-  apiEstimate: EstimatePayload,
-  accountAssets: Assets,
-  supportedAssets: Asset[],
-) => {
+export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload) => {
   const {
     gasAmount,
     gasPrice,
     totalCost,
     gasTokenCost,
-    gasToken: parsedGasToken,
+    gasToken,
   } = parseEstimatePayload(apiEstimate);
 
   let estimate = {
@@ -367,14 +341,9 @@ export const buildSmartWalletTransactionEstimate = (
   const hasGasTokenSupport = get(apiEstimate, 'relayerFeatures.gasTokenSupported', false);
   if (!hasGasTokenSupport) return estimate;
 
-  const gasToken = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
   const parsedGasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-  const parsedGasTokenAddress = get(parsedGasToken, 'address');
 
-  if (!isEmpty(gasToken)
-    && addressesEqual(parsedGasTokenAddress, gasToken.address)
-    && gasTokenCost
-    && gasTokenCost.gt(0)) {
+  if (gasTokenCost && gasTokenCost.gt(0)) {
     estimate = {
       ...estimate,
       gasToken,
@@ -383,4 +352,17 @@ export const buildSmartWalletTransactionEstimate = (
   }
 
   return estimate;
+};
+
+export const buildTxFeeInfo = (estimated: EstimatedTransactionFee, useGasToken: boolean): TransactionFeeInfo => {
+  const { gasTokenCost, gasToken, ethCost } = estimated;
+
+  if (!useGasToken || !gasToken) {
+    return { fee: ethCost };
+  }
+
+  return {
+    fee: gasTokenCost,
+    gasToken,
+  };
 };

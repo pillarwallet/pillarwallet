@@ -30,6 +30,7 @@ import Button from 'components/Button';
 import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 
+import { findFirstSmartAccount } from 'utils/accounts';
 import { fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -40,7 +41,6 @@ import {
   initSmartWalletSdkAction,
 } from 'actions/smartWalletActions';
 import { switchAccountAction } from 'actions/accountsActions';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -107,16 +107,14 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
     await initSmartWalletSdk(wallet.privateKey);
     await importSmartWalletAccounts(wallet.privateKey, true, {});
     const { accounts } = this.props;
-    const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || { id: '' });
+    const smartAccount = findFirstSmartAccount(accounts) || { id: '' };
     await switchAccount(smartAccount.id);
     navigation.navigate(ASSETS);
   };
 
   render() {
     const { showPinModal, showLoader } = this.state;
-    const {
-      theme,
-    } = this.props;
+    const { theme } = this.props;
     const colors = getThemeColors(theme);
 
     if (showLoader) {
@@ -141,9 +139,6 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
             <BodyText>
               Your new Pillar Smart Wallet is powered by a personal smart contract. This provides better asset
               management, security and recovery functionality.
-            </BodyText>
-            <BodyText>
-              In order to enable your Smart Wallet, it needs to be deployed which comes with a small fee.
             </BodyText>
             <BodyText>
               Pillar also recommends that you transfer most of your assets to your Smart Wallet due to the benefits

@@ -160,7 +160,7 @@ class CheckAuth extends React.Component<Props, State> {
         removeAppStateChangeListener(this.handleAppStateChange);
         checkPrivateKey(
           privateKey,
-          (_, wallet) => onPinValid(_, revealMnemonic ? constructWalletFromMnemonic(mnemonic) : wallet),
+          (_, wallet) => onPinValid(_, (revealMnemonic && mnemonic) ? constructWalletFromMnemonic(mnemonic) : wallet),
         );
         this.hideModal(modalProps);
       } else {

@@ -64,13 +64,6 @@ import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
-import UpgradeInfoScreen from 'screens/UpgradeToSmartWallet/UpgradeInfoScreen';
-import RecoveryAgentsScreen from 'screens/UpgradeToSmartWallet/RecoveryAgentsScreen';
-import ChooseAssetsScreen from 'screens/UpgradeToSmartWallet/ChooseAssetsScreen';
-import EditAssetAmountScreen from 'screens/UpgradeToSmartWallet/EditAssetAmountScreen';
-import UpgradeReviewScreen from 'screens/UpgradeToSmartWallet/UpgradeReviewScreen';
-import UpgradeConfirmScreen from 'screens/UpgradeToSmartWallet/UpgradeConfirmScreen';
-import SmartWalletUnlockScreen from 'screens/UpgradeToSmartWallet/SmartWalletUnlock';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
@@ -84,7 +77,7 @@ import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
-import SmartWalletIntroScreen from 'screens/UpgradeToSmartWallet/SmartWalletIntro';
+import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticAssetScreen from 'screens/SendSynthetic/SendSyntheticAsset';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
@@ -125,11 +118,7 @@ import {
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
-import {
-  fetchTransactionsHistoryNotificationsAction,
-  startListeningForBalanceChangeAction,
-  stopListeningForBalanceChangeAction,
-} from 'actions/historyActions';
+import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -186,14 +175,6 @@ import {
   BADGE,
   OTP,
   CONFIRM_CLAIM,
-  UPGRADE_TO_SMART_WALLET_FLOW,
-  UPGRADE_INFO,
-  RECOVERY_AGENTS,
-  CHOOSE_ASSETS_TO_TRANSFER,
-  EDIT_ASSET_AMOUNT_TO_TRANSFER,
-  UPGRADE_REVIEW,
-  UPGRADE_CONFIRM,
-  SMART_WALLET_UNLOCK,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
   FUND_TANK,
@@ -318,6 +299,7 @@ const assetsFlow = createStackNavigator(
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
     [CHAT]: ChatScreen,
+    [EXCHANGE_INFO]: ExchangeInfoScreen,
   },
   StackNavigatorConfig,
 );
@@ -606,19 +588,6 @@ const backupWalletFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
 }, StackNavigatorModalConfig);
 
-// UPGRADE TO SMART WALLET FLOW
-const smartWalletUpgradeFlow = createStackNavigator({
-  [SMART_WALLET_UNLOCK]: SmartWalletUnlockScreen,
-  [CHOOSE_ASSETS_TO_TRANSFER]: ChooseAssetsScreen,
-  [UPGRADE_INFO]: UpgradeInfoScreen,
-  [RECOVERY_AGENTS]: RecoveryAgentsScreen,
-  [EDIT_ASSET_AMOUNT_TO_TRANSFER]: EditAssetAmountScreen,
-  [UPGRADE_REVIEW]: UpgradeReviewScreen,
-  [UPGRADE_CONFIRM]: UpgradeConfirmScreen,
-}, StackNavigatorConfig);
-
-smartWalletUpgradeFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // PPN SEND TOKEN FROM ASSET FLOW
 const ppnSendTokenFromAssetFlow = createStackNavigator(
   {
@@ -651,7 +620,6 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
   [FUND_CONFIRM]: FundConfirmScreen,
-  [RECOVERY_AGENTS]: RecoveryAgentsScreen,
 }, StackNavigatorConfig);
 
 manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -717,7 +685,6 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
-    [UPGRADE_TO_SMART_WALLET_FLOW]: smartWalletUpgradeFlow,
     [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
     [TANK_SETTLE_FLOW]: tankSettleFlow,
     [UNSETTLED_ASSETS_FLOW]: unsettledAssetsFlow,
@@ -768,8 +735,6 @@ type Props = {
   removePrivateKeyFromMemory: Function,
   smartWalletFeatureEnabled: boolean,
   isBrowsingWebView: boolean,
-  startListeningForBalanceChange: Function,
-  stopListeningForBalanceChange: Function,
   isOnline: boolean,
   initSignal: Function,
   endWalkthrough: () => void,
@@ -799,7 +764,6 @@ class AppFlow extends React.Component<Props, State> {
       getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
-      startListeningForBalanceChange,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -810,7 +774,6 @@ class AppFlow extends React.Component<Props, State> {
     fetchAllCollectiblesData();
     startListeningChatWebSocket();
     initWalletConnect();
-    startListeningForBalanceChange();
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -863,13 +826,11 @@ class AppFlow extends React.Component<Props, State> {
       stopListeningIntercomNotifications,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
-      stopListeningForBalanceChange,
     } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     stopListeningChatWebSocket();
     updateSignalInitiatedState(false);
-    stopListeningForBalanceChange();
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -882,7 +843,6 @@ class AppFlow extends React.Component<Props, State> {
       updateSignalInitiatedState,
       isPickingImage,
       isBrowsingWebView,
-      stopListeningForBalanceChange,
       endWalkthrough,
       handleSystemDefaultThemeChange,
     } = this.props;
@@ -899,7 +859,6 @@ class AppFlow extends React.Component<Props, State> {
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         updateSignalInitiatedState(false);
-        stopListeningForBalanceChange();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
@@ -996,8 +955,6 @@ const mapDispatchToProps = dispatch => ({
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
-  startListeningForBalanceChange: () => dispatch(startListeningForBalanceChangeAction()),
-  stopListeningForBalanceChange: () => dispatch(stopListeningForBalanceChangeAction()),
   initSignal: () => dispatch(signalInitAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),

@@ -261,7 +261,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         {!isFetchingPhoneContacts &&
           <React.Fragment>
             <SearchBlock
-              searchInputPlaceholder="Search or add contact"
+              searchInputPlaceholder={isPhoneVerified ? 'Phone number' : 'Email address'}
               onSearchChange={(q) => this.handleSearch(q)}
               itemSearchState={query.length >= MIN_QUERY_LENGTH}
               wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}

@@ -21,11 +21,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import { spacing, fontStyles, fontTrackings } from 'utils/variables';
-import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { Paragraph, BaseText } from 'components/Typography';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
@@ -36,9 +38,11 @@ import {
   setAppThemeAction,
   setUserJoinedBetaAction,
   saveOptOutTrackingAction,
+  setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 import { SettingsSection } from './SettingsSection';
 
 
@@ -51,6 +55,9 @@ type Props = {
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   setUserJoinedBeta: (status: boolean) => void,
   saveOptOutTracking: (status: boolean) => void,
+  preferredGasToken: ?string,
+  isGasTokenSupported: boolean,
+  setPreferredGasToken: (token: string) => void,
 };
 
 type State = {
@@ -133,7 +140,13 @@ class AppSettings extends React.Component<Props, State> {
 
   getItems = () => {
     const {
-      baseFiatCurrency, themeType, setAppTheme, userJoinedBeta,
+      baseFiatCurrency,
+      themeType,
+      setAppTheme,
+      userJoinedBeta,
+      preferredGasToken,
+      isGasTokenSupported,
+      setPreferredGasToken,
     } = this.props;
 
     return [
@@ -142,6 +155,14 @@ class AppSettings extends React.Component<Props, State> {
         title: 'Local fiat currency',
         onPress: () => this.setState({ visibleModal: 'baseCurrency' }),
         value: baseFiatCurrency || defaultFiatCurrency,
+      },
+      isGasTokenSupported &&
+      {
+        key: 'preferredGasToken',
+        title: 'Pay fees with PLR',
+        toggle: true,
+        value: preferredGasToken === PLR,
+        onPress: () => setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR),
       },
       {
         key: 'darkMode',
@@ -167,7 +188,7 @@ class AppSettings extends React.Component<Props, State> {
         title: 'System Info',
         onPress: () => this.setState({ visibleModal: 'systemInfo' }),
       },
-    ];
+    ].filter(Boolean);
   }
 
   renderCurrencyListItem = (item) => {
@@ -324,6 +345,7 @@ const mapStateToProps = ({
       themeType,
       userJoinedBeta = false,
       optOutTracking = false,
+      preferredGasToken,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
@@ -331,6 +353,16 @@ const mapStateToProps = ({
   themeType,
   userJoinedBeta,
   optOutTracking,
+  preferredGasToken,
+});
+
+const structuredSelector = createStructuredSelector({
+  isGasTokenSupported: isGasTokenSupportedSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -340,6 +372,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
+  setPreferredGasToken: (token: string) => dispatch(setPreferredGasTokenAction(token)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppSettings);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AppSettings);

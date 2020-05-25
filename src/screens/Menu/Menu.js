@@ -31,7 +31,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
 import { images } from 'utils/images';
-import { isProdEnv, isTest } from 'utils/environment';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -71,6 +70,7 @@ type Props = {
   logoutUser: () => void,
   lockScreen: () => void,
   goToInvitationFlow: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -115,23 +115,12 @@ const LogoutIcon = styled(Icon)`
   margin-right: 5px;
 `;
 
-const CrashAppIcon = styled(Icon)`
-  color: ${themedColors.orange};
-  ${fontStyles.regular};
-  margin-right: 5px;
-`;
-
 const LegalTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
 const LogoutTextLink = styled(TextLink)`
   color: ${themedColors.negative};
-  ${fontStyles.regular};
-`;
-
-const CrashAppTextLink = styled(TextLink)`
-  color: ${themedColors.orange};
   ${fontStyles.regular};
 `;
 
@@ -147,7 +136,7 @@ class Menu extends React.Component<Props, State> {
 
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus, goToInvitationFlow,
+      theme, navigation, backupStatus, goToInvitationFlow, isPillarRewardCampaignActive,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
@@ -186,7 +175,7 @@ class Menu extends React.Component<Props, State> {
       },
       {
         key: 'referFriends',
-        title: 'Refer friends',
+        title: isPillarRewardCampaignActive ? 'Refer friends' : 'Invite friends',
         icon: 'present',
         iconColor: colors.accent,
         action: goToInvitationFlow,
@@ -326,15 +315,6 @@ class Menu extends React.Component<Props, State> {
                   Lock wallet
                 </LockScreenTextLink>
               </LockScreenSection>
-              {(!!__DEV__ || !isProdEnv) && !isTest && (
-                <LogoutSection>
-                  <CrashAppIcon name="close" />
-                  {/* $FlowFixMe – intentional bug to have actual crash */}
-                  <CrashAppTextLink onPress={() => undefined.crash()}>
-                    Crash App (visible in staging/dev env only)
-                  </CrashAppTextLink>
-                </LogoutSection>
-              )}
               <LogoutSection>
                 <LogoutIcon name="signout" />
                 <LogoutTextLink onPress={this.deleteWallet}>
@@ -364,9 +344,11 @@ class Menu extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
+  referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

@@ -15050,10 +15050,17 @@ react-native-image-crop-picker@^0.26.2:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.26.2.tgz#c70985ff6740e63569f90b185be0516d83f5933b"
   integrity sha1-xwmF/2dA5jVp+QsYW+BRbYP1kzs=
 
-react-native-image-view@^2.1.6:
-  version "2.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-view/-/react-native-image-view-2.1.9.tgz#635306360c42ad2479f364161c47d2557f9240fd"
-  integrity sha1-Y1MGNgxCrSR582QWHEfSVX+SQP0=
+react-native-image-pan-zoom@^2.1.9:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/react-native-image-pan-zoom/-/react-native-image-pan-zoom-2.1.11.tgz#61bcb69219d95e76a9797d23e4a2e8e0bd654ae9"
+  integrity sha512-ZCisGUFpPchHXsjT7ZI0anlSLPgcTmjRKXqpVnPu3RDWFXfKjuL4zpY57DX4Y8YgGZCpbf9fApN7KjVYody2Mw==
+
+react-native-image-zoom-viewer@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-zoom-viewer/-/react-native-image-zoom-viewer-3.0.0.tgz#cf292fb97cbf06c880a643458be9b8871d911c49"
+  integrity sha512-/jm1EX/71NcT9ZVK18YfNDpUZiP46HJsyq1GBSG/BWgpGBFAZ3kXRnXzCCcZJGlx4NkfUJnpoonelfRStk42xw==
+  dependencies:
+    react-native-image-pan-zoom "^2.1.9"
 
 react-native-intercom@^13.1.0:
   version "13.2.0"
@@ -16225,10 +16232,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.216:
-  version "1.0.216"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.216.tgz#ec1a2a9a947fcb4371f9e4c4ec9d1c63db3d8743"
-  integrity sha1-7BoqmpR/y0Nx+eTE7J0cY9s9h0M=
+rn-signal-protocol-messaging@1.0.218:
+  version "1.0.218"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.218.tgz#7e8a83040b1f3c58f42a73f94a31fad7b36f9c97"
+  integrity sha1-foqDBAsfPFj0KnP5SjH617NvnJc=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

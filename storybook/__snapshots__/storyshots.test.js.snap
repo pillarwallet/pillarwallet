@@ -696,6 +696,7 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -1458,6 +1459,7 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -1726,6 +1728,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -1994,6 +1997,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -2262,6 +2266,7 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -2530,6 +2535,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -2798,6 +2804,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -3066,6 +3073,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -3334,6 +3342,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
               "borderWidth": 1,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -5123,6 +5132,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -5686,6 +5696,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -5983,6 +5994,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -6546,6 +6558,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -6774,6 +6787,290 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                   ]
                 }
               />
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexDirection": "column",
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "opacity": 1,
+        "paddingBottom": 14,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 14,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "paddingRight": 12,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        backgroundColor={null}
+        diameter={48}
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#EBF0F6",
+              "borderRadius": 24,
+              "height": 48,
+              "justifyContent": "center",
+              "overflow": "hidden",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          name="received"
+          style={
+            Array [
+              Object {
+                "color": "#497391",
+                "fontSize": 48,
+              },
+              undefined,
+            ]
+          }
+        />
+      </View>
+    </View>
+    <View
+      style={
+        Object {
+          "flex": 1,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+        type="ACTION"
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexBasis": 0,
+                "flexDirection": "column",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "justifyContent": "center",
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "flexGrow": 1,
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              ellipsizeMode="tail"
+              numberOfLines={2}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              type="ACTION"
+            >
+              Referral reward
+            </Text>
+          </View>
+          <View
+            h={2}
+            style={
+              Array [
+                Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <Text
+            numberOfLines={2}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Key wallet
+          </Text>
+        </View>
+        <View
+          rightColumn={true}
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-end",
+                "flexDirection": "column",
+                "justifyContent": "center",
+                "marginLeft": 10,
+                "marginTop": 0,
+                "minHeight": 54,
+              },
+              Object {
+                "maxWidth": "50%",
+              },
+            ]
+          }
+          type="ACTION"
+        >
+          <View
+            style={
+              Array [
+                undefined,
+                Object {
+                  "flexWrap": "wrap",
+                },
+              ]
+            }
+          >
+            <View
+              horizontal={true}
+              style={
+                Array [
+                  Object {
+                    "flexDirection": "row",
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                  },
+                  Object {
+                    "alignItems": "center",
+                    "flexWrap": "wrap",
+                    "justifyContent": "flex-end",
+                  },
+                ]
+              }
+            >
+              <Text
+                color="#2AA057"
+                ellipsizeMode="tail"
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#2AA057",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#2AA057",
+                        "fontSize": 18,
+                        "lineHeight": 28,
+                        "textAlign": "right",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                + 250 PLR
+              </Text>
             </View>
           </View>
         </View>
@@ -8389,6 +8686,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -8952,6 +9250,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -9249,6 +9548,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -9812,6 +10112,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               "borderRadius": 24,
               "height": 48,
               "justifyContent": "center",
+              "overflow": "hidden",
               "textAlign": "center",
               "width": 48,
             },
@@ -10838,6 +11139,7 @@ exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -11045,6 +11347,7 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -11286,6 +11589,7 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
           "borderWidth": 1,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -12531,6 +12835,7 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -12983,6 +13288,7 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -19010,6 +19316,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -19476,6 +19783,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -20844,6 +21152,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },
@@ -21310,6 +21619,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
           "borderRadius": 32,
           "height": 64,
           "justifyContent": "center",
+          "overflow": "hidden",
           "textAlign": "center",
           "width": 64,
         },

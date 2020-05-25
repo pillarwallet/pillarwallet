@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -41,6 +40,7 @@ import Spinner from 'components/Spinner';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // types
 import type { Balances } from 'models/Asset';
@@ -50,6 +50,7 @@ import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount, formatTransactionFee } from 'utils/common';
+import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 
 
 type Props = {
@@ -59,7 +60,7 @@ type Props = {
   settleTxFee: SettleTxFee,
   balances: Balances,
   estimateSettleBalance: Function,
-  smartWalletAccountSupportsGasToken: boolean,
+  useGasToken: boolean,
 };
 
 type State = {
@@ -123,10 +124,12 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       navigation,
       settleTransactions,
       balances,
+      useGasToken,
+      settleTxFee: { feeInfo },
     } = this.props;
-    const txFeeInWei = this.getTxFeeInWei();
+    const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
 
-    const gasToken = this.getGasToken();
+    const gasToken = getGasToken(useGasToken, feeInfo);
     const payForGasWithToken = !!gasToken;
     const feeSymbol = get(gasToken, 'symbol', ETH);
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
@@ -150,21 +153,11 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     });
   };
 
-  getTxFeeInWei = (): BigNumber => {
-    const gasTokenCost = get(this.props, 'settleTxFee.feeInfo.gasTokenCost');
-    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
-    return get(this.props, 'settleTxFee.feeInfo.totalCost', 0);
-  };
-
-  getGasToken = () => {
-    return this.props.smartWalletAccountSupportsGasToken
-      ? get(this.props, 'settleTxFee.feeInfo.gasToken')
-      : null;
-  };
-
   render() {
     const { settleButtonSubmitted } = this.state;
-    const { session, settleTxFee } = this.props;
+    const {
+      session, settleTxFee, useGasToken, settleTxFee: { feeInfo },
+    } = this.props;
 
     let submitButtonTitle = 'Release Funds';
     if (!settleTxFee.isFetched) {
@@ -177,8 +170,8 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       || !settleTxFee.isFetched
       || settleButtonSubmitted;
 
-    const gasToken = this.getGasToken();
-    const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
+    const gasToken = getGasToken(useGasToken, feeInfo);
+    const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
     return (
       <ContainerWithHeader
@@ -220,15 +213,14 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   paymentNetwork: { settleTxFee },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }) => ({
   session,
   settleTxFee,
-  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
+  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

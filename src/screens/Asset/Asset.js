@@ -42,6 +42,7 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
+import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -117,6 +118,7 @@ type Props = {
   contactsSmartAddresses: ContactSmartAddressData[],
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
+  fetchReferralRewardsIssuerAddresses: () => void,
 };
 
 type State = {
@@ -209,9 +211,11 @@ class AssetScreen extends React.Component<Props, State> {
       logScreenView,
       getExchangeSupportedAssets,
       exchangeSupportedAssets,
+      fetchReferralRewardsIssuerAddresses,
     } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
     fetchAssetTransactions(token);
+    fetchReferralRewardsIssuerAddresses();
     if (resetHideRemoval) resetHideRemoval();
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
     logScreenView('View asset', 'Asset', `asset-${token}`);
@@ -298,6 +302,7 @@ class AssetScreen extends React.Component<Props, State> {
       availableStake,
       contactsSmartAddresses,
       exchangeSupportedAssets,
+      fetchReferralRewardsIssuerAddresses,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -376,6 +381,7 @@ class AssetScreen extends React.Component<Props, State> {
               onRefresh={() => {
                 fetchAssetsBalances();
                 fetchAssetTransactions(token);
+                fetchReferralRewardsIssuerAddresses();
               }}
             />
           }
@@ -504,6 +510,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     dispatch(logScreenViewAction(contentName, contentType, contentId));
   },
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
+  fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);

@@ -24,7 +24,6 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
-import BigNumber from 'bignumber.js';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -42,12 +41,13 @@ import {
 } from 'utils/feedData';
 import { findMatchingContact } from 'utils/contacts';
 import { findAccountByAddress, getAccountName } from 'utils/accounts';
-import { images } from 'utils/images';
+import { images, isSvgImage } from 'utils/images';
 
 // components
 import {
   formatAmount,
   formatUnits,
+  getDecimalPlaces,
 } from 'utils/common';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
@@ -77,9 +77,9 @@ import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER 
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // selectors
-import { bitcoinAddressSelector, isSmartWalletActivatedSelector, activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, bitcoinAddressSelector } from 'selectors';
 import { assetDecimalsSelector } from 'selectors/assets';
-import { activeBlockchainSelector } from 'selectors/selectors';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
@@ -89,6 +89,7 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 
 
 type Props = {
@@ -105,7 +106,6 @@ type Props = {
   acceptInvitation: Function,
   rejectInvitation: Function,
   activeAccountAddress: string,
-  activeBlockchainNetwork: string,
   accounts: Accounts,
   isSmartWalletActivated: boolean,
   assetDecimals: number,
@@ -113,6 +113,7 @@ type Props = {
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
+  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
 };
 
 export type EventData = {
@@ -139,6 +140,7 @@ export type EventData = {
   buttonActionLabel?: string,
   isReceived?: boolean,
   isBetweenAccounts?: boolean,
+  collectibleUrl?: string,
 };
 
 const NAMES = {
@@ -168,6 +170,7 @@ const ItemValue = styled(BaseText)`
   color: ${themedColors.positive};
   text-align: right;
 `;
+
 
 export class ActivityFeedItem extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -215,43 +218,11 @@ export class ActivityFeedItem extends React.Component<Props> {
     const groupedPPNTransactions: TransactionsGroup[] = groupPPNTransactions(ppnTransactions);
 
     const formattedValuesArray: Object[] = groupedPPNTransactions.map(({ symbol, value }): Object => ({
-      formatted: formatAmount(formatUnits(value.toString(), assetDecimals)),
+      formatted: formatAmount(formatUnits(value.toString(), assetDecimals), getDecimalPlaces(symbol)),
       symbol,
     }));
     return formattedValuesArray;
   };
-
-  getFormattedSettleValues = () => {
-    const {
-      event,
-      asset,
-      assetDecimals,
-    } = this.props;
-    const settleData = event.extra;
-    const ppnTransactions = asset
-      ? settleData.filter(({ symbol }) => symbol === asset)
-      : settleData;
-
-    const valueByAsset: Object = {};
-
-    ppnTransactions.forEach((trx) => {
-      const { symbol, value: rawValue } = trx;
-      const value = new BigNumber(rawValue);
-      if (!valueByAsset[symbol]) {
-        valueByAsset[symbol] = { ...trx, value, decimals: assetDecimals };
-      } else {
-        const { value: currentValue } = valueByAsset[symbol];
-        valueByAsset[symbol].value = currentValue.plus(value);
-      }
-    });
-
-    const valuesArray = (Object.values(valueByAsset): any);
-    const formattedValuesArray: Object[] = valuesArray.map(({ symbol, value, decimals }): Object => ({
-      formatted: formatAmount(formatUnits(value.toString(), decimals)),
-      symbol,
-    }));
-    return formattedValuesArray;
-  }
 
   getWalletCreatedEventData = (event: Object) => {
     const { isSmartWalletActivated, theme } = this.props;
@@ -317,18 +288,22 @@ export class ActivityFeedItem extends React.Component<Props> {
       bitcoinAddresses,
       isForAllAccounts,
       isAssetView,
+      referralRewardIssuersAddresses,
     } = this.props;
+
     const isReceived = this.isReceived(event);
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const avatarUrl = contact && contact.profileImage;
 
-    const formattedValue = formatAmount(value);
+    const assetSymbol = event ? event.asset : null;
+    const decimalPlaces = getDecimalPlaces(assetSymbol);
+    const formattedValue = formatAmount(value, decimalPlaces);
     const directionIcon = isReceived ? 'received' : 'sent';
     let directionSymbol = isReceived ? '+' : '-';
 
-    if (formattedValue === '0') {
+    if (value === '0.0') {
       directionSymbol = '';
     }
 
@@ -441,10 +416,12 @@ export class ActivityFeedItem extends React.Component<Props> {
           || ensRegistry[relevantAddress]
           || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
+        let subtext = getAccountName(event.accountType);
         const keyWallet = getAccountName(ACCOUNT_TYPES.KEY_BASED);
         const smartWallet = getAccountName(ACCOUNT_TYPES.SMART_WALLET);
 
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
+        const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
 
         if (isPPNTransaction) {
           if (isTrxBetweenSWAccount) {
@@ -484,7 +461,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           let itemLabel = usernameOrAddress;
           const isTrxBetweenAccounts = (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) ||
             (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts));
-          let subtext = getAccountName(event.accountType);
 
           const sendingAccountType = isReceived
             ? (findAccountByAddress(event.to, accounts) || {}).type
@@ -530,7 +506,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           }
 
           data = {
-            label: itemLabel,
+            label: isReferralRewardTransaction ? 'Referral reward' : itemLabel,
             subtext,
             avatarUrl,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
@@ -549,10 +525,12 @@ export class ActivityFeedItem extends React.Component<Props> {
     const isReceived = this.isReceived(event);
     const {
       asset,
-      icon,
       to,
       from,
+      assetData: { image },
+      icon,
     } = event;
+
     const relevantAddress = this.getRelevantAddress(event);
 
     let usernameOrAddress;
@@ -572,7 +550,7 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     return {
       label: asset,
-      itemImageUrl: icon,
+      collectibleUrl: isSvgImage(image) ? image : icon,
       subtext,
       actionLabel: isReceived ? STATUSES.RECEIVED : STATUSES.SENT,
       iconBackgroundColor: 'card',
@@ -680,17 +658,18 @@ const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
+  referrals: { referralRewardIssuersAddresses },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
   ensRegistry,
   accounts,
+  referralRewardIssuersAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   bitcoinAddresses: bitcoinAddressSelector,
-  activeBlockchainNetwork: activeBlockchainSelector,
   isSmartWalletActivated: isSmartWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
 });

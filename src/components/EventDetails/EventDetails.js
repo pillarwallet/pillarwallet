@@ -40,6 +40,7 @@ import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
+import CollectibleImage from 'components/CollectibleImage';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -63,6 +64,7 @@ import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
+import { findTransactionAcrossAccounts } from 'utils/history';
 
 // constants
 import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -73,7 +75,12 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TRANSACTION_EVENT, TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
+import {
+  TRANSACTION_EVENT,
+  TRANSACTION_PENDING_EVENT,
+  TX_PENDING_STATUS,
+  TX_CONFIRMED_STATUS,
+} from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -109,11 +116,11 @@ import {
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
+  activeBlockchainSelector,
   bitcoinAddressSelector,
-  isSmartWalletActivatedSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { activeBlockchainSelector } from 'selectors/selectors';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -130,12 +137,13 @@ import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
-import type { Transaction } from 'models/Transaction';
+import type { Transaction, TransactionsStore } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
 
+import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 
 type Props = {
   theme: Theme,
@@ -166,13 +174,15 @@ type Props = {
   isPPNActivated: boolean,
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
-  history: {[string]: Object[]},
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
   bitcoinFeatureEnabled?: boolean,
   setActiveBlockchainNetwork: (id: string) => void,
   refreshBitcoinBalance: () => void,
+  history: TransactionsStore,
+  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -199,6 +209,7 @@ type EventData = {
   username?: string,
   imageBorder?: boolean,
   imageBackground?: ?string,
+  collectibleUrl?: ?string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -216,6 +227,12 @@ const TokenImage = styled(CachedImage)`
   border-radius: 64px;
 `;
 
+const StyledCollectibleImage = styled(CollectibleImage)`
+  width: 64px;
+  height: 64px;
+  border-radius: 64px;
+`;
+
 const IconCircle = styled.View`
   width: 64px;
   height: 64px;
@@ -227,6 +244,7 @@ const IconCircle = styled.View`
   ${({ border, theme }) => border &&
   `border-color: ${theme.colors.border};
     border-width: 1px;`};
+  overflow: hidden;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -309,10 +327,7 @@ export class EventDetail extends React.Component<Props, State> {
 
   findTxInfo = () => {
     const { history, event } = this.props;
-    const accountsHistory: Object[] = Object.values(history);
-    return accountsHistory
-      .map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
-      .find(tx => tx) || {};
+    return findTransactionAcrossAccounts(history, event.hash) || {};
   }
 
   syncEnsRegistry = (txInfo: Transaction) => {
@@ -586,6 +601,12 @@ export class EventDetail extends React.Component<Props, State> {
     }
   };
 
+  getReferButtonTitle = () => {
+    const { isPillarRewardCampaignActive } = this.props;
+    if (isPillarRewardCampaignActive) return 'Refer friends';
+    return 'Invite friends';
+  };
+
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
     const keyWalletButtons = [
@@ -595,7 +616,7 @@ export class EventDetail extends React.Component<Props, State> {
         secondary: true,
       },
       {
-        title: 'Refer friends',
+        title: this.getReferButtonTitle(),
         onPress: this.referFriends,
         squarePrimary: true,
       },
@@ -631,7 +652,7 @@ export class EventDetail extends React.Component<Props, State> {
       case 'Wallet imported':
         return {
           primaryButtonTitle: 'Top up',
-          secondaryButtonTitle: 'Refer friends',
+          secondaryButtonTitle: this.getReferButtonTitle(),
           buttons: keyWalletButtons,
         };
       default:
@@ -682,7 +703,7 @@ export class EventDetail extends React.Component<Props, State> {
               secondary: true,
             },
             {
-              title: 'Refer friends',
+              title: this.getReferButtonTitle(),
               onPress: this.referFriends,
               squarePrimary: true,
             },
@@ -703,16 +724,13 @@ export class EventDetail extends React.Component<Props, State> {
       itemData,
       bitcoinAddresses,
       bitcoinFeatureEnabled,
+      referralRewardIssuersAddresses,
     } = this.props;
+
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
-    const {
-      itemValue,
-      subtext,
-      isBetweenAccounts,
-      isReceived,
-    } = itemData;
+    const { itemValue, isBetweenAccounts, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
     let directionSymbol = isReceived ? '+' : '-';
@@ -734,13 +752,13 @@ export class EventDetail extends React.Component<Props, State> {
         };
 
         const referFriendsButton = {
-          title: 'Refer friends',
+          title: this.getReferButtonTitle(),
           onPress: this.referFriends,
           secondary: true,
         };
 
         const referFriendsButtonSecondary = {
-          title: 'Refer friends',
+          title: this.getReferButtonTitle(),
           onPress: this.referFriends,
           squarePrimary: true,
         };
@@ -812,7 +830,7 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
-          name: 'Smart Wallet fees with PLR',
+          name: 'Smart Wallet fees with PLR token',
           actionTitle: 'Enabled',
           buttons: [
             {
@@ -826,6 +844,8 @@ export class EventDetail extends React.Component<Props, State> {
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
+
+        const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
 
         if (isPPNTransaction) {
           eventData = {
@@ -868,7 +888,6 @@ export class EventDetail extends React.Component<Props, State> {
         } else {
           eventData = {
             actionTitle: itemValue,
-            actionSubtitle: subtext,
           };
 
           let buttons = [];
@@ -954,7 +973,10 @@ export class EventDetail extends React.Component<Props, State> {
             secondary: true,
           };
 
-          if (isReceived) {
+
+          if (isReferralRewardTransaction) {
+            buttons = [];
+          } else if (isReceived) {
             if (isFromKWToSW) {
               buttons = [sendFromSW, topUpMore];
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
@@ -1007,6 +1029,8 @@ export class EventDetail extends React.Component<Props, State> {
     const { itemData } = this.props;
     const { subtext, isReceived } = itemData;
 
+    const isPending = isPendingTransaction(event);
+
     let eventData: EventData = {
       actionSubtitle: subtext,
     };
@@ -1021,10 +1045,16 @@ export class EventDetail extends React.Component<Props, State> {
             secondary: true,
           },
         ],
+        actionTitle: isPending ? 'Receiving' : 'Received',
+      };
+    } else {
+      eventData = {
+        ...eventData,
+        actionTitle: isPending ? 'Sending' : 'Sent',
       };
     }
 
-    if (isPendingTransaction(event)) {
+    if (isPending) {
       eventData.actionIcon = 'pending';
     }
 
@@ -1051,7 +1081,7 @@ export class EventDetail extends React.Component<Props, State> {
     return {
       name,
       imageUrl,
-      actionTitle: 'Received',
+      actionTitle: isPending ? 'Receiving' : 'Received',
       actionSubtitle: 'Badge',
       actionIcon: isPending ? 'pending' : null,
       buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
@@ -1117,6 +1147,7 @@ export class EventDetail extends React.Component<Props, State> {
         eventData = this.getUserEventData(event);
         break;
       case TRANSACTION_EVENT:
+      case TRANSACTION_PENDING_EVENT:
         eventData = this.getTransactionEventData(event);
         break;
       case COLLECTIBLE_TRANSACTION:
@@ -1145,8 +1176,17 @@ export class EventDetail extends React.Component<Props, State> {
   renderImage = (itemData: PassedEventData) => {
     const { theme } = this.props;
     const {
-      itemImageUrl, itemImageSource, avatarUrl, label, iconName, iconColor, iconBackgroundColor, iconBorder,
+      itemImageUrl,
+      itemImageSource,
+      avatarUrl,
+      label,
+      iconName,
+      iconColor,
+      iconBackgroundColor,
+      iconBorder,
+      collectibleUrl,
     } = itemData;
+
     const { genericToken: fallbackSource } = images(theme);
     if (itemImageUrl) {
       return (
@@ -1162,6 +1202,14 @@ export class EventDetail extends React.Component<Props, State> {
       return (
         <IconCircle>
           <ItemIcon name={iconName} iconColor={this.getColor(iconColor)} />
+        </IconCircle>
+      );
+    }
+
+    if (collectibleUrl) {
+      return (
+        <IconCircle border backgroundColor={this.getColor('card')}>
+          <StyledCollectibleImage source={{ uri: collectibleUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
@@ -1321,7 +1369,9 @@ export class EventDetail extends React.Component<Props, State> {
       const txInfo = this.findTxInfo();
       event = { ...event, ...txInfo };
     }
+
     const eventData = this.getEventData(event);
+
     if (!eventData) return null;
 
     if (storybook) {
@@ -1367,6 +1417,7 @@ const mapStateToProps = ({
       BITCOIN_ENABLED: bitcoinFeatureEnabled,
     },
   },
+  referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1378,6 +1429,8 @@ const mapStateToProps = ({
   supportedAssets,
   history,
   bitcoinFeatureEnabled,
+  referralRewardIssuersAddresses,
+  isPillarRewardCampaignActive,
 });
 
 const structuredSelector = createStructuredSelector({

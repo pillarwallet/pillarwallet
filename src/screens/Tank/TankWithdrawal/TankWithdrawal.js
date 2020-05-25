@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
-import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
@@ -44,6 +43,7 @@ import { spacing, fontStyles } from 'utils/variables';
 import { getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
+import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -61,6 +61,7 @@ import { estimateWithdrawFromVirtualAccountAction } from 'actions/smartWalletAct
 import { accountBalancesSelector } from 'selectors/balances';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 
 const ActionsWrapper = styled.View`
@@ -103,7 +104,7 @@ type Props = {
   withdrawalFee: WithdrawalFee,
   rates: Rates,
   baseFiatCurrency: string,
-  smartWalletAccountSupportsGasToken: boolean,
+  useGasToken: boolean,
 };
 
 type State = {
@@ -135,9 +136,9 @@ class TankWithdrawal extends React.Component<Props, State> {
   }
 
   getMaxAmount() {
-    const { availableStake } = this.props;
+    const { availableStake, useGasToken, withdrawalFee: { feeInfo } } = this.props;
     const token = PPN_TOKEN;
-    const txFeeInWei = this.getTxFeeInWei();
+    const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
     return calculateMaxAmount(token, availableStake, txFeeInWei);
   }
 
@@ -165,18 +166,6 @@ class TankWithdrawal extends React.Component<Props, State> {
     }, () => this.checkFormInputErrors());
   };
 
-  getTxFeeInWei = (): BigNumber => {
-    const gasTokenCost = get(this.props, 'withdrawalFee.feeInfo.gasTokenCost');
-    if (this.props.smartWalletAccountSupportsGasToken && gasTokenCost) return gasTokenCost;
-    return get(this.props, 'withdrawalFee.feeInfo.totalCost', 0);
-  };
-
-  getGasToken = () => {
-    return this.props.smartWalletAccountSupportsGasToken
-      ? get(this.props, 'withdrawalFee.feeInfo.gasToken')
-      : null;
-  };
-
   checkFormInputErrors = () => {
     const { inputHasError } = this.state;
     if (!this._form) return;
@@ -197,6 +186,8 @@ class TankWithdrawal extends React.Component<Props, State> {
       withdrawalFee,
       rates,
       baseFiatCurrency,
+      useGasToken,
+      withdrawalFee: { feeInfo },
     } = this.props;
 
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
@@ -215,8 +206,8 @@ class TankWithdrawal extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // fee
-    const gasToken = this.getGasToken();
-    const txFeeInWei = this.getTxFeeInWei();
+    const gasToken = getGasToken(useGasToken, feeInfo);
+    const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei,
       gasToken,
@@ -302,19 +293,18 @@ const mapStateToProps = ({
   rates: { data: rates },
   paymentNetwork: { withdrawalFee },
   appSettings: { data: { baseFiatCurrency } },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }) => ({
   rates,
   session,
   withdrawalFee,
   baseFiatCurrency,
-  smartWalletAccountSupportsGasToken,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
   availableStake: availableStakeSelector,
+  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
