@@ -176,6 +176,7 @@ class HomeScreen extends React.Component<Props, State> {
       logScreenView,
       fetchBadges,
       fetchBadgeAwardHistory,
+      fetchTransactionsHistory,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -185,6 +186,7 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
     });
+    fetchTransactionsHistory();
     fetchBadges();
     fetchBadgeAwardHistory();
   }
@@ -528,7 +530,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction(true)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),

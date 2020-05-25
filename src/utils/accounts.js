@@ -145,7 +145,6 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
   return {};
 };
 
-
 export const getKeyWalletAddress = (accounts: Accounts): ?string => {
   const kwAccount = findKeyBasedAccount(accounts);
   if (!kwAccount) return null;
