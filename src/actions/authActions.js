@@ -50,6 +50,7 @@ import { LOG_OUT } from 'constants/authConstants';
 import { DARK_THEME, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { SET_RECOVERY_PORTAL_TEMPORARY_WALLET } from 'constants/recoveryPortalConstants';
 
 // utils
 import { delay, reportOrWarn } from 'utils/common';
@@ -163,13 +164,14 @@ export const loginAction = (
 
       const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
       if (isWalletRecoveryPending) {
+        dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
         api.init();
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
         await smartWalletService.init(
           wallet.privateKey,
           (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
         );
-        dispatch(checkIfRecoveredSmartWalletFinishedAction());
+        dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
         return;
       }
 

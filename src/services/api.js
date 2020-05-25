@@ -187,21 +187,20 @@ class SDKWrapper {
   registerOnAuthServer(
     walletPrivateKey: string,
     fcmToken: ?string,
-    username: string,
-    recovery: ?{
+    username: ?string,
+    recovery?: {
       accountAddress: string,
       deviceAddress: string,
     },
   ) {
     const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
-    let requestPayload = { privateKey, username };
+    let requestPayload = { privateKey };
+    if (username) requestPayload = { ...requestPayload, username };
     if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
     if (!isEmpty(recovery)) requestPayload = { ...requestPayload, recovery };
     return Promise.resolve()
-      .then(() => {
-        return this.pillarWalletSdk.wallet.registerAuthServer(requestPayload);
-      })
-      .then(({ data }) => data)
+      .then(() => this.pillarWalletSdk.wallet.registerAuthServer(requestPayload))
+      .then(({ data }) => { console.log('data: ', data); return data; })
       .catch((error) => {
         reportLog('Registration error', { error }, Sentry.Severity.Error);
         const responseStatus = get(error, 'response.status');

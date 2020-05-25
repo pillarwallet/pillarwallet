@@ -109,11 +109,15 @@ import type { KeyChainData } from 'utils/keychain';
 
 const storage = Storage.getInstance('db');
 
-const getTokenWalletAndRegister = async (
+export const getTokenWalletAndRegister = async (
   privateKey: string,
   api: SDKWrapper,
-  user: Object,
+  user?: Object,
   dispatch: Dispatch,
+  recover?: {
+    accountAddress: string,
+    deviceAddress: string,
+  },
 ) => {
   // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
   await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
@@ -121,7 +125,11 @@ const getTokenWalletAndRegister = async (
   const fcmToken = await firebaseMessaging.getToken().catch(() => null);
 
   if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
+
+  const sdkWallet: Object = isEmpty(user) && !isEmpty(recover)
+    ? await api.registerOnAuthServer(privateKey, fcmToken, null, recover)
+    : await api.registerOnAuthServer(privateKey, fcmToken, user?.username);
+
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
   const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;
@@ -169,7 +177,7 @@ const getTokenWalletAndRegister = async (
   };
 };
 
-const finishRegistration = async ({
+export const finishRegistration = async ({
   api,
   dispatch,
   getState,
@@ -255,7 +263,7 @@ const finishRegistration = async ({
   dispatch(fetchReferralRewardAction());
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
+export const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
   toastWalletBackup(isWalletBackedUp);
 
   const navigateToHomeScreen = NavigationActions.navigate({
@@ -347,7 +355,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
         params: {},
         action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
       }));
-      dispatch(checkIfRecoveredSmartWalletFinishedAction());
+      dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
       return;
     }
 
