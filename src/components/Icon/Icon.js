@@ -84,7 +84,6 @@ const glyphMap = {
   'rounded-close': '\uE879',
   'connect-active': '\uE87A',
   hidden: '\uE83E',
-  visible: '\uE81E',
 };
 
 export type IconProps = {

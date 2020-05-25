@@ -122,7 +122,9 @@ class PortfolioBalance extends React.PureComponent<Props> {
                   balance={combinedBalance}
                 />)
             }
-            <ToggleIcon name={showBalance ? 'hidden' : 'visible'} bigger={!showBalance} />
+            {showBalance &&
+              <ToggleIcon name="hidden" /> // different icon name will be passed when !showBalance
+            }
           </ContentWrapper>
         </BalanceButton>
       </BalanceWrapper>
