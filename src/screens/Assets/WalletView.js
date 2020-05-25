@@ -66,7 +66,7 @@ import Switcher from 'components/Switcher';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
+import type { Accounts, Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Theme } from 'models/Theme';
@@ -87,6 +87,7 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getThemeColors, themedColors } from 'utils/themes';
+import { getAccountAddress } from 'utils/accounts';
 
 // partials
 import CollectiblesList from './CollectiblesList';
@@ -104,7 +105,7 @@ type Props = {
   insightList: Object[],
   insightsTitle: string,
   assetsSearchResults: Asset[],
-  activeAccount: Object,
+  activeAccount: Account,
   searchAssets: (query: string) => void,
   resetSearchAssetsResult: () => void,
   addAsset: (asset: Asset) => void,
@@ -387,6 +388,7 @@ class WalletView extends React.Component<Props, State> {
       SWInsightDismissed,
       smartWalletFeatureEnabled,
       onScroll,
+      activeAccount,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -495,6 +497,7 @@ class WalletView extends React.Component<Props, State> {
               collectibles={this.getFilteredCollectibles()}
               searchQuery={query}
               navigation={navigation}
+              activeAccountAddress={getAccountAddress(activeAccount)}
             />)}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
           <ActionsWrapper>
