@@ -63,7 +63,7 @@ type State = {
 };
 
 const ModalContainer = styled.View`
-  padding: 20px ${spacing.layoutSides}px 80px;
+  padding: 20px ${spacing.layoutSides}px 40px;
 `;
 
 class RelayerMigrationModal extends React.PureComponent<Props, State> {
@@ -101,7 +101,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
         onModalHide={onModalHide}
         hideHeader
       >
-        <SafeAreaView>
+        <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
           <ModalContainer>
             <MediumText center medium>Pay fees with PLR</MediumText>
             <Spacing h={18} />
