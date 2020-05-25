@@ -34,7 +34,6 @@ import {
   YOUTUBE_SOCIAL_ADDRESS,
   MEDIUM_SOCIAL_ADDRESS,
   FACEBOOK_SOCIAL_ADDRESS,
-  FORUM_SOCIAL_ADDRESS,
 } from 'constants/communityConstants';
 import { SettingsSection } from './SettingsSection';
 
@@ -89,11 +88,6 @@ class CommunitySettings extends React.Component<{}, State> {
         key: 'facebook',
         title: 'Facebook',
         onPress: this.goTo(FACEBOOK_SOCIAL_ADDRESS),
-      },
-      {
-        key: 'forum',
-        title: 'Forum',
-        onPress: this.goTo(FORUM_SOCIAL_ADDRESS),
       },
     ];
   }
