@@ -63,6 +63,7 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
+import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -122,6 +123,7 @@ type Props = {
   toggleBadges: () => void,
   walletConnectRequests: CallRequest[],
   fetchAllAccountsBalances: () => void,
+  refreshBitcoinBalance: () => void,
 };
 
 type State = {
@@ -220,6 +222,7 @@ class HomeScreen extends React.Component<Props, State> {
       fetchTransactionsHistory,
       fetchBadges,
       fetchAllAccountsBalances,
+      refreshBitcoinBalance,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
@@ -227,6 +230,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
     fetchTransactionsHistory();
     fetchAllAccountsBalances();
+    refreshBitcoinBalance();
   };
 
   setActiveTab = (activeTab) => {
@@ -541,6 +545,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
+  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
