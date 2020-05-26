@@ -19,6 +19,14 @@
 */
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
+import shuffle from 'shuffle-array';
+import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
+
+// components
+import Toast from 'components/Toast';
+
+// constants
 import {
   UPDATE_WALLET_MNEMONIC,
   IMPORT_ERROR,
@@ -36,17 +44,26 @@ import {
   UPDATE_WALLET_STATE,
   IMPORTING,
 } from 'constants/walletConstants';
-import { PIN_CODE_CONFIRMATION, NEW_PROFILE } from 'constants/navigationConstants';
-import shuffle from 'shuffle-array';
+import { PIN_CODE_CONFIRMATION, NEW_PROFILE, RECOVERY_SETTINGS } from 'constants/navigationConstants';
+
+// utils
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
+import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
+
+// services
 import { navigate } from 'services/navigation';
-import { logEventAction } from 'actions/analyticsActions';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+
+// actions
+import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 import { registerWalletAction } from './onboardingActions';
 import { addWalletBackupEventAction } from './userEventsActions';
+
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -231,5 +248,44 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
         lastPinAttempt: currentTimeStamp,
       },
     }));
+  };
+};
+
+/**
+ * wallet backup toast not needed if wallet is imported, backed up,
+ * no key based account or key based account balances are 0
+ */
+export const checkForWalletBackupToastAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      wallet: { backupStatus: { isImported, isBackedUp } },
+      accounts: { data: accounts },
+      balances: { data: balances },
+    } = getState();
+
+    const keyBasedAccount = findKeyBasedAccount(accounts);
+    if (isImported || isBackedUp || !keyBasedAccount) return;
+
+    const keyBasedAccountBalances = balances[getAccountId(keyBasedAccount)];
+    const anyAssetHasPositiveBalance = !isEmpty(keyBasedAccountBalances)
+      && Object.values(keyBasedAccountBalances).some((asset) => !!Number(get(asset, 'balance', 0)));
+    if (!anyAssetHasPositiveBalance) return;
+
+    const message =
+      'Go to wallet settings on the assets screen and complete the wallet backup. ' +
+      'Pillar cannot help you retrieve your wallet if it is lost.';
+
+    Toast.show({
+      message,
+      type: 'warning',
+      title: 'Please ensure you backup your wallet now',
+      autoClose: false,
+      onPress: () => {
+        const action = NavigationActions.navigate({
+          routeName: RECOVERY_SETTINGS,
+        });
+        navigate(action);
+      },
+    });
   };
 };
