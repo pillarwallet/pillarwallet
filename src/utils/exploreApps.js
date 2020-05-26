@@ -28,14 +28,14 @@ export type AppItem = {
 
 const zerionLogo = require('assets/images/apps/zerion.png');
 const poolTogetherLogo = require('assets/images/apps/pool_together.png');
-const mooniLogo = require('assets/images/apps/mooni.png');
+// const mooniLogo = require('assets/images/apps/mooni.png');
 const oasisLogo = require('assets/images/apps/oasis.png');
 const sablierLogo = require('assets/images/apps/sablier.png');
 const binanceLogo = require('assets/images/apps/binance_dex.png');
 const asyncartLogo = require('assets/images/apps/asyncart.png');
 const knownOriginLogo = require('assets/images/apps/known_origin.png');
 const cloversLogo = require('assets/images/apps/clovers.png');
-const localCryptosLogo = require('assets/images/apps/local_cryptos.png');
+// const localCryptosLogo = require('assets/images/apps/local_cryptos.png');
 
 export const APPS: AppItem[] = [
   {
@@ -51,12 +51,12 @@ export const APPS: AppItem[] = [
 Each ticket is a chance to win weekly prizes!`,
     url: 'pooltogether.com',
   },
-  {
-    name: 'Mooni',
-    logo: mooniLogo,
-    text: 'A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.',
-    url: 'mooni.tech',
-  },
+  // {
+  //   name: 'Mooni',
+  //   logo: mooniLogo,
+  //   text: 'A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.',
+  //   url: 'mooni.tech',
+  // },
   {
     name: 'Oasis',
     logo: oasisLogo,
@@ -75,13 +75,13 @@ Each ticket is a chance to win weekly prizes!`,
     text: `Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.`,
     url: 'binance.org',
   },
-  {
-    name: 'Local Cryptos',
-    logo: localCryptosLogo,
-    text: `The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with \
-each other. Buy and sell crypto on your own terms, using any payment method.`,
-    url: 'localcryptos.com',
-  },
+  //   {
+  //     name: 'Local Cryptos',
+  //     logo: localCryptosLogo,
+  //     text: `The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with \
+  // each other. Buy and sell crypto on your own terms, using any payment method.`,
+  //     url: 'localcryptos.com',
+  //   },
   {
     name: 'Async.art',
     logo: asyncartLogo,

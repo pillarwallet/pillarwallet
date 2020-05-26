@@ -57,6 +57,7 @@ import Storage from 'services/storage';
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
+import { getAccountAddress, findFirstSmartAccount } from 'utils/accounts';
 
 // actions
 import {
@@ -399,11 +400,13 @@ export const approveSessionAction = (peerId: string) => {
     if (peerMeta) {
       dispatch(killWalletConnectSessionByUrl(peerMeta.url, peerId));
     }
-    const { wallet: { data: { address } } } = getState();
-
+    const {
+      accounts: { data: accounts },
+    } = getState();
     try {
+      const smartAccAddress = getAccountAddress(findFirstSmartAccount(accounts));
       await connector.approveSession({
-        accounts: [address],
+        accounts: [smartAccAddress],
         chainId: NETWORK_PROVIDER === 'ropsten' ? 3 : 1,
       });
     } catch (e) {

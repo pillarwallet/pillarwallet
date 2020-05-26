@@ -157,6 +157,7 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
     handleNoteChange = (text) => this.setState({ note: text });
 
     render() {
+      console.log(this.props.requests)
       return (
         <WrappedComponent
           acceptWCRequest={this.acceptWCRequest}
