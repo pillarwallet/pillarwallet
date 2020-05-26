@@ -631,6 +631,18 @@ export class EventDetail extends React.Component<Props, State> {
     return 'Invite friends';
   };
 
+  getTrxNote = (event: Object) => {
+    const { txNotes } = this.props;
+    let transactionNote = event.note;
+    if (txNotes && txNotes.length > 0) {
+      const txNote = txNotes.find(txn => txn.txHash === event.hash);
+      if (txNote) {
+        transactionNote = txNote.text;
+      }
+    }
+    return transactionNote;
+  };
+
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
     const keyWalletButtons = [
@@ -749,7 +761,6 @@ export class EventDetail extends React.Component<Props, State> {
       bitcoinAddresses,
       bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
-      txNotes,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -869,16 +880,8 @@ export class EventDetail extends React.Component<Props, State> {
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
-
-        let transactionNote = event.note;
-        if (txNotes && txNotes.length > 0) {
-          const txNote = txNotes.find(txn => txn.txHash === event.hash);
-          if (txNote) {
-            transactionNote = txNote.text;
-          }
-        }
+        const transactionNote = this.getTrxNote(event);
 
         if (isPPNTransaction) {
           eventData = {
@@ -1065,9 +1068,11 @@ export class EventDetail extends React.Component<Props, State> {
     const { subtext, isReceived } = itemData;
 
     const isPending = isPendingTransaction(event);
+    const transactionNote = this.getTrxNote(event);
 
     let eventData: EventData = {
       actionSubtitle: subtext,
+      transactionNote,
     };
 
     if (isReceived) {
