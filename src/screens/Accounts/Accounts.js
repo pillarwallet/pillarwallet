@@ -70,6 +70,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -130,6 +131,7 @@ type Props = {|
   refreshBitcoinBalance: () => void,
   initializeBitcoinWallet: (wallet: EthereumWallet) => void;
   theme: Theme,
+  fetchAllAccountsBalances: () => void,
 |};
 
 type State = {|
@@ -166,6 +168,11 @@ class AccountsScreen extends React.Component<Props, State> {
       onPinValidAction: null,
       switchingToWalletId: null,
     };
+  }
+
+  componentDidMount() {
+    const { fetchAllAccountsBalances } = this.props;
+    fetchAllAccountsBalances();
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -494,6 +501,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
+  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen));

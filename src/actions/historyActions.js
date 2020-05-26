@@ -47,7 +47,8 @@ import {
   getAccountId,
   getAccountWalletId,
   getActiveAccount,
-  getActiveAccountId,
+  findFirstSmartAccount,
+  findKeyBasedAccount,
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
@@ -58,8 +59,8 @@ import { extractBitcoinTransactions } from 'utils/bitcoin';
 import smartWalletService from 'services/smartWallet';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
 import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
+import { smartAccountAssetsSelector } from 'selectors/assets';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -164,17 +165,18 @@ export const fetchSmartWalletTransactionsAction = () => {
       smartWallet: { lastSyncedTransactionId },
     } = getState();
 
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) return;
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
 
     await dispatch(loadSupportedAssetsAction());
     const supportedAssets = get(getState(), 'assets.supportedAssets', []);
 
     await dispatch(syncVirtualAccountTransactionsAction());
 
-    const accountId = getActiveAccountId(accounts);
+    const accountId = getAccountId(smartWalletAccount);
+
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = smartAccountAssetsSelector(getState());
     const isGasTokenSupported = isGasTokenSupportedSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
     const history = parseSmartWalletTransactions(
@@ -393,9 +395,10 @@ export const restoreTransactionHistoryAction = () => {
       user: { data: { walletId } },
     } = getState();
 
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
-    const walletAddress = getAccountAddress(activeAccount);
+    const keyWalletAccount = findKeyBasedAccount(accounts);
+    if (!keyWalletAccount) return;
+    const walletAddress = getAccountAddress(keyWalletAccount);
+    if (!walletAddress) return;
 
     const [allAssets, _erc20History, ethHistory] = await Promise.all([
       api.fetchSupportedAssets(walletId),
@@ -478,11 +481,19 @@ export const restoreTransactionHistoryAction = () => {
  * For the key based wallet it uses ethplorer as a data provider
  * For smart wallets data will be fetched through the Archanova SDK
  */
-export const fetchTransactionsHistoryAction = () => {
+export const fetchTransactionsHistoryAction = (forAllAccounts?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
     } = getState();
+
+
+    if (forAllAccounts) {
+      await dispatch(restoreTransactionHistoryAction());
+      await dispatch(fetchSmartWalletTransactionsAction());
+      await dispatch(fetchBTCTransactionsHistoryAction());
+      return Promise.resolve();
+    }
 
     await dispatch(fetchBTCTransactionsHistoryAction());
 
