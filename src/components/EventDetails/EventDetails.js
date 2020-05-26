@@ -115,7 +115,6 @@ import {
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
-  activeBlockchainSelector,
   bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
