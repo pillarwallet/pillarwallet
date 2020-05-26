@@ -134,8 +134,7 @@ class CollectiblesList extends React.PureComponent<Props, State> {
   };
 
   toggleReceiveModal = () => {
-    const { isReceiveVisible } = this.state;
-    this.setState({ isReceiveVisible: !isReceiveVisible });
+    this.setState(({ isReceiveVisible }) => ({ isReceiveVisible: !isReceiveVisible }));
   };
 
   render() {
