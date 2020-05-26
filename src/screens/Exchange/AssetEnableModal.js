@@ -103,6 +103,7 @@ const AssetEnableModal = (props: Props) => {
       noClose
       headerProps={{
         centerItems: [{ title: `Enable ${assetSymbol}` }],
+        sideFlex: '0',
         wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
       }}
     >

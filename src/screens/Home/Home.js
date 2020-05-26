@@ -410,6 +410,7 @@ class HomeScreen extends React.Component<Props, State> {
                 ),
               },
             ],
+            sideFlex: '25px',
           }}
           inset={{ bottom: 0 }}
           tab

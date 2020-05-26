@@ -138,6 +138,7 @@ const ConnectionConfirmationModal = (props: Props) => {
           { custom: !!iconName && <HeaderIcon name={iconName} notice={contactType === BLOCK} /> },
           { title: titleConfirmation(contactType, username) },
         ],
+        sideFlex: '0',
         wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
       }}
     >

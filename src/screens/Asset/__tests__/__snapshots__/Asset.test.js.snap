@@ -63,27 +63,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               Array [
                 Object {
                   "alignItems": "center",
+                  "flexBasis": 0,
                   "flexDirection": "row",
-                  "justifyContent": "center",
-                  "left": 0,
-                  "minHeight": 28,
-                  "paddingBottom": 0,
-                  "paddingLeft": 12,
-                  "paddingRight": 12,
-                  "paddingTop": 0,
-                  "position": "absolute",
-                  "right": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
+                  "flexGrow": 1,
+                  "flexShrink": 1,
                   "flexWrap": "wrap",
                   "justifyContent": "flex-start",
                   "minHeight": 28,
@@ -140,7 +123,30 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               Array [
                 Object {
                   "alignItems": "center",
+                  "flexBasis": 0,
                   "flexDirection": "row",
+                  "flexGrow": 4,
+                  "flexShrink": 1,
+                  "justifyContent": "center",
+                  "minHeight": 28,
+                  "paddingBottom": 0,
+                  "paddingLeft": 12,
+                  "paddingRight": 12,
+                  "paddingTop": 0,
+                },
+                undefined,
+              ]
+            }
+          />
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexBasis": 0,
+                  "flexDirection": "row",
+                  "flexGrow": 1,
+                  "flexShrink": 1,
                   "flexWrap": "wrap",
                   "justifyContent": "flex-end",
                   "minHeight": 28,
@@ -1378,11 +1384,15 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       }
                     >
                       <View
+                        sideFlex={4}
                         style={
                           Array [
                             Object {
                               "alignItems": "center",
+                              "flexBasis": 0,
                               "flexDirection": "row",
+                              "flexGrow": 4,
+                              "flexShrink": 1,
                               "flexWrap": "wrap",
                               "justifyContent": "flex-start",
                               "minHeight": 28,
@@ -1499,7 +1509,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           Array [
                             Object {
                               "alignItems": "center",
+                              "flexBasis": 0,
                               "flexDirection": "row",
+                              "flexGrow": 1,
+                              "flexShrink": 1,
                               "flexWrap": "wrap",
                               "justifyContent": "flex-end",
                               "minHeight": 28,
@@ -2477,11 +2490,15 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       }
                     >
                       <View
+                        sideFlex={4}
                         style={
                           Array [
                             Object {
                               "alignItems": "center",
+                              "flexBasis": 0,
                               "flexDirection": "row",
+                              "flexGrow": 4,
+                              "flexShrink": 1,
                               "flexWrap": "wrap",
                               "justifyContent": "flex-start",
                               "minHeight": 28,
@@ -2495,7 +2512,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           Array [
                             Object {
                               "alignItems": "center",
+                              "flexBasis": 0,
                               "flexDirection": "row",
+                              "flexGrow": 1,
+                              "flexShrink": 1,
                               "flexWrap": "wrap",
                               "justifyContent": "flex-end",
                               "minHeight": 28,

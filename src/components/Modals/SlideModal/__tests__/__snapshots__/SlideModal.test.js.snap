@@ -218,11 +218,15 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   }
                 >
                   <View
+                    sideFlex={4}
                     style={
                       Array [
                         Object {
                           "alignItems": "center",
+                          "flexBasis": 0,
                           "flexDirection": "row",
+                          "flexGrow": 4,
+                          "flexShrink": 1,
                           "flexWrap": "wrap",
                           "justifyContent": "flex-start",
                           "minHeight": 28,
@@ -276,7 +280,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       Array [
                         Object {
                           "alignItems": "center",
+                          "flexBasis": 0,
                           "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
                           "flexWrap": "wrap",
                           "justifyContent": "flex-end",
                           "minHeight": 28,

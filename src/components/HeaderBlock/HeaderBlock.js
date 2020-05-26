@@ -44,6 +44,7 @@ export type Props = {
   rightItems?: NavItem[],
   leftItems?: NavItem[],
   centerItems?: NavItem[],
+  sideFlex?: number,
   navigation: NavigationScreenProp<*>,
   background?: string,
   floating?: boolean,
@@ -55,6 +56,7 @@ export type Props = {
   noPaddingTop?: boolean,
   noBottomBorder?: boolean,
   onClose?: () => void,
+  leftSideFlex?: number,
   wrapperStyle?: Object,
   noHorizonatalPadding?: boolean,
   forceInsetTop?: string,
@@ -93,17 +95,16 @@ const HeaderRow = styled.View`
 `;
 
 const CenterItems = styled.View`
+  flex: 4;
   padding: 0 ${spacing.medium}px;
   align-items: center;
   justify-content: center;
   flex-direction: row;
   min-height: 28px;
-  position: absolute;
-  left: 0;
-  right: 0;
 `;
 
 const LeftItems = styled.View`
+  flex: ${props => props.sideFlex || 1};
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
@@ -112,6 +113,7 @@ const LeftItems = styled.View`
 `;
 
 const RightItems = styled.View`
+  flex: ${props => props.sideFlex || 1};
   align-items: center;
   justify-content: flex-end;
   flex-direction: row;
@@ -189,6 +191,7 @@ class HeaderBlock extends React.Component<Props> {
   renderHeaderContent = () => {
     const {
       rightItems = [],
+      sideFlex,
       leftItems = [],
       centerItems = [],
       navigation,
@@ -196,18 +199,15 @@ class HeaderBlock extends React.Component<Props> {
       customOnBack,
       theme,
       transparent,
+      leftSideFlex,
     } = this.props;
     const colors = getThemeColors(theme);
 
     return (
       <HeaderRow>
-        {!!centerItems.length &&
-        <CenterItems>
-          {centerItems.map((item) => this.renderSideItems(item, CENTER))}
-        </CenterItems>
-        }
         <LeftItems
-          style={!centerItems.length && !rightItems.length ? { flexGrow: 2 } : {}}
+          sideFlex={sideFlex || leftSideFlex}
+          style={!centerItems.length && !rightItems.length && !leftSideFlex ? { flexGrow: 2 } : {}}
         >
           {(leftItems.length || !!noBack)
             ? leftItems.map((item) => this.renderSideItems(item, LEFT))
@@ -222,8 +222,13 @@ class HeaderBlock extends React.Component<Props> {
             )
           }
         </LeftItems>
+        {!!centerItems.length &&
+        <CenterItems>
+          {centerItems.map((item) => this.renderSideItems(item, CENTER))}
+        </CenterItems>
+        }
         {(!!centerItems.length || !!rightItems.length) &&
-          <RightItems>
+          <RightItems sideFlex={sideFlex}>
             {rightItems.map((item) => this.renderSideItems(item, RIGHT))}
           </RightItems>
         }
