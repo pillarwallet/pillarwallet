@@ -21,5 +21,6 @@
 import type { Session } from 'models/WalletConnect';
 
 export const shouldClearWCSessions = (sessions: Session[], keyWalletAddress: string) => {
-  return sessions[0]?.accounts.includes(keyWalletAddress);
+  if (!sessions[0]) return false;
+  return sessions[0].accounts.includes(keyWalletAddress);
 };

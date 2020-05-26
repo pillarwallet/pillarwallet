@@ -420,7 +420,9 @@ export const approveSessionAction = (peerId: string) => {
       accounts: { data: accounts },
     } = getState();
     try {
-      const smartAccAddress = getAccountAddress(findFirstSmartAccount(accounts));
+      const smartAcc = findFirstSmartAccount(accounts);
+      if (!smartAcc) return;
+      const smartAccAddress = getAccountAddress(smartAcc);
       await connector.approveSession({
         accounts: [smartAccAddress],
         chainId: NETWORK_PROVIDER === 'ropsten' ? 3 : 1,
@@ -534,7 +536,9 @@ export const initWalletConnectSessions = () => {
       accounts: { data: accounts },
     } = getState();
 
-    const keyWalletAddress = getAccountAddress(findKeyBasedAccount(accounts));
+    const keyWallet = findKeyBasedAccount(accounts);
+    if (!keyWallet) return;
+    const keyWalletAddress = getAccountAddress(keyWallet);
 
     if (shouldClearWCSessions(sessions, keyWalletAddress)) {
       dispatch(killAllWalletConnectSessions());
