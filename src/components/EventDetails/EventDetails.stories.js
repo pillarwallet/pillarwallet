@@ -98,6 +98,7 @@ const reduxData = {
   history: [],
   referralRewardIssuersAddresses: [],
   isPillarRewardCampaignActive: true,
+  txNotes: [],
 };
 
 const actions = {
@@ -105,6 +106,7 @@ const actions = {
   goToInvitationFlow: noop,
   updateTransactionStatus: noop,
   lookupAddress: noop,
+  getTxNoteByContact: noop,
 };
 
 const commonProps = {

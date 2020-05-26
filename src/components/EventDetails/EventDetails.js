@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Linking } from 'react-native';
+import { View, Linking, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
@@ -41,6 +41,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
+import ButtonText from 'components/ButtonText';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -129,6 +130,7 @@ import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
+import { getTxNoteByContactAction } from 'actions/txNoteActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -142,8 +144,9 @@ import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
-
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
+import type { TxNote } from 'reducers/txNoteReducer';
+
 
 type Props = {
   theme: Theme,
@@ -183,6 +186,8 @@ type Props = {
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
+  getTxNoteByContact: (username: string) => void,
+  txNotes: TxNote[],
 };
 
 type State = {
@@ -210,6 +215,7 @@ type EventData = {
   imageBorder?: boolean,
   imageBackground?: ?string,
   collectibleUrl?: ?string,
+  transactionNote?: string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -282,6 +288,18 @@ const Divider = styled.View`
   margin: 8px 0px 18px;
 `;
 
+const ButtonHolder = styled.View`
+  flex-direction: row;
+  flex: 1;
+  justify-content: flex-end;
+`;
+
+const EventTimeHolder = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  padding: 0 8px;
+`;
+
 
 export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -294,20 +312,26 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const { event, getTxNoteByContact } = this.props;
+    const { type, username } = event;
+    if (type !== TRANSACTION_EVENT) return;
     const txInfo = this.findTxInfo();
     this.syncEnsRegistry(txInfo);
     this.syncTxStatus(txInfo);
+    getTxNoteByContact(username);
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (this.props.event.type !== TRANSACTION_EVENT) return;
+    const { event, isVisible, getTxNoteByContact } = this.props;
+    const { type, username } = event;
+    if (type !== TRANSACTION_EVENT) return;
     const txInfo = this.findTxInfo();
-    if (!prevProps.isVisible && this.props.isVisible) {
+    if (!prevProps.isVisible && isVisible) {
       this.syncEnsRegistry(txInfo);
       this.syncTxStatus(txInfo);
+      getTxNoteByContact(username);
     }
-    if (prevProps.isVisible && !this.props.isVisible) {
+    if (prevProps.isVisible && !isVisible) {
       this.cleanup();
     }
     if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
@@ -725,6 +749,7 @@ export class EventDetail extends React.Component<Props, State> {
       bitcoinAddresses,
       bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
+      txNotes,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -847,6 +872,14 @@ export class EventDetail extends React.Component<Props, State> {
 
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
 
+        let transactionNote = event.note;
+        if (txNotes && txNotes.length > 0) {
+          const txNote = txNotes.find(txn => txn.txHash === event.hash);
+          if (txNote) {
+            transactionNote = txNote.text;
+          }
+        }
+
         if (isPPNTransaction) {
           eventData = {
             customActionTitle: !isTrxBetweenSWAccount && (
@@ -857,6 +890,7 @@ export class EventDetail extends React.Component<Props, State> {
               />
             ),
             actionSubtitle: !isTrxBetweenSWAccount ? `${isReceived ? 'to' : 'from'} Pillar Network` : '',
+            transactionNote,
           };
 
           if (isReceived) {
@@ -888,6 +922,7 @@ export class EventDetail extends React.Component<Props, State> {
         } else {
           eventData = {
             actionTitle: itemValue,
+            transactionNote,
           };
 
           let buttons = [];
@@ -1287,12 +1322,23 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
+  showNote = (note: string) => {
+    return Alert.alert(
+      null,
+      note,
+      [
+        { text: 'OK' },
+      ],
+    );
+  };
+
   renderContent = (eventData: EventData) => {
     const { itemData } = this.props;
     const {
       date, name,
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
+      transactionNote,
     } = eventData;
 
     const {
@@ -1311,7 +1357,17 @@ export class EventDetail extends React.Component<Props, State> {
 
     return (
       <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <BaseText tiny secondary>{eventTime}</BaseText>
+        <Row>
+          <ButtonHolder>
+            <View />
+          </ButtonHolder>
+          <EventTimeHolder>
+            <BaseText tiny secondary>{eventTime}</BaseText>
+          </EventTimeHolder>
+          <ButtonHolder>
+            {!!transactionNote && <ButtonText onPress={() => this.showNote(transactionNote)} buttonText="Note" />}
+          </ButtonHolder>
+        </Row>
         <Spacing h={10} />
         <BaseText medium>{label}</BaseText>
         <Spacing h={20} />
@@ -1364,14 +1420,12 @@ export class EventDetail extends React.Component<Props, State> {
     } = this.state;
 
     let { event } = this.props;
-
     if (event.type === TRANSACTION_EVENT) {
       const txInfo = this.findTxInfo();
       event = { ...event, ...txInfo };
     }
 
     const eventData = this.getEventData(event);
-
     if (!eventData) return null;
 
     if (storybook) {
@@ -1418,6 +1472,7 @@ const mapStateToProps = ({
     },
   },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
+  txNotes: { data: txNotes },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1431,6 +1486,7 @@ const mapStateToProps = ({
   bitcoinFeatureEnabled,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
+  txNotes,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1457,6 +1513,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
+  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));

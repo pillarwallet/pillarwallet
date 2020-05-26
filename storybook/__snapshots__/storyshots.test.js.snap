@@ -11073,22 +11073,81 @@ exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -11281,22 +11340,81 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -11519,22 +11637,81 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -11840,22 +12017,81 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -12140,22 +12376,81 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -12318,22 +12613,81 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -12769,22 +13123,81 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -13222,22 +13635,81 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -13675,22 +14147,81 @@ exports[`Storyshots EventDetail Key wallet back up 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -14068,22 +14599,81 @@ exports[`Storyshots EventDetail Key wallet created 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -14461,22 +15051,81 @@ exports[`Storyshots EventDetail Key wallet imported 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -14854,22 +15503,81 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -15247,22 +15955,81 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -15525,22 +16292,81 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -15985,22 +16811,81 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -16322,22 +17207,81 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -16888,22 +17832,81 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -17311,22 +18314,81 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -17734,22 +18796,81 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -18034,22 +19155,81 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -18334,22 +19514,81 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -18799,22 +20038,81 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -19250,22 +20548,81 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -19717,22 +21074,81 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -20170,22 +21586,81 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -20635,22 +22110,81 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -21086,22 +22620,81 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -21553,22 +23146,81 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -22006,22 +23658,81 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -22308,22 +24019,81 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -22731,22 +24501,81 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -23124,22 +24953,81 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
@@ -23394,22 +25282,81 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
     }
   }
 >
-  <Text
-    secondary={true}
+  <View
     style={
       Array [
         Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 10,
-          "lineHeight": 14,
-          "textAlignVertical": "center",
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
         },
         undefined,
       ]
     }
-    tiny={true}
-  />
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "paddingBottom": 0,
+            "paddingLeft": 8,
+            "paddingRight": 8,
+            "paddingTop": 0,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 10,
+              "lineHeight": 14,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+        tiny={true}
+      />
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "flexBasis": 0,
+            "flexDirection": "row",
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "flex-end",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={10}
     style={
