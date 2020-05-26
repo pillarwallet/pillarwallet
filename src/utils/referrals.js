@@ -79,10 +79,15 @@ export const getRemainingDailyInvitations = (sentInvitationsCount: SentInvitatio
 
 const getAssetRewardText = (awardInfo: ReferralReward = {}) => {
   const { asset, amount } = awardInfo;
-  return asset && amount ? `${amount} ${asset}` : '';
+  if (asset && amount) return `${amount} ${asset}`;
+  return null;
 };
 
 export const getCampaignRewardText = (campaignRewards: ReferralReward[] = []) => {
-  const rewards = campaignRewards.map((reward) => getAssetRewardText(reward));
+  const rewards = campaignRewards.reduce((reducedRewards, reward) => {
+    const rewardText = getAssetRewardText(reward);
+    if (rewardText) return [...reducedRewards, rewardText];
+    return reducedRewards;
+  }, []);
   return rewards.join(', ');
 };
