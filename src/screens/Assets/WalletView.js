@@ -53,7 +53,7 @@ import {
 import { EXCHANGE } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
-import { activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -87,7 +87,6 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { getAccountAddress } from 'utils/accounts';
 
 // partials
 import CollectiblesList from './CollectiblesList';
@@ -124,6 +123,7 @@ type Props = {
   dismissSmartWalletInsight: () => void,
   SWInsightDismissed: boolean,
   onScroll: (event: Object) => void,
+  activeAccountAddress: string,
 }
 
 type State = {
@@ -388,7 +388,7 @@ class WalletView extends React.Component<Props, State> {
       SWInsightDismissed,
       smartWalletFeatureEnabled,
       onScroll,
-      activeAccount,
+      activeAccountAddress,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -497,7 +497,7 @@ class WalletView extends React.Component<Props, State> {
               collectibles={this.getFilteredCollectibles()}
               searchQuery={query}
               navigation={navigation}
-              activeAccountAddress={getAccountAddress(activeAccount)}
+              activeAccountAddress={activeAccountAddress}
             />)}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
           <ActionsWrapper>
@@ -540,6 +540,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
   activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
 });
