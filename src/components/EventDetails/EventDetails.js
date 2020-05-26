@@ -360,15 +360,19 @@ export class EventDetail extends React.Component<Props, State> {
     return isReceived ? event.from : event.to;
   };
 
+  getFormattedGasFee = (formattedFee: number, token: string) => {
+    const { baseFiatCurrency, rates } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const rate = getRate(rates, token, fiatCurrency);
+    const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
+    return `Fee ${formattedFee} ${token} (${formattedFiatValue})`;
+  };
+
   getFeeLabel = () => {
-    const {
-      event, baseFiatCurrency, rates, assetDecimals,
-    } = this.props;
+    const { event, assetDecimals } = this.props;
     const {
       gasUsed, gasPrice, btcFee, feeWithGasToken,
     } = event;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     if (!isEmpty(feeWithGasToken)) {
       return `Fee ${formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken'))}`;
@@ -377,14 +381,10 @@ export class EventDetail extends React.Component<Props, State> {
     if (gasUsed) {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const formattedFee = parseFloat(utils.formatEther(fee.toString()));
-      const rate = getRate(rates, ETH, fiatCurrency);
-      const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
-      return `Fee ${formattedFee} ETH (${formattedFiatValue})`;
+      return this.getFormattedGasFee(formattedFee, ETH);
     } else if (btcFee) {
       const formattedBTCFee = parseFloat(formatUnits(btcFee, assetDecimals));
-      const btcRate = getRate(rates, BTC, fiatCurrency);
-      const formattedFiatValue = formatFiat(formattedBTCFee * btcRate, fiatCurrency);
-      return `Fee ${formattedBTCFee} BTC (${formattedFiatValue})`;
+      return this.getFormattedGasFee(formattedBTCFee, BTC);
     }
     return null;
   };
