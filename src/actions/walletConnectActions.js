@@ -57,7 +57,8 @@ import Storage from 'services/storage';
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
-import { getAccountAddress, findFirstSmartAccount } from 'utils/accounts';
+import { getAccountAddress, findFirstSmartAccount, findKeyBasedAccount } from 'utils/accounts';
+import { shouldClearWCSessions } from 'utils/walletConnect';
 
 // actions
 import {
@@ -513,7 +514,16 @@ const loadLegacySessions = async (): Promise<Session[]> => {
 
 export const initWalletConnectSessions = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnectSessions: { isImported, sessions } } = getState();
+    const {
+      walletConnectSessions: { isImported, sessions },
+      accounts: { data: accounts },
+    } = getState();
+
+    const keyWalletAddress = getAccountAddress(findKeyBasedAccount(accounts));
+
+    if (shouldClearWCSessions(sessions, keyWalletAddress)) {
+      // clear sessions
+    }
 
     let initialSessions = sessions;
     if (!isImported) {
