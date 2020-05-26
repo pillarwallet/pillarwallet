@@ -262,6 +262,21 @@ export const killWalletConnectSession = (peerId: string) => {
   };
 };
 
+const killAllWalletConnectSessions = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { walletConnectSessions: { sessions } } = getState();
+    sessions.forEach((s: Session) => {
+      dispatch(killWalletConnectSession(s.peerId));
+    });
+    Toast.show({
+      type: 'warning',
+      title: 'Connections removed',
+      message: 'WalletConnect now connects to Smart Wallet. Please re-initialize your connections.',
+      autoClose: false,
+    });
+  };
+};
+
 export const killWalletConnectSessionByUrl = (url: string, skipPeerId?: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { walletConnect: { connectors } } = getState();
@@ -522,7 +537,7 @@ export const initWalletConnectSessions = () => {
     const keyWalletAddress = getAccountAddress(findKeyBasedAccount(accounts));
 
     if (shouldClearWCSessions(sessions, keyWalletAddress)) {
-      // clear sessions
+      dispatch(killAllWalletConnectSessions());
     }
 
     let initialSessions = sessions;
