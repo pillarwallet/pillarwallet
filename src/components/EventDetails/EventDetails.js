@@ -94,7 +94,6 @@ import {
   SET_SMART_WALLET_ACCOUNT_ENS,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
   CHAT,
@@ -166,7 +165,6 @@ type Props = {
   assetDecimals: number,
   activeAccountAddress: string,
   accountAssets: Assets,
-  activeBlockchainNetwork: string,
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
@@ -1420,7 +1418,6 @@ const structuredSelector = createStructuredSelector({
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
-  activeBlockchainNetwork: activeBlockchainSelector,
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
 });

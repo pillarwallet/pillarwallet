@@ -30,7 +30,6 @@ import PortfolioBalance from 'components/PortfolioBalance';
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
