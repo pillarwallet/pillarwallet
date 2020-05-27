@@ -25,6 +25,7 @@ import type { Session } from 'models/WalletConnect';
 const UNSUPPORTED_APPS_URLS: string[] = [
   'https://app.mooni.tech',
   'https://localcryptos.com',
+  'https://www.binance.org',
 ];
 
 export const shouldClearWCSessions = (sessions: Session[], keyWalletAddress: string) => {

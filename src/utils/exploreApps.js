@@ -31,7 +31,7 @@ const poolTogetherLogo = require('assets/images/apps/pool_together.png');
 // const mooniLogo = require('assets/images/apps/mooni.png');
 const oasisLogo = require('assets/images/apps/oasis.png');
 const sablierLogo = require('assets/images/apps/sablier.png');
-const binanceLogo = require('assets/images/apps/binance_dex.png');
+// const binanceLogo = require('assets/images/apps/binance_dex.png');
 const asyncartLogo = require('assets/images/apps/asyncart.png');
 const knownOriginLogo = require('assets/images/apps/known_origin.png');
 const cloversLogo = require('assets/images/apps/clovers.png');
@@ -69,12 +69,12 @@ Each ticket is a chance to win weekly prizes!`,
     text: '"Stream" money in real-time.',
     url: 'sablier.finance',
   },
-  {
-    name: 'Binance DEX',
-    logo: binanceLogo,
-    text: `Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.`,
-    url: 'binance.org',
-  },
+  // {
+  //   name: 'Binance DEX',
+  //   logo: binanceLogo,
+  //   text: `Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.`,
+  //   url: 'binance.org',
+  // },
   //   {
   //     name: 'Local Cryptos',
   //     logo: localCryptosLogo,
