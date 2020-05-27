@@ -20,7 +20,19 @@
 
 import type { Session } from 'models/WalletConnect';
 
+// urls of dapps that don't support smart accounts
+// or that we don't want to support for any reason
+const UNSUPPORTED_APPS_URLS: string[] = [
+  'https://app.mooni.tech',
+  'https://localcryptos.com',
+];
+
 export const shouldClearWCSessions = (sessions: Session[], keyWalletAddress: string) => {
   if (!sessions[0]) return false;
   return sessions[0].accounts.includes(keyWalletAddress);
+};
+
+
+export const shouldAllowSession = (url: string) => {
+  return !UNSUPPORTED_APPS_URLS.includes(url);
 };

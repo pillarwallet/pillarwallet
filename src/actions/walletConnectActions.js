@@ -58,7 +58,7 @@ import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
 import { getAccountAddress, findFirstSmartAccount, findKeyBasedAccount } from 'utils/accounts';
-import { shouldClearWCSessions } from 'utils/walletConnect';
+import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
 
 // actions
 import {
@@ -217,8 +217,18 @@ const subscribeToSessionRequestEvent = (connector: Connector) => {
 
         return;
       }
-      dispatch(walletConnectSessionReceived());
 
+      if (!shouldAllowSession(peerMeta.url)) {
+        Toast.show({
+          type: 'warning',
+          title: 'Cannot connect',
+          message: 'This application does not support smart accounts.',
+          autoClose: false,
+        });
+        return;
+      }
+
+      dispatch(walletConnectSessionReceived());
       navigate(
         NavigationActions.navigate({
           routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN,
