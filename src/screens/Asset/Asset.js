@@ -36,6 +36,7 @@ import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
+import Button from 'components/Button';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -49,6 +50,7 @@ import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConsta
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -81,6 +83,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
+
 
 const RECEIVE = 'RECEIVE';
 
@@ -187,6 +190,10 @@ const SyntheticAssetIcon = styled(CachedImage)`
   margin-right: 4px;
   margin-top: 1px;
   tint-color: ${themedColors.primary};
+`;
+
+const TransferButtonWrapper = styled.View`
+  padding: 35px ${spacing.large}px 0;
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning.png');
@@ -299,6 +306,7 @@ class AssetScreen extends React.Component<Props, State> {
       contactsSmartAddresses,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
+      activeAccount,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -343,6 +351,7 @@ class AssetScreen extends React.Component<Props, State> {
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
+    const isKeyBasedActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.KEY_BASED;
 
     return (
       <ContainerWithHeader
@@ -409,9 +418,18 @@ class AssetScreen extends React.Component<Props, State> {
               isReceiveDisabled={!isReceiveActive}
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
-            {!isSendActive &&
-              <SWActivationCard />
+            {isKeyBasedActive &&
+              <TransferButtonWrapper>
+                <Button
+                  title="Transfer to Smart Wallet"
+                  onPress={() => this.goToSendTokenFlow(assetData)}
+                  disabled={!isSendActive}
+                  secondary
+                  regularText
+                />
+              </TransferButtonWrapper>
             }
+            {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
