@@ -64,6 +64,7 @@ import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
 import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { Account } from 'models/Account';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -75,6 +76,7 @@ import withWCRequests from './withWCRequests';
 
 
 type Props = {
+  accounts: Account[],
   navigation: NavigationScreenProp<*>,
   requests: CallRequest[],
   session: Object,
@@ -185,7 +187,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     this.setState({ gettingFee: true });
 
     const gasLimit = await this.getGasLimit();
-    this.setState({ gasLimit }, async () => {
+    this.setState({ gasLimit: gasLimit || 0 }, async () => {
       const txFeeInfo = await this.getSmartWalletTxFee();
       this.setState({ txFeeInfo, gettingFee: false });
     });
