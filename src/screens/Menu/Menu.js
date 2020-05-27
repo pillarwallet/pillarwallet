@@ -70,6 +70,7 @@ type Props = {
   logoutUser: () => void,
   lockScreen: () => void,
   goToInvitationFlow: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -135,7 +136,7 @@ class Menu extends React.Component<Props, State> {
 
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus, goToInvitationFlow,
+      theme, navigation, backupStatus, goToInvitationFlow, isPillarRewardCampaignActive,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
@@ -174,7 +175,7 @@ class Menu extends React.Component<Props, State> {
       },
       {
         key: 'referFriends',
-        title: 'Refer friends',
+        title: isPillarRewardCampaignActive ? 'Refer friends' : 'Invite friends',
         icon: 'present',
         iconColor: colors.accent,
         action: goToInvitationFlow,
@@ -343,9 +344,11 @@ class Menu extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
+  referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

@@ -40,6 +40,7 @@ import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
+import CollectibleImage from 'components/CollectibleImage';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -57,7 +58,8 @@ import {
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getAccountName } from 'utils/accounts';
-import { images } from 'utils/images';
+import { images, isSvgImage } from 'utils/images';
+import { findTransactionAcrossAccounts } from 'utils/history';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -107,11 +109,11 @@ import {
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
+  activeBlockchainSelector,
   bitcoinAddressSelector,
-  isSmartWalletActivatedSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { activeBlockchainSelector } from 'selectors/selectors';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -126,7 +128,7 @@ import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
-import type { Transaction } from 'models/Transaction';
+import type { Transaction, TransactionsStore } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -160,8 +162,9 @@ type Props = {
   isPPNActivated: boolean,
   updateTransactionStatus: (hash: string) => void,
   lookupAddress: (address: string) => void,
-  history: {[string]: Object[]},
+  history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -188,6 +191,7 @@ type EventData = {
   username?: string,
   imageBorder?: boolean,
   imageBackground?: ?string,
+  collectibleUrl?: ?string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -205,6 +209,12 @@ const TokenImage = styled(CachedImage)`
   border-radius: 64px;
 `;
 
+const StyledCollectibleImage = styled(CollectibleImage)`
+  width: 64px;
+  height: 64px;
+  border-radius: 64px;
+`;
+
 const IconCircle = styled.View`
   width: 64px;
   height: 64px;
@@ -216,6 +226,7 @@ const IconCircle = styled.View`
   ${({ border, theme }) => border &&
   `border-color: ${theme.colors.border};
     border-width: 1px;`};
+  overflow: hidden;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -297,10 +308,7 @@ class EventDetail extends React.Component<Props, State> {
 
   findTxInfo = () => {
     const { history, event } = this.props;
-    const accountsHistory: Object[] = Object.values(history);
-    return accountsHistory
-      .map(accountHistory => accountHistory.find(tx => tx.hash === event.hash))
-      .find(tx => tx) || {};
+    return findTransactionAcrossAccounts(history, event.hash) || {};
   }
 
   syncEnsRegistry = (txInfo) => {
@@ -521,6 +529,12 @@ class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SETTLE_BALANCE);
   };
 
+  getReferButtonTitle = () => {
+    const { isPillarRewardCampaignActive } = this.props;
+    if (isPillarRewardCampaignActive) return 'Refer friends';
+    return 'Invite friends';
+  };
+
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { theme, isSmartWalletActivated } = this.props;
     const { keyWalletIcon, smartWalletIcon } = images(theme);
@@ -531,7 +545,7 @@ class EventDetail extends React.Component<Props, State> {
         secondary: true,
       },
       {
-        title: 'Refer friends',
+        title: this.getReferButtonTitle(),
         onPress: this.referFriends,
         squarePrimary: true,
       },
@@ -576,7 +590,7 @@ class EventDetail extends React.Component<Props, State> {
           itemImageSource: keyWalletIcon,
           actionTitle: 'Imported',
           primaryButtonTitle: 'Top up',
-          secondaryButtonTitle: 'Refer friends',
+          secondaryButtonTitle: this.getReferButtonTitle(),
           buttons: keyWalletButtons,
         };
       default:
@@ -635,7 +649,7 @@ class EventDetail extends React.Component<Props, State> {
               secondary: true,
             },
             {
-              title: 'Refer friends',
+              title: this.getReferButtonTitle(),
               onPress: this.referFriends,
               squarePrimary: true,
             },
@@ -688,13 +702,13 @@ class EventDetail extends React.Component<Props, State> {
         };
 
         const referFriendsButton = {
-          title: 'Refer friends',
+          title: this.getReferButtonTitle(),
           onPress: this.referFriends,
           secondary: true,
         };
 
         const referFriendsButtonSecondary = {
-          title: 'Refer friends',
+          title: this.getReferButtonTitle(),
           onPress: this.referFriends,
           squarePrimary: true,
         };
@@ -798,7 +812,7 @@ class EventDetail extends React.Component<Props, State> {
         break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
-          name: 'Smart Wallet fees with PLR',
+          name: 'Smart Wallet fees with PLR token',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Enabled',
           buttons: [
@@ -987,39 +1001,40 @@ class EventDetail extends React.Component<Props, State> {
   getCollectibleTransactionEventData = (event: Object): EventData => {
     const { contacts } = this.props;
     const isReceived = this.isReceived(event);
-    const { asset, icon } = event;
+    const { asset, icon, assetData: { image } } = event;
     const relevantAddress = this.getRelevantAddress(event);
     const usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
+    const isPending = isPendingTransaction(event);
 
     let eventData: EventData = {
       name: asset,
-      imageUrl: icon,
+      collectibleUrl: isSvgImage(image) ? image : icon,
       imageBackground: this.getColor('card'),
       imageBorder: true,
+      buttons: [
+        {
+          title: 'View on the Blockchain',
+          onPress: this.viewOnTheBlockchain,
+          secondary: true,
+        },
+      ],
     };
 
     if (isReceived) {
       eventData = {
         ...eventData,
-        actionTitle: 'Received',
+        actionTitle: isPending ? 'Receiving' : 'Received',
         actionSubtitle: `Collectible from ${usernameOrAddress}`,
-        buttons: [
-          {
-            title: 'View on the Blockchain',
-            onPress: this.viewOnTheBlockchain,
-            secondary: true,
-          },
-        ],
       };
     } else {
       eventData = {
         ...eventData,
-        actionTitle: 'Sent',
+        actionTitle: isPending ? 'Sending' : 'Sent',
         actionSubtitle: `Collectible to ${usernameOrAddress}`,
       };
     }
 
-    if (isPendingTransaction(event)) {
+    if (isPending) {
       eventData.actionIcon = 'pending';
     }
 
@@ -1046,7 +1061,7 @@ class EventDetail extends React.Component<Props, State> {
     return {
       name,
       imageUrl,
-      actionTitle: 'Received',
+      actionTitle: isPending ? 'Receiving' : 'Received',
       actionSubtitle: 'Badge',
       actionIcon: isPending ? 'pending' : null,
       buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
@@ -1141,7 +1156,15 @@ class EventDetail extends React.Component<Props, State> {
   renderImage = (eventData) => {
     const { theme } = this.props;
     const {
-      imageUrl, itemImageSource, profileImage, username, iconName, iconColor, imageBackground, imageBorder,
+      imageUrl,
+      itemImageSource,
+      profileImage,
+      username,
+      iconName,
+      iconColor,
+      imageBackground,
+      imageBorder,
+      collectibleUrl,
     } = eventData;
     const { genericToken: fallbackSource } = images(theme);
     if (imageUrl) {
@@ -1158,6 +1181,14 @@ class EventDetail extends React.Component<Props, State> {
       return (
         <IconCircle>
           <ItemIcon name={iconName} iconColor={iconColor} />
+        </IconCircle>
+      );
+    }
+
+    if (collectibleUrl) {
+      return (
+        <IconCircle border={imageBorder} backgroundColor={imageBackground}>
+          <StyledCollectibleImage source={{ uri: collectibleUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
@@ -1324,7 +1355,7 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history },
-  referrals: { referralRewardIssuersAddresses },
+  referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1336,6 +1367,7 @@ const mapStateToProps = ({
   supportedAssets,
   history,
   referralRewardIssuersAddresses,
+  isPillarRewardCampaignActive,
 });
 
 const structuredSelector = createStructuredSelector({

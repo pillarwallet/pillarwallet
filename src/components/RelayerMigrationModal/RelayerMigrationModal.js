@@ -63,7 +63,7 @@ type State = {
 };
 
 const ModalContainer = styled.View`
-  padding: 20px ${spacing.layoutSides}px 80px;
+  padding: 20px ${spacing.layoutSides}px 40px;
 `;
 
 class RelayerMigrationModal extends React.PureComponent<Props, State> {
@@ -86,22 +86,22 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
     } = this.props;
     const { switchPressed } = this.state;
     const { iconUrl } = accountAssets[PLR] || {};
-    const isSwitchPending = accountHistory.some(({
-      tag, status,
-    }) => tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS);
+    const isSwitchPending = accountHistory.some(({ tag, status }) => {
+      return tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
+    });
     const buttonTitle = switchPressed || isSwitchPending
       ? 'Waiting for confirmation..'
       : 'Switch';
     const subtitle = switchPressed || isSwitchPending
       ? 'Switch transaction is pending'
-      : 'Switching is free\nThis is irreversible.';
+      : 'Switching is free';
     return (
       <SlideModal
         isVisible={isVisible}
         onModalHide={onModalHide}
         hideHeader
       >
-        <SafeAreaView>
+        <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
           <ModalContainer>
             <MediumText center medium>Pay fees with PLR</MediumText>
             <Spacing h={18} />

@@ -19,10 +19,14 @@
 */
 
 import {
-  DISMISS_SMART_WALLET_INSIGHT, DISMISS_PRIVACY_INSIGHT, DISMISS_VERIFICATION_NOTE,
+  DISMISS_SMART_WALLET_INSIGHT,
+  DISMISS_PRIVACY_INSIGHT,
+  DISMISS_VERIFICATION_NOTE,
+  DISMISS_REFER_FRIENDS_ON_HOME_SCREEN,
 } from 'constants/insightsConstants';
 import { saveDbAction } from 'actions/dbActions';
 import type { Dispatch } from 'reducers/rootReducer';
+
 
 export const dismissSmartWalletInsightAction = () => {
   return async (dispatch: Dispatch) => {
@@ -42,5 +46,12 @@ export const dismissVerificationNoteAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(saveDbAction('insights', { insights: { verificationNoteDismissed: true } }));
     dispatch({ type: DISMISS_VERIFICATION_NOTE });
+  };
+};
+
+export const dismissReferFriendsOnHomeScreenAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(saveDbAction('insights', { insights: { referFriendsOnHomeScreenDismissed: true } }));
+    dispatch({ type: DISMISS_REFER_FRIENDS_ON_HOME_SCREEN });
   };
 };

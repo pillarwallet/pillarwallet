@@ -35,22 +35,18 @@ import isEmpty from 'lodash.isempty';
 import abi from 'ethjs-abi';
 
 // constants
-import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportLog, reportOrWarn } from 'utils/common';
 
-// services
-import { DEFAULT_GAS_LIMIT } from 'services/assets';
-
 // types
-import type { GasInfo } from 'models/GasInfo';
 import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
-import type { GasToken } from 'models/Transaction';
+import type { EstimatedTransactionFee, GasToken } from 'models/Transaction';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -69,8 +65,6 @@ const TransactionSpeeds = {
 };
 
 const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
-
-const DEFAULT_DEPLOYMENT_GAS_LIMIT = 790000;
 
 export type AccountTransaction = {
   recipient: string,
@@ -118,44 +112,6 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   };
 };
 
-const calculateEstimate = (
-  estimate,
-  gasInfo?: GasInfo,
-  speed: string = SPEED_TYPES.NORMAL,
-  defaultGasAmount: number = DEFAULT_GAS_LIMIT,
-  gasToken: ?GasToken,
-): { gasTokenCost: BigNumber, cost: BigNumber } => {
-  const parsedPayload = parseEstimatePayload(estimate);
-  let { gasAmount, gasPrice, gasTokenCost } = parsedPayload;
-
-  // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
-
-  gasAmount = new BigNumber(gasAmount
-    ? gasAmount.toString()
-    : defaultGasAmount,
-  );
-
-  const hasGasTokenSupport = get(parsedPayload, 'relayerFeatures.gasTokenSupported', false);
-  const parsedGasTokenAddress = get(parsedPayload, 'gasToken.address');
-  const gasTokenAddress = get(gasToken, 'address');
-  const isGasTokenAvailable = hasGasTokenSupport && !isEmpty(gasToken)
-    && addressesEqual(parsedGasTokenAddress, gasTokenAddress);
-
-  gasTokenCost = new BigNumber(isGasTokenAvailable && gasTokenCost
-    ? gasTokenCost.toString()
-    : 0,
-  );
-
-  if (!gasPrice) {
-    const defaultGasPrice = get(gasInfo, `gasPrice.${speed}`, 0);
-    gasPrice = utils.parseUnits(defaultGasPrice.toString(), 'gwei');
-  }
-
-  return {
-    cost: new BigNumber(gasPrice.toString()).multipliedBy(gasAmount),
-    gasTokenCost,
-  };
-};
 
 class SmartWallet {
   sdk: Sdk;
@@ -446,18 +402,11 @@ class SmartWallet {
     return items;
   }
 
-  async estimateAccountDeployment(gasInfo: GasInfo) {
-    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(() => {});
-    const calculated = calculateEstimate(deployEstimate, gasInfo, SPEED_TYPES.FAST, DEFAULT_DEPLOYMENT_GAS_LIMIT);
-    return calculated.cost;
-  }
-
   async estimateAccountTransaction(
     transaction: AccountTransaction,
-    gasInfo: GasInfo,
     assetData?: AssetData,
-  ): Promise<{ gasTokenCost: BigNumber, cost: BigNumber }> {
-    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG], gasToken } = transaction;
+  ): Promise<EstimatedTransactionFee> {
+    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
     let { data, recipient } = transaction;
     const decimals = get(assetData, 'decimals');
     const assetSymbol = get(assetData, 'token');
@@ -478,18 +427,26 @@ class SmartWallet {
       value = 0; // value is in encoded token transfer
     }
 
-    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
+    const estimated = await this.sdk.estimateAccountTransaction(
       recipient,
       value,
       data,
       transactionSpeed,
-    ).catch(() => {});
+    ).then(parseEstimatePayload).catch(() => ({}));
 
-    const defaultSpeed = transactionSpeed === TransactionSpeeds[FAST]
-      ? SPEED_TYPES.FAST
-      : SPEED_TYPES.NORMAL;
+    let { gasTokenCost, totalCost } = estimated;
+    const { gasToken, relayerFeatures } = estimated;
+    const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
 
-    return calculateEstimate(estimatedTransaction, gasInfo, defaultSpeed, DEFAULT_GAS_LIMIT, gasToken);
+    // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
+    gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
+    totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
+
+    return {
+      ethCost: totalCost,
+      gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
+      gasToken: hasGasTokenSupport ? gasToken : null,
+    };
   }
 
   getTransactionStatus(hash: string) {
@@ -514,7 +471,7 @@ class SmartWallet {
   }
 
   switchToGasTokenRelayer() {
-    return this.sdk.switchToGasTokenRelayer();
+    return this.sdk.switchToGasTokenRelayer().catch(() => null);
   }
 
   handleError(error: any) {

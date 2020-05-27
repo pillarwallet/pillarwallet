@@ -22,7 +22,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
-import get from 'lodash.get';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -33,6 +32,7 @@ import Button from 'components/Button';
 import LoadingParagraph from 'components/LoadingParagraph';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { getCampaignRewardText } from 'utils/referrals';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 import type { NavigationScreenProp } from 'react-navigation';
@@ -43,9 +43,10 @@ import type { RewardsByCompany } from 'reducers/referralsReducer';
 type Props = {
   navigation: NavigationScreenProp<*>,
   referrals: RewardsByCompany,
-  rewards: RewardsByCompany,
+  rewardsByCampaign: RewardsByCompany,
   isFetchingRewards: boolean,
   fetchReferralReward: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 const RewardBadge = styled(CachedImage)`
@@ -69,9 +70,18 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
   }
 
   render() {
-    const { navigation, rewards, isFetchingRewards } = this.props;
-    const { asset, amount } = get(rewards, 'pillar', {});
-    const rewardText = asset && amount ? `${amount} ${asset} and a badge` : 'a badge';
+    const {
+      navigation,
+      rewardsByCampaign,
+      isFetchingRewards,
+      isPillarRewardCampaignActive,
+    } = this.props;
+
+    const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
+    const modalTitle = isPillarRewardCampaignActive ? 'Invite and get rewarded' : 'Invite to Pillar';
+    const rewardParagraph = isPillarRewardCampaignActive && rewardText
+      ? `You will receive ${rewardText} for each friend installed the app with your referral link.`
+      : '';
 
     return (
       <ContainerWithHeader
@@ -82,14 +92,14 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
         }}
       >
         <Wrapper flex={1} center regularPadding>
-          <RewardBadge source={rewardBadge} />
-          <Title>Invite and get rewarded</Title>
+          {!!isPillarRewardCampaignActive && <RewardBadge source={rewardBadge} />}
+          <Title>{modalTitle}</Title>
           <LoadingParagraph
             isLoading={isFetchingRewards}
             text={
-              `You will receive ${rewardText} for each friend installed the app with your referral link.` +
-              '\n To enable referral system we need to make sure you\'re a genuine user. We care for our users ' +
-              'privacy and never share your data.'
+              `${rewardParagraph}` +
+              `\n To enable ${isPillarRewardCampaignActive ? 'referral' : 'invitation'} system we need to make sure ` +
+              'you\'re a genuine user. We care for our users\' privacy and never share your data.'
             }
             paragraphProps={{
               center: true,
@@ -112,10 +122,11 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = ({
-  referrals: { rewards, isFetchingRewards },
+  referrals: { rewardsByCampaign, isFetchingRewards, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
-  rewards,
+  rewardsByCampaign,
   isFetchingRewards,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

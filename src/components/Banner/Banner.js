@@ -44,7 +44,8 @@ const BannerContentWrapper = styled.TouchableOpacity`
   border: 1px solid ${themedColors.border};
   border-radius: 6px;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: space-between;
   overflow: hidden;
 `;
 
@@ -66,6 +67,7 @@ const BannerParagraph = styled(Paragraph)`
 `;
 
 const BannerImage = styled(CachedImage)`
+  align-self: flex-end;
 `;
 
 export const Banner = (props: Props) => {

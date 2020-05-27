@@ -43,6 +43,7 @@ import { formatAmount, formatMoney } from 'utils/common';
 import { getAssetsAsList, getBalance } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { isSvgImage } from 'utils/images';
 
 import {
   SEND_TOKEN_AMOUNT,
@@ -190,7 +191,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.proceedSendingCollectible(item)}
         label={item.name}
-        itemImageUrl={item.icon}
+        collectibleUrl={isSvgImage(item.image) ? item.image : item.icon}
         fallbackToGenericToken
       />
     );
