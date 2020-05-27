@@ -80,6 +80,7 @@ type Props = {
   dismissPrivacyInsight: () => void,
   dismissVerificationNote: () => void,
   goToInvitationFlow: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -508,6 +509,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       dismissVerificationNote,
       user,
       goToInvitationFlow,
+      isPillarRewardCampaignActive,
     } = this.props;
     const {
       isEmailVerified, isPhoneVerified, email, phone,
@@ -517,6 +519,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         <InviteBanner
           title="Pillar is social"
           onInvitePress={goToInvitationFlow}
+          isReferralActive={isPillarRewardCampaignActive}
         />
       );
     }
@@ -648,12 +651,14 @@ const mapStateToProps = ({
   },
   accounts: { data: accounts },
   insights: { privacyInsightDismissed, verificationNoteDismissed },
+  referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
   oneTimePasswordSent,
   accounts,
   privacyInsightDismissed,
   verificationNoteDismissed,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
