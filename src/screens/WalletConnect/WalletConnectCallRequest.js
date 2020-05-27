@@ -48,9 +48,11 @@ import { isEnoughBalanceForTransactionFee, getAssetDataByAddress, getAssetsAsLis
 import { images } from 'utils/images';
 import { formatTransactionFee } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
+import { findFirstSmartAccount } from 'utils/accounts';
 
 // services
 import smartWalletService from 'services/smartWallet';
+import { calculateGasEstimate } from 'services/assets';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -161,6 +163,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (['eth_sendTransaction', 'eth_signTransaction'].includes(requestMethod)) {
       this.fetchTransactionEstimate();
     }
+    this.props.fetchGasInfo();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -170,7 +173,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       fetchGasInfo,
     } = this.props;
     if (prevProps.session.isOnline !== isOnline) {
-      fetchGasInfo(); // TODO do we want this if we dropped KW?
+      fetchGasInfo();
     }
     if (!isEqual(prevProps.gasInfo, gasInfo)) {
       this.fetchTransactionEstimate();
@@ -181,9 +184,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (this.unsupportedTransaction) return;
     this.setState({ gettingFee: true });
 
-    const txFeeInfo = await this.getSmartWalletTxFee();
-
-    this.setState({ txFeeInfo, gettingFee: false });
+    const gasLimit = await this.getGasLimit();
+    this.setState({ gasLimit }, async () => {
+      const txFeeInfo = await this.getSmartWalletTxFee();
+      this.setState({ txFeeInfo, gettingFee: false });
+    });
   };
 
   getGasPriceWei = () => {
@@ -197,17 +202,27 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   };
 
   getGasLimit = () => {
-    const { gasLimit: estGasLimit } = this.state;
-    if (!this.shouldUseGasInfoFromRequest()) return estGasLimit;
+    if (this.shouldCalculateGasLimit()) {
+      return this.getCalculatedGasLimit();
+    }
     return this.getGasLimitFromRequest();
   };
+
+  getCalculatedGasLimit = async () => {
+    const { accounts } = this.props;
+    const account = findFirstSmartAccount(accounts);
+    if (!account) return null;
+    const address = account.id;
+    const gasLimit = await calculateGasEstimate({ ...this.transactionDetails, from: address });
+    return gasLimit;
+  }
 
   getRequestParams = () => get(this, 'request.params') || [];
 
   getGasLimitFromRequest = () => {
     const params = this.getRequestParams();
     const requestGasLimit = params[0].gasLimit;
-    return requestGasLimit || this.state.gasLimit;
+    return utils.bigNumberify(requestGasLimit).toNumber();
   };
 
   shouldUseGasInfoFromRequest = () => {
@@ -215,6 +230,13 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (!params.length || !params[0].gasPrice) return false;
     return true;
   };
+
+  shouldCalculateGasLimit = () => {
+    const shouldUseGasInfoFromRequest = this.shouldUseGasInfoFromRequest();
+    if (!shouldUseGasInfoFromRequest) return true;
+    const params = this.getRequestParams();
+    return !params[0]?.gasLimit;
+  }
 
   getGasPriceFromRequest = () => {
     const params = this.getRequestParams();
@@ -244,7 +266,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
     if (this.shouldUseGasInfoFromRequest()) {
       const gasPrice = this.getGasPriceFromRequest();
-      const gasLimit = this.getGasLimit();
+      const { gasLimit } = this.state;
       return { fee: utils.bigNumberify(gasPrice).mul(gasLimit) };
     }
 
@@ -507,7 +529,9 @@ const mapStateToProps = ({
   session: { data: session },
   history: { gasInfo },
   assets: { supportedAssets },
+  accounts: { data: accounts },
 }) => ({
+  accounts,
   contacts,
   session,
   gasInfo,
