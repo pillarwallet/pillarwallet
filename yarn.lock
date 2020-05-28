@@ -15130,10 +15130,10 @@ react-native-video@^3.2.1:
     keymirror "0.1.1"
     prop-types "^15.5.10"
 
-react-native-webview@^9.4.0:
-  version "9.4.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-webview/-/react-native-webview-9.4.0.tgz#108da34a6c7e1c032dcabc942b7e4947ca1d8028"
-  integrity sha1-EI2jSmx+HAMtyryUK35JR8odgCg=
+react-native-webview@^10.1.0:
+  version "10.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-webview/-/react-native-webview-10.1.0.tgz#57ddb199e6f574b5a31196a6343b89f3998b815c"
+  integrity sha1-V92xmeb1dLWjEZamNDuJ85mLgVw=
   dependencies:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
