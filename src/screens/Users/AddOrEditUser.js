@@ -133,13 +133,11 @@ const SelectorWrapper = styled.View`
 const FieldTitle = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: ${({ alignItems }) => alignItems || 'center'};
 `;
 
 const FieldWrapper = styled.View`
-  flex-direction: row;
   padding: 20px 0 25px;
-  align-items: flex-start;
 `;
 
 const FieldIcon = styled(CachedImage)`
@@ -166,6 +164,7 @@ const ProfileFormTemplate = (locals: Object) => {
     fieldDisplayValue,
     descriptionEmpty,
     descriptionAdded,
+    descriptionVerified,
     icon,
     onSelectorClose,
     inputRef,
@@ -196,10 +195,11 @@ const ProfileFormTemplate = (locals: Object) => {
     ...config.inputProps,
   };
 
+  let description = null;
+
   if (!isFocused) {
     const name = fieldDisplayValue || fieldDisplayName;
     let sideComponent;
-    let description;
 
     if (isVerified) {
       sideComponent = (
@@ -232,54 +232,63 @@ const ProfileFormTemplate = (locals: Object) => {
     );
   }
 
+  description = isVerified ? descriptionVerified : descriptionEmpty;
+
   return (
     <FieldWrapper>
-      <FieldIcon source={icon} marginTop={2} />
-      <Spacing w={8} />
-      <TextInput
-        getInputRef={inputRef}
-        errorMessage={errorMessage}
-        inputProps={inputProps}
-        selectorOptions={options ? {
-          options,
-          selectorModalTitle: label,
-          optionsSearchPlaceholder,
-          showOptionsTitles: true,
-          optionsTitle,
-        } : {}}
-        inputWrapperStyle={{ flex: 1 }}
-        additionalStyle={{
-          fontSize: fontSizes.big,
-          fontFamily: appFont.medium,
-        }}
-        renderOption={(item, selectOption) => {
-          return (
-            <CountryWrapper onPress={selectOption}>
-              <CountryNameAndFlagWrapper>
-                <Flag country={item.cca2} width={48} height={37} radius={4} />
-                <Spacing w={15} />
-                <MediumText big>{item.name}</MediumText>
-              </CountryNameAndFlagWrapper>
-              <MediumText big>+{item.callingCode}</MediumText>
-            </CountryWrapper>
-          );
-        }}
-        optionKeyExtractor={({ cca2, value: val }) => cca2 || val}
-        renderSelector={(item) => {
-          return (
-            <SelectorWrapper>
-              <Flag country={item.cca2} width={22} height={15} />
-              <Spacing w={8} />
-              <MediumText big>+{item.callingCode}</MediumText>
-            </SelectorWrapper>
-          );
-        }}
-        iconProps={{
-          icon: config.statusIcon,
-          color: config.statusIconColor,
-          onPress: config.onIconPress,
-        }}
-      />
+      <FieldTitle alignItems="flex-start">
+        <FieldIcon source={icon} marginTop={2} />
+        <Spacing w={8} />
+        <TextInput
+          getInputRef={inputRef}
+          errorMessage={errorMessage}
+          inputProps={inputProps}
+          selectorOptions={options ? {
+            options,
+            selectorModalTitle: label,
+            optionsSearchPlaceholder,
+            showOptionsTitles: true,
+            optionsTitle,
+          } : {}}
+          inputWrapperStyle={{ flex: 1, paddingBottom: 0 }}
+          additionalStyle={{
+            fontSize: fontSizes.big,
+            fontFamily: appFont.medium,
+          }}
+          renderOption={(item, selectOption) => {
+            return (
+              <CountryWrapper onPress={selectOption}>
+                <CountryNameAndFlagWrapper>
+                  <Flag country={item.cca2} width={48} height={37} radius={4} />
+                  <Spacing w={15} />
+                  <MediumText big>{item.name}</MediumText>
+                </CountryNameAndFlagWrapper>
+                <MediumText big>+{item.callingCode}</MediumText>
+              </CountryWrapper>
+            );
+          }}
+          optionKeyExtractor={({ cca2, value: val }) => cca2 || val}
+          renderSelector={(item) => {
+            return (
+              <SelectorWrapper>
+                <Flag country={item.cca2} width={22} height={15} />
+                <Spacing w={8} />
+                <MediumText big>+{item.callingCode}</MediumText>
+              </SelectorWrapper>
+            );
+          }}
+          iconProps={{
+            icon: config.statusIcon,
+            color: config.statusIconColor,
+            onPress: config.onIconPress,
+          }}
+        />
+      </FieldTitle>
+      {!!description && !errorMessage && (
+        <DescriptionWrapper>
+          <BaseText regular secondary>{description}</BaseText>
+        </DescriptionWrapper>
+      )}
     </FieldWrapper>
   );
 };
@@ -344,6 +353,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             fieldDisplayName: 'Email',
             descriptionEmpty: 'Add your email to be able receive special requests.',
             descriptionAdded: 'Verify your email and you will be able to invite your friends in Pillar ',
+            descriptionVerified: 'After changing email you will have re-verify it',
             icon: roundedEmailIcon,
             onPressVerify: this.verifyField,
             isFormFocused: !!focusedField,
@@ -370,6 +380,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             descriptionEmpty: 'Add your phone number to be able to invite your friends.',
             descriptionAdded:
               'Verify your phone number and you will be able to invite your friends in Pillar community ',
+            descriptionVerified: 'After changing phone number you will have re-verify it',
             icon: roundedPhoneIcon,
             inputRef: (ref) => {
               if (this.phoneInputRef) this.phoneInputRef = ref;
