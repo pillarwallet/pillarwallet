@@ -40,9 +40,10 @@ import SlideModal from 'components/Modals/SlideModal';
 import SendTokenDetails from 'components/SendTokenDetails';
 import Spinner from 'components/Spinner';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // utils
-import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -144,6 +145,13 @@ type State = {
   submitPressed: boolean,
   showRelayerMigrationModal: boolean,
 };
+
+type FooterProps = {
+  showTransactionSpeeds: boolean,
+  showRelayerMigration: boolean,
+  showFee: boolean,
+  isLoading: boolean,
+}
 
 
 const { Form } = t.form;
@@ -435,6 +443,42 @@ class SendEthereumTokens extends React.Component<Props, State> {
     }
   };
 
+  renderFooterLeftSide = (props: FooterProps) => {
+    const { txFeeInfo } = this.state;
+    const {
+      showTransactionSpeeds,
+      showRelayerMigration,
+      showFee,
+      isLoading,
+    } = props;
+
+    if (isLoading) {
+      return <Spinner width={20} height={20} />;
+    }
+
+    if (showTransactionSpeeds) {
+      return (
+        <TouchableOpacity onPress={() => this.setState({ showTransactionSpeedModal: true })}>
+          <SendTokenDetailsValue>
+            <Label small>Fee: </Label>
+            <TextLink>{SPEED_TYPE_LABELS[this.getTxSpeed()]}</TextLink>
+          </SendTokenDetailsValue>
+        </TouchableOpacity>
+      );
+    } else if (showRelayerMigration) {
+      return this.renderRelayerMigrationButton();
+    } else if (showFee && txFeeInfo) {
+      const { fee, gasToken } = txFeeInfo;
+      return (
+        <FeeLabelToggle
+          txFeeInWei={fee}
+          gasToken={gasToken}
+        />
+      );
+    }
+    return <Label>&nbsp;</Label>;
+  };
+
   render() {
     const {
       value,
@@ -470,7 +514,6 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     // fee
     let isEnoughForFee = true;
-    let feeDisplayValue = '';
     if (txFeeInfo) {
       const balanceCheckTransaction = {
         txFeeInWei: txFeeInfo.fee,
@@ -480,7 +523,6 @@ class SendEthereumTokens extends React.Component<Props, State> {
         gasToken: txFeeInfo.gasToken,
       };
       isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
-      feeDisplayValue = formatTransactionFee(txFeeInfo.fee, txFeeInfo.gasToken);
     }
 
     // max amount
@@ -507,12 +549,9 @@ class SendEthereumTokens extends React.Component<Props, State> {
     });
 
     const enteredMoreThanBalance = currentValue > balance;
-    const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError;
+    const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError && !gettingFee;
     const showFee = !enteredMoreThanBalance && !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0);
     const isNextButtonDisabled = gettingFee || !session.isOnline;
-    const nextButtonTitle = gettingFee
-      ? 'Getting the fee..'
-      : 'Next';
 
     const showRelayerMigration = showFee && isSmartAccount && !isGasTokenSupported;
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
@@ -522,27 +561,18 @@ class SendEthereumTokens extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: `Send ${assetData.token}` }] }}
         footer={(
           <FooterInner>
-            {!!showTransactionSpeeds &&
-              <TouchableOpacity onPress={() => this.setState({ showTransactionSpeedModal: true })}>
-                <SendTokenDetailsValue>
-                  <Label small>Fee: </Label>
-                  <TextLink>{SPEED_TYPE_LABELS[this.getTxSpeed()]}</TextLink>
-                </SendTokenDetailsValue>
-              </TouchableOpacity>
-            }
-            {!showTransactionSpeeds && !showRelayerMigration && showFee &&
-              <SendTokenDetailsValue>
-                <Label small>Estimated fee: {feeDisplayValue}</Label>
-              </SendTokenDetailsValue>
-            }
-            {showRelayerMigration && this.renderRelayerMigrationButton()}
-            {!showTransactionSpeeds && !showFee && !showRelayerMigration && <Label>&nbsp;</Label>}
+            {this.renderFooterLeftSide({
+              showTransactionSpeeds,
+              showRelayerMigration,
+              showFee,
+              isLoading: gettingFee && !!value && !!parseFloat(value.amount) && !inputHasError,
+            })}
             {showNextButton &&
               <Button
                 disabled={isNextButtonDisabled}
                 small
                 flexRight
-                title={nextButtonTitle}
+                title="Next"
                 onPress={this.handleFormSubmit}
               />
             }
