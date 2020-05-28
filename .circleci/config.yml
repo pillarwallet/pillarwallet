@@ -687,6 +687,7 @@ workflows:
             branches:
               only:
                 - develop
+                - fix/ios-sentry-sourcemap-attempt-2
       - appcenter_android:
           requires:
             - build-and-test

@@ -34,7 +34,7 @@ import DeviceInfo from 'react-native-device-info';
 import * as Sentry from '@sentry/react-native';
 
 // components
-import { Wrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 
 // utils
@@ -63,7 +63,7 @@ const SystemInfoModal = () => {
   const appBundleId = DeviceInfo.getBundleId();
   const buildNumber = DeviceInfo.getBuildNumber();
   return (
-    <Wrapper regularPadding>
+    <ScrollWrapper regularPadding>
       <LabeledRow>
         <Label>BUILD_NUMBER</Label>
         <Value>{BUILD_NUMBER}</Value>
@@ -108,7 +108,7 @@ const SystemInfoModal = () => {
           <Value>{appBundleId}-{appVersion} ({buildNumber})</Value>
         </TouchableOpacity>
       </LabeledRow>
-    </Wrapper>
+    </ScrollWrapper>
   );
 };
 
