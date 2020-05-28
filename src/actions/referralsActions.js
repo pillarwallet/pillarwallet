@@ -47,13 +47,15 @@ import {
   SET_REFERRAL_REWARD_AMOUNT,
   SET_ALREADY_INVITED_CONTACTS,
   FETCHING_REFERRAL_REWARD_AMOUNT,
+  SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
+  SET_PILLAR_REWARD_CAMPAIGN_STATUS,
+  SET_1WORLD_CAMPAIGN_STATUS,
 } from 'constants/referralsConstants';
 import {
   APP_FLOW,
   REFER_FLOW,
   REFERRAL_SENT,
   REFERRAL_CONTACT_INFO_MISSING,
-  REFERRAL_INCOMING_REWARD,
 } from 'constants/navigationConstants';
 
 // components
@@ -64,7 +66,8 @@ import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
 // utils
-import { reportLog } from 'utils/common';
+import { printLog } from 'utils/common';
+
 
 export type ClaimTokenAction = {
   walletId: string,
@@ -142,7 +145,7 @@ export const completeReferralsEventAction = () => {
     });
 
     Toast.show({
-      message: 'You are gonna receive your rewards soon!',
+      message: 'You are going to receive your rewards soon!',
       type: 'info',
       title: 'Rewards on their way',
       autoClose: false,
@@ -214,11 +217,14 @@ export const startReferralsListenerAction = () => {
   return (dispatch: Dispatch) => {
     if (branchIoSubscription) return;
 
+
     branchIoSubscription = branch.subscribe(({ error, params }) => {
       if (!isEmpty(error)) {
-        reportLog('Branch.io Subscribe error', error, 'error');
+        // TODO: need to re-subscribe on fail
+        printLog('Branch.io Subscribe error', error, 'error');
         return;
       }
+
       if (!params['+clicked_branch_link']) return;
 
       const { token, phone, email } = params;
@@ -228,10 +234,6 @@ export const startReferralsListenerAction = () => {
         email,
         phone,
       ));
-
-      if (token) {
-        navigate(REFERRAL_INCOMING_REWARD);
-      }
     });
   };
 };
@@ -331,11 +333,48 @@ export const fetchReferralRewardAction = () => {
       type: FETCHING_REFERRAL_REWARD_AMOUNT,
     });
 
-    const referralRewards: RewardsByCompany = await api.getReferralRewardValue(walletId, referralToken);
+    const referralCampaignsInfo = await api.getReferralCampaignsInfo(walletId, referralToken);
+    const referralRewards: RewardsByCompany = Object.keys(referralCampaignsInfo)
+      .reduce((rewardsByCampaign, campaignName) => {
+        const isCampaignActive = get(referralCampaignsInfo, `[${campaignName}].isActive`);
+        const campaignRewards = get(referralCampaignsInfo, `[${campaignName}].rewards`);
+        if (campaignRewards && isCampaignActive) rewardsByCampaign[campaignName] = campaignRewards;
+        return rewardsByCampaign;
+      },
+      {});
 
     dispatch({
       type: SET_REFERRAL_REWARD_AMOUNT,
       payload: referralRewards,
+    });
+
+    const isPillarRewardsActive = get(referralCampaignsInfo, 'pillar.isActive');
+    const is1WorldCampaignActive = get(referralCampaignsInfo, '1world.isActive');
+
+    dispatch({
+      type: SET_PILLAR_REWARD_CAMPAIGN_STATUS,
+      payload: isPillarRewardsActive,
+    });
+
+    dispatch({
+      type: SET_1WORLD_CAMPAIGN_STATUS,
+      payload: is1WorldCampaignActive,
+    });
+  };
+};
+
+export const fetchReferralRewardsIssuerAddressesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: { walletId } },
+      referrals: { referralToken },
+    } = getState();
+
+    const addresses = await api.getReferralRewardIssuerAddress(walletId, referralToken);
+
+    dispatch({
+      type: SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
+      payload: addresses,
     });
   };
 };

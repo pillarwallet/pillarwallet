@@ -5,9 +5,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { COLLECTIBLES_NETWORK, GAS_TOKEN_ADDRESS, NETWORK_PROVIDER } from 'react-native-dotenv';
+import { COLLECTIBLES_NETWORK, NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import isEqual from 'lodash.isequal';
 
@@ -23,23 +22,28 @@ import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
 import { findMatchingContact, getUserName } from 'utils/contacts';
-import { addressesEqual, getAssetDataByAddress, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { checkIfSmartWalletAccount, getAccountName } from 'utils/accounts';
 import { formatTransactionFee, getEthereumProvider, noop } from 'utils/common';
+import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { getAccountName } from 'utils/accounts';
+import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // services
 import smartWalletService from 'services/smartWallet';
 import { buildERC721TransactionData, calculateGasEstimate, fetchRinkebyETHBalance } from 'services/assets';
 
 // selectors
-import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import {
+  isActiveAccountSmartWalletSelector,
+  useGasTokenSelector,
+} from 'selectors/smartWallet';
 
 // types
-import type { CollectibleTransactionPayload, GasToken } from 'models/Transaction';
+import type { CollectibleTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
-import type { Account, Accounts } from 'models/Account';
+import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -54,12 +58,12 @@ type Props = {
   wallet: Object,
   activeAccountAddress: string,
   accounts: Accounts,
-  activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  smartWalletAccountSupportsGasToken: boolean,
   balances: Balances,
   contactsSmartAddresses: ContactSmartAddressData[],
+  isSmartAccount: boolean,
+  useGasToken: boolean,
 };
 
 type State = {
@@ -67,8 +71,7 @@ type State = {
   rinkebyETH: string,
   gettingFee: boolean,
   gasLimit: number,
-  feeByGasToken: boolean,
-  txFeeInWei: BigNumber,
+  txFeeInfo: ?TransactionFeeInfo,
 };
 
 
@@ -77,7 +80,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   receiver: string;
   receiverEnsName: string;
   source: string;
-  gasToken: ?GasToken;
   isRopstenNetwork: boolean;
 
   constructor(props) {
@@ -87,38 +89,22 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.source = this.props.navigation.getParam('source', '');
     this.receiverEnsName = this.props.navigation.getParam('receiverEnsName');
     this.isRopstenNetwork = NETWORK_PROVIDER === 'ropsten';
-    let feeByGasToken = false;
-
-    const {
-      activeAccount,
-      accountAssets,
-      supportedAssets,
-      smartWalletAccountSupportsGasToken,
-    } = props;
-    const gasTokenData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, GAS_TOKEN_ADDRESS);
-    const isSmartAccount = activeAccount && checkIfSmartWalletAccount(activeAccount);
-    if (isSmartAccount
-      && smartWalletAccountSupportsGasToken
-      && !isEmpty(gasTokenData)) {
-      const { decimals, address, symbol } = gasTokenData;
-      this.gasToken = { decimals, address, symbol };
-      feeByGasToken = true;
-    }
 
     this.state = {
       note: null,
       rinkebyETH: '',
       gasLimit: 0,
       gettingFee: true,
-      feeByGasToken,
-      txFeeInWei: new BigNumber(0),
+      txFeeInfo: null,
     };
   }
 
   componentDidMount() {
-    const { fetchGasInfo } = this.props;
+    const { fetchGasInfo, isSmartAccount } = this.props;
     if (Platform.OS === 'android') BackHandler.addEventListener('hardwareBackPress', this.handleBackAction);
-    fetchGasInfo();
+    if (!isSmartAccount) {
+      fetchGasInfo();
+    }
     this.fetchETHBalanceInRinkeby();
     this.calculateTransactionFee();
   }
@@ -139,7 +125,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   getTransactionPayload = (): CollectibleTransactionPayload => {
     const { activeAccountAddress } = this.props;
-    const { txFeeInWei, note } = this.state;
+    const { txFeeInfo, note } = this.state;
     const {
       name,
       tokenType,
@@ -155,7 +141,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       contractAddress,
       tokenType,
       tokenId,
-      txFeeInWei,
+      txFeeInWei: txFeeInfo?.fee || new BigNumber(0),
       note,
     };
   };
@@ -163,28 +149,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   updateTransactionFee = async () => {
     this.setState({ gettingFee: true }, () => {
       this.calculateTransactionFee();
-    });
-  };
-
-  calculateTransactionFee = async () => {
-    const { activeAccount, gasInfo } = this.props;
-    let { gasLimit } = this.state;
-    const transactionPayload = this.getTransactionPayload();
-    let txFeeInWei;
-
-    if (activeAccount && checkIfSmartWalletAccount(activeAccount)) {
-      txFeeInWei = await this.getSmartWalletTxFeeInWei(transactionPayload);
-    } else {
-      const gasPrice = gasInfo.gasPrice[SPEED_TYPES.NORMAL] || 0;
-      const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-      gasLimit = await calculateGasEstimate(transactionPayload);
-      txFeeInWei = gasPriceWei.mul(gasLimit);
-    }
-
-    this.setState({
-      gettingFee: false,
-      txFeeInWei,
-      gasLimit,
     });
   };
 
@@ -222,44 +186,69 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.setState({ rinkebyETH });
   };
 
-  getSmartWalletTxFeeInWei = async (transaction: CollectibleTransactionPayload): BigNumber => {
-    const { feeByGasToken } = this.state;
-    const { gasInfo } = this.props;
+  calculateTransactionFee = async () => {
+    const { isSmartAccount } = this.props;
+    const transactionPayload = this.getTransactionPayload();
 
+    let gasLimit;
+    if (!isSmartAccount) {
+      gasLimit = await calculateGasEstimate(transactionPayload);
+      this.setState({ gasLimit });
+    }
+
+    const txFeeInfo = isSmartAccount
+      ? await this.getSmartWalletTxFee(transactionPayload)
+      : this.getKeyWalletTxFee(transactionPayload, gasLimit);
+
+    this.setState({ txFeeInfo, gettingFee: false });
+  };
+
+  getKeyWalletTxFee = (transaction: CollectibleTransactionPayload, gasLimit?: number): TransactionFeeInfo => {
+    const { gasInfo } = this.props;
+    gasLimit = gasLimit || 0;
+
+    const gasPrice = gasInfo.gasPrice[SPEED_TYPES.NORMAL] || 0;
+    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+
+    return {
+      fee: gasPriceWei.mul(gasLimit),
+    };
+  };
+
+  getSmartWalletTxFee = async (transaction: CollectibleTransactionPayload): Promise<TransactionFeeInfo> => {
+    const { useGasToken } = this.props;
+    const defaultResponse = { fee: new BigNumber(0) };
     const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
     const data = await buildERC721TransactionData(transaction, provider);
 
     const estimateTransaction = {
       data,
       recipient: transaction.contractAddress || '',
-      gasToken: this.gasToken,
       value: 0,
     };
 
-    const { gasTokenCost, cost: ethCost } = await smartWalletService
-      .estimateAccountTransaction(estimateTransaction, gasInfo)
-      .catch(() => ({}));
+    const estimated = await smartWalletService
+      .estimateAccountTransaction(estimateTransaction)
+      .then(result => buildTxFeeInfo(result, useGasToken))
+      .catch(() => null);
 
-    if (gasTokenCost && gasTokenCost.gt(0)) {
-      if (!feeByGasToken) this.setState({ feeByGasToken: true });
-
-      return gasTokenCost;
+    if (!estimated) {
+      return defaultResponse;
     }
 
-    if (feeByGasToken) this.setState({ feeByGasToken: false });
-
-    return ethCost || new BigNumber(0);
+    return estimated;
   };
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
-    const { navigation, activeAccount } = this.props;
-    const { txFeeInWei, gasLimit, feeByGasToken } = this.state;
+    const { navigation, isSmartAccount } = this.props;
+    const { txFeeInfo, gasLimit } = this.state;
+    if (!txFeeInfo) return;
 
     let transactionPayload = this.getTransactionPayload();
 
-    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
-      const gasPrice = gasLimit ? txFeeInWei.div(gasLimit).toNumber() : 0;
+    if (!isSmartAccount) {
+      const gasPrice = gasLimit ? txFeeInfo.fee.div(gasLimit).toNumber() : 0;
       transactionPayload = {
         ...transactionPayload,
         gasLimit,
@@ -267,9 +256,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       };
     }
 
-    if (feeByGasToken) {
-      transactionPayload = { ...transactionPayload, gasToken: this.gasToken };
-    }
+    if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
@@ -285,7 +272,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const {
       contacts,
       session,
-      gasInfo,
       accounts,
       contactsSmartAddresses,
       balances,
@@ -293,9 +279,8 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const {
       rinkebyETH,
       gettingFee,
-      txFeeInWei,
-      feeByGasToken,
       note,
+      txFeeInfo,
     } = this.state;
     const { name } = this.assetData;
 
@@ -305,24 +290,28 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const recipientUsername = getUserName(contact);
     const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
 
-    // rinkeby testnet fee check
-    const txFee = utils.formatEther(txFeeInWei.toString());
-    const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee);
+    let isEnoughForFee = true;
+    let feeDisplayValue = '';
+    if (txFeeInfo) {
+      // rinkeby testnet fee check
+      const txFee = utils.formatEther(txFeeInfo.fee.toString());
+      const canProceedTesting = this.isRopstenNetwork && parseFloat(rinkebyETH) > parseFloat(txFee);
 
-    // fee
-    const parsedGasToken = feeByGasToken && !isEmpty(this.gasToken) ? this.gasToken : null;
-    const balanceCheckTransaction = {
-      txFeeInWei,
-      amount: 0,
-      gasToken: parsedGasToken,
-    };
-    const isEnoughForFee = canProceedTesting || isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
-    const feeDisplayValue = formatTransactionFee(txFeeInWei, parsedGasToken);
-    const feeSymbol = get(parsedGasToken, 'symbol', ETH);
+      // fee
+      const balanceCheckTransaction = {
+        txFeeInWei: txFeeInfo.fee,
+        amount: 0,
+        gasToken: txFeeInfo.gasToken,
+      };
+      isEnoughForFee = canProceedTesting || isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
+      feeDisplayValue = formatTransactionFee(txFeeInfo.fee, txFeeInfo.gasToken);
+    }
+
+    const feeSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
     const errorMessage = !isEnoughForFee ? `Not enough ${feeSymbol} for transaction fee` : '';
 
     // confirm button
-    const isConfirmDisabled = gettingFee || !session.isOnline || !gasInfo.isFetched || !isEnoughForFee;
+    const isConfirmDisabled = gettingFee || !session.isOnline || !txFeeInfo || !isEnoughForFee;
     const confirmButtonTitle = gettingFee
       ? 'Getting the fee..'
       : 'Confirm Transaction';
@@ -400,7 +389,6 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   accounts: { data: accounts },
   assets: { supportedAssets },
-  smartWallet: { connectedAccount: { gasTokenSupported: smartWalletAccountSupportsGasToken } },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   session,
@@ -408,15 +396,15 @@ const mapStateToProps = ({
   wallet,
   accounts,
   supportedAssets,
-  smartWalletAccountSupportsGasToken,
   contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
+  isSmartAccount: isActiveAccountSmartWalletSelector,
+  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

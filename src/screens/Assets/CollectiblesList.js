@@ -23,12 +23,14 @@ import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
+import CollectibleImage from 'components/CollectibleImage';
+import Button from 'components/Button';
+import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // constants
 import { COLLECTIBLE } from 'constants/navigationConstants';
@@ -77,13 +79,22 @@ type Props = {
   searchQuery: string,
   navigation: NavigationScreenProp<*>,
   theme: Theme,
+  activeAccountAddress: string,
 };
 
 type CollectibleItem = {
   item: Collectible,
 };
 
-class CollectiblesList extends React.PureComponent<Props> {
+type State = {
+  isReceiveVisible: boolean,
+}
+
+class CollectiblesList extends React.PureComponent<Props, State> {
+  state = {
+    isReceiveVisible: false,
+  };
+
   handleCardTap = (assetData: Collectible) => {
     const { navigation } = this.props;
 
@@ -91,8 +102,9 @@ class CollectiblesList extends React.PureComponent<Props> {
   };
 
   renderCollectible = ({ item }: CollectibleItem) => {
-    const { name, image, icon: itemIcon } = item;
-    const icon = itemIcon || image;
+    const { name, image } = item;
+
+    const icon = image;
     const { theme } = this.props;
     const { genericToken } = images(theme);
 
@@ -103,12 +115,12 @@ class CollectiblesList extends React.PureComponent<Props> {
           contentWrapperStyle={{ padding: spacing.medium, alignItems: 'center' }}
           onPress={() => this.handleCardTap(item)}
         >
-          <CachedImage
+          <CollectibleImage
             style={{
-              height: 135,
-              width: 135,
               marginBottom: spacing.mediumLarge,
             }}
+            width={135}
+            height={135}
             source={{ uri: icon }}
             fallbackSource={genericToken}
             resizeMode="contain"
@@ -121,11 +133,13 @@ class CollectiblesList extends React.PureComponent<Props> {
     );
   };
 
+  toggleReceiveModal = () => {
+    this.setState(({ isReceiveVisible }) => ({ isReceiveVisible: !isReceiveVisible }));
+  };
+
   render() {
-    const {
-      searchQuery,
-      collectibles,
-    } = this.props;
+    const { searchQuery, collectibles, activeAccountAddress } = this.props;
+    const { isReceiveVisible } = this.state;
 
     const emptyStateInfo = {
       title: 'No collectibles',
@@ -138,28 +152,43 @@ class CollectiblesList extends React.PureComponent<Props> {
     }
 
     return (
-      <FlatList
-        data={collectibles}
-        keyExtractor={(it) => { return `${it.assetContract}${it.id}`; }}
-        renderItem={this.renderCollectible}
-        numColumns={2}
-        style={[searchQuery ? { flexGrow: 1, paddingTop: spacing.mediumLarge } : { flexGrow: 1 }]}
-        contentContainerStyle={{
-          paddingHorizontal: 12,
-          paddingTop: 24,
-          paddingBottom: 12,
-          flexGrow: 1,
-        }}
-        ListEmptyComponent={
-          <EmptyStateWrapper>
-            <EmptyStateParagraph {...emptyStateInfo} />
-          </EmptyStateWrapper>
-        }
-        initialNumToRender={4}
-        removeClippedSubviews
-        viewabilityConfig={viewConfig}
-        keyboardShouldPersistTaps="always"
-      />
+      <>
+        <FlatList
+          data={collectibles}
+          keyExtractor={(it) => { return `${it.assetContract}${it.id}`; }}
+          renderItem={this.renderCollectible}
+          numColumns={2}
+          style={[searchQuery ? { flexGrow: 1, paddingTop: spacing.mediumLarge } : { flexGrow: 1 }]}
+          contentContainerStyle={{
+            paddingHorizontal: 12,
+            paddingTop: 24,
+            paddingBottom: 12,
+            flexGrow: 1,
+          }}
+          ListEmptyComponent={
+            <EmptyStateWrapper>
+              <EmptyStateParagraph {...emptyStateInfo} />
+              <Button
+                title="Receive"
+                block
+                marginTop={40}
+                secondary
+                regularText
+                onPress={this.toggleReceiveModal}
+              />
+            </EmptyStateWrapper>
+          }
+          initialNumToRender={4}
+          removeClippedSubviews
+          viewabilityConfig={viewConfig}
+          keyboardShouldPersistTaps="always"
+        />
+        <ReceiveModal
+          address={activeAccountAddress}
+          onModalHide={this.toggleReceiveModal}
+          isVisible={isReceiveVisible}
+        />
+      </>
     );
   }
 }

@@ -32,7 +32,6 @@ import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/as
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { UPDATE_RATES } from 'constants/ratesConstants';
 import { SET_USER, REGISTERED } from 'constants/userConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -135,14 +134,6 @@ const mockBackupStatus: Object = {
   isBackedUp: false,
 };
 
-const mockExchangeRates = {
-  ETH: {
-    EUR: 624.21,
-    GBP: 544.57,
-    USD: 748.92,
-  },
-};
-
 describe('Wallet actions', () => {
   let store;
   beforeEach(() => {
@@ -165,6 +156,8 @@ describe('Wallet actions', () => {
       },
       history: { data: {} },
       appSettings: {},
+      smartWallet: {},
+      balances: { data: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -191,7 +184,6 @@ describe('Wallet actions', () => {
       { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
-      { type: UPDATE_RATES, payload: mockExchangeRates },
       {
         type: SET_INITIAL_ASSETS,
         payload: {
@@ -232,6 +224,7 @@ describe('Wallet actions', () => {
       assets: { data: {} },
       history: { data: {} },
       appSettings: {},
+      balances: { data: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -258,7 +251,6 @@ describe('Wallet actions', () => {
       { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
-      { type: UPDATE_RATES, payload: mockExchangeRates },
       {
         type: SET_INITIAL_ASSETS,
         payload: {
@@ -312,6 +304,8 @@ describe('Wallet actions', () => {
       assets: { data: {} },
       history: { data: {} },
       appSettings: {},
+      smartWallet: {},
+      balances: { data: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -337,7 +331,6 @@ describe('Wallet actions', () => {
       { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
-      { type: UPDATE_RATES, payload: mockExchangeRates },
       {
         type: SET_INITIAL_ASSETS,
         payload: {

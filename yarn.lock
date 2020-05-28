@@ -1817,14 +1817,14 @@
     hoist-non-react-statics "^3.3.2"
     react-native-safe-area-view "^0.14.8"
 
-"@sentry/browser@^5.12.1":
-  version "5.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/browser/-/browser-5.13.0.tgz#399b0a09d6603726d787b746bcc70659010bc50c"
-  integrity sha1-OZsKCdZgNybXh7dGvMcGWQELxQw=
+"@sentry/browser@^5.15.4":
+  version "5.15.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/browser/-/browser-5.15.5.tgz#d9a51f1388581067b50d30ed9b1aed2cbb333a36"
+  integrity sha1-2aUfE4hYEGe1DTDtmxrtLLszOjY=
   dependencies:
-    "@sentry/core" "5.13.0"
-    "@sentry/types" "5.12.4"
-    "@sentry/utils" "5.13.0"
+    "@sentry/core" "5.15.5"
+    "@sentry/types" "5.15.5"
+    "@sentry/utils" "5.15.5"
     tslib "^1.9.3"
 
 "@sentry/cli@^1.51.0":
@@ -1839,67 +1839,67 @@
     progress "2.0.0"
     proxy-from-env "^1.0.0"
 
-"@sentry/core@5.13.0", "@sentry/core@^5.12.0":
-  version "5.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/core/-/core-5.13.0.tgz#144beb2d48b53244774a7fd809f9b5b672920971"
-  integrity sha1-FEvrLUi1MkR3Sn/YCfm1tnKSCXE=
+"@sentry/core@5.15.5", "@sentry/core@^5.15.4":
+  version "5.15.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/core/-/core-5.15.5.tgz#40ea79bff5272d3fbbeeb4a98cdc59e1adbd2c92"
+  integrity sha1-QOp5v/UnLT+77rSpjNxZ4a29LJI=
   dependencies:
-    "@sentry/hub" "5.13.0"
-    "@sentry/minimal" "5.13.0"
-    "@sentry/types" "5.12.4"
-    "@sentry/utils" "5.13.0"
+    "@sentry/hub" "5.15.5"
+    "@sentry/minimal" "5.15.5"
+    "@sentry/types" "5.15.5"
+    "@sentry/utils" "5.15.5"
     tslib "^1.9.3"
 
-"@sentry/hub@5.13.0":
-  version "5.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/hub/-/hub-5.13.0.tgz#f48e3e4e273f40316391cd6190e22ea69cb20c7e"
-  integrity sha1-9I4+Tic/QDFjkc1hkOIuppyyDH4=
+"@sentry/hub@5.15.5":
+  version "5.15.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/hub/-/hub-5.15.5.tgz#f5abbcdbe656a70e2ff02c02a5a4cffa0f125935"
+  integrity sha1-9au82+ZWpw4v8CwCpaTP+g8SWTU=
   dependencies:
-    "@sentry/types" "5.12.4"
-    "@sentry/utils" "5.13.0"
+    "@sentry/types" "5.15.5"
+    "@sentry/utils" "5.15.5"
     tslib "^1.9.3"
 
-"@sentry/integrations@^5.12.0":
-  version "5.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/integrations/-/integrations-5.13.0.tgz#358e3225ff302353ea38214daa4a5eed1eb5d4aa"
-  integrity sha1-NY4yJf8wI1PqOCFNqkpe7R611Ko=
+"@sentry/integrations@^5.15.4":
+  version "5.15.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/integrations/-/integrations-5.15.5.tgz#7f7bc488d838cd50e9ca50d5f933680632827826"
+  integrity sha1-f3vEiNg4zVDpylDV+TNoBjKCeCY=
   dependencies:
-    "@sentry/types" "5.12.4"
-    "@sentry/utils" "5.13.0"
+    "@sentry/types" "5.15.5"
+    "@sentry/utils" "5.15.5"
     tslib "^1.9.3"
 
-"@sentry/minimal@5.13.0":
-  version "5.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/minimal/-/minimal-5.13.0.tgz#ee906191e3c2a1f7d0925fbfa0a4e96261013764"
-  integrity sha1-7pBhkePCoffQkl+/oKTpYmEBN2Q=
+"@sentry/minimal@5.15.5":
+  version "5.15.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/minimal/-/minimal-5.15.5.tgz#a0e4e071f01d9c4d808094ae7203f6c4cca9348a"
+  integrity sha1-oOTgcfAdnE2AgJSucgP2xMypNIo=
   dependencies:
-    "@sentry/hub" "5.13.0"
-    "@sentry/types" "5.12.4"
+    "@sentry/hub" "5.15.5"
+    "@sentry/types" "5.15.5"
     tslib "^1.9.3"
 
-"@sentry/react-native@^1.3.3":
-  version "1.3.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/react-native/-/react-native-1.3.3.tgz#a2acb53171c743d89e92eb578dde9af9e6a91422"
-  integrity sha1-oqy1MXHHQ9iekutXjd6a+eapFCI=
+"@sentry/react-native@^1.3.8":
+  version "1.3.8"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/react-native/-/react-native-1.3.8.tgz#ba0318fb42c40b872d794cd912b2f80dbc60d1bd"
+  integrity sha1-ugMY+0LEC4cteUzZErL4Dbxg0b0=
   dependencies:
-    "@sentry/browser" "^5.12.1"
-    "@sentry/core" "^5.12.0"
-    "@sentry/integrations" "^5.12.0"
-    "@sentry/types" "^5.12.0"
-    "@sentry/utils" "^5.12.0"
+    "@sentry/browser" "^5.15.4"
+    "@sentry/core" "^5.15.4"
+    "@sentry/integrations" "^5.15.4"
+    "@sentry/types" "^5.15.4"
+    "@sentry/utils" "^5.15.4"
     "@sentry/wizard" "^1.1.1"
 
-"@sentry/types@5.12.4", "@sentry/types@^5.12.0":
-  version "5.12.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/types/-/types-5.12.4.tgz#6e52639bc3b4e136e9a0da5385890f8f78bb7697"
-  integrity sha1-blJjm8O04TbpoNpThYkPj3i7dpc=
+"@sentry/types@5.15.5", "@sentry/types@^5.15.4":
+  version "5.15.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/types/-/types-5.15.5.tgz#16c97e464cf09bbd1d2e8ce90d130e781709076e"
+  integrity sha1-Fsl+Rkzwm70dLozpDRMOeBcJB24=
 
-"@sentry/utils@5.13.0", "@sentry/utils@^5.12.0":
-  version "5.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/utils/-/utils-5.13.0.tgz#6463e53b6178dbbd3b90e671517cbca82744b055"
-  integrity sha1-ZGPlO2F42707kOZxUXy8qCdEsFU=
+"@sentry/utils@5.15.5", "@sentry/utils@^5.15.4":
+  version "5.15.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/utils/-/utils-5.15.5.tgz#dec1d4c79037c4da08b386f5d34409234dcbfb15"
+  integrity sha1-3sHUx5A3xNoIs4b100QJI03L+xU=
   dependencies:
-    "@sentry/types" "5.12.4"
+    "@sentry/types" "5.15.5"
     tslib "^1.9.3"
 
 "@sentry/wizard@^1.1.1":
@@ -15050,10 +15050,17 @@ react-native-image-crop-picker@^0.26.2:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.26.2.tgz#c70985ff6740e63569f90b185be0516d83f5933b"
   integrity sha1-xwmF/2dA5jVp+QsYW+BRbYP1kzs=
 
-react-native-image-view@^2.1.6:
-  version "2.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-view/-/react-native-image-view-2.1.9.tgz#635306360c42ad2479f364161c47d2557f9240fd"
-  integrity sha1-Y1MGNgxCrSR582QWHEfSVX+SQP0=
+react-native-image-pan-zoom@^2.1.9:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/react-native-image-pan-zoom/-/react-native-image-pan-zoom-2.1.11.tgz#61bcb69219d95e76a9797d23e4a2e8e0bd654ae9"
+  integrity sha512-ZCisGUFpPchHXsjT7ZI0anlSLPgcTmjRKXqpVnPu3RDWFXfKjuL4zpY57DX4Y8YgGZCpbf9fApN7KjVYody2Mw==
+
+react-native-image-zoom-viewer@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-zoom-viewer/-/react-native-image-zoom-viewer-3.0.0.tgz#cf292fb97cbf06c880a643458be9b8871d911c49"
+  integrity sha512-/jm1EX/71NcT9ZVK18YfNDpUZiP46HJsyq1GBSG/BWgpGBFAZ3kXRnXzCCcZJGlx4NkfUJnpoonelfRStk42xw==
+  dependencies:
+    react-native-image-pan-zoom "^2.1.9"
 
 react-native-intercom@^13.1.0:
   version "13.2.0"
@@ -16225,10 +16232,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.216:
-  version "1.0.216"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.216.tgz#ec1a2a9a947fcb4371f9e4c4ec9d1c63db3d8743"
-  integrity sha1-7BoqmpR/y0Nx+eTE7J0cY9s9h0M=
+rn-signal-protocol-messaging@1.0.218:
+  version "1.0.218"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.218.tgz#7e8a83040b1f3c58f42a73f94a31fad7b36f9c97"
+  integrity sha1-foqDBAsfPFj0KnP5SjH617NvnJc=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

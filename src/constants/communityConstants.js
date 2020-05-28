@@ -44,7 +44,3 @@ export const FACEBOOK_SOCIAL_ADDRESS = {
     ios: 'fb://profile/277505029373839',
   }),
 };
-
-export const FORUM_SOCIAL_ADDRESS = {
-  web: 'https://forum.pillarproject.io/',
-};

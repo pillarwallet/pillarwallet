@@ -17,9 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import merge from 'lodash.merge';
+import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
+import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
 export type AppSettingsReducerState = {
   data: {
@@ -39,6 +39,7 @@ export type AppSettingsReducerState = {
     hideBalance?: boolean,
     hasDismissedConnectAppsIntro?: boolean,
     hideBadges?: boolean,
+    preferredGasToken: ?string,
   },
   isFetched: boolean,
 };
@@ -64,6 +65,7 @@ export const initialState: AppSettingsReducerState = {
     hideBalance: false,
     hasDismissedConnectAppsIntro: false,
     hideBadges: false,
+    preferredGasToken: null,
   },
   isFetched: false,
 };
@@ -83,6 +85,9 @@ const appSettingsReducer = (
 
     case RESET_APP_SETTINGS:
       return { ...state, data: { ...initialState.data } };
+
+    case RESET_APP_LOADED:
+      return { ...state, isFetched: false };
 
     default:
       return state;

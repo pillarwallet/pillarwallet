@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
-import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
@@ -44,6 +43,7 @@ import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
+import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -61,6 +61,7 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 
 const ActionsWrapper = styled.View`
@@ -102,6 +103,7 @@ type Props = {
   topUpFee: TopUpFee,
   rates: Rates,
   baseFiatCurrency: ?string,
+  useGasToken: boolean,
 };
 
 type State = {
@@ -136,7 +138,7 @@ class FundTank extends React.Component<Props, State> {
     this.setState({ value }, () => this.checkFormInputErrors());
   };
 
-  handleFormSubmit = (isInitFlow: boolean) => {
+  handleFormSubmit = () => {
     this.formSubmitted = true;
     const { navigation } = this.props;
     const formValues = this._form.getValue();
@@ -144,26 +146,21 @@ class FundTank extends React.Component<Props, State> {
     if (!formValues) return;
 
     Keyboard.dismiss();
-    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount, isInitFlow });
+    navigation.navigate(FUND_CONFIRM, { amount: formValues.amount });
   };
 
   useMaxValue = () => {
-    const { balances } = this.props;
-    const txFeeInWei = this.getTxFeeInWei();
+    const { balances, useGasToken, topUpFee: { feeInfo } } = this.props;
+    const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
     const token = PPN_TOKEN;
     const balance = getBalance(balances, token);
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
+    const gasToken = getGasToken(useGasToken, feeInfo);
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
     this.setState({
       value: {
         amount: formatAmount(maxAmount),
       },
     }, () => this.checkFormInputErrors);
-  };
-
-  getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.gasTokenCost')
-      || get(this.props, 'topUpFee.feeInfo.totalCost', 0);
   };
 
   checkFormInputErrors = () => {
@@ -185,13 +182,13 @@ class FundTank extends React.Component<Props, State> {
       topUpFee,
       rates,
       baseFiatCurrency,
-      navigation,
+      useGasToken,
+      topUpFee: { feeInfo },
     } = this.props;
 
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
     const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const isInitFlow = navigation.getParam('isInitFlow', false);
 
     // balance
     const balance = getBalance(balances, token);
@@ -205,8 +202,8 @@ class FundTank extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
 
     // fee
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
-    const txFeeInWei = this.getTxFeeInWei();
+    const gasToken = getGasToken(useGasToken, feeInfo);
+    const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
     const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
       amount: currentValue,
       decimals,
@@ -214,7 +211,7 @@ class FundTank extends React.Component<Props, State> {
       txFeeInWei,
       gasToken,
     });
-    const feeSymbol = isEmpty(gasToken) ? ETH : gasToken.symbol;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
     const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
@@ -242,7 +239,7 @@ class FundTank extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: isInitFlow ? 'Stake initial PLR' : 'Fund PLR tank' }] }}
+        headerProps={{ centerItems: [{ title: 'Fund PLR tank' }] }}
         footer={(
           <FooterInner>
             {!topUpFee.isFetched && balance > 0 && <Spinner width={20} height={20} />}
@@ -253,7 +250,7 @@ class FundTank extends React.Component<Props, State> {
               small
               flexRight
               title="Next"
-              onPress={() => this.handleFormSubmit(isInitFlow)}
+              onPress={this.handleFormSubmit}
             />
             }
           </FooterInner>
@@ -305,6 +302,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
+  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

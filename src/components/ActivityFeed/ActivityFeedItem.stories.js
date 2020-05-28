@@ -68,6 +68,7 @@ const reduxData = {
   isSmartWalletActivated: false,
   accounts: [],
   bitcoinAddresses: [],
+  referralRewardIssuersAddresses: ['0x123456'],
 };
 
 const ActivityFeedItem = withTheme(ActivityFeedItemNoTheme);
@@ -101,7 +102,12 @@ storiesOf('ActivityFeedItem', module)
     <ActivityFeedItem
       {...reduxData}
       event={{
-        type: COLLECTIBLE_TRANSACTION, from: '0x000000', to: '', icon: placeholderImage, asset: 'CryptoKitty',
+        type: COLLECTIBLE_TRANSACTION,
+        from: '0x000000',
+        to: '',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        assetData: { image: placeholderImage },
       }}
     />
   ))
@@ -109,7 +115,12 @@ storiesOf('ActivityFeedItem', module)
     <ActivityFeedItem
       {...reduxData}
       event={{
-        type: COLLECTIBLE_TRANSACTION, to: '0x000000', from: '', icon: placeholderImage, asset: 'CryptoKitty',
+        type: COLLECTIBLE_TRANSACTION,
+        to: '0x000000',
+        from: '',
+        icon: placeholderImage,
+        asset: 'CryptoKitty',
+        assetData: { image: placeholderImage },
       }}
     />
   ))
@@ -432,4 +443,18 @@ storiesOf('ActivityFeedItem', module)
         subType: WALLET_BACKUP_EVENT,
       }}
     />
+  ))
+  .add('Key wallet referral reward', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        from: '0x123456',
+        to: '0x000000',
+        accountType: ACCOUNT_TYPES.KEY_BASED,
+        asset: 'PLR',
+        value: '250000000000000000000',
+      }}
+    />
   ));
+

@@ -46,6 +46,7 @@ import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
 import { reportLog, uniqBy } from 'utils/common';
+import { validEthplorerTransaction } from 'utils/notifications';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -276,12 +277,14 @@ class SDKWrapper {
         const status = get(error, 'response.status');
         const message = get(error, 'response.data.message');
 
-        reportLog('verifyPhone: Can\'t verify code', {
-          walletId: user.walletId,
-          user,
-          status,
-          message,
-        }, Sentry.Severity.Error);
+        if (message !== 'One-time password is not valid.') {
+          reportLog('verifyPhone: Can\'t verify code', {
+            walletId: user.walletId,
+            user,
+            status,
+            message,
+          }, Sentry.Severity.Error);
+        }
         return { responseStatus: status, message };
       });
   }
@@ -329,12 +332,28 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  getReferralRewardValue(walletId: string, referralToken: ?string) {
+  getReferralCampaignsInfo(walletId: string, referralToken: ?string) {
     const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
       .then(({ data }) => get(data, 'campaigns', {}))
       .catch(() => ({}));
+  }
+
+  getReferralRewardIssuerAddress(walletId: string, referralToken: ?string) {
+    const requestPayload = referralToken ? { walletId, token: referralToken } : { walletId };
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.referral.listCampaigns(requestPayload))
+      .then(({ data }) => {
+        const campaignsData = get(data, 'campaigns', {});
+        return Object.keys(campaignsData).reduce((memo, campaign) => {
+          if (!campaignsData[campaign].rewards && !campaignsData[campaign].rewards.length) return memo;
+          const campaignsAddresses = campaignsData[campaign].rewards.map(({ rewardAddress }) => rewardAddress)
+            .filter(n => n);
+          return [...memo, ...campaignsAddresses];
+        }, []);
+      })
+      .catch(() => []);
   }
 
   updateUserAvatar(walletId: string, formData: Object) {
@@ -689,6 +708,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
       .then(data => Array.isArray(data) ? data : [])
+      .then(data => data.filter(validEthplorerTransaction))
       .catch(() => []);
   }
 
@@ -697,6 +717,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
       .then(data => get(data, 'operations', []))
+      .then(data => data.filter(validEthplorerTransaction))
       .catch(() => []);
   }
 

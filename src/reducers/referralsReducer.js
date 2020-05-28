@@ -30,6 +30,9 @@ import {
   CLAIM_REWARD,
   SET_REFERRAL_REWARD_AMOUNT,
   FETCHING_REFERRAL_REWARD_AMOUNT,
+  SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
+  SET_PILLAR_REWARD_CAMPAIGN_STATUS,
+  SET_1WORLD_CAMPAIGN_STATUS,
 } from 'constants/referralsConstants';
 
 export type SentInvitationsCount = {
@@ -51,13 +54,15 @@ export type ReferralReward = {
 };
 
 export type RewardsByCompany = {
-  [campaignName: string]: ReferralReward,
+  [campaignName: string]: ReferralReward[],
 };
 
 export type InviteSentPayload = {
   alreadyInvitedContacts: ReferralContact[],
   sentInvitationsCount: SentInvitationsCount,
 };
+
+export type ReferralRewardsIssuersAddresses = string[];
 
 type ReferralsAllowPhoneContactsAccess = {|
   type: 'ALLOW_ACCESS_PHONE_CONTACTS',
@@ -126,8 +131,11 @@ export type ReferralsReducerState = {|
   referredEmail: ?string,
   referredPhone: ?string,
   isRewardClaimed: boolean,
-  rewards: RewardsByCompany,
+  rewardsByCampaign: RewardsByCompany,
   isFetchingRewards: boolean,
+  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
+  isPillarRewardCampaignActive: boolean,
+  is1WorldCampaignActive: boolean,
 |};
 
 export const initialState: ReferralsReducerState = {
@@ -143,8 +151,11 @@ export const initialState: ReferralsReducerState = {
   referredEmail: null,
   referredPhone: null,
   isRewardClaimed: false,
-  rewards: {},
+  rewardsByCampaign: {},
   isFetchingRewards: false,
+  referralRewardIssuersAddresses: [],
+  isPillarRewardCampaignActive: false,
+  is1WorldCampaignActive: false,
 };
 
 
@@ -242,7 +253,16 @@ export default function referralsReducer(
       return { ...state, isFetchingRewards: true };
 
     case SET_REFERRAL_REWARD_AMOUNT:
-      return { ...state, rewards: { ...state.rewards, ...action.payload }, isFetchingRewards: false };
+      return { ...state, rewardsByCampaign: action.payload, isFetchingRewards: false };
+
+    case SET_REFERRAL_REWARD_ISSUER_ADDRESSES:
+      return { ...state, referralRewardIssuersAddresses: action.payload };
+
+    case SET_PILLAR_REWARD_CAMPAIGN_STATUS:
+      return { ...state, isPillarRewardCampaignActive: action.payload };
+
+    case SET_1WORLD_CAMPAIGN_STATUS:
+      return { ...state, is1WorldCampaignActive: action.payload };
 
     default:
       return state;
