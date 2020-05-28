@@ -99,14 +99,12 @@ class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
-      const appVersion = DeviceInfo.getVersion();
-      const appBundleId = DeviceInfo.getBundleId();
-      const buildNumber = DeviceInfo.getBuildNumber();
-      Sentry.init({
-        dsn: SENTRY_DSN,
-        release: `${appBundleId}@${appVersion}+${buildNumber}`,
-        dist: buildNumber,
-      });
+      const dist = DeviceInfo.getBuildNumber();
+      // : `${appBundleId}@${appVersion}+${buildNumber}`
+      const release = `${DeviceInfo.getBundleId()}-${DeviceInfo.getVersion()}`;
+      Sentry.init({ dsn: SENTRY_DSN, release, dist });
+      Sentry.setRelease(release);
+      Sentry.setDist(dist);
       Sentry.setTags({ environment: BUILD_TYPE });
     }
   }
