@@ -54,8 +54,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 // utils
 import { delay, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
-import { findKeyBasedAccount, getActiveAccountType } from 'utils/accounts';
-import { toastWalletBackup } from 'utils/toasts';
+import { getActiveAccountType } from 'utils/accounts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
@@ -78,7 +77,7 @@ import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
 import { signalInitAction } from './signalClientActions';
 import { initOnLoginSmartWalletAccountAction, switchAccountAction } from './accountsActions';
-import { updatePinAttemptsAction } from './walletActions';
+import { checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setInitialPreferredGasTokenAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
@@ -115,11 +114,11 @@ export const loginAction = (
   useBiometrics?: ?boolean,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    let { accounts: { data: accounts } } = getState();
     const {
       appSettings: { data: { blockchainNetwork = '', preferredGasToken } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
+      accounts: { data: accounts },
     } = getState();
 
     dispatch({
@@ -239,9 +238,6 @@ export const loginAction = (
         api.init();
       }
 
-      // re-fetch accounts as they might change at this point
-      accounts = getState().accounts.data;
-
       firebaseCrashlytics.setUserId(user.username);
       dispatch({
         type: UPDATE_USER,
@@ -294,18 +290,7 @@ export const loginAction = (
         action: navigateToRoute,
       });
 
-      // show toast if the wallet wasn't backed up
-      const {
-        isImported,
-        isBackedUp,
-      } = getState().wallet.backupStatus;
-
-      const isWalletBackedUp = isImported || isBackedUp;
-      const keyBasedAccount = findKeyBasedAccount(accounts);
-      if (keyBasedAccount) {
-        toastWalletBackup(isWalletBackedUp);
-      }
-
+      dispatch(checkForWalletBackupToastAction());
       dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
     } catch (e) {
