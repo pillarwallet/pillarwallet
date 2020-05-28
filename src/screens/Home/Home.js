@@ -570,7 +570,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
+  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(true)),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),

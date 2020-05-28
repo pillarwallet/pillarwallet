@@ -1431,7 +1431,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
+  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(true)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));
