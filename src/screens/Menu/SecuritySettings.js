@@ -132,11 +132,15 @@ class SecuritySettings extends React.Component<Props, State> {
 
   handleBiometricPress = async () => {
     const { useBiometrics } = this.props;
-    const keychainData = await getKeychainDataObject();
-    if (keychainData) {
-      this.handleChangeUseBiometrics(!useBiometrics, keychainData);
-    } else {
+    if (!useBiometrics) {
       this.setState({ showPinModal: true });
+    } else {
+      const keychainData = await getKeychainDataObject();
+      if (keychainData) {
+        this.handleChangeUseBiometrics(!useBiometrics, keychainData);
+      } else {
+        this.setState({ showPinModal: true });
+      }
     }
   };
 
@@ -154,7 +158,7 @@ class SecuritySettings extends React.Component<Props, State> {
 
   onPinValid = (pin, { mnemonic, privateKey }) => {
     const { useBiometrics } = this.props;
-    this.handleChangeUseBiometrics(!useBiometrics, { mnemonic, privateKey });
+    this.handleChangeUseBiometrics(!useBiometrics, { mnemonic, privateKey, pin });
   };
 
   render() {
@@ -180,6 +184,7 @@ class SecuritySettings extends React.Component<Props, State> {
           onPinValid={this.onPinValid}
           revealMnemonic
           enforcePin
+          hideLoader
           modalProps={{
             isVisible: showPinModal,
             onModalHide: () => this.setState({ showPinModal: false }),

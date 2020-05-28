@@ -85,7 +85,11 @@ export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) 
   const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
 
   if (pin && pin === pinFromKeychain && privateKey) {
-    const wallet = constructWalletFromPrivateKey(privateKey);
+    let wallet = constructWalletFromPrivateKey(privateKey);
+    wallet = {
+      ...wallet,
+      privateKey, // we need PK for changing biometrics settingds
+    };
     return withMnemonic ? { ...wallet, mnemonic } : wallet;
   }
 
