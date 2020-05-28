@@ -337,7 +337,6 @@ export const checkAuthAction = (
       if (pin) {
         wallet = await getWalletFromPkByPin(pin, options.mnemonic);
       } else if (privateKey) {
-        // TODO inject mnemonic into this somehow. possibly pass mnemonic as this func arg
         wallet = constructWalletFromPrivateKey(privateKey);
       }
       if (wallet) {
