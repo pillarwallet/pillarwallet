@@ -59,7 +59,7 @@ import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
 import {
-  setKeychainDataObject, resetKeychainDataObject, getWalletFromPkByPin, getKeychainDataObject,
+  setKeychainDataObject, resetKeychainDataObject, getWalletFromPkByPin, canLoginWithPkFromPin,
 } from 'utils/keychain';
 
 // services
@@ -131,9 +131,8 @@ export const loginAction = (
     try {
       let wallet;
 
-      // !biometricsSetting because we don't want users with BM on to trigger getKeychainDataObject during migration
-      // apart from migration, users with BM on won't go through this flow because they don't provide pin
-      if (pin && !biometricsSetting && getKeychainDataObject().then(data => data.pin)) {
+      const keychainLogin = await canLoginWithPkFromPin(biometricsSetting);
+      if (pin && keychainLogin) {
         wallet = await getWalletFromPkByPin(pin);
       } else if (pin) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -327,14 +326,21 @@ export const checkAuthAction = (
   onValidPin?: Function,
   options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { useBiometrics = false } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
     try {
       let wallet;
-      if (pin) {
+      // fallback if biometrics check fails, or is rejected by user
+      if (pin && useBiometrics) {
+        const { wallet: encryptedWallet } = await storage.get('wallet');
+        await delay(100);
+        const saltedPin = await getSaltedPin(pin, dispatch);
+        wallet = await decryptWallet(encryptedWallet, saltedPin, options);
+      } else if (pin) {
         wallet = await getWalletFromPkByPin(pin, options.mnemonic);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);

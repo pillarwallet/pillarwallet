@@ -83,15 +83,22 @@ export const shouldUpdateKeychainObject = (data: KeyChainData) => {
 export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) => {
   const keychainData: KeyChainData = await getKeychainDataObject();
   const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
-
   if (pin && pin === pinFromKeychain && privateKey) {
     let wallet = constructWalletFromPrivateKey(privateKey);
     wallet = {
       ...wallet,
-      privateKey, // we need PK for changing biometrics settingds
+      privateKey, // we need PK for changing biometrics settings
     };
     return withMnemonic ? { ...wallet, mnemonic } : wallet;
   }
 
   throw new Error(); // wrong pin
+};
+
+// check biometrics because we don't want users with BM on to trigger getKeychainDataObject
+// during migration or when providing pin as fallback after failed/rejected BM check
+export const canLoginWithPkFromPin = async (useBiometrics: boolean) => {
+  if (useBiometrics) return false;
+  const keychainData = await getKeychainDataObject();
+  return !!keychainData.pin;
 };
