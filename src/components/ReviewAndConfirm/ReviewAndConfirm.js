@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import isEmpty from 'lodash.isempty';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -75,7 +76,7 @@ const WarningMessage = styled(Paragraph)`
 
 const ValueHolder = ({ value, valueArray, isLoading }) => {
   if (isLoading) return <Spinner width={20} height={20} />;
-  if (valueArray && valueArray.length) return valueArray.map((val) => (<Value key={val}>{val}</Value>));
+  if (!isEmpty(valueArray)) return valueArray.map(val => <Value key={val}>{val}</Value>);
   if (value) return <Value>{value}</Value>;
   return null;
 };
