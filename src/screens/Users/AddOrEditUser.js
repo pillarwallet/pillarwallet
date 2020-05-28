@@ -527,7 +527,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       if (verificationNoteDismissed) return null;
       return (
         <Note
-          note="Verification is required to prevent scammers activity. We care for our users privacy."
+          note="Verification is required to prevent scammers' activity. We care for our users privacy."
           containerStyle={{ marginHorizontal: spacing.layoutSides }}
           onClose={dismissVerificationNote}
         />
