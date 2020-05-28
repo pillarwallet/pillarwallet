@@ -100,7 +100,7 @@ class App extends React.Component<Props, *> {
     super(props);
     if (!__DEV__) {
       const dist = DeviceInfo.getBuildNumber();
-      const release = `${DeviceInfo.getVersion()} (${dist})`;
+      const release = `${DeviceInfo.getVersion()}`;
       // : `${appBundleId}@${appVersion}+${buildNumber}`
       Sentry.init({ dsn: SENTRY_DSN, release, dist });
       Sentry.setRelease(release);
