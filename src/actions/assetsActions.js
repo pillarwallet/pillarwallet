@@ -81,6 +81,7 @@ import { findMatchingContact } from 'utils/contacts';
 import { satoshisToBtc, totalBitcoinBalance } from 'utils/bitcoin';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
+import { activeAccountSelector } from 'selectors/selectors';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import type SDKWrapper from 'services/api';
@@ -521,11 +522,16 @@ export const startAssetsSearchAction = () => ({
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { assets: { supportedAssets } } = getState();
+    const account = activeAccountSelector(getState());
+    if (!account) {
+      return;
+    }
+    const isSmartWallet = checkIfSmartWalletAccount(account);
     const search = query.toUpperCase();
 
     const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
       return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
-    });
+    }).filter(({ symbol }) => symbol === BTC && isSmartWallet);
 
     if (filteredAssets.length > 0) {
       dispatch({
