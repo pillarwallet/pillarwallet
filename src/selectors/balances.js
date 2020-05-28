@@ -19,6 +19,7 @@
 */
 
 import { createSelector } from 'reselect';
+import isEmpty from 'lodash.isempty';
 import { PLR } from 'constants/assetsConstants';
 import { balancesSelector, activeAccountIdSelector } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
@@ -38,8 +39,8 @@ export const allBalancesSelector = createSelector(
   availableStakeSelector,
   (balances, ppnBalance) => {
     const allBalances = Object.keys(balances).reduce((memo, account) => {
-      if (balances[account] && Object.keys(balances[account]).length) {
-        const accountsBalances = Object.keys(balances[account]).map((symbol) => balances[account][symbol]);
+      if (!isEmpty(balances[account])) {
+        const accountsBalances: Object[] = Object.values(balances[account]);
         return [...memo, ...accountsBalances];
       }
       return memo;

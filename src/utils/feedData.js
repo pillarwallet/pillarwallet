@@ -86,9 +86,14 @@ export function mapTransactionsHistory(
 
     const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
       const { from: fromAddress, to: toAddress, hash } = historyItem;
-      if (alteredHistory.some((item) => item.hash === hash)) {
-        if (accountsAddresses.some((userAddress) => addressesEqual(fromAddress, userAddress))
-          && accountsAddresses.some((userAddress) => addressesEqual(toAddress, userAddress))) {
+      const isTransactionFromUsersAccount = accountsAddresses
+        .some((userAddress) => addressesEqual(fromAddress, userAddress));
+      const isTransactionToUsersAccount = accountsAddresses
+        .some((userAddress) => addressesEqual(toAddress, userAddress));
+      const eventWithSameHashExists = alteredHistory.some((item) => item.hash === hash);
+
+      if (eventWithSameHashExists) {
+        if (isTransactionFromUsersAccount && isTransactionToUsersAccount) {
           return [...alteredHistory, {
             ...historyItem,
             accountType: getAccountTypeByAddress(toAddress, accounts),
