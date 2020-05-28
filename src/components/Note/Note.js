@@ -63,6 +63,7 @@ const CloseIcon = styled(IconButton)`
   position: absolute;
   top: 8px;
   right: 8px;
+  padding: 4px;
 `;
 
 export const Note = withTheme((props: Props) => {

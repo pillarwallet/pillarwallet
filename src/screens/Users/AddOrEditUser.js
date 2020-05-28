@@ -139,16 +139,21 @@ const FieldTitle = styled.View`
 const FieldWrapper = styled.View`
   flex-direction: row;
   padding: 20px 0 25px;
-  align-items: ${({ alignItems }) => alignItems || 'flex-start'};
+  align-items: flex-start;
 `;
 
 const FieldIcon = styled(CachedImage)`
   width: 48px;
   height: 48px;
+  margin-top: ${({ marginTop }) => marginTop || 0};
+`;
+
+const DescriptionWrapper = styled.View`
+  padding: 0 11px 0 64px;
 `;
 
 const ProfileFormTemplate = (locals: Object) => {
-  const { config = {} } = locals;
+  const { config = {}, error: errorMessage } = locals;
   const {
     label,
     fieldName,
@@ -169,7 +174,6 @@ const ProfileFormTemplate = (locals: Object) => {
     optionsTitle,
     onSubmit,
   } = config;
-  const errorMessage = locals.error;
 
   const value = get(locals, 'value', {});
   const { selector } = value;
@@ -196,13 +200,11 @@ const ProfileFormTemplate = (locals: Object) => {
     const name = fieldDisplayValue || fieldDisplayName;
     let sideComponent;
     let description;
-    let alignItems;
 
     if (isVerified) {
       sideComponent = (
         <LabelBadge positive labelStyle={{ fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny }} label="Verified" />
       );
-      alignItems = 'center';
     } else {
       const buttonTitle = fieldDisplayValue ? 'Verify' : 'Add';
       const buttonAction = fieldDisplayValue ? (() => onPressVerify(fieldName)) : (() => onFocus(fieldName));
@@ -211,20 +213,19 @@ const ProfileFormTemplate = (locals: Object) => {
     }
 
     return (
-      <FieldWrapper pointerEvents={isFormFocused ? 'none' : 'auto'} alignItems={alignItems}>
-        <FieldIcon source={icon} />
-        <Spacing w={16} />
+      <FieldWrapper pointerEvents={isFormFocused ? 'none' : 'auto'}>
         <TouchableOpacity onPress={() => onFocus(fieldName)} style={{ flex: 1 }}>
           <FieldTitle>
+            <FieldIcon source={icon} />
+            <Spacing w={16} />
             <MediumText big numberOfLines={1} style={{ flex: 1 }}>{name}</MediumText>
             <Spacing w={10} />
             {sideComponent}
           </FieldTitle>
-          {description && (
-            <>
-              <Spacing h={8} />
+          {!!description && (
+            <DescriptionWrapper>
               <BaseText regular secondary>{description}</BaseText>
-            </>
+            </DescriptionWrapper>
           )}
         </TouchableOpacity>
       </FieldWrapper>
@@ -233,8 +234,8 @@ const ProfileFormTemplate = (locals: Object) => {
 
   return (
     <FieldWrapper>
-      <FieldIcon source={icon} />
-      <Spacing w={16} />
+      <FieldIcon source={icon} marginTop={2} />
+      <Spacing w={8} />
       <TextInput
         getInputRef={inputRef}
         errorMessage={errorMessage}
@@ -263,6 +264,7 @@ const ProfileFormTemplate = (locals: Object) => {
             </CountryWrapper>
           );
         }}
+        optionKeyExtractor={({ cca2, value: val }) => cca2 || val}
         renderSelector={(item) => {
           return (
             <SelectorWrapper>
@@ -283,7 +285,10 @@ const ProfileFormTemplate = (locals: Object) => {
 };
 
 const getInitialValue = (user) => {
-  const { email = '', phone = '' } = user;
+  let { email, phone = '' } = user;
+  // those can be null
+  email = email || '';
+  phone = phone || '';
   const country = countries.find(c => phone.substring(1).startsWith(c.callingCode));
   const phoneInput = country && phone.substring(country.callingCode.length + 1);
   return { phone: { input: phoneInput || '', selector: country || countries.find(c => c.cca2 === 'US') }, email };
@@ -478,7 +483,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   onCloseVerification = () => {
     const { verifyingField } = this.state;
-    this.setState({ verifyingField: null, verifiedModalField: verifyingField });
+    const { isPhoneVerified, isEmailVerified } = this.props.user;
+    if ((verifyingField === 'phone' && isPhoneVerified) || (verifyingField === 'email' && isEmailVerified)) {
+      this.setState({ verifiedModalField: verifyingField });
+    }
+    this.setState({ verifyingField: null });
   };
 
   changeField = () => {

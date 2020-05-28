@@ -176,8 +176,13 @@ describe('Validators', () => {
 
   describe('isValidPhone', () => {
     it('should return true as valid number', () => {
-      const phone = '7473222885';
+      const phone = '+447473222885';
       expect(isValidPhone(phone)).toBeTruthy();
     });
+  });
+
+  it('should return false for missing +', () => {
+    const phone = '447473222885';
+    expect(isValidPhone(phone)).toBeFalsy();
   });
 });

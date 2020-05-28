@@ -130,7 +130,11 @@ export function isValidEmail(email: string) {
 }
 
 export function isValidPhone(phone: string) {
-  const re = /^(\d{5,20}\b)/;
+  const re = /^(\+\d{10,20}\b)/;
+  return re.test(phone);
+}
 
+export function isValidPhoneWithoutCountryCode(phone: string) {
+  const re = /^(\d{5,20}\b)/;
   return re.test(phone);
 }

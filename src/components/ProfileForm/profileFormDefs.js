@@ -1,7 +1,7 @@
 // @flow
 
 import t from 'tcomb-form-native';
-import { isValidEmail, isValidPhone } from 'utils/validators';
+import { isValidEmail, isValidPhoneWithoutCountryCode } from 'utils/validators';
 
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
@@ -39,12 +39,12 @@ const EmailStructDef = t.refinement(t.String, (email: string = ''): boolean => {
 });
 
 const PhoneStructDef = t.refinement(t.Object, ({ input }): boolean => {
-  return isValidPhone(input);
+  return isValidPhoneWithoutCountryCode(input);
 });
 
 EmailStructDef.getValidationErrorMessage = (email): string => {
   if (email && !isValidEmail(email)) {
-    return 'Please enter a valid email';
+    return 'Please, check your email address. It may contain only latin letters (a-z), numbers (0-9) and dot (.)';
   } else if (email && email.length > maxLength) {
     return `Email should not be longer than ${maxLength} symbols`;
   }
@@ -52,8 +52,8 @@ EmailStructDef.getValidationErrorMessage = (email): string => {
 };
 
 PhoneStructDef.getValidationErrorMessage = (phone): string => {
-  if (phone && !isValidPhone(phone)) {
-    return 'Please enter a valid phone number';
+  if (phone && !isValidPhoneWithoutCountryCode(phone)) {
+    return 'Please, check your phone number. It may contain only numbers (0-9).';
   }
   return '';
 };

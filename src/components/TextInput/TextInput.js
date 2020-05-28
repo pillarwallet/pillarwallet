@@ -85,6 +85,7 @@ type Props = {
   fallbackToGenericToken?: boolean,
   renderOption?: (item: Object, selectOption: () => void) => React.Node,
   renderSelector?: (selector: Object) => React.Node,
+  optionKeyExtractor?: (item: Object) => string,
 };
 
 type State = {
@@ -484,10 +485,7 @@ class TextInput extends React.Component<Props, State> {
       theme, inputProps, selectorOptions = {}, renderSelector,
     } = this.props;
     const { genericToken } = images(theme);
-    const {
-      selectorValue = {},
-    } = inputProps;
-    const { selector = {} } = selectorValue;
+    const selector = get(inputProps, 'selectorValue.selector', {});
 
     if (renderSelector) return renderSelector(selector);
 
@@ -514,6 +512,14 @@ class TextInput extends React.Component<Props, State> {
         <SelectorValue>{selectedValue}</SelectorValue>
       </ValueWrapper>
     );
+  }
+
+  optionKeyExtractor = (option) => {
+    const { optionKeyExtractor } = this.props;
+    if (optionKeyExtractor) {
+      return optionKeyExtractor(option);
+    }
+    return option.value;
   }
 
   render() {
@@ -730,7 +736,7 @@ class TextInput extends React.Component<Props, State> {
               stickyHeaderIndices={[0]}
               data={allFeedListData}
               renderItem={this.renderOption}
-              keyExtractor={({ value: val }) => val}
+              keyExtractor={this.optionKeyExtractor}
               keyboardShouldPersistTaps="always"
               initialNumToRender={10}
               viewabilityConfig={viewConfig}
