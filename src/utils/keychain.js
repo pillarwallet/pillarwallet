@@ -84,7 +84,7 @@ export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) 
   const keychainData: KeyChainData = await getKeychainDataObject();
   const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
 
-  if (pin && pin === pinFromKeychain) {
+  if (pin && pin === pinFromKeychain && privateKey) {
     const wallet = constructWalletFromPrivateKey(privateKey);
     return withMnemonic ? { ...wallet, mnemonic } : wallet;
   }

@@ -28,6 +28,7 @@ import { SEND_BITCOIN_TRANSACTION } from 'constants/navigationConstants';
 
 import type { BitcoinTransactionPlan } from 'models/Bitcoin';
 import type { EthereumWallet } from 'models/Wallet';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -117,7 +118,7 @@ const mapStateToProps = ({
   useBiometrics,
 });
 
-const mapDispatchToProps = (dispatch): $Shape<Props> => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   sendAsset: (wallet: EthereumWallet, transaction: BitcoinTransactionPlan, callback) =>
     dispatch(sendTransactionAction(wallet, transaction, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
