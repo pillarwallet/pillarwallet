@@ -29,10 +29,16 @@ import {
   OPEN_SEA_API,
 } from 'react-native-dotenv';
 import styled from 'styled-components/native';
+import DeviceInfo from 'react-native-device-info';
+
+// components
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
+
+// utils
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
 
 const LabeledRow = styled.View`
   margin: 6px 0;
@@ -50,6 +56,9 @@ const Value = styled(MediumText)`
 
 
 const SystemInfoModal = () => {
+  const appVersion = DeviceInfo.getVersion();
+  const appBundleId = DeviceInfo.getBundleId();
+  const buildNumber = DeviceInfo.getBuildNumber();
   return (
     <Wrapper regularPadding>
       <LabeledRow>
@@ -83,6 +92,10 @@ const SystemInfoModal = () => {
       <LabeledRow>
         <Label>OPEN_SEA_API</Label>
         <Value>{OPEN_SEA_API}</Value>
+      </LabeledRow>
+      <LabeledRow>
+        <Label>NATIVE</Label>
+        <Value>{appBundleId}-{appVersion} ({buildNumber})</Value>
       </LabeledRow>
     </Wrapper>
   );
