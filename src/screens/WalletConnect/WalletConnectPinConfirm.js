@@ -37,6 +37,7 @@ type Props = {
   rejectCallRequest: (callId: number, errorMsg?: string) => Function,
   sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
+  useBiometrics: boolean,
 };
 
 type State = {
@@ -184,11 +185,13 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
   render() {
     const { isChecking } = this.state;
+    const { useBiometrics } = this.props;
     return (
       <CheckAuth
         onPinValid={this.handleCallRequest}
         isChecking={isChecking}
         headerProps={{ onBack: this.handleBack }}
+        enforcePin={!useBiometrics}
       />
     );
   }
@@ -196,7 +199,9 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   walletConnect: { requests },
+  appSettings: { data: { useBiometrics = false } },
 }) => ({
+  useBiometrics,
   requests,
 });
 

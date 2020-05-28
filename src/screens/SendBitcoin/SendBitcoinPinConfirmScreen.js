@@ -38,6 +38,7 @@ type Props = {
   ) => void,
   resetIncorrectPassword: () => void,
   logEvent: (name: string, properties: Object) => void,
+  useBiometrics: boolean,
 }
 
 type State = {
@@ -95,6 +96,7 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
 
   render() {
     const { isChecking, errorMessage } = this.state;
+    const { useBiometrics } = this.props;
     return (
       <CheckAuth
         onPinValid={this.handleTransaction}
@@ -103,10 +105,17 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
         revealMnemonic
         errorMessage={errorMessage}
         headerProps={{ onBack: this.handleBack }}
+        enforcePin={!useBiometrics}
       />
     );
   }
 }
+
+const mapStateToProps = ({
+  appSettings: { data: { useBiometrics = false } },
+}: RootReducerState): $Shape<Props> => ({
+  useBiometrics,
+});
 
 const mapDispatchToProps = (dispatch): $Shape<Props> => ({
   sendAsset: (wallet: EthereumWallet, transaction: BitcoinTransactionPlan, callback) =>
@@ -115,4 +124,4 @@ const mapDispatchToProps = (dispatch): $Shape<Props> => ({
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });
 
-export default connect(null, mapDispatchToProps)(SendBitcoinPinConfirmScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SendBitcoinPinConfirmScreen);
