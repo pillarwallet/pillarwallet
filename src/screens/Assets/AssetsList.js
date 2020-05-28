@@ -290,9 +290,9 @@ class AssetsList extends React.Component<Props, State> {
           if (scrollViewRef) scrollViewRef.setNativeProps({ scrollEnabled: shouldAllowScroll });
         }}
       >
-        {symbol !== BTC &&
-          <ListItemWithImage
-            onPress={() => {
+        <ListItemWithImage
+          onPress={() => {
+            if (symbol !== BTC) {
               navigation.navigate(ASSET,
                 {
                   assetData: {
@@ -301,44 +301,30 @@ class AssetsList extends React.Component<Props, State> {
                   },
                 },
               );
-            }}
-            address={props.address}
-            label={name}
-            avatarUrl={fullIconUrl}
-            balance={{
-              balance: formatAmount(balance),
-              value: formattedBalanceInFiat,
-              token: symbol,
-            }}
-            fallbackToGenericToken
-          />
-        }
-        {symbol === BTC &&
-          <>
-            <ListItemWithImage
-              onPress={() => {
+            } else {
               this.navigateToBTCAsset({ ...props, tokenType: TOKENS });
+            }
+          }}
+          address={props.address}
+          label={name}
+          avatarUrl={fullIconUrl}
+          balance={{
+            balance: formatAmount(balance),
+            value: formattedBalanceInFiat,
+            token: symbol,
+          }}
+          fallbackToGenericToken
+        />
+        {symbol === BTC &&
+          <CheckAuth
+            onPinValid={onPinValidAction}
+            revealMnemonic
+            hideLoader
+            modalProps={{
+              isVisible: showPinModal,
+              onModalHide: this.handleCheckPinModalClose,
             }}
-              address={props.address}
-              label={name}
-              avatarUrl={fullIconUrl}
-              balance={{
-                balance: formatAmount(balance),
-                value: formattedBalanceInFiat,
-                token: symbol,
-              }}
-              fallbackToGenericToken
-            />
-            <CheckAuth
-              onPinValid={onPinValidAction}
-              revealMnemonic
-              hideLoader
-              modalProps={{
-                isVisible: showPinModal,
-                onModalHide: this.handleCheckPinModalClose,
-              }}
-            />
-          </>
+          />
         }
       </Swipeout>
     );

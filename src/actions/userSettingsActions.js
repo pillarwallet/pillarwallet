@@ -20,10 +20,10 @@
 import get from 'lodash.get';
 import { SET_HIDDEN_ASSETS } from 'constants/userSettingsConstants';
 import Toast from 'components/Toast';
-
+import { BTC } from 'constants/assetsConstants';
 import type { Asset } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { getActiveAccountId } from 'utils/accounts';
+import { getActiveAccountId, checkIfKeyBasedAccount, getActiveAccount } from 'utils/accounts';
 import { saveDbAction } from './dbActions';
 
 export const hideAssetAction = (asset: Asset) => {
@@ -62,8 +62,16 @@ export const showAssetAction = (asset: Asset) => {
       userSettings: { data: { hiddenAssets } },
     } = getState();
 
-    const accountId = getActiveAccountId(accounts);
+    const activeAccount = getActiveAccount(accounts);
+    if (!activeAccount) {
+      return;
+    }
+    const { id: accountId } = activeAccount;
     const { symbol: assetTicker } = asset;
+
+    if (assetTicker === BTC && checkIfKeyBasedAccount(activeAccount)) {
+      return;
+    }
 
     if (!assetTicker || !accountId) return;
     const updatedHiddenAccountAssets = get(hiddenAssets, accountId, []).filter(a => a !== assetTicker);
