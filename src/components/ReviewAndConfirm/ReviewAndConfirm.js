@@ -115,6 +115,7 @@ const ReviewAndConfirm = (props: Props) => {
         regularPadding
         disableAutomaticScroll
         contentContainerStyle={contentContainerStyle}
+        disableOnAndroid
       >
         {!!reviewData.length &&
         reviewData.map(({ label, ...rest }) => {
