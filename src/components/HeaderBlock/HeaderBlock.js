@@ -297,7 +297,7 @@ class HeaderBlock extends React.Component<Props> {
           withBackground={item.withBackground}
           style={{ ...commonStyle, ...itemStyle }}
         >
-          <ButtonLabel>{item.link}</ButtonLabel>
+          <ButtonLabel maxFontSizeMultiplier={1.1}>{item.link}</ButtonLabel>
           {item.addon}
         </TextButton>
       );
