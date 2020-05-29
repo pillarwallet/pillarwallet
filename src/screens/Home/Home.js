@@ -37,6 +37,7 @@ import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
 import Requests from 'screens/WalletConnect/Requests';
 import UserNameAndImage from 'components/UserNameAndImage';
+import LinearGraph from 'components/LinearGraph';
 
 // constants
 import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
@@ -437,6 +438,7 @@ class HomeScreen extends React.Component<Props, State> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
+                  <LinearGraph />
                   {!!walletConnectRequests &&
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
                     {walletConnectRequests.length > 1 &&
