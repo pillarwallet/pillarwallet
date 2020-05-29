@@ -368,9 +368,9 @@ export const checkAuthAction = (
 };
 
 export const changePinAction = (newPin: string, currentPin: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
-
+    const { appSettings: { data: { useBiometrics = false } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,
@@ -387,6 +387,9 @@ export const changePinAction = (newPin: string, currentPin: string) => {
       .catch(() => ({}));
 
     dispatch(saveDbAction('wallet', { wallet: newEncryptedWallet }));
+
+    const { privateKey, mnemonic } = wallet;
+    await setKeychainDataObject({ privateKey, mnemonic, pin: newPin }, useBiometrics);
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
