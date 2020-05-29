@@ -21,6 +21,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
+import { Platform } from 'react-native';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -110,6 +111,7 @@ const ReviewAndConfirm = (props: Props) => {
           />
         </FooterWrapper>
       )}
+      shouldFooterAvoidKeyboard={Platform.OS === 'ios'}
     >
       <ScrollWrapper
         regularPadding
