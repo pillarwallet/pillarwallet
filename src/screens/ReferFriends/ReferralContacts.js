@@ -251,7 +251,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Select contacts' }] }}
+        headerProps={{ centerItems: [{ title: 'Invite friends' }] }}
       >
         {!!isFetchingPhoneContacts &&
         <Wrapper flex={1} center>
@@ -261,7 +261,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         {!isFetchingPhoneContacts &&
           <React.Fragment>
             <SearchBlock
-              searchInputPlaceholder={isPhoneVerified ? 'Phone number' : 'Email address'}
+              searchInputPlaceholder="Email or phone"
               onSearchChange={(q) => this.handleSearch(q)}
               itemSearchState={query.length >= MIN_QUERY_LENGTH}
               wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
