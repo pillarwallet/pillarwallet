@@ -521,7 +521,14 @@ export const startAssetsSearchAction = () => ({
 
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { assets: { supportedAssets } } = getState();
+    const {
+      assets: { supportedAssets },
+      featureFlags: {
+        data: {
+          BITCOIN_ENABLED: btcEnabled,
+        },
+      },
+    } = getState();
     const account = activeAccountSelector(getState());
     if (!account) {
       return;
@@ -531,7 +538,7 @@ export const searchAssetsAction = (query: string) => {
 
     const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
       return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
-    }).filter(({ symbol }) => symbol === BTC && isSmartWallet);
+    }).filter(({ symbol }) => symbol !== BTC ? true : isSmartWallet && btcEnabled);
 
     if (filteredAssets.length > 0) {
       dispatch({
