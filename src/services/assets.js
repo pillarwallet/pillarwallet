@@ -271,8 +271,8 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
-        ? await fetchETHBalance(walletAddress)
-        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => 0);
+        ? await fetchETHBalance(walletAddress).catch(() => null)
+        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => null);
       return {
         balance,
         symbol: asset.symbol,

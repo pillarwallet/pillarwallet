@@ -49,7 +49,7 @@ export const transformAssetsToObject = (assetsArray: Asset[] = []): Assets => {
 };
 
 export const transformBalancesToObject = (balancesArray: Balance[] = []): Balances => {
-  return balancesArray.reduce((memo, balance) => {
+  return balancesArray.filter(({ balance }) => balance !== null).reduce((memo, balance) => {
     memo[balance.symbol] = balance;
     return memo;
   }, {});

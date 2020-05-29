@@ -353,7 +353,7 @@ export const updateAccountBalancesAction = (accountId: string, balances: Balance
     const allBalances = getState().balances.data;
     const updatedBalances = {
       ...allBalances,
-      [accountId]: balances,
+      [accountId]: !allBalances.accountId ? balances : { ...allBalances[accountId], ...balances },
     };
     dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
     dispatch({
