@@ -329,7 +329,6 @@ class AppSettings extends React.Component<Props, State> {
           title="System info"
           onModalHide={() => this.setState({ visibleModal: null })}
           insetTop
-          noSwipeToDismiss
         >
           <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
         </SlideModal>
