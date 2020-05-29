@@ -294,7 +294,7 @@ const ButtonHolder = styled.View`
   justify-content: flex-end;
 `;
 
-const EventTimeHolder = styled.View`
+const EventTimeHolder = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
   padding: 0 8px;
@@ -806,25 +806,22 @@ export class EventDetail extends React.Component<Props, State> {
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
+        const topUpMoreButton = {
+          title: 'Top up more',
+          onPress: this.topUpPillarNetwork,
+          squarePrimary: true,
+        };
         eventData = {
-          buttons: [
-            isPending ?
-              {
-                title: 'View on the blockchain',
-                onPress: this.viewOnTheBlockchain,
-                secondary: true,
-              } :
+          buttons: isPending
+            ? [topUpMoreButton]
+            : [
               {
                 title: 'Send',
                 onPress: this.sendSynthetic,
                 secondary: true,
               },
-            {
-              title: 'Top up more',
-              onPress: this.topUpPillarNetwork,
-              squarePrimary: true,
-            },
-          ],
+              topUpMoreButton,
+            ],
         };
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
@@ -832,13 +829,6 @@ export class EventDetail extends React.Component<Props, State> {
           name: 'ENS name',
           actionTitle: 'Registered',
           actionSubtitle: event.extra.ensName,
-          buttons: [
-            {
-              title: 'View on the blockchain',
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
@@ -868,13 +858,6 @@ export class EventDetail extends React.Component<Props, State> {
         eventData = {
           name: 'Smart Wallet fees with PLR token',
           actionTitle: 'Enabled',
-          buttons: [
-            {
-              title: 'View on the blockchain',
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       default:
@@ -937,18 +920,6 @@ export class EventDetail extends React.Component<Props, State> {
             title: 'Message',
             onPress: () => this.messageContact(contact),
             secondary: true,
-          };
-
-          const viewOnBlockchainButton = {
-            title: 'View on the blockchain',
-            onPress: this.viewOnTheBlockchain,
-            secondary: true,
-          };
-
-          const viewOnBlockchainButtonSecondary = {
-            title: 'View on the blockchain',
-            onPress: this.viewOnTheBlockchain,
-            squarePrimary: true,
           };
 
           const sendBackButtonSecondary = {
@@ -1020,34 +991,34 @@ export class EventDetail extends React.Component<Props, State> {
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
             } else if (isBitcoinTrx) {
-              if (bitcoinFeatureEnabled) {
-                buttons = isPending ? [viewOnBlockchainButton] : [sendBackBtc];
+              if (bitcoinFeatureEnabled && !isPending) {
+                buttons = [sendBackBtc];
               } else {
                 buttons = [];
               }
             } else if (contactFound) {
               buttons = isPending
-                ? [messageButton, viewOnBlockchainButtonSecondary]
+                ? [messageButton]
                 : [messageButton, sendBackButtonSecondary];
             } else if (isPending) {
-              buttons = [viewOnBlockchainButton, inviteToPillarButton];
+              buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
           } else if (isBitcoinTrx) {
-            if (bitcoinFeatureEnabled) {
-              buttons = isPending ? [viewOnBlockchainButton] : [sendMoreBtc];
+            if (bitcoinFeatureEnabled && !isPending) {
+              buttons = [sendMoreBtc];
             } else {
               buttons = [];
             }
           } else if (contactFound) {
             buttons = isPending
-              ? [messageButton, viewOnBlockchainButtonSecondary]
+              ? [messageButton]
               : [messageButton, sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
-            buttons = [viewOnBlockchainButton, inviteToPillarButton];
+            buttons = [inviteToPillarButton];
           } else {
             buttons = [sendMoreToAddress, inviteToPillarButton];
           }
@@ -1078,13 +1049,6 @@ export class EventDetail extends React.Component<Props, State> {
     if (isReceived) {
       eventData = {
         ...eventData,
-        buttons: [
-          {
-            title: 'View on the Blockchain',
-            onPress: this.viewOnTheBlockchain,
-            secondary: true,
-          },
-        ],
         actionTitle: isPending ? 'Receiving' : 'Received',
       };
     } else {
@@ -1110,12 +1074,6 @@ export class EventDetail extends React.Component<Props, State> {
       secondary: true,
     };
 
-    const viewOnBlockchainButton = {
-      title: 'View on the blockchain',
-      onPress: this.viewOnTheBlockchain,
-      squarePrimary: true,
-    };
-
     const isPending = isPendingTransaction(event);
 
     return {
@@ -1124,7 +1082,7 @@ export class EventDetail extends React.Component<Props, State> {
       actionTitle: isPending ? 'Receiving' : 'Received',
       actionSubtitle: 'Badge',
       actionIcon: isPending ? 'pending' : null,
-      buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
+      buttons: [viewBadgeButton],
     };
   };
 
@@ -1337,7 +1295,7 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  renderContent = (eventData: EventData) => {
+  renderContent = (eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
     const {
       date, name,
@@ -1366,7 +1324,7 @@ export class EventDetail extends React.Component<Props, State> {
           <ButtonHolder>
             <View />
           </ButtonHolder>
-          <EventTimeHolder>
+          <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
             <BaseText tiny secondary>{eventTime}</BaseText>
           </EventTimeHolder>
           <ButtonHolder>
@@ -1432,9 +1390,11 @@ export class EventDetail extends React.Component<Props, State> {
 
     const eventData = this.getEventData(event);
     if (!eventData) return null;
+    const { hash, isPPNTransaction } = event;
+    const allowViewOnBlockchain = !!hash && !isPPNTransaction;
 
     if (storybook) {
-      return this.renderContent(eventData);
+      return this.renderContent(eventData, allowViewOnBlockchain);
     }
 
     return (
@@ -1445,7 +1405,7 @@ export class EventDetail extends React.Component<Props, State> {
           noClose
           hideHeader
         >
-          {this.renderContent(eventData)}
+          {this.renderContent(eventData, allowViewOnBlockchain)}
         </SlideModal>
         <ReceiveModal
           isVisible={isReceiveModalVisible}

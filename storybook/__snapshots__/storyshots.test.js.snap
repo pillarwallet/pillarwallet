@@ -11102,18 +11102,26 @@ exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -11369,18 +11377,26 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -11666,18 +11682,26 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -11877,129 +11901,7 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
         undefined,
       ]
     }
-  >
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "alignSelf": "auto",
-          "backgroundColor": "#e6f1f9",
-          "borderColor": "#EDEDED",
-          "borderRadius": 6,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "flexDirection": "row",
-          "height": 48,
-          "justifyContent": "center",
-          "marginBottom": 0,
-          "marginLeft": 0,
-          "marginRight": 0,
-          "marginTop": 0,
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 19,
-          "paddingRight": 19,
-          "paddingTop": 0,
-          "width": "auto",
-        }
-      }
-    >
-      <Text
-        customTheme={
-          Object {
-            "borderWidth": 0,
-            "shadow": false,
-          }
-        }
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 12,
-              "lineHeight": 18,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#007AFF",
-                "fontSize": 18,
-                "lineHeight": 18,
-                "marginBottom": 0,
-                "marginTop": 3.2399999999999998,
-              },
-              undefined,
-            ],
-          ]
-        }
-        theme={
-          Object {
-            "colors": Object {
-              "PPNSurface": "#0a0c78",
-              "PPNText": "#f33726",
-              "accent": "#818EB3",
-              "activeTabBarIcon": "#007AFF",
-              "bitcoinWallet": "#F79319",
-              "border": "#EDEDED",
-              "buttonSecondaryBackground": "#e6f1f9",
-              "card": "#FFFFFF",
-              "control": "#FCFDFF",
-              "danger": "#ff0005",
-              "helpIcon": "#f7931a",
-              "iconBackground": "#ebf0f5",
-              "inactiveTabBarIcon": "#D4D9DB",
-              "indicator": "#F8E71C",
-              "legacyWallet": "#FA574F",
-              "link": "#007aff",
-              "negative": "#BD573A",
-              "notice": "#ea480e",
-              "orange": "#f57c00",
-              "popularSwaps": "#d08cb1",
-              "positive": "#2AA057",
-              "primary": "#007AFF",
-              "secondaryAccent": "#EBF0F5",
-              "secondaryText": "#8B939E",
-              "smartWallet": "#3C71FE",
-              "smartWalletSurface": "#f3f7ff",
-              "smartWalletText": "#1D24D8",
-              "surface": "#e6f1f9",
-              "synthetic": "#2329d6",
-              "tertiary": "#EBF0F6",
-              "text": "#007AFF",
-              "transactionReceivedIcon": "#497391",
-              "userAvatar": "#d1d9e4",
-              "warning": "#ECA93A",
-            },
-            "current": "lightTheme",
-          }
-        }
-      >
-        View on the Blockchain
-      </Text>
-    </View>
-    <View
-      h={4}
-      style={
-        Array [
-          Object {
-            "height": 4,
-            "width": 0,
-          },
-          undefined,
-        ]
-      }
-    />
-  </View>
+  />
 </View>
 `;
 
@@ -12046,18 +11948,26 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -12405,18 +12315,26 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -12642,18 +12560,26 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -13152,18 +13078,26 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -13664,18 +13598,26 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -14176,18 +14118,26 @@ exports[`Storyshots EventDetail Key wallet back up 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -14628,18 +14578,26 @@ exports[`Storyshots EventDetail Key wallet created 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -15080,18 +15038,26 @@ exports[`Storyshots EventDetail Key wallet imported 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -15532,18 +15498,26 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -15984,18 +15958,26 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -16321,18 +16303,26 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -16840,18 +16830,26 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -17236,18 +17234,26 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -17861,18 +17867,26 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -18343,18 +18357,26 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -18825,18 +18847,26 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -19184,18 +19214,26 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -19543,18 +19581,26 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -19897,129 +19943,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
         ]
       }
     />
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "alignSelf": "auto",
-          "backgroundColor": "transparent",
-          "borderColor": "transparent",
-          "borderRadius": 6,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "flexDirection": "column",
-          "height": 48,
-          "justifyContent": "center",
-          "marginBottom": 0,
-          "marginLeft": 0,
-          "marginRight": 0,
-          "marginTop": 0,
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 19,
-          "paddingRight": 19,
-          "paddingTop": 0,
-          "width": "auto",
-        }
-      }
-    >
-      <Text
-        customTheme={
-          Object {
-            "borderRadius": 0,
-            "borderWidth": 0,
-            "flexDirection": "column",
-            "iconHorizontalMargin": 0,
-          }
-        }
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 12,
-              "lineHeight": 18,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#007AFF",
-                "fontSize": 18,
-                "lineHeight": 18,
-                "marginBottom": 0,
-                "marginTop": 3.2399999999999998,
-              },
-              undefined,
-            ],
-          ]
-        }
-        theme={
-          Object {
-            "colors": Object {
-              "PPNSurface": "#0a0c78",
-              "PPNText": "#f33726",
-              "accent": "#818EB3",
-              "activeTabBarIcon": "#007AFF",
-              "bitcoinWallet": "#F79319",
-              "border": "transparent",
-              "buttonSecondaryBackground": "#e6f1f9",
-              "card": "#FFFFFF",
-              "control": "#FCFDFF",
-              "danger": "#ff0005",
-              "helpIcon": "#f7931a",
-              "iconBackground": "#ebf0f5",
-              "inactiveTabBarIcon": "#D4D9DB",
-              "indicator": "#F8E71C",
-              "legacyWallet": "#FA574F",
-              "link": "#007aff",
-              "negative": "#BD573A",
-              "notice": "#ea480e",
-              "orange": "#f57c00",
-              "popularSwaps": "#d08cb1",
-              "positive": "#2AA057",
-              "primary": "#007AFF",
-              "secondaryAccent": "#EBF0F5",
-              "secondaryText": "#8B939E",
-              "smartWallet": "#3C71FE",
-              "smartWalletSurface": "#f3f7ff",
-              "smartWalletText": "#1D24D8",
-              "surface": "transparent",
-              "synthetic": "#2329d6",
-              "tertiary": "#EBF0F6",
-              "text": "#007AFF",
-              "transactionReceivedIcon": "#497391",
-              "userAvatar": "#d1d9e4",
-              "warning": "#ECA93A",
-            },
-            "current": "lightTheme",
-          }
-        }
-      >
-        View on the blockchain
-      </Text>
-    </View>
-    <View
-      h={4}
-      style={
-        Array [
-          Object {
-            "height": 4,
-            "width": 0,
-          },
-          undefined,
-        ]
-      }
-    />
   </View>
 </View>
 `;
@@ -20067,18 +19990,26 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -20577,18 +20508,26 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -20827,127 +20766,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
         Object {
           "alignItems": "center",
           "alignSelf": "auto",
-          "backgroundColor": "#e6f1f9",
-          "borderColor": "#EDEDED",
-          "borderRadius": 6,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "flexDirection": "row",
-          "height": 48,
-          "justifyContent": "center",
-          "marginBottom": 0,
-          "marginLeft": 0,
-          "marginRight": 0,
-          "marginTop": 0,
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 19,
-          "paddingRight": 19,
-          "paddingTop": 0,
-          "width": "auto",
-        }
-      }
-    >
-      <Text
-        customTheme={
-          Object {
-            "borderWidth": 0,
-            "shadow": false,
-          }
-        }
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 12,
-              "lineHeight": 18,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#007AFF",
-                "fontSize": 18,
-                "lineHeight": 18,
-                "marginBottom": 0,
-                "marginTop": 3.2399999999999998,
-              },
-              undefined,
-            ],
-          ]
-        }
-        theme={
-          Object {
-            "colors": Object {
-              "PPNSurface": "#0a0c78",
-              "PPNText": "#f33726",
-              "accent": "#818EB3",
-              "activeTabBarIcon": "#007AFF",
-              "bitcoinWallet": "#F79319",
-              "border": "#EDEDED",
-              "buttonSecondaryBackground": "#e6f1f9",
-              "card": "#FFFFFF",
-              "control": "#FCFDFF",
-              "danger": "#ff0005",
-              "helpIcon": "#f7931a",
-              "iconBackground": "#ebf0f5",
-              "inactiveTabBarIcon": "#D4D9DB",
-              "indicator": "#F8E71C",
-              "legacyWallet": "#FA574F",
-              "link": "#007aff",
-              "negative": "#BD573A",
-              "notice": "#ea480e",
-              "orange": "#f57c00",
-              "popularSwaps": "#d08cb1",
-              "positive": "#2AA057",
-              "primary": "#007AFF",
-              "secondaryAccent": "#EBF0F5",
-              "secondaryText": "#8B939E",
-              "smartWallet": "#3C71FE",
-              "smartWalletSurface": "#f3f7ff",
-              "smartWalletText": "#1D24D8",
-              "surface": "#e6f1f9",
-              "synthetic": "#2329d6",
-              "tertiary": "#EBF0F6",
-              "text": "#007AFF",
-              "transactionReceivedIcon": "#497391",
-              "userAvatar": "#d1d9e4",
-              "warning": "#ECA93A",
-            },
-            "current": "lightTheme",
-          }
-        }
-      >
-        View on the blockchain
-      </Text>
-    </View>
-    <View
-      h={4}
-      style={
-        Array [
-          Object {
-            "height": 4,
-            "width": 0,
-          },
-          undefined,
-        ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "alignSelf": "auto",
           "backgroundColor": "transparent",
           "borderColor": "transparent",
           "borderRadius": 6,
@@ -21103,18 +20921,26 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -21615,18 +21441,26 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -21969,129 +21803,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
         ]
       }
     />
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "alignSelf": "auto",
-          "backgroundColor": "transparent",
-          "borderColor": "transparent",
-          "borderRadius": 6,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "flexDirection": "column",
-          "height": 48,
-          "justifyContent": "center",
-          "marginBottom": 0,
-          "marginLeft": 0,
-          "marginRight": 0,
-          "marginTop": 0,
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 19,
-          "paddingRight": 19,
-          "paddingTop": 0,
-          "width": "auto",
-        }
-      }
-    >
-      <Text
-        customTheme={
-          Object {
-            "borderRadius": 0,
-            "borderWidth": 0,
-            "flexDirection": "column",
-            "iconHorizontalMargin": 0,
-          }
-        }
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 12,
-              "lineHeight": 18,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#007AFF",
-                "fontSize": 18,
-                "lineHeight": 18,
-                "marginBottom": 0,
-                "marginTop": 3.2399999999999998,
-              },
-              undefined,
-            ],
-          ]
-        }
-        theme={
-          Object {
-            "colors": Object {
-              "PPNSurface": "#0a0c78",
-              "PPNText": "#f33726",
-              "accent": "#818EB3",
-              "activeTabBarIcon": "#007AFF",
-              "bitcoinWallet": "#F79319",
-              "border": "transparent",
-              "buttonSecondaryBackground": "#e6f1f9",
-              "card": "#FFFFFF",
-              "control": "#FCFDFF",
-              "danger": "#ff0005",
-              "helpIcon": "#f7931a",
-              "iconBackground": "#ebf0f5",
-              "inactiveTabBarIcon": "#D4D9DB",
-              "indicator": "#F8E71C",
-              "legacyWallet": "#FA574F",
-              "link": "#007aff",
-              "negative": "#BD573A",
-              "notice": "#ea480e",
-              "orange": "#f57c00",
-              "popularSwaps": "#d08cb1",
-              "positive": "#2AA057",
-              "primary": "#007AFF",
-              "secondaryAccent": "#EBF0F5",
-              "secondaryText": "#8B939E",
-              "smartWallet": "#3C71FE",
-              "smartWalletSurface": "#f3f7ff",
-              "smartWalletText": "#1D24D8",
-              "surface": "transparent",
-              "synthetic": "#2329d6",
-              "tertiary": "#EBF0F6",
-              "text": "#007AFF",
-              "transactionReceivedIcon": "#497391",
-              "userAvatar": "#d1d9e4",
-              "warning": "#ECA93A",
-            },
-            "current": "lightTheme",
-          }
-        }
-      >
-        View on the blockchain
-      </Text>
-    </View>
-    <View
-      h={4}
-      style={
-        Array [
-          Object {
-            "height": 4,
-            "width": 0,
-          },
-          undefined,
-        ]
-      }
-    />
   </View>
 </View>
 `;
@@ -22139,18 +21850,26 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -22649,18 +22368,26 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -22899,127 +22626,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
         Object {
           "alignItems": "center",
           "alignSelf": "auto",
-          "backgroundColor": "#e6f1f9",
-          "borderColor": "#EDEDED",
-          "borderRadius": 6,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "flexDirection": "row",
-          "height": 48,
-          "justifyContent": "center",
-          "marginBottom": 0,
-          "marginLeft": 0,
-          "marginRight": 0,
-          "marginTop": 0,
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 19,
-          "paddingRight": 19,
-          "paddingTop": 0,
-          "width": "auto",
-        }
-      }
-    >
-      <Text
-        customTheme={
-          Object {
-            "borderWidth": 0,
-            "shadow": false,
-          }
-        }
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 12,
-              "lineHeight": 18,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#007AFF",
-                "fontSize": 18,
-                "lineHeight": 18,
-                "marginBottom": 0,
-                "marginTop": 3.2399999999999998,
-              },
-              undefined,
-            ],
-          ]
-        }
-        theme={
-          Object {
-            "colors": Object {
-              "PPNSurface": "#0a0c78",
-              "PPNText": "#f33726",
-              "accent": "#818EB3",
-              "activeTabBarIcon": "#007AFF",
-              "bitcoinWallet": "#F79319",
-              "border": "#EDEDED",
-              "buttonSecondaryBackground": "#e6f1f9",
-              "card": "#FFFFFF",
-              "control": "#FCFDFF",
-              "danger": "#ff0005",
-              "helpIcon": "#f7931a",
-              "iconBackground": "#ebf0f5",
-              "inactiveTabBarIcon": "#D4D9DB",
-              "indicator": "#F8E71C",
-              "legacyWallet": "#FA574F",
-              "link": "#007aff",
-              "negative": "#BD573A",
-              "notice": "#ea480e",
-              "orange": "#f57c00",
-              "popularSwaps": "#d08cb1",
-              "positive": "#2AA057",
-              "primary": "#007AFF",
-              "secondaryAccent": "#EBF0F5",
-              "secondaryText": "#8B939E",
-              "smartWallet": "#3C71FE",
-              "smartWalletSurface": "#f3f7ff",
-              "smartWalletText": "#1D24D8",
-              "surface": "#e6f1f9",
-              "synthetic": "#2329d6",
-              "tertiary": "#EBF0F6",
-              "text": "#007AFF",
-              "transactionReceivedIcon": "#497391",
-              "userAvatar": "#d1d9e4",
-              "warning": "#ECA93A",
-            },
-            "current": "lightTheme",
-          }
-        }
-      >
-        View on the blockchain
-      </Text>
-    </View>
-    <View
-      h={4}
-      style={
-        Array [
-          Object {
-            "height": 4,
-            "width": 0,
-          },
-          undefined,
-        ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "alignSelf": "auto",
           "backgroundColor": "transparent",
           "borderColor": "transparent",
           "borderRadius": 6,
@@ -23175,18 +22781,26 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -23687,18 +23301,26 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -24048,18 +23670,26 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -24530,18 +24160,26 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -24982,18 +24620,26 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
@@ -25311,18 +24957,26 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
       <View />
     </View>
     <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
       style={
-        Array [
-          Object {
-            "flexDirection": "row",
-            "justifyContent": "center",
-            "paddingBottom": 0,
-            "paddingLeft": 8,
-            "paddingRight": 8,
-            "paddingTop": 0,
-          },
-          undefined,
-        ]
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+        }
       }
     >
       <Text
