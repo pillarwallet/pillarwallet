@@ -219,7 +219,11 @@ const finishRegistration = async ({
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
-    await dispatch(initializeBitcoinWalletAction({ mnemonic, privateKey }));
+    const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED', false);
+    // Generate a BTC address when the wallet is imported. TODO: change this check when backend stores btc info
+    if (bitcoinFeatureEnabled && isImported) {
+      await dispatch(initializeBitcoinWalletAction({ mnemonic, privateKey }));
+    }
     // create smart wallet account only for new wallets
     const createNewAccount = !isImported;
     await dispatch(initSmartWalletSdkAction(privateKey));
