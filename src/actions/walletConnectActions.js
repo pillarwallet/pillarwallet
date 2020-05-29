@@ -222,7 +222,7 @@ const subscribeToSessionRequestEvent = (connector: Connector) => {
         Toast.show({
           type: 'warning',
           title: 'Cannot connect',
-          message: 'We are sorry. We do not support this application.',
+          message: 'This application does not support smart accounts.',
           autoClose: false,
         });
         return;
