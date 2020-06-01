@@ -551,6 +551,7 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
 
   const updatedAccountAssets = supportedAssets
     .filter(asset => accountAssetsTickers.includes(asset.symbol))
+    .filter(({ symbol }) => symbol !== BTC) // remove BTC if it is already shown in SW/KW
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
   return { id: accountId, ...updatedAccountAssets };
 };
