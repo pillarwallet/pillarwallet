@@ -351,9 +351,10 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
 export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const allBalances = getState().balances.data;
+    const currentAccountBalances = allBalances[accountId] || {};
     const updatedBalances = {
       ...allBalances,
-      [accountId]: !allBalances.accountId ? balances : { ...allBalances[accountId], ...balances },
+      [accountId]: { ...currentAccountBalances, ...balances },
     };
     dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
     dispatch({

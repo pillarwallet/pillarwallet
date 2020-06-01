@@ -70,6 +70,11 @@ type ETHTransferOptions = {
   data?: string,
 };
 
+type FetchBalancesResponse = Array<{
+  balance: string,
+  symbol: string,
+}>;
+
 function contractHasMethod(contractCode, encodedMethodName) {
   return contractCode.includes(encodedMethodName);
 }
@@ -251,23 +256,27 @@ export async function transferETH(options: ETHTransferOptions) {
 
 // Fetch methods are temporary until the BCX API provided
 
-export function fetchETHBalance(walletAddress: Address) {
+export function fetchETHBalance(walletAddress: Address): Promise<string> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchRinkebyETHBalance(walletAddress: Address) {
+export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> {
   const provider = getEthereumProvider('rinkeby');
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchERC20Balance(walletAddress: Address, contractAddress: Address, decimals: number = 18) {
+export function fetchERC20Balance(
+  walletAddress: Address,
+  contractAddress: Address,
+  decimals: number = 18,
+): Promise<string> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
-export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<Object[]> {
+export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
@@ -278,7 +287,9 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
         symbol: asset.symbol,
       };
     });
-  return Promise.all(promises).catch(() => ([]));
+  return Promise.all(promises)
+    .then(balances => balances.filter(({ balance }) => balance !== null))
+    .catch(() => []);
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
