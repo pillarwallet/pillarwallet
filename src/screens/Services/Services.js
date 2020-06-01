@@ -52,7 +52,7 @@ class ServicesScreen extends React.Component<Props> {
     } = this.props;
     const colors = getThemeColors(theme);
 
-    const offersBadge = providersMeta ? {
+    const offersBadge = Array.isArray(providersMeta) ? {
       label: `${providersMeta.length} exchanges`,
       color: colors.primary,
     } : null;
