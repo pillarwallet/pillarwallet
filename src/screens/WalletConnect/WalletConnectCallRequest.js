@@ -223,7 +223,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   getGasLimitFromRequest = () => {
     const params = this.getRequestParams();
-    const requestGasLimit = params[0].gasLimit;
+    let requestGasLimit = params[0].gas;
+    if (!requestGasLimit && requestGasLimit !== 0) {
+      requestGasLimit = params[0].gasLimit;
+    }
+    if (!requestGasLimit) return 0;
     return utils.bigNumberify(requestGasLimit).toNumber();
   };
 
@@ -237,7 +241,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const shouldUseGasInfoFromRequest = this.shouldUseGasInfoFromRequest();
     if (!shouldUseGasInfoFromRequest) return true;
     const params = this.getRequestParams();
-    return !params[0]?.gasLimit;
+    return !params[0]?.gas && !params[0]?.gasLimit;
   }
 
   getGasPriceFromRequest = () => {
