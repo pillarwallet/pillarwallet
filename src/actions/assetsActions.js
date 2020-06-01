@@ -37,6 +37,7 @@ import {
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
   PLR,
+  BTC,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -512,7 +513,7 @@ export const searchAssetsAction = (query: string) => {
 
     const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
       return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
-    });
+    }).filter(({ symbol }) => symbol !== BTC);
 
     if (filteredAssets.length > 0) {
       dispatch({
