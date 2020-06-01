@@ -554,16 +554,19 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       );
     }
     if (privacyInsightDismissed) return null;
-    return (
-      <InsightWithButton
-        title="All your data is private"
-        description="We care for our users' privacy. We don't support scammers.
-                     We need to make sure you're a genuine user in order to get
-                     rewarded with PLR tokens for inviting friends."
-        buttonTitle="I understand"
-        onButtonPress={dismissPrivacyInsight}
-      />
-    );
+    if (isPillarRewardCampaignActive) {
+      return (
+        <InsightWithButton
+          title="All your data is private"
+          description="We care for our users' privacy. We don't support scammers.
+                       We need to make sure you're a genuine user in order to get
+                       rewarded with PLR tokens for inviting friends."
+          buttonTitle="I understand"
+          onButtonPress={dismissPrivacyInsight}
+        />
+      );
+    }
+    return null;
   }
 
   render() {
