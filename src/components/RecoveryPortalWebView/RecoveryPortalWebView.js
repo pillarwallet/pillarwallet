@@ -34,6 +34,7 @@ type Props = {
   title?: string,
   isVisible?: boolean,
   webViewRef?: WebView,
+  urlPath?: string,
 };
 
 const renderLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
@@ -45,9 +46,11 @@ const RecoveryPortalWebView = ({
   isVisible = true,
   navigation,
   onRef,
+  urlPath = '',
 }: Props) => {
   let webViewRef;
   let canWebViewNavigateBack = false;
+  const uri = `${RECOVERY_PORTAL_URL}/${urlPath}`;
 
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {
@@ -79,7 +82,7 @@ const RecoveryPortalWebView = ({
         {isVisible &&
           <WebView
             ref={(ref) => { webViewRef = ref; if (onRef) onRef(webViewRef); }}
-            source={{ uri: RECOVERY_PORTAL_URL }}
+            source={{ uri }}
             onNavigationStateChange={onNavigationStateChange}
             allowsBackForwardNavigationGestures={false}
             onMessage={onWebViewMessage}

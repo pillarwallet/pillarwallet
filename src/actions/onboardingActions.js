@@ -130,9 +130,7 @@ export const getTokenWalletAndRegister = async (
 
   if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
 
-  const sdkWallet: Object = isEmpty(user) && !isEmpty(recover)
-    ? await api.registerOnAuthServer(privateKey, fcmToken, null, recover)
-    : await api.registerOnAuthServer(privateKey, fcmToken, user?.username);
+  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user?.username, recover);
 
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);

@@ -16,8 +16,9 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Alert, BackHandler, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
+import { useBackHandler } from '@react-native-community/hooks';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
@@ -65,80 +66,70 @@ const skipPrompt = (callback) => Alert.alert(
   { cancelable: true },
 );
 
-class RecoveryPortalSetupComplete extends React.PureComponent<Props> {
-  componentDidMount() {
-    if (Platform.OS !== 'android') return;
-    BackHandler.addEventListener('hardwareBackPress', this.handleBack);
-  }
+const RecoveryPortalSetupComplete = ({
+  isBackedUp,
+  isImported,
+  navigation,
+  theme,
+}: Props) => {
+  const colors = getThemeColors(theme);
+  const isWalletBackupNeeded = !isImported && !isBackedUp;
+  const dismissNavigation = () => navigation.dismiss();
 
-  componentWillUnmount() {
-    if (Platform.OS !== 'android') return;
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBack);
-  }
+  useBackHandler(() => {
+    dismissNavigation();
+    return true;
+  });
 
-  handleBack = () => this.props.navigation.dismiss();
-
-  render() {
-    const {
-      isBackedUp,
-      isImported,
-      navigation,
-      theme,
-    } = this.props;
-
-    const colors = getThemeColors(theme);
-    const isWalletBackupNeeded = !isImported && !isBackedUp;
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Recovery Portal' }],
-          rightItems: [{ close: true }],
-          noBack: true,
-          onClose: this.handleBack,
-        }}
-      >
-        <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
-          <Wrapper flex={1} center regularPadding>
-            <Animation source={animationSuccess} />
-            <Title center>Recovery device setup is now complete</Title>
-            <Paragraph small>
-              It is important that you also write down and secure your private key back up phrase
-              in order to recover your primary Pillar account. This is the only way to recover your
-              password to the Pillar Recovery Portal. Pillar cannot help you retrieve your wallet.
-            </Paragraph>
-            {isWalletBackupNeeded &&
-              <Button
-                block
-                title="Backup my Seed Phrase"
-                onPress={() => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW)}
-                marginTop={50}
-                marginBottom={spacing.large}
-              />
-            }
-            {isWalletBackupNeeded &&
-              <ButtonText
-                buttonText="Skip (at my own risk)"
-                onPress={() => skipPrompt(this.handleBack)}
-                color={colors.negative}
-                fontSize={fontSizes.medium}
-                medium
-              />
-            }
-            {!isWalletBackupNeeded &&
-              <Button
-                block
-                title="Magic"
-                onPress={() => navigation.dismiss()}
-                marginTop={50}
-              />
-            }
-          </Wrapper>
-        </ScrollWrapper>
-      </ContainerWithHeader>
-    );
-  }
-}
+  return (
+    <ContainerWithHeader
+      headerProps={{
+        centerItems: [{ title: 'Recovery Portal' }],
+        rightItems: [{ close: true }],
+        noBack: true,
+        onClose: dismissNavigation,
+      }}
+    >
+      <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
+        <Wrapper flex={1} center regularPadding>
+          <Animation source={animationSuccess} />
+          <Title center>Recovery device setup is now complete</Title>
+          <Paragraph small>
+            It is important that you also write down and secure your private key back up phrase
+            in order to recover your primary Pillar account. This is the only way to recover your
+            password to the Pillar Recovery Portal. Pillar cannot help you retrieve your wallet.
+          </Paragraph>
+          {isWalletBackupNeeded &&
+            <Button
+              block
+              title="Backup my Seed Phrase"
+              onPress={() => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW)}
+              marginTop={50}
+              marginBottom={spacing.large}
+            />
+          }
+          {isWalletBackupNeeded &&
+            <ButtonText
+              buttonText="Skip (at my own risk)"
+              onPress={() => skipPrompt(dismissNavigation)}
+              color={colors.negative}
+              fontSize={fontSizes.medium}
+              medium
+            />
+          }
+          {!isWalletBackupNeeded &&
+            <Button
+              block
+              title="Magic"
+              onPress={() => navigation.dismiss()}
+              marginTop={50}
+            />
+          }
+        </Wrapper>
+      </ScrollWrapper>
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
   wallet: { backupStatus: { isBackedUp, isImported } },

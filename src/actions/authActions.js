@@ -391,9 +391,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
       mnemonic: true,
     });
 
-    const isImported = get(encryptedWallet, 'backupStatus.isImported', false);
-    const isBackedUp = get(encryptedWallet, 'backupStatus.isBackedUp', false);
-
+    const { isImported = false, isBackedUp = false } = get(encryptedWallet, 'backupStatus', {});
     dispatch(encryptAndSaveWalletAction(newPin, wallet, isImported, isBackedUp));
   };
 };

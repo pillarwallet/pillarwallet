@@ -1431,8 +1431,8 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
       return;
     }
 
-    const accountDeviceUNDeploymentHash = await smartWalletService.unDeployAccountDevice(deviceAddress);
-    if (!accountDeviceUNDeploymentHash) {
+    const accountDeviceUnDeploymentHash = await smartWalletService.unDeployAccountDevice(deviceAddress);
+    if (!accountDeviceUnDeploymentHash) {
       // no transaction hash, unknown error occurred
       Toast.show({
         message: 'Failed to remove device to Smart Wallet account',

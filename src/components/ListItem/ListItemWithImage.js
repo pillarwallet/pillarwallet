@@ -207,7 +207,7 @@ const ItemIcon = styled(Icon)`
 
 const IconImage = styled(CachedImage)`
   height: 24px;
-  ${({ iconAutoWidth }) => !iconAutoWidth && 'width: 24px;'}
+  ${({ autoWidth }) => !autoWidth && 'width: 24px;'}
 `;
 
 const TokenImage = styled(CachedImage)`
@@ -388,7 +388,7 @@ const ItemImage = (props: Props) => {
     return (
       <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
         <IconImage
-          iconImageAutoWidth={iconImageAutoWidth}
+          autoWidth={iconImageAutoWidth}
           source={iconSource}
           resizeMode={iconImageAutoWidth && 'contain'}
         />

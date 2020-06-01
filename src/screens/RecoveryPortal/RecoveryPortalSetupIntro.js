@@ -38,7 +38,7 @@ import { responsiveSize } from 'utils/ui';
 
 type Props = {
   navigation: NavigationScreenProp,
-}
+};
 
 const CustomWrapper = styled.View`
   flex: 1;
