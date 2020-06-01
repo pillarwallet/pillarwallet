@@ -33,6 +33,7 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
 import SystemInfoModal from 'components/SystemInfoModal';
+import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import {
   saveBaseFiatCurrencyAction,
   setAppThemeAction,
@@ -42,7 +43,11 @@ import {
 } from 'actions/appSettingsActions';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
+import type { Transaction } from 'models/Transaction';
+import type { Assets } from 'models/Asset';
+import { isGasTokenSupportedSelector, isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
 import { SettingsSection } from './SettingsSection';
 
 
@@ -57,6 +62,9 @@ type Props = {
   saveOptOutTracking: (status: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
+  isSmartAccount: boolean,
+  accountAssets: Assets,
+  accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
 };
 
@@ -64,6 +72,7 @@ type State = {
   visibleModal: ?string,
   leaveBetaPressed: boolean,
   joinBetaPressed: boolean,
+  showRelayerMigrationModal: boolean,
 };
 
 const StyledWrapper = styled(Wrapper)`
@@ -93,6 +102,7 @@ class AppSettings extends React.Component<Props, State> {
     visibleModal: null,
     leaveBetaPressed: false,
     joinBetaPressed: false,
+    showRelayerMigrationModal: false,
   }
 
   renderListItem = (
@@ -147,7 +157,10 @@ class AppSettings extends React.Component<Props, State> {
       preferredGasToken,
       isGasTokenSupported,
       setPreferredGasToken,
+      isSmartAccount,
     } = this.props;
+
+    const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
 
     return [
       {
@@ -156,13 +169,19 @@ class AppSettings extends React.Component<Props, State> {
         onPress: () => this.setState({ visibleModal: 'baseCurrency' }),
         value: baseFiatCurrency || defaultFiatCurrency,
       },
-      isGasTokenSupported &&
+      isSmartAccount &&
       {
         key: 'preferredGasToken',
         title: 'Pay fees with PLR',
         toggle: true,
         value: preferredGasToken === PLR,
-        onPress: () => setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR),
+        onPress: () => {
+          if (showRelayerMigration) {
+            this.setState({ showRelayerMigrationModal: true });
+            return;
+          }
+          setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
+        },
       },
       {
         key: 'darkMode',
@@ -196,9 +215,27 @@ class AppSettings extends React.Component<Props, State> {
     return this.renderListItem('currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { isGasTokenSupported, setPreferredGasToken, preferredGasToken } = this.props;
+    const { showRelayerMigrationModal } = this.state;
+    if (prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported && showRelayerMigrationModal) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ showRelayerMigrationModal: false });
+      setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
+    }
+  }
+
   render() {
-    const { optOutTracking } = this.props;
-    const { visibleModal } = this.state;
+    const {
+      optOutTracking,
+      isSmartAccount,
+      isGasTokenSupported,
+      accountAssets,
+      accountHistory,
+    } = this.props;
+    const { visibleModal, showRelayerMigrationModal } = this.state;
+
+    const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
 
     return (
       <ContainerWithHeader
@@ -333,6 +370,16 @@ class AppSettings extends React.Component<Props, State> {
           <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
         </SlideModal>
 
+        {/* RELAYER GAS FEE ACTIVATION MODAL */}
+        {showRelayerMigration &&
+        <RelayerMigrationModal
+          isVisible={showRelayerMigrationModal}
+          onModalHide={() => this.setState({ showRelayerMigrationModal: false })}
+          accountAssets={accountAssets}
+          accountHistory={accountHistory}
+        />
+        }
+
       </ContainerWithHeader>
     );
   }
@@ -358,6 +405,9 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
+  isSmartAccount: isActiveAccountSmartWalletSelector,
+  accountAssets: accountAssetsSelector,
+  accountHistory: accountHistorySelector,
 });
 
 const combinedMapStateToProps = (state) => ({
