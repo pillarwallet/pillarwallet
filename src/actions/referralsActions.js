@@ -49,6 +49,7 @@ import {
   FETCHING_REFERRAL_REWARD_AMOUNT,
   SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
   SET_PILLAR_REWARD_CAMPAIGN_STATUS,
+  SET_1WORLD_CAMPAIGN_STATUS,
 } from 'constants/referralsConstants';
 import {
   APP_FLOW,
@@ -223,6 +224,7 @@ export const startReferralsListenerAction = () => {
         printLog('Branch.io Subscribe error', error, 'error');
         return;
       }
+
       if (!params['+clicked_branch_link']) return;
 
       const { token, phone, email } = params;
@@ -347,10 +349,16 @@ export const fetchReferralRewardAction = () => {
     });
 
     const isPillarRewardsActive = get(referralCampaignsInfo, 'pillar.isActive');
+    const is1WorldCampaignActive = get(referralCampaignsInfo, '1world.isActive');
 
     dispatch({
       type: SET_PILLAR_REWARD_CAMPAIGN_STATUS,
       payload: isPillarRewardsActive,
+    });
+
+    dispatch({
+      type: SET_1WORLD_CAMPAIGN_STATUS,
+      payload: is1WorldCampaignActive,
     });
   };
 };

@@ -32,6 +32,7 @@ import {
   FETCHING_REFERRAL_REWARD_AMOUNT,
   SET_REFERRAL_REWARD_ISSUER_ADDRESSES,
   SET_PILLAR_REWARD_CAMPAIGN_STATUS,
+  SET_1WORLD_CAMPAIGN_STATUS,
 } from 'constants/referralsConstants';
 
 export type SentInvitationsCount = {
@@ -134,6 +135,7 @@ export type ReferralsReducerState = {|
   isFetchingRewards: boolean,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
+  is1WorldCampaignActive: boolean,
 |};
 
 export const initialState: ReferralsReducerState = {
@@ -153,6 +155,7 @@ export const initialState: ReferralsReducerState = {
   isFetchingRewards: false,
   referralRewardIssuersAddresses: [],
   isPillarRewardCampaignActive: false,
+  is1WorldCampaignActive: false,
 };
 
 
@@ -257,6 +260,9 @@ export default function referralsReducer(
 
     case SET_PILLAR_REWARD_CAMPAIGN_STATUS:
       return { ...state, isPillarRewardCampaignActive: action.payload };
+
+    case SET_1WORLD_CAMPAIGN_STATUS:
+      return { ...state, is1WorldCampaignActive: action.payload };
 
     default:
       return state;
