@@ -300,7 +300,7 @@ const getInitialValue = (user) => {
   phone = phone || '';
   const country = countries.find(c => phone.substring(1).startsWith(c.callingCode));
   const phoneInput = country && phone.substring(country.callingCode.length + 1);
-  return { phone: { input: phoneInput || '', selector: country || countries.find(c => c.cca2 === 'US') }, email };
+  return { phone: { input: phoneInput || '', selector: country || countries.find(c => c.cca2 === 'GB') }, email };
 };
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
