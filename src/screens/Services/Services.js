@@ -23,14 +23,13 @@ import { FlatList, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import uniq from 'lodash.uniq';
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { EXCHANGE } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
-import type { Offer } from 'models/Offer';
+import type { ProvidersMeta } from 'models/Offer';
 import { withTheme } from 'styled-components/native';
 import type { RootReducerState } from 'reducers/rootReducer';
 import { spacing } from 'utils/variables';
@@ -38,7 +37,7 @@ import { spacing } from 'utils/variables';
 
 type Props = {
   theme: Theme,
-  offers: Offer[],
+  providersMeta: ProvidersMeta,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
 };
@@ -49,14 +48,12 @@ const mastercardIcon = require('assets/icons/mastercard.png');
 class ServicesScreen extends React.Component<Props> {
   getServices = () => {
     const {
-      navigation, theme, offers, baseFiatCurrency,
+      navigation, theme, baseFiatCurrency, providersMeta,
     } = this.props;
     const colors = getThemeColors(theme);
 
-    const providersCount = uniq((offers || []).map(offer => offer.provider)).length;
-
-    const offersBadge = providersCount ? {
-      label: `${providersCount} exchanges`,
+    const offersBadge = providersMeta ? {
+      label: `${providersMeta.length} exchanges`,
       color: colors.primary,
     } : null;
 
@@ -146,10 +143,10 @@ class ServicesScreen extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  exchange: { data: { offers } },
+  exchange: { providersMeta },
   appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
-  offers,
+  providersMeta,
   baseFiatCurrency,
 });
 
