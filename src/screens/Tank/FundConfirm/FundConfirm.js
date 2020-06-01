@@ -20,9 +20,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import get from 'lodash.get';
-import { BigNumber } from 'bignumber.js';
 import type { NavigationScreenProp } from 'react-navigation';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
@@ -40,10 +39,14 @@ import Spinner from 'components/Spinner';
 // utils
 import { fontSizes, spacing } from 'utils/variables';
 import { formatTransactionFee } from 'utils/common';
+import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { TopUpFee } from 'models/PaymentNetwork';
+
+// selectors
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // other
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -55,6 +58,7 @@ type Props = {
   topUpFee: TopUpFee,
   estimateTopUpVirtualAccount: (amount: string) => void,
   topUpVirtualAccount: (amount: string, payForGasWithToken: boolean) => void,
+  useGasToken: boolean,
 };
 
 type State = {
@@ -99,27 +103,26 @@ class FundConfirm extends React.Component<Props, State> {
   }
 
   handleFormSubmit = async () => {
-    const { navigation, topUpVirtualAccount } = this.props;
+    const {
+      navigation, topUpVirtualAccount, useGasToken, topUpFee: { feeInfo },
+    } = this.props;
     this.setState({ topUpButtonSubmitted: true });
     const amount = navigation.getParam('amount', '0');
-    const payForGasWithToken = !!get(this.props, 'topUpFee.feeInfo.gasTokenCost');
+    const payForGasWithToken = !!getGasToken(useGasToken, feeInfo);
     await topUpVirtualAccount(amount, payForGasWithToken);
     this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(ASSETS));
   };
 
-  getTxFeeInWei = (): BigNumber => {
-    return get(this.props, 'topUpFee.feeInfo.gasTokenCost')
-      || get(this.props, 'topUpFee.feeInfo.totalCost', 0);
-  };
-
   render() {
-    const { session, navigation, topUpFee } = this.props;
+    const {
+      session, navigation, topUpFee, useGasToken, topUpFee: { feeInfo },
+    } = this.props;
     const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
     const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
 
-    const gasToken = get(this.props, 'topUpFee.feeInfo.gasToken');
-    const feeDisplayValue = formatTransactionFee(this.getTxFeeInWei(), gasToken);
+    const gasToken = getGasToken(useGasToken, feeInfo);
+    const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
     return (
       <ContainerWithHeader
@@ -165,12 +168,20 @@ const mapStateToProps = ({
   topUpFee,
 });
 
+const structuredSelector = createStructuredSelector({
+  useGasToken: useGasTokenSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  topUpVirtualAccount: (
-    amount: string,
-    payForGasWithToken: boolean,
-  ) => dispatch(topUpVirtualAccountAction(amount, payForGasWithToken)),
+  topUpVirtualAccount: (amount: string, payForGasWithToken: boolean) => {
+    return dispatch(topUpVirtualAccountAction(amount, payForGasWithToken));
+  },
   estimateTopUpVirtualAccount: (amount: string) => dispatch(estimateTopUpVirtualAccountAction(amount)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(FundConfirm);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(FundConfirm);

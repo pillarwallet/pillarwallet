@@ -39,7 +39,7 @@ import {
   INVALID_USERNAME,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, HOME } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, HOME, REFERRAL_INCOMING_REWARD } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -59,7 +59,6 @@ import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConsta
 // utils
 import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
 import { delay } from 'utils/common';
-import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import { setKeychainDataObject } from 'utils/keychain';
 
@@ -77,11 +76,16 @@ import {
   managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import { generateWalletMnemonicAction } from 'actions/walletActions';
+import { checkForWalletBackupToastAction, generateWalletMnemonicAction } from 'actions/walletActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction, changeUseBiometricsAction, updateAppSettingsAction } from 'actions/appSettingsActions';
+import {
+  setAppThemeAction,
+  changeUseBiometricsAction,
+  updateAppSettingsAction,
+  setInitialPreferredGasTokenAction,
+} from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -89,12 +93,14 @@ import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
+import { fetchReferralRewardAction } from 'actions/referralsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 import type { KeyChainData } from 'utils/keychain';
+
 
 const storage = Storage.getInstance('db');
 
@@ -226,6 +232,9 @@ const finishRegistration = async ({
     dispatch(managePPNInitFlagAction());
   }
 
+  // set initial preferredGasToken value. Should be called after we connect to Archanova
+  dispatch(setInitialPreferredGasTokenAction());
+
   await dispatch({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
@@ -238,17 +247,27 @@ const finishRegistration = async ({
   } else {
     await setKeychainDataObject(keychainData);
   }
+  dispatch(fetchReferralRewardAction());
 };
 
-const navigateToAppFlow = (isWalletBackedUp: boolean) => {
-  toastWalletBackup(isWalletBackedUp);
-
-  const navigateToAssetsAction = NavigationActions.navigate({
+const navigateToAppFlow = (showIncomingReward?: boolean) => {
+  const navigateToHomeScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: HOME }),
   });
-  navigate(navigateToAssetsAction);
+
+  const navigateToIncomingRewardScreen = NavigationActions.navigate({
+    routeName: APP_FLOW,
+    params: {},
+    action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
+  });
+
+  if (showIncomingReward) {
+    navigate(navigateToIncomingRewardScreen);
+  } else {
+    navigate(navigateToHomeScreen);
+  }
 };
 
 export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
@@ -381,9 +400,14 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch(getWalletsCreationEventsAction());
     if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
-    // STEP 7: all done, navigate to the home screen
-    const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+    // STEP 7: check if user ir referred to install the app
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    // STEP 8: check if wallet backup warning toast needed
+    dispatch(checkForWalletBackupToastAction());
+
+    // STEP 9: all done, navigate to the home screen or incoming reward screen
+    navigateToAppFlow(!!referralToken);
   };
 };
 
@@ -404,7 +428,7 @@ export const registerOnBackendAction = () => {
           privateKey,
           importedWallet,
         },
-        backupStatus: { isBackedUp, isImported },
+        backupStatus: { isImported },
       },
     } = getState();
     const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
@@ -440,8 +464,10 @@ export const registerOnBackendAction = () => {
       isImported,
     });
 
-    const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp);
+    dispatch(checkForWalletBackupToastAction());
+    const referralToken = get(getState(), 'referrals.referralToken');
+
+    navigateToAppFlow(!!referralToken);
   };
 };
 

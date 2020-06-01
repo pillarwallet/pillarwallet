@@ -20,8 +20,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, AppState, Platform, Linking, Text, TouchableOpacity } from 'react-native';
-import SplashScreen from 'react-native-splash-screen';
+import { StatusBar, Platform, Linking, Text, TouchableOpacity } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -29,6 +28,7 @@ import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
+import DeviceInfo from 'react-native-device-info';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -78,7 +78,7 @@ export const LoadingSpinner = styled(Spinner)`
 type Props = {
   dispatch: Dispatch,
   isFetched: boolean,
-  fetchAppSettingsAndRedirect: (appState: string, platform: string) => void,
+  fetchAppSettingsAndRedirect: () => void,
   updateSessionNetworkStatus: (isOnline: boolean) => void,
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => void,
   startListeningOnOpenNotification: () => void,
@@ -99,7 +99,11 @@ class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
+      const dist = DeviceInfo.getBuildNumber();
+      const release = `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${dist}`;
       Sentry.init({ dsn: SENTRY_DSN });
+      Sentry.setRelease(release);
+      Sentry.setDist(dist);
       Sentry.setTags({ environment: BUILD_TYPE });
     }
   }
@@ -133,7 +137,7 @@ class App extends React.Component<Props, *> {
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
     startReferralsListener();
-    fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
+    fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS === 'android') {
       StatusBar.setTranslucent(true);
@@ -152,7 +156,6 @@ class App extends React.Component<Props, *> {
     const { isFetched, handleSystemDefaultThemeChange, themeType } = this.props;
     const { isFetched: prevIsFetched, themeType: prevThemeType } = prevProps;
     if (isFetched && !prevIsFetched) {
-      SplashScreen.hide();
       handleSystemDefaultThemeChange();
     }
 
@@ -256,8 +259,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
-    dispatch(initAppAndRedirectAction(appState, platform)),
+  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),

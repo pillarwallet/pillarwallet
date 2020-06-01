@@ -17,7 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type RecoveryAgent = {
-  name: string,
-  icon: string,
+
+import * as React from 'react';
+import { CachedImage } from 'react-native-cached-image';
+import { SvgCssUri } from 'react-native-svg';
+import { isSvgImage } from 'utils/images';
+
+type Props = CachedImage | SvgCssUri;
+
+const CollectibleImage = (props: Props) => {
+  const { uri } = props.source;
+  if (isSvgImage(uri)) {
+    return (
+      <SvgCssUri
+        uri={uri}
+        width={props.width || '100%'}
+        height={props.height || '100%'}
+        {...props}
+      />
+    );
+  }
+  return <CachedImage {...props} style={[{ width: props.width, height: props.height }, props.style]} />;
 };
+
+export default CollectibleImage;

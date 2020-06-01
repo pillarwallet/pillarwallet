@@ -70,6 +70,7 @@ type Props = {
   modalProps?: ModalProps,
   headerProps?: HeaderProps,
   errorMessage?: string,
+  hideLoader?: boolean,
 };
 
 type State = {
@@ -159,7 +160,7 @@ class CheckAuth extends React.Component<Props, State> {
         removeAppStateChangeListener(this.handleAppStateChange);
         checkPrivateKey(
           privateKey,
-          (_, wallet) => onPinValid(_, revealMnemonic ? constructWalletFromMnemonic(mnemonic) : wallet),
+          (_, wallet) => onPinValid(_, (revealMnemonic && mnemonic) ? constructWalletFromMnemonic(mnemonic) : wallet),
         );
         this.hideModal(modalProps);
       } else {
@@ -274,11 +275,11 @@ class CheckAuth extends React.Component<Props, State> {
 
   render() {
     const {
-      wallet: { walletState }, isChecking, enforcePin, modalProps, headerProps,
+      wallet: { walletState }, isChecking, enforcePin, modalProps, headerProps, hideLoader,
     } = this.props;
     const { showPin } = this.state;
 
-    if (walletState === DECRYPTING || isChecking) {
+    if (!hideLoader && (walletState === DECRYPTING || isChecking)) {
       return (
         <Container style={{ flex: 1, width: '100%' }} center>
           <Loader messages={['Checking']} />

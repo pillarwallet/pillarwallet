@@ -19,13 +19,11 @@
 */
 import { ethers, utils } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
-import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import * as Sentry from '@sentry/react-native';
 import { isHexString } from '@walletconnect/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import AsyncStorage from '@react-native-community/async-storage';
 
 import {
   getRandomInt,
@@ -36,7 +34,6 @@ import {
 } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
-import { WALLET_STORAGE_BACKUP_KEY } from 'constants/walletConstants';
 import type { Dispatch } from 'reducers/rootReducer';
 
 const storage = Storage.getInstance('db');
@@ -108,51 +105,33 @@ export function signPersonalMessage(message: string, walletInstance: Object): Pr
 }
 
 // we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Object, api: Object) {
-  let { wallet = {} } = await storage.get('wallet');
-  const { user = {} } = await storage.get('user');
-  const walletBackup = await AsyncStorage.getItem(WALLET_STORAGE_BACKUP_KEY);
+export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch, api: Object) {
+  const { wallet = {} } = get(storageData, 'wallet', {});
+  const { appSettings = {} } = get(storageData, 'app_settings', {});
+  const { user = {} } = get(storageData, 'user', {});
   const isWalletEmpty = isEmpty(wallet);
-  // wallet timestamp missing causes welcome screen
+
+  // missing wallet timestamp causes 'welcome screen'
   let walletTimestamp = appSettings.wallet;
+
   const reportToSentry = (message, data = {}) => reportLog(message, {
-    walletHadBackup: !!walletBackup,
     isWalletEmpty,
     walletCreationTimestamp: appSettings.wallet,
     isAppSettingsEmpty: isEmpty(appSettings),
     ...data,
   });
-  // restore wallet if one is empty and backup is present
-  if (isWalletEmpty && walletBackup) {
-    printLog('RESTORING WALLET FROM BACKUP');
-    // restore wallet to storage
-    try {
-      wallet = JSON.parse(walletBackup);
-      dispatch(saveDbAction('wallet', { wallet }));
-    } catch (e) {
-      reportToSentry('Wallet parse failed', {
-        walletHadBackup: true,
-        walletBackupParseError: e,
-      });
-    }
-  }
-  // we can only set new timestamp if any wallet is present (existing or backup)
-  if (!walletTimestamp && (!isWalletEmpty || walletBackup)) {
+
+  // we can only set the new timestamp if the wallet is present
+  if (!walletTimestamp && !isWalletEmpty) {
     walletTimestamp = +new Date();
     printLog('SETTING NEW WALLET TIMESTAMP');
-    // only wallet timestamp was missing, let's update it to storage
+    // if only the wallet timestamp was missing, let's update it
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
+    reportToSentry('Empty wallet timestamp (auto-fix)');
   }
 
-  const walletAsString = !isWalletEmpty && JSON.stringify(wallet);
-  // check backup and store if needed
-  if (!!walletAsString && !isEqual(walletAsString, walletBackup)) {
-    // wallet has changed or backup does not exist, let's update it
-    await AsyncStorage.setItem(WALLET_STORAGE_BACKUP_KEY, walletAsString);
-  }
-
+  // TODO: remove this if there will be no reports in Sentry
   if (isEmpty(user) || !user.username || !user.walletId) {
-    printLog('EMPTY USER OBJECT DETECTED');
     if (!isEmpty(wallet)) {
       printLog('RESTORING USER FROM API');
       api.init();
@@ -169,16 +148,9 @@ export async function getWalletFromStorage(dispatch: Dispatch, appSettings: Obje
       } else {
         printLog('UNABLE TO RESTORE USER FROM API');
       }
-    } else {
-      printLog('WALLET OBJECT IS STILL EMPTY');
+      reportToSentry('Empty user object');
     }
   }
-
-  // we check for previous value of `appSettings.wallet` as by this point `walletTimestamp` can be already set.
-  // in that part we report a case if either wallet was empty or wallet timestamp AND we additionally check
-  // if the walletBackup is present because this would conflict with onboarding flow and will report to sentry
-  // because both wallet and wallet timestamp will be empty
-  if (walletBackup && (isWalletEmpty || !appSettings.wallet)) reportToSentry('Wallet login issue spotted');
 
   return {
     wallet,

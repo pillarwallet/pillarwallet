@@ -10,19 +10,20 @@ executors:
     working_directory: ~/pillarwallet
     macos:
       xcode: "11.3.1"
+    resource_class: medium
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
-    resource_class: medium
+
     shell: /bin/bash --login -o pipefail
 
   android-executor:
     working_directory: ~/pillarwallet
-    resource_class: large
     docker:
       - image: circleci/android:api-29-node
+    resource_class: large
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       TERM: dumb
@@ -35,14 +36,15 @@ executors:
     working_directory: ~/pillarwallet
     docker:
       - image: circleci/node:10.14
+    resource_class: large
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
-    resource_class: large
     shell: /bin/bash --login -o pipefail
 
 aliases:
   - &restore_pod_cache
     restore_cache:
+      name: Restore pods cache
       keys:
         - ios-pods-{{ checksum "./ios/Podfile.lock" }}
   - &fetch_pods
@@ -60,92 +62,154 @@ aliases:
         pod install --verbose
   - &save_pod_cache
     save_cache:
+      name: Save pods cache
       key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
       paths:
         - ./ios/Pods
-  - &restore_gems_cache_ios
-    restore_cache:
-      name: Restore cache
-      keys:
-        - ios-gems-{{ checksum "./ios/Gemfile" }}
-  - &restore_gems_cache_android
-    restore_cache:
-      name: Restore cache
-      keys:
-        - android-gems-{{ checksum "./android/Gemfile" }}
   - &install_gems_ios
     run:
-      name: Bundle install
-      command: cd ios && bundle check || bundle install --path vendor/bundle
+      name: Create Vendor/bundle for gem dependencies
+      command: |
+        cd ios && bundle check || bundle install --path vendor/bundle
       environment:
         BUNDLE_JOBS: 4
         BUNDLE_RETRY: 3
   - &install_gems_android
     run:
       name: Bundle install
-      command: cd android && bundle check || bundle install --path vendor/bundle
+      command: |
+        cd android && bundle check || bundle install --path vendor/bundle
       environment:
         BUNDLE_JOBS: 4
         BUNDLE_RETRY: 3
   - &save_gems_cache_ios
     save_cache:
+      name: Save ios gems cache
       key: ios-gems-{{ checksum "./ios/Gemfile" }}
       paths:
         - vendor/bundle
+  - &restore_gems_cache_ios
+    restore_cache:
+      name: Restore ios gems cache
+      keys:
+        - ios-gems-{{ checksum "./ios/Gemfile" }}
   - &save_gems_cache_android
     save_cache:
+      name: Save android gems cache
       key: android-gems-{{ checksum "./android/Gemfile" }}
       paths:
         - vendor/bundle
+  - &restore_gems_cache_android
+    restore_cache:
+      name: Restore android gems cache
+      keys:
+        - android-gems-{{ checksum "./android/Gemfile" }}
   - &node_restore_cache
     restore_cache:
-      key: node-{{ checksum "./yarn.lock" }}
-  - &node_artifactory_authenticate
-    run:
-      name: Authenticate with Artifactory
-      command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-  - &node_artifactory_set_registry
-    run:
-      name: set Registry to use Artifactory
-      command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-  - &android_latest_npm
-    run:
-      name: Install latest npm version
-      command: sudo npm install -g npm@latest
-  - &ios_latest_npm
-    run:
-      name: Install latest npm version
-      command: npm install -g npm@latest
-  - &ios_latest_yarn
-    run:
-      name: Install latest yarn version
-      command: npm install -g yarn
-  - &android_latest_yarn
-    run:
-      name: Install latest yarn version
-      command: sudo npm install -g yarn
-  - &yarn_install
-    run:
-      name: Install node dependencies
-      command: yarn install
+      name: Restore node modules cache
+      keys:
+        - node-{{ checksum "./yarn.lock" }}
   - &node_save_cache
     save_cache:
+      name: Save node modules cache
       key: node-{{ checksum "./yarn.lock" }}
       paths:
         - ~/nodes_modules
+  - &node_artifactory_authenticate
+    run:
+      name: Authenticate with Artifactory
+      command: |
+        curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+  - &node_artifactory_set_registry
+    run:
+      name: set Registry to use Artifactory
+      command: |
+        npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+  - &android_latest_npm
+    run:
+      name: Install latest npm version
+      command: |
+        sudo npm install -g npm@latest
+  - &ios_latest_npm
+    run:
+      name: Install latest npm version
+      command: |
+        npm install -g npm@latest
+  - &ios_latest_yarn
+    run:
+      name: Install latest yarn version
+      command: |
+        npm install -g yarn
+  - &android_latest_yarn
+    run:
+      name: Install latest yarn version
+      command: |
+        sudo npm install -g yarn
+  - &yarn_install
+    run:
+      name: Install node dependencies
+      command: |
+        yarn install --prefer-offline --cache-folder /home/circleci/.cache/yarn &> /dev/null
+  - &yarn_install_ios
+    run:
+      name: Install node dependencies
+      command: |
+        yarn install --prefer-offline &> /dev/null
+  - &yarn_restore_cache
+    restore_cache:
+      name: Restore Yarn Package Cache
+      keys:
+        - yarn-packages-{{ checksum "yarn.lock" }}
+  - &yarn_save_cache
+    save_cache:
+      name: Save Yarn Package Cache
+      key: yarn-packages-{{ checksum "yarn.lock" }}
+      paths:
+        - ~/.cache/yarn
+  - &yarn_ios_restore_cache
+    restore_cache:
+      name: Restore Yarn Package Cache
+      keys:
+        - yarn-packages-v1-{{ checksum "yarn.lock" }}
+  - &yarn_ios_save_cache
+    save_cache:
+      name: Save Yarn Package Cache
+      key: yarn-packages-v1-{{ checksum "yarn.lock" }}
+      paths:
+        - /Users/distiller/Library/Caches/Yarn/v6
   - &gradle_restore_cache
     restore_cache:
-      key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+      name: Restore gradle cache
+      keys:
+        - android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
   - &gradle_dependencies
     run:
       name: Download Dependencies
-      command: cd android && ./gradlew app:androidDependencies --no-daemon --stacktrace --max-workers=2
+      command: |
+        cd android && ./gradlew app:androidDependencies --no-daemon --stacktrace --max-workers=2
   - &gradle_save_cache
     save_cache:
-      key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+      name: Save gradle Cache
+      key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
       paths:
         - ~/android/.gradle
         - ~/android/.m2
+  - &homebrew_save_cache
+    save_cache:
+      name: Save homebrew cache
+      key: homebrew-packages-v1
+      paths:
+        - /usr/local/Homebrew
+  - &homebrew_install
+    run:
+      name: Install coureutils
+      command: |
+        brew install coreutils
+  - &homebrew_restore_cache
+    restore_cache:
+      name: Restore homebrew cache
+      keys:
+        - homebrew-packages-v1
 
 jobs:
   build-and-test:
@@ -168,9 +232,10 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      #      - *ios_latest_yarn
       - *android_latest_npm
+      - *yarn_restore_cache
       - *yarn_install
+      - *yarn_save_cache
       - *node_save_cache
       - run:
           name: Run validation
@@ -186,27 +251,25 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
-
       - aws-cli/setup:
           aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
           aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
           aws-region: AWS_DEFAULT_REGION
-
       - run:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
-      - run:
-          name: Install coureutils
-          command: |
-            brew install coreutils
+
+      - *homebrew_restore_cache
+      - *homebrew_install
+      - *homebrew_save_cache
 
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      #      - *ios_latest_yarn
-      #      - *ios_latest_npm
-      - *yarn_install
+
+      - *yarn_install_ios
+
       - *node_save_cache
 
       - *restore_gems_cache_ios
@@ -214,8 +277,11 @@ jobs:
       - *save_gems_cache_ios
 
       - *restore_pod_cache
-      - *fetch_pods
-      - *install_pods
+      - run:
+          name: Install CocoaPods
+          command: |
+            cd ios
+            bundle exec pod install --verbose
       - *save_pod_cache
 
       - run:
@@ -253,6 +319,7 @@ jobs:
           destination: app_build
       - slack/status:
           fail_only: true
+          only_for_branches: develop
           failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
@@ -262,7 +329,6 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
-
       - aws-cli/setup:
           aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
           aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
@@ -275,15 +341,15 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      #      - *android_latest_yarn
       - *android_latest_npm
+      - *yarn_restore_cache
       - *yarn_install
+      - *yarn_save_cache
       - *node_save_cache
 
       - *restore_gems_cache_android
       - *install_gems_android
       - *save_gems_cache_android
-      - *gradle_restore_cache
 
       - run:
           name: Get keystore file
@@ -341,6 +407,7 @@ jobs:
           destination: apks
       - slack/status:
           fail_only: true
+          only_for_branches: develop
           failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
@@ -379,11 +446,12 @@ jobs:
       - run:
           name: Set slack message
           command: |
-            aws --region $AWS_DEFAULT_REGION s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/ios_prod.txt .
-      - run:
-          name: Install coureutils
-          command: |
-            brew install coreutils
+            aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
+
+      - *homebrew_restore_cache
+      - *homebrew_install
+      - *homebrew_save_cache
+
       - run:
           name: Append circleCI build number to version
           command: |
@@ -401,53 +469,35 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+
       - restore_cache:
-          key: ios-node-{{ checksum "./yarn.lock" }}
-      - run:
-          name: Authenticate with Artifactory
-          command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-      - run:
-          name: set Registry to use Artifactory
-          command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-      - run:
-          name: Install node dependencies
-          command: yarn install
+          name: Restore node modules cache
+          keys:
+            - ios-node-{{ checksum "./yarn.lock" }}
+
+      - *node_artifactory_authenticate
+      - *node_artifactory_set_registry
+
+      - *yarn_install_ios
+
       - save_cache:
+          name: Save node modules cache
           key: ios-node-{{ checksum "./yarn.lock" }}
           paths:
-            - ~/nodes_modules
-      - restore_cache:
-          key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
-      - run:
-          name: Fetch CocoaPods Specs
-          command: |
-            Y | sudo gem uninstall cocoapods
-            sudo gem install cocoapods -v 1.9.1
-            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+            - ~/pillarwallet/nodes_modules
+
+      - *restore_gems_cache_ios
+      - *install_gems_ios
+      - *save_gems_cache_ios
+
+      - *restore_pod_cache
       - run:
           name: Install CocoaPods
           command: |
             cd ios
-            pod install --verbose
-      - save_cache:
-          key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
-          paths:
-            - ./ios/Pods
-      - run:
-          name: Install Bundler
-          command: sudo gem install bundler -v 2.0.2
-      - restore_cache:
-          key: ios-gems-{{ checksum "./ios/Gemfile" }}
-      - run:
-          name: Create Vendor/bundle for gem dependencies
-          command: cd ios && bundle check || bundle install --path vendor/bundle
-      - run:
-          name: Install fastlane as a dependency
-          command: cd ios && sudo bundle update
-      - save_cache:
-          key: ios-gems-{{ checksum "./ios/Gemfile" }}
-          paths:
-            - vendor/bundle
+            bundle exec pod install --verbose
+      - *save_pod_cache
+
       - run:
           no_output_timeout: 20m
           name: Upload to TestFlight
@@ -492,6 +542,7 @@ jobs:
             - ios-release
       - slack/status:
           fail_only: true
+          only_for_branches: master
           failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
@@ -508,10 +559,10 @@ jobs:
       - run:
           name: Set slack message
           command: |
-            aws --region eu-west-2 s3 cp $PILLAR_PROD_ARTIFACTS_BUCKET/android_prod.txt .
-      - run:
-          name: Install npm latest
-          command: sudo npm install -g npm@latest
+            aws --region eu-west-2 s3 cp $PROD_KEYSTORE_S3_BUCKET/android_prod.txt .
+
+      - *android_latest_npm
+
       - run:
           name: Get keystore file
           command: |
@@ -535,38 +586,34 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" android/app/src/main/assets/branch.json
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+
       - restore_cache:
-          key: android-node-{{ checksum "./yarn.lock" }}
-      - run:
-          name: Authenticate with Artifactory
-          command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-      - run:
-          name: set Registry to use Artifactory
-          command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+          name: Restore node modules cache
+          keys:
+            - android-node-{{ checksum "./yarn.lock" }}
+
+      - *node_artifactory_authenticate
+      - *node_artifactory_set_registry
+
       - run:
           name: set Yarn to use Artifactory
           command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
-      - run:
-          name: Install node dependencies
-          command: yarn install
+
+      - *yarn_restore_cache
+      - *yarn_install
+      - *yarn_save_cache
+
       - save_cache:
           key: android-node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/pillarwallet/nodes_modules
-      - restore_cache:
-          keys:
-            - android-gems-{{ checksum "./android/Gemfile" }}
-      - run:
-          name: Bundle install
-          command: |
-            cd android
-            bundle check || bundle install --path vendor/bundle
-      - save_cache:
-          key: android-gems-{{ checksum "./android/Gemfile" }}
-          paths:
-            - vendor/bundle
-      - restore_cache:
-          key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
+
+      - *restore_gems_cache_android
+      - *install_gems_android
+      - *save_gems_cache_android
+
+      - *gradle_restore_cache
+
       - run:
           name: Chmod permissions
           command: cd android && sudo chmod +x ./gradlew
@@ -583,11 +630,7 @@ jobs:
       - run:
           name: Download Dependencies
           command: cd android && ./gradlew app:androidDependencies --no-daemon --stacktrace --max-workers=2
-      - save_cache:
-          key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
-          paths:
-            - ~/.gradle
-            - ~/.m2
+
       - run:
           name: Initial build
           command: |
@@ -595,6 +638,9 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             ./gradlew clean app:assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+
+      - *gradle_save_cache
+
       - run:
           name: Fastlane deploy to Google Play
           command: |
@@ -642,6 +688,7 @@ jobs:
             - android-release
       - slack/status:
           fail_only: true
+          only_for_branches: master
           failure_message: '$(shuf -n 1 android_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 

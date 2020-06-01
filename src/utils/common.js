@@ -205,6 +205,17 @@ export const isValidNumber = (amount: string = '0') => {
   return true;
 };
 
+export const getDecimalPlaces = (assetSymbol: ?string): number => {
+  switch (assetSymbol) {
+    case 'ETH':
+      return 4;
+    case 'BTC':
+      return 8;
+    default:
+      return 2;
+  }
+};
+
 export const formatAmount = (amount: string | number, precision: number = 6): string => {
   const roundedNumber = new BigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
 
@@ -568,7 +579,7 @@ export const getDeviceWidth = () => {
   return Dimensions.get('window').width;
 };
 
-export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken) => {
+export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken): string => {
   if (!feeInWei) return '';
 
   if (gasToken && !isEmpty(gasToken)) {

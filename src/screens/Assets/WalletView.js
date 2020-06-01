@@ -53,7 +53,7 @@ import {
 import { EXCHANGE } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
-import { activeAccountSelector } from 'selectors';
+import { activeAccountAddressSelector, activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -66,7 +66,7 @@ import Switcher from 'components/Switcher';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
+import type { Accounts, Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Theme } from 'models/Theme';
@@ -104,7 +104,7 @@ type Props = {
   insightList: Object[],
   insightsTitle: string,
   assetsSearchResults: Asset[],
-  activeAccount: Object,
+  activeAccount: Account,
   searchAssets: (query: string) => void,
   resetSearchAssetsResult: () => void,
   addAsset: (asset: Asset) => void,
@@ -123,6 +123,7 @@ type Props = {
   dismissSmartWalletInsight: () => void,
   SWInsightDismissed: boolean,
   onScroll: (event: Object) => void,
+  activeAccountAddress: string,
 }
 
 type State = {
@@ -172,7 +173,7 @@ class WalletView extends React.Component<Props, State> {
       hideInsightForSearch: false,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
-    this.scrollViewRef = React.createRef();
+    this.scrollViewRef = null;
   }
 
   renderFoundTokensList() {
@@ -387,6 +388,7 @@ class WalletView extends React.Component<Props, State> {
       SWInsightDismissed,
       smartWalletFeatureEnabled,
       onScroll,
+      activeAccountAddress,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -495,6 +497,7 @@ class WalletView extends React.Component<Props, State> {
               collectibles={this.getFilteredCollectibles()}
               searchQuery={query}
               navigation={navigation}
+              activeAccountAddress={activeAccountAddress}
             />)}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
           <ActionsWrapper>
@@ -537,6 +540,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   collectibles: accountCollectiblesSelector,
   activeAccount: activeAccountSelector,
+  activeAccountAddress: activeAccountAddressSelector,
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
 });

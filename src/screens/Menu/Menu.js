@@ -25,11 +25,14 @@ import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 
+// utils
 import { getThemeColors, themedColors } from 'utils/themes';
 import { spacing, fontStyles } from 'utils/variables';
 import { images } from 'utils/images';
 
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import { ListCard } from 'components/ListItem/ListCard';
@@ -37,6 +40,7 @@ import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
+// constants
 import {
   SECURITY_SETTINGS,
   RECOVERY_SETTINGS,
@@ -46,12 +50,14 @@ import {
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
+
+// actions
 import { lockScreenAction, logoutAction } from 'actions/authActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 
+// types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { NavigationScreenProp } from 'react-navigation';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { User } from 'models/User';
 
@@ -64,6 +70,7 @@ type Props = {
   logoutUser: () => void,
   lockScreen: () => void,
   goToInvitationFlow: () => void,
+  isPillarRewardCampaignActive: boolean,
 };
 
 type State = {
@@ -129,7 +136,7 @@ class Menu extends React.Component<Props, State> {
 
   getMenuItems = () => {
     const {
-      theme, navigation, backupStatus, goToInvitationFlow,
+      theme, navigation, backupStatus, goToInvitationFlow, isPillarRewardCampaignActive,
     } = this.props;
     const colors = getThemeColors(theme);
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
@@ -168,7 +175,7 @@ class Menu extends React.Component<Props, State> {
       },
       {
         key: 'referFriends',
-        title: 'Refer friends',
+        title: isPillarRewardCampaignActive ? 'Refer friends' : 'Invite friends',
         icon: 'present',
         iconColor: colors.accent,
         action: goToInvitationFlow,
@@ -337,9 +344,11 @@ class Menu extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { backupStatus },
+  referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
   backupStatus,
+  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

@@ -20,19 +20,10 @@
 import smartWalletService from 'services/smartWallet';
 
 import type { AccountTransaction } from 'services/smartWallet';
-import type { GasInfo, GasPrice } from 'models/GasInfo';
-import { BN } from 'ethereumjs-util';
-import { sdkConstants } from '@smartwallet/sdk';
 import type { AssetData } from 'models/Asset';
 import { ETH } from 'constants/assetsConstants';
 
 describe('Smart Wallet service', () => {
-  const gasInfoPrices: GasPrice = { min: 2, avg: 2, max: 3 };
-  const gasInfo: GasInfo = {
-    gasPrice: gasInfoPrices,
-    isFetched: true,
-  };
-
   const assetData: AssetData = {
     token: ETH,
     decimals: 18,
@@ -44,38 +35,8 @@ describe('Smart Wallet service', () => {
   };
 
   it('account transaction estimate fee should be equal 350000000000000', async () => {
-    const { cost } = await smartWalletService.estimateAccountTransaction(accountTransaction, gasInfo, assetData);
-    expect(cost.eq(350000000000000)).toBeTruthy();
-  });
-
-  // in case SDK method doesn't return price and app gas oracle price is trusted with fast speed
-  it('account transaction estimate fee should be equal 210000000000000', async () => {
-    jest.spyOn(smartWalletService.sdk, 'estimateAccountTransaction').mockImplementation(() => Promise.resolve({
-      gasFee: new BN(70000),
-      signedGasPrice: null,
-    }));
-    const { cost } = await smartWalletService.estimateAccountTransaction({
-      ...accountTransaction,
-      transactionSpeed: sdkConstants.GasPriceStrategies.Fast,
-    }, gasInfo, assetData);
-    expect(cost.eq(210000000000000)).toBeTruthy();
-  });
-
-  // in case SDK method doesn't return gas fee, but returns price
-  it('account transaction estimate fee should be equal 2500000000000000', async () => {
-    jest.spyOn(smartWalletService.sdk, 'estimateAccountTransaction').mockImplementation(() => Promise.resolve({
-      gasFee: null,
-      signedGasPrice: { gasPrice: new BN(5000000000) },
-    }));
-    const { cost } = await smartWalletService.estimateAccountTransaction(accountTransaction, gasInfo, assetData);
-    expect(cost.eq(2500000000000000)).toBeTruthy();
-  });
-
-  // in case of SDK method doesn't return anything
-  it('account transaction estimate fee should be equal 1000000000000000', async () => {
-    jest.spyOn(smartWalletService.sdk, 'estimateAccountTransaction').mockImplementation(() => Promise.resolve({}));
-    const { cost } = await smartWalletService.estimateAccountTransaction(accountTransaction, gasInfo, assetData);
-    expect(cost.eq(1000000000000000)).toBeTruthy();
+    const { ethCost } = await smartWalletService.estimateAccountTransaction(accountTransaction, assetData);
+    expect(ethCost.eq(350000000000000)).toBeTruthy();
   });
 });
 
