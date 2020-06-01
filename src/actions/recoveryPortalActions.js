@@ -29,6 +29,7 @@ import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { finishRegistration, getTokenWalletAndRegister, navigateToAppFlow } from 'actions/onboardingActions';
 import { logEventAction } from 'actions/analyticsActions';
+import { saveDbAction } from 'actions/dbActions';
 
 // constants
 import { RECOVERY_PORTAL_SETUP_COMPLETE, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -96,11 +97,10 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
 
     const recover = {
-      deviceAddress: activeDeviceAddress,
+      deviceAddress: activeDeviceAddress.toLowerCase(),
       accountAddress: connectedAccountAddress,
     };
 
-    dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
     dispatch({ type: UPDATE_WALLET_STATE, payload: REGISTERING });
 
     api.init();
@@ -115,6 +115,9 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
 
     if (!registrationSucceed) return;
 
+    dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
+    dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
+
     dispatch(logEventAction('user_created'));
 
     const { privateKey, mnemonic } = wallet;
@@ -123,10 +126,10 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       dispatch,
       getState,
       userInfo,
-      address: normalizeWalletAddress(activeDeviceAddress),
+      address: normalizeWalletAddress(activeDeviceAddress).toLowerCase(),
       mnemonic,
       privateKey,
-      isImported: false,
+      isImported: true,
     });
 
     navigateToAppFlow(false);
