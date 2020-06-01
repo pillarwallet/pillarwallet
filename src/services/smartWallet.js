@@ -43,10 +43,7 @@ import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportLog, reportOrWarn } from 'utils/common';
 
 // types
-import type {
-  ConnectedSmartWalletAccount,
-  SmartWalletAccount,
-} from 'models/SmartWalletAccount';
+import type { ConnectedSmartWalletAccount, SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
 import type { EstimatedTransactionFee, GasToken } from 'models/Transaction';

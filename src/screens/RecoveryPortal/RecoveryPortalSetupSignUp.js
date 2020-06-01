@@ -53,12 +53,17 @@ const RecoveryPortalSetupSignUp = ({
   ].join('/');
 
   const onWebViewMessage = (message) => {
-    const setupAddress = message?.nativeEvent?.data?.recoveryPortalSetupDeviceAddress;
-    if (!setupAddress) return;
-    navigation.navigate({
-      routeName: RECOVERY_PORTAL_SETUP_CONNECT_DEVICE,
-      params: { setupAddress },
-    });
+    if (!message?.nativeEvent?.data) return;
+    try {
+      const { deviceAddress } = JSON.parse(message.nativeEvent.data);
+      if (!deviceAddress) return;
+      navigation.navigate({
+        routeName: RECOVERY_PORTAL_SETUP_CONNECT_DEVICE,
+        params: { deviceAddress },
+      });
+    } catch (e) {
+      //
+    }
   };
 
   return (
