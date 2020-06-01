@@ -17,7 +17,7 @@
     "lint:fix": "eslint --fix .",
     "flow": "flow",
     "flow-stop": "flow stop",
-    "validate": "run-s flow test lint",
+    "validate": "run-p flow test lint",
     "jest": "jest --colors",
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",

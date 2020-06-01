@@ -20,6 +20,11 @@
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import shuffle from 'shuffle-array';
+import isEmpty from 'lodash.isempty';
+import get from 'lodash.get';
+
+// components
+import Toast from 'components/Toast';
 
 // constants
 import {
@@ -41,10 +46,11 @@ import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
 } from 'constants/walletConstants';
-import { PIN_CODE_CONFIRMATION, NEW_PROFILE } from 'constants/navigationConstants';
+import { PIN_CODE_CONFIRMATION, NEW_PROFILE, RECOVERY_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
+import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { delay } from 'utils/common';
 
 // services
@@ -274,6 +280,45 @@ export const encryptAndSaveWalletAction = (
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: { address: wallet.address },
+    });
+  };
+};
+
+/**
+ * wallet backup toast not needed if wallet is imported, backed up,
+ * no key based account or key based account balances are 0
+ */
+export const checkForWalletBackupToastAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      wallet: { backupStatus: { isImported, isBackedUp } },
+      accounts: { data: accounts },
+      balances: { data: balances },
+    } = getState();
+
+    const keyBasedAccount = findKeyBasedAccount(accounts);
+    if (isImported || isBackedUp || !keyBasedAccount) return;
+
+    const keyBasedAccountBalances = balances[getAccountId(keyBasedAccount)];
+    const anyAssetHasPositiveBalance = !isEmpty(keyBasedAccountBalances)
+      && Object.values(keyBasedAccountBalances).some((asset) => !!Number(get(asset, 'balance', 0)));
+    if (!anyAssetHasPositiveBalance) return;
+
+    const message =
+      'Go to wallet settings on the assets screen and complete the wallet backup. ' +
+      'Pillar cannot help you retrieve your wallet if it is lost.';
+
+    Toast.show({
+      message,
+      type: 'warning',
+      title: 'Please ensure you backup your wallet now',
+      autoClose: false,
+      onPress: () => {
+        const action = NavigationActions.navigate({
+          routeName: RECOVERY_SETTINGS,
+        });
+        navigate(action);
+      },
     });
   };
 };

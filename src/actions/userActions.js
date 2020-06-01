@@ -148,6 +148,7 @@ export const verifyEmailAction = (walletId: string, code: string) => {
         isRewardClaimed,
         referredEmail,
         isPillarRewardCampaignActive,
+        is1WorldCampaignActive,
       },
       user: {
         data: { email },
@@ -156,8 +157,8 @@ export const verifyEmailAction = (walletId: string, code: string) => {
 
     let message = 'Email verification was successful';
 
-    // TODO: check if related campaign is active (not pillar)
-    if (isPillarRewardCampaignActive && referralToken && !isRewardClaimed && referredEmail === email) {
+    if ((isPillarRewardCampaignActive || is1WorldCampaignActive)
+      && referralToken && !isRewardClaimed && referredEmail === email) {
       dispatch(completeReferralsEventAction());
       message = 'Thank you for verifying your information, ' +
                 'we are currently processing your reward.';
@@ -198,6 +199,7 @@ export const verifyPhoneAction = (
         isRewardClaimed,
         referredPhone,
         isPillarRewardCampaignActive,
+        is1WorldCampaignActive,
       },
       user: {
         data: { phone },
@@ -206,8 +208,8 @@ export const verifyPhoneAction = (
 
     let message = 'Phone verification was successful';
 
-    // TODO: check if related campaign is active (not pillar)
-    if (isPillarRewardCampaignActive && referralToken && !isRewardClaimed && referredPhone === phone) {
+    if ((isPillarRewardCampaignActive || is1WorldCampaignActive)
+      && referralToken && !isRewardClaimed && referredPhone === phone) {
       dispatch(completeReferralsEventAction());
       message = 'Thank you for verifying your information, ' +
                 'we are currently processing your reward.';

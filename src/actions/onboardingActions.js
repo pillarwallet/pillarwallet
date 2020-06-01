@@ -63,7 +63,6 @@ import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConsta
 // utils
 import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
 import { delay } from 'utils/common';
-import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import { setKeychainDataObject } from 'utils/keychain';
 
@@ -81,7 +80,11 @@ import {
   managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import { encryptAndSaveWalletAction, generateWalletMnemonicAction } from 'actions/walletActions';
+import {
+  checkForWalletBackupToastAction,
+  encryptAndSaveWalletAction,
+  generateWalletMnemonicAction,
+} from 'actions/walletActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -106,6 +109,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 import type { KeyChainData } from 'utils/keychain';
+
 
 const storage = Storage.getInstance('db');
 
@@ -263,9 +267,7 @@ export const finishRegistration = async ({
   dispatch(fetchReferralRewardAction());
 };
 
-export const navigateToAppFlow = (isWalletBackedUp: boolean, showIncomingReward?: boolean) => {
-  toastWalletBackup(isWalletBackedUp);
-
+export const navigateToAppFlow = (showIncomingReward?: boolean) => {
   const navigateToHomeScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
@@ -413,9 +415,11 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     // STEP 7: check if user ir referred to install the app
     const referralToken = get(getState(), 'referrals.referralToken');
 
-    // STEP 8: all done, navigate to the home screen or incoming reward screen
-    const isWalletBackedUp = isImported || isBackedUp;
-    navigateToAppFlow(isWalletBackedUp, !!referralToken);
+    // STEP 8: check if wallet backup warning toast needed
+    dispatch(checkForWalletBackupToastAction());
+
+    // STEP 9: all done, navigate to the home screen or incoming reward screen
+    navigateToAppFlow(!!referralToken);
   };
 };
 
@@ -436,7 +440,7 @@ export const registerOnBackendAction = () => {
           privateKey,
           importedWallet,
         },
-        backupStatus: { isBackedUp, isImported },
+        backupStatus: { isImported },
       },
     } = getState();
     const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
@@ -472,11 +476,10 @@ export const registerOnBackendAction = () => {
       isImported,
     });
 
-    const isWalletBackedUp = isImported || isBackedUp;
-
+    dispatch(checkForWalletBackupToastAction());
     const referralToken = get(getState(), 'referrals.referralToken');
 
-    navigateToAppFlow(isWalletBackedUp, !!referralToken);
+    navigateToAppFlow(!!referralToken);
   };
 };
 
