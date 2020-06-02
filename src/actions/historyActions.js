@@ -39,7 +39,7 @@ import { ETH } from 'constants/assetsConstants';
 import { SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID } from 'constants/smartWalletConstants';
 
 // utils
-import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
+import { buildHistoryTransaction, getTrxInfo, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   checkIfKeyBasedAccount,
   checkIfSmartWalletAccount,
@@ -341,13 +341,14 @@ export const updateTransactionStatusAction = (hash: string) => {
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
 
-    const txInfo = await api.fetchTxInfo(hash);
-    const txReceipt = await api.fetchTransactionReceipt(hash);
-    const lastBlockNumber = await api.fetchLastBlockNumber();
-    if (!txInfo || !txReceipt || !lastBlockNumber) return;
-
-    const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
-    const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
+    const trxInfo = await getTrxInfo(api, hash);
+    if (!trxInfo) return;
+    const {
+      txInfo,
+      txReceipt,
+      nbConfirmations,
+      status,
+    } = trxInfo;
 
     if (checkIfSmartWalletAccount(activeAccount)) {
       const sdkRawStatus = await smartWalletService.getTransactionStatus(hash);

@@ -20,11 +20,15 @@
 import isEmpty from 'lodash.isempty';
 import BigNumber from 'bignumber.js';
 
+import type SDKWrapper from 'services/api';
+
 // constants
 import {
   TRANSACTION_CONFIRMATION_EVENT,
   TRANSACTION_CONFIRMATION_SENDER_EVENT,
   TRANSACTION_PENDING_EVENT,
+  TX_CONFIRMED_STATUS,
+  TX_FAILED_STATUS,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 
@@ -36,7 +40,6 @@ import type {
   TransactionEthers,
   TransactionsStore,
 } from 'models/Transaction';
-
 
 export const buildHistoryTransaction = ({
   from,
@@ -139,4 +142,24 @@ export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash
   return accountsHistory
     .map(accountHistory => accountHistory.find(tx => tx.hash.toLowerCase() === txHash))
     .find(tx => tx);
+};
+
+export const getTrxInfo = async (api: SDKWrapper, hash: string) => {
+  const [txInfo, txReceipt, lastBlockNumber] = await Promise.all([
+    api.fetchTxInfo(hash),
+    api.fetchTransactionReceipt(hash),
+    api.fetchLastBlockNumber(),
+  ]);
+
+  if (!txInfo || !txReceipt || !lastBlockNumber) return null;
+
+  const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
+  const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
+
+  return {
+    txInfo,
+    txReceipt,
+    nbConfirmations,
+    status,
+  };
 };

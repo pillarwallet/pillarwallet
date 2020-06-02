@@ -17,13 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
-import { getAccountAddress, getAccountId, getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import {
+  getAccountAddress,
+  getAccountId,
+  getActiveAccountAddress,
+  getActiveAccountId,
+} from 'utils/accounts';
+import { getTrxInfo } from 'utils/history';
 
 import type SDKWrapper from 'services/api';
 import type { Collectible } from 'models/Collectible';
@@ -227,5 +234,45 @@ export const fetchAllCollectiblesDataAction = (forAllAccounts?: boolean) => {
       await dispatch(fetchCollectiblesAction());
       await dispatch(fetchCollectiblesHistoryAction());
     }
+  };
+};
+
+export const updateCollectibleTransactionAction = (hash: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      session: { data: { isOnline } },
+      collectibles: { transactionHistory: collectiblesHistory },
+    } = getState();
+    if (!isOnline) return;
+
+    const trxInfo = await getTrxInfo(api, hash);
+    if (!trxInfo) return;
+    const {
+      txInfo,
+      txReceipt,
+      nbConfirmations,
+      status,
+    } = trxInfo;
+
+    const accounts = Object.keys(collectiblesHistory);
+    const updatedHistory = accounts.reduce((history, accountId) => {
+      const accountHistory = collectiblesHistory[accountId].map(transaction => {
+        if (transaction.hash.toLowerCase() !== hash) {
+          return transaction;
+        }
+        return {
+          ...transaction,
+          nbConfirmations,
+          status,
+          gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
+          gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
+        };
+      });
+      return { ...history, [accountId]: accountHistory };
+    }, {});
+
+    dispatch(getExistingTxNotesAction());
+    dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedHistory }, true));
+    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedHistory });
   };
 };

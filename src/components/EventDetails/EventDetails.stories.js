@@ -99,6 +99,7 @@ const reduxData = {
   referralRewardIssuersAddresses: [],
   isPillarRewardCampaignActive: true,
   txNotes: [],
+  collectiblesHistory: [],
 };
 
 const actions = {

@@ -122,6 +122,7 @@ import {
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -131,6 +132,7 @@ import { lookupAddressAction } from 'actions/ensRegistryActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
+import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -141,6 +143,7 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
@@ -188,6 +191,8 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
   getTxNoteByContact: (username: string) => void,
   txNotes: TxNote[],
+  collectiblesHistory: CollectibleTrx[],
+  updateCollectibleTransaction: (hash: string) => void,
 };
 
 type State = {
@@ -314,27 +319,31 @@ export class EventDetail extends React.Component<Props, State> {
   componentDidMount() {
     const { event, getTxNoteByContact } = this.props;
     const { type, username } = event;
-    if (type !== TRANSACTION_EVENT) return;
-    const txInfo = this.findTxInfo();
+    if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
+    getTxNoteByContact(username);
+    const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
+    if (!txInfo) return;
     this.syncEnsRegistry(txInfo);
     this.syncTxStatus(txInfo);
-    getTxNoteByContact(username);
   }
 
   componentDidUpdate(prevProps: Props) {
     const { event, isVisible, getTxNoteByContact } = this.props;
     const { type, username } = event;
-    if (type !== TRANSACTION_EVENT) return;
-    const txInfo = this.findTxInfo();
+    if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
+    const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
+    const trxStatus = txInfo?.status;
     if (!prevProps.isVisible && isVisible) {
-      this.syncEnsRegistry(txInfo);
-      this.syncTxStatus(txInfo);
+      if (txInfo) {
+        this.syncEnsRegistry(txInfo);
+        this.syncTxStatus(txInfo);
+      }
       getTxNoteByContact(username);
     }
     if (prevProps.isVisible && !isVisible) {
       this.cleanup();
     }
-    if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
+    if (trxStatus !== TX_PENDING_STATUS && this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
@@ -349,32 +358,43 @@ export class EventDetail extends React.Component<Props, State> {
     if (this.timeout) clearTimeout(this.timeout);
   }
 
-  findTxInfo = () => {
-    const { history, event } = this.props;
-    return findTransactionAcrossAccounts(history, event.hash) || {};
-  }
+  findTxInfo = (isCollectible?: boolean) => {
+    const { collectiblesHistory, history, event } = this.props;
 
-  syncEnsRegistry = (txInfo: Transaction) => {
+    if (isCollectible) {
+      return collectiblesHistory.find(({ hash }) => hash === event.hash);
+    }
+
+    return findTransactionAcrossAccounts(history, event.hash);
+  };
+
+  syncEnsRegistry = (txInfo: Transaction | CollectibleTrx) => {
     const { ensRegistry, lookupAddress } = this.props;
     const relatedAddress = this.getRelevantAddress(txInfo);
 
     if (!ensRegistry[relatedAddress]) {
       lookupAddress(relatedAddress);
     }
-  }
+  };
 
-  syncTxStatus = (txInfo: Transaction) => {
-    const {
-      event,
-      updateTransactionStatus,
-    } = this.props;
+  syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
     if (txInfo.status === TX_PENDING_STATUS) {
-      this.timeout = setTimeout(() => updateTransactionStatus(event.hash), 500);
-      this.timer = setInterval(() => updateTransactionStatus(event.hash), 10000);
+      this.timeout = setTimeout(this.updateTransaction, 500);
+      this.timer = setInterval(this.updateTransaction, 10000);
     }
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
-      updateTransactionStatus(event.hash);
+      this.updateTransaction();
+    }
+  };
+
+  updateTransaction = () => {
+    const { event, updateCollectibleTransaction, updateTransactionStatus } = this.props;
+    const { type, hash } = event;
+    if (type === COLLECTIBLE_TRANSACTION) {
+      updateCollectibleTransaction(hash);
+    } else {
+      updateTransactionStatus(hash);
     }
   };
 
@@ -1056,6 +1076,10 @@ export class EventDetail extends React.Component<Props, State> {
         ...eventData,
         actionTitle: isPending ? 'Sending' : 'Sent',
       };
+
+      if (!isPending) {
+        eventData.fee = this.getFeeLabel();
+      }
     }
 
     if (isPending) {
@@ -1383,8 +1407,9 @@ export class EventDetail extends React.Component<Props, State> {
     } = this.state;
 
     let { event } = this.props;
-    if (event.type === TRANSACTION_EVENT) {
-      const txInfo = this.findTxInfo();
+
+    if (event.type === TRANSACTION_EVENT || event.type === COLLECTIBLE_TRANSACTION) {
+      const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION) || {};
       event = { ...event, ...txInfo };
     }
 
@@ -1464,6 +1489,7 @@ const structuredSelector = createStructuredSelector({
   activeBlockchainNetwork: activeBlockchainSelector,
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
+  collectiblesHistory: combinedCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
@@ -1475,6 +1501,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
+  updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
