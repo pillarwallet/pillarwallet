@@ -31,7 +31,7 @@ import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import { withTheme } from 'styled-components/native';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import { spacing } from 'utils/variables';
 import { getMetaDataAction } from 'actions/exchangeActions';
 
