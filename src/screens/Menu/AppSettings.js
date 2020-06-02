@@ -372,12 +372,12 @@ class AppSettings extends React.Component<Props, State> {
 
         {/* RELAYER GAS FEE ACTIVATION MODAL */}
         {showRelayerMigration &&
-        <RelayerMigrationModal
-          isVisible={showRelayerMigrationModal}
-          onModalHide={() => this.setState({ showRelayerMigrationModal: false })}
-          accountAssets={accountAssets}
-          accountHistory={accountHistory}
-        />
+          <RelayerMigrationModal
+            isVisible={showRelayerMigrationModal}
+            onModalHide={() => this.setState({ showRelayerMigrationModal: false })}
+            accountAssets={accountAssets}
+            accountHistory={accountHistory}
+          />
         }
 
       </ContainerWithHeader>
