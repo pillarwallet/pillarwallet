@@ -50,7 +50,6 @@ import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConsta
 import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -68,11 +67,9 @@ import assetsConfig from 'configs/assetsConfig';
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import {
-  availableStakeSelector,
-  paymentNetworkAccountBalancesSelector,
-} from 'selectors/paymentNetwork';
+import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -118,6 +115,7 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
+  isActiveAccountSmartWallet: boolean,
 };
 
 type State = {
@@ -306,7 +304,7 @@ class AssetScreen extends React.Component<Props, State> {
       contactsSmartAddresses,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
-      activeAccount,
+      isActiveAccountSmartWallet,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -351,7 +349,6 @@ class AssetScreen extends React.Component<Props, State> {
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
-    const isKeyBasedActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.KEY_BASED;
 
     return (
       <ContainerWithHeader
@@ -418,12 +415,12 @@ class AssetScreen extends React.Component<Props, State> {
               isReceiveDisabled={!isReceiveActive}
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
-            {isKeyBasedActive &&
+            {!isActiveAccountSmartWallet &&
               <TransferButtonWrapper>
                 <Button
                   title="Transfer to Smart Wallet"
                   onPress={() => this.goToSendTokenFlow(assetData)}
-                  disabled={!isSendActive}
+                  disabled={!isSendActive || isWalletEmpty}
                   secondary
                   regularText
                 />
@@ -497,6 +494,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
+  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
