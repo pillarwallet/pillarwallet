@@ -17,9 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -31,12 +31,8 @@ import { ETH } from 'constants/assetsConstants';
 import { settleTransactionsAction, estimateSettleBalanceAction } from 'actions/smartWalletActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
-import { Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
 import Toast from 'components/Toast';
-import Spinner from 'components/Spinner';
+import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -48,7 +44,6 @@ import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 
 // utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount, formatTransactionFee } from 'utils/common';
 import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 
@@ -67,34 +62,6 @@ type State = {
   settleButtonSubmitted: boolean,
 };
 
-const FooterWrapper = styled.View`
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
-
-/*
-const TextButton = styled.TouchableOpacity`
-  padding: 10px;
-  margin-top: 10px;
-`;
-
-const ButtonText = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-  letter-spacing: 0.1;
-  color: #c95c45;
-`;
-*/
 
 class SettleBalanceConfirm extends React.Component<Props, State> {
   txToSettle: TxToSettle[] = [];
@@ -161,9 +128,9 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
     let submitButtonTitle = 'Release Funds';
     if (!settleTxFee.isFetched) {
-      submitButtonTitle = 'Getting the fee..';
+      submitButtonTitle = 'Getting the fee...';
     } else if (settleButtonSubmitted) {
-      submitButtonTitle = 'Processing..';
+      submitButtonTitle = 'Processing...';
     }
 
     const submitButtonDisabled = !session.isOnline
@@ -173,39 +140,28 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const gasToken = getGasToken(useGasToken, feeInfo);
     const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
+    const txToSettle = this.txToSettle.map((asset: Object) =>
+      `${formatAmount(asset.value.toNumber())} ${asset.symbol}`);
+
+    const reviewData = [
+      {
+        label: 'Assets to settle',
+        valueArray: txToSettle,
+      },
+      {
+        label: 'Transaction fee',
+        value: feeDisplayValue,
+        isLoading: !settleTxFee.isFetched,
+      },
+    ];
+
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Review' }] }}
-        footer={(
-          <FooterWrapper>
-            <Button
-              disabled={submitButtonDisabled}
-              onPress={this.handleFormSubmit}
-              title={submitButtonTitle}
-            />
-            {/* <TextButton onPress={() => {}}>
-              <ButtonText>Open dispute</ButtonText>
-            </TextButton> */}
-          </FooterWrapper>
-        )}
-      >
-        <ScrollWrapper
-          regularPadding
-          contentContainerStyle={{ marginTop: 40 }}
-        >
-          <LabeledRow>
-            <Label>Assets to settle</Label>
-            {this.txToSettle.map((asset: Object, index: number) =>
-              <Value key={index}>{`${formatAmount(asset.value.toNumber())} ${asset.symbol}`}</Value>)
-            }
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Transaction fee</Label>
-            {settleTxFee.isFetched && <Value>{feeDisplayValue}</Value>}
-            {!settleTxFee.isFetched && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
-          </LabeledRow>
-        </ScrollWrapper>
-      </ContainerWithHeader>
+      <ReviewAndConfirm
+        reviewData={reviewData}
+        onConfirm={this.handleFormSubmit}
+        isConfirmDisabled={submitButtonDisabled}
+        submitButtonTitle={submitButtonTitle}
+      />
     );
   }
 }

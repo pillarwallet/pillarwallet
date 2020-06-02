@@ -93,7 +93,7 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 
 // selectors
-import { accountAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector, smartAccountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -114,7 +114,13 @@ import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
-import { getActiveAccountAddress, getActiveAccountId, normalizeForEns } from 'utils/accounts';
+import {
+  findFirstSmartAccount,
+  getActiveAccountAddress,
+  getActiveAccountId,
+  normalizeForEns,
+  getAccountId,
+} from 'utils/accounts';
 import {
   isSmartWalletDeviceDeployed,
   buildSmartWalletTransactionEstimate,
@@ -431,9 +437,11 @@ export const syncVirtualAccountTransactionsAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    const accountId = getActiveAccountId(accounts);
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+    const accountId = getAccountId(smartWalletAccount);
     const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
-    const accountAssets = accountAssetsSelector(getState());
+    const accountAssets = smartAccountAssetsSelector(getState());
     const assetsList = getAssetsAsList(accountAssets);
 
     // filter out already stored payments
