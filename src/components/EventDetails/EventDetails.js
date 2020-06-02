@@ -147,6 +147,7 @@ import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
+
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { TxNote } from 'reducers/txNoteReducer';
 
@@ -883,6 +884,7 @@ export class EventDetail extends React.Component<Props, State> {
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
+
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
         const transactionNote = this.getTrxNote(event);
 

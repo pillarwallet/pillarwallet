@@ -72,7 +72,6 @@ const reduxData = {
   supportedAssets: [],
 };
 
-
 const dataForAllAccounts = {
   ...reduxData,
   activeAccountAddress: '0xKeyWallet',
