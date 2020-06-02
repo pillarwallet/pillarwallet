@@ -48,8 +48,14 @@ import {
   paymentNetworkBalancesSelector,
   supportedAssetsSelector,
 } from './selectors';
-import { accountHistorySelector } from './history';
+import { accountHistorySelector, smartAccountHistorySelector } from './history';
 import { accountAssetsSelector } from './assets';
+
+const ppnTrxTags = [
+  PAYMENT_NETWORK_ACCOUNT_TOPUP,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+];
 
 export const paymentNetworkAccountBalancesSelector: ((state: RootReducerState) => Balances) = createSelector(
   paymentNetworkBalancesSelector,
@@ -74,12 +80,14 @@ export const PPNIncomingTransactionsSelector: ((state: RootReducerState) => Tran
 export const PPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
   accountHistorySelector,
   (history: Transaction[]) => {
-    const ppnTags = [
-      PAYMENT_NETWORK_ACCOUNT_TOPUP,
-      PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
-      PAYMENT_NETWORK_TX_SETTLEMENT,
-    ];
-    return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTags.includes(tag));
+    return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTrxTags.includes(tag));
+  },
+);
+
+export const combinedPPNTransactionsSelector: ((state: RootReducerState) => Transaction[]) = createSelector(
+  smartAccountHistorySelector,
+  (history: Transaction[]) => {
+    return history.filter(({ isPPNTransaction, tag }) => !!isPPNTransaction || ppnTrxTags.includes(tag));
   },
 );
 

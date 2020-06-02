@@ -23,6 +23,7 @@ import { RefreshControl, ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // constants
 import { SEND_BITCOIN_FLOW } from 'constants/navigationConstants';
@@ -101,12 +102,15 @@ class BTCView extends React.Component<Props, State> {
     const {
       symbol: token,
       decimals,
+      iconUrl,
     } = btcToken;
 
     const assetData: AssetData = {
       token,
       decimals,
+      iconColor: `${SDK_PROVIDER}/${iconUrl}?size=2`,
     };
+
 
     this.props.navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
   };

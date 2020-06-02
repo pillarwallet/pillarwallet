@@ -58,8 +58,6 @@ import type { AssetData, Rates } from 'models/Asset';
 import { SEND_BITCOIN_CONFIRM } from 'constants/navigationConstants';
 import { BTC, SPEED_TYPES, SPEED_TYPE_LABELS } from 'constants/assetsConstants';
 
-const BTCIcon = require('assets/icons/icon_BTC.png');
-
 const ActionsWrapper = styled.View`
   display: flex;
   flex-direction: row;
@@ -179,6 +177,7 @@ class BTCAmount extends React.Component<Props, State> {
       source: this.source,
       assetData: this.assetData,
     });
+
     this.formSubmitted = false;
   };
 
@@ -287,7 +286,7 @@ class BTCAmount extends React.Component<Props, State> {
       fiatCurrency,
     } = this.props;
 
-    const { token, decimals } = this.assetData;
+    const { token, decimals, iconColor } = this.assetData;
 
     // balance
     const { address } = addresses[0];
@@ -304,7 +303,7 @@ class BTCAmount extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, fiatCurrency);
 
     const formStructure = makeAmountForm(balance, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
-    const formFields = getAmountFormFields({ icon: BTCIcon, currency: token, valueInFiatOutput });
+    const formFields = getAmountFormFields({ icon: iconColor, currency: token, valueInFiatOutput });
 
     const showNextButton = !!currentAmount && !inputHasError;
 
