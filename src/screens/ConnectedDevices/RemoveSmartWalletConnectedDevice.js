@@ -194,7 +194,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
           {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>
-        {!isEmpty(errorMessage) && <WarningMessage small>{errorMessage}</WarningMessage>}
+        {!isEmpty(errorMessage) && !gettingFee && <WarningMessage small>{errorMessage}</WarningMessage>}
         {!isDeviceBeingRemoved &&
           <View style={{ alignItems: 'center' }}>
             <Button
