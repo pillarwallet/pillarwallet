@@ -693,7 +693,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       }).filter(asset => asset.key !== 'BTC');
   };
 
-  handleFormChange = (value: Object) => {
+  handleFormChange = (value: FormValue) => {
     this.resetSearch(); // reset all cards before they change according to input values
     const { value: currentValue } = this.state;
 
@@ -771,7 +771,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  onSwapPress = (fromAssetCode, toAssetCode) => {
+  onSwapPress = (fromAssetCode: string, toAssetCode: string) => {
     const { assets, exchangeSupportedAssets } = this.props;
     const { fromInput, toInput } = this.state.value;
     const fromOptions = this.generateAssetsOptions(assets);
