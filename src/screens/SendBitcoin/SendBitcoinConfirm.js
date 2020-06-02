@@ -18,24 +18,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { ScrollWrapper } from 'components/Layout';
-import { Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-
 import { SEND_BITCOIN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-import { fontSizes, spacing } from 'utils/variables';
+import ReviewAndConfirm from 'components/ReviewAndConfirm';
+
 import { satoshisToBtc } from 'utils/bitcoin';
 import { getFormattedRate } from 'utils/assets';
 import { formatUnits } from 'utils/common';
-import { themedColors } from 'utils/themes';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { AssetData, Rates } from 'models/Asset';
@@ -50,22 +44,6 @@ type State = {
   note: ?string,
 };
 
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-  background-color: ${themedColors.surface};
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
 
 class SendBitcoinConfirm extends React.Component<Props, State> {
   source: string;
@@ -111,33 +89,26 @@ class SendBitcoinConfirm extends React.Component<Props, State> {
     const formattedAmountInFiat = getFormattedRate(rates, amount, token, fiatCurrency);
     const formattedFeeInFiat = getFormattedRate(rates, feeInBtc, token, fiatCurrency);
 
+    const reviewData = [
+      {
+        label: 'Amount',
+        value: `${formattedAmountInBtc} BTC (${formattedAmountInFiat})`,
+      },
+      {
+        label: 'Recipient Address',
+        value: to,
+      },
+      {
+        label: 'Total fee',
+        value: `${formattedFeeInBtc} BTC (${formattedFeeInFiat})`,
+      },
+    ];
+
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        footer={(
-          <FooterWrapper>
-            <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
-          </FooterWrapper>
-        )}
-      >
-        <ScrollWrapper
-          regularPadding
-          disableAutomaticScroll
-        >
-          <LabeledRow>
-            <Label>Amount</Label>
-            <Value>{formattedAmountInBtc} BTC ({formattedAmountInFiat})</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Recipient Address</Label>
-            <Value>{to}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Total fee</Label>
-            <Value>{formattedFeeInBtc} BTC ({formattedFeeInFiat})</Value>
-          </LabeledRow>
-        </ScrollWrapper>
-      </ContainerWithHeader>
+      <ReviewAndConfirm
+        reviewData={reviewData}
+        onConfirm={this.handleFormSubmit}
+      />
     );
   }
 }

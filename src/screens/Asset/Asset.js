@@ -47,9 +47,13 @@ import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActi
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
-import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import {
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
+} from 'constants/paymentNetworkConstants';
 
 // utils
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -58,7 +62,7 @@ import { themedColors } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-import { mapTransactionsHistory } from 'utils/feedData';
+import { isSWAddress, mapTransactionsHistory } from 'utils/feedData';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -339,11 +343,21 @@ class AssetScreen extends React.Component<Props, State> {
       accounts,
       TRANSACTION_EVENT,
     );
-    const tokenTransactions = mappedTransactions.filter(({ asset, tag = '', extra = [] }) =>
-      asset === token || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
-    const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return !isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
-    });
+    const tokenTransactions = mappedTransactions
+      .filter(({ asset, tag = '', extra = [] }) => (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT)
+        || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+
+    const mainnetTransactions = tokenTransactions
+      .filter(({
+        isPPNTransaction = false,
+        from,
+        to,
+        tag,
+      }) => {
+        return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+        && (!isPPNTransaction || (isPPNTransaction && (isSWAddress(from, accounts) && isSWAddress(to, accounts))));
+      });
+
     const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
@@ -434,8 +448,7 @@ class AssetScreen extends React.Component<Props, State> {
             navigation={navigation}
             noBorder
             feedData={relatedTransactions}
-            feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}
-            asset={token}
+            isAssetView
           />}
         </ScrollWrapper>
 
