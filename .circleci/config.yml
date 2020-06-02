@@ -734,7 +734,6 @@ workflows:
             branches:
               only:
                 - develop
-                - feature/web-recovery-portal
       - appcenter_android:
           requires:
             - build-and-test
@@ -742,7 +741,6 @@ workflows:
             branches:
               only:
                 - develop
-                - feature/web-recovery-portal
       - get-latest-tag:
           requires:
             - build-and-test
