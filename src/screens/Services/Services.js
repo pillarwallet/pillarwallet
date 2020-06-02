@@ -33,6 +33,7 @@ import type { ProvidersMeta } from 'models/Offer';
 import { withTheme } from 'styled-components/native';
 import type { RootReducerState } from 'reducers/rootReducer';
 import { spacing } from 'utils/variables';
+import { getMetaDataAction } from 'actions/exchangeActions';
 
 
 type Props = {
@@ -40,19 +41,27 @@ type Props = {
   providersMeta: ProvidersMeta,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
+  getMetaData: () => void,
 };
 
 const visaIcon = require('assets/icons/visa.png');
 const mastercardIcon = require('assets/icons/mastercard.png');
 
 class ServicesScreen extends React.Component<Props> {
+  componentDidMount() {
+    const { getMetaData, providersMeta } = this.props;
+    if (!Array.isArray(providersMeta) || !providersMeta?.length) {
+      getMetaData();
+    }
+  }
+
   getServices = () => {
     const {
       navigation, theme, baseFiatCurrency, providersMeta,
     } = this.props;
     const colors = getThemeColors(theme);
 
-    const offersBadge = Array.isArray(providersMeta) ? {
+    const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
       label: `${providersMeta.length} exchanges`,
       color: colors.primary,
     } : null;
@@ -150,4 +159,8 @@ const mapStateToProps = ({
   baseFiatCurrency,
 });
 
-export default withTheme(connect(mapStateToProps)(ServicesScreen));
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  getMetaData: () => dispatch(getMetaDataAction()),
+});
+
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ServicesScreen));
