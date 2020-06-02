@@ -199,7 +199,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   walletConnect: { requests },
-  appSettings: { data: { useBiometrics = false } },
+  appSettings: { data: { useBiometrics } },
 }) => ({
   useBiometrics,
   requests,
