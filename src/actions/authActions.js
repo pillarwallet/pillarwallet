@@ -141,9 +141,13 @@ export const loginAction = (
         wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access OR fallback for biometrics login
-        await setKeychainDataObject({
-          pin, privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '',
-        }, useBiometrics);
+        await setKeychainDataObject(
+          {
+            pin,
+            privateKey: wallet.privateKey,
+            mnemonic: wallet.mnemonic || '',
+          },
+          useBiometrics);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       } else {
