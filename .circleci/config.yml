@@ -16,7 +16,7 @@ executors:
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
-    
+
     shell: /bin/bash --login -o pipefail
 
   android-executor:
@@ -107,7 +107,7 @@ aliases:
   - &node_restore_cache
     restore_cache:
       name: Restore node modules cache
-      keys: 
+      keys:
         - node-{{ checksum "./yarn.lock" }}
   - &node_save_cache
     save_cache:
@@ -180,7 +180,7 @@ aliases:
   - &gradle_restore_cache
     restore_cache:
       name: Restore gradle cache
-      keys: 
+      keys:
         - android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
   - &gradle_dependencies
     run:
@@ -208,7 +208,7 @@ aliases:
   - &homebrew_restore_cache
     restore_cache:
       name: Restore homebrew cache
-      keys: 
+      keys:
         - homebrew-packages-v1
 
 jobs:
@@ -259,7 +259,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
-      
+
       - *homebrew_restore_cache
       - *homebrew_install
       - *homebrew_save_cache
@@ -447,7 +447,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
-            
+
       - *homebrew_restore_cache
       - *homebrew_install
       - *homebrew_save_cache
@@ -469,10 +469,10 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-       
+
       - restore_cache:
           name: Restore node modules cache
-          keys: 
+          keys:
             - ios-node-{{ checksum "./yarn.lock" }}
 
       - *node_artifactory_authenticate
@@ -560,7 +560,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region eu-west-2 s3 cp $PROD_KEYSTORE_S3_BUCKET/android_prod.txt .
-      
+
       - *android_latest_npm
 
       - run:
@@ -598,7 +598,7 @@ jobs:
       - run:
           name: set Yarn to use Artifactory
           command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
-      
+
       - *yarn_restore_cache
       - *yarn_install
       - *yarn_save_cache
@@ -611,7 +611,7 @@ jobs:
       - *restore_gems_cache_android
       - *install_gems_android
       - *save_gems_cache_android
-      
+
       - *gradle_restore_cache
 
       - run:
@@ -638,9 +638,9 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             ./gradlew clean app:assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
-      
+
       - *gradle_save_cache
-      
+
       - run:
           name: Fastlane deploy to Google Play
           command: |
