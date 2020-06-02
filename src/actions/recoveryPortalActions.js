@@ -45,6 +45,9 @@ import {
   UPDATE_WALLET_STATE,
 } from 'constants/walletConstants';
 
+// components
+import Toast from 'components/Toast';
+
 // utils
 import { addressesEqual } from 'utils/assets';
 import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
@@ -130,6 +133,12 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       mnemonic,
       privateKey,
       isImported: true,
+    });
+
+    Toast.show({
+      message: 'Wallet successfully recovered!',
+      type: 'success',
+      title: 'Success',
     });
 
     navigateToAppFlow(false);
