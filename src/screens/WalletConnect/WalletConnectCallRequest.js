@@ -223,9 +223,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   getGasLimitFromRequest = () => {
     const params = this.getRequestParams();
-    let requestGasLimit = params[0].gas;
+    let requestGasLimit = params[0]?.gas;
     if (!requestGasLimit && requestGasLimit !== 0) {
-      requestGasLimit = params[0].gasLimit;
+      requestGasLimit = params[0]?.gasLimit;
     }
     if (!requestGasLimit) return 0;
     return utils.bigNumberify(requestGasLimit).toNumber();
@@ -233,7 +233,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   shouldUseGasInfoFromRequest = () => {
     const params = this.getRequestParams();
-    if (!params.length || !params[0].gasPrice) return false;
+    if (!params.length || !params[0]?.gasPrice) return false;
     return true;
   };
 
@@ -246,7 +246,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   getGasPriceFromRequest = () => {
     const params = this.getRequestParams();
-    return params[0].gasPrice;
+    return params[0]?.gasPrice;
   };
 
   getSmartWalletTxFee = async (): Promise<TransactionFeeInfo> => {
