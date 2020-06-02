@@ -21,7 +21,7 @@ import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { constructWalletFromPrivateKey } from 'utils/wallet';
+import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'utils/wallet';
 
 const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
 const KEYCHAIN_DATA_KEY = 'data';
@@ -84,12 +84,10 @@ export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) 
   const keychainData: KeyChainData = await getKeychainDataObject();
   const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
   if (pin && pin === pinFromKeychain && privateKey) {
-    let wallet = constructWalletFromPrivateKey(privateKey);
-    wallet = {
-      ...wallet,
-      privateKey, // we need PK for changing biometrics settings
-    };
-    return withMnemonic ? { ...wallet, mnemonic } : wallet;
+    const wallet = withMnemonic && mnemonic
+      ? constructWalletFromMnemonic(mnemonic)
+      : constructWalletFromPrivateKey(privateKey);
+    return wallet;
   }
 
   throw new Error(); // wrong pin
