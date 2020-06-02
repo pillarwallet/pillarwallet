@@ -454,7 +454,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const selectedAssetSymbol = this.getSelectedFromAssetSymbol();
     const chosenAssetBalance = formatAmount(getBalance(balances, selectedAssetSymbol));
     value.fromInput.input = chosenAssetBalance;
-    this.setState({ value });
+    this.handleFormChange(value);
   }
 
   shouldShowSellMax = () => {
