@@ -137,7 +137,7 @@ export const deviceHasGasTokenSupport = (device: IAccountDevice): boolean => {
 
 export const accountHasGasTokenSupport = (account: Object): boolean => {
   if (isEmpty(get(account, 'devices', []))) return false;
-  return account.devices.some(device => deviceHasGasTokenSupport(device) && isSmartWalletDeviceDeployed(device.state));
+  return account.devices.some(device => deviceHasGasTokenSupport(device) && isSmartWalletDeviceDeployed(device));
 };
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');

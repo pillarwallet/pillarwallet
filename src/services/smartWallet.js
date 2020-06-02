@@ -112,6 +112,21 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   };
 };
 
+export const formatEstimated = (estimated) => {
+  let { gasTokenCost, totalCost } = estimated;
+  const { gasToken, relayerFeatures } = estimated;
+  const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
+
+  // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
+  gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
+  totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
+
+  return {
+    ethCost: totalCost,
+    gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
+    gasToken: hasGasTokenSupport ? gasToken : null,
+  };
+};
 
 class SmartWallet {
   sdk: Sdk;
@@ -455,27 +470,23 @@ class SmartWallet {
       transactionSpeed,
     ).then(parseEstimatePayload).catch(() => ({}));
 
-    let { gasTokenCost, totalCost } = estimated;
-    const { gasToken, relayerFeatures } = estimated;
-    const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
-
-    // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
-    gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-    totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
-
-    return {
-      ethCost: totalCost,
-      gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
-      gasToken: hasGasTokenSupport ? gasToken : null,
-    };
+    return formatEstimated(estimated);
   }
 
-  estimateAccountDeviceDeployment(deviceAddress: string) {
-    return this.sdk.estimateAccountDeviceDeployment(deviceAddress);
+  async estimateAccountDeviceDeployment(deviceAddress: string) {
+    const estimated = await this.sdk.estimateAccountDeviceDeployment(deviceAddress)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
+
+    return formatEstimated(estimated);
   }
 
-  estimateAccountDeviceUnDeployment(deviceAddress: string) {
-    return this.sdk.estimateAccountDeviceUnDeployment(deviceAddress);
+  async estimateAccountDeviceUnDeployment(deviceAddress: string) {
+    const estimated = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
+
+    return formatEstimated(estimated);
   }
 
   getTransactionStatus(hash: string) {
