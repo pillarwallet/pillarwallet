@@ -134,10 +134,7 @@ export const completeConnectedDeviceRemoveAction = (deviceAddress: string, fromT
 };
 
 export const removeConnectedDeviceAction = (
-  {
-    category: deviceCategory,
-    address: deviceAddress,
-  }: ConnectedDevice,
+  { category: deviceCategory, address: deviceAddress }: ConnectedDevice,
   payWithGasToken: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {

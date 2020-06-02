@@ -276,3 +276,11 @@ export const setInitialPreferredGasTokenAction = () => {
     }
   };
 };
+
+export const hasSeenRecoveryPortalIntroAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { hasSeenRecoveryPortalIntro: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenRecoveryPortalIntro: true } });
+  };
+};
+

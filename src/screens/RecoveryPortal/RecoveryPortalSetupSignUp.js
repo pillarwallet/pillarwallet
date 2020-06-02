@@ -72,6 +72,7 @@ const RecoveryPortalSetupSignUp = ({
       onWebViewMessage={onWebViewMessage}
       navigation={navigation}
       urlPath={signUpPath}
+      goBackDismiss
     />
   );
 };

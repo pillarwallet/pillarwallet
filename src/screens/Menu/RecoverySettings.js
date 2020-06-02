@@ -36,6 +36,7 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   MANAGE_CONNECTED_DEVICES,
   RECOVERY_PORTAL_SETUP_INTRO,
+  RECOVERY_PORTAL_SETUP_SIGN_UP,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
 
@@ -61,6 +62,7 @@ type Props = {
   theme: Theme,
   resetIncorrectPassword: () => void,
   isSmartWalletActivated: boolean,
+  hasSeenRecoveryPortalIntro?: boolean,
 };
 
 type State = {
@@ -75,9 +77,12 @@ class RecoverySettings extends React.Component<Props, State> {
   };
 
   getGlobalSection = () => {
-    const { navigation, isSmartWalletActivated } = this.props;
+    const { navigation, isSmartWalletActivated, hasSeenRecoveryPortalIntro } = this.props;
     let recoveryPortalSubtitle = 'Smart Wallet account web recovery portal';
     if (!isSmartWalletActivated) recoveryPortalSubtitle = `${recoveryPortalSubtitle} (requires activated Smart Wallet)`;
+    const recoveryPortalNavigationPath = hasSeenRecoveryPortalIntro
+      ? RECOVERY_PORTAL_SETUP_SIGN_UP
+      : RECOVERY_PORTAL_SETUP_INTRO;
     return [
       {
         key: 'linkedDevices',
@@ -90,7 +95,7 @@ class RecoverySettings extends React.Component<Props, State> {
         title: 'Recovery Portal',
         subtitle: recoveryPortalSubtitle,
         disabled: !isSmartWalletActivated,
-        onPress: () => navigation.navigate(RECOVERY_PORTAL_SETUP_INTRO),
+        onPress: () => navigation.navigate(recoveryPortalNavigationPath),
       },
     ];
   }
@@ -170,8 +175,10 @@ class RecoverySettings extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet: { backupStatus },
+  appSettings: { data: { hasSeenRecoveryPortalIntro } },
 }: RootReducerState): $Shape<Props> => ({
   backupStatus,
+  hasSeenRecoveryPortalIntro,
 });
 
 const structuredSelector = createStructuredSelector({

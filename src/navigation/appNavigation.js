@@ -691,7 +691,6 @@ const menuFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 const recoveryPortalSetupFlow = createStackNavigator({
-  [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
   [RECOVERY_PORTAL_SETUP_SIGN_UP]: RecoveryPortalSetupSignUpScreen,
   [RECOVERY_PORTAL_SETUP_CONNECT_DEVICE]: RecoveryPortalSetupConnectDeviceScreen,
   [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
@@ -737,6 +736,7 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
+    [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
     [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
     [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,

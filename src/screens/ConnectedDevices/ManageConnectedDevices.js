@@ -14,7 +14,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { FlatList, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
@@ -70,15 +70,21 @@ const HorizontalView = styled.View`
   flex-direction: row;
 `;
 
-class ManageConnectedDevices extends React.Component<Props> {
-  componentDidMount() {
-    this.props.fetchConnectedAccount();
-  }
+const ManageConnectedDevices = ({
+  theme,
+  activeDeviceAddress,
+  removingDeviceAddress,
+  devices,
+  fetchConnectedAccount,
+  confirmConnectedDeviceRemove,
+}: Props) => {
+  useEffect(() => {
+    fetchConnectedAccount();
+  }, []);
 
-  removeDevice = (device: ConnectedDevice) => this.props.confirmConnectedDeviceRemove(device);
+  const removeDevice = (device: ConnectedDevice) => confirmConnectedDeviceRemove(device);
 
-  renderListItem = ({ item }) => {
-    const { theme, activeDeviceAddress, removingDeviceAddress } = this.props;
+  const renderListItem = ({ item }) => {
     const colors = getThemeColors(theme);
     const { updatedAt, address: deviceAddress } = item;
     const deviceDate = humanizeDateString(updatedAt);
@@ -106,12 +112,12 @@ class ManageConnectedDevices extends React.Component<Props> {
           </HorizontalView>
         }
         {!thisDeviceBeingRemoved && !isCurrentDevice && anyDeviceBeingRemoved &&
-          <RemoveAction onPress={() => this.removeDevice(item)}>
+          <RemoveAction onPress={() => removeDevice(item)}>
             <BaseText color={colors.secondaryText}>On hold</BaseText>
           </RemoveAction>
         }
         {!isCurrentDevice && !anyDeviceBeingRemoved &&
-          <RemoveAction onPress={() => this.removeDevice(item)}>
+          <RemoveAction onPress={() => removeDevice(item)}>
             <BaseText color={colors.negative}>Remove</BaseText>
           </RemoveAction>
         }
@@ -119,30 +125,28 @@ class ManageConnectedDevices extends React.Component<Props> {
     );
   };
 
-  render() {
-    const { devices, fetchConnectedAccount } = this.props;
-    const devicesByLatest = orderBy(devices, ['updatedAt'], ['desc']);
-    const emptyStyle = { justifyContent: 'center', alignItems: 'center' };
-    return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Manage devices' }] }}>
-        <FlatList
-          data={devicesByLatest}
-          keyExtractor={({ address }) => `${address}`}
-          renderItem={this.renderListItem}
-          initialNumToRender={9}
-          style={[{ flex: 1 }, !devices.length && emptyStyle]}
-          ListEmptyComponent={<EmptyStateParagraph title="No Connected Devices" />}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => fetchConnectedAccount()}
-            />
-          }
-        />
-      </ContainerWithHeader>
-    );
-  }
-}
+  const devicesByLatest = orderBy(devices, ['updatedAt'], ['desc']);
+  const emptyStyle = { justifyContent: 'center', alignItems: 'center' };
+
+  return (
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Manage devices' }] }}>
+      <FlatList
+        data={devicesByLatest}
+        keyExtractor={({ address }) => `${address}`}
+        renderItem={renderListItem}
+        initialNumToRender={9}
+        style={[{ flex: 1 }, !devices.length && emptyStyle]}
+        ListEmptyComponent={<EmptyStateParagraph title="No Connected Devices" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => fetchConnectedAccount()}
+          />
+        }
+      />
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
   smartWallet: { connectedAccount: { activeDeviceAddress } },

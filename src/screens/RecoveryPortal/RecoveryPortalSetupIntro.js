@@ -21,6 +21,10 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+
+// actions
+import { hasSeenRecoveryPortalIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { RECOVERY_PORTAL_SETUP_SIGN_UP } from 'constants/navigationConstants';
@@ -35,8 +39,12 @@ import Button from 'components/Button';
 import { fontStyles, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
+// type
+import type { Dispatch } from 'reducers/rootReducer';
+
 
 type Props = {
+  hasSeenRecoveryPortalIntro: () => void,
   navigation: NavigationScreenProp,
 };
 
@@ -69,7 +77,10 @@ const FeatureIcon = styled(CachedImage)`
 
 const deviceRecoveryIcon = require('assets/images/logo_recovery_device.png');
 
-const RecoveryPortalSetupIntro = (props: Props) => (
+const RecoveryPortalSetupIntro = ({
+  hasSeenRecoveryPortalIntro,
+  navigation,
+}: Props) => (
   <ContainerWithHeader
     headerProps={{ floating: true }}
     backgroundColor="#faf3f5"
@@ -88,11 +99,18 @@ const RecoveryPortalSetupIntro = (props: Props) => (
         <Button
           block
           title="Next"
-          onPress={() => props.navigation.navigate(RECOVERY_PORTAL_SETUP_SIGN_UP)}
+          onPress={() => {
+            hasSeenRecoveryPortalIntro();
+            navigation.navigate(RECOVERY_PORTAL_SETUP_SIGN_UP);
+          }}
         />
       </ButtonWrapper>
     </ScrollWrapper>
   </ContainerWithHeader>
 );
 
-export default RecoveryPortalSetupIntro;
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  hasSeenRecoveryPortalIntro: () => dispatch(hasSeenRecoveryPortalIntroAction()),
+});
+
+export default connect(null, mapDispatchToProps)(RecoveryPortalSetupIntro);

@@ -596,7 +596,7 @@ export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasTo
   return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
 };
 
-export const humanizeHexString = (hexString) => {
+export const humanizeHexString = (hexString: ?string) => {
   if (!hexString) return '';
 
   const startCharsCount = 6;

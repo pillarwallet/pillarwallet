@@ -35,6 +35,7 @@ type Props = {
   isVisible?: boolean,
   webViewRef?: WebView,
   urlPath?: string,
+  goBackDismiss?: boolean,
 };
 
 const renderLoading = () => <Spinner style={{ alignSelf: 'center', position: 'absolute', top: '50%' }} />;
@@ -47,6 +48,7 @@ const RecoveryPortalWebView = ({
   navigation,
   onRef,
   urlPath = '',
+  goBackDismiss,
 }: Props) => {
   let webViewRef;
   let canWebViewNavigateBack = false;
@@ -54,6 +56,10 @@ const RecoveryPortalWebView = ({
 
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {
+      if (goBackDismiss) {
+        navigation.dismiss();
+        return;
+      }
       navigation.goBack();
       return;
     }
