@@ -117,7 +117,7 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork = '', preferredGasToken, useBiometrics: biometricsSetting = false } },
+      appSettings: { data: { blockchainNetwork = '', preferredGasToken, useBiometrics: biometricsSetting } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
