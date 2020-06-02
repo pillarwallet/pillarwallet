@@ -37,13 +37,12 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { humanizeDateString } from 'utils/common';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import { addressesEqual } from 'utils/assets';
+import { images } from 'utils/images';
 
-// models, types
+// types
 import type { Theme } from 'models/Theme';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-
-const iconPhone = require('assets/icons/icon_phone.png');
 
 
 type Props = {
@@ -86,11 +85,13 @@ class ManageConnectedDevices extends React.Component<Props> {
     const isCurrentDevice = addressesEqual(activeDeviceAddress, deviceAddress);
     const anyDeviceBeingRemoved = !!removingDeviceAddress;
     const thisDeviceBeingRemoved = addressesEqual(removingDeviceAddress, deviceAddress);
+    const { roundedPhoneIcon } = images(theme);
     return (
       <ListItemWithImage
         subtext={deviceDate}
-        iconSource={iconPhone}
-        iconImageAutoWidth
+        iconSource={roundedPhoneIcon}
+        iconImageResizeMode="contain"
+        iconImageSize={48}
         customLabel={(
           <HorizontalView style={{ width: '60%' }}>
             <ItemTitle numberOfLines={1} >Device </ItemTitle>

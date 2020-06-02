@@ -51,7 +51,7 @@ import {
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
-import { parseSmartWalletTransactions } from 'utils/smartWallet';
+import { deviceHasGasTokenSupport, parseSmartWalletTransactions } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
 
 // services
@@ -59,7 +59,6 @@ import smartWalletService from 'services/smartWallet';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -161,7 +160,7 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId },
+      smartWallet: { lastSyncedTransactionId, connectedAccount: { devices } },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -175,13 +174,13 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountId = getActiveAccountId(accounts);
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = accountAssetsSelector(getState());
-    const isGasTokenSupported = isGasTokenSupportedSelector(getState());
+    const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     const assetsList = getAssetsAsList(accountAssets);
     const history = parseSmartWalletTransactions(
       smartWalletTransactions,
       supportedAssets,
       assetsList,
-      isGasTokenSupported,
+      relayerExtensionDevice?.address,
     );
 
     if (!history.length) return;

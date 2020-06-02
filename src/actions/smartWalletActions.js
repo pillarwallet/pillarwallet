@@ -46,6 +46,8 @@ import {
   PAYMENT_PROCESSED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
   ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -1408,14 +1410,28 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
         title: 'Unable to deploy device',
         autoClose: false,
       });
+      return;
     }
+
+    const { accounts: { data: accounts } } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    const historyTx = buildHistoryTransaction({
+      from: accountAddress,
+      hash: accountDeviceDeploymentHash,
+      to: accountAddress,
+      value: '0',
+      asset: ETH,
+      tag: SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+    });
+    dispatch(insertTransactionAction(historyTx, accountId));
 
     dispatch(fetchConnectedAccountAction());
   };
 };
 
 export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     await dispatch(fetchGasInfoAction());
     const estimate = await smartWalletService.estimateAccountDeviceUnDeployment(deviceAddress);
     const estimateFeeBN = estimate?.fee || new BigNumber(0);
@@ -1440,7 +1456,21 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
         title: 'Unable to add device',
         autoClose: false,
       });
+      return;
     }
+
+    const { accounts: { data: accounts } } = getState();
+    const accountId = getActiveAccountId(accounts);
+    const accountAddress = getActiveAccountAddress(accounts);
+    const historyTx = buildHistoryTransaction({
+      from: accountAddress,
+      hash: accountDeviceUnDeploymentHash,
+      to: accountAddress,
+      value: '0',
+      asset: ETH,
+      tag: SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+    });
+    dispatch(insertTransactionAction(historyTx, accountId));
 
     await dispatch(fetchConnectedAccountAction());
   };

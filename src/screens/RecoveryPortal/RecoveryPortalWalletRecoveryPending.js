@@ -65,8 +65,8 @@ const WalletRecoveryOptions = (props: Props) => {
         />
         <Title center>Smart Wallet is now being recovered</Title>
         <Paragraph small light center>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-          sed do eiusmod tempor incididunt ut labore et dolore magna
+          Your Smart Wallet device recovery transaction is sent.
+          You will be able to use your recovered wallet once transaction is confirmed.
         </Paragraph>
       </ScrollWrapper>
     </ContainerWithHeader>

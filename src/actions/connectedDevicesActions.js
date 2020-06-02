@@ -115,12 +115,11 @@ export const addConnectedDeviceAction = (
       dispatch(setConnectedDevicesAction(updatedDevices));
       dispatch({ type: RESET_ADDING_CONNECTED_DEVICE_ADDRESS });
     }
-    // TODO: add history entry for added device
   };
 };
 
 export const completeConnectedDeviceRemoveAction = (deviceAddress: string, fromTransaction?: boolean) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     if (fromTransaction) {
       dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: null }));
       Toast.show({
@@ -131,8 +130,6 @@ export const completeConnectedDeviceRemoveAction = (deviceAddress: string, fromT
       });
     }
     dispatch({ type: RESET_REMOVING_CONNECTED_DEVICE_ADDRESS });
-    console.log('completed device removal for: ', deviceAddress);
-    // TODO: add history entry for removed device
   };
 };
 

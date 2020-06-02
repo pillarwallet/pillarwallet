@@ -87,6 +87,8 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } 
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
   SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -678,7 +680,7 @@ class EventDetail extends React.Component<Props, State> {
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const avatarUrl = contact && contact.profileImage;
-    const { smartWalletIcon, PPNIcon } = images(theme);
+    const { smartWalletIcon, PPNIcon, roundedPhoneIcon } = images(theme);
 
     const formattedValue = formatAmount(value);
 
@@ -815,6 +817,34 @@ class EventDetail extends React.Component<Props, State> {
           name: 'Smart Wallet fees with PLR token',
           itemImageSource: smartWalletIcon,
           actionTitle: 'Enabled',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+        eventData = {
+          name: 'New Smart Wallet account device',
+          itemImageSource: roundedPhoneIcon,
+          actionTitle: 'Added',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+        eventData = {
+          name: 'Smart Wallet account device',
+          itemImageSource: roundedPhoneIcon,
+          actionTitle: 'Removed',
           buttons: [
             {
               title: 'View on the blockchain',

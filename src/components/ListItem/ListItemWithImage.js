@@ -96,9 +96,10 @@ type Props = {
   badge?: string,
   iconBackgroundColor?: string,
   iconBorder?: boolean,
-  iconImageAutoWidth?: boolean,
   address?: string,
   collectibleUrl?: string,
+  iconImageResizeMode?: string,
+  iconImageSize?: number,
 }
 
 type AddonProps = {
@@ -206,8 +207,10 @@ const ItemIcon = styled(Icon)`
 `;
 
 const IconImage = styled(CachedImage)`
-  height: 24px;
-  ${({ autoWidth }) => !autoWidth && 'width: 24px;'}
+  ${({ size }) => `
+    height: ${size || 24}px;
+    width: ${size || 24}px;
+  `}
 `;
 
 const TokenImage = styled(CachedImage)`
@@ -370,7 +373,8 @@ const ItemImage = (props: Props) => {
     iconBackgroundColor,
     iconBorder,
     collectibleUrl,
-    iconImageAutoWidth,
+    iconImageResizeMode,
+    iconImageSize,
   } = props;
 
   let { fallbackSource } = props;
@@ -388,9 +392,9 @@ const ItemImage = (props: Props) => {
     return (
       <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
         <IconImage
-          autoWidth={iconImageAutoWidth}
           source={iconSource}
-          resizeMode={iconImageAutoWidth && 'contain'}
+          size={iconImageSize}
+          resizeMode={iconImageResizeMode}
         />
       </IconCircle>
     );

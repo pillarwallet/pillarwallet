@@ -124,7 +124,6 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
     if (prevProps.isOnline !== isOnline && isOnline) {
       fetchGasInfo();
     }
-    this.updateDeviceDeploymentFee();
   }
 
   updateDeviceDeploymentFee = () => {
