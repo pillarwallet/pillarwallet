@@ -462,8 +462,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const selectedAssetSymbol = this.getSelectedFromAssetSymbol();
     if (isFiatCurrency(selectedAssetSymbol)) return false;
     const assetBalance = getBalance(balances, selectedAssetSymbol);
-    if (assetBalance) return true;
-    return false;
+    return !!assetBalance;
   }
 
   getSelectedFromAssetSymbol = () => {
@@ -709,13 +708,16 @@ class ExchangeScreen extends React.Component<Props, State> {
       }
     }
 
-    this.setState({ value });
-    this.updateOptions(value);
-    if (!this.exchangeForm.getValue()) return; // this validates form!
-    this.triggerSearch();
+    this.setState({ value }, () => {
+      this.updateOptions(value, () => {
+        if (this.exchangeForm.getValue()) { // this validates form!
+          this.triggerSearch();
+        }
+      });
+    });
   };
 
-  updateOptions = (value) => {
+  updateOptions = (value: FormValue, callback: () => void) => {
     const {
       assets,
       exchangeSupportedAssets,
@@ -757,7 +759,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       },
     });
 
-    this.setState({ formOptions: newOptions });
+    this.setState({ formOptions: newOptions }, callback);
   };
 
   generatePopularSwaps = () => {
@@ -771,11 +773,14 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   onSwapPress = (fromAssetCode, toAssetCode) => {
     const { assets, exchangeSupportedAssets } = this.props;
+    const { fromInput, toInput } = this.state.value;
     const fromOptions = this.generateAssetsOptions(assets);
     const toOptions = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     const fromAsset = fromOptions.find(option => option.key === fromAssetCode);
     const toAsset = toOptions.find(option => option.key === toAssetCode);
-    this.handleFormChange({ fromInput: { selector: fromAsset, input: '' }, toInput: { selector: toAsset, input: '' } });
+    this.handleFormChange({
+      fromInput: { selector: fromAsset, input: fromInput.input }, toInput: { selector: toAsset, input: toInput.input },
+    });
   };
 
   render() {
