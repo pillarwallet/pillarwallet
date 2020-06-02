@@ -23,10 +23,13 @@ import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
-import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import { getAccountAddress, getAccountId, getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+
 import type SDKWrapper from 'services/api';
 import type { Collectible } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
+
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 
@@ -68,14 +71,16 @@ const collectibleFromResponse = (responseItem: Object): Collectible => {
   };
 };
 
-export const fetchCollectiblesAction = () => {
+export const fetchCollectiblesAction = (accountToFetchFor?: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles },
     } = getState();
-    const walletAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
+    const walletAddress = accountToFetchFor ? getAccountAddress(accountToFetchFor) : getActiveAccountAddress(accounts);
+    const accountId = accountToFetchFor ? getAccountId(accountToFetchFor) : getActiveAccountId(accounts);
+
+    if (!walletAddress || !accountId) return;
     const response = await api.fetchCollectibles(walletAddress);
 
     if (response.error || !response.assets) return;
@@ -154,14 +159,17 @@ const isCollectibleTransaction = (event: Object): boolean => {
   return assetContract.schema_name === 'ERC721';
 };
 
-export const fetchCollectiblesHistoryAction = () => {
+export const fetchCollectiblesHistoryAction = (accountToFetchFor?: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
     } = getState();
-    const walletAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
+
+    const walletAddress = accountToFetchFor ? getAccountAddress(accountToFetchFor) : getActiveAccountAddress(accounts);
+    const accountId = accountToFetchFor ? getAccountId(accountToFetchFor) : getActiveAccountId(accounts);
+
+    if (!walletAddress || !accountId) return;
     const response = await api.fetchCollectiblesTransactionHistory(walletAddress);
 
     if (response.error || !response.asset_events) return;
@@ -181,9 +189,43 @@ export const fetchCollectiblesHistoryAction = () => {
   };
 };
 
-export const fetchAllCollectiblesDataAction = () => {
+
+export const fetchAllAccountsCollectiblesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+
+    const promises = accounts.map(async account => {
+      await dispatch(fetchCollectiblesAction(account));
+    });
+    await Promise.all(promises).catch(_ => _);
+  };
+};
+
+
+export const fetchAllAccountsCollectiblesHistoryAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+
+    const promises = accounts.map(async account => {
+      await dispatch(fetchCollectiblesHistoryAction(account));
+    });
+    await Promise.all(promises).catch(_ => _);
+  };
+};
+
+
+export const fetchAllCollectiblesDataAction = (forAllAccounts?: boolean) => {
   return async (dispatch: Dispatch) => {
-    await dispatch(fetchCollectiblesAction());
-    await dispatch(fetchCollectiblesHistoryAction());
+    if (forAllAccounts) {
+      await dispatch(fetchAllAccountsCollectiblesAction());
+      await dispatch(fetchAllAccountsCollectiblesHistoryAction());
+    } else {
+      await dispatch(fetchCollectiblesAction());
+      await dispatch(fetchCollectiblesHistoryAction());
+    }
   };
 };
