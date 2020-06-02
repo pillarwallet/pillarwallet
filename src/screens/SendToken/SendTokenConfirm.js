@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -27,18 +26,13 @@ import { connect } from 'react-redux';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // components
-import { ScrollWrapper } from 'components/Layout';
-import { Label, MediumText } from 'components/Typography';
-import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import TextInput from 'components/TextInput';
+import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // utils
-import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
-import { formatTransactionFee } from 'utils/common';
+import { formatTransactionFee, noop } from 'utils/common';
 
 // types
 import type { ContactSmartAddressData } from 'models/Contacts';
@@ -57,21 +51,6 @@ type State = {
   note: ?string,
 };
 
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
 
 class SendTokenConfirm extends React.Component<Props, State> {
   source: string;
@@ -94,9 +73,9 @@ class SendTokenConfirm extends React.Component<Props, State> {
     });
   };
 
-  handleNoteChange(text) {
+  handleNoteChange = (text) => {
     this.setState({ note: text });
-  }
+  };
 
   render() {
     const {
@@ -106,6 +85,7 @@ class SendTokenConfirm extends React.Component<Props, State> {
       contactsSmartAddresses,
       accounts,
     } = this.props;
+    const { note } = this.state;
     const {
       amount,
       to,
@@ -120,65 +100,55 @@ class SendTokenConfirm extends React.Component<Props, State> {
 
     const recipientUsername = getUserName(contact);
     const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
+
+
+    const reviewData = [
+      {
+        label: 'Amount',
+        value: `${amount} ${symbol}`,
+      },
+    ];
+
+    if (recipientUsername) {
+      reviewData.push({
+        label: 'Recipient Username',
+        value: recipientUsername,
+      });
+    }
+
+    if (receiverEnsName) {
+      reviewData.push({
+        label: 'Recipient ENS name',
+        value: receiverEnsName,
+      });
+    }
+
+    if (userAccount) {
+      reviewData.push({
+        label: 'Recipient',
+        value: getAccountName(userAccount.type),
+      });
+    }
+
+    reviewData.push(
+      {
+        label: 'Recipient Address',
+        value: to,
+      },
+      {
+        label: 'Est. Network Fee',
+        value: feeDisplayValue,
+      },
+    );
+
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Review and confirm' }] }}
-        footer={(
-          <FooterWrapper>
-            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
-          </FooterWrapper>
-        )}
-      >
-        <ScrollWrapper
-          regularPadding
-          disableAutomaticScroll
-        >
-          <LabeledRow>
-            <Label>Amount</Label>
-            <Value>{amount} {symbol}</Value>
-          </LabeledRow>
-          {!!recipientUsername &&
-          <LabeledRow>
-            <Label>Recipient Username</Label>
-            <Value>{recipientUsername}</Value>
-          </LabeledRow>
-          }
-          {!!receiverEnsName &&
-          <LabeledRow>
-            <Label>Recipient ENS name</Label>
-            <Value>{receiverEnsName}</Value>
-          </LabeledRow>
-          }
-          {!!userAccount &&
-          <LabeledRow>
-            <Label>Recipient</Label>
-            <Value>{getAccountName(userAccount.type)}</Value>
-          </LabeledRow>
-          }
-          <LabeledRow>
-            <Label>Recipient Address</Label>
-            <Value>{to}</Value>
-          </LabeledRow>
-          <LabeledRow>
-            <Label>Est. Network Fee</Label>
-            <Value>{feeDisplayValue}</Value>
-          </LabeledRow>
-          {session.isOnline && !!recipientUsername &&
-            <TextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              keyboardAvoidance
-              inputWrapperStyle={{ marginTop: spacing.medium }}
-            />
-          }
-        </ScrollWrapper>
-      </ContainerWithHeader>
+      <ReviewAndConfirm
+        reviewData={reviewData}
+        isConfirmDisabled={!session.isOnline}
+        onConfirm={this.handleFormSubmit}
+        onTextChange={session.isOnline && !!recipientUsername ? this.handleNoteChange : noop}
+        textInputValue={note}
+      />
     );
   }
 }
