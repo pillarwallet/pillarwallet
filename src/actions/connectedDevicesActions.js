@@ -133,10 +133,13 @@ export const completeConnectedDeviceRemoveAction = (deviceAddress: string, fromT
   };
 };
 
-export const removeConnectedDeviceAction = ({
-  category: deviceCategory,
-  address: deviceAddress,
-}: ConnectedDevice) => {
+export const removeConnectedDeviceAction = (
+  {
+    category: deviceCategory,
+    address: deviceAddress,
+  }: ConnectedDevice,
+  payWithGasToken: boolean = false,
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     let removingWthTransaction = false;
     dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: deviceAddress });
@@ -144,7 +147,7 @@ export const removeConnectedDeviceAction = ({
       if (!isSmartWalletDeviceDeployed(getConnectedSmartWalletDevice(getState, deviceAddress))) {
         await dispatch(removeSmartWalletAccountDeviceAction(deviceAddress));
       } else {
-        await dispatch(removeDeployedSmartWalletAccountDeviceAction(deviceAddress));
+        await dispatch(removeDeployedSmartWalletAccountDeviceAction(deviceAddress, payWithGasToken));
         // transaction might take some time so let's save the state and don't reset it
         removingWthTransaction = true;
       }

@@ -145,11 +145,7 @@ import { addAccountAction, setActiveAccountAction, switchAccountAction } from '.
 import { saveDbAction } from './dbActions';
 import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import {
-  fetchGasInfoAction,
-  fetchSmartWalletTransactionsAction,
-  insertTransactionAction,
-} from './historyActions';
+import { fetchSmartWalletTransactionsAction, insertTransactionAction } from './historyActions';
 import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { setInitialPreferredGasTokenAction } from './appSettingsActions';
@@ -1430,24 +1426,12 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
   };
 };
 
-export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: string) => {
+export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: string, payWithGasToken: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    await dispatch(fetchGasInfoAction());
-    const estimate = await smartWalletService.estimateAccountDeviceUnDeployment(deviceAddress);
-    const estimateFeeBN = estimate?.fee || new BigNumber(0);
-    const deployEstimateFeeBN = new BigNumber(utils.formatEther(estimateFeeBN.toString()));
-    const etherBalanceBN = smartWalletService.getAccountRealBalance();
-    if (etherBalanceBN.lt(deployEstimateFeeBN)) {
-      Toast.show({
-        message: 'Not enough ETH to remove device',
-        type: 'warning',
-        title: 'Unable to remove device',
-        autoClose: false,
-      });
-      return;
-    }
-
-    const accountDeviceUnDeploymentHash = await smartWalletService.unDeployAccountDevice(deviceAddress);
+    const accountDeviceUnDeploymentHash = await smartWalletService.unDeployAccountDevice(
+      deviceAddress,
+      payWithGasToken,
+    );
     if (!accountDeviceUnDeploymentHash) {
       // no transaction hash, unknown error occurred
       Toast.show({

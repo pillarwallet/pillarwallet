@@ -260,7 +260,10 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
-  removeConnectedDevice: (device: ConnectedDevice) => dispatch(removeConnectedDeviceAction(device)),
+  removeConnectedDevice: (
+    device: ConnectedDevice,
+    payWithGasToken: boolean,
+  ) => dispatch(removeConnectedDeviceAction(device, payWithGasToken)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(RemoveSmartWalletConnectedDevice);

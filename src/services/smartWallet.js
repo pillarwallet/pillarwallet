@@ -112,7 +112,7 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   };
 };
 
-export const formatEstimated = (estimated) => {
+export const formatEstimated = (estimated: ParsedEstimate) => {
   let { gasTokenCost, totalCost } = estimated;
   const { gasToken, relayerFeatures } = estimated;
   const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
@@ -255,18 +255,13 @@ class SmartWallet {
       });
   }
 
-  async unDeployAccountDevice(deviceAddress: string) {
+  async unDeployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
     const unDeployEstimate = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress).catch(this.handleError);
-
-    const accountBalance = this.getAccountRealBalance();
-    const { totalCost } = parseEstimatePayload(unDeployEstimate);
-
-    if (totalCost && accountBalance.gte(totalCost)) {
-      return this.sdk.submitAccountTransaction(unDeployEstimate);
-    }
-
-    console.log('insufficient balance: ', unDeployEstimate, accountBalance);
-    return null;
+    return this.sdk.submitAccountTransaction(unDeployEstimate, payForGasWithToken)
+      .catch((e) => {
+        this.reportError('Unable to undeploy device', { e });
+        return null;
+      });
   }
 
   getAccountRealBalance() {
