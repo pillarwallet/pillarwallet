@@ -151,7 +151,7 @@ type FooterProps = {
   showRelayerMigration: boolean,
   showFee: boolean,
   isLoading: boolean,
-}
+};
 
 
 const { Form } = t.form;
