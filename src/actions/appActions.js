@@ -233,9 +233,9 @@ export const initAppAndRedirectAction = () => {
   };
 };
 
-export const setupSentryAction = (user: Object, wallet: Object) => {
+export const setupSentryAction = (user: ?Object, wallet: Object) => {
   return async () => {
-    const { id, username, walletId = '' } = user;
+    const { id, username, walletId = '' } = user || {};
     const { address } = wallet;
     Sentry.setUser({
       id,

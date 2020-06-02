@@ -156,28 +156,6 @@ export const loginAction = (
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
 
-      const { address } = wallet;
-      dispatch({
-        type: DECRYPT_WALLET,
-        payload: {
-          address,
-          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
-        },
-      });
-
-      const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
-      if (isWalletRecoveryPending) {
-        dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
-        api.init();
-        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await smartWalletService.init(
-          wallet.privateKey,
-          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
-        );
-        dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
-        return;
-      }
-
       if (user.username) {
         dispatch({ type: SET_USERNAME, payload: user.username });
       }
@@ -283,8 +261,30 @@ export const loginAction = (
         dispatch(labelUserAsLegacyAction());
       }
 
+      const { address } = wallet;
+      dispatch({
+        type: DECRYPT_WALLET,
+        payload: {
+          address,
+          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
+        },
+      });
+
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
+      }
+
+      const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
+      if (isWalletRecoveryPending) {
+        dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
+        api.init();
+        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
+        await smartWalletService.init(
+          wallet.privateKey,
+          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
+        );
+        dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
+        return;
       }
 
       dispatch(fetchTransactionsHistoryAction());
