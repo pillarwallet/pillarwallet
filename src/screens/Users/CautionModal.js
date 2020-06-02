@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { ScrollView } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
@@ -54,19 +55,22 @@ const CautionModal = (props: Props) => {
     <ModalBox
       isVisible={isVisible}
       onModalHide={onModalHide}
+      modalStyle={{ marginVertical: 80 }}
     >
-      <ModalWrapper>
-        <MediumText center large>Proceed with caution</MediumText>
-        <Spacing h={38} />
-        <CautionImage source={cautionImage} />
-        <Spacing h={12} />
-        <BaseText center regular>
-          After changing {field} you will have to re-verify it in order to
-          retain the ability to invite friends and get rewarded.
-        </BaseText>
-        <Spacing h={32} />
-        <Button secondary small title={`Change my ${field}`} onPress={onButtonPress} />
-      </ModalWrapper>
+      <ScrollView>
+        <ModalWrapper>
+          <MediumText center large>Proceed with caution</MediumText>
+          <Spacing h={38} />
+          <CautionImage source={cautionImage} />
+          <Spacing h={12} />
+          <BaseText center regular>
+            After changing {field} you will have to re-verify it in order to
+            retain the ability to invite friends and get rewarded.
+          </BaseText>
+          <Spacing h={32} />
+          <Button secondary small title={`Change my ${field}`} onPress={onButtonPress} />
+        </ModalWrapper>
+      </ScrollView>
     </ModalBox>
   );
 };
