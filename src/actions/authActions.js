@@ -131,7 +131,7 @@ export const loginAction = (
     try {
       let wallet;
 
-      const keychainLogin = await canLoginWithPkFromPin(biometricsSetting);
+      const keychainLogin = await canLoginWithPkFromPin(!!biometricsSetting);
       if (pin && keychainLogin) {
         wallet = await getWalletFromPkByPin(pin);
       } else if (pin) {
