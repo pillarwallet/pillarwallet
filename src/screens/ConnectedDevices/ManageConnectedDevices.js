@@ -34,7 +34,7 @@ import Spinner from 'components/Spinner';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
-import { humanizeDateString } from 'utils/common';
+import { humanizeDateString, humanizeHexString } from 'utils/common';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import { addressesEqual } from 'utils/assets';
 import { images } from 'utils/images';
@@ -93,9 +93,8 @@ class ManageConnectedDevices extends React.Component<Props> {
         iconImageResizeMode="contain"
         iconImageSize={48}
         customLabel={(
-          <HorizontalView style={{ width: '60%' }}>
-            <ItemTitle numberOfLines={1} >Device </ItemTitle>
-            <ItemTitle numberOfLines={1} ellipsizeMode="middle">{deviceAddress}</ItemTitle>
+          <HorizontalView style={{ flex: 0.8 }}>
+            <ItemTitle>Device {humanizeHexString(deviceAddress)}</ItemTitle>
           </HorizontalView>
         )}
       >

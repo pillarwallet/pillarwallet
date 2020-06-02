@@ -595,3 +595,22 @@ export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasTo
 
   return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
 };
+
+export const humanizeHexString = (hexString) => {
+  if (!hexString) return '';
+
+  const startCharsCount = 6;
+  const endCharsCount = 4;
+  const separator = '...';
+  const totalTruncatedSum = startCharsCount + endCharsCount + separator.length;
+
+  const words = hexString.toString().split(' ');
+  const firstWord = words[0];
+
+  if (words.length === 1) {
+    if (firstWord.length <= totalTruncatedSum) return firstWord;
+    return `${firstWord.slice(0, startCharsCount)}${separator}${firstWord.slice(-endCharsCount)}`;
+  }
+
+  return hexString;
+};
