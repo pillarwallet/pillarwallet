@@ -331,7 +331,7 @@ export const checkAuthAction = (
   options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { appSettings: { data: { useBiometrics = false } } } = getState();
+    const { appSettings: { data: { useBiometrics } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
@@ -374,7 +374,7 @@ export const checkAuthAction = (
 export const changePinAction = (newPin: string, currentPin: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
-    const { appSettings: { data: { useBiometrics = false } } } = getState();
+    const { appSettings: { data: { useBiometrics } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,

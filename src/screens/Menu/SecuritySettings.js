@@ -196,11 +196,7 @@ class SecuritySettings extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: {
-    data: {
-      useBiometrics = false,
-    },
-  },
+  appSettings: { data: { useBiometrics } },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
 });

@@ -123,7 +123,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   accounts: { data: accounts },
   session: { data: { isOnline } },
-  appSettings: { data: { useBiometrics = false } },
+  appSettings: { data: { useBiometrics } },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
   accounts,
