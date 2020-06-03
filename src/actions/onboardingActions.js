@@ -84,7 +84,6 @@ import {
   setAppThemeAction,
   changeUseBiometricsAction,
   updateAppSettingsAction,
-  setInitialPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -233,9 +232,6 @@ const finishRegistration = async ({
   if (smartWalletFeatureEnabled) {
     dispatch(managePPNInitFlagAction());
   }
-
-  // set initial preferredGasToken value. Should be called after we connect to Archanova
-  dispatch(setInitialPreferredGasTokenAction());
 
   await dispatch({
     type: UPDATE_WALLET_STATE,

@@ -45,7 +45,11 @@ import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import { isGasTokenSupportedSelector, isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import {
+  isGasTokenSupportedSelector,
+  isActiveAccountSmartWalletSelector,
+  preferredGasTokenSelector,
+} from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 import { SettingsSection } from './SettingsSection';
@@ -392,7 +396,6 @@ const mapStateToProps = ({
       themeType,
       userJoinedBeta = false,
       optOutTracking = false,
-      preferredGasToken,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
@@ -400,7 +403,6 @@ const mapStateToProps = ({
   themeType,
   userJoinedBeta,
   optOutTracking,
-  preferredGasToken,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -408,6 +410,7 @@ const structuredSelector = createStructuredSelector({
   isSmartAccount: isActiveAccountSmartWalletSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
+  preferredGasToken: preferredGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
