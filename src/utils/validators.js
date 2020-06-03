@@ -135,6 +135,6 @@ export function isValidPhone(phone: string) {
 }
 
 export function isValidPhoneWithoutCountryCode(phone: string) {
-  const re = /^(\d{5,20}\b)/;
+  const re = /^(\d{5,20}$)/;
   return re.test(phone);
 }
