@@ -72,9 +72,19 @@ type State = {
   isLoading: boolean,
 }
 
+const ERROR_TIMEOUT = 15000;
+
 export default class CameraView extends React.Component<Props, State> {
   state = {
     isLoading: false,
+  }
+
+  timeout: TimeoutID;
+
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
   }
 
   handleError = () => {
@@ -92,6 +102,9 @@ export default class CameraView extends React.Component<Props, State> {
       includeBase64: true,
     })
       .then(image => {
+        this.timeout = setTimeout(() => {
+          this.handleError();
+        }, ERROR_TIMEOUT);
         const buffer = Buffer.from(image.data, 'base64');
         Jimp.read(buffer, (e, parsedImg) => {
           try {
@@ -114,6 +127,7 @@ export default class CameraView extends React.Component<Props, State> {
       .catch(() => {
         this.handleError();
       });
+    clearTimeout(this.timeout);
   }
 
   render() {
