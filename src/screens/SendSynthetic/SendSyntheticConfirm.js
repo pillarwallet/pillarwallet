@@ -17,28 +17,22 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
-import { View } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { SYNTHETICS_CONTRACT_ADDRESS } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
-import { Footer, ScrollWrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Button from 'components/Button';
-import { Label, MediumText, Paragraph } from 'components/Typography';
-import TextInput from 'components/TextInput';
+import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // util
-import { fontSizes, spacing } from 'utils/variables';
 import { findMatchingContact, getUserName } from 'utils/contacts';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { noop } from 'utils/common';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
@@ -48,7 +42,6 @@ import type { Asset } from 'models/Asset';
 import type { SyntheticTransaction } from 'models/Transaction';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -57,34 +50,12 @@ type Props = {
   availableStake: number,
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
-  theme: Theme,
 };
 
 type State = {
   note: ?string,
 };
 
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
-  width: 100%;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const Value = styled(MediumText)`
-  font-size: ${fontSizes.big}px;
-`;
-
-const WarningMessage = styled(Paragraph)`
-  text-align: center;
-  color: ${themedColors.negative};
-  padding-bottom: ${spacing.rhythm}px;
-`;
 
 class SendSyntheticConfirm extends React.Component<Props, State> {
   syntheticTransaction: SyntheticTransaction;
@@ -118,13 +89,9 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
   };
 
 
-  handleBack = () => {
-    this.props.navigation.goBack();
-  };
-
-  handleNoteChange(text) {
+  handleNoteChange = (text) => {
     this.setState({ note: text });
-  }
+  };
 
   render() {
     const {
@@ -132,9 +99,8 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
       availableStake,
       contacts,
       contactsSmartAddresses,
-      theme,
     } = this.props;
-    const colors = getThemeColors(theme);
+    const { note } = this.state;
 
     const {
       fromAmount,
@@ -151,70 +117,58 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
     const contact = findMatchingContact(toAddress, contacts, contactsSmartAddresses);
     const recipientUsername = getUserName(contact);
 
+    const reviewData = [];
+
+    if (recipientUsername) {
+      reviewData.push({
+        label: 'Recipient Username',
+        value: recipientUsername,
+      });
+    }
+
+    if (receiverEnsName) {
+      reviewData.push({
+        label: 'Recipient ENS name',
+        value: receiverEnsName,
+      });
+    }
+
+    if (receiverEnsName) {
+      reviewData.push({
+        label: 'Recipient ENS name',
+        value: receiverEnsName,
+      });
+    }
+
+    reviewData.push(
+      {
+        label: 'Recipient Address',
+        value: toAddress,
+      },
+      {
+        label: 'Recipient will get',
+        value: `${toAmount} ${toAssetCode}`,
+      },
+      {
+        label: 'You will pay',
+        value: `${fromAmount} PLR`,
+      },
+      {
+        label: 'Est. Network Fee',
+        value: 'free',
+      },
+    );
+
+
     return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: 'Review and confirm' }],
-          customOnBack: this.handleBack,
-        }}
-      >
-        <ScrollWrapper regularPadding>
-          <View>
-            {!!recipientUsername &&
-            <LabeledRow>
-              <Label>Recipient Username</Label>
-              <Value>{recipientUsername}</Value>
-            </LabeledRow>
-            }
-            {!!receiverEnsName &&
-            <LabeledRow>
-              <Label>Recipient ENS name</Label>
-              <Value>{receiverEnsName}</Value>
-            </LabeledRow>
-            }
-            <LabeledRow>
-              <Label>Recipient Address</Label>
-              <Value>{toAddress}</Value>
-            </LabeledRow>
-            <LabeledRow>
-              <Label>Recipient will get</Label>
-              <Value>{`${toAmount} ${toAssetCode}`}</Value>
-            </LabeledRow>
-            <LabeledRow>
-              <Label>You will pay</Label>
-              <Value>{`${fromAmount} PLR`}</Value>
-            </LabeledRow>
-          </View>
-          <LabeledRow>
-            <Label>Est. Network Fee</Label>
-            <Value>free</Value>
-          </LabeledRow>
-          {isOnline && !!recipientUsername &&
-            <TextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              keyboardAvoidance
-              inputWrapperStyle={{ marginTop: spacing.medium }}
-            />
-          }
-        </ScrollWrapper>
-        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
-          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
-          <FooterWrapper>
-            <Button
-              disabled={!!errorMessage}
-              onPress={this.onConfirmPress}
-              title="Confirm"
-            />
-          </FooterWrapper>
-        </Footer>
-      </ContainerWithHeader>
+      <ReviewAndConfirm
+        reviewData={reviewData}
+        onConfirm={this.onConfirmPress}
+        isConfirmDisabled={!!errorMessage}
+        errorMessage={errorMessage}
+        onTextChange={isOnline && !!recipientUsername ? this.handleNoteChange : noop}
+        textInputValue={note}
+      />
     );
   }
 }
@@ -239,4 +193,4 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-export default withTheme(connect(combinedMapStateToProps)(SendSyntheticConfirm));
+export default connect(combinedMapStateToProps)(SendSyntheticConfirm);

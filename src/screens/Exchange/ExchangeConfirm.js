@@ -134,7 +134,7 @@ const MainWrapper = styled.View`
 const FooterWrapper = styled.View`
   justify-content: center;
   align-items: center;
-  padding: 54px ${spacing.layoutSides}px 36px;
+  padding: ${spacing.large}px ${spacing.layoutSides}px 100px;
   width: 100%;
   background-color: ${themedColors.surface};
   border-top-color: ${themedColors.border};
@@ -157,6 +157,18 @@ const SettingsWrapper = styled.View`
 
 const SliderContentWrapper = styled.View`
   margin: 30px 0;
+`;
+
+const SafeArea = styled.SafeAreaView`
+  width: 100%;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+`;
+
+const ButtonWrapper = styled.SafeAreaView`
+  margin: ${spacing.large}px ${spacing.layoutSides}px;
 `;
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
@@ -483,15 +495,9 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             </SettingsWrapper>
           </MainWrapper>
           <FooterWrapper>
-            <Button
-              block
-              disabled={!session.isOnline || !!errorMessage || gettingFee}
-              onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={confirmButtonTitle}
-            />
             {!setTokenAllowance &&
             <React.Fragment>
-              <BaseText small center style={{ maxWidth: 242, marginTop: 24 }}>
+              <BaseText small center style={{ maxWidth: 242 }}>
                 Final rate may be slightly higher or lower at the end of the transaction.
               </BaseText>
               <HyperLink
@@ -503,6 +509,16 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             </React.Fragment>}
           </FooterWrapper>
         </ScrollWrapper>
+        <SafeArea>
+          <ButtonWrapper>
+            <Button
+              block
+              disabled={!session.isOnline || !!errorMessage || gettingFee}
+              onPress={() => this.onConfirmTransactionPress(offerOrder)}
+              title={confirmButtonTitle}
+            />
+          </ButtonWrapper>
+        </SafeArea>
         <SlideModal
           isVisible={showFeeModal}
           onModalHide={() => { this.setState({ showFeeModal: false }); }}
