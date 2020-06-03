@@ -89,7 +89,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     this.errorMessage = navigation.getParam('errorMessage', '');
     this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
 
-    if (navigation.getParam('forcePin')) {
+    if (!this.props.useBiometrics || navigation.getParam('forcePin')) {
       this.state.showPin = true;
     }
   }
@@ -122,11 +122,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const { useBiometrics } = this.props;
     if (useBiometrics) {
       this.showBiometricLogin();
-    } else {
-      getKeychainDataObject().then(data => {
-        this.loginWithPrivateKey(data);
-      }).catch(this.requirePinLogin);
-    }
+    } else { this.setState({ showPin: true }); }
   };
 
   handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
@@ -279,7 +275,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet,
-  appSettings: { data: { useBiometrics = false } },
+  appSettings: { data: { useBiometrics } },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,

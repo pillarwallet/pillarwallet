@@ -84,7 +84,6 @@ import {
   setAppThemeAction,
   changeUseBiometricsAction,
   updateAppSettingsAction,
-  setInitialPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -173,6 +172,7 @@ const finishRegistration = async ({
   address,
   isImported,
   enableBiometrics,
+  pin,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
@@ -180,6 +180,7 @@ const finishRegistration = async ({
   privateKey: string,
   address: string,
   isImported: boolean,
+  pin: string,
   mnemonic?: string,
   enableBiometrics?: boolean,
 }) => {
@@ -225,16 +226,13 @@ const finishRegistration = async ({
 
   dispatch(managePPNInitFlagAction());
 
-  // set initial preferredGasToken value. Should be called after we connect to Archanova
-  dispatch(setInitialPreferredGasTokenAction());
-
   await dispatch({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
   });
 
   // save data to keychain
-  const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
+  const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey, pin };
   if (enableBiometrics) {
     await dispatch(changeUseBiometricsAction(true, keychainData, true));
   } else {
@@ -386,6 +384,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       isImported,
       enableBiometrics,
       mnemonic: wallet.mnemonic,
+      pin,
     });
 
     // STEP 6: add wallet created / imported events
@@ -419,6 +418,7 @@ export const registerOnBackendAction = () => {
           mnemonic,
           privateKey,
           importedWallet,
+          pin,
         },
         backupStatus: { isImported },
       },
@@ -453,6 +453,7 @@ export const registerOnBackendAction = () => {
       mnemonic: walletMnemonic,
       privateKey: walletPrivateKey,
       isImported,
+      pin,
     });
 
     dispatch(checkForWalletBackupToastAction());

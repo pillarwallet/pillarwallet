@@ -32,13 +32,13 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { spacing, fontStyles } from 'utils/variables';
 import { getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -213,7 +213,6 @@ class TankWithdrawal extends React.Component<Props, State> {
       gasToken,
     });
     const feeSymbol = get(gasToken, 'symbol', ETH);
-    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
     const maxAmount = calculateMaxAmount(token, availableStake, txFeeInWei);
@@ -243,8 +242,11 @@ class TankWithdrawal extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: 'Withdraw from PLR tank' }] }}
         footer={(
           <FooterInner>
-            {!withdrawalFee.isFetched && <Spinner width={20} height={20} />}
-            {withdrawalFee.isFetched && <Label>Estimated fee: {feeDisplayValue}</Label>}
+            <FeeLabelToggle
+              txFeeInWei={txFeeInWei}
+              gasToken={gasToken}
+              isLoading={!withdrawalFee.isFetched}
+            />
             {!!value && !!parseFloat(value.amount) && !inputHasError &&
             <Button
               disabled={!session.isOnline || !withdrawalFee.isFetched}

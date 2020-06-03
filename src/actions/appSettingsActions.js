@@ -31,7 +31,6 @@ import {
 } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { PLR } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -41,10 +40,10 @@ import { firebaseAnalytics } from 'services/firebase';
 
 // selectors
 import { activeAccountSelector, activeBlockchainSelector } from 'selectors';
-import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // utils
 import { setKeychainDataObject } from 'utils/keychain';
+import { delay } from 'utils/common';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -138,11 +137,13 @@ export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, no
       },
     });
     if (!noToast) {
-      Toast.show({
-        message,
-        type: 'success',
-        title: 'Success',
-      });
+      delay(200)
+        .then(() => Toast.show({
+          message,
+          type: 'success',
+          title: 'Success',
+        }))
+        .catch(() => null);
     }
   };
 };
@@ -269,12 +270,5 @@ export const setPreferredGasTokenAction = (preferredGasToken: string) => {
       type: UPDATE_APP_SETTINGS,
       payload: { preferredGasToken },
     });
-  };
-};
-
-export const setInitialPreferredGasTokenAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    if (!isGasTokenSupportedSelector(getState())) return;
-    dispatch(setPreferredGasTokenAction(PLR));
   };
 };
