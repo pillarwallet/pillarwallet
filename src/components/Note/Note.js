@@ -42,6 +42,7 @@ const NoteWrapper = styled.View`
   background-color: ${themedColors.card};
   border: 1px solid ${themedColors.border};
   padding: ${spacing.layoutSides}px;
+  padding-top: ${({ additionalPaddingTop }) => additionalPaddingTop ? '24' : spacing.layoutSides}px;
   border-radius: 4px;
 `;
 
@@ -78,7 +79,7 @@ export const Note = withTheme((props: Props) => {
   const colors = getThemeColors(theme);
 
   return (
-    <NoteWrapper style={containerStyle}>
+    <NoteWrapper additionalPaddingTop={!!onClose} style={containerStyle}>
       <TextWrapper>
         <Text style={{ lineHeight: 19 }}>
           <NoteText>
