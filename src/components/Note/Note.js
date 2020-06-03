@@ -19,17 +19,21 @@
 */
 import * as React from 'react';
 import { Text } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 import { BaseText } from 'components/Typography';
-import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import IconButton from 'components/IconButton';
+import { fontStyles, spacing, fontSizes } from 'utils/variables';
+import { themedColors, getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
   note: string | React.Node,
   emoji?: string,
   containerStyle?: Object,
   children?: React.Node,
+  onClose?: () => void,
+  theme: Theme,
 }
 
 const NoteWrapper = styled.View`
@@ -38,6 +42,7 @@ const NoteWrapper = styled.View`
   background-color: ${themedColors.card};
   border: 1px solid ${themedColors.border};
   padding: ${spacing.layoutSides}px;
+  padding-top: ${({ additionalPaddingTop }) => additionalPaddingTop ? '24' : spacing.layoutSides}px;
   border-radius: 4px;
 `;
 
@@ -55,15 +60,26 @@ const NoteEmoji = styled(Emoji)`
   color: #000000;
 `;
 
-export const Note = (props: Props) => {
+const CloseIcon = styled(IconButton)`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px;
+`;
+
+export const Note = withTheme((props: Props) => {
   const {
     note,
     emoji,
     containerStyle,
     children,
+    onClose,
+    theme,
   } = props;
+  const colors = getThemeColors(theme);
+
   return (
-    <NoteWrapper style={containerStyle}>
+    <NoteWrapper additionalPaddingTop={!!onClose} style={containerStyle}>
       <TextWrapper>
         <Text style={{ lineHeight: 19 }}>
           <NoteText>
@@ -74,6 +90,7 @@ export const Note = (props: Props) => {
         </Text>
       </TextWrapper>
       {children}
+      {onClose && <CloseIcon icon="close" color={colors.labelTertiary} fontSize={fontSizes.tiny} onPress={onClose} />}
     </NoteWrapper>
   );
-};
+});

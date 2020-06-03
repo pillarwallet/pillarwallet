@@ -29,7 +29,6 @@ import { withTheme } from 'styled-components';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
@@ -52,7 +51,6 @@ import SendBitcoinTransactionScreen from 'screens/SendBitcoin/SendBitcoinTransac
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
-import LoginScreen from 'screens/Home/Login';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
@@ -136,12 +134,10 @@ import {
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
-  PROFILE,
   PEOPLE,
   CONTACT,
   HOME,
   HOME_TAB,
-  LOGIN,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -360,8 +356,6 @@ walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
 // HOME FLOW
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
-  [LOGIN]: LoginScreen,
-  [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
