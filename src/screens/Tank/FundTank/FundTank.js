@@ -32,13 +32,13 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -212,7 +212,6 @@ class FundTank extends React.Component<Props, State> {
       gasToken,
     });
     const feeSymbol = get(gasToken, 'symbol', ETH);
-    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
     // max amount
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
@@ -242,8 +241,11 @@ class FundTank extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: 'Fund PLR tank' }] }}
         footer={(
           <FooterInner>
-            {!topUpFee.isFetched && balance > 0 && <Spinner width={20} height={20} />}
-            {topUpFee.isFetched && <Label>Estimated fee: {feeDisplayValue}</Label>}
+            <FeeLabelToggle
+              txFeeInWei={txFeeInWei}
+              gasToken={gasToken}
+              isLoading={!topUpFee.isFetched && balance > 0}
+            />
             {!!value && !!parseFloat(value.amount) && !inputHasError &&
             <Button
               disabled={!session.isOnline || !topUpFee.isFetched}
