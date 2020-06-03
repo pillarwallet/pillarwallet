@@ -54,12 +54,13 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 // utils
 import { delay, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
-import { findKeyBasedAccount, getActiveAccountType } from 'utils/accounts';
-import { toastWalletBackup } from 'utils/toasts';
+import { getActiveAccountType } from 'utils/accounts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
-import { setKeychainDataObject, resetKeychainDataObject } from 'utils/keychain';
+import {
+  setKeychainDataObject, resetKeychainDataObject, getWalletFromPkByPin, canLoginWithPkFromPin,
+} from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -78,7 +79,7 @@ import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
 import { signalInitAction } from './signalClientActions';
 import { initOnLoginSmartWalletAccountAction, switchAccountAction } from './accountsActions';
-import { updatePinAttemptsAction } from './walletActions';
+import { checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setInitialPreferredGasTokenAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
@@ -115,11 +116,11 @@ export const loginAction = (
   useBiometrics?: ?boolean,
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    let { accounts: { data: accounts } } = getState();
     const {
-      appSettings: { data: { blockchainNetwork = '', preferredGasToken } },
+      appSettings: { data: { blockchainNetwork = '', preferredGasToken, useBiometrics: biometricsSetting } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
+      accounts: { data: accounts },
     } = getState();
 
     dispatch({
@@ -130,14 +131,23 @@ export const loginAction = (
     try {
       let wallet;
 
-      if (pin) {
+      const keychainLogin = await canLoginWithPkFromPin(!!biometricsSetting);
+      if (pin && keychainLogin) {
+        wallet = await getWalletFromPkByPin(pin);
+      } else if (pin) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access OR fallback for biometrics login
-        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' }, useBiometrics);
+        await setKeychainDataObject(
+          {
+            pin,
+            privateKey: wallet.privateKey,
+            mnemonic: wallet.mnemonic || '',
+          },
+          useBiometrics);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       } else {
@@ -241,9 +251,6 @@ export const loginAction = (
         api.init();
       }
 
-      // re-fetch accounts as they might change at this point
-      accounts = getState().accounts.data;
-
       firebaseCrashlytics.setUserId(user.username);
       dispatch({
         type: UPDATE_USER,
@@ -296,18 +303,7 @@ export const loginAction = (
         action: navigateToRoute,
       });
 
-      // show toast if the wallet wasn't backed up
-      const {
-        isImported,
-        isBackedUp,
-      } = getState().wallet.backupStatus;
-
-      const isWalletBackedUp = isImported || isBackedUp;
-      const keyBasedAccount = findKeyBasedAccount(accounts);
-      if (keyBasedAccount) {
-        toastWalletBackup(isWalletBackedUp);
-      }
-
+      dispatch(checkForWalletBackupToastAction());
       dispatch(getWalletsCreationEventsAction());
       navigate(navigateToAppAction);
     } catch (e) {
@@ -334,18 +330,22 @@ export const checkAuthAction = (
   onValidPin?: Function,
   options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { useBiometrics } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
     try {
       let wallet;
-      if (pin) {
+      // fallback if biometrics check fails, or is rejected by user
+      if (pin && useBiometrics) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, options);
+      } else if (pin) {
+        wallet = await getWalletFromPkByPin(pin, options.mnemonic);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       }
@@ -372,9 +372,9 @@ export const checkAuthAction = (
 };
 
 export const changePinAction = (newPin: string, currentPin: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
-
+    const { appSettings: { data: { useBiometrics } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,
@@ -391,6 +391,9 @@ export const changePinAction = (newPin: string, currentPin: string) => {
       .catch(() => ({}));
 
     dispatch(saveDbAction('wallet', { wallet: newEncryptedWallet }));
+
+    const { privateKey, mnemonic } = wallet;
+    await setKeychainDataObject({ privateKey, mnemonic, pin: newPin }, useBiometrics);
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,

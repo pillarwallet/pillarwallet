@@ -30,7 +30,6 @@ import {
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import get from 'lodash.get';
 
 import { ETH } from 'constants/assetsConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
@@ -346,7 +345,7 @@ class TextInput extends React.Component<Props, State> {
       this.setState({
         isFocused: true,
       });
-    }, 500);
+    }, 250);
   };
 
   handleMultilineFocus = () => {
@@ -623,11 +622,8 @@ class TextInput extends React.Component<Props, State> {
               <InputField
                 {...inputProps}
                 innerRef={(input) => {
-                  const inputRoot = get(input, '_root');
-                  if (inputRoot) {
-                    this.multilineInputField = inputRoot;
-                    if (getInputRef) getInputRef(inputRoot);
-                  }
+                  if (getInputRef) getInputRef(input);
+                  this.multilineInputField = input;
                 }}
                 onChange={this.handleChange}
                 onBlur={this.handleBlur}

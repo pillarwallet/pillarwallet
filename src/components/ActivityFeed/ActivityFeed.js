@@ -27,6 +27,7 @@ import memoize from 'memoize-one';
 // types
 import type { Transaction } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+import type { EventData } from 'components/ActivityFeed/ActivityFeedItem';
 
 // components
 import Title from 'components/Title';
@@ -123,11 +124,14 @@ type Props = {
   headerComponent?: React.Node,
   flatListProps?: FlatList,
   isPPNView?: boolean,
+  isForAllAccounts?: boolean,
+  isAssetView?: boolean,
 };
 
 type State = {|
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
+  selectedEventItemData: ?EventData,
   tabIsChanging: boolean,
 |};
 
@@ -140,8 +144,6 @@ const ITEM_TYPE = {
 };
 
 class ActivityFeed extends React.Component<Props, State> {
-  eventDetailScrollViewRef: ?Object;
-
   static defaultProps = {
     initialNumToRender: 7,
   };
@@ -149,6 +151,7 @@ class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
     selectedEventData: null,
+    selectedEventItemData: null,
     tabIsChanging: false,
   };
 
@@ -202,9 +205,10 @@ class ActivityFeed extends React.Component<Props, State> {
     return !isEq;
   }
 
-  selectEvent = (eventData: Object) => {
+  selectEvent = (eventData: Object, itemData: Object) => {
     this.setState({
       selectedEventData: eventData,
+      selectedEventItemData: itemData,
       showModal: true,
     });
   };
@@ -215,7 +219,7 @@ class ActivityFeed extends React.Component<Props, State> {
       TYPE_SENT, TYPE_RECEIVED, TYPE_ACCEPTED,
     ];
     return typesThatRender.includes(item.type);
-  }
+  };
 
   renderActivityFeedItem = ({ item }) => {
     switch (item.type) {
@@ -236,7 +240,13 @@ class ActivityFeed extends React.Component<Props, State> {
           </SectionHeaderWrapper>
         );
       default:
-        const { onRejectInvitation, onAcceptInvitation, isPPNView } = this.props;
+        const {
+          onRejectInvitation,
+          onAcceptInvitation,
+          isPPNView,
+          isForAllAccounts,
+          isAssetView,
+        } = this.props;
         return (
           <ActivityFeedItem
             event={item.item}
@@ -244,6 +254,8 @@ class ActivityFeed extends React.Component<Props, State> {
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
             isPPNView={isPPNView}
+            isAssetView={isAssetView}
+            isForAllAccounts={isForAllAccounts}
           />
         );
     }
@@ -296,12 +308,14 @@ class ActivityFeed extends React.Component<Props, State> {
       flatListProps,
       onRejectInvitation,
       onAcceptInvitation,
+      isForAllAccounts,
     } = this.props;
 
     const {
       showModal,
       selectedEventData,
       tabIsChanging,
+      selectedEventItemData,
     } = this.state;
 
     const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
@@ -344,10 +358,12 @@ class ActivityFeed extends React.Component<Props, State> {
           <EventDetails
             isVisible={showModal}
             event={selectedEventData}
+            itemData={selectedEventItemData}
             navigation={navigation}
             onClose={this.handleClose}
             rejectInvitation={onRejectInvitation}
             acceptInvitation={onAcceptInvitation}
+            isForAllAccounts={isForAllAccounts}
           />
         }
       </ActivityFeedWrapper>

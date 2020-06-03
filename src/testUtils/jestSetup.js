@@ -290,7 +290,9 @@ jest.setMock('@smartwallet/sdk', {
 
 jest.setMock('react-native-keychain', {
   setGenericPassword: jest.fn().mockResolvedValue(),
-  getGenericPassword: jest.fn().mockResolvedValue(),
+  getGenericPassword: jest.fn(() => new Promise((resolve) => resolve({
+    pin: '123456', privateKey: 'testKey', mnemonic: 'testMnemonic',
+  }))),
   resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {
     BIOMETRY_ANY: 'BIOMETRY_ANY',

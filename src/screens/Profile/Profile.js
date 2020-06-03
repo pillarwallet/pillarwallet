@@ -384,7 +384,7 @@ class Profile extends React.Component<Props, State> {
 
   onPinValid = (pin, { mnemonic, privateKey }) => {
     const { useBiometrics } = this.props;
-    this.handleChangeUseBiometrics(!useBiometrics, { mnemonic, privateKey });
+    this.handleChangeUseBiometrics(!useBiometrics, { pin, mnemonic, privateKey });
   }
 
   render() {

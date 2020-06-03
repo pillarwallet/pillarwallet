@@ -353,7 +353,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   wallet: { backupStatus },
   assets: { assetsState },
-  appSettings: { data: { useBiometrics = false } },
+  appSettings: { data: { useBiometrics } },
   badges: { data: badges },
   smartWallet: smartWalletState,
   blockchainNetwork: { data: blockchainNetworks },

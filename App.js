@@ -28,6 +28,7 @@ import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
+import DeviceInfo from 'react-native-device-info';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -98,7 +99,11 @@ class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
+      const dist = DeviceInfo.getBuildNumber();
+      const release = `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${dist}`;
       Sentry.init({ dsn: SENTRY_DSN });
+      Sentry.setRelease(release);
+      Sentry.setDist(dist);
       Sentry.setTags({ environment: BUILD_TYPE });
     }
   }
