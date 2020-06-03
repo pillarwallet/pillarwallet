@@ -395,19 +395,15 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
 
 export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
     await dispatch(fetchAccountAssetsBalancesAction(activeAccount, showToastIfIncreased));
     dispatch(fetchAccountAssetsRatesAction());
 
-    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
+    if (checkIfSmartWalletAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
@@ -415,10 +411,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
 
 export const fetchAllAccountsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
@@ -429,8 +422,7 @@ export const fetchAllAccountsBalancesAction = () => {
     await Promise.all(promises).catch(_ => _);
     dispatch(fetchAllAccountsAssetsRatesAction());
 
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
-    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
+    if (checkIfSmartWalletAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };

@@ -178,7 +178,6 @@ type Props = {
   useBiometrics: ?boolean,
   changeUseBiometrics: (enabled: boolean, data: KeyChainData) => void,
   cleanSmartWalletAccounts: Function,
-  smartWalletFeatureEnabled: boolean,
   logScreenView: (view: string, screen: string) => void,
   logEvent: (name: string) => void,
   saveOptOutTracking: (status: boolean) => void,
@@ -397,7 +396,6 @@ class Profile extends React.Component<Props, State> {
       appSettings: { appearanceSettings },
       backupStatus,
       useBiometrics,
-      smartWalletFeatureEnabled,
       optOutTracking,
       setUserJoinedBeta,
       userJoinedBeta,
@@ -761,18 +759,16 @@ class Profile extends React.Component<Props, State> {
               htmlEndpoint="privacy_policy"
             />
 
-            {smartWalletFeatureEnabled && (
-              <React.Fragment>
-                <ListSeparator>
-                  <SubHeading>Smart Wallet</SubHeading>
-                </ListSeparator>
-                <ProfileSettingsItem
-                  key="clearSmartAccounts"
-                  label="Clear Smart Accounts"
-                  onPress={() => { this.props.cleanSmartWalletAccounts(); }}
-                />
-              </React.Fragment>
-            )}
+            <React.Fragment>
+              <ListSeparator>
+                <SubHeading>Smart Wallet</SubHeading>
+              </ListSeparator>
+              <ProfileSettingsItem
+                key="clearSmartAccounts"
+                label="Clear Smart Accounts"
+                onPress={() => { this.props.cleanSmartWalletAccounts(); }}
+              />
+            </React.Fragment>
 
             {!!__DEV__ &&
             <React.Fragment>
@@ -884,7 +880,6 @@ const mapStateToProps = ({
   },
   notifications: { intercomNotificationsCount },
   wallet: { backupStatus },
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
 }: RootReducerState): $Shape<Props> => ({
   user,
   baseFiatCurrency,
@@ -892,7 +887,6 @@ const mapStateToProps = ({
   appSettings,
   backupStatus,
   useBiometrics,
-  smartWalletFeatureEnabled,
   optOutTracking,
   userJoinedBeta,
 });

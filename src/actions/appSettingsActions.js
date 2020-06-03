@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import branchIo from 'react-native-branch';
-import get from 'lodash.get';
 import set from 'lodash.set';
 import { Appearance } from 'react-native-appearance';
 
@@ -41,6 +40,7 @@ import Toast from 'components/Toast';
 import { firebaseAnalytics } from 'services/firebase';
 
 // selectors
+import { activeAccountSelector, activeBlockchainSelector } from 'selectors';
 import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // utils
@@ -169,11 +169,17 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
     if (userJoinedBeta) {
       message = 'You have successfully been added to the Early Access program queue.';
     } else {
-      // in case user opts out when PPN is set as active
-      dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-      // in case user opts out when Smart wallet account is active
-      const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-      if (keyBasedAccount) dispatch(switchAccountAction(keyBasedAccount.id));
+      // in case user opts out when Bitcoin is set as active
+      const activeBlockchain = activeBlockchainSelector(getState());
+      if (activeBlockchain === BLOCKCHAIN_NETWORK_TYPES.BITCOIN) {
+        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+      }
+      const activeAccount = activeAccountSelector(getState());
+      if (activeAccount && activeAccount.type === ACCOUNT_TYPES.BITCOIN_WALLET) {
+        const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET)
+         || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+        if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
+      }
       message = 'You have successfully left Early Access program.';
     }
 
@@ -268,11 +274,7 @@ export const setPreferredGasTokenAction = (preferredGasToken: string) => {
 
 export const setInitialPreferredGasTokenAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-    const isGasTokenSupported = isGasTokenSupportedSelector(getState());
-
-    if (smartWalletFeatureEnabled && isGasTokenSupported) {
-      dispatch(setPreferredGasTokenAction(PLR));
-    }
+    if (!isGasTokenSupportedSelector(getState())) return;
+    dispatch(setPreferredGasTokenAction(PLR));
   };
 };

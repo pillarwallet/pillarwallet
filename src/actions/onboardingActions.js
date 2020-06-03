@@ -167,7 +167,6 @@ const getTokenWalletAndRegister = async (
 const finishRegistration = async ({
   api,
   dispatch,
-  getState,
   userInfo,
   mnemonic,
   privateKey,
@@ -177,7 +176,6 @@ const finishRegistration = async ({
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
-  getState: GetState,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
   address: string,
@@ -216,21 +214,16 @@ const finishRegistration = async ({
 
   dispatch(loadFeatureFlagsAction(userInfo));
 
-  const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
-  if (smartWalletFeatureEnabled) {
-    // create smart wallet account only for new wallets
-    const createNewAccount = !isImported;
-    await dispatch(initSmartWalletSdkAction(privateKey));
-    await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
-  }
+  // create smart wallet account only for new wallets
+  const createNewAccount = !isImported;
+  await dispatch(initSmartWalletSdkAction(privateKey));
+  await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
 
   await dispatch(fetchTransactionsHistoryAction());
   dispatch(updateConnectionsAction());
   dispatch(labelUserAsLegacyAction());
 
-  if (smartWalletFeatureEnabled) {
-    dispatch(managePPNInitFlagAction());
-  }
+  dispatch(managePPNInitFlagAction());
 
   // set initial preferredGasToken value. Should be called after we connect to Archanova
   dispatch(setInitialPreferredGasTokenAction());
@@ -284,7 +277,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     // STEP 0: Clear local storage and reset app state
     if (isImported) {
-      await resetAppState(dispatch, getState);
+      await resetAppState();
     } else {
       await storage.removeAll();
     }
@@ -387,7 +380,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     await finishRegistration({
       api,
       dispatch,
-      getState,
       userInfo,
       address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
@@ -456,7 +448,6 @@ export const registerOnBackendAction = () => {
     await finishRegistration({
       api,
       dispatch,
-      getState,
       userInfo,
       address: normalizeWalletAddress(walletData.address),
       mnemonic: walletMnemonic,
