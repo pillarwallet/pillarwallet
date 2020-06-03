@@ -67,7 +67,7 @@ import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 
 // constants
-import { defaultFiatCurrency, ETH, BTC } from 'constants/assetsConstants';
+import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -94,6 +94,7 @@ import {
   SET_SMART_WALLET_ACCOUNT_ENS,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
   CHAT,
@@ -115,6 +116,7 @@ import {
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
+  activeBlockchainSelector,
   bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
@@ -125,6 +127,7 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // types
@@ -164,6 +167,7 @@ type Props = {
   assetDecimals: number,
   activeAccountAddress: string,
   accountAssets: Assets,
+  activeBlockchainNetwork: string,
   bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
@@ -173,6 +177,8 @@ type Props = {
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
+  bitcoinFeatureEnabled?: boolean,
+  setActiveBlockchainNetwork: (id: string) => void,
   refreshBitcoinBalance: () => void,
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
@@ -556,10 +562,12 @@ export class EventDetail extends React.Component<Props, State> {
       onClose,
       navigation,
       supportedAssets,
+      setActiveBlockchainNetwork,
       refreshBitcoinBalance,
       isForAllAccounts,
     } = this.props;
     onClose();
+    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
     refreshBitcoinBalance();
     const btcToken = supportedAssets.find(e => e.symbol === BTC);
 
@@ -715,6 +723,7 @@ export class EventDetail extends React.Component<Props, State> {
       isPPNActivated,
       itemData,
       bitcoinAddresses,
+      bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
     } = this.props;
 
@@ -973,7 +982,11 @@ export class EventDetail extends React.Component<Props, State> {
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
             } else if (isBitcoinTrx) {
-              buttons = isPending ? [viewOnBlockchainButton] : [sendBackBtc];
+              if (bitcoinFeatureEnabled) {
+                buttons = isPending ? [viewOnBlockchainButton] : [sendBackBtc];
+              } else {
+                buttons = [];
+              }
             } else if (contactFound) {
               buttons = isPending
                 ? [messageButton, viewOnBlockchainButtonSecondary]
@@ -984,7 +997,11 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
           } else if (isBitcoinTrx) {
-            buttons = isPending ? [viewOnBlockchainButton] : [sendMoreBtc];
+            if (bitcoinFeatureEnabled) {
+              buttons = isPending ? [viewOnBlockchainButton] : [sendMoreBtc];
+            } else {
+              buttons = [];
+            }
           } else if (contactFound) {
             buttons = isPending
               ? [messageButton, viewOnBlockchainButtonSecondary]
@@ -1395,6 +1412,11 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history },
+  featureFlags: {
+    data: {
+      BITCOIN_ENABLED: bitcoinFeatureEnabled,
+    },
+  },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   rates,
@@ -1406,6 +1428,7 @@ const mapStateToProps = ({
   ensRegistry,
   supportedAssets,
   history,
+  bitcoinFeatureEnabled,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
 });

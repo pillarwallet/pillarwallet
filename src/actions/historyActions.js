@@ -485,17 +485,24 @@ export const fetchTransactionsHistoryAction = (forAllAccounts?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
+      appSettings: { data: { blockchainNetwork } = {} },
+      featureFlags: {
+        data: {
+          BITCOIN_ENABLED: bitcoinFeatureEnabled,
+        },
+      },
     } = getState();
-
 
     if (forAllAccounts) {
       await dispatch(restoreTransactionHistoryAction());
       await dispatch(fetchSmartWalletTransactionsAction());
-      await dispatch(fetchBTCTransactionsHistoryAction());
+      if (bitcoinFeatureEnabled) dispatch(fetchBTCTransactionsHistoryAction());
       return Promise.resolve();
     }
 
-    await dispatch(fetchBTCTransactionsHistoryAction());
+    if (blockchainNetwork && blockchainNetwork === 'BITCOIN') {
+      return dispatch(fetchBTCTransactionsHistoryAction());
+    }
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return Promise.resolve();

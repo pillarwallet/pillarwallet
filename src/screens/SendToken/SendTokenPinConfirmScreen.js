@@ -37,6 +37,7 @@ type Props = {
   accounts: Accounts,
   isOnline: boolean,
   logEvent: (name: string, properties: Object) => void,
+  useBiometrics: boolean,
 }
 
 type State = {
@@ -104,6 +105,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 
   render() {
     const { isChecking, errorMessage } = this.state;
+    const { useBiometrics } = this.props;
 
     return (
       <CheckAuth
@@ -112,6 +114,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
         pinError={!!errorMessage}
         errorMessage={errorMessage}
         headerProps={{ onBack: this.handleBack }}
+        enforcePin={!useBiometrics}
       />
     );
   }
@@ -120,7 +123,9 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   accounts: { data: accounts },
   session: { data: { isOnline } },
+  appSettings: { data: { useBiometrics } },
 }: RootReducerState): $Shape<Props> => ({
+  useBiometrics,
   accounts,
   isOnline,
 });

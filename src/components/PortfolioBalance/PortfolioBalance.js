@@ -82,6 +82,18 @@ const LabelText = styled(BaseText)`
   margin-bottom: 8px;
 `;
 
+const getCombinedBalances = (props: Props): number => {
+  const {
+    balances,
+    fiatCurrency,
+    rates,
+    bitcoinBalances,
+  } = props;
+
+  return calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency)
+    + calculateBalanceInFiat(rates, balances, fiatCurrency);
+};
+
 class PortfolioBalance extends React.PureComponent<Props> {
   render() {
     const {
@@ -89,11 +101,9 @@ class PortfolioBalance extends React.PureComponent<Props> {
       fiatCurrency,
       showBalance,
       toggleBalanceVisibility,
-      rates,
-      balances,
     } = this.props;
 
-    const combinedBalance = calculateBalanceInFiat(rates, balances, fiatCurrency);
+    const combinedBalance = getCombinedBalances(this.props);
 
     return (
       <BalanceWrapper>
@@ -121,8 +131,10 @@ class PortfolioBalance extends React.PureComponent<Props> {
 
 const mapStateToProps = ({
   rates: { data: rates },
+  bitcoin: { data: { balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
+  bitcoinBalances,
 });
 
 const structuredSelector = createStructuredSelector({

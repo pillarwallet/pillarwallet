@@ -20,13 +20,16 @@
 
 import {
   DISMISS_SMART_WALLET_INSIGHT,
+  DISMISS_PRIVACY_INSIGHT,
+  DISMISS_VERIFICATION_NOTE,
   SET_INSIGHTS_STATE,
   DISMISS_REFER_FRIENDS_ON_HOME_SCREEN,
 } from 'constants/insightsConstants';
 
 export type InsightsReducerState = {
   SWInsightDismissed: boolean,
-  PPNInsightDismissed: boolean,
+  privacyInsightDismissed: boolean,
+  verificationNoteDismissed: boolean,
   referFriendsOnHomeScreenDismissed: boolean,
 };
 
@@ -37,7 +40,8 @@ export type InsightsReducerAction = {
 
 export const initialState = {
   SWInsightDismissed: false,
-  PPNInsightDismissed: false,
+  privacyInsightDismissed: false,
+  verificationNoteDismissed: false,
   referFriendsOnHomeScreenDismissed: false,
 };
 
@@ -50,6 +54,16 @@ export default function insightsReducer(
       return {
         ...state,
         SWInsightDismissed: true,
+      };
+    case DISMISS_PRIVACY_INSIGHT:
+      return {
+        ...state,
+        privacyInsightDismissed: true,
+      };
+    case DISMISS_VERIFICATION_NOTE:
+      return {
+        ...state,
+        verificationNoteDismissed: true,
       };
     case DISMISS_REFER_FRIENDS_ON_HOME_SCREEN:
       return {

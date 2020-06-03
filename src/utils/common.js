@@ -74,11 +74,11 @@ export const reportLog = (
   level: Sentry.Severity = Sentry.Severity.Info,
 ) => {
   Sentry.withScope((scope) => {
+    scope.setExtras({ extra, level });
     if (level === Sentry.Severity.Info) {
-      if (!isEmpty(extra)) scope.setExtras(extra);
       Sentry.captureMessage(message, Sentry.Severity.Info);
     } else {
-      Sentry.captureException({ message, level, extra });
+      Sentry.captureException(new Error(message));
     }
   });
   printLog(`${level}: ${message}`, extra);

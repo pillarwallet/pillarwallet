@@ -33,11 +33,11 @@ import {
   FETCHING_INITIAL,
   FETCH_INITIAL_FAILED,
   ETH,
-  BTC,
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
   PLR,
+  BTC,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -355,9 +355,10 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
 export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const allBalances = getState().balances.data;
+    const currentAccountBalances = allBalances[accountId] || {};
     const updatedBalances = {
       ...allBalances,
-      [accountId]: balances,
+      [accountId]: { ...currentAccountBalances, ...balances },
     };
     dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
     dispatch({

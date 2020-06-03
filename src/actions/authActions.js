@@ -58,7 +58,9 @@ import { getActiveAccountType } from 'utils/accounts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
-import { setKeychainDataObject, resetKeychainDataObject } from 'utils/keychain';
+import {
+  setKeychainDataObject, resetKeychainDataObject, getWalletFromPkByPin, canLoginWithPkFromPin,
+} from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -115,7 +117,7 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork = '', preferredGasToken } },
+      appSettings: { data: { blockchainNetwork = '', preferredGasToken, useBiometrics: biometricsSetting } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
@@ -129,14 +131,23 @@ export const loginAction = (
     try {
       let wallet;
 
-      if (pin) {
+      const keychainLogin = await canLoginWithPkFromPin(!!biometricsSetting);
+      if (pin && keychainLogin) {
+        wallet = await getWalletFromPkByPin(pin);
+      } else if (pin) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access OR fallback for biometrics login
-        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' }, useBiometrics);
+        await setKeychainDataObject(
+          {
+            pin,
+            privateKey: wallet.privateKey,
+            mnemonic: wallet.mnemonic || '',
+          },
+          useBiometrics);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       } else {
@@ -317,18 +328,22 @@ export const checkAuthAction = (
   onValidPin?: Function,
   options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { useBiometrics } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
     try {
       let wallet;
-      if (pin) {
+      // fallback if biometrics check fails, or is rejected by user
+      if (pin && useBiometrics) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, options);
+      } else if (pin) {
+        wallet = await getWalletFromPkByPin(pin, options.mnemonic);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       }
@@ -355,9 +370,9 @@ export const checkAuthAction = (
 };
 
 export const changePinAction = (newPin: string, currentPin: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
-
+    const { appSettings: { data: { useBiometrics } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,
@@ -374,6 +389,9 @@ export const changePinAction = (newPin: string, currentPin: string) => {
       .catch(() => ({}));
 
     dispatch(saveDbAction('wallet', { wallet: newEncryptedWallet }));
+
+    const { privateKey, mnemonic } = wallet;
+    await setKeychainDataObject({ privateKey, mnemonic, pin: newPin }, useBiometrics);
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,

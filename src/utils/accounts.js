@@ -145,6 +145,11 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
   return {};
 };
 
+export const getEnsName = (accounts: Accounts): string => {
+  const SWAccount = findFirstSmartAccount(accounts);
+  return get(SWAccount, 'extra.ensName', '');
+};
+
 export const getKeyWalletAddress = (accounts: Accounts): ?string => {
   const kwAccount = findKeyBasedAccount(accounts);
   if (!kwAccount) return null;

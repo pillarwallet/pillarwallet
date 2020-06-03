@@ -36,6 +36,7 @@ import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
+import Button from 'components/Button';
 import BTCView from 'screens/Assets/BTCView';
 
 // actions
@@ -71,11 +72,9 @@ import assetsConfig from 'configs/assetsConfig';
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import {
-  availableStakeSelector,
-  paymentNetworkAccountBalancesSelector,
-} from 'selectors/paymentNetwork';
+import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -86,6 +85,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
+
 
 const RECEIVE = 'RECEIVE';
 
@@ -120,6 +120,7 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
+  isActiveAccountSmartWallet: boolean,
 };
 
 type State = {
@@ -192,6 +193,10 @@ const SyntheticAssetIcon = styled(CachedImage)`
   margin-right: 4px;
   margin-top: 1px;
   tint-color: ${themedColors.primary};
+`;
+
+const TransferButtonWrapper = styled.View`
+  padding: 35px ${spacing.large}px 0;
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning.png');
@@ -304,6 +309,7 @@ class AssetScreen extends React.Component<Props, State> {
       contactsSmartAddresses,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
+      isActiveAccountSmartWallet,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -426,9 +432,18 @@ class AssetScreen extends React.Component<Props, State> {
               isReceiveDisabled={!isReceiveActive}
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
-            {!isSendActive &&
-            <SWActivationCard />
+            {!isActiveAccountSmartWallet &&
+              <TransferButtonWrapper>
+                <Button
+                  title="Transfer to Smart Wallet"
+                  onPress={() => this.goToSendTokenFlow(assetData)}
+                  disabled={!isSendActive || isWalletEmpty}
+                  secondary
+                  regularText
+            />
+              </TransferButtonWrapper>
             }
+            {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
@@ -498,6 +513,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
+  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
