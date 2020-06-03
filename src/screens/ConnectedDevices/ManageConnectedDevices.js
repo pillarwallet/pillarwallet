@@ -33,7 +33,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 // utils
-import { getThemeColors, themedColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 import { humanizeDateString, humanizeHexString } from 'utils/common';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import { addressesEqual } from 'utils/assets';
@@ -85,7 +85,6 @@ const ManageConnectedDevices = ({
   const removeDevice = (device: ConnectedDevice) => confirmConnectedDeviceRemove(device);
 
   const renderListItem = ({ item }) => {
-    const colors = getThemeColors(theme);
     const { updatedAt, address: deviceAddress } = item;
     const deviceDate = humanizeDateString(updatedAt);
     const isCurrentDevice = addressesEqual(activeDeviceAddress, deviceAddress);
@@ -104,21 +103,21 @@ const ManageConnectedDevices = ({
           </HorizontalView>
         )}
       >
-        {isCurrentDevice && <MediumText color={colors.secondaryText}>This device</MediumText>}
+        {isCurrentDevice && <MediumText secondary>This device</MediumText>}
         {thisDeviceBeingRemoved &&
           <HorizontalView>
-            <BaseText color={colors.secondaryText}>Removing</BaseText>
+            <BaseText secondary>Removing</BaseText>
             <Spinner style={{ marginLeft: 7 }} width={20} height={20} />
           </HorizontalView>
         }
         {!thisDeviceBeingRemoved && !isCurrentDevice && anyDeviceBeingRemoved &&
           <RemoveAction onPress={() => removeDevice(item)}>
-            <BaseText color={colors.secondaryText}>On hold</BaseText>
+            <BaseText secondary>On hold</BaseText>
           </RemoveAction>
         }
         {!isCurrentDevice && !anyDeviceBeingRemoved &&
           <RemoveAction onPress={() => removeDevice(item)}>
-            <BaseText color={colors.negative}>Remove</BaseText>
+            <BaseText negative>Remove</BaseText>
           </RemoveAction>
         }
       </ListItemWithImage>

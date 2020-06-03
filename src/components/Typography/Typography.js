@@ -83,7 +83,7 @@ const getTextStyle = (props) => {
 export const BaseText = styled.Text`
   font-family: ${appFont.regular};
   text-align-vertical: center;
-  color: ${({ color }) => color || themedColors.text};
+  color: ${themedColors.text};
   ${(props) => getTextStyle(props)}
 `;
 
@@ -104,7 +104,7 @@ export const LightText = styled(BaseText)`
 export const MediumText = styled(BaseText)`
   font-family: ${appFont.medium};
   text-align-vertical: center;
-  color: ${({ color }) => color || themedColors.text};
+  color: ${themedColors.text};
   ${(props) => getTextStyle(props)}
 `;
 
