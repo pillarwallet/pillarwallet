@@ -71,6 +71,7 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging } from 'services/firebase';
+import smartWalletService from 'services/smartWallet';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
@@ -233,6 +234,7 @@ export const finishRegistration = async ({
 
   const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
   if (smartWalletFeatureEnabled) {
+    await smartWalletService.reset();
     // create smart wallet account only for new wallets
     const createNewAccount = !isImported;
     await dispatch(initSmartWalletSdkAction(privateKey));

@@ -99,6 +99,12 @@ export const addConnectedDeviceAction = (
       // check if device was deployed
       if (!newSmartWalletAccountDevice || !isSmartWalletDeviceDeployed(newSmartWalletAccountDevice)) {
         dispatch({ type: RESET_ADDING_CONNECTED_DEVICE_ADDRESS });
+        Toast.show({
+          message: 'Failed to find device in Smart Wallet account',
+          type: 'warning',
+          title: 'Unable to connect device',
+          autoClose: false,
+        });
         return;
       }
 
