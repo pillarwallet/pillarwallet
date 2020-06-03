@@ -101,7 +101,7 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.KEY_BASED;
 };
 
-export const getAccountName = (accountType: AccountTypes): string => {
+export const getAccountName = (accountType: AccountTypes | string): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
       return 'Smart Wallet';
@@ -116,6 +116,12 @@ export const getAccountName = (accountType: AccountTypes): string => {
 
 export const findAccountByAddress = (address: string, accounts: Accounts): ?Account => {
   return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
+};
+
+export const getAccountTypeByAddress = (address: string, accounts: Accounts): ?string => {
+  const relatedAccount = findAccountByAddress(address, accounts);
+  if (!relatedAccount) return null;
+  return relatedAccount.type;
 };
 
 export const findAccountById = (accountId: string, accounts: Accounts): ?Account => {
@@ -137,4 +143,16 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
     return omit(allAccountAssets, hiddenAssets);
   }
   return {};
+};
+
+export const getKeyWalletAddress = (accounts: Accounts): ?string => {
+  const kwAccount = findKeyBasedAccount(accounts);
+  if (!kwAccount) return null;
+  return getAccountAddress(kwAccount);
+};
+
+export const getSmartWalletAddress = (accounts: Accounts): ?string => {
+  const swAccount = findFirstSmartAccount(accounts);
+  if (!swAccount) return null;
+  return getAccountAddress(swAccount);
 };
