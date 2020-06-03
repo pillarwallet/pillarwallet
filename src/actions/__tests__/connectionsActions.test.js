@@ -23,7 +23,7 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
 import { TYPE_SENT, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { START_SYNC_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 
 const walletId = 'walletId';
@@ -219,11 +219,6 @@ describe('Connections Actions tests', () => {
       user: {
         data: { walletId },
       },
-      featureFlags: {
-        data: {
-          SMART_WALLET_ENABLED: false,
-        },
-      },
     };
     store = mockStore({ ...storeMock });
   });
@@ -232,6 +227,7 @@ describe('Connections Actions tests', () => {
     const expectedActions = [
       { type: UPDATE_INVITATIONS, payload: mockInvitationsResult },
       { type: UPDATE_CONTACTS, payload: mockContactsResult },
+      { type: START_SYNC_CONTACTS_SMART_ADDRESSES },
     ];
     return store.dispatch(updateConnectionsAction())
       .then(() => {
