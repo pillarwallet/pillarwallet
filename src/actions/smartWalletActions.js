@@ -634,7 +634,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         && newAccountDeviceState === createdDeviceState
         && addressesEqual(eventAccountDeviceAddress, removingConnectedDeviceAddress)) {
         await dispatch(removeSmartWalletAccountDeviceAction(eventAccountDeviceAddress));
-        dispatch(completeConnectedDeviceRemoveAction(eventAccountDeviceAddress, true));
+        dispatch(completeConnectedDeviceRemoveAction());
       } else {
         dispatch(fetchConnectedAccountAction());
       }

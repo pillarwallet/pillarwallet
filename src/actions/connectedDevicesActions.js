@@ -118,18 +118,16 @@ export const addConnectedDeviceAction = (
   };
 };
 
-export const completeConnectedDeviceRemoveAction = (deviceAddress: string, fromTransaction?: boolean) => {
+export const completeConnectedDeviceRemoveAction = () => {
   return (dispatch: Dispatch) => {
-    if (fromTransaction) {
-      dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: null }));
-      Toast.show({
-        message: 'Connected device has been removed',
-        type: 'success',
-        title: 'Success',
-        autoClose: true,
-      });
-    }
     dispatch({ type: RESET_REMOVING_CONNECTED_DEVICE_ADDRESS });
+    dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: null }));
+    Toast.show({
+      message: 'Connected device has been removed',
+      type: 'success',
+      title: 'Success',
+      autoClose: true,
+    });
   };
 };
 
@@ -138,22 +136,17 @@ export const removeConnectedDeviceAction = (
   payWithGasToken: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    let removingWthTransaction = false;
     dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: deviceAddress });
     if (deviceCategory === DEVICE_CATEGORIES.SMART_WALLET_DEVICE) {
       if (!isSmartWalletDeviceDeployed(getConnectedSmartWalletDevice(getState, deviceAddress))) {
         await dispatch(removeSmartWalletAccountDeviceAction(deviceAddress));
+        dispatch(completeConnectedDeviceRemoveAction());
       } else {
         await dispatch(removeDeployedSmartWalletAccountDeviceAction(deviceAddress, payWithGasToken));
         // transaction might take some time so let's save the state and don't reset it
-        removingWthTransaction = true;
+        dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: deviceAddress }));
       }
     }
-    if (removingWthTransaction) {
-      dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: deviceAddress }));
-      return;
-    }
-    dispatch(completeConnectedDeviceRemoveAction(deviceAddress));
   };
 };
 
