@@ -386,7 +386,7 @@ class SDKWrapper {
       .catch(() => null);
   }
 
-  userInfo(walletId: string) {
+  userInfo(walletId: string): Promise<Object> {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.info({ walletId }))
       .then(({ data }) => ({ ...data, walletId }))

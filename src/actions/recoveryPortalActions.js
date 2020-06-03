@@ -30,6 +30,8 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { finishRegistration, getTokenWalletAndRegister, navigateToAppFlow } from 'actions/onboardingActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from 'actions/dbActions';
+import { signalInitAction } from 'actions/signalClientActions';
+import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 
 // constants
 import { RECOVERY_PORTAL_SETUP_COMPLETE, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -51,6 +53,7 @@ import Toast from 'components/Toast';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
+import { updateOAuthTokensCB } from 'utils/oAuth';
 
 // services
 import { navigate } from 'services/navigation';
@@ -60,6 +63,7 @@ import smartWalletService from 'services/smartWallet';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { EthereumWallet } from 'models/Wallet';
 import type SDKWrapper from 'services/api';
+import type { SignalCredentials } from 'models/Config';
 
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasToken: boolean = false) => {
@@ -104,11 +108,22 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       accountAddress: connectedAccountAddress,
     };
 
+    /**
+     * on this API part we only need f retrieve user,
+     * insert key based wallet creation date (it's not imported)
+     * and initiate signal
+     */
+
+    // recover user
     dispatch({ type: UPDATE_WALLET_STATE, payload: REGISTERING });
-
     api.init();
-
-    const { registrationSucceed, userInfo } = await getTokenWalletAndRegister(
+    const {
+      sdkWallet,
+      userInfo,
+      fcmToken,
+      registrationSucceed,
+      oAuthTokens,
+    } = await getTokenWalletAndRegister(
       wallet.privateKey,
       api,
       {},
@@ -118,11 +133,24 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
 
     if (!registrationSucceed) return;
 
-    dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
-    dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
-
     dispatch(logEventAction('user_created'));
 
+    // initiate chat
+    const signalCredentials: SignalCredentials = {
+      userId: sdkWallet.userId,
+      username: userInfo.username,
+      walletId: sdkWallet.walletId,
+      ethAddress: wallet.address,
+      fcmToken,
+      ...oAuthTokens,
+    };
+    await dispatch(signalInitAction(signalCredentials));
+
+    // reinit oauth
+    const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+    api.init(updateOAuth, oAuthTokens);
+
+    // finish reg
     const { privateKey, mnemonic } = wallet;
     await finishRegistration({
       api,
@@ -135,6 +163,12 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       isImported: true,
     });
 
+    // technically key based wallet is not imported
+    dispatch(getWalletsCreationEventsAction());
+
+    // all done
+    dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
+    dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
     Toast.show({
       message: 'Wallet successfully recovered!',
       type: 'success',
