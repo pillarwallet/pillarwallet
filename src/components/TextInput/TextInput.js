@@ -349,7 +349,7 @@ class TextInput extends React.Component<Props, State> {
       this.setState({
         isFocused: true,
       });
-    }, 500);
+    }, 250);
   };
 
   handleMultilineFocus = () => {
@@ -657,12 +657,8 @@ class TextInput extends React.Component<Props, State> {
               <InputField
                 {...inputProps}
                 innerRef={(input) => {
-                  const inputRoot = get(input, '_root');
                   if (getInputRef) getInputRef(input);
-                  if (inputRoot) {
-                    this.multilineInputField = inputRoot;
-                    if (getInputRef) getInputRef(inputRoot);
-                  }
+                  this.multilineInputField = input;
                 }}
                 onChange={this.handleChange}
                 onBlur={this.handleBlur}

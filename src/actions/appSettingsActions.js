@@ -45,6 +45,7 @@ import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // utils
 import { setKeychainDataObject } from 'utils/keychain';
+import { delay } from 'utils/common';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -138,11 +139,13 @@ export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, no
       },
     });
     if (!noToast) {
-      Toast.show({
-        message,
-        type: 'success',
-        title: 'Success',
-      });
+      delay(200)
+        .then(() => Toast.show({
+          message,
+          type: 'success',
+          title: 'Success',
+        }))
+        .catch(() => null);
     }
   };
 };

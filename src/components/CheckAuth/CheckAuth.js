@@ -298,7 +298,7 @@ class CheckAuth extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet,
-  appSettings: { data: { useBiometrics = false } },
+  appSettings: { data: { useBiometrics } },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
