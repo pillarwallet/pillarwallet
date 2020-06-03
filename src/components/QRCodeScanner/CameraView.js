@@ -18,15 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { PureComponent } from 'react';
-import { Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import { Buffer } from 'buffer';
+import ImagePicker from 'react-native-image-crop-picker';
+import jsQR from 'jsqr';
+import Jimp from 'jimp';
 import Header from 'components/Header';
+import Toast from 'components/Toast';
 import styled from 'styled-components/native';
+import IconButton from 'components/IconButton';
+import { fontSizes } from 'utils/variables';
+import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 
 import type { Barcode } from 'react-native-camera';
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = getDeviceWidth();
+const screenHeight = getDeviceHeight();
 
 const SquareContainer = styled.View`
   position: absolute;
@@ -44,6 +51,14 @@ const HeaderWrapper = styled.SafeAreaView`
   width: 100%;
 `;
 
+const ButtonWrapper = styled.View`
+  width: 100%;
+  position: absolute;
+  bottom: 60px;
+  justify-content: center;
+  align-items: center;
+`;
+
 type Props = {
   onQRRead: (barcode: Barcode) => void,
   onCancel: () => void,
@@ -51,7 +66,45 @@ type Props = {
   rectangleSize: number,
 };
 
-export class CameraView extends PureComponent<Props> {
+export default class CameraView extends PureComponent<Props> {
+  handleError = () => {
+    Toast.show({
+      message: 'Cannot scan QR code',
+      type: 'warning',
+      autoClose: true,
+    });
+    this.props.onCancel();
+  }
+
+  handleGalleryPress = () => {
+    ImagePicker.openPicker({
+      includeBase64: true,
+    })
+      .then(image => {
+        const buffer = Buffer.from(image.data, 'base64');
+        Jimp.read(buffer, (e, parsedImg) => {
+          try {
+            if (e) {
+              throw new Error();
+            } else {
+              const { data, height, width } = parsedImg.bitmap;
+              const code = jsQR(data, width, height);
+              if (code) {
+                this.props.onQRRead(code);
+              } else {
+                throw new Error();
+              }
+            }
+          } catch {
+            this.handleError();
+          }
+        });
+      })
+      .catch(() => {
+        this.handleError();
+      });
+  }
+
   render() {
     const {
       onQRRead,
@@ -76,6 +129,14 @@ export class CameraView extends PureComponent<Props> {
           <Header light flexStart onClose={onCancel} />
         </HeaderWrapper>
         <SquareContainer color={rectangleColor} size={rectangleSize} />
+        <ButtonWrapper>
+          <IconButton
+            icon="gallery"
+            onPress={this.handleGalleryPress}
+            fontSize={fontSizes.giant}
+            color={rectangleColor}
+          />
+        </ButtonWrapper>
       </RNCamera>
     );
   }
