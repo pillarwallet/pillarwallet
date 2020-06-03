@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { RNCamera } from 'react-native-camera';
 import { Buffer } from 'buffer';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -68,7 +68,11 @@ type Props = {
   rectangleSize: number,
 };
 
-export default class CameraView extends PureComponent<Props> {
+type State = {
+  isLoading: boolean,
+}
+
+export default class CameraView extends React.Component<Props, State> {
   state = {
     isLoading: false,
   }
