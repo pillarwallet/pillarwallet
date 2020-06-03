@@ -29,6 +29,8 @@ import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
 import { fontSizes } from 'utils/variables';
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
+import { Container } from 'components/Layout';
+import Loader from 'components/Loader';
 
 import type { Barcode } from 'react-native-camera';
 
@@ -67,6 +69,10 @@ type Props = {
 };
 
 export default class CameraView extends PureComponent<Props> {
+  state = {
+    isLoading: false,
+  }
+
   handleError = () => {
     Toast.show({
       message: 'Cannot scan QR code',
@@ -77,6 +83,7 @@ export default class CameraView extends PureComponent<Props> {
   }
 
   handleGalleryPress = () => {
+    this.setState({ isLoading: true });
     ImagePicker.openPicker({
       includeBase64: true,
     })
@@ -112,6 +119,16 @@ export default class CameraView extends PureComponent<Props> {
       rectangleSize,
       rectangleColor,
     } = this.props;
+
+    const { isLoading } = this.state;
+
+    if (isLoading) {
+      return (
+        <Container center >
+          <Loader noMessages />
+        </Container>
+      );
+    }
 
     return (
       <RNCamera
