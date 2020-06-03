@@ -61,7 +61,7 @@ const removePrompt = (callback) => Alert.alert(
   'You are going to remove the link between this device and your account.' +
   '\n\nPlease make sure you have all your funds backed up.',
   [
-    { text: 'Confirm remove', onPress: () => callback() },
+    { text: 'Confirm remove', onPress: callback },
     { text: 'Cancel', style: 'cancel' },
   ],
   { cancelable: true },
@@ -185,4 +185,3 @@ export const confirmConnectedDeviceRemoveAction = (device: ConnectedDevice) => {
     });
   };
 };
-
