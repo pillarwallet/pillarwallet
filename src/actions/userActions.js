@@ -33,6 +33,7 @@ import { logEventAction } from 'actions/analyticsActions';
 import { completeReferralsEventAction } from 'actions/referralsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+import { isCaseInsensitiveMatch } from 'utils/common';
 import { saveDbAction } from './dbActions';
 
 const sendingOneTimePasswordAction = () => ({
@@ -158,7 +159,7 @@ export const verifyEmailAction = (walletId: string, code: string) => {
     let message = 'Email verification was successful';
 
     if ((isPillarRewardCampaignActive || is1WorldCampaignActive)
-      && referralToken && !isRewardClaimed && referredEmail === email) {
+      && referralToken && !isRewardClaimed && isCaseInsensitiveMatch(email, referredEmail)) {
       dispatch(completeReferralsEventAction());
       message = 'Thank you for verifying your information, ' +
                 'we are currently processing your reward.';
