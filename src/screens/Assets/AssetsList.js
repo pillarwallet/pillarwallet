@@ -210,7 +210,7 @@ class AssetsList extends React.Component<Props, State> {
       navigation.navigate(ASSET, { assetData, onBackPress: this.onBackPress });
       return;
     }
-    this.setState({ showPinModal: true, onPinValidAction: () => this.initialiseBTC(assetData) });
+    this.setState({ showPinModal: true, onPinValidAction: this.initialiseBTC(assetData) });
   };
 
   renderToken = ({ item: asset }) => {
