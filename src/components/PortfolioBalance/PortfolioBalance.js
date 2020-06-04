@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 
+import type { BitcoinBalance } from 'models/Bitcoin';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type {
   Balances,
@@ -32,6 +33,7 @@ import BalanceView from 'components/PortfolioBalance/BalanceView';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { calculateBalanceInFiat } from 'utils/assets';
+import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { allBalancesSelector } from 'selectors/balances';
@@ -40,6 +42,7 @@ import { allBalancesSelector } from 'selectors/balances';
 type Props = {
   rates: Rates,
   balances: Balances,
+  bitcoinBalances: BitcoinBalance,
   fiatCurrency: string,
   style: Object,
   showBalance: boolean,
@@ -90,7 +93,8 @@ const getCombinedBalances = (props: Props): number => {
     bitcoinBalances,
   } = props;
 
-  return calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency)
+  const btcBalance = balances.BTC ? 0 : calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency);
+  return btcBalance
     + calculateBalanceInFiat(rates, balances, fiatCurrency);
 };
 

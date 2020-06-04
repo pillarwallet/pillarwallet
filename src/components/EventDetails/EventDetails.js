@@ -94,7 +94,6 @@ import {
   SET_SMART_WALLET_ACCOUNT_ENS,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
   CHAT,
@@ -116,7 +115,6 @@ import {
 } from 'selectors/paymentNetwork';
 import {
   activeAccountAddressSelector,
-  activeBlockchainSelector,
   bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
@@ -127,7 +125,6 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 
 // types
@@ -178,7 +175,6 @@ type Props = {
   isForAllAccounts?: boolean,
   storybook?: boolean,
   bitcoinFeatureEnabled?: boolean,
-  setActiveBlockchainNetwork: (id: string) => void,
   refreshBitcoinBalance: () => void,
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
@@ -562,12 +558,10 @@ export class EventDetail extends React.Component<Props, State> {
       onClose,
       navigation,
       supportedAssets,
-      setActiveBlockchainNetwork,
       refreshBitcoinBalance,
       isForAllAccounts,
     } = this.props;
     onClose();
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
     refreshBitcoinBalance();
     const btcToken = supportedAssets.find(e => e.symbol === BTC);
 

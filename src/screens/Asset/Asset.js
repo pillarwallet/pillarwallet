@@ -439,7 +439,7 @@ class AssetScreen extends React.Component<Props, State> {
                   disabled={!isSendActive || isWalletEmpty}
                   secondary
                   regularText
-            />
+                />
               </TransferButtonWrapper>
             }
             {!isSendActive && <SWActivationCard />}

@@ -31,8 +31,6 @@ import {
   bitcoinAddressSelector,
   accountsSelector,
 } from './selectors';
-import { accountAssetsSelector } from './assets';
-
 
 
 export const accountHistorySelector = createSelector(
@@ -40,38 +38,12 @@ export const accountHistorySelector = createSelector(
   activeAccountIdSelector,
   activeBlockchainSelector,
   bitcoinAddressSelector,
-  accountAssetsSelector,
-  (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses, activeAssets) => {
-    let mergedHistory = [];
-    if (bitcoinAddresses.length && (activeAssets.BTC || activeBlockchainNetwork === 'BITCOIN')) {
-      mergedHistory = [...(history[bitcoinAddresses[0].address] || [])];
+  (history, activeAccountId, activeBlockchainNetwork, bitcoinAddresses) => {
+    if (activeBlockchainNetwork && activeBlockchainNetwork === 'BITCOIN' && bitcoinAddresses.length) {
+      return orderBy(history[bitcoinAddresses[0].address] || [], ['createdAt'], ['desc']);
     }
     if (!activeAccountId) return [];
-    mergedHistory = [...mergedHistory, ...(history[activeAccountId] || [])];
-    return orderBy(mergedHistory, ['createdAt'], ['desc']);
-  },
-);
-
-export const smartAccountHistorySelector = createSelector(
-  historySelector,
-  accountsSelector,
-  (history, accounts) => {
-    const userHasSW = userHasSmartWallet(accounts);
-    if (!userHasSW) return [];
-    const smartAccountId = getSmartWalletAddress(accounts);
-    if (!smartAccountId) return [];
-    return orderBy(history[smartAccountId] || [], ['createdAt'], ['desc']);
-  },
-);
-
-export const combinedHistorySelector = createSelector(
-  historySelector,
-  (history) => {
-    const combinedHistory = Object.keys(history).reduce((historyArray, account) => {
-      return [...historyArray, ...history[account]];
-    }, []);
-
-    return orderBy(combinedHistory, ['createdAt'], ['desc']);
+    return orderBy(history[activeAccountId] || [], ['createdAt'], ['desc']);
   },
 );
 

@@ -178,6 +178,7 @@ const finishRegistration = async ({
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
+  getState: GetState,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
   address: string,
@@ -218,7 +219,7 @@ const finishRegistration = async ({
   dispatch(loadFeatureFlagsAction(userInfo));
 
   const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED', false);
-  // Generate a BTC address when the wallet is imported. TODO: change this check when backend stores btc info
+  // Generate a BTC address when the wallet is imported. TODO: change this check when/if backend stores btc info
   if (bitcoinFeatureEnabled && isImported) {
     await dispatch(initializeBitcoinWalletAction({ mnemonic, privateKey }));
   }
@@ -456,6 +457,7 @@ export const registerOnBackendAction = () => {
     await finishRegistration({
       api,
       dispatch,
+      getState,
       userInfo,
       address: normalizeWalletAddress(walletData.address),
       mnemonic: walletMnemonic,
