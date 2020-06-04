@@ -412,16 +412,15 @@ export const startListeningChatWebSocketAction = () => {
     const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
     const chatWebSocket = chat.getWebSocketInstance();
-    chatWebSocket.onMessage(async webSocketMessage => {
+    chatWebSocket.start(({
+      type: messageType,
+      response: messageResponse,
+      request: messageRequest,
+      receivedSignalMessage,
+    }) => {
       const {
         contacts: { data: contacts },
       } = getState();
-      const {
-        type: messageType,
-        response: messageResponse,
-        request: messageRequest,
-        receivedSignalMessage,
-      } = webSocketMessage;
       if (messageType === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
         if (messageResponse.message.toLowerCase() === 'gone') {
           const {

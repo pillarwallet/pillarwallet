@@ -51,8 +51,6 @@ describe('chatWebSocket service', () => {
     mockServer = new Server(fakeURL.replace('https', 'wss'));
     websocket1 = new ChatWebSocketService(credentials1);
     websocket2 = new ChatWebSocketService(credentials2);
-    websocket1.init();
-    websocket2.init();
   });
 
   afterEach(() => {
@@ -67,6 +65,8 @@ describe('chatWebSocket service', () => {
         socket.send(data);
       });
     });
+    websocket1.start();
+    websocket2.start();
     expect(websocket1.ws).toBeTruthy();
     expect(websocket2.ws).toBeTruthy();
     expect(websocket1.running).toBe(true);
@@ -110,13 +110,14 @@ describe('chatWebSocket service', () => {
 
     expect(mockRequest).toBeTruthy();
 
-    websocket1.onMessage((message) => {
+    websocket1.start((message) => {
       expect(message).toBeTruthy();
       if (message.type === 2) {
         done();
       }
     });
 
+    websocket2.start();
     if (mockRequest) websocket2.send(mockRequest);
   });
 });

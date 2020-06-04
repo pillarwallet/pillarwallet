@@ -58,7 +58,6 @@ describe('chat service', () => {
       websocket = new ChatWebSocketService(creds);
       creds.errorTrackingDSN = SENTRY_DSN;
       creds.isSendingLogs = false;
-      websocket.init();
       return client.init(credentials);
     }),
     getWebSocketInstance: () => {
@@ -87,6 +86,8 @@ describe('chat service', () => {
       .then(() => chatMock.client.registerAccount())
       .then(() => chatMock.client.setFcmId(credentials.fcmToken))
       .catch(() => null);
+
+    websocket.start();
   });
 
   it('Should successfully send a chat message to a target', async (done) => {
@@ -103,6 +104,8 @@ describe('chat service', () => {
       .then(() => chatMock.client.registerAccount())
       .then(() => chatMock.client.setFcmId(credentials.fcmToken))
       .catch(() => null);
+
+    websocket.start();
 
     chatMock.getWebSocketInstance = () => {
       return websocket;

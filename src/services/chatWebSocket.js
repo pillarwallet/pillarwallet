@@ -46,7 +46,7 @@ export default class ChatWebSocket {
     this.running = false;
   }
 
-  init() {
+  start(onMessageCallback?: Function) {
     this.stop();
     if (!this.credentials.host || !this.credentials.accessToken) return;
     const wsUrl = `${this.credentials.host
@@ -66,6 +66,43 @@ export default class ChatWebSocket {
       this.ws.onerror = () => {
         this.setRunning(false);
       };
+      this.ws.onmessage = async (incoming: Object) => {
+        const buffer = new Uint8Array(incoming.data);
+        if (buffer === undefined || !buffer.length) return;
+        const received = this.WebSocketMessage.decode(buffer);
+        const message = this.WebSocketMessage.toObject(received, {
+          bytes: String,
+        });
+        const receivedType = message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST ? 'request' : 'response';
+        if (typeof message[receivedType].body !== 'undefined'
+          && message[receivedType].body.trim() !== '') {
+          if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST
+            && message[receivedType].verb === 'PUT'
+            && message[receivedType].path === '/api/v1/message') {
+            const encryptedBody = message[receivedType].body;
+            const b64EncodedBytes = await SignalClient.decryptReceivedBody(encryptedBody)
+              .catch(() => null);
+            const decodedBytes = Buffer.from(b64EncodedBytes, 'base64');
+            if (decodedBytes !== undefined && decodedBytes.length) {
+              const textSecureEnvelope = this.TextSecureEnvelope.decode(decodedBytes);
+              message.receivedSignalMessage = this.TextSecureEnvelope.toObject(textSecureEnvelope, {
+                bytes: String,
+              });
+            }
+          } else {
+            message[receivedType].body = Buffer.from(message[receivedType].body, 'base64')
+              .toString('utf8');
+          }
+        }
+        if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST
+          && message.request.path !== '/api/v1/message') {
+          const webSocketResponse = this.prepareResponse(message.request.id, 200, 'OK');
+          if (webSocketResponse != null) {
+            this.send(webSocketResponse);
+          }
+        }
+        if (typeof onMessageCallback === 'function') onMessageCallback(message);
+      };
       this.setRunning(true);
     } catch (e) {
       this.setRunning(false);
@@ -78,47 +115,6 @@ export default class ChatWebSocket {
     if (request == null) return;
     this.send(request);
     keepaliveTimer = setTimeout(() => this.keepalive(), 60000); // 60s keepalive
-  }
-
-  onMessage(callback?: Function) {
-    if (!this.isRunning()) return;
-    this.ws.onmessage = async (incoming: Object) => {
-      const buffer = new Uint8Array(incoming.data);
-      if (buffer === undefined || !buffer.length) return;
-      const received = this.WebSocketMessage.decode(buffer);
-      const message = this.WebSocketMessage.toObject(received, {
-        bytes: String,
-      });
-      const receivedType = message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST ? 'request' : 'response';
-      if (typeof message[receivedType].body !== 'undefined'
-        && message[receivedType].body.trim() !== '') {
-        if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST
-          && message[receivedType].verb === 'PUT'
-          && message[receivedType].path === '/api/v1/message') {
-          const encryptedBody = message[receivedType].body;
-          const b64EncodedBytes = await SignalClient.decryptReceivedBody(encryptedBody)
-            .catch(() => null);
-          const decodedBytes = Buffer.from(b64EncodedBytes, 'base64');
-          if (decodedBytes !== undefined && decodedBytes.length) {
-            const textSecureEnvelope = this.TextSecureEnvelope.decode(decodedBytes);
-            message.receivedSignalMessage = this.TextSecureEnvelope.toObject(textSecureEnvelope, {
-              bytes: String,
-            });
-          }
-        } else {
-          message[receivedType].body = Buffer.from(message[receivedType].body, 'base64')
-            .toString('utf8');
-        }
-      }
-      if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST
-        && message.request.path !== '/api/v1/message') {
-        const webSocketResponse = this.prepareResponse(message.request.id, 200, 'OK');
-        if (webSocketResponse != null) {
-          this.send(webSocketResponse);
-        }
-      }
-      if (typeof callback === 'function') callback(message);
-    };
   }
 
   send(data: Uint8Array, callback?: Function) {
