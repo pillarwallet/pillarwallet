@@ -82,43 +82,13 @@ platform :android do
   desc "Build custom changelog"
   lane :build_custom_changelog do
     changelog_notes = changelog_from_git_commits(
-      merge_commit_filtering: "include_merges",
+      merge_commit_filtering: "exclude_merges",
       commits_count: "25"
     )
 
-    custom_changelog = ""
+    UI.message "Changelog: #{changelog_notes}"
 
-    pr_merges = changelog_notes.split(/Merge/)
-
-    pr_merges = pr_merges.grep(/\.*pull request\.*/)
-
-    pr_merges = pr_merges.reject { |text| text.match(/Merge.from/) }
-
-    pr_merges.each do |merge_text|
-
-        pr_number = merge_text.match(/pull request [#]([0-9]+).*/i).captures[0]
-
-        result = github_api(
-          api_token: ENV["GITHUB_TOKEN"],
-          http_method: "GET",
-          path: "/repos/pillarwallet/pillarwallet/pulls/#{pr_number}"
-        )
-
-        pr_body = "#{result[:json]['body']}"
-
-        custom_changelog << "- #{result[:json]['title']}"
-
-        unless pr_body.nil? || pr_body.empty? then
-          custom_changelog << "\n#{pr_body.indent(4)}"
-        end
-
-        custom_changelog << "\n"
-
-    end
-
-    UI.message "Changelog: #{custom_changelog}"
-
-    custom_changelog
+    changelog_notes
   end
 
   desc "Build application"
