@@ -740,7 +740,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - fix/appcenter-release-notes
       - get-latest-tag:
           requires:
             - build-and-test
