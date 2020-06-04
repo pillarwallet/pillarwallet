@@ -37,7 +37,6 @@ import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
 import Requests from 'screens/WalletConnect/Requests';
 import UserNameAndImage from 'components/UserNameAndImage';
-import LinearGraph from 'components/LinearGraph';
 
 // constants
 import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
@@ -93,6 +92,7 @@ import type { User } from 'models/User';
 
 // partials
 import WalletsPart from './WalletsPart';
+import BalanceGraph from './BalanceGraph';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -175,6 +175,7 @@ const referralImage = require('assets/images/referral_gift.png');
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
+  scrollViewRef = null;
 
   state = {
     activeTab: ALL,
@@ -269,6 +270,12 @@ class HomeScreen extends React.Component<Props, State> {
   handleWalletChange = (loaderMessage: string) => {
     this.setState({ loaderMessage });
   };
+
+  setScrollViewScrollable = (scrollEnabled: boolean) => {
+    if (this.scrollViewRef) {
+      this.scrollViewRef.setNativeProps({ scrollEnabled });
+    }
+  }
 
   render() {
     const {
@@ -424,6 +431,9 @@ class HomeScreen extends React.Component<Props, State> {
         >
           {onScroll => (
             <ActivityFeed
+              scrollViewRef={ref => {
+                this.scrollViewRef = ref;
+              }}
               onCancelInvitation={cancelInvitation}
               onRejectInvitation={rejectInvitation}
               onAcceptInvitation={acceptInvitation}
@@ -438,7 +448,10 @@ class HomeScreen extends React.Component<Props, State> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
-                  <LinearGraph />
+                  <BalanceGraph
+                    onDragStart={() => this.setScrollViewScrollable(false)}
+                    onDragEnd={() => this.setScrollViewScrollable(true)}
+                  />
                   {!!walletConnectRequests &&
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
                     {walletConnectRequests.length > 1 &&

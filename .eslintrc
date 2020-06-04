@@ -51,6 +51,7 @@
     "function-paren-newline": [0],
     "no-param-reassign": ["off"],
     "react/default-props-match-prop-types": ["off"],
-    "react/no-did-mount-set-state": ["off"]
+    "react/no-did-mount-set-state": ["off"],
+    "no-mixed-operators": ["error", {"allowSamePrecedence": true}]
   }
 }

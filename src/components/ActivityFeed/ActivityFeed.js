@@ -126,6 +126,7 @@ type Props = {
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
+  scrollViewRef?: Object,
 };
 
 type State = {|
@@ -309,6 +310,7 @@ class ActivityFeed extends React.Component<Props, State> {
       onRejectInvitation,
       onAcceptInvitation,
       isForAllAccounts,
+      scrollViewRef,
     } = this.props;
 
     const {
@@ -352,6 +354,7 @@ class ActivityFeed extends React.Component<Props, State> {
           keyExtractor={this.getActivityFeedListKeyExtractor}
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
           stickyHeaderIndices={[1]}
+          innerRef={scrollViewRef}
           {...flatListProps}
         />}
         {!!selectedEventData &&

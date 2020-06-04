@@ -589,3 +589,7 @@ export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasTo
 
   return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
 };
+
+export const range = (end: number): number[] => {
+  return [...Array(end - 1).keys()];
+};
