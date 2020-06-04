@@ -144,11 +144,11 @@ export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash
     .find(tx => tx);
 };
 
-export const getTrxInfo = async (api: SDKWrapper, hash: string) => {
+export const getTrxInfo = async (api: SDKWrapper, hash: string, network?: string) => {
   const [txInfo, txReceipt, lastBlockNumber] = await Promise.all([
-    api.fetchTxInfo(hash),
-    api.fetchTransactionReceipt(hash),
-    api.fetchLastBlockNumber(),
+    api.fetchTxInfo(hash, network),
+    api.fetchTransactionReceipt(hash, network),
+    api.fetchLastBlockNumber(network),
   ]);
 
   if (!txInfo || !txReceipt || !lastBlockNumber) return null;

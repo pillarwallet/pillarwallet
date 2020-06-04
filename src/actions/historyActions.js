@@ -33,6 +33,7 @@ import {
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
   ADD_TRANSACTION,
+  UPDATING_TRANSACTION,
 } from 'constants/historyConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ETH } from 'constants/assetsConstants';
@@ -329,6 +330,13 @@ export const fetchGasInfoAction = () => {
   };
 };
 
+const transactionUpdate = (hash: string) => {
+  return {
+    type: UPDATING_TRANSACTION,
+    payload: hash,
+  };
+};
+
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -341,8 +349,13 @@ export const updateTransactionStatusAction = (hash: string) => {
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
 
+    dispatch(transactionUpdate(hash));
+
     const trxInfo = await getTrxInfo(api, hash);
-    if (!trxInfo) return;
+    if (!trxInfo) {
+      dispatch(transactionUpdate(''));
+      return;
+    }
     const {
       txInfo,
       txReceipt,
@@ -362,6 +375,7 @@ export const updateTransactionStatusAction = (hash: string) => {
           blockchainStatus: status,
         });
       }
+      dispatch(transactionUpdate(''));
       return;
     }
 

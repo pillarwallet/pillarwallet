@@ -18,11 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
+  UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 import {
   getAccountAddress,
@@ -77,6 +79,14 @@ const collectibleFromResponse = (responseItem: Object): Collectible => {
     icon,
   };
 };
+
+const collectibleTransactionUpdate = (hash: string) => {
+  return {
+    type: UPDATING_COLLECTIBLE_TRANSACTION,
+    payload: hash,
+  };
+};
+
 
 export const fetchCollectiblesAction = (accountToFetchFor?: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -245,8 +255,12 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     } = getState();
     if (!isOnline) return;
 
-    const trxInfo = await getTrxInfo(api, hash);
-    if (!trxInfo) return;
+    dispatch(collectibleTransactionUpdate(hash));
+    const trxInfo = await getTrxInfo(api, hash, COLLECTIBLES_NETWORK);
+    if (!trxInfo) {
+      dispatch(collectibleTransactionUpdate(''));
+      return;
+    }
     const {
       txInfo,
       txReceipt,

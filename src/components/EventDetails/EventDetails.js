@@ -42,6 +42,7 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
 import ButtonText from 'components/ButtonText';
+import Spinner from 'components/Spinner';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -194,6 +195,8 @@ type Props = {
   txNotes: TxNote[],
   collectiblesHistory: CollectibleTrx[],
   updateCollectibleTransaction: (hash: string) => void,
+  updatingTransaction: string,
+  updatingCollectibleTransaction: string,
 };
 
 type State = {
@@ -413,8 +416,8 @@ export class EventDetail extends React.Component<Props, State> {
     return `Fee ${formattedFee} ${token} (${formattedFiatValue})`;
   };
 
-  getFeeLabel = () => {
-    const { event, assetDecimals } = this.props;
+  getFeeLabel = (event: Object) => {
+    const { assetDecimals } = this.props;
     const {
       gasUsed, gasPrice, btcFee, feeWithGasToken,
     } = event;
@@ -822,7 +825,7 @@ export class EventDetail extends React.Component<Props, State> {
 
         eventData = {
           actionTitle: 'Activated',
-          actionSubtitle: this.getFeeLabel(),
+          actionSubtitle: this.getFeeLabel(event),
           buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
         break;
@@ -1046,7 +1049,7 @@ export class EventDetail extends React.Component<Props, State> {
           }
           eventData.buttons = buttons;
           if (!isReceived) {
-            eventData.fee = this.getFeeLabel();
+            eventData.fee = this.getFeeLabel(event);
           }
         }
     }
@@ -1080,7 +1083,7 @@ export class EventDetail extends React.Component<Props, State> {
       };
 
       if (!isPending) {
-        eventData.fee = this.getFeeLabel();
+        eventData.fee = this.getFeeLabel(event);
       }
     }
 
@@ -1321,7 +1324,17 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  renderContent = (eventData: EventData, allowViewOnBlockchain: boolean) => {
+  renderFee = (hash: string, fee: ?string) => {
+    const { updatingTransaction, updatingCollectibleTransaction } = this.props;
+    if (fee) {
+      return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
+    } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
+      return (<Spinner height={20} width={20} style={{ marginBottom: 32 }} />);
+    }
+    return null;
+  };
+
+  renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
     const {
       date, name,
@@ -1378,12 +1391,7 @@ export class EventDetail extends React.Component<Props, State> {
             ) : (
               <Spacing h={32} />
             )}
-            {!!fee && (
-              <React.Fragment>
-                <BaseText regular secondary>{fee}</BaseText>
-                <Spacing h={32} />
-              </React.Fragment>
-            )}
+            {this.renderFee(event.hash, fee)}
           </React.Fragment>
         )}
         <ButtonsContainer>
@@ -1416,12 +1424,13 @@ export class EventDetail extends React.Component<Props, State> {
     }
 
     const eventData = this.getEventData(event);
+
     if (!eventData) return null;
     const { hash, isPPNTransaction } = event;
     const allowViewOnBlockchain = !!hash && !isPPNTransaction;
 
     if (storybook) {
-      return this.renderContent(eventData, allowViewOnBlockchain);
+      return this.renderContent(event, eventData, allowViewOnBlockchain);
     }
 
     return (
@@ -1432,7 +1441,7 @@ export class EventDetail extends React.Component<Props, State> {
           noClose
           hideHeader
         >
-          {this.renderContent(eventData, allowViewOnBlockchain)}
+          {this.renderContent(event, eventData, allowViewOnBlockchain)}
         </SlideModal>
         <ReceiveModal
           isVisible={isReceiveModalVisible}
@@ -1457,7 +1466,7 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
-  history: { data: history },
+  history: { data: history, updatingTransaction },
   featureFlags: {
     data: {
       BITCOIN_ENABLED: bitcoinFeatureEnabled,
@@ -1465,6 +1474,7 @@ const mapStateToProps = ({
   },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
+  collectibles: { updatingTransaction: updatingCollectibleTransaction },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1479,6 +1489,8 @@ const mapStateToProps = ({
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
   txNotes,
+  updatingTransaction,
+  updatingCollectibleTransaction,
 });
 
 const structuredSelector = createStructuredSelector({
