@@ -112,7 +112,6 @@ type Props = {
   accounts: Accounts,
   activeAccount: ?Account,
   paymentNetworkBalances: Balances,
-  smartWalletFeatureEnabled: boolean,
   history: Object[],
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
@@ -489,11 +488,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  featureFlags: {
-    data: {
-      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-    },
-  },
   exchange: { exchangeSupportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
@@ -501,7 +495,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  smartWalletFeatureEnabled,
   contactsSmartAddresses,
   exchangeSupportedAssets,
 });

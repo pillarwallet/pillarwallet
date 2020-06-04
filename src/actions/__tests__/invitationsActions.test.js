@@ -204,11 +204,6 @@ describe('Invitations Actions tests', () => {
       user: {
         data: { walletId },
       },
-      featureFlags: {
-        data: {
-          SMART_WALLET_ENABLED: false,
-        },
-      },
     };
     store = mockStore({ ...mockStoreData });
   });

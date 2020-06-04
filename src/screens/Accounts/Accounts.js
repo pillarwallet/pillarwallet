@@ -119,7 +119,6 @@ type Props = {|
   blockchainNetworks: BlockchainNetwork[],
   assets: Assets,
   baseFiatCurrency: ?string,
-  smartWalletFeatureEnabled: boolean,
   bitcoinFeatureEnabled: boolean,
   availableStake: number,
   isTankInitialised: boolean,
@@ -261,38 +260,25 @@ class AccountsScreen extends React.Component<Props, State> {
     );
   };
 
-  visibleAccounts(accounts: Accounts, smartWalletFeatureEnabled: boolean): Accounts {
-    if (smartWalletFeatureEnabled) {
-      return accounts;
-    }
-
-    return accounts.filter(({ type }) => type !== ACCOUNT_TYPES.SMART_WALLET);
-  }
-
   wallets(activeNetwork?: BlockchainNetwork): WalletsListItem[] {
     const {
       accounts,
       navigation,
       balances,
       rates,
-      smartWalletFeatureEnabled,
       baseFiatCurrency,
       theme,
     } = this.props;
 
     const { smartWalletIcon, keyWalletIcon } = images(theme);
 
-    const visibleAccounts = this.visibleAccounts(accounts, smartWalletFeatureEnabled);
-
-    const hasAccount = userHasSmartWallet(accounts);
-    const showSmartWalletInitButton = !hasAccount && smartWalletFeatureEnabled;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const isEthereumActive = !!activeNetwork && (
       activeNetwork.id === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM
     );
 
-    const wallets = visibleAccounts.map((account: Account): WalletsListItem => {
+    const wallets = accounts.map((account: Account): WalletsListItem => {
       const { id, isActive, type } = account;
       const accountBalances: Balances = balances[id];
       const isActiveWallet = !!isActive && isEthereumActive;
@@ -316,7 +302,7 @@ class AccountsScreen extends React.Component<Props, State> {
       };
     });
 
-    if (showSmartWalletInitButton) {
+    if (!userHasSmartWallet(accounts)) {
       wallets.push({
         id: NEW_SMART_WALLET,
         type: NEW_SMART_WALLET,
@@ -364,7 +350,6 @@ class AccountsScreen extends React.Component<Props, State> {
       blockchainNetworks,
       availableStake,
       isTankInitialised,
-      smartWalletFeatureEnabled,
       bitcoinFeatureEnabled,
       accounts,
       bitcoinAddresses,
@@ -379,10 +364,8 @@ class AccountsScreen extends React.Component<Props, State> {
     const ppnNetwork = blockchainNetworks.find(
       (network) => network.id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK,
     );
-    const hasAccount = userHasSmartWallet(accounts);
-    const hasSmartWallet = hasAccount && smartWalletFeatureEnabled;
 
-    if (smartWalletFeatureEnabled && ppnNetwork) {
+    if (ppnNetwork) {
       const { title, isActive } = ppnNetwork;
       const availableStakeFormattedAmount = formatMoney(availableStake);
 
@@ -390,7 +373,7 @@ class AccountsScreen extends React.Component<Props, State> {
         id: `NETWORK_${ppnNetwork.id}`,
         type: 'NETWORK',
         title,
-        balance: hasSmartWallet ? `${availableStakeFormattedAmount} ${PPN_TOKEN}` : 'N/A',
+        balance: userHasSmartWallet(accounts) ? `${availableStakeFormattedAmount} ${PPN_TOKEN}` : 'N/A',
         isInitialised: isTankInitialised,
         mainAction: this.setPPNAsActiveNetwork,
         initialiseAction: this.initialisePPN,
@@ -526,7 +509,6 @@ const mapStateToProps = ({
   paymentNetwork: { isTankInitialised },
   featureFlags: {
     data: {
-      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
       BITCOIN_ENABLED: bitcoinFeatureEnabled,
     },
   },
@@ -539,7 +521,6 @@ const mapStateToProps = ({
   accounts,
   blockchainNetworks,
   isTankInitialised,
-  smartWalletFeatureEnabled,
   bitcoinFeatureEnabled,
   baseFiatCurrency,
   balances,

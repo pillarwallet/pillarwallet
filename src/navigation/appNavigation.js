@@ -727,7 +727,6 @@ type Props = {
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
-  smartWalletFeatureEnabled: boolean,
   isBrowsingWebView: boolean,
   isOnline: boolean,
   initSignal: Function,
@@ -871,7 +870,6 @@ class AppFlow extends React.Component<Props, State> {
       hasUnreadChatNotifications,
       navigation,
       backupStatus,
-      smartWalletFeatureEnabled,
       theme,
     } = this.props;
     if (!userState) return null;
@@ -890,7 +888,6 @@ class AppFlow extends React.Component<Props, State> {
           hasUnreadChatNotifications,
           intercomNotificationsCount,
           isWalletBackedUp,
-          smartWalletFeatureEnabled,
           theme,
         }}
         navigation={navigation}
@@ -909,11 +906,6 @@ const mapStateToProps = ({
   },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
-  featureFlags: {
-    data: {
-      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-    },
-  },
   session: { data: { isOnline } },
 }) => ({
   profileImage,
@@ -925,7 +917,6 @@ const mapStateToProps = ({
   hasUnreadChatNotifications,
   intercomNotificationsCount,
   isPickingImage,
-  smartWalletFeatureEnabled,
   isBrowsingWebView,
   isOnline,
 });

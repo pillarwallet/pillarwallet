@@ -144,7 +144,6 @@ import { getPrivateKeyFromPin } from 'utils/wallet';
 
 // actions
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
-import { setInitialPreferredGasTokenAction } from './appSettingsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -555,11 +554,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         if (get(event, 'payload.features.gasTokenSupported')) {
           // update connected devices
           await dispatch(fetchConnectedAccountAction());
-
-          const { appSettings: { data: { preferredGasToken } } } = getState();
-          if (!preferredGasToken) {
-            dispatch(setInitialPreferredGasTokenAction());
-          }
         }
       }
     }
