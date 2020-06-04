@@ -28,6 +28,7 @@ import { SEND_BITCOIN_TRANSACTION } from 'constants/navigationConstants';
 
 import type { BitcoinTransactionPlan } from 'models/Bitcoin';
 import type { EthereumWallet } from 'models/Wallet';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -38,6 +39,7 @@ type Props = {
   ) => void,
   resetIncorrectPassword: () => void,
   logEvent: (name: string, properties: Object) => void,
+  useBiometrics: boolean,
 }
 
 type State = {
@@ -95,6 +97,7 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
 
   render() {
     const { isChecking, errorMessage } = this.state;
+    const { useBiometrics } = this.props;
     return (
       <CheckAuth
         onPinValid={this.handleTransaction}
@@ -103,16 +106,23 @@ class SendBitcoinPinConfirmScreen extends React.Component<Props, State> {
         revealMnemonic
         errorMessage={errorMessage}
         headerProps={{ onBack: this.handleBack }}
+        enforcePin={!useBiometrics}
       />
     );
   }
 }
 
-const mapDispatchToProps = (dispatch): $Shape<Props> => ({
+const mapStateToProps = ({
+  appSettings: { data: { useBiometrics } },
+}: RootReducerState): $Shape<Props> => ({
+  useBiometrics,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   sendAsset: (wallet: EthereumWallet, transaction: BitcoinTransactionPlan, callback) =>
     dispatch(sendTransactionAction(wallet, transaction, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });
 
-export default connect(null, mapDispatchToProps)(SendBitcoinPinConfirmScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SendBitcoinPinConfirmScreen);
