@@ -11253,13 +11253,71 @@ exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 0.1 BTC
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Bitcoin Wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -11470,13 +11528,71 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 0.1 BTC
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Bitcoin Wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -11943,13 +12059,71 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -12255,13 +12429,71 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Key wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -12470,13 +12702,71 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Key wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -12938,13 +13228,71 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Key wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -13406,13 +13754,71 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Key wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -17804,13 +18210,71 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Smart Wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -18242,13 +18706,71 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Pillar Network
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -18680,13 +19202,71 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Smart Wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -18992,13 +19572,71 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Pillar Network
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -19333,6 +19971,33 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
       ]
     }
   >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
     <View
       name="pending"
       style={
@@ -19349,11 +20014,41 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
     />
   </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -19687,13 +20382,71 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -20156,6 +20909,33 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
       ]
     }
   >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
     <View
       name="pending"
       style={
@@ -20172,11 +20952,41 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
     />
   </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -20514,13 +21324,71 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -20981,6 +21849,33 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
       ]
     }
   >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
     <View
       name="pending"
       style={
@@ -20997,11 +21892,41 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
     />
   </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -21335,13 +22260,71 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -21804,6 +22787,33 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
       ]
     }
   >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
     <View
       name="pending"
       style={
@@ -21820,11 +22830,41 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
     />
   </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -22162,13 +23202,71 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Smart wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -22600,13 +23698,71 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#0A1427"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      - 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    to Smart Wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
@@ -22914,13 +24070,71 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
         undefined,
       ]
     }
-  />
+  >
+    <Text
+      color="#2AA057"
+      large={true}
+      style={
+        Array [
+          Object {
+            "color": "#2AA057",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 24,
+              "lineHeight": 38,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      + 10 PLR
+    </Text>
+  </View>
   <View
-    h={32}
+    h={4}
     style={
       Array [
         Object {
-          "height": 32,
+          "height": 4,
+          "width": 0,
+        },
+        undefined,
+      ]
+    }
+  />
+  <Text
+    regular={true}
+    secondary={true}
+    style={
+      Array [
+        Object {
+          "color": "#8B939E",
+          "fontFamily": "EuclidCircularB-Regular",
+          "fontSize": 14,
+          "lineHeight": 22,
+          "textAlignVertical": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    from Key wallet
+  </Text>
+  <View
+    h={24}
+    style={
+      Array [
+        Object {
+          "height": 24,
           "width": 0,
         },
         undefined,
