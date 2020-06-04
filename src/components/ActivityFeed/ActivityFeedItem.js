@@ -133,6 +133,7 @@ export type EventData = {
   iconName?: ?string,
   iconColor?: string,
   itemValue?: string,
+  fullItemValue?: string,
   valueColor?: string,
   customAddon?: React.Node,
   itemStatusIcon?: string,
@@ -331,6 +332,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
+            fullItemValue: `- ${value} ${event.asset}`,
             itemValue: `- ${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
@@ -339,6 +341,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: 'Top Up',
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
+            fullItemValue: `+ ${value} ${event.asset}`,
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
@@ -347,6 +350,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.SMART_WALLET,
             subtext: 'To Pillar Network',
             itemImageSource: smartWalletIcon,
+            fullItemValue: `- ${value} ${event.asset}`,
             itemValue: `- ${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
@@ -355,6 +359,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: 'Top up',
             itemImageSource: PPNIcon,
+            fullItemValue: `+ ${value} ${event.asset}`,
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
@@ -369,6 +374,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
+          fullItemValue: `- ${value} ${event.asset}`,
           itemValue: `- ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
@@ -434,6 +440,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               subtext: isAssetView ? `to ${smartWallet}` : 'from Pillar Network',
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
+              fullItemValue: `+ ${value} ${event.asset}`,
               itemValue: `+ ${formattedValue} ${event.asset}`,
               valueColor: 'positive',
             };
@@ -525,8 +532,9 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: itemLabel,
             subtext,
             avatarUrl,
+            fullItemValue: `${directionSymbol} ${value} ${event.asset}`,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
-            valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
+            valueColor: isReceived && value !== '0' ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
           };
