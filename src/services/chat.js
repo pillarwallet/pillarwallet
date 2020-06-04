@@ -51,6 +51,9 @@ export default class Chat {
     } catch (e) {
       //
     }
+
+    webSocketInstance.init();
+
     return this.client.init(credentials);
   }
 

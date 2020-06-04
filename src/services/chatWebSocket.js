@@ -46,7 +46,7 @@ export default class ChatWebSocket {
     this.running = false;
   }
 
-  listen() {
+  init() {
     this.stop();
     if (!this.credentials.host || !this.credentials.accessToken) return;
     const wsUrl = `${this.credentials.host
@@ -55,6 +55,17 @@ export default class ChatWebSocket {
     try {
       this.ws = new WebSocket(wsUrl, [this.credentials.accessToken]);
       this.ws.binaryType = 'arraybuffer';
+      this.ws.onopen = () => {
+        if (keepaliveTimer) clearTimeout(keepaliveTimer);
+        this.keepalive();
+        this.setRunning(true);
+      };
+      this.ws.onclose = () => {
+        this.setRunning(false);
+      };
+      this.ws.onerror = () => {
+        this.setRunning(false);
+      };
       this.setRunning(true);
     } catch (e) {
       this.setRunning(false);
@@ -124,22 +135,6 @@ export default class ChatWebSocket {
     if (this.isRunning()) this.ws.close(1000, 'OK');
     this.setRunning(false);
     if (typeof callback === 'function') callback();
-  }
-
-  onOpen(callback?: Function) {
-    if (!this.ws) return;
-    this.ws.onopen = () => {
-      if (keepaliveTimer) clearTimeout(keepaliveTimer);
-      this.keepalive();
-      this.setRunning(true);
-      if (typeof callback === 'function') callback();
-    };
-    this.ws.onclose = () => {
-      this.setRunning(false);
-    };
-    this.ws.onerror = () => {
-      this.setRunning(false);
-    };
   }
 
   setRunning(state: boolean) {

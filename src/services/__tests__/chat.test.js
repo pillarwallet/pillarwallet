@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import ChatWebSocketService from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 import { WebSocket, Server } from 'mock-socket';
@@ -12,8 +30,6 @@ SignalClient.prepareApiBody = () => {
     message: 'hello there',
     userId: null,
     targetUserId: null,
-    sourceIdentityKey: null,
-    targetIdentityKey: null,
   }));
 };
 
@@ -42,6 +58,7 @@ describe('chat service', () => {
       websocket = new ChatWebSocketService(creds);
       creds.errorTrackingDSN = SENTRY_DSN;
       creds.isSendingLogs = false;
+      websocket.init();
       return client.init(credentials);
     }),
     getWebSocketInstance: () => {
@@ -65,11 +82,11 @@ describe('chat service', () => {
       expect(socket).toBeTruthy();
       done();
     });
+
     await chatMock.init(credentials)
       .then(() => chatMock.client.registerAccount())
       .then(() => chatMock.client.setFcmId(credentials.fcmToken))
       .catch(() => null);
-    await websocket.listen();
   });
 
   it('Should successfully send a chat message to a target', async (done) => {
@@ -81,12 +98,11 @@ describe('chat service', () => {
         }
       });
     });
+
     await chatMock.init(credentials)
       .then(() => chatMock.client.registerAccount())
       .then(() => chatMock.client.setFcmId(credentials.fcmToken))
       .catch(() => null);
-
-    await websocket.listen();
 
     chatMock.getWebSocketInstance = () => {
       return websocket;

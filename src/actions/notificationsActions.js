@@ -412,8 +412,6 @@ export const startListeningChatWebSocketAction = () => {
     const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
     const chatWebSocket = chat.getWebSocketInstance();
-    await chatWebSocket.listen();
-    chatWebSocket.onOpen();
     chatWebSocket.onMessage(async webSocketMessage => {
       const {
         contacts: { data: contacts },
