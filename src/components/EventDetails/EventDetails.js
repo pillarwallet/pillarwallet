@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Linking } from 'react-native';
+import { View, Linking, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
@@ -41,6 +41,8 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
+import ButtonText from 'components/ButtonText';
+import Spinner from 'components/Spinner';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -119,6 +121,7 @@ import {
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -126,6 +129,8 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
+import { getTxNoteByContactAction } from 'actions/txNoteActions';
+import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -136,11 +141,14 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
+import type { TxNote } from 'reducers/txNoteReducer';
+
 
 type Props = {
   theme: Theme,
@@ -179,6 +187,12 @@ type Props = {
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
+  getTxNoteByContact: (username: string) => void,
+  txNotes: TxNote[],
+  collectiblesHistory: CollectibleTrx[],
+  updateCollectibleTransaction: (hash: string) => void,
+  updatingTransaction: string,
+  updatingCollectibleTransaction: string,
 };
 
 type State = {
@@ -206,6 +220,7 @@ type EventData = {
   imageBorder?: boolean,
   imageBackground?: ?string,
   collectibleUrl?: ?string,
+  transactionNote?: string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -278,6 +293,18 @@ const Divider = styled.View`
   margin: 8px 0px 18px;
 `;
 
+const ButtonHolder = styled.View`
+  flex-direction: row;
+  flex: 1;
+  justify-content: flex-end;
+`;
+
+const EventTimeHolder = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: center;
+  padding: 0 8px;
+`;
+
 
 export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -290,23 +317,33 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    if (this.props.event.type !== TRANSACTION_EVENT) return;
-    const txInfo = this.findTxInfo();
+    const { event, getTxNoteByContact } = this.props;
+    const { type, username } = event;
+    if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
+    getTxNoteByContact(username);
+    const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
+    if (!txInfo) return;
     this.syncEnsRegistry(txInfo);
     this.syncTxStatus(txInfo);
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (this.props.event.type !== TRANSACTION_EVENT) return;
-    const txInfo = this.findTxInfo();
-    if (!prevProps.isVisible && this.props.isVisible) {
-      this.syncEnsRegistry(txInfo);
-      this.syncTxStatus(txInfo);
+    const { event, isVisible, getTxNoteByContact } = this.props;
+    const { type, username } = event;
+    if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
+    const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
+    const trxStatus = txInfo?.status;
+    if (!prevProps.isVisible && isVisible) {
+      if (txInfo) {
+        this.syncEnsRegistry(txInfo);
+        this.syncTxStatus(txInfo);
+      }
+      getTxNoteByContact(username);
     }
-    if (prevProps.isVisible && !this.props.isVisible) {
+    if (prevProps.isVisible && !isVisible) {
       this.cleanup();
     }
-    if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
+    if (trxStatus !== TX_PENDING_STATUS && this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
@@ -321,32 +358,43 @@ export class EventDetail extends React.Component<Props, State> {
     if (this.timeout) clearTimeout(this.timeout);
   }
 
-  findTxInfo = () => {
-    const { history, event } = this.props;
-    return findTransactionAcrossAccounts(history, event.hash) || {};
-  }
+  findTxInfo = (isCollectible?: boolean) => {
+    const { collectiblesHistory, history, event } = this.props;
 
-  syncEnsRegistry = (txInfo: Transaction) => {
+    if (isCollectible) {
+      return collectiblesHistory.find(({ hash }) => hash === event.hash);
+    }
+
+    return findTransactionAcrossAccounts(history, event.hash);
+  };
+
+  syncEnsRegistry = (txInfo: Transaction | CollectibleTrx) => {
     const { ensRegistry, lookupAddress } = this.props;
     const relatedAddress = this.getRelevantAddress(txInfo);
 
     if (!ensRegistry[relatedAddress]) {
       lookupAddress(relatedAddress);
     }
-  }
+  };
 
-  syncTxStatus = (txInfo: Transaction) => {
-    const {
-      event,
-      updateTransactionStatus,
-    } = this.props;
+  syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
     if (txInfo.status === TX_PENDING_STATUS) {
-      this.timeout = setTimeout(() => updateTransactionStatus(event.hash), 500);
-      this.timer = setInterval(() => updateTransactionStatus(event.hash), 10000);
+      this.timeout = setTimeout(this.updateTransaction, 500);
+      this.timer = setInterval(this.updateTransaction, 10000);
     }
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
-      updateTransactionStatus(event.hash);
+      this.updateTransaction();
+    }
+  };
+
+  updateTransaction = () => {
+    const { event, updateCollectibleTransaction, updateTransactionStatus } = this.props;
+    const { type, hash } = event;
+    if (type === COLLECTIBLE_TRANSACTION) {
+      updateCollectibleTransaction(hash);
+    } else {
+      updateTransactionStatus(hash);
     }
   };
 
@@ -364,8 +412,8 @@ export class EventDetail extends React.Component<Props, State> {
     return `Fee ${formattedFee} ${token} (${formattedFiatValue})`;
   };
 
-  getFeeLabel = () => {
-    const { event, assetDecimals } = this.props;
+  getFeeLabel = (event: Object) => {
+    const { assetDecimals } = this.props;
     const {
       gasUsed, gasPrice, btcFee, feeWithGasToken,
     } = event;
@@ -601,6 +649,18 @@ export class EventDetail extends React.Component<Props, State> {
     return 'Invite friends';
   };
 
+  getTrxNote = (event: Object) => {
+    const { txNotes } = this.props;
+    let transactionNote = event.note;
+    if (txNotes && txNotes.length > 0) {
+      const txNote = txNotes.find(txn => txn.txHash === event.hash);
+      if (txNote) {
+        transactionNote = txNote.text;
+      }
+    }
+    return transactionNote;
+  };
+
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
     const keyWalletButtons = [
@@ -759,30 +819,27 @@ export class EventDetail extends React.Component<Props, State> {
 
         eventData = {
           actionTitle: 'Activated',
-          actionSubtitle: this.getFeeLabel(),
+          actionSubtitle: this.getFeeLabel(event),
           buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
+        const topUpMoreButton = {
+          title: 'Top up more',
+          onPress: this.topUpPillarNetwork,
+          squarePrimary: true,
+        };
         eventData = {
-          buttons: [
-            isPending ?
-              {
-                title: 'View on the blockchain',
-                onPress: this.viewOnTheBlockchain,
-                secondary: true,
-              } :
+          buttons: isPending
+            ? [topUpMoreButton]
+            : [
               {
                 title: 'Send',
                 onPress: this.sendSynthetic,
                 secondary: true,
               },
-            {
-              title: 'Top up more',
-              onPress: this.topUpPillarNetwork,
-              squarePrimary: true,
-            },
-          ],
+              topUpMoreButton,
+            ],
         };
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
@@ -790,13 +847,6 @@ export class EventDetail extends React.Component<Props, State> {
           name: 'ENS name',
           actionTitle: 'Registered',
           actionSubtitle: event.extra.ensName,
-          buttons: [
-            {
-              title: 'View on the blockchain',
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
@@ -826,13 +876,6 @@ export class EventDetail extends React.Component<Props, State> {
         eventData = {
           name: 'Smart Wallet fees with PLR token',
           actionTitle: 'Enabled',
-          buttons: [
-            {
-              title: 'View on the blockchain',
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       default:
@@ -840,6 +883,7 @@ export class EventDetail extends React.Component<Props, State> {
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
+        const transactionNote = this.getTrxNote(event);
 
         if (isPPNTransaction) {
           eventData = {
@@ -851,6 +895,7 @@ export class EventDetail extends React.Component<Props, State> {
               />
             ),
             actionSubtitle: !isTrxBetweenSWAccount ? `${isReceived ? 'to' : 'from'} Pillar Network` : '',
+            transactionNote,
           };
 
           if (isReceived) {
@@ -882,6 +927,7 @@ export class EventDetail extends React.Component<Props, State> {
         } else {
           eventData = {
             actionTitle: itemValue,
+            transactionNote,
           };
 
           let buttons = [];
@@ -893,18 +939,6 @@ export class EventDetail extends React.Component<Props, State> {
             title: 'Message',
             onPress: () => this.messageContact(contact),
             secondary: true,
-          };
-
-          const viewOnBlockchainButton = {
-            title: 'View on the blockchain',
-            onPress: this.viewOnTheBlockchain,
-            secondary: true,
-          };
-
-          const viewOnBlockchainButtonSecondary = {
-            title: 'View on the blockchain',
-            onPress: this.viewOnTheBlockchain,
-            squarePrimary: true,
           };
 
           const sendBackButtonSecondary = {
@@ -976,40 +1010,40 @@ export class EventDetail extends React.Component<Props, State> {
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
             } else if (isBitcoinTrx) {
-              if (bitcoinFeatureEnabled) {
-                buttons = isPending ? [viewOnBlockchainButton] : [sendBackBtc];
+              if (bitcoinFeatureEnabled && !isPending) {
+                buttons = [sendBackBtc];
               } else {
                 buttons = [];
               }
             } else if (contactFound) {
               buttons = isPending
-                ? [messageButton, viewOnBlockchainButtonSecondary]
+                ? [messageButton]
                 : [messageButton, sendBackButtonSecondary];
             } else if (isPending) {
-              buttons = [viewOnBlockchainButton, inviteToPillarButton];
+              buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
           } else if (isBitcoinTrx) {
-            if (bitcoinFeatureEnabled) {
-              buttons = isPending ? [viewOnBlockchainButton] : [sendMoreBtc];
+            if (bitcoinFeatureEnabled && !isPending) {
+              buttons = [sendMoreBtc];
             } else {
               buttons = [];
             }
           } else if (contactFound) {
             buttons = isPending
-              ? [messageButton, viewOnBlockchainButtonSecondary]
+              ? [messageButton]
               : [messageButton, sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
-            buttons = [viewOnBlockchainButton, inviteToPillarButton];
+            buttons = [inviteToPillarButton];
           } else {
             buttons = [sendMoreToAddress, inviteToPillarButton];
           }
           eventData.buttons = buttons;
           if (!isReceived) {
-            eventData.fee = this.getFeeLabel();
+            eventData.fee = this.getFeeLabel(event);
           }
         }
     }
@@ -1024,21 +1058,16 @@ export class EventDetail extends React.Component<Props, State> {
     const { subtext, isReceived } = itemData;
 
     const isPending = isPendingTransaction(event);
+    const transactionNote = this.getTrxNote(event);
 
     let eventData: EventData = {
       actionSubtitle: subtext,
+      transactionNote,
     };
 
     if (isReceived) {
       eventData = {
         ...eventData,
-        buttons: [
-          {
-            title: 'View on the Blockchain',
-            onPress: this.viewOnTheBlockchain,
-            secondary: true,
-          },
-        ],
         actionTitle: isPending ? 'Receiving' : 'Received',
       };
     } else {
@@ -1046,6 +1075,10 @@ export class EventDetail extends React.Component<Props, State> {
         ...eventData,
         actionTitle: isPending ? 'Sending' : 'Sent',
       };
+
+      if (!isPending) {
+        eventData.fee = this.getFeeLabel(event);
+      }
     }
 
     if (isPending) {
@@ -1064,12 +1097,6 @@ export class EventDetail extends React.Component<Props, State> {
       secondary: true,
     };
 
-    const viewOnBlockchainButton = {
-      title: 'View on the blockchain',
-      onPress: this.viewOnTheBlockchain,
-      squarePrimary: true,
-    };
-
     const isPending = isPendingTransaction(event);
 
     return {
@@ -1078,7 +1105,7 @@ export class EventDetail extends React.Component<Props, State> {
       actionTitle: isPending ? 'Receiving' : 'Received',
       actionSubtitle: 'Badge',
       actionIcon: isPending ? 'pending' : null,
-      buttons: isPending ? [viewBadgeButton] : [viewBadgeButton, viewOnBlockchainButton],
+      buttons: [viewBadgeButton],
     };
   };
 
@@ -1281,12 +1308,33 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  renderContent = (eventData: EventData) => {
+  showNote = (note: string) => {
+    return Alert.alert(
+      null,
+      note,
+      [
+        { text: 'OK' },
+      ],
+    );
+  };
+
+  renderFee = (hash: string, fee: ?string) => {
+    const { updatingTransaction, updatingCollectibleTransaction } = this.props;
+    if (fee) {
+      return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
+    } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
+      return (<Spinner height={20} width={20} style={{ marginBottom: 32 }} />);
+    }
+    return null;
+  };
+
+  renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
     const {
       date, name,
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
+      transactionNote,
     } = eventData;
 
     const {
@@ -1305,7 +1353,17 @@ export class EventDetail extends React.Component<Props, State> {
 
     return (
       <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <BaseText tiny secondary>{eventTime}</BaseText>
+        <Row>
+          <ButtonHolder>
+            <View />
+          </ButtonHolder>
+          <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
+            <BaseText tiny secondary>{eventTime}</BaseText>
+          </EventTimeHolder>
+          <ButtonHolder>
+            {!!transactionNote && <ButtonText onPress={() => this.showNote(transactionNote)} buttonText="Note" />}
+          </ButtonHolder>
+        </Row>
         <Spacing h={10} />
         <BaseText medium>{label}</BaseText>
         <Spacing h={20} />
@@ -1327,12 +1385,7 @@ export class EventDetail extends React.Component<Props, State> {
             ) : (
               <Spacing h={32} />
             )}
-            {!!fee && (
-              <React.Fragment>
-                <BaseText regular secondary>{fee}</BaseText>
-                <Spacing h={32} />
-              </React.Fragment>
-            )}
+            {this.renderFee(event.hash, fee)}
           </React.Fragment>
         )}
         <ButtonsContainer>
@@ -1359,17 +1412,19 @@ export class EventDetail extends React.Component<Props, State> {
 
     let { event } = this.props;
 
-    if (event.type === TRANSACTION_EVENT) {
-      const txInfo = this.findTxInfo();
+    if (event.type === TRANSACTION_EVENT || event.type === COLLECTIBLE_TRANSACTION) {
+      const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION) || {};
       event = { ...event, ...txInfo };
     }
 
     const eventData = this.getEventData(event);
 
     if (!eventData) return null;
+    const { hash, isPPNTransaction } = event;
+    const allowViewOnBlockchain = !!hash && !isPPNTransaction;
 
     if (storybook) {
-      return this.renderContent(eventData);
+      return this.renderContent(event, eventData, allowViewOnBlockchain);
     }
 
     return (
@@ -1380,7 +1435,7 @@ export class EventDetail extends React.Component<Props, State> {
           noClose
           hideHeader
         >
-          {this.renderContent(eventData)}
+          {this.renderContent(event, eventData, allowViewOnBlockchain)}
         </SlideModal>
         <ReceiveModal
           isVisible={isReceiveModalVisible}
@@ -1405,13 +1460,15 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
-  history: { data: history },
+  history: { data: history, updatingTransaction },
   featureFlags: {
     data: {
       BITCOIN_ENABLED: bitcoinFeatureEnabled,
     },
   },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
+  txNotes: { data: txNotes },
+  collectibles: { updatingTransaction: updatingCollectibleTransaction },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1425,6 +1482,9 @@ const mapStateToProps = ({
   bitcoinFeatureEnabled,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
+  txNotes,
+  updatingTransaction,
+  updatingCollectibleTransaction,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1436,6 +1496,7 @@ const structuredSelector = createStructuredSelector({
   accountAssets: accountAssetsSelector,
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
+  collectiblesHistory: combinedCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
@@ -1447,8 +1508,11 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
+  updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(true)),
+  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
+  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
+  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));

@@ -19,7 +19,7 @@
 */
 import get from 'lodash.get';
 import { REHYDRATE } from 'redux-persist';
-import { SET_HISTORY, ADD_TRANSACTION, SET_GAS_INFO } from 'constants/historyConstants';
+import { SET_HISTORY, ADD_TRANSACTION, SET_GAS_INFO, UPDATING_TRANSACTION } from 'constants/historyConstants';
 import type { TransactionsStore } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
 
@@ -27,6 +27,7 @@ export type HistoryReducerState = {
   data: TransactionsStore,
   gasInfo: GasInfo,
   isFetched: boolean,
+  updatingTransaction: string,
 }
 
 export type HistoryAction = {
@@ -41,6 +42,7 @@ export const initialState = {
     isFetched: false,
   },
   isFetched: false,
+  updatingTransaction: '',
 };
 
 export default function historyReducer(
@@ -69,12 +71,15 @@ export default function historyReducer(
       return Object.assign(
         {},
         state,
-        { isFetched: true, data: action.payload },
+        { isFetched: true, data: action.payload, updatingTransaction: '' },
       );
     case SET_GAS_INFO: {
       const gasPriceInfo = action.payload;
       const isGasFetched = !!Object.keys(gasPriceInfo).length;
       return { ...state, gasInfo: { gasPrice: gasPriceInfo, isFetched: isGasFetched } };
+    }
+    case UPDATING_TRANSACTION: {
+      return { ...state, updatingTransaction: action.payload };
     }
     default:
       return state;
