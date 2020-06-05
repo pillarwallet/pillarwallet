@@ -750,7 +750,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
-      startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAllAccountsBalances,
@@ -765,7 +764,6 @@ class AppFlow extends React.Component<Props, State> {
     fetchTransactionsHistoryNotifications();
     getExistingChats();
     fetchAllCollectiblesData();
-    startListeningChatWebSocket();
     initWalletConnect();
     addAppStateChangeListener(this.handleAppStateChange);
   }
@@ -777,7 +775,6 @@ class AppFlow extends React.Component<Props, State> {
       wallet,
       removePrivateKeyFromMemory,
       isOnline,
-      startListeningChatWebSocket,
       stopListeningChatWebSocket,
       initSignal,
     } = this.props;
@@ -789,9 +786,12 @@ class AppFlow extends React.Component<Props, State> {
 
     if (prevIsOnline !== isOnline) {
       if (isOnline) {
-        // try initializing Signal in case of user user logged to wallet while being offline and then switched
+        /**
+         * try initializing Signal in case of user user logged
+         * to wallet while being offline and then switched,
+         * this action also includes chat websocket listener action
+         */
         initSignal();
-        startListeningChatWebSocket();
       } else {
         stopListeningChatWebSocket();
       }
