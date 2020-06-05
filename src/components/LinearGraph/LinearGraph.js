@@ -31,6 +31,7 @@ import Svg, {
   Path,
   ForeignObject,
 } from 'react-native-svg';
+import memoize from 'memoize-one';
 import { BaseText } from 'components/Typography';
 import { range } from 'utils/common';
 
@@ -43,12 +44,11 @@ type DataPoints = DataPoint[];
 
 type Props = {
   data: DataPoints,
-  resolution: number,
   width: number,
   height: number,
-  getXAxisValue?: (x: number) => string,
+  getXAxisValue: (x: number) => string,
   xAxisValuesCount?: number,
-  getYAxisValue?: (y: number) => string,
+  getYAxisValue: (y: number) => string,
   yAxisValuesCount?: number,
   getTooltipContent: (dataIndex: number) => string,
   onDragStart?: () => void,
@@ -85,8 +85,7 @@ class LinearGraph extends React.Component<Props, State> {
   }
 
   getScreenX = (x: number) => {
-    const { resolution, width } = this.props;
-    return x / resolution * width;
+    return x * this.props.width;
   };
 
   getScreenY = (y: number) => {
@@ -100,11 +99,13 @@ class LinearGraph extends React.Component<Props, State> {
     return this.props.height - BOTTOM_MARGIN - TOP_MARGIN;
   }
 
-  getMaxY = () => {
-    const maxValue = Math.max(...this.props.data.map(v => v.y));
+  _getMaxY = memoize((data) => {
+    const maxValue = Math.max(...data.map(v => v.y));
     const graphHeight = this.getGraphHeight();
     return (maxValue * graphHeight) / (graphHeight - GRAPH_TOP_PADDING);
-  }
+  })
+
+  getMaxY = () => this._getMaxY(this.props.data);
 
   updateActivePoint = (x: number) => {
     const { data } = this.props;
@@ -165,7 +166,7 @@ class LinearGraph extends React.Component<Props, State> {
     const { activeDataPoint } = this.state;
     const content = getTooltipContent(activeDataPoint);
 
-    const tooltipWidth = 75;
+    const tooltipWidth = 90; // 75;
     const tooltipHeight = 40;
     const tipHeight = 7;
     const tipWidth = 10;
@@ -239,9 +240,9 @@ class LinearGraph extends React.Component<Props, State> {
 
   renderXAxis = () => {
     const {
-      xAxisValuesCount = 6, getXAxisValue = v => Math.round(v), resolution, height,
+      xAxisValuesCount = 6, getXAxisValue, height,
     } = this.props;
-    const values = range(xAxisValuesCount + 1).map(v => getXAxisValue(v * resolution / (xAxisValuesCount - 1)));
+    const values = range(xAxisValuesCount + 1).map(v => getXAxisValue(v / (xAxisValuesCount - 1)));
     return (
       <ForeignObject y={height - BOTTOM_MARGIN + 3}>
         <View style={{ width: '100%', flexDirection: 'row' }}>
@@ -276,7 +277,7 @@ class LinearGraph extends React.Component<Props, State> {
 
   renderYAxis = () => {
     const {
-      yAxisValuesCount = 3, getYAxisValue = v => Math.round(v),
+      yAxisValuesCount = 3, getYAxisValue,
     } = this.props;
     const maxY = this.getMaxY();
 

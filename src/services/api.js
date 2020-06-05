@@ -544,6 +544,12 @@ class SDKWrapper {
       .catch(() => []);
   }
 
+  fetchBalancesHistory(payload: BalancesHistoryPayload) {
+    return this.BCXSdk.balanceHistory(payload)
+      .then(({ balanceHistory: { balanceHistory } }) => balanceHistory)
+      .catch(() => []);
+  }
+
   fetchTransactionReceipt(hash: string) {
     return fetchTransactionReceipt(hash);
   }

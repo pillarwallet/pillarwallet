@@ -66,7 +66,7 @@ import {
   fetchReferralRewardAction,
 } from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
-import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsBalancesAction, fetchBalancesHistoryAction } from 'actions/assetsActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 
@@ -135,6 +135,7 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
   dismissReferFriends: () => void,
   referFriendsOnHomeScreenDismissed: boolean,
+  fetchBalancesHistory: () => void,
 };
 
 type State = {
@@ -189,6 +190,7 @@ class HomeScreen extends React.Component<Props, State> {
       fetchBadgeAwardHistory,
       fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
+      fetchBalancesHistory,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -202,6 +204,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
     fetchBadgeAwardHistory();
     fetchReferralRewardsIssuerAddresses();
+    fetchBalancesHistory();
   }
 
   componentWillUnmount() {
@@ -236,6 +239,7 @@ class HomeScreen extends React.Component<Props, State> {
       refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
+      fetchBalancesHistory,
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
@@ -247,6 +251,7 @@ class HomeScreen extends React.Component<Props, State> {
     refreshBitcoinBalance();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
+    fetchBalancesHistory();
   };
 
   setActiveTab = (activeTab) => {
@@ -302,6 +307,7 @@ class HomeScreen extends React.Component<Props, State> {
       isPillarRewardCampaignActive,
       dismissReferFriends,
       referFriendsOnHomeScreenDismissed,
+      balancesHistory,
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
@@ -451,6 +457,7 @@ class HomeScreen extends React.Component<Props, State> {
                   <BalanceGraph
                     onDragStart={() => this.setScrollViewScrollable(false)}
                     onDragEnd={() => this.setScrollViewScrollable(true)}
+                    balancesHistory={balancesHistory}
                   />
                   {!!walletConnectRequests &&
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
@@ -543,6 +550,7 @@ const mapStateToProps = ({
   walletConnect: { requests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
+  balancesHistory: { data: balancesHistory },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -558,6 +566,7 @@ const mapStateToProps = ({
   walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
+  balancesHistory,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -589,6 +598,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
+  fetchBalancesHistory: () => dispatch(fetchBalancesHistoryAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

@@ -61,6 +61,7 @@ import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
+import balancesHistoryReducer from './balancesHistoryReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -101,6 +102,7 @@ import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensReg
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
+import type { BalancesHistoryReducerAction, BalancesHistoryReducerState } from './balancesHistoryReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -138,6 +140,7 @@ export type RootReducerState = {|
   referrals: ReferralsReducerState,
   insights: InsightsReducerState,
   phoneContacts: PhoneContactsReducerState,
+  balancesHistory: BalancesHistoryReducerState,
 |};
 
 type RootReducerAction =
@@ -164,7 +167,8 @@ type RootReducerAction =
   | EnsRegistryReducerAction
   | InsightsReducerAction
   | ReferralsReducerAction
-  | PhoneContactsReducerAction;
+  | PhoneContactsReducerAction
+  | BalancesHistoryReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -212,6 +216,7 @@ const appReducer = combineReducers({
   insights: insightsReducer,
   referrals: referralsReducer,
   phoneContacts: phoneContactsReducer,
+  balancesHistory: balancesHistoryReducer,
 });
 
 export const initialState = appReducer(undefined, {});

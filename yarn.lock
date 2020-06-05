@@ -4526,10 +4526,9 @@ blob@0.0.5:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blob/-/blob-0.0.5.tgz#d680eeef25f8cd91ad533f5b01eed48e64caf683"
   integrity sha1-1oDu7yX4zZGtUz9bAe7UjmTK9oM=
 
-blockchain-explorer-sdk@^0.1.163:
-  version "0.1.205"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blockchain-explorer-sdk/-/blockchain-explorer-sdk-0.1.205.tgz#44b59de358a5380bd3a56986510efde7c688e9ae"
-  integrity sha1-RLWd41ilOAvTpWmGUQ7958aI6a4=
+"blockchain-explorer-sdk@https://github.com/pillarwallet/blockchain-explorer-sdk#develop":
+  version "1.1.2"
+  resolved "https://github.com/pillarwallet/blockchain-explorer-sdk#ba526a1749196f7840f03a389f20531eecf8018f"
   dependencies:
     ajv "6.5.1"
     convict "4.2.0"
