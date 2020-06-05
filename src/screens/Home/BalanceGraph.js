@@ -18,46 +18,90 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
-import { subDays, isAfter, min, isEqual, getTime, compareAsc, getDate, format } from 'date-fns';
-import { utils } from 'ethers';
+import * as dateDns from 'date-fns';
 import memoize from 'memoize-one';
+import styled, { withTheme } from 'styled-components/native';
 import LinearGraph from 'components/LinearGraph';
+import { LabelBadge } from 'components/LabelBadge';
 import { getDeviceWidth, formatUnits, formatFiat } from 'utils/common';
-import { defaultFiatCurrency, TOKENS, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { getRate } from 'utils/assets';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   onDragStart?: () => void,
   onDragEnd?: () => void,
-}
+  theme: Theme,
+};
+
+const TimeRangeSwitcher = styled.TouchableOpacity`
+  position: absolute;
+  top: 10px;
+  left: 40px;
+`;
+
+const MONTH = 'MONTH';
+const WEEK = 'WEEK';
+const DAY = 'DAY';
+const ALL = 'ALL';
 
 const RANGES = {
-  MONTH: 'MONTH',
-  WEEK: 'WEEK',
-  DAY: 'DAY',
-  ALL: 'ALL',
+  MONTH: {
+    label: '30 days',
+    xAxisFormat: 'D',
+    tooltipFormat: 'D MMM',
+    nextTimeRange: WEEK,
+  },
+  WEEK: {
+    label: '7 days',
+    xAxisFormat: 'ddd',
+    tooltipFormat: 'D MMM',
+    nextTimeRange: DAY,
+  },
+  DAY: {
+    label: '1 day',
+    xAxisFormat: 'HH:00',
+    tooltipFormat: 'ddd hh:mm',
+    nextTimeRange: ALL,
+  },
+  ALL: {
+    label: 'all',
+    xAxisFormat: 'MMM \'YY',
+    tooltipFormat: 'MMM YYYY',
+    nextTimeRange: MONTH,
+  },
 };
 
 class BalanceGraph extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      timeRange: RANGES.MONTH,
-    };
     this.now = new Date('2017-02-13T22:14:44.000Z');
+    const { balancesHistory } = this.props;
+    const filteredHistory = this._getFilteredHistory(balancesHistory, this._getStartRange(balancesHistory, MONTH));
+    this.state = {
+      timeRange: MONTH,
+      activeDataPoint: filteredHistory.length - 1,
+    };
   }
 
   _getStartRange = memoize((balancesHistory, timeRange) => {
     switch (timeRange) {
-      case RANGES.MONTH:
-        return subDays(this.now, 30);
-      case RANGES.WEEK:
-        return subDays(this.now, 7);
-      case RANGES.DAY:
-        return subDays(this.now, 1);
+      case MONTH:
+        return dateDns.subDays(this.now, 30);
+      case WEEK:
+        return dateDns.subDays(this.now, 7);
+      case DAY:
+        return dateDns.subDays(this.now, 1);
       default:
-        return min(...balancesHistory.map(({ timestamp }) => new Date(timestamp)));
+        return dateDns.min(
+          ...balancesHistory
+            .filter(({ timestamp }) => !!timestamp)
+            .map(({ timestamp }) => new Date(timestamp)),
+        );
     }
   })
 
@@ -67,31 +111,34 @@ class BalanceGraph extends React.Component<Props, State> {
     return this._getStartRange(balancesHistory, timeRange);
   }
 
-  _getFilteredHistory = memoize((balancesHistory) => {
-    const rangeStart = this.getStartRange();
-
+  _getFilteredHistory = memoize((balancesHistory, rangeStart) => {
     const filteredHistory = balancesHistory.filter(({ timestamp }) => {
       const date = new Date(timestamp);
-      return timestamp && (isEqual(date, rangeStart) || isAfter(date, rangeStart));
+      return timestamp && (dateDns.isEqual(date, rangeStart) || dateDns.isAfter(date, rangeStart));
     });
 
-    return filteredHistory
-      .sort((a, b) => compareAsc(new Date(a.timestamp), new Date(b.timestamp)));
+    const sortedHistory = filteredHistory
+      .sort((a, b) => dateDns.compareAsc(new Date(a.timestamp), new Date(b.timestamp)));
+    return [
+      { timestamp: rangeStart.toString(), total_balance: sortedHistory[0].total_balance },
+      ...sortedHistory,
+      { timestamp: this.now.toString(), total_balance: sortedHistory[sortedHistory.length - 1].total_balance },
+    ];
   })
 
   getFilteredHistory = () => {
-    return this._getFilteredHistory(this.props.balancesHistory);
+    return this._getFilteredHistory(this.props.balancesHistory, this.getStartRange());
   }
 
   _getFormattedData = memoize((filteredHistory) => {
     const rangeStart = this.getStartRange();
 
-    const rangeStartMs = getTime(rangeStart);
-    const rangeMs = getTime(this.now) - rangeStartMs;
+    const rangeStartMs = dateDns.getTime(rangeStart);
+    const rangeMs = dateDns.getTime(this.now) - rangeStartMs;
 
     return filteredHistory
       .map(entry => {
-        return { x: (getTime(new Date(entry.timestamp)) - rangeStartMs) / rangeMs, y: entry.total_balance };
+        return { x: (dateDns.getTime(new Date(entry.timestamp)) - rangeStartMs) / rangeMs, y: entry.total_balance };
       });
   })
 
@@ -109,50 +156,62 @@ class BalanceGraph extends React.Component<Props, State> {
   getXAxisValue = (x: number) => {
     const { timeRange } = this.state;
 
-    switch (timeRange) {
-      case RANGES.MONTH:
-        const rangeStart = subDays(this.now, 30);
-        return getDate(new Date(getTime(rangeStart) + ((getTime(this.now) - getTime(rangeStart)) * x)));
-      default:
-        return x;
-    }
+    const rangeStart = this.getStartRange();
+
+    const date = new Date(dateDns.getTime(rangeStart) + ((dateDns.getTime(this.now) - dateDns.getTime(rangeStart)) * x));
+
+    const dateFormat = RANGES[timeRange].xAxisFormat;
+    return dateDns.format(date, dateFormat);
   }
 
-  getTooltipContent = (index: number) => {
-    const { timeRange } = this.state;
-    const entry = this.getFilteredHistory()[index];
-    let dateFormat;
-    switch (timeRange) {
-      case RANGES.MONTH:
-      case RANGES.WEEK:
-        dateFormat = 'D MMM';
-        break;
-      case RANGES.DAY:
-        dateFormat = 'ddd hh:mm';
-        break;
-      default:
-        dateFormat = 'MMM YYYY';
-    }
-    return `${format(entry.timestamp, dateFormat)}\n${this.getYAxisValue(entry.total_balance)}`;
+  getTooltipContent = () => {
+    const { timeRange, activeDataPoint } = this.state;
+    const entry = this.getFilteredHistory()[activeDataPoint];
+    const dateFormat = RANGES[timeRange].tooltipFormat;
+    return `${dateDns.format(new Date(entry.timestamp), dateFormat)}\n${this.getYAxisValue(entry.total_balance)}`;
+  }
+
+  getTimeRangeSwitcherLabel = () => {
+    return RANGES[this.state.timeRange].label;
+  }
+
+  switchTimeRange = () => {
+    const newTimeRange = RANGES[this.state.timeRange].nextTimeRange;
+    const { balancesHistory } = this.props;
+    const filteredHistory = this._getFilteredHistory(balancesHistory, this._getStartRange(balancesHistory, newTimeRange));
+    this.setState({ timeRange: newTimeRange, activeDataPoint: filteredHistory.length - 1 });
   }
 
   render() {
-    const { onDragStart, onDragEnd } = this.props;
+    const { onDragStart, onDragEnd, theme } = this.props;
+    const { activeDataPoint } = this.state;
     const data = this.getFormattedData();
 
     if (data.length < 2) return null;
 
+    const colors = getThemeColors(theme);
+
     return (
-      <LinearGraph
-        data={data}
-        width={getDeviceWidth()}
-        height={140}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        getTooltipContent={this.getTooltipContent}
-        getXAxisValue={this.getXAxisValue}
-        getYAxisValue={this.getYAxisValue}
-      />
+      <View>
+        <LinearGraph
+          data={data}
+          width={getDeviceWidth()}
+          height={140}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          getTooltipContent={this.getTooltipContent}
+          getXAxisValue={this.getXAxisValue}
+          getYAxisValue={this.getYAxisValue}
+          activeDataPoint={Math.min(activeDataPoint, data.length - 1)}
+          onActivePointChange={(point) => this.setState({ activeDataPoint: point })}
+        />
+        <TimeRangeSwitcher onPress={this.switchTimeRange}>
+          <LabelBadge
+            label={this.getTimeRangeSwitcherLabel()}
+            color={colors.labelTertiary}
+          />
+        </TimeRangeSwitcher>
+      </View>
     );
   }
 }
@@ -166,4 +225,4 @@ const mapStateToProps = ({
 });
 
 
-export default connect(mapStateToProps)(BalanceGraph);
+export default withTheme(connect(mapStateToProps)(BalanceGraph));

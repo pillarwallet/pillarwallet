@@ -650,7 +650,7 @@ export const fetchBalancesHistoryAction = () => {
     };
 */
     const history = await api.fetchBalancesHistory(payload);
-    dispatch(saveDbAction('balances_history', { balanceHistory: history }, true));
+    dispatch(saveDbAction('balanceHistory', { balanceHistory: history }, true));
 
     dispatch({
       type: SET_BALANCES_HISTORY,

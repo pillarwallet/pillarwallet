@@ -46,6 +46,8 @@ type Props = {
   data: DataPoints,
   width: number,
   height: number,
+  activeDataPoint: number,
+  onActivePointChange: (newActivePoint: numer) => void,
   getXAxisValue: (x: number) => string,
   xAxisValuesCount?: number,
   getYAxisValue: (y: number) => string,
@@ -64,28 +66,22 @@ type Props = {
   yAxisTextStyle?: Object,
 };
 
-type State = {
-  activeDataPoint: number,
-};
-
 const BOTTOM_MARGIN = 17;
 const TOP_MARGIN = 30;
 const GRAPH_TOP_PADDING = 25;
+const GRAPH_RIGHT_PADDING = 45;
 const TOOLTIP_OFFSET = 5;
 
-class LinearGraph extends React.Component<Props, State> {
+class LinearGraph extends React.Component<Props> {
   panResponder: Object;
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      activeDataPoint: props.data.length - 1,
-    };
     this.panResponder = this.buildPanResponder();
   }
 
   getScreenX = (x: number) => {
-    return x * this.props.width;
+    return x * (this.props.width - GRAPH_RIGHT_PADDING);
   };
 
   getScreenY = (y: number) => {
@@ -108,8 +104,7 @@ class LinearGraph extends React.Component<Props, State> {
   getMaxY = () => this._getMaxY(this.props.data);
 
   updateActivePoint = (x: number) => {
-    const { data } = this.props;
-    const { activeDataPoint } = this.state;
+    const { data, activeDataPoint, onActivePointChange } = this.props;
 
     const biggerIndex = data.findIndex(p => this.getScreenX(p.x) > x);
     let newActivePoint;
@@ -123,7 +118,7 @@ class LinearGraph extends React.Component<Props, State> {
       newActivePoint = (leftEnd + ((rightEnd - leftEnd) / 2) < x) ? biggerIndex : smallerIndex;
     }
     if (newActivePoint !== activeDataPoint) {
-      this.setState({ activeDataPoint: newActivePoint });
+      onActivePointChange(newActivePoint);
     }
   }
 
@@ -163,8 +158,7 @@ class LinearGraph extends React.Component<Props, State> {
 
   renderTooltip = (tooltipX: number, tooltipY: number) => {
     const { getTooltipContent } = this.props;
-    const { activeDataPoint } = this.state;
-    const content = getTooltipContent(activeDataPoint);
+    const content = getTooltipContent();
 
     const tooltipWidth = 90; // 75;
     const tooltipHeight = 40;
@@ -301,11 +295,8 @@ class LinearGraph extends React.Component<Props, State> {
 
   render() {
     const {
-      data, width, height,
+      data, width, height, activeDataPoint,
     } = this.props;
-    const {
-      activeDataPoint,
-    } = this.state;
 
     const activePointX = this.getScreenX(data[activeDataPoint].x);
     const activePointY = this.getScreenY(data[activeDataPoint].y);
