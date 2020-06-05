@@ -17,16 +17,25 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { PureComponent } from 'react';
-import { Dimensions } from 'react-native';
+import React from 'react';
 import { RNCamera } from 'react-native-camera';
+import { Buffer } from 'buffer';
+import ImagePicker from 'react-native-image-crop-picker';
+import jsQR from 'jsqr';
+import Jimp from 'jimp';
 import Header from 'components/Header';
+import Toast from 'components/Toast';
 import styled from 'styled-components/native';
+import IconButton from 'components/IconButton';
+import { fontSizes } from 'utils/variables';
+import { getDeviceHeight, getDeviceWidth } from 'utils/common';
+import { Container } from 'components/Layout';
+import Loader from 'components/Loader';
 
 import type { Barcode } from 'react-native-camera';
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = getDeviceWidth();
+const screenHeight = getDeviceHeight();
 
 const SquareContainer = styled.View`
   position: absolute;
@@ -44,6 +53,14 @@ const HeaderWrapper = styled.SafeAreaView`
   width: 100%;
 `;
 
+const ButtonWrapper = styled.View`
+  width: 100%;
+  position: absolute;
+  bottom: 60px;
+  justify-content: center;
+  align-items: center;
+`;
+
 type Props = {
   onQRRead: (barcode: Barcode) => void,
   onCancel: () => void,
@@ -51,7 +68,60 @@ type Props = {
   rectangleSize: number,
 };
 
-export class CameraView extends PureComponent<Props> {
+type State = {
+  isLoading: boolean,
+}
+
+const ERROR_TIMEOUT = 10000;
+
+export default class CameraView extends React.Component<Props, State> {
+  state = {
+    isLoading: false,
+  }
+
+  timeout: TimeoutID;
+
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+  }
+
+  handleError = (e?: string) => {
+    if (e !== 'Error: User cancelled image selection') {
+      Toast.show({
+        message: 'Cannot scan QR code',
+        type: 'warning',
+        autoClose: true,
+      });
+    }
+    this.props.onCancel();
+  };
+
+  handleGalleryPress = async () => {
+    this.setState({ isLoading: true });
+    try {
+      const image = await ImagePicker.openPicker({
+        includeBase64: true,
+        compressImageMaxWidth: 300,
+        compressImageMaxHeight: 300,
+      });
+      this.timeout = setTimeout(() => {
+        this.handleError();
+      }, ERROR_TIMEOUT);
+      const buffer = Buffer.from(image.data, 'base64');
+      const parsedImg = await Jimp.read(buffer);
+      const { data, height, width } = parsedImg.bitmap;
+      const code = jsQR(data, width, height);
+      if (code) {
+        this.props.onQRRead(code);
+      } else {
+        throw new Error();
+      }
+    } catch (e) { this.handleError(e.toString()); }
+    clearTimeout(this.timeout);
+  };
+
   render() {
     const {
       onQRRead,
@@ -59,6 +129,16 @@ export class CameraView extends PureComponent<Props> {
       rectangleSize,
       rectangleColor,
     } = this.props;
+
+    const { isLoading } = this.state;
+
+    if (isLoading) {
+      return (
+        <Container center >
+          <Loader noMessages />
+        </Container>
+      );
+    }
 
     return (
       <RNCamera
@@ -76,6 +156,14 @@ export class CameraView extends PureComponent<Props> {
           <Header light flexStart onClose={onCancel} />
         </HeaderWrapper>
         <SquareContainer color={rectangleColor} size={rectangleSize} />
+        <ButtonWrapper>
+          <IconButton
+            icon="gallery"
+            onPress={this.handleGalleryPress}
+            fontSize={fontSizes.giant}
+            color={rectangleColor}
+          />
+        </ButtonWrapper>
       </RNCamera>
     );
   }
