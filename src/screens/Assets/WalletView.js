@@ -115,7 +115,6 @@ type Props = {
   rates: Rates,
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
-  smartWalletFeatureEnabled: boolean,
   fetchAssetsBalances: () => void,
   fetchAllCollectiblesData: () => void,
   showDeploySmartWallet?: boolean,
@@ -386,7 +385,6 @@ class WalletView extends React.Component<Props, State> {
       theme,
       dismissSmartWalletInsight,
       SWInsightDismissed,
-      smartWalletFeatureEnabled,
       onScroll,
       activeAccountAddress,
     } = this.props;
@@ -430,11 +428,8 @@ class WalletView extends React.Component<Props, State> {
             onClose={() => { hideInsight(); }}
             wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
           />
-          {smartWalletFeatureEnabled && (blockAssetsView || !!deploymentData.error) &&
-            <SWActivationCard />
-          }
-          {!deploymentData.error && smartWalletFeatureEnabled && !blockAssetsView && !isInSearchAndFocus
-          && showDeploySmartWallet && (
+          {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
+          {!deploymentData.error && !blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
             SWInsightDismissed ?
               (
                 <SWActivationCard
@@ -524,7 +519,6 @@ const mapStateToProps = ({
   rates: { data: rates },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-  featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
   insights: { SWInsightDismissed },
 }: RootReducerState): $Shape<Props> => ({
   assetsSearchState,
@@ -533,7 +527,6 @@ const mapStateToProps = ({
   rates,
   accounts,
   smartWalletState,
-  smartWalletFeatureEnabled,
   SWInsightDismissed,
 });
 

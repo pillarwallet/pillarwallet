@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
 import {
   BUILD_NUMBER,
   BCX_URL,
@@ -30,18 +29,10 @@ import {
   OPEN_SEA_API,
 } from 'react-native-dotenv';
 import styled from 'styled-components/native';
-import DeviceInfo from 'react-native-device-info';
-import * as Sentry from '@sentry/react-native';
-
-// components
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
-
-// utils
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { reportLog } from 'utils/common';
-
 
 const LabeledRow = styled.View`
   margin: 6px 0;
@@ -59,9 +50,6 @@ const Value = styled(MediumText)`
 
 
 const SystemInfoModal = () => {
-  const appVersion = DeviceInfo.getVersion();
-  const appBundleId = DeviceInfo.getBundleId();
-  const buildNumber = DeviceInfo.getBuildNumber();
   return (
     <Wrapper regularPadding>
       <LabeledRow>
@@ -95,18 +83,6 @@ const SystemInfoModal = () => {
       <LabeledRow>
         <Label>OPEN_SEA_API</Label>
         <Value>{OPEN_SEA_API}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>NATIVE</Label>
-        <TouchableOpacity
-          onPress={() => {
-            reportLog('Sentry report check #1!', { err1: true });
-            reportLog('Sentry report check #2!', { err2: true }, Sentry.Severity.Error);
-            throw new Error('Sentry report check #3!');
-          }}
-        >
-          <Value>{appBundleId}-{appVersion} ({buildNumber})</Value>
-        </TouchableOpacity>
       </LabeledRow>
     </Wrapper>
   );

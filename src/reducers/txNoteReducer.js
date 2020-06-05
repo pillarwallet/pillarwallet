@@ -25,7 +25,7 @@ import {
 } from 'constants/txNoteConstants';
 import merge from 'lodash.merge';
 
-type TxNote = {
+export type TxNote = {
   text: string,
   txHash: string,
 };

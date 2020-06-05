@@ -36,6 +36,7 @@ import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
+import Button from 'components/Button';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -46,9 +47,13 @@ import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActi
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
-import { defaultFiatCurrency, SYNTHETIC, NONSYNTHETIC } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT } from 'constants/paymentNetworkConstants';
+import {
+  PAYMENT_NETWORK_TX_SETTLEMENT,
+  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
+  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
+} from 'constants/paymentNetworkConstants';
 
 // utils
 import { checkIfSmartWalletAccount } from 'utils/accounts';
@@ -57,7 +62,7 @@ import { themedColors } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-import { mapTransactionsHistory } from 'utils/feedData';
+import { isSWAddress, mapTransactionsHistory } from 'utils/feedData';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -66,11 +71,9 @@ import assetsConfig from 'configs/assetsConfig';
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import {
-  availableStakeSelector,
-  paymentNetworkAccountBalancesSelector,
-} from 'selectors/paymentNetwork';
+import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -81,6 +84,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
 import ReceiveModal from './ReceiveModal';
+
 
 const RECEIVE = 'RECEIVE';
 
@@ -107,7 +111,6 @@ type Props = {
   accounts: Accounts,
   activeAccount: ?Account,
   paymentNetworkBalances: Balances,
-  smartWalletFeatureEnabled: boolean,
   history: Object[],
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
@@ -115,6 +118,7 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
+  isActiveAccountSmartWallet: boolean,
 };
 
 type State = {
@@ -187,6 +191,10 @@ const SyntheticAssetIcon = styled(CachedImage)`
   margin-right: 4px;
   margin-top: 1px;
   tint-color: ${themedColors.primary};
+`;
+
+const TransferButtonWrapper = styled.View`
+  padding: 35px ${spacing.large}px 0;
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning.png');
@@ -299,6 +307,7 @@ class AssetScreen extends React.Component<Props, State> {
       contactsSmartAddresses,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
+      isActiveAccountSmartWallet,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -333,11 +342,21 @@ class AssetScreen extends React.Component<Props, State> {
       accounts,
       TRANSACTION_EVENT,
     );
-    const tokenTransactions = mappedTransactions.filter(({ asset, tag = '', extra = [] }) =>
-      asset === token || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
-    const mainnetTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return !isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
-    });
+    const tokenTransactions = mappedTransactions
+      .filter(({ asset, tag = '', extra = [] }) => (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT)
+        || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+
+    const mainnetTransactions = tokenTransactions
+      .filter(({
+        isPPNTransaction = false,
+        from,
+        to,
+        tag,
+      }) => {
+        return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
+        && (!isPPNTransaction || (isPPNTransaction && (isSWAddress(from, accounts) && isSWAddress(to, accounts))));
+      });
+
     const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
       return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
     });
@@ -409,9 +428,18 @@ class AssetScreen extends React.Component<Props, State> {
               isReceiveDisabled={!isReceiveActive}
               showButtons={isSynthetic ? ['receive'] : undefined}
             />
-            {!isSendActive &&
-              <SWActivationCard />
+            {!isActiveAccountSmartWallet &&
+              <TransferButtonWrapper>
+                <Button
+                  title="Transfer to Smart Wallet"
+                  onPress={() => this.goToSendTokenFlow(assetData)}
+                  disabled={!isSendActive || isWalletEmpty}
+                  secondary
+                  regularText
+                />
+              </TransferButtonWrapper>
             }
+            {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
@@ -419,8 +447,7 @@ class AssetScreen extends React.Component<Props, State> {
             navigation={navigation}
             noBorder
             feedData={relatedTransactions}
-            feedType={isSynthetic ? SYNTHETIC : NONSYNTHETIC}
-            asset={token}
+            isAssetView
           />}
         </ScrollWrapper>
 
@@ -455,11 +482,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  featureFlags: {
-    data: {
-      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-    },
-  },
   exchange: { exchangeSupportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
@@ -467,7 +489,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  smartWalletFeatureEnabled,
   contactsSmartAddresses,
   exchangeSupportedAssets,
 });
@@ -479,6 +500,7 @@ const structuredSelector = createStructuredSelector({
   availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
+  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

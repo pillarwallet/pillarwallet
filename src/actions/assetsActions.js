@@ -37,6 +37,7 @@ import {
   UPDATE_SUPPORTED_ASSETS,
   COLLECTIBLES,
   PLR,
+  BTC,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -351,9 +352,10 @@ function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balanc
 export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const allBalances = getState().balances.data;
+    const currentAccountBalances = allBalances[accountId] || {};
     const updatedBalances = {
       ...allBalances,
-      [accountId]: balances,
+      [accountId]: { ...currentAccountBalances, ...balances },
     };
     dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
     dispatch({
@@ -393,19 +395,15 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
 
 export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
 
     await dispatch(fetchAccountAssetsBalancesAction(activeAccount, showToastIfIncreased));
     dispatch(fetchAccountAssetsRatesAction());
 
-    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
+    if (checkIfSmartWalletAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
@@ -413,10 +411,7 @@ export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
 
 export const fetchAllAccountsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
-    } = getState();
+    const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
@@ -427,8 +422,7 @@ export const fetchAllAccountsBalancesAction = () => {
     await Promise.all(promises).catch(_ => _);
     dispatch(fetchAllAccountsAssetsRatesAction());
 
-    const isSmartWalletAccount = checkIfSmartWalletAccount(activeAccount);
-    if (smartWalletFeatureEnabled && isSmartWalletAccount) {
+    if (checkIfSmartWalletAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
@@ -511,7 +505,7 @@ export const searchAssetsAction = (query: string) => {
     const search = query.toUpperCase();
 
     const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
-      return name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search);
+      return (name.toUpperCase().includes(search) || symbol.toUpperCase().includes(search)) && symbol !== BTC;
     });
 
     if (filteredAssets.length > 0) {
@@ -547,9 +541,9 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   // HACK: Dirty fix for users who removed somehow ETH and PLR from their assets list
   if (!accountAssetsTickers.includes(ETH)) accountAssetsTickers.push(ETH);
   if (!accountAssetsTickers.includes(PLR)) accountAssetsTickers.push(PLR);
-
+  // remove BTC if it is already shown in SW/KW
   const updatedAccountAssets = supportedAssets
-    .filter(asset => accountAssetsTickers.includes(asset.symbol))
+    .filter(({ symbol }) => accountAssetsTickers.includes(symbol) && symbol !== BTC)
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
   return { id: accountId, ...updatedAccountAssets };
 };
@@ -584,8 +578,8 @@ export const loadSupportedAssetsAction = () => {
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;
 
-    if (!supportedAssets.some(e => e.symbol === 'BTC')) {
-      const btcAsset = assetFixtures.find(e => e.symbol === 'BTC');
+    if (!supportedAssets.some(e => e.symbol === BTC)) {
+      const btcAsset = assetFixtures.find(e => e.symbol === BTC);
       if (btcAsset) {
         supportedAssets.push(btcAsset);
       }

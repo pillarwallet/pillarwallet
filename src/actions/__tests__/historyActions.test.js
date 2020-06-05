@@ -37,10 +37,18 @@ const mockWallet: Object = {
   address: walletAddress,
 };
 
-const mockAccounts: Object[] = [{
-  id: walletAddress,
-  isActive: true,
-}];
+const mockAccounts: Object[] = [
+  {
+    id: walletAddress,
+    type: 'KEY_BASED',
+    isActive: true,
+  },
+  {
+    id: '0xSmartWallet',
+    type: 'SMART_WALLET',
+    isActive: true,
+  },
+];
 
 const plrContractAddress = '0x1234567';
 
@@ -191,7 +199,6 @@ describe('History Actions', () => {
           accounts: { data: mockAccounts },
           history: { data: {} },
           wallet: { data: mockWallet },
-          featureFlags: { data: { SMART_WALLET_ENABLED: false } },
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve(transactions));
 
@@ -221,7 +228,6 @@ describe('History Actions', () => {
           accounts: { data: mockAccounts },
           history: { data: {} },
           wallet: { data: mockWallet },
-          featureFlags: { data: { SMART_WALLET_ENABLED: false } },
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve([]));
 

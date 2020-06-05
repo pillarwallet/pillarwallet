@@ -17,16 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
+  UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
-import { getActiveAccountAddress, getActiveAccountId } from 'utils/accounts';
+import {
+  getAccountAddress,
+  getAccountId,
+  getActiveAccountAddress,
+  getActiveAccountId,
+} from 'utils/accounts';
+import { getTrxInfo } from 'utils/history';
+
 import type SDKWrapper from 'services/api';
 import type { Collectible } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
+import type { Account } from 'models/Account';
+
 import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 
@@ -68,14 +80,24 @@ const collectibleFromResponse = (responseItem: Object): Collectible => {
   };
 };
 
-export const fetchCollectiblesAction = () => {
+const collectibleTransactionUpdate = (hash: string) => {
+  return {
+    type: UPDATING_COLLECTIBLE_TRANSACTION,
+    payload: hash,
+  };
+};
+
+
+export const fetchCollectiblesAction = (accountToFetchFor?: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       collectibles: { data: collectibles },
     } = getState();
-    const walletAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
+    const walletAddress = accountToFetchFor ? getAccountAddress(accountToFetchFor) : getActiveAccountAddress(accounts);
+    const accountId = accountToFetchFor ? getAccountId(accountToFetchFor) : getActiveAccountId(accounts);
+
+    if (!walletAddress || !accountId) return;
     const response = await api.fetchCollectibles(walletAddress);
 
     if (response.error || !response.assets) return;
@@ -154,14 +176,17 @@ const isCollectibleTransaction = (event: Object): boolean => {
   return assetContract.schema_name === 'ERC721';
 };
 
-export const fetchCollectiblesHistoryAction = () => {
+export const fetchCollectiblesHistoryAction = (accountToFetchFor?: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
     } = getState();
-    const walletAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
+
+    const walletAddress = accountToFetchFor ? getAccountAddress(accountToFetchFor) : getActiveAccountAddress(accounts);
+    const accountId = accountToFetchFor ? getAccountId(accountToFetchFor) : getActiveAccountId(accounts);
+
+    if (!walletAddress || !accountId) return;
     const response = await api.fetchCollectiblesTransactionHistory(walletAddress);
 
     if (response.error || !response.asset_events) return;
@@ -181,9 +206,87 @@ export const fetchCollectiblesHistoryAction = () => {
   };
 };
 
-export const fetchAllCollectiblesDataAction = () => {
+
+export const fetchAllAccountsCollectiblesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+
+    const promises = accounts.map(async account => {
+      await dispatch(fetchCollectiblesAction(account));
+    });
+    await Promise.all(promises).catch(_ => _);
+  };
+};
+
+
+export const fetchAllAccountsCollectiblesHistoryAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+
+    const promises = accounts.map(async account => {
+      await dispatch(fetchCollectiblesHistoryAction(account));
+    });
+    await Promise.all(promises).catch(_ => _);
+  };
+};
+
+
+export const fetchAllCollectiblesDataAction = (forAllAccounts?: boolean) => {
   return async (dispatch: Dispatch) => {
-    await dispatch(fetchCollectiblesAction());
-    await dispatch(fetchCollectiblesHistoryAction());
+    if (forAllAccounts) {
+      await dispatch(fetchAllAccountsCollectiblesAction());
+      await dispatch(fetchAllAccountsCollectiblesHistoryAction());
+    } else {
+      await dispatch(fetchCollectiblesAction());
+      await dispatch(fetchCollectiblesHistoryAction());
+    }
+  };
+};
+
+export const updateCollectibleTransactionAction = (hash: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      session: { data: { isOnline } },
+      collectibles: { transactionHistory: collectiblesHistory },
+    } = getState();
+    if (!isOnline) return;
+
+    dispatch(collectibleTransactionUpdate(hash));
+    const trxInfo = await getTrxInfo(api, hash, COLLECTIBLES_NETWORK);
+    if (!trxInfo) {
+      dispatch(collectibleTransactionUpdate(''));
+      return;
+    }
+    const {
+      txInfo,
+      txReceipt,
+      nbConfirmations,
+      status,
+    } = trxInfo;
+
+    const accounts = Object.keys(collectiblesHistory);
+    const updatedHistory = accounts.reduce((history, accountId) => {
+      const accountHistory = collectiblesHistory[accountId].map(transaction => {
+        if (transaction.hash.toLowerCase() !== hash) {
+          return transaction;
+        }
+        return {
+          ...transaction,
+          nbConfirmations,
+          status,
+          gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
+          gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
+        };
+      });
+      return { ...history, [accountId]: accountHistory };
+    }, {});
+
+    dispatch(getExistingTxNotesAction());
+    dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedHistory }, true));
+    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedHistory });
   };
 };

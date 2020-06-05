@@ -38,3 +38,12 @@ export const accountCollectiblesHistorySelector = createSelector(
     return history[activeAccountId] || [];
   },
 );
+
+export const combinedCollectiblesHistorySelector = createSelector(
+  collectiblesHistorySelector,
+  (history) => {
+    return Object.keys(history).reduce((historyArray, account) => {
+      return [...historyArray, ...history[account]];
+    }, []);
+  },
+);

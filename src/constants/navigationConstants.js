@@ -28,7 +28,6 @@ export const ME_TAB = 'ME_TAB';
 export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
 export const MARKET = 'MARKET';
-export const PROFILE = 'PROFILE';
 export const CONTACT_INFO = 'CONTACT_INFO';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';
 export const CHAT_LIST = 'CHAT_LIST';
@@ -111,7 +110,6 @@ export const CONTACT = 'CONTACT';
 // HOME FLOW
 export const HOME = 'HOME';
 export const HOME_TAB = 'HOME_TAB';
-export const LOGIN = 'LOGIN';
 export const FIAT_EXCHANGE = 'FIAT_EXCHANGE';
 export const FIAT_CRYPTO = 'FIAT_CRYPTO';
 
@@ -170,6 +168,7 @@ export const SEND_BITCOIN_FLOW = 'SEND_BITCOIN_FLOW';
 export const SEND_BITCOIN_CONFIRM = 'SEND_BITCOIN_CONFIRM';
 export const SEND_BITCOIN_TRANSACTION = 'SEND_BITCOIN_TRANSACTION';
 export const SEND_BITCOIN_PIN_CONFIRM = 'SEND_BITCOIN_PIN_CONFIRM';
+export const SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW = 'SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW';
 
 // MENU FLOW
 export const MENU_FLOW = 'MENU_FLOW';

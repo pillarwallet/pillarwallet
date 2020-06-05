@@ -44,7 +44,6 @@ import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import {
@@ -67,12 +66,13 @@ import {
   fetchReferralRewardAction,
 } from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
+import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 
 // selectors
-import { accountHistorySelector } from 'selectors/history';
-import { accountCollectiblesHistorySelector } from 'selectors/collectibles';
-import { activeBlockchainSelector } from 'selectors/selectors';
+import { combinedHistorySelector } from 'selectors/history';
+import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -123,11 +123,12 @@ type Props = {
   badgesEvents: BadgeRewardEvent[],
   theme: Theme,
   baseFiatCurrency: ?string,
-  activeBlockchainNetwork: ?string,
   goToInvitationFlow: () => void,
   hideBadges: boolean,
   toggleBadges: () => void,
   walletConnectRequests: CallRequest[],
+  fetchAllAccountsBalances: () => void,
+  refreshBitcoinBalance: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
   fetchReferralReward: () => void,
   isPillarRewardCampaignActive: boolean,
@@ -184,6 +185,7 @@ class HomeScreen extends React.Component<Props, State> {
       logScreenView,
       fetchBadges,
       fetchBadgeAwardHistory,
+      fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
     } = this.props;
 
@@ -194,6 +196,7 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
     });
+    fetchTransactionsHistory();
     fetchBadges();
     fetchBadgeAwardHistory();
     fetchReferralRewardsIssuerAddresses();
@@ -227,6 +230,8 @@ class HomeScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
+      fetchAllAccountsBalances,
+      refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
     } = this.props;
@@ -236,6 +241,8 @@ class HomeScreen extends React.Component<Props, State> {
     fetchAllCollectiblesData();
     fetchBadges();
     fetchTransactionsHistory();
+    fetchAllAccountsBalances();
+    refreshBitcoinBalance();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
   };
@@ -279,7 +286,6 @@ class HomeScreen extends React.Component<Props, State> {
       userEvents,
       badgesEvents,
       theme,
-      activeBlockchainNetwork,
       hideBadges,
       toggleBadges,
       walletConnectRequests,
@@ -295,26 +301,27 @@ class HomeScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
-    const transactionsOnMainnet = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
-      ? history
-      : mapTransactionsHistory(
-        tokenTxHistory,
-        contacts,
-        contactsSmartAddresses,
-        accounts,
-        TRANSACTION_EVENT,
-      );
-    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const transactionsOnMainnet = mapTransactionsHistory(
+      tokenTxHistory,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+      true,
+      true,
+    );
 
-    const mappedCTransactions = activeBlockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN
-      ? []
-      : mapTransactionsHistory(
-        collectiblesTransactions,
-        contacts,
-        contactsSmartAddresses,
-        accounts,
-        COLLECTIBLE_TRANSACTION,
-      );
+    const collectiblesTransactions =
+      mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory, true);
+
+    const mappedCTransactions = mapTransactionsHistory(
+      collectiblesTransactions,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      COLLECTIBLE_TRANSACTION,
+      true,
+    );
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
 
@@ -427,6 +434,7 @@ class HomeScreen extends React.Component<Props, State> {
               initialNumToRender={8}
               wrapperStyle={{ flexGrow: 1 }}
               contentContainerStyle={{ flexGrow: 1 }}
+              isForAllAccounts
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
@@ -539,9 +547,8 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  history: accountHistorySelector,
-  openSeaTxHistory: accountCollectiblesHistorySelector,
-  activeBlockchainNetwork: activeBlockchainSelector,
+  history: combinedHistorySelector,
+  openSeaTxHistory: combinedCollectiblesHistorySelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -553,16 +560,18 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction(true)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction(true)),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
+  fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
+  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
