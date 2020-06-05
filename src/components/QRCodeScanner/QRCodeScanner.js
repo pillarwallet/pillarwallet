@@ -26,6 +26,7 @@ import { noop, reportLog } from 'utils/common';
 import CameraView from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
 import type { Barcode, Point, Size } from 'react-native-camera';
+import Toast from 'components/Toast';
 
 
 type BarcodeBounds = {
@@ -162,6 +163,12 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     const { validator } = this.props;
 
     if (!validator(code)) {
+      this.setState({ isFinished: true });
+      Toast.show({
+        message: 'Wrong QR code',
+        type: 'warning',
+        autoClose: true,
+      });
       return;
     }
 
