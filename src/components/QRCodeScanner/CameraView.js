@@ -87,12 +87,14 @@ export default class CameraView extends React.Component<Props, State> {
     }
   }
 
-  handleError = () => {
-    Toast.show({
-      message: 'Cannot scan QR code',
-      type: 'warning',
-      autoClose: true,
-    });
+  handleError = (e?: string) => {
+    if (e !== 'Error: User cancelled image selection') {
+      Toast.show({
+        message: 'Cannot scan QR code',
+        type: 'warning',
+        autoClose: true,
+      });
+    }
     this.props.onCancel();
   };
 
@@ -116,7 +118,7 @@ export default class CameraView extends React.Component<Props, State> {
       } else {
         throw new Error();
       }
-    } catch { this.handleError(); }
+    } catch (e) { this.handleError(e.toString()); }
     clearTimeout(this.timeout);
   };
 
