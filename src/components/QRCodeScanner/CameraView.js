@@ -94,43 +94,31 @@ export default class CameraView extends React.Component<Props, State> {
       autoClose: true,
     });
     this.props.onCancel();
-  }
+  };
 
-  handleGalleryPress = () => {
+  handleGalleryPress = async () => {
     this.setState({ isLoading: true });
-    ImagePicker.openPicker({
-      includeBase64: true,
-      compressImageMaxWidth: 300,
-      compressImageMaxHeight: 300,
-    })
-      .then(image => {
-        this.timeout = setTimeout(() => {
-          this.handleError();
-        }, ERROR_TIMEOUT);
-        const buffer = Buffer.from(image.data, 'base64');
-        Jimp.read(buffer, (e, parsedImg) => {
-          try {
-            if (e) {
-              throw new Error();
-            } else {
-              const { data, height, width } = parsedImg.bitmap;
-              const code = jsQR(data, width, height);
-              if (code) {
-                this.props.onQRRead(code);
-              } else {
-                throw new Error();
-              }
-            }
-          } catch {
-            this.handleError();
-          }
-        });
-      })
-      .catch(() => {
-        this.handleError();
+    try {
+      const image = await ImagePicker.openPicker({
+        includeBase64: true,
+        compressImageMaxWidth: 300,
+        compressImageMaxHeight: 300,
       });
+      this.timeout = setTimeout(() => {
+        this.handleError();
+      }, ERROR_TIMEOUT);
+      const buffer = Buffer.from(image.data, 'base64');
+      const parsedImg = await Jimp.read(buffer);
+      const { data, height, width } = parsedImg.bitmap;
+      const code = jsQR(data, width, height);
+      if (code) {
+        this.props.onQRRead(code);
+      } else {
+        throw new Error();
+      }
+    } catch { this.handleError(); }
     clearTimeout(this.timeout);
-  }
+  };
 
   render() {
     const {
