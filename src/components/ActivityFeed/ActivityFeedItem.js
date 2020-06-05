@@ -203,6 +203,10 @@ export class ActivityFeedItem extends React.Component<Props> {
     return addressesEqual(to, activeAccountAddress) || bitcoinAddresses.some(e => e.address === to);
   };
 
+  isZeroValue(value: string): boolean {
+    return value === '0' || value === '0.0';
+  }
+
   getRelevantAddress = (event: Object): string => {
     const isReceived = this.isReceived(event);
     return isReceived ? event.from : event.to;
@@ -308,7 +312,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const directionIcon = isReceived ? 'received' : 'sent';
     let directionSymbol = isReceived ? '+' : '-';
 
-    if (value === '0.0') {
+    if (this.isZeroValue(value)) {
       directionSymbol = '';
     }
 
@@ -534,7 +538,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             avatarUrl,
             fullItemValue: `${directionSymbol} ${value} ${event.asset}`,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
-            valueColor: isReceived && value !== '0' ? 'positive' : 'text',
+            valueColor: isReceived && !this.isZeroValue() ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
           };
