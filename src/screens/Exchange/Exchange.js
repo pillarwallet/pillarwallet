@@ -81,8 +81,6 @@ import { HotSwapsHorizontalList } from './HotSwapsList';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import { calculateMaxAmount, getFormattedBalanceInFiat } from './utils';
-import SellMaxButton from './SellMaxButton';
-
 
 type Props = {
   rates: Rates,
@@ -868,7 +866,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         >
           {!isSubmitted && <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />}
           <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
-            {/* {this.shouldShowSellMax() && <SellMaxButton onPress={this.handleSellMax} />} */}
             <Form
               ref={node => { this.exchangeForm = node; }}
               type={formStructure}
