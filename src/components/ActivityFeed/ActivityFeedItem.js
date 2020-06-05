@@ -538,7 +538,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             avatarUrl,
             fullItemValue: `${directionSymbol} ${value} ${event.asset}`,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
-            valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
+            valueColor: isReceived && !this.isZeroValue() ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
           };
