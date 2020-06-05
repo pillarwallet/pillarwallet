@@ -46,7 +46,13 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
-import { getAccountId, getActiveAccount, getActiveAccountType, getInactiveUserAccounts } from 'utils/accounts';
+import {
+  findFirstSmartAccount,
+  getAccountId,
+  getAccountType,
+  getActiveAccount,
+  getInactiveUserAccounts,
+} from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { navigate } from 'services/navigation';
 
@@ -280,9 +286,10 @@ export const initOnLoginSmartWalletAccountAction = (
     } = getState();
 
     const inactiveAccounts = getInactiveUserAccounts(accounts);
-    const smartWalletAccount = getActiveAccountType(accounts) === ACCOUNT_TYPES.SMART_WALLET
-      ? getActiveAccount(accounts)
-      : inactiveAccounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+    const activeAccount = getActiveAccount(accounts);
+    const smartWalletAccount = getAccountType(activeAccount) === ACCOUNT_TYPES.SMART_WALLET
+      ? activeAccount
+      : findFirstSmartAccount(inactiveAccounts);
 
     if (!smartWalletAccount) return;
 
