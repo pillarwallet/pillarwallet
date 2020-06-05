@@ -287,7 +287,7 @@ export const initOnLoginSmartWalletAccountAction = (
 
     const inactiveAccounts = getInactiveUserAccounts(accounts);
     const activeAccount = getActiveAccount(accounts);
-    const smartWalletAccount = getAccountType(activeAccount) === ACCOUNT_TYPES.SMART_WALLET
+    const smartWalletAccount = activeAccount && getAccountType(activeAccount) === ACCOUNT_TYPES.SMART_WALLET
       ? activeAccount
       : findFirstSmartAccount(inactiveAccounts);
 
