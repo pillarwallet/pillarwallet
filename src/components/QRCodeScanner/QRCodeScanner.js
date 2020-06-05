@@ -163,7 +163,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     const { validator } = this.props;
 
     if (!validator(code)) {
-      this.setState({ isFinished: true });
+      this.props.onCancel();
       Toast.show({
         message: 'Wrong QR code',
         type: 'warning',
