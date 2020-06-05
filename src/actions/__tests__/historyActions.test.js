@@ -199,7 +199,6 @@ describe('History Actions', () => {
           accounts: { data: mockAccounts },
           history: { data: {} },
           wallet: { data: mockWallet },
-          featureFlags: { data: { SMART_WALLET_ENABLED: false } },
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve(transactions));
 
@@ -229,7 +228,6 @@ describe('History Actions', () => {
           accounts: { data: mockAccounts },
           history: { data: {} },
           wallet: { data: mockWallet },
-          featureFlags: { data: { SMART_WALLET_ENABLED: false } },
         }));
         api.fetchHistory.mockImplementation(() => Promise.resolve([]));
 

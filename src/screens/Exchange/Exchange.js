@@ -51,7 +51,6 @@ import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils, services
 import { fiatCurrencies, initialAssets } from 'fixtures/assets';
@@ -59,7 +58,6 @@ import { spacing } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
-import { getActiveAccountType } from 'utils/accounts';
 import { themedColors } from 'utils/themes';
 import { satoshisToBtc } from 'utils/bitcoin';
 
@@ -67,6 +65,7 @@ import { satoshisToBtc } from 'utils/bitcoin';
 import { accountBalancesSelector } from 'selectors/balances';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
@@ -104,7 +103,6 @@ type Props = {
   oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
-  smartWalletFeatureEnabled: boolean,
   getMetaData: () => void,
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
@@ -114,6 +112,7 @@ type Props = {
   btcAddresses: BitcoinAddress[],
   btcBalances: BitcoinBalance,
   theme: Theme,
+  isActiveAccountSmartWallet: boolean,
 };
 
 type InputValue = {
@@ -487,12 +486,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   checkIfAssetsExchangeIsAllowed = () => {
-    const { accounts, smartWalletState, smartWalletFeatureEnabled } = this.props;
-    const activeAccountType = getActiveAccountType(accounts);
+    const { accounts, smartWalletState, isActiveAccountSmartWallet } = this.props;
+    if (!isActiveAccountSmartWallet) return true;
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const isSmartWallet = smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET;
-    return !isSmartWallet
-      || (isSmartWallet && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE);
+    return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
   };
 
   provideOptions = () => {
@@ -915,11 +912,6 @@ const mapStateToProps = ({
     fiatExchangeSupportedAssets,
   },
   rates: { data: rates },
-  featureFlags: {
-    data: {
-      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-    },
-  },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
   bitcoin: {
@@ -936,7 +928,6 @@ const mapStateToProps = ({
   connectedProviders,
   hasUnreadExchangeNotification,
   oAuthAccessToken,
-  smartWalletFeatureEnabled,
   accounts,
   smartWalletState,
   exchangeSupportedAssets,
@@ -950,6 +941,7 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assets: accountAssetsSelector,
+  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

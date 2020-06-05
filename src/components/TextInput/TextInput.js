@@ -30,6 +30,7 @@ import {
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import get from 'lodash.get';
 
 import { ETH } from 'constants/assetsConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
@@ -83,6 +84,9 @@ type Props = {
   inputWrapperStyle?: Object,
   rightPlaceholder?: string,
   fallbackToGenericToken?: boolean,
+  renderOption?: (item: Object, selectOption: () => void) => React.Node,
+  renderSelector?: (selector: Object) => React.Node,
+  optionKeyExtractor?: (item: Object) => string,
 };
 
 type State = {
@@ -355,6 +359,11 @@ class TextInput extends React.Component<Props, State> {
     }
   };
 
+  handleSubmit = () => {
+    const { onSubmit } = this.props.inputProps;
+    if (onSubmit) onSubmit();
+  }
+
   openSelector = () => {
     Keyboard.dismiss();
     this.setState({ showOptionsSelector: true });
@@ -366,6 +375,10 @@ class TextInput extends React.Component<Props, State> {
   renderOption = ({ item: option }: Object) => {
     if (option.value === 'extendedHeaderItems') {
       return option.component;
+    }
+    const { renderOption } = this.props;
+    if (renderOption) {
+      return renderOption(option, () => this.selectValue(option));
     }
     const {
       name,
@@ -468,6 +481,48 @@ class TextInput extends React.Component<Props, State> {
     );
   };
 
+  renderSelector = () => {
+    const {
+      theme, inputProps, selectorOptions = {}, renderSelector,
+    } = this.props;
+    const { genericToken } = images(theme);
+    const selector = get(inputProps, 'selectorValue.selector', {});
+
+    if (renderSelector) return renderSelector(selector);
+
+    const {
+      icon: selectedOptionIcon,
+      iconFallback: selectedOptionFallback,
+      value: selectedValue,
+    } = selector;
+
+    if (!selectedValue) {
+      return <Placeholder>{selectorOptions.selectorPlaceholder || 'select'}</Placeholder>;
+    }
+
+
+    const optionImageSource = resolveAssetSource(selectedOptionIcon);
+    return (
+      <ValueWrapper>
+        <Image
+          key={selectedValue}
+          source={optionImageSource}
+          fallbackSource={selectedOptionFallback || genericToken}
+          resizeMode="contain"
+        />
+        <SelectorValue>{selectedValue}</SelectorValue>
+      </ValueWrapper>
+    );
+  }
+
+  optionKeyExtractor = (option) => {
+    const { optionKeyExtractor } = this.props;
+    if (optionKeyExtractor) {
+      return optionKeyExtractor(option);
+    }
+    return option.value;
+  }
+
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
     const {
@@ -495,9 +550,9 @@ class TextInput extends React.Component<Props, State> {
 
     const colors = getThemeColors(theme);
     const {
-      value = '', selectorValue = {}, label, multiline, onPressRightLabel, rightLabel,
+      value = '', selectorValue = {}, label, multiline, onPressRightLabel, rightLabel, onSelectorClose,
     } = inputProps;
-    const { selector = {}, input: inputValue } = selectorValue;
+    const { input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
     const { genericToken } = images(theme);
     if (fallbackToGenericToken) fallbackSource = genericToken;
@@ -512,7 +567,6 @@ class TextInput extends React.Component<Props, State> {
     const {
       options = [],
       horizontalOptions = [],
-      selectorPlaceholder,
       fullWidth: fullWidthSelector,
       showOptionsTitles,
       horizontalOptionsTitle,
@@ -528,12 +582,6 @@ class TextInput extends React.Component<Props, State> {
     const showRightAddon = !!iconProps || loading || rightPlaceholder;
 
     const selectorOptionsCount = options.length + horizontalOptions.length;
-    const {
-      icon: selectedOptionIcon,
-      iconFallback: selectedOptionFallback,
-      value: selectedValue,
-    } = selector;
-
     let filteredHorizontalListData = horizontalOptions;
     let filteredListData = options;
 
@@ -544,7 +592,6 @@ class TextInput extends React.Component<Props, State> {
     }
 
     const imageSource = resolveAssetSource(innerImageURI);
-    const optionImageSource = resolveAssetSource(selectedOptionIcon);
 
     const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
 
@@ -597,19 +644,7 @@ class TextInput extends React.Component<Props, State> {
                 disabled={selectorOptionsCount < 1}
                 height={inputHeight}
               >
-                {selector.value
-                  ? (
-                    <ValueWrapper>
-                      <Image
-                        key={selectedValue}
-                        source={optionImageSource}
-                        fallbackSource={selectedOptionFallback || genericToken}
-                        resizeMode="contain"
-                      />
-                      <SelectorValue>{selectedValue}</SelectorValue>
-                    </ValueWrapper>
-                    )
-                  : (<Placeholder>{selectorPlaceholder || 'select'}</Placeholder>)}
+                {this.renderSelector()}
                 {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}
               </Selector>}
               {showLeftAddon &&
@@ -634,6 +669,7 @@ class TextInput extends React.Component<Props, State> {
                 onBlur={this.handleBlur}
                 onEndEditing={this.handleBlur}
                 onFocus={this.handleFocus}
+                onSubmitEditing={this.handleSubmit}
                 value={textInputValue}
                 autoCorrect={autoCorrect}
                 style={[{
@@ -681,6 +717,7 @@ class TextInput extends React.Component<Props, State> {
           onModalHidden={() => {
             this.setState({ query: '' });
             Keyboard.dismiss();
+            if (onSelectorClose) onSelectorClose();
           }}
           noSwipeToDismiss
           noClose
@@ -700,7 +737,7 @@ class TextInput extends React.Component<Props, State> {
               stickyHeaderIndices={[0]}
               data={allFeedListData}
               renderItem={this.renderOption}
-              keyExtractor={({ value: val }) => val}
+              keyExtractor={this.optionKeyExtractor}
               keyboardShouldPersistTaps="always"
               initialNumToRender={10}
               viewabilityConfig={viewConfig}
@@ -718,11 +755,6 @@ class TextInput extends React.Component<Props, State> {
                     marginBottom="0"
                   />
                 </SearchBarWrapper>}
-              getItemLayout={(data, index) => ({
-                length: 70,
-                offset: 70 * index,
-                index,
-              })}
               windowSize={10}
               hideModalContentWhileAnimating
             />

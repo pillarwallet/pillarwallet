@@ -69,8 +69,8 @@ const reduxData = {
   accounts: [],
   bitcoinAddresses: [],
   referralRewardIssuersAddresses: ['0x123456'],
+  supportedAssets: [],
 };
-
 
 const dataForAllAccounts = {
   ...reduxData,
