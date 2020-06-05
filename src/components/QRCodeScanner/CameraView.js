@@ -72,7 +72,7 @@ type State = {
   isLoading: boolean,
 }
 
-const ERROR_TIMEOUT = 15000;
+const ERROR_TIMEOUT = 10000;
 
 export default class CameraView extends React.Component<Props, State> {
   state = {
@@ -100,6 +100,8 @@ export default class CameraView extends React.Component<Props, State> {
     this.setState({ isLoading: true });
     ImagePicker.openPicker({
       includeBase64: true,
+      compressImageMaxWidth: 300,
+      compressImageMaxHeight: 300,
     })
       .then(image => {
         this.timeout = setTimeout(() => {
