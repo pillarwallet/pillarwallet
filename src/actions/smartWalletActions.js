@@ -719,7 +719,6 @@ export const initSmartWalletSdkAction = (walletPrivateKey: string) => {
       type: SET_SMART_WALLET_SDK_INIT,
       payload: initialized,
     });
-    console.log('initSmartWalletSdkAction finished!');
   };
 };
 
