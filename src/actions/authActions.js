@@ -215,7 +215,7 @@ export const loginAction = (
 
         // init smart wallet
         if (wallet.privateKey && userHasSmartWallet(accounts)) {
-          await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
+          await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey, false));
         }
 
         /**

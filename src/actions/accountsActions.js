@@ -46,7 +46,7 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
-import { getActiveAccountId, getActiveAccountType } from 'utils/accounts';
+import { getAccountId, getActiveAccount, getActiveAccountType, getInactiveUserAccounts } from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { navigate } from 'services/navigation';
 
@@ -269,23 +269,30 @@ export const switchAccountAction = (accountId: string) => {
   };
 };
 
-export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
+export const initOnLoginSmartWalletAccountAction = (
+  privateKey: string,
+  setAccountActive: boolean = true,
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { blockchainNetwork } },
       accounts: { data: accounts },
     } = getState();
 
-    const activeAccountId = getActiveAccountId(accounts);
-    const activeAccountType = getActiveAccountType(accounts);
+    const inactiveAccounts = getInactiveUserAccounts(accounts);
+    const smartWalletAccount = getActiveAccountType(accounts) === ACCOUNT_TYPES.SMART_WALLET
+      ? getActiveAccount(accounts)
+      : inactiveAccounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+
+    if (!smartWalletAccount) return;
+
+    const smartWalletAccountId = getAccountId(smartWalletAccount);
     await dispatch(initSmartWalletSdkAction(privateKey));
 
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
-
-    await dispatch(connectSmartWalletAccountAction(activeAccountId));
+    await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
     dispatch(fetchVirtualAccountBalanceAction());
 
-    if (blockchainNetwork) {
+    if (setAccountActive && blockchainNetwork) {
       dispatch({
         type: SET_ACTIVE_NETWORK,
         payload: blockchainNetwork,
