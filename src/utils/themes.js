@@ -56,6 +56,9 @@ export const lightThemeColors = {
   transactionReceivedIcon: '#497391',
   iconBackground: '#ebf0f5',
   link: '#007aff',
+  avatarPlaceholderBackground: '#e0eeff',
+  avatarPlaceholderText: '#6690eb',
+  labelTertiary: '#818eb3',
 };
 
 export const darkThemeColors = {
@@ -93,6 +96,9 @@ export const darkThemeColors = {
   transactionReceivedIcon: '#00E097',
   iconBackground: '#222c46',
   link: '#fcfdff',
+  avatarPlaceholderBackground: '#181f31',
+  avatarPlaceholderText: '#6690eb',
+  labelTertiary: '#818eb3',
 };
 
 export const themedColors = {
@@ -231,6 +237,18 @@ export const themedColors = {
   link: theme('current', {
     lightTheme: lightThemeColors.link,
     darkTheme: darkThemeColors.link,
+  }),
+  avatarPlaceholderBackground: theme('current', {
+    lightTheme: lightThemeColors.avatarPlaceholderBackground,
+    darkTheme: darkThemeColors.avatarPlaceholderBackground,
+  }),
+  avatarPlaceholderText: theme('current', {
+    lightTheme: lightThemeColors.avatarPlaceholderText,
+    darkTheme: darkThemeColors.avatarPlaceholderText,
+  }),
+  labelTertiary: theme('current', {
+    lightTheme: lightThemeColors.labelTertiary,
+    darkTheme: darkThemeColors.labelTertiary,
   }),
 };
 

@@ -963,7 +963,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 <Image
                   source={
                     Object {
-                      "testUri": "../../../src/assets/images/bg_action_button.png",
+                      "default": "",
                     }
                   }
                   style={
@@ -1080,7 +1080,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 <Image
                   source={
                     Object {
-                      "testUri": "../../../src/assets/images/bg_action_button_disabled.png",
+                      "default": "",
                     }
                   }
                   style={
@@ -1248,6 +1248,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       "PPNText": "#f33726",
                       "accent": "#818EB3",
                       "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
                       "bitcoinWallet": "#F79319",
                       "border": "#EDEDED",
                       "buttonSecondaryBackground": "#e6f1f9",
@@ -1258,6 +1260,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       "iconBackground": "#ebf0f5",
                       "inactiveTabBarIcon": "#D4D9DB",
                       "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
                       "legacyWallet": "#FA574F",
                       "link": "#007aff",
                       "negative": "#BD573A",
@@ -1907,6 +1910,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "PPNText": "#f33726",
                               "accent": "#818EB3",
                               "activeTabBarIcon": "#007AFF",
+                              "avatarPlaceholderBackground": "#e0eeff",
+                              "avatarPlaceholderText": "#6690eb",
                               "bitcoinWallet": "#F79319",
                               "border": "#EDEDED",
                               "buttonSecondaryBackground": "#e6f1f9",
@@ -1917,6 +1922,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "iconBackground": "#ebf0f5",
                               "inactiveTabBarIcon": "#D4D9DB",
                               "indicator": "#F8E71C",
+                              "labelTertiary": "#818eb3",
                               "legacyWallet": "#FA574F",
                               "link": "#007aff",
                               "negative": "#BD573A",
@@ -2027,6 +2033,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "PPNText": "#f33726",
                               "accent": "#818EB3",
                               "activeTabBarIcon": "#007AFF",
+                              "avatarPlaceholderBackground": "#e0eeff",
+                              "avatarPlaceholderText": "#6690eb",
                               "bitcoinWallet": "#F79319",
                               "border": "#007AFF",
                               "buttonSecondaryBackground": "#e6f1f9",
@@ -2037,6 +2045,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "iconBackground": "#ebf0f5",
                               "inactiveTabBarIcon": "#D4D9DB",
                               "indicator": "#F8E71C",
+                              "labelTertiary": "#818eb3",
                               "legacyWallet": "#FA574F",
                               "link": "#007aff",
                               "negative": "#BD573A",
@@ -2084,7 +2093,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     <Image
                       source={
                         Object {
-                          "testUri": "../../../src/assets/icons/visa.png",
+                          "default": "",
                         }
                       }
                     />
@@ -2101,7 +2110,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     <Image
                       source={
                         Object {
-                          "testUri": "../../../src/assets/icons/mastercard.png",
+                          "default": "",
                         }
                       }
                     />

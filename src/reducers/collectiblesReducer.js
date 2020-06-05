@@ -22,6 +22,7 @@ import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   ADD_COLLECTIBLE_TRANSACTION,
+  UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 import type { CollectiblesStore, CollectiblesHistoryStore } from 'models/Collectible';
 
@@ -29,6 +30,7 @@ import type { CollectiblesStore, CollectiblesHistoryStore } from 'models/Collect
 export type CollectiblesReducerState = {
   data: CollectiblesStore,
   transactionHistory: CollectiblesHistoryStore,
+  updatingTransaction: string,
 };
 
 export type CollectiblesAction = {
@@ -39,6 +41,7 @@ export type CollectiblesAction = {
 const initialState = {
   data: {},
   transactionHistory: {},
+  updatingTransaction: '',
 };
 
 
@@ -56,6 +59,12 @@ const collectiblesReducer = (
       return {
         ...state,
         transactionHistory: action.payload || {},
+        updatingTransaction: '',
+      };
+    case UPDATING_COLLECTIBLE_TRANSACTION:
+      return {
+        ...state,
+        updatingTransaction: action.payload,
       };
     case ADD_COLLECTIBLE_TRANSACTION:
       const { accountId, tokenId, transactionData } = action.payload;

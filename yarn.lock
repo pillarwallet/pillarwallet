@@ -17933,6 +17933,11 @@ supports-hyperlinks@^2.0.0:
     has-flag "^4.0.0"
     supports-color "^7.0.0"
 
+svg-country-flags@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/svg-country-flags/-/svg-country-flags-1.2.7.tgz#3f4c7bcf0603467736eb85fe37fc6932c60ba64b"
+  integrity sha512-23/PTK1CWeFFnL4S7IBI8/vok6uE1qZBZrh6avn5J3XbQmw0NUHpOBRC0HEe7y80YbTOrOqu81IaCC030h74qQ==
+
 svg-path-properties@^0.4.1:
   version "0.4.11"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/svg-path-properties/-/svg-path-properties-0.4.11.tgz#1a04760a773b17ea71737e5c4fca12a74502a612"

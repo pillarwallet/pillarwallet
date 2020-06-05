@@ -317,19 +317,19 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status
-export function fetchTransactionInfo(hash: string): Promise<?Object> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchTransactionInfo(hash: string, network?: string): Promise<?Object> {
+  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
   return provider.getTransaction(hash).catch(() => null);
 }
 
 // receipt available for mined transactions only, here you can get the status of the tx
-export function fetchTransactionReceipt(hash: string): Promise<?Object> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchTransactionReceipt(hash: string, network?: string): Promise<?Object> {
+  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
   return provider.getTransactionReceipt(hash).catch(() => null);
 }
 
-export function fetchLastBlockNumber(): Promise<number> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchLastBlockNumber(network?: string): Promise<number> {
+  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
 }
 
