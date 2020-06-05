@@ -47,6 +47,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Input from 'components/Input';
+import ButtonText from 'components/ButtonText';
 
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -494,7 +495,7 @@ class TextInput extends React.Component<Props, State> {
 
     const colors = getThemeColors(theme);
     const {
-      value = '', selectorValue = {}, label, multiline,
+      value = '', selectorValue = {}, label, multiline, onPressRightLabel, rightLabel,
     } = inputProps;
     const { selector = {}, input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
@@ -576,9 +577,13 @@ class TextInput extends React.Component<Props, State> {
         {!!errorMessage && !!errorMessageOnTop &&
           <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
         }
-        {!!label &&
-          <InputLabel>{label}</InputLabel>
-        }
+        <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+          {!!label &&
+            <InputLabel>{label}</InputLabel>
+          }
+          {!!rightLabel &&
+            <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />}
+        </View>
         <InputBorder error={!!errorMessage}>
           <ItemHolder error={!!errorMessage}>
             <Item

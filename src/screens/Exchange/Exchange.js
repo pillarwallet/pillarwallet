@@ -244,6 +244,8 @@ function SelectorInputTemplate(locals) {
       fiatOptions,
       fiatOptionsTitle,
       displayFiatOptionsFirst,
+      rightLabel,
+      onPressRightLabel,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -267,6 +269,8 @@ function SelectorInputTemplate(locals) {
     onSelectorOpen,
     selectorValue,
     label,
+    rightLabel,
+    onPressRightLabel,
   };
 
   return (
@@ -342,6 +346,8 @@ class ExchangeScreen extends React.Component<Props, State> {
               inputRef: (ref) => { this.fromInputRef = ref; },
               displayFiatOptionsFirst: get(props, 'navigation.state.params.displayFiatOptionsFirst'),
               inputWrapperStyle: { width: '100%' },
+              rightLabel: 'Sell max',
+              onPressRightLabel: this.handleSellMax,
             },
             transformer: {
               parse: (value) => {
@@ -449,10 +455,10 @@ class ExchangeScreen extends React.Component<Props, State> {
   }
 
   handleSellMax = () => {
-    const { value } = this.state;
     const { balances } = this.props;
     const selectedAssetSymbol = this.getSelectedFromAssetSymbol();
     const chosenAssetBalance = formatAmount(getBalance(balances, selectedAssetSymbol));
+    const value = { ...this.state.value };
     value.fromInput.input = chosenAssetBalance;
     this.handleFormChange(value);
   }
@@ -751,6 +757,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           config: {
             options: { $set: optionsFrom },
             inputAddonText: { $set: valueInFiatToShow },
+            rightLabel: { $set: this.shouldShowSellMax() ? 'Sell max' : '' },
           },
         },
         toInput: {
@@ -864,7 +871,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         >
           {!isSubmitted && <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />}
           <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
-            {this.shouldShowSellMax() && <SellMaxButton onPress={this.handleSellMax} />}
+            {/* {this.shouldShowSellMax() && <SellMaxButton onPress={this.handleSellMax} />} */}
             <Form
               ref={node => { this.exchangeForm = node; }}
               type={formStructure}
