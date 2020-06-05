@@ -51,6 +51,7 @@ export default class Chat {
     } catch (e) {
       //
     }
+
     return this.client.init(credentials);
   }
 

@@ -20,13 +20,21 @@
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 
-import ChatService from 'services/chat';
+// actions
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
-import { getActiveAccountAddress } from 'utils/accounts';
-import { firebaseMessaging } from 'services/firebase';
+import { startListeningChatWebSocketAction } from 'actions/notificationsActions';
 
+// utils
+import { getActiveAccountAddress } from 'utils/accounts';
+
+// services
+import { firebaseMessaging } from 'services/firebase';
+import ChatService from 'services/chat';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
+
 
 const chat = new ChatService();
 
@@ -70,6 +78,7 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
     await chat.init(credentials)
       .then(() => chat.client.registerAccount())
       .then(() => fcmToken && chat.client.setFcmId(fcmToken))
+      .then(() => dispatch(startListeningChatWebSocketAction()))
       .then(() => dispatch(updateSignalInitiatedStateAction(true)))
       .catch(() => null);
   };
