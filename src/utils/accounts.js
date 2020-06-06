@@ -46,13 +46,17 @@ export const getAccountId = (account: Account): string => {
   return get(account, 'id', '');
 };
 
+export const getAccountType = (account: Account): ?AccountTypes => {
+  return account.type;
+};
+
 export const getActiveAccountType = (accounts: Accounts): ?AccountTypes => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
     return null;
   }
 
-  return activeAccount.type;
+  return getAccountType(activeAccount);
 };
 
 export const getAccountAddress = (account: Account): string => {
@@ -80,6 +84,7 @@ export const hasLegacyAccountBalance = (accounts: Accounts, balances: BalancesSt
   const accountBalances: Balances = balances[account.id];
   return Object.keys(accountBalances).some(token => getBalance(accountBalances, token) > 0);
 };
+
 export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 };
