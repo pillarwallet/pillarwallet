@@ -46,7 +46,7 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
-import { getActiveAccountId, getActiveAccountType } from 'utils/accounts';
+import { findFirstSmartAccount, getAccountId, getActiveAccountType } from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { navigate } from 'services/navigation';
 
@@ -276,16 +276,18 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
       accounts: { data: accounts },
     } = getState();
 
-    const activeAccountId = getActiveAccountId(accounts);
-    const activeAccountType = getActiveAccountType(accounts);
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    const smartWalletAccountId = getAccountId(smartWalletAccount);
     await dispatch(initSmartWalletSdkAction(privateKey));
 
-    if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) return;
-
-    await dispatch(connectSmartWalletAccountAction(activeAccountId));
+    const activeAccountType = getActiveAccountType(accounts);
+    const setAccountActive = activeAccountType === ACCOUNT_TYPES.SMART_WALLET; // set to active routine
+    await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
     dispatch(fetchVirtualAccountBalanceAction());
 
-    if (blockchainNetwork) {
+    if (setAccountActive && blockchainNetwork) {
       dispatch({
         type: SET_ACTIVE_NETWORK,
         payload: blockchainNetwork,
