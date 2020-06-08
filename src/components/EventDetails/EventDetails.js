@@ -1510,7 +1510,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
   refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
