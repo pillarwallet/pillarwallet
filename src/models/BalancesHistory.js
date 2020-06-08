@@ -17,30 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_BALANCES_HISTORY } from 'constants/assetsConstants';
-import type { BalancesHistory } from 'models/BalancesHistory';
 
-export type BalancesHistoryReducerState = {
-  data: BalancesHistory,
+export type BalanceHistoryEntry = {
+  blockNumber: number,
+  wallet: string,
+  asset: string,
+  timestamp: string,
+  total_incoming: string,
+  total_outgoing: string,
+  total_balance: string,
 };
 
-export type BalancesHistoryReducerAction = {
-  type: string,
-  payload: any,
-};
-
-export const initialState = {
-  data: [],
-};
-
-export default function balancesReducer(
-  state: BalancesHistoryReducerState = initialState,
-  action: BalancesHistoryReducerAction,
-): BalancesHistoryReducerState {
-  switch (action.type) {
-    case SET_BALANCES_HISTORY:
-      return { ...state, data: action.payload };
-    default:
-      return state;
-  }
-}
+export type BalancesHistory = BalanceHistoryEntry[];

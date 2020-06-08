@@ -47,12 +47,12 @@ type Props = {
   width: number,
   height: number,
   activeDataPoint: number,
-  onActivePointChange: (newActivePoint: numer) => void,
+  onActivePointChange: (newActivePoint: number) => void,
   getXAxisValue: (x: number) => string,
   xAxisValuesCount?: number,
   getYAxisValue: (y: number) => string,
   yAxisValuesCount?: number,
-  getTooltipContent: (dataIndex: number) => string,
+  getTooltipContent: () => string,
   onDragStart?: () => void,
   onDragEnd?: () => void,
 
@@ -160,7 +160,7 @@ class LinearGraph extends React.Component<Props> {
     const { getTooltipContent } = this.props;
     const content = getTooltipContent();
 
-    const tooltipWidth = 90; // 75;
+    const tooltipWidth = 90;
     const tooltipHeight = 40;
     const tipHeight = 7;
     const tipWidth = 10;
@@ -234,13 +234,29 @@ class LinearGraph extends React.Component<Props> {
 
   renderXAxis = () => {
     const {
-      xAxisValuesCount = 6, getXAxisValue, height,
+      xAxisValuesCount = 6, getXAxisValue, height, width,
     } = this.props;
-    const values = range(xAxisValuesCount + 1).map(v => getXAxisValue(v / (xAxisValuesCount - 1)));
+
+    const values = range(xAxisValuesCount + 2).map(v => getXAxisValue(v / xAxisValuesCount)).slice(1);
+    const valueWidth = 35;
     return (
       <ForeignObject y={height - BOTTOM_MARGIN + 3}>
-        <View style={{ width: '100%', flexDirection: 'row' }}>
-          {values.map(v => <BaseText style={{ flex: 1 }} center tiny color="#518df8" >{v}</BaseText>)}
+        <View style={{ width: width - GRAPH_RIGHT_PADDING, flexDirection: 'row', backgroundColor: 'transparent' }}>
+          {values.map((v, i) => (
+            <BaseText
+              style={{
+                width: valueWidth,
+                position: 'absolute',
+                left: ((i + 1) * ((width - GRAPH_RIGHT_PADDING) / xAxisValuesCount)) - (valueWidth / 2),
+              }}
+              center
+              tiny
+              color="#518df8"
+              key={`${i}-${v}`}
+            >
+              {v}
+            </BaseText>
+          ))}
         </View>
       </ForeignObject>
     );
@@ -263,6 +279,7 @@ class LinearGraph extends React.Component<Props> {
             strokeWidth="1"
             strokeOpacity="0.23"
             strokeDasharray="5, 2"
+            key={i}
           />
         );
       })
@@ -271,19 +288,20 @@ class LinearGraph extends React.Component<Props> {
 
   renderYAxis = () => {
     const {
-      yAxisValuesCount = 3, getYAxisValue,
+      yAxisValuesCount = 3, getYAxisValue, width, height,
     } = this.props;
     const maxY = this.getMaxY();
 
     const values = range(yAxisValuesCount).map(v => getYAxisValue((v + 1) * maxY / (yAxisValuesCount - 1)));
 
     return (
-      <ForeignObject>
-        <View>
+      <ForeignObject width={width} height={height} x={0} y={0}>
+        <View style={{ flex: 1, backgroundColor: 'transparent' }}>
           {values.map((v, i) => (
             <BaseText
               tiny
               style={{ position: 'absolute', left: 4, top: this.getScreenY((i + 1) * maxY / (yAxisValuesCount - 1)) }}
+              key={i}
             >
               {v}
             </BaseText>

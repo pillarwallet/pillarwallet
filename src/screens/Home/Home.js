@@ -307,7 +307,6 @@ class HomeScreen extends React.Component<Props, State> {
       isPillarRewardCampaignActive,
       dismissReferFriends,
       referFriendsOnHomeScreenDismissed,
-      balancesHistory,
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
@@ -457,7 +456,6 @@ class HomeScreen extends React.Component<Props, State> {
                   <BalanceGraph
                     onDragStart={() => this.setScrollViewScrollable(false)}
                     onDragEnd={() => this.setScrollViewScrollable(true)}
-                    balancesHistory={balancesHistory}
                   />
                   {!!walletConnectRequests &&
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
@@ -550,7 +548,6 @@ const mapStateToProps = ({
   walletConnect: { requests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
-  balancesHistory: { data: balancesHistory },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -566,7 +563,6 @@ const mapStateToProps = ({
   walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
-  balancesHistory,
 });
 
 const structuredSelector = createStructuredSelector({

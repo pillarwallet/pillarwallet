@@ -638,17 +638,18 @@ export const fetchBalancesHistoryAction = () => {
     if (!activeAccount) return;
     const accountAddress = getAccountAddress(activeAccount);
 
+    /*
     const payload = {
       wallet: '0xc91eB53B03024676797AEBC0390b6a485E4774Fe',
       asset: 'ETH',
     };
+*/
 
-    /*
     const payload = {
       wallet: accountAddress,
       asset: 'ETH',
     };
-*/
+
     const history = await api.fetchBalancesHistory(payload);
     dispatch(saveDbAction('balanceHistory', { balanceHistory: history }, true));
 

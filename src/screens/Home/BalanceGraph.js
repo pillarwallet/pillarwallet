@@ -20,22 +20,34 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
-import * as dateDns from 'date-fns';
+import * as dateFns from 'date-fns';
 import memoize from 'memoize-one';
 import styled, { withTheme } from 'styled-components/native';
 import LinearGraph from 'components/LinearGraph';
 import { LabelBadge } from 'components/LabelBadge';
-import { getDeviceWidth, formatUnits, formatFiat } from 'utils/common';
+import { getDeviceWidth, formatUnits } from 'utils/common';
+import { getFormattedRate } from 'utils/assets';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { getRate } from 'utils/assets';
+
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { BalancesHistory } from 'models/BalancesHistory';
+import type { Rates } from 'models/Asset';
+
 
 type Props = {
   onDragStart?: () => void,
   onDragEnd?: () => void,
   theme: Theme,
+  balancesHistory: BalancesHistory,
+  rates: Rates,
+  baseFiatCurrency: ?string,
+};
+
+type State = {
+  timeRange: string,
+  activeDataPoint: number,
 };
 
 const TimeRangeSwitcher = styled.TouchableOpacity`
@@ -53,11 +65,13 @@ const RANGES = {
   MONTH: {
     label: '30 days',
     xAxisFormat: 'D',
+    xAxisValuesCount: 6,
     tooltipFormat: 'D MMM',
     nextTimeRange: WEEK,
   },
   WEEK: {
     label: '7 days',
+    xAxisValuesCount: 7,
     xAxisFormat: 'ddd',
     tooltipFormat: 'D MMM',
     nextTimeRange: DAY,
@@ -65,21 +79,31 @@ const RANGES = {
   DAY: {
     label: '1 day',
     xAxisFormat: 'HH:00',
-    tooltipFormat: 'ddd hh:mm',
+    xAxisValuesCount: 6,
+    tooltipFormat: 'ddd HH:mm',
     nextTimeRange: ALL,
   },
   ALL: {
     label: 'all',
     xAxisFormat: 'MMM \'YY',
+    xAxisValuesCount: 6,
     tooltipFormat: 'MMM YYYY',
     nextTimeRange: MONTH,
   },
 };
+/*
+const randomBalancesHistory = [...Array(1000).keys()].map(() => ({
+  total_balance: Math.random() * 10000000000000000000,
+  timestamp: (new Date(dateFns.getTime(new Date()) - Math.random() * (3 * 30 * 24 * 60 * 60 * 1000))).toString(),
+}));
+*/
 
 class BalanceGraph extends React.Component<Props, State> {
+  now: Date;
+
   constructor(props: Props) {
     super(props);
-    this.now = new Date('2017-02-13T22:14:44.000Z');
+    this.now = new Date();
     const { balancesHistory } = this.props;
     const filteredHistory = this._getFilteredHistory(balancesHistory, this._getStartRange(balancesHistory, MONTH));
     this.state = {
@@ -91,13 +115,13 @@ class BalanceGraph extends React.Component<Props, State> {
   _getStartRange = memoize((balancesHistory, timeRange) => {
     switch (timeRange) {
       case MONTH:
-        return dateDns.subDays(this.now, 30);
+        return dateFns.subDays(this.now, 30);
       case WEEK:
-        return dateDns.subDays(this.now, 7);
+        return dateFns.subDays(this.now, 7);
       case DAY:
-        return dateDns.subDays(this.now, 1);
+        return dateFns.subDays(this.now, 1);
       default:
-        return dateDns.min(
+        return dateFns.min(
           ...balancesHistory
             .filter(({ timestamp }) => !!timestamp)
             .map(({ timestamp }) => new Date(timestamp)),
@@ -114,11 +138,11 @@ class BalanceGraph extends React.Component<Props, State> {
   _getFilteredHistory = memoize((balancesHistory, rangeStart) => {
     const filteredHistory = balancesHistory.filter(({ timestamp }) => {
       const date = new Date(timestamp);
-      return timestamp && (dateDns.isEqual(date, rangeStart) || dateDns.isAfter(date, rangeStart));
+      return timestamp && (dateFns.isEqual(date, rangeStart) || dateFns.isAfter(date, rangeStart));
     });
 
     const sortedHistory = filteredHistory
-      .sort((a, b) => dateDns.compareAsc(new Date(a.timestamp), new Date(b.timestamp)));
+      .sort((a, b) => dateFns.compareAsc(new Date(a.timestamp), new Date(b.timestamp)));
     return [
       { timestamp: rangeStart.toString(), total_balance: sortedHistory[0].total_balance },
       ...sortedHistory,
@@ -133,12 +157,12 @@ class BalanceGraph extends React.Component<Props, State> {
   _getFormattedData = memoize((filteredHistory) => {
     const rangeStart = this.getStartRange();
 
-    const rangeStartMs = dateDns.getTime(rangeStart);
-    const rangeMs = dateDns.getTime(this.now) - rangeStartMs;
+    const rangeStartMs = dateFns.getTime(rangeStart);
+    const rangeMs = dateFns.getTime(this.now) - rangeStartMs;
 
     return filteredHistory
       .map(entry => {
-        return { x: (dateDns.getTime(new Date(entry.timestamp)) - rangeStartMs) / rangeMs, y: entry.total_balance };
+        return { x: (dateFns.getTime(new Date(entry.timestamp)) - rangeStartMs) / rangeMs, y: +entry.total_balance };
       });
   })
 
@@ -150,7 +174,8 @@ class BalanceGraph extends React.Component<Props, State> {
   getYAxisValue = (y: number) => {
     const { rates, baseFiatCurrency } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return formatFiat(formatUnits(y, 18) * getRate(rates, ETH, fiatCurrency), fiatCurrency);
+    const amount = parseFloat(formatUnits(y.toString(), 18));
+    return getFormattedRate(rates, amount, ETH, fiatCurrency);
   }
 
   getXAxisValue = (x: number) => {
@@ -158,17 +183,19 @@ class BalanceGraph extends React.Component<Props, State> {
 
     const rangeStart = this.getStartRange();
 
-    const date = new Date(dateDns.getTime(rangeStart) + ((dateDns.getTime(this.now) - dateDns.getTime(rangeStart)) * x));
+    const rangeStartMs = dateFns.getTime(rangeStart);
+    const nowMs = dateFns.getTime(this.now);
+    const date = new Date(rangeStartMs + ((nowMs - rangeStartMs) * x));
 
     const dateFormat = RANGES[timeRange].xAxisFormat;
-    return dateDns.format(date, dateFormat);
+    return dateFns.format(date, dateFormat);
   }
 
   getTooltipContent = () => {
     const { timeRange, activeDataPoint } = this.state;
     const entry = this.getFilteredHistory()[activeDataPoint];
     const dateFormat = RANGES[timeRange].tooltipFormat;
-    return `${dateDns.format(new Date(entry.timestamp), dateFormat)}\n${this.getYAxisValue(entry.total_balance)}`;
+    return `${dateFns.format(new Date(entry.timestamp), dateFormat)}\n${this.getYAxisValue(+entry.total_balance)}`;
   }
 
   getTimeRangeSwitcherLabel = () => {
@@ -178,13 +205,14 @@ class BalanceGraph extends React.Component<Props, State> {
   switchTimeRange = () => {
     const newTimeRange = RANGES[this.state.timeRange].nextTimeRange;
     const { balancesHistory } = this.props;
-    const filteredHistory = this._getFilteredHistory(balancesHistory, this._getStartRange(balancesHistory, newTimeRange));
+    const startRange = this._getStartRange(balancesHistory, newTimeRange);
+    const filteredHistory = this._getFilteredHistory(balancesHistory, startRange);
     this.setState({ timeRange: newTimeRange, activeDataPoint: filteredHistory.length - 1 });
   }
 
   render() {
     const { onDragStart, onDragEnd, theme } = this.props;
-    const { activeDataPoint } = this.state;
+    const { activeDataPoint, timeRange } = this.state;
     const data = this.getFormattedData();
 
     if (data.length < 2) return null;
@@ -201,6 +229,7 @@ class BalanceGraph extends React.Component<Props, State> {
           onDragEnd={onDragEnd}
           getTooltipContent={this.getTooltipContent}
           getXAxisValue={this.getXAxisValue}
+          xAxisValuesCount={RANGES[timeRange].xAxisValuesCount}
           getYAxisValue={this.getYAxisValue}
           activeDataPoint={Math.min(activeDataPoint, data.length - 1)}
           onActivePointChange={(point) => this.setState({ activeDataPoint: point })}
@@ -219,9 +248,11 @@ class BalanceGraph extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
+  balancesHistory: { data: balancesHistory },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
+  balancesHistory,
 });
 
 

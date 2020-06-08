@@ -108,6 +108,11 @@ type SendReferralInvitationParams = {|
   phone?: string,
 |};
 
+type BalancesHistoryPayload = {
+  wallet: string,
+  asset: string,
+};
+
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 class SDKWrapper {
