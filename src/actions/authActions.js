@@ -44,7 +44,6 @@ import {
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
 } from 'constants/navigationConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_USERNAME, UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { DARK_THEME, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -55,11 +54,12 @@ import { SET_RECOVERY_PORTAL_TEMPORARY_WALLET } from 'constants/recoveryPortalCo
 // utils
 import { delay, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
-import { getActiveAccountType } from 'utils/accounts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
-import { setKeychainDataObject, resetKeychainDataObject } from 'utils/keychain';
+import {
+  setKeychainDataObject, resetKeychainDataObject, getWalletFromPkByPin, canLoginWithPkFromPin,
+} from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -77,14 +77,14 @@ import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
 import { signalInitAction } from './signalClientActions';
-import { initOnLoginSmartWalletAccountAction, switchAccountAction } from './accountsActions';
+import { initOnLoginSmartWalletAccountAction } from './accountsActions';
 import {
   encryptAndSaveWalletAction,
   checkForWalletBackupToastAction,
   updatePinAttemptsAction,
 } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
-import { setAppThemeAction, setInitialPreferredGasTokenAction } from './appSettingsActions';
+import { setAppThemeAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
@@ -124,7 +124,7 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork = '', preferredGasToken } },
+      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
@@ -138,14 +138,23 @@ export const loginAction = (
     try {
       let wallet;
 
-      if (pin) {
+      const keychainLogin = await canLoginWithPkFromPin(!!biometricsSetting);
+      if (pin && keychainLogin) {
+        wallet = await getWalletFromPkByPin(pin);
+      } else if (pin) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access OR fallback for biometrics login
-        await setKeychainDataObject({ privateKey: wallet.privateKey, mnemonic: wallet.mnemonic || '' }, useBiometrics);
+        await setKeychainDataObject(
+          {
+            pin,
+            privateKey: wallet.privateKey,
+            mnemonic: wallet.mnemonic || '',
+          },
+          useBiometrics);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       } else {
@@ -211,39 +220,20 @@ export const loginAction = (
         // perform signal init
         dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
 
-        const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
         const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
 
         // init smart wallet
-        if (smartWalletFeatureEnabled && wallet.privateKey && userHasSmartWallet(accounts)) {
+        if (wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
         }
 
-        // set initial preferredGasToken value. Should be called after we connect to Archanova
-        if (!preferredGasToken) {
-          dispatch(setInitialPreferredGasTokenAction());
-        }
-
-        // set Ethereum network as active
-        // if we disable feature flag or end beta testing program
-        // while user has set PPN or BTC as active network
-        const revertToDefaultNetwork =
-          (!smartWalletFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK) ||
-          (!bitcoinFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-
-        let newBlockchainNetwork = blockchainNetwork;
-
-        if (!newBlockchainNetwork || revertToDefaultNetwork) {
-          newBlockchainNetwork = BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
-        }
-
-        dispatch(setActiveBlockchainNetworkAction(newBlockchainNetwork));
-
-        // if smart wallet feature was disabled and prev active account was Smart Wallet then revert to key based
-        const activeAccountType = getActiveAccountType(accounts);
-        if (!smartWalletFeatureEnabled && activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
-          const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-          if (keyBasedAccount) dispatch(switchAccountAction(keyBasedAccount.id));
+        /**
+         * set Ethereum network as active if we disable feature flag
+         * or end beta testing program while user has set BTC as active network
+         */
+        const revertToDefaultNetwork = !bitcoinFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN;
+        if (revertToDefaultNetwork || !blockchainNetwork) {
+          dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
       } else {
         api.init();
@@ -342,18 +332,22 @@ export const checkAuthAction = (
   onValidPin?: Function,
   options: DecryptionSettings = defaultDecryptionSettings,
 ) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { useBiometrics } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
     try {
       let wallet;
-      if (pin) {
+      // fallback if biometrics check fails, or is rejected by user
+      if (pin && useBiometrics) {
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
         wallet = await decryptWallet(encryptedWallet, saltedPin, options);
+      } else if (pin) {
+        wallet = await getWalletFromPkByPin(pin, options.mnemonic);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       }
@@ -380,19 +374,19 @@ export const checkAuthAction = (
 };
 
 export const changePinAction = (newPin: string, currentPin: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
+    const { appSettings: { data: { useBiometrics } } } = getState();
+    const backupStatus = get(encryptedWallet, 'backupStatus', {});
 
     dispatch({ type: UPDATE_WALLET_STATE, payload: ENCRYPTING });
-
     await delay(50);
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
     const wallet = await decryptWallet(encryptedWallet, currentSaltedPin, {
       mnemonic: true,
     });
 
-    const { isImported = false, isBackedUp = false } = get(encryptedWallet, 'backupStatus', {});
-    dispatch(encryptAndSaveWalletAction(newPin, wallet, isImported, isBackedUp));
+    await dispatch(encryptAndSaveWalletAction(newPin, wallet, backupStatus, useBiometrics));
   };
 };
 
@@ -422,13 +416,12 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
   };
 };
 
-export const resetAppState = async (dispatch: Dispatch, getState: GetState) => {
+export const resetAppState = async () => {
   Intercom.logout();
   await firebaseIid.delete().catch(() => {});
   await chat.client.resetAccount().catch(() => null);
   await storage.removeAll();
-  const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED');
-  if (smartWalletFeatureEnabled) await smartWalletService.reset();
+  await smartWalletService.reset();
   clearWebViewCookies();
 };
 
@@ -436,7 +429,7 @@ export const logoutAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
     const themeType = get(getState(), 'appSettings.data.themeType', '');
-    await resetAppState(dispatch, getState);
+    await resetAppState();
     await dispatch({ type: LOG_OUT });
     await dispatch({ type: RESET_APP_SETTINGS, payload: {} });
     await resetKeychainDataObject();

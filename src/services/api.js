@@ -536,8 +536,8 @@ class SDKWrapper {
       .catch(() => ({}));
   }
 
-  fetchTxInfo(hash: string) {
-    return fetchTransactionInfo(hash);
+  fetchTxInfo(hash: string, network?: string) {
+    return fetchTransactionInfo(hash, network);
   }
 
   fetchHistory(payload: HistoryPayload) {
@@ -561,12 +561,12 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  fetchTransactionReceipt(hash: string) {
-    return fetchTransactionReceipt(hash);
+  fetchTransactionReceipt(hash: string, network?: string) {
+    return fetchTransactionReceipt(hash, network);
   }
 
-  fetchLastBlockNumber() {
-    return fetchLastBlockNumber();
+  fetchLastBlockNumber(network?: string) {
+    return fetchLastBlockNumber(network);
   }
 
   fetchBalances({ address, assets }: BalancePayload) {

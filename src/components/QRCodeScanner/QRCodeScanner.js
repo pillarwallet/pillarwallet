@@ -23,9 +23,10 @@ import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import { noop, reportLog } from 'utils/common';
-import { CameraView } from 'components/QRCodeScanner/CameraView';
+import CameraView from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
 import type { Barcode, Point, Size } from 'react-native-camera';
+import Toast from 'components/Toast';
 
 
 type BarcodeBounds = {
@@ -150,7 +151,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     const { bounds, data: code } = barcode;
     const isIos = Platform.OS === 'ios';
 
-    if (isIos && !this.isInsideScanArea(bounds)) {
+    if (isIos && bounds && !this.isInsideScanArea(bounds)) {
       return;
     }
 
@@ -162,6 +163,12 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     const { validator } = this.props;
 
     if (!validator(code)) {
+      this.props.onCancel();
+      Toast.show({
+        message: 'Wrong QR code',
+        type: 'warning',
+        autoClose: true,
+      });
       return;
     }
 

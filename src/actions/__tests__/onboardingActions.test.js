@@ -150,75 +150,7 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: {
-        data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false },
-      },
-      history: { data: {} },
-      appSettings: {},
-      smartWallet: {},
-      balances: { data: {} },
-    });
-    const expectedActions = [
-      { type: UPDATE_ACCOUNTS, payload: [] },
-      { type: UPDATE_CONTACTS, payload: [] },
-      { type: UPDATE_INVITATIONS, payload: [] },
-      { type: UPDATE_ASSETS, payload: {} },
-      { type: RESET_APP_SETTINGS, payload: {} },
-      { type: SET_HISTORY, payload: {} },
-      { type: UPDATE_BALANCES, payload: {} },
-      { type: UPDATE_COLLECTIBLES, payload: {} },
-      { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
-      { type: UPDATE_BADGES, payload: [] },
-      { type: RESET_SMART_WALLET },
-      { type: RESET_PAYMENT_NETWORK },
-      { type: SET_USER_SETTINGS, payload: {} },
-      { type: SET_FEATURE_FLAGS, payload: {} },
-      { type: SET_USER_EVENTS, payload: [] },
-      { type: UPDATE_WALLET_STATE, payload: GENERATING },
-      { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
-      { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: UPDATE_WALLET_STATE, payload: REGISTERING },
-      { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
-      { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockKeyBasedAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
-      {
-        type: SET_FEATURE_FLAGS,
-        payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false },
-      },
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
-    ];
-
-    return store.dispatch(registerWalletAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
-  });
-
-  it(`should expect series of actions with payload to be dispatched
-  on registerWalletAction execution when wallet wasn't imported
-  and Smart Wallet feature enabled`, () => {
-    store = mockStore({
-      user: { data: mockUser },
-      session: { data: { isSignalInitiated: false, isOnline: true } },
-      oAuthTokens: { data: {} },
-      wallet: {
-        onboarding: mockOnboarding,
-        backupStatus: mockBackupStatus,
-      },
-      accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: {
-        data: { SMART_WALLET_ENABLED: true, BITCOIN_ENABLED: false },
-      },
+      featureFlags: { data: { BITCOIN_ENABLED: false } },
       smartWallet: { upgrade: { status: null } },
       assets: { data: {} },
       history: { data: {} },
@@ -259,7 +191,7 @@ describe('Wallet actions', () => {
       },
       {
         type: SET_FEATURE_FLAGS,
-        payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false },
+        payload: { BITCOIN_ENABLED: false },
       },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
@@ -297,13 +229,11 @@ describe('Wallet actions', () => {
         backupStatus: mockBackupStatus,
       },
       accounts: { data: [mockSmartWalletAccount] },
-      featureFlags: {
-        data: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false },
-      },
+      featureFlags: { data: { BITCOIN_ENABLED: false } },
       assets: { data: {} },
       history: { data: {} },
       appSettings: {},
-      smartWallet: {},
+      smartWallet: { upgrade: { status: null } },
       balances: { data: {} },
     });
     const expectedActions = [
@@ -339,7 +269,19 @@ describe('Wallet actions', () => {
       },
       {
         type: SET_FEATURE_FLAGS,
-        payload: { SMART_WALLET_ENABLED: false, BITCOIN_ENABLED: false },
+        payload: { BITCOIN_ENABLED: false },
+      },
+      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
+      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
+      { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
+      { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
+      { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockSmartWalletAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
       },
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];

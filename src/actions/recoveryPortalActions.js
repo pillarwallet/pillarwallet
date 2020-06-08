@@ -151,14 +151,13 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     api.init(updateOAuth, oAuthTokens);
 
     // finish reg
-    const { privateKey, mnemonic } = wallet;
+    const { privateKey } = wallet;
     await finishRegistration({
       api,
       dispatch,
       getState,
       userInfo,
       address: normalizeWalletAddress(activeDeviceAddress).toLowerCase(),
-      mnemonic,
       privateKey,
       isImported: true,
     });

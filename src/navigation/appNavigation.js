@@ -29,7 +29,6 @@ import { withTheme } from 'styled-components';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
@@ -52,7 +51,6 @@ import SendBitcoinTransactionScreen from 'screens/SendBitcoin/SendBitcoinTransac
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
-import LoginScreen from 'screens/Home/Login';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
@@ -144,12 +142,10 @@ import {
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
-  PROFILE,
   PEOPLE,
   CONTACT,
   HOME,
   HOME_TAB,
-  LOGIN,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -379,8 +375,6 @@ walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
 // HOME FLOW
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
-  [LOGIN]: LoginScreen,
-  [PROFILE]: ProfileScreen,
   [OTP]: OTPScreen,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
   [CONTACT]: ContactScreen,
@@ -778,7 +772,6 @@ type Props = {
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
-  smartWalletFeatureEnabled: boolean,
   isBrowsingWebView: boolean,
   isOnline: boolean,
   initSignal: Function,
@@ -802,7 +795,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
-      startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAllAccountsBalances,
@@ -828,7 +820,6 @@ class AppFlow extends React.Component<Props, State> {
     fetchTransactionsHistoryNotifications();
     getExistingChats();
     fetchAllCollectiblesData();
-    startListeningChatWebSocket();
     initWalletConnect();
     addAppStateChangeListener(this.handleAppStateChange);
   }
@@ -840,7 +831,6 @@ class AppFlow extends React.Component<Props, State> {
       wallet,
       removePrivateKeyFromMemory,
       isOnline,
-      startListeningChatWebSocket,
       stopListeningChatWebSocket,
       initSignal,
     } = this.props;
@@ -852,9 +842,12 @@ class AppFlow extends React.Component<Props, State> {
 
     if (prevIsOnline !== isOnline) {
       if (isOnline) {
-        // try initializing Signal in case of user user logged to wallet while being offline and then switched
+        /**
+         * try initializing Signal in case of user user logged
+         * to wallet while being offline and then switched,
+         * this action also includes chat websocket listener action
+         */
         initSignal();
-        startListeningChatWebSocket();
       } else {
         stopListeningChatWebSocket();
       }
@@ -938,7 +931,6 @@ class AppFlow extends React.Component<Props, State> {
       hasUnreadChatNotifications,
       navigation,
       backupStatus,
-      smartWalletFeatureEnabled,
       theme,
     } = this.props;
 
@@ -959,7 +951,6 @@ class AppFlow extends React.Component<Props, State> {
           hasUnreadChatNotifications,
           intercomNotificationsCount,
           isWalletBackedUp,
-          smartWalletFeatureEnabled,
           theme,
         }}
         navigation={navigation}
@@ -978,11 +969,6 @@ const mapStateToProps = ({
   },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
-  featureFlags: {
-    data: {
-      SMART_WALLET_ENABLED: smartWalletFeatureEnabled,
-    },
-  },
   session: { data: { isOnline } },
 }) => ({
   profileImage,
@@ -994,7 +980,6 @@ const mapStateToProps = ({
   hasUnreadChatNotifications,
   intercomNotificationsCount,
   isPickingImage,
-  smartWalletFeatureEnabled,
   isBrowsingWebView,
   isOnline,
 });

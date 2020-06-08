@@ -64,7 +64,6 @@ import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConsta
 import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
 import { delay } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
-import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
@@ -89,12 +88,7 @@ import {
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import {
-  setAppThemeAction,
-  changeUseBiometricsAction,
-  updateAppSettingsAction,
-  setInitialPreferredGasTokenAction,
-} from 'actions/appSettingsActions';
+import { setAppThemeAction, updateAppSettingsAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -109,7 +103,6 @@ import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPorta
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
-import type { KeyChainData } from 'utils/keychain';
 
 
 const storage = Storage.getInstance('db');
@@ -183,23 +176,17 @@ export const getTokenWalletAndRegister = async (
 export const finishRegistration = async ({
   api,
   dispatch,
-  getState,
   userInfo,
-  mnemonic,
   privateKey,
   address,
   isImported,
-  enableBiometrics,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
-  getState: GetState,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
   address: string,
   isImported: boolean,
-  mnemonic?: string,
-  enableBiometrics?: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -232,38 +219,23 @@ export const finishRegistration = async ({
 
   dispatch(loadFeatureFlagsAction(userInfo));
 
-  const smartWalletFeatureEnabled = get(getState(), 'featureFlags.data.SMART_WALLET_ENABLED', false);
-  if (smartWalletFeatureEnabled) {
-    await smartWalletService.reset();
-    // create smart wallet account only for new wallets
-    const createNewAccount = !isImported;
-    await dispatch(initSmartWalletSdkAction(privateKey));
-    await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
-  }
+  // create smart wallet account only for new wallets
+  await smartWalletService.reset();
+  const createNewAccount = !isImported;
+  await dispatch(initSmartWalletSdkAction(privateKey));
+  await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
 
   await dispatch(fetchTransactionsHistoryAction());
   dispatch(updateConnectionsAction());
   dispatch(labelUserAsLegacyAction());
 
-  if (smartWalletFeatureEnabled) {
-    dispatch(managePPNInitFlagAction());
-  }
-
-  // set initial preferredGasToken value. Should be called after we connect to Archanova
-  dispatch(setInitialPreferredGasTokenAction());
+  dispatch(managePPNInitFlagAction());
 
   await dispatch({
     type: UPDATE_WALLET_STATE,
     payload: DECRYPTED,
   });
 
-  // save data to keychain
-  const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
-  if (enableBiometrics) {
-    await dispatch(changeUseBiometricsAction(true, keychainData, true));
-  } else {
-    await setKeychainDataObject(keychainData);
-  }
   dispatch(fetchReferralRewardAction());
 };
 
@@ -306,7 +278,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     // STEP 0: Clear local storage and reset app state
     if (isImported) {
-      await resetAppState(dispatch, getState);
+      await resetAppState();
     } else {
       await storage.removeAll();
     }
@@ -347,7 +319,8 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     }
 
     // STEP 3: encrypt the wallet
-    await dispatch(encryptAndSaveWalletAction(pin, wallet, !!importedWallet, isBackedUp, isRecoveryPending));
+    const backupStatus = { isImported: !!importedWallet, isBackedUp, isRecoveryPending };
+    await dispatch(encryptAndSaveWalletAction(pin, wallet, backupStatus, enableBiometrics));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
     // checks if wallet import is pending and in this state we don't want to auth any users yet
@@ -399,13 +372,10 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     await finishRegistration({
       api,
       dispatch,
-      getState,
       userInfo,
       address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
       isImported,
-      enableBiometrics,
-      mnemonic: wallet.mnemonic,
     });
 
     // STEP 6: add wallet created / imported events
@@ -436,14 +406,12 @@ export const registerOnBackendAction = () => {
         data: walletData,
         onboarding: {
           apiUser,
-          mnemonic,
           privateKey,
           importedWallet,
         },
         backupStatus: { isImported },
       },
     } = getState();
-    const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -468,10 +436,8 @@ export const registerOnBackendAction = () => {
     await finishRegistration({
       api,
       dispatch,
-      getState,
       userInfo,
       address: normalizeWalletAddress(walletData.address),
-      mnemonic: walletMnemonic,
       privateKey: walletPrivateKey,
       isImported,
     });

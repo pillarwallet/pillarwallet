@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -26,45 +25,17 @@ import isEmpty from 'lodash.isempty';
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
 
 // constants
-import { LOGIN, CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
-
-// components
-import Toast from 'components/Toast';
-
-// utils
-import { isNavigationAllowed } from 'utils/navigation';
-import { validateDeepLink } from 'utils/deepLink';
+import { CONFIRM_CLAIM } from 'constants/navigationConstants';
 
 // services
-import { updateNavigationLastScreenState, navigate } from 'services/navigation';
+import { updateNavigationLastScreenState } from 'services/navigation';
+
+// utils
+import { validateDeepLink } from 'utils/deepLink';
 
 // types
-import type SDKWrapper from 'services/api';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 
-
-type ApproveLoginQuery = {
-  loginToken?: string,
-};
-
-const beginApproveLogin = (query: ApproveLoginQuery) => {
-  const { loginToken: loginAttemptToken } = query;
-
-  if (!isNavigationAllowed()) {
-    updateNavigationLastScreenState({
-      lastActiveScreen: LOGIN,
-      lastActiveScreenParams: { loginAttemptToken },
-    });
-    return;
-  }
-
-  const navigateToAppAction = NavigationActions.navigate({
-    routeName: LOGIN,
-    params: { loginAttemptToken },
-  });
-
-  navigate(navigateToAppAction);
-};
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
@@ -84,11 +55,6 @@ export const executeDeepLinkAction = (deepLink: string) => {
           Alert.alert('Invalid link', 'Referral code is missing');
         }
         break;
-      case 'approve':
-        if (query) {
-          beginApproveLogin(query);
-        }
-        break;
       case 'shapeshift':
         const shapeshiftTokenHash = get(query, 'auth');
         const authStatus = get(query, 'status');
@@ -98,27 +64,6 @@ export const executeDeepLinkAction = (deepLink: string) => {
         break;
       default:
         break;
-    }
-  };
-};
-
-export const approveLoginAttemptAction = (loginAttemptToken: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    try {
-      const result = await api.approveLoginToExternalResource(loginAttemptToken);
-      if (!result || result.error) throw new Error();
-      navigate(HOME);
-      Toast.show({
-        message: 'Your forum login was approved.',
-        type: 'success',
-        title: 'Success',
-      });
-    } catch (e) {
-      Toast.show({
-        message: 'Failed to approve your login, please try again.',
-        type: 'warning',
-        title: 'Something gone wrong',
-      });
     }
   };
 };

@@ -244,7 +244,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   getGasLimitFromRequest = () => {
     const params = this.getRequestParams();
-    const requestGasLimit = params[0].gasLimit;
+    const requestGasLimit = params[0]?.gas || params[0]?.gasLimit;
     return requestGasLimit || this.state.gasLimit;
   };
 

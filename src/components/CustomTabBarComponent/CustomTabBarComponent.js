@@ -26,9 +26,6 @@ import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 type Props = {
-  screenProps: {
-    smartWalletFeatureEnabled: boolean,
-  },
   theme: Theme,
   style?: Object,
 };

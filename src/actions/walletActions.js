@@ -52,6 +52,7 @@ import { PIN_CODE_CONFIRMATION, NEW_PROFILE, RECOVERY_SETTINGS } from 'constants
 import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
 import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { delay } from 'utils/common';
+import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import { navigate } from 'services/navigation';
@@ -59,6 +60,8 @@ import { navigate } from 'services/navigation';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+import type { KeyChainData } from 'utils/keychain';
+import type { BackupStatus } from 'reducers/walletReducer';
 
 // actions
 import { logEventAction } from './analyticsActions';
@@ -66,6 +69,7 @@ import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 import { registerWalletAction } from './onboardingActions';
 import { addWalletBackupEventAction } from './userEventsActions';
+import { changeUseBiometricsAction } from './appSettingsActions';
 
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
@@ -251,13 +255,13 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
 
 export const encryptAndSaveWalletAction = (
   pin: string,
-  wallet: Object,
-  isImported: boolean,
-  isBackedUp: boolean,
-  isRecoveryPending: boolean = false,
+  wallet: ethers.Wallet,
+  backupStatus: BackupStatus,
+  enableBiometrics: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: { walletState } } = getState();
+    const { isImported, isBackedUp, isRecoveryPending } = backupStatus;
 
     // might be already in ENCRYPTING state, i.e. on pin change
     if (walletState !== ENCRYPTING) {
@@ -281,6 +285,15 @@ export const encryptAndSaveWalletAction = (
       type: GENERATE_ENCRYPTED_WALLET,
       payload: { address: wallet.address },
     });
+
+    // save data to keychain
+    const { mnemonic, privateKey } = wallet;
+    const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey, pin };
+    if (enableBiometrics) {
+      await dispatch(changeUseBiometricsAction(true, keychainData, true));
+    } else {
+      await setKeychainDataObject(keychainData);
+    }
   };
 };
 

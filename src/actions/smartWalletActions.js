@@ -154,7 +154,6 @@ import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchSmartWalletTransactionsAction, insertTransactionAction } from './historyActions';
 import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
-import { setInitialPreferredGasTokenAction } from './appSettingsActions';
 
 
 const storage = Storage.getInstance('db');
@@ -621,11 +620,6 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         if (get(event, 'payload.features.gasTokenSupported')) {
           // update connected devices
           await dispatch(fetchConnectedAccountAction());
-
-          const { appSettings: { data: { preferredGasToken } } } = getState();
-          if (!preferredGasToken) {
-            dispatch(setInitialPreferredGasTokenAction());
-          }
         }
       }
 

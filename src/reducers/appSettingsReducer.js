@@ -62,6 +62,7 @@ export const initialState: AppSettingsReducerState = {
     transactionSpeed: null,
     themeType: '',
     isManualThemeSelection: false,
+    useBiometrics: false,
     hasSeenExchangeIntro: false,
     hideBalance: false,
     hasDismissedConnectAppsIntro: false,
