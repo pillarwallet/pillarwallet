@@ -271,7 +271,10 @@ export const fetchConnectedAccountAction = () => {
   };
 };
 
-export const connectSmartWalletAccountAction = (accountId: string) => {
+export const connectSmartWalletAccountAction = (
+  accountId: string,
+  setAccountActive: boolean = true,
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
     let { smartWallet: { connectedAccount } } = getState();
@@ -289,7 +292,8 @@ export const connectSmartWalletAccountAction = (accountId: string) => {
       }
       dispatch(setSmartWalletConnectedAccount(connectedAccount));
     }
-    dispatch(setActiveAccountAction(accountId));
+
+    if (setAccountActive) dispatch(setActiveAccountAction(accountId));
   };
 };
 

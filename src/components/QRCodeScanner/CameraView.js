@@ -22,7 +22,7 @@ import { RNCamera } from 'react-native-camera';
 import { Buffer } from 'buffer';
 import ImagePicker from 'react-native-image-crop-picker';
 import jsQR from 'jsqr';
-import Jimp from 'jimp';
+import Jimp from 'jimp/es';
 import Header from 'components/Header';
 import Toast from 'components/Toast';
 import styled from 'styled-components/native';
