@@ -30,6 +30,27 @@ export type Collectible = {
   tokenType: string,
 };
 
+export type CollectibleTrx = {
+  asset: string,
+  assetData: Collectible,
+  blockNumber: string,
+  contractAddress: string,
+  createdAt: number,
+  from: string,
+  gasPrice?: number,
+  gasUsed?: number,
+  hash: string,
+  icon: string,
+  nbConfirmations?: number,
+  protocol: string,
+  status: string,
+  to: string,
+  type: string,
+  value: number,
+  _id: number,
+};
+
+
 export type Collectibles = Collectible[];
 
 export type CollectiblesStore = {
@@ -37,5 +58,5 @@ export type CollectiblesStore = {
 };
 
 export type CollectiblesHistoryStore = {
-  [accountId: string]: Object[],
+  [accountId: string]: CollectibleTrx[],
 };

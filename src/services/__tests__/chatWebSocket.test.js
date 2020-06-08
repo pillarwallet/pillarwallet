@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import ChatWebSocketService from 'services/chatWebSocket';
 import { WebSocket, Server } from 'mock-socket';
 
@@ -47,8 +65,8 @@ describe('chatWebSocket service', () => {
         socket.send(data);
       });
     });
-    await websocket1.listen();
-    await websocket2.listen();
+    websocket1.start();
+    websocket2.start();
     expect(websocket1.ws).toBeTruthy();
     expect(websocket2.ws).toBeTruthy();
     expect(websocket1.running).toBe(true);
@@ -71,38 +89,35 @@ describe('chatWebSocket service', () => {
       });
     });
 
-    await websocket1.listen();
-    await websocket2.listen();
-
     const requestId = (new Date()).getTime();
-    const mockRequest = await websocket1.prepareRequest(
-      requestId,
-      'PUT',
-      '/v1/messages/websocket1',
-      JSON.stringify({
-        username: 'websocket1',
-        message: 'hello there',
-        userId: null,
-        targetUserId: null,
-        sourceIdentityKey: null,
-        targetIdentityKey: null,
-      }),
-      ['content-type:application/json;'],
-    ) || new Uint8Array(0);
 
-    websocket1.onMessage((msgs) => {
-      expect(msgs).toBeTruthy();
-      if (msgs.type === 2) {
+    let mockRequest;
+    try {
+      mockRequest = await websocket1.prepareRequest(
+        requestId,
+        'PUT',
+        '/v1/messages/websocket1',
+        JSON.stringify({
+          username: 'websocket1',
+          message: 'hello there',
+          userId: null,
+          targetUserId: null,
+        }),
+      );
+    } catch (e) {
+      //
+    }
+
+    expect(mockRequest).toBeTruthy();
+
+    websocket1.start((message) => {
+      expect(message).toBeTruthy();
+      if (message.type === 2) {
         done();
       }
     });
 
-    websocket1.onOpen(() => {
-      websocket2.onOpen(() => {
-        setTimeout(() => {
-          websocket2.send(mockRequest);
-        }, 50);
-      });
-    });
+    websocket2.start();
+    if (mockRequest) websocket2.send(mockRequest);
   });
 });

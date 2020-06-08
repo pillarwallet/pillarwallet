@@ -75,6 +75,7 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } 
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // selectors
 import { activeAccountAddressSelector, bitcoinAddressSelector } from 'selectors';
@@ -90,6 +91,7 @@ import type { Accounts } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
+import type { Asset } from 'models/Asset';
 
 
 type Props = {
@@ -114,6 +116,7 @@ type Props = {
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
+  supportedAssets: Asset[],
 };
 
 export type EventData = {
@@ -289,6 +292,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       isForAllAccounts,
       isAssetView,
       referralRewardIssuersAddresses,
+      supportedAssets,
     } = this.props;
 
     const isReceived = this.isReceived(event);
@@ -505,8 +509,20 @@ export class ActivityFeedItem extends React.Component<Props> {
             additionalInfo.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
           }
 
+          if (isReferralRewardTransaction) {
+            let referralAwardTokenImage;
+            const referralAwardAssetData = supportedAssets.find(({ symbol }) => symbol === event.asset);
+            if (referralAwardAssetData) {
+              const { iconUrl } = referralAwardAssetData;
+              referralAwardTokenImage = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+              additionalInfo.iconName = null;
+              additionalInfo.avatarUrl = referralAwardTokenImage;
+            }
+            additionalInfo.label = 'Referral reward';
+          }
+
           data = {
-            label: isReferralRewardTransaction ? 'Referral reward' : itemLabel,
+            label: itemLabel,
             subtext,
             avatarUrl,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
@@ -659,12 +675,14 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
   referrals: { referralRewardIssuersAddresses },
+  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   contactsSmartAddresses,
   ensRegistry,
   accounts,
   referralRewardIssuersAddresses,
+  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -26,9 +26,11 @@ import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
+import type { CollectibleTrx } from 'models/Collectible';
 
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import {
   findAccountByAddress,
@@ -60,7 +62,7 @@ export function mapTransactionsHistory(
         || findMatchingContact(from, contacts, contactsSmartAddresses);
 
       // apply to wallet accounts only if received from other account address
-      const account = !contact
+      const account = !contact && eventType !== COLLECTIBLE_TRANSACTION
         && (findAccountByAddress(from, getInactiveUserAccounts(accounts))
           || findAccountByAddress(to, getInactiveUserAccounts(accounts))
         );
@@ -99,6 +101,8 @@ export function mapTransactionsHistory(
             accountType: getAccountTypeByAddress(toAddress, accounts),
             isReceived: true,
             betweenAccTrxDuplicate: true,
+            _id: `${historyItem._id}_duplicate`,
+            createdAt: historyItem.createdAt + 1,
           }];
         }
         return alteredHistory;
@@ -124,7 +128,11 @@ export function mapTransactionsHistory(
 }
 
 // extending OpenSea transaction data with BCX data
-export function mapOpenSeaAndBCXTransactionsHistory(openSeaHistory: Object[], BCXHistory: Object[]) {
+export function mapOpenSeaAndBCXTransactionsHistory(
+  openSeaHistory: CollectibleTrx[],
+  BCXHistory: Object[],
+  keepDuplicates?: boolean,
+): CollectibleTrx[] {
   const concatedCollectiblesHistory = openSeaHistory
     .map(({ hash, ...rest }) => {
       const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
@@ -137,6 +145,8 @@ export function mapOpenSeaAndBCXTransactionsHistory(openSeaHistory: Object[], BC
         ...historyEntry,
       };
     }).sort((a, b) => b.createdAt - a.createdAt);
+
+  if (keepDuplicates) return concatedCollectiblesHistory;
   return uniqBy(concatedCollectiblesHistory, 'hash');
 }
 

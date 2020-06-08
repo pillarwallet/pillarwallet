@@ -324,7 +324,8 @@ class HomeScreen extends React.Component<Props, State> {
       true,
     );
 
-    const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
+    const collectiblesTransactions =
+      mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory, true);
 
     const mappedCTransactions = mapTransactionsHistory(
       collectiblesTransactions,
