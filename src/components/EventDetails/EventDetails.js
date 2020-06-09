@@ -792,7 +792,7 @@ export class EventDetail extends React.Component<Props, State> {
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
-    const { itemValue, isBetweenAccounts, isReceived } = itemData;
+    const { fullItemValue, isBetweenAccounts, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
     let directionSymbol = isReceived ? '+' : '-';
@@ -960,7 +960,7 @@ export class EventDetail extends React.Component<Props, State> {
           }
         } else {
           eventData = {
-            actionTitle: itemValue,
+            actionTitle: fullItemValue,
             transactionNote,
           };
 
@@ -1352,8 +1352,9 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  renderFee = (hash: string, fee: ?string) => {
+  renderFee = (hash: string, fee: ?string, isReceived?: boolean) => {
     const { updatingTransaction, updatingCollectibleTransaction } = this.props;
+    if (isReceived) return null;
     if (fee) {
       return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
     } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
@@ -1374,14 +1375,15 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       label: itemLabel,
       actionLabel,
-      itemValue,
+      fullItemValue,
       subtext,
       valueColor,
+      isReceived,
     } = itemData;
 
-    const title = actionTitle || actionLabel || itemValue;
+    const title = actionTitle || actionLabel || fullItemValue;
     const label = name || itemLabel;
-    const subtitle = (actionSubtitle || itemValue) ? actionSubtitle || subtext : null;
+    const subtitle = (actionSubtitle || fullItemValue) ? actionSubtitle || subtext : null;
     const titleColor = this.getColor(valueColor);
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
 
@@ -1419,7 +1421,7 @@ export class EventDetail extends React.Component<Props, State> {
             ) : (
               <Spacing h={32} />
             )}
-            {this.renderFee(event.hash, fee)}
+            {this.renderFee(event.hash, fee, isReceived)}
           </React.Fragment>
         )}
         <ButtonsContainer>
