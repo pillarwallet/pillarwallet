@@ -20,7 +20,7 @@ import { View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
-import { RECOVERY_PORTAL_WALLET_RECOVERY } from 'constants/navigationConstants';
+import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY } from 'constants/navigationConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -100,7 +100,7 @@ const RecoveryPortalWalletRecoveryIntro = (props: Props) => {
           />
           <ButtonText
             buttonText="Recover Key wallet first"
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate(IMPORT_WALLET)}
             fontSize={fontSizes.medium}
             medium
           />
