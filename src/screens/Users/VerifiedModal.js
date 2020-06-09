@@ -59,11 +59,10 @@ const VerifiedModal = (props: Props) => {
   const referralMethod = verifiedField === 'phone' ? 'text message' : 'email';
   const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
 
-  const text = (isPillarRewardCampaignActive && rewardText) ?
-    `You are now able to invite friends via ${referralMethod}. You will receive ${rewardText} and a badge 
-     for each friend installed the app with your referral link.` :
-    `You are now able to invite friends via ${referralMethod}. Start receiving badges for friends 
-     installed Pillar with your referral link!`;
+  const text = (isPillarRewardCampaignActive && rewardText)
+    ? `You are now able to invite friends via ${referralMethod}. You will receive ${rewardText} for each friend` +
+    'installed the app with your referral link.'
+    : `You are now able to invite friends via ${referralMethod}.`;
 
   return (
     <SlideModal

@@ -89,5 +89,5 @@ export const getCampaignRewardText = (campaignRewards: ReferralReward[] = []) =>
     if (rewardText) return [...reducedRewards, rewardText];
     return reducedRewards;
   }, []);
-  return rewards.join(', ');
+  return rewards.length ? `${rewards.join(', ')} and a badge` : '';
 };
