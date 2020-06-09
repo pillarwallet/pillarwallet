@@ -1418,7 +1418,7 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
 
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
-    if (smartWalletAccount) return;
+    if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
     const historyTx = buildHistoryTransaction({
@@ -1454,7 +1454,7 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
 
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
-    if (smartWalletAccount) return;
+    if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
     const historyTx = buildHistoryTransaction({
@@ -1476,7 +1476,7 @@ export const setSmartWalletEnsNameAction = (username: string) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
-    if (smartWalletAccount) return;
+    if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
     const normalizedUsername = normalizeForEns(username);
@@ -1516,7 +1516,7 @@ export const switchToGasTokenRelayerAction = () => {
 
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
-    if (smartWalletAccount) return;
+    if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
 
