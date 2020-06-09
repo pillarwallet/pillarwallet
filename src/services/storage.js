@@ -129,7 +129,7 @@ Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
   return Promise.resolve();
 };
 
-Storage.getInstance = function (name: string) {
+Storage.getInstance = function (name: string): Storage {
   if (!this._instances) {
     this._instances = {};
   }
