@@ -31,6 +31,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
+import { ScrollWrapper } from 'components/Layout';
 
 // utils
 import { themedColors } from 'utils/themes';
@@ -125,24 +126,26 @@ const ManageConnectedDevices = ({
   };
 
   const devicesByLatest = orderBy(devices, ['updatedAt'], ['desc']);
-  const emptyStyle = { justifyContent: 'center', alignItems: 'center' };
+  const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
 
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Manage devices' }] }}>
-      <FlatList
-        data={devicesByLatest}
-        keyExtractor={({ address }) => `${address}`}
-        renderItem={renderListItem}
-        initialNumToRender={9}
-        style={[{ flex: 1 }, !devices.length && emptyStyle]}
-        ListEmptyComponent={<EmptyStateParagraph title="No Connected Devices" />}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => fetchConnectedAccount()}
-          />
-        }
-      />
+      <ScrollWrapper contentContainerStyle={!devicesByLatest.length && emptyStyle}>
+        <FlatList
+          data={devicesByLatest}
+          keyExtractor={({ address }) => `${address}`}
+          renderItem={renderListItem}
+          initialNumToRender={9}
+          contentContainerStyle={!devicesByLatest.length && emptyStyle}
+          ListEmptyComponent={<EmptyStateParagraph title="No Connected Devices" />}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => fetchConnectedAccount()}
+            />
+          }
+        />
+      </ScrollWrapper>
     </ContainerWithHeader>
   );
 };
