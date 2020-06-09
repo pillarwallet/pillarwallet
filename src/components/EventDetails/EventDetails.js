@@ -1324,8 +1324,9 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  renderFee = (hash: string, fee: ?string) => {
+  renderFee = (hash: string, fee: ?string, isReceived?: boolean) => {
     const { updatingTransaction, updatingCollectibleTransaction } = this.props;
+    if (isReceived) return null;
     if (fee) {
       return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
     } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
@@ -1349,6 +1350,7 @@ export class EventDetail extends React.Component<Props, State> {
       fullItemValue,
       subtext,
       valueColor,
+      isReceived,
     } = itemData;
 
     const title = actionTitle || actionLabel || fullItemValue;
@@ -1391,7 +1393,7 @@ export class EventDetail extends React.Component<Props, State> {
             ) : (
               <Spacing h={32} />
             )}
-            {this.renderFee(event.hash, fee)}
+            {this.renderFee(event.hash, fee, isReceived)}
           </React.Fragment>
         )}
         <ButtonsContainer>
