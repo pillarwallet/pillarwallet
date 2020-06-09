@@ -443,7 +443,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               label: usernameOrAddress,
               avatarUrl,
               isReceived,
-              username: contact && contact.username,
+              username: contact?.username,
             };
 
             if (event.extra) {
@@ -527,7 +527,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: itemLabel,
             subtext,
             avatarUrl,
-            username: contact && contact.username,
+            username: contact?.username,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
             valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
             ...additionalInfo,
