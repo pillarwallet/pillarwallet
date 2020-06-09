@@ -795,7 +795,7 @@ export class EventDetail extends React.Component<Props, State> {
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
-    const { itemValue, isBetweenAccounts, isReceived } = itemData;
+    const { fullItemValue, isBetweenAccounts, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
     let directionSymbol = isReceived ? '+' : '-';
@@ -937,7 +937,7 @@ export class EventDetail extends React.Component<Props, State> {
           }
         } else {
           eventData = {
-            actionTitle: itemValue,
+            actionTitle: fullItemValue,
             transactionNote,
           };
 
@@ -1360,15 +1360,15 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       label: itemLabel,
       actionLabel,
-      itemValue,
+      fullItemValue,
       subtext,
       valueColor,
       username,
     } = itemData;
 
-    const title = actionTitle || actionLabel || itemValue;
+    const title = actionTitle || actionLabel || fullItemValue;
     const label = name || itemLabel;
-    const subtitle = (actionSubtitle || itemValue) ? actionSubtitle || subtext : null;
+    const subtitle = (actionSubtitle || fullItemValue) ? actionSubtitle || subtext : null;
     const titleColor = this.getColor(valueColor);
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
 
