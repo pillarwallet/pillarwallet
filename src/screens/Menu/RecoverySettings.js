@@ -95,7 +95,7 @@ class RecoverySettings extends React.Component<Props, State> {
         title: 'Recovery Portal',
         subtitle: recoveryPortalSubtitle,
         disabled: !isSmartWalletActivated,
-        onPress: () => navigation.navigate(recoveryPortalNavigationPath),
+        onPress: () => isSmartWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
       },
     ];
   }
