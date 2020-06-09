@@ -91,7 +91,7 @@ class RecoverySettings extends React.Component<Props, State> {
         onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
       },
       {
-        key: 'linkedDevices',
+        key: 'recoveryPortal',
         title: 'Recovery Portal',
         subtitle: recoveryPortalSubtitle,
         disabled: !isSmartWalletActivated,

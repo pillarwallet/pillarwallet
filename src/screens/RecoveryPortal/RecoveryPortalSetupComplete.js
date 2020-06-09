@@ -58,7 +58,7 @@ const Title = styled(MediumText)`
 
 const skipPrompt = (callback) => Alert.alert(
   'Are you sure?',
-  'You are going to skip your Private Key backup, but no at all worries – you can still do it later!',
+  'You are going to skip your Private Key backup, but no worries at all – you can still do it later!',
   [
     { text: 'Confirm skip', onPress: () => callback() },
     { text: 'Dismiss', style: 'cancel' },

@@ -200,7 +200,7 @@ class SDKWrapper {
     if (!isEmpty(recovery)) requestPayload = { ...requestPayload, recovery };
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.wallet.registerAuthServer(requestPayload))
-      .then(({ data }) => { console.log('data: ', data); return data; })
+      .then(({ data }) => data)
       .catch((error) => {
         reportLog('Registration error', { error }, Sentry.Severity.Error);
         const responseStatus = get(error, 'response.status');

@@ -883,13 +883,13 @@ export class EventDetail extends React.Component<Props, State> {
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
           name: 'Smart Wallet fees with PLR token',
-          actionTitle: 'Enabled',
+          actionTitle: isPending ? 'Enabling' : 'Enabled',
         };
         break;
       case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
         eventData = {
           name: 'New Smart Wallet account device',
-          actionTitle: 'Added',
+          actionTitle: isPending ? 'Adding' : 'Added',
           buttons: [
             {
               title: 'View on the blockchain',
@@ -902,7 +902,7 @@ export class EventDetail extends React.Component<Props, State> {
       case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
         eventData = {
           name: 'Smart Wallet account device',
-          actionTitle: 'Removed',
+          actionTitle: isPending ? 'Removing' : 'Removed',
           buttons: [
             {
               title: 'View on the blockchain',
