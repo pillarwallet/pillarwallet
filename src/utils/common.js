@@ -480,7 +480,7 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
   return utils.parseUnits(gasPrice.toString(), 'gwei');
 };
 
-export const formatUnits = (val: string = '0', decimals: number) => {
+export const formatUnits = (val: string = '0', decimals: number): string => {
   let formattedUnits = decimals === 0 ? '0' : '0.0';
   let preparedValue = null; // null for sentry reports
   let valueWithoutDecimals = null; // null for sentry reports
