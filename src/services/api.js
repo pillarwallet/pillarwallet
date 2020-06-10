@@ -47,6 +47,7 @@ import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
 import { reportLog, uniqBy } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
+import { normalizeWalletAddress } from 'utils/wallet';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -180,9 +181,7 @@ class SDKWrapper {
     let requestPayload = { privateKey, username };
     if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
     return Promise.resolve()
-      .then(() => {
-        return this.pillarWalletSdk.wallet.registerAuthServer(requestPayload);
-      })
+      .then(() => this.pillarWalletSdk.wallet.registerAuthServer(requestPayload))
       .then(({ data }) => data)
       .catch((error) => {
         reportLog('Registration error', { error }, Sentry.Severity.Error);
@@ -410,13 +409,11 @@ class SDKWrapper {
   }
 
   validateAddress(blockchainAddress: string): Object {
+    blockchainAddress = normalizeWalletAddress(blockchainAddress);
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
       .then(({ data }) => data)
-      .catch(error => {
-        reportLog('Unable to restore user wallet', { blockchainAddress, error });
-        return { error: true };
-      });
+      .catch(() => ({ error: true }));
   }
 
   fetchSupportedAssets(walletId: string) {
