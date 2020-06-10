@@ -621,11 +621,28 @@ export const checkForMissedAssetsAction = () => {
       .map((acc) => ({ id: acc, ...accountUpdatedAssets[acc], ...allAccountAssets[acc] }))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
-    dispatch({
-      type: UPDATE_ASSETS,
-      payload: updatedAssets,
+    let newAssetsFound = false;
+    Object.keys(updatedAssets).forEach(account => {
+      if (!accountsAssets[account] || !updatedAssets[account]) {
+        newAssetsFound = true;
+        return;
+      }
+
+      const assetsInAccountBefore = Object.keys(accountsAssets[account]).length;
+      const assetsInAccountAfter = Object.keys(updatedAssets[account]).length;
+
+      if (assetsInAccountBefore !== assetsInAccountAfter) {
+        newAssetsFound = true;
+      }
     });
-    dispatch(fetchAssetsBalancesAction());
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+
+    if (newAssetsFound) {
+      dispatch({
+        type: UPDATE_ASSETS,
+        payload: updatedAssets,
+      });
+      dispatch(fetchAssetsBalancesAction());
+      dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    }
   };
 };
