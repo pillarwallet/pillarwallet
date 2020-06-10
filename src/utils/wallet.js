@@ -104,11 +104,9 @@ export function signPersonalMessage(message: string, walletInstance: Object): Pr
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
 
-// we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch, api: Object) {
+export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch) {
   const { wallet = {} } = get(storageData, 'wallet', {});
   const { appSettings = {} } = get(storageData, 'app_settings', {});
-  const { user = {} } = get(storageData, 'user', {});
   const isWalletEmpty = isEmpty(wallet);
 
   // missing wallet timestamp causes 'welcome screen'
@@ -128,28 +126,6 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
     // if only the wallet timestamp was missing, let's update it
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: walletTimestamp } }));
     reportToSentry('Empty wallet timestamp (auto-fix)');
-  }
-
-  // TODO: remove this if there will be no reports in Sentry
-  if (isEmpty(user) || !user.username || !user.walletId) {
-    if (!isEmpty(wallet)) {
-      printLog('RESTORING USER FROM API');
-      api.init();
-      const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
-      if (apiUser.walletId) {
-        const restoredUser = {
-          id: apiUser.id,
-          walletId: apiUser.walletId,
-          username: apiUser.username,
-          profileLargeImage: apiUser.profileImage,
-        };
-        await dispatch(saveDbAction('user', { user: restoredUser }, true));
-        printLog('USER RESTORED FROM API');
-      } else {
-        printLog('UNABLE TO RESTORE USER FROM API');
-      }
-      reportToSentry('Empty user object');
-    }
   }
 
   return {
