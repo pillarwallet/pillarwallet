@@ -108,6 +108,7 @@ import {
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
+  CONTACT,
 } from 'constants/navigationConstants';
 
 // selectors
@@ -307,6 +308,10 @@ const EventTimeHolder = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
   padding: 0 8px;
+`;
+
+const AvatarWrapper = styled.TouchableOpacity`
+  align-items: center;
 `;
 
 
@@ -1335,6 +1340,15 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
+  goToProfile = () => {
+    const { navigation, itemData: { username }, onClose } = this.props;
+
+    if (username) {
+      onClose();
+      navigation.navigate(CONTACT, { username });
+    }
+  }
+
   renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
     const {
@@ -1350,6 +1364,7 @@ export class EventDetail extends React.Component<Props, State> {
       fullItemValue,
       subtext,
       valueColor,
+      username,
       isReceived,
     } = itemData;
 
@@ -1373,9 +1388,11 @@ export class EventDetail extends React.Component<Props, State> {
           </ButtonHolder>
         </Row>
         <Spacing h={10} />
-        <BaseText medium>{label}</BaseText>
-        <Spacing h={20} />
-        {this.renderImage(itemData)}
+        <AvatarWrapper onPress={this.goToProfile} disabled={!username}>
+          <BaseText medium>{label}</BaseText>
+          <Spacing h={20} />
+          {this.renderImage(itemData)}
+        </AvatarWrapper>
         <Spacing h={20} />
         {settleEventData ? this.renderSettle(settleEventData) : (
           <React.Fragment>

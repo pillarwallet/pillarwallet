@@ -129,6 +129,7 @@ export type EventData = {
   rejectInvitation?: Function,
   acceptInvitation?: Function,
   avatarUrl?: string,
+  username?: string,
   itemImageUrl?: string,
   iconName?: ?string,
   iconColor?: string,
@@ -454,6 +455,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               label: usernameOrAddress,
               avatarUrl,
               isReceived,
+              username: contact?.username,
             };
 
             if (event.extra) {
@@ -537,6 +539,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: itemLabel,
             subtext,
             avatarUrl,
+            username: contact?.username,
             fullItemValue: `${directionSymbol} ${formattedFullValue} ${event.asset}`,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
             valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
@@ -615,6 +618,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       label: username,
       actionLabel,
       avatarUrl: profileImage,
+      username,
     };
 
     if (type === TYPE_SENT) {
