@@ -186,7 +186,7 @@ export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEven
     const transactionType = get(event, 'payload.state');
     const transactionHash = get(event, 'payload.hash');
 
-    if (eventName === Api.EventNames.AccountTransactionUpdated
+    if (eventName === sdkModules.Api.EventNames.AccountTransactionUpdated
       && !isEmpty(transactionHash)
       && !isEmpty(transactionType)) {
       if (transactionType === sdkConstants.AccountTransactionStates.Created) {
