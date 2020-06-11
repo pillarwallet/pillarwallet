@@ -29,18 +29,24 @@ import { CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { requestSessionAction } from 'actions/walletConnectActions';
+import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
 
 const allowedDeepLinkProtocols = [
   'pillarwallet:',
   'wc:',
 ];
 
-export const executeDeepLinkAction = (deepLink: string) => {
+export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) => {
   return async (dispatch: Dispatch) => {
     const params = url.parse(deepLink, true);
     if (isEmpty(params)) return;
     const { host, protocol, query = {} } = params;
     if (!allowedDeepLinkProtocols.includes(protocol)) return;
+
+    // make sure a deeplink is only handled once
+    if (onAppLaunch) {
+      dispatch(initialDeeplinkExecuted());
+    }
 
     if (protocol === 'wc:') {
       dispatch(requestSessionAction(deepLink));

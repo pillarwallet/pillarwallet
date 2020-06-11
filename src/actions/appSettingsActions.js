@@ -272,3 +272,12 @@ export const setPreferredGasTokenAction = (preferredGasToken: string) => {
     });
   };
 };
+
+export const initialDeeplinkExecuted = () => {
+  return (dispatch: Dispatch) => {
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: { initialDeeplinkExecuted: true },
+    });
+  };
+};

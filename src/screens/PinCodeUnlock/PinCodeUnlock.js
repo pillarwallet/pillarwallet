@@ -64,7 +64,8 @@ type Props = {
   useBiometrics: ?boolean,
   initSmartWalletSdkWithPrivateKeyOrPin: (InitSmartWalletProps) => void,
   switchAccount: (accountId: string) => void,
-  executeDeepLink: (deepLink: string) => void,
+  executeDeepLink: (deepLink: string, onAppLaunch?: boolean) => void,
+  initialDeeplinkExecuted: boolean,
 };
 
 type State = {
@@ -114,11 +115,14 @@ class PinCodeUnlock extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    Linking.getInitialURL()
-      .then(url => {
-        if (url) this.props.executeDeepLink(url);
-      })
-      .catch(() => {});
+    const { initialDeeplinkExecuted } = this.props;
+    if (!initialDeeplinkExecuted) {
+      Linking.getInitialURL()
+        .then(url => {
+          if (url) this.props.executeDeepLink(url, true);
+        })
+        .catch(() => {});
+    }
     removeAppStateChangeListener(this.handleAppStateChange);
     if (this.interval) {
       clearInterval(this.interval);
@@ -282,10 +286,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet,
-  appSettings: { data: { useBiometrics } },
+  appSettings: { data: { useBiometrics, initialDeeplinkExecuted } },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
+  initialDeeplinkExecuted,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -296,7 +301,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   initSmartWalletSdkWithPrivateKeyOrPin: ({ privateKey, pin }: InitSmartWalletProps) =>
     dispatch(initSmartWalletSdkWithPrivateKeyOrPinAction({ privateKey, pin })),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
-  executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
+  executeDeepLink: (deepLink: string, onAppLaunch?: boolean) => dispatch(executeDeepLinkAction(deepLink, onAppLaunch)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
