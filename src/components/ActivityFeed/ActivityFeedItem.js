@@ -129,10 +129,12 @@ export type EventData = {
   rejectInvitation?: Function,
   acceptInvitation?: Function,
   avatarUrl?: string,
+  username?: string,
   itemImageUrl?: string,
   iconName?: ?string,
   iconColor?: string,
   itemValue?: string,
+  fullItemValue?: string,
   valueColor?: string,
   customAddon?: React.Node,
   itemStatusIcon?: string,
@@ -201,6 +203,10 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     return addressesEqual(to, activeAccountAddress) || bitcoinAddresses.some(e => e.address === to);
   };
+
+  isZeroValue(value: string): boolean {
+    return value === '0' || value === '0.0';
+  }
 
   getRelevantAddress = (event: Object): string => {
     const isReceived = this.isReceived(event);
@@ -304,10 +310,11 @@ export class ActivityFeedItem extends React.Component<Props> {
     const assetSymbol = event ? event.asset : null;
     const decimalPlaces = getDecimalPlaces(assetSymbol);
     const formattedValue = formatAmount(value, decimalPlaces);
+    const formattedFullValue = formatAmount(value);
     const directionIcon = isReceived ? 'received' : 'sent';
     let directionSymbol = isReceived ? '+' : '-';
 
-    if (value === '0.0') {
+    if (this.isZeroValue(value)) {
       directionSymbol = '';
     }
 
@@ -331,6 +338,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
+            fullItemValue: `- ${formattedFullValue} ${event.asset}`,
             itemValue: `- ${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
@@ -339,6 +347,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: 'Top Up',
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
+            fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
@@ -347,6 +356,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.SMART_WALLET,
             subtext: 'To Pillar Network',
             itemImageSource: smartWalletIcon,
+            fullItemValue: `- ${formattedFullValue} ${event.asset}`,
             itemValue: `- ${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
@@ -355,6 +365,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: 'Top up',
             itemImageSource: PPNIcon,
+            fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
@@ -369,6 +380,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
+          fullItemValue: `- ${formattedFullValue} ${event.asset}`,
           itemValue: `- ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
@@ -434,6 +446,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               subtext: isAssetView ? `to ${smartWallet}` : 'from Pillar Network',
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
+              fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
               itemValue: `+ ${formattedValue} ${event.asset}`,
               valueColor: 'positive',
             };
@@ -442,6 +455,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               label: usernameOrAddress,
               avatarUrl,
               isReceived,
+              username: contact?.username,
             };
 
             if (event.extra) {
@@ -525,8 +539,10 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: itemLabel,
             subtext,
             avatarUrl,
+            username: contact?.username,
+            fullItemValue: `${directionSymbol} ${formattedFullValue} ${event.asset}`,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
-            valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
+            valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
           };
@@ -602,6 +618,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       label: username,
       actionLabel,
       avatarUrl: profileImage,
+      username,
     };
 
     if (type === TYPE_SENT) {

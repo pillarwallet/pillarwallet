@@ -19,13 +19,25 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import styled from 'styled-components/native';
 import NewProfile from 'screens/NewProfile';
 import { registerOnBackendAction } from 'actions/onboardingActions';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
+import { MediumText } from 'components/Typography';
 import { REGISTRATION_FAILED, USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import { fontStyles } from 'utils/variables';
+
+
+const Text = styled(MediumText)`
+  ${fontStyles.big};
+  width: 100%;
+  text-align: center;
+  max-width: 230px;
+  margin-bottom: 20px;
+`;
 
 type Props = {
   wallet: Object,
@@ -51,7 +63,10 @@ class RetryApiRegistration extends React.Component<Props> {
           <Loader messages={['Registering on backend']} />
         )}
         {walletState === REGISTRATION_FAILED && (
-          <Button title="Try again" onPress={registerOnBackend} />
+          <>
+            <Text>Registration failed</Text>
+            <Button title="Try again" onPress={registerOnBackend} />
+          </>
         )}
       </Container>
     );
@@ -59,10 +74,9 @@ class RetryApiRegistration extends React.Component<Props> {
 }
 
 const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  registerOnBackend: () => {
-    dispatch(registerOnBackendAction());
-  },
+  registerOnBackend: () => dispatch(registerOnBackendAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RetryApiRegistration);
