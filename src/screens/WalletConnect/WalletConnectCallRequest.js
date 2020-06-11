@@ -326,8 +326,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (request) {
       rejectWCRequest(request);
     }
-
-    navigation.dismiss();
+    navigation.goBack();
   };
 
   render() {
