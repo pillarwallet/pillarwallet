@@ -116,7 +116,7 @@ export const getTokenWalletAndRegister = async (
     accountAddress: string,
     deviceAddress: string,
   },
-) => {
+): Promise<Object> => {
   // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
   await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
   await firebaseMessaging.requestPermission().catch(() => {});
@@ -163,14 +163,14 @@ export const getTokenWalletAndRegister = async (
   // invalidate image cache
   ImageCacheManager().clearCache().catch(() => null);
 
-  return {
+  return Promise.resolve({
     sdkWallet,
     userInfo,
     userState,
     fcmToken,
     registrationSucceed,
     oAuthTokens,
-  };
+  });
 };
 
 export const finishRegistration = async ({
