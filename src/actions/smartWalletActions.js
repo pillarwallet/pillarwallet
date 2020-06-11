@@ -268,6 +268,7 @@ export const setSmartWalletConnectedAccount = (connectedAccount: SmartWalletAcco
 export const fetchConnectedAccountAction = () => {
   return async (dispatch: Dispatch) => {
     const connectedAccount = await smartWalletService.fetchConnectedAccount();
+    if (isEmpty(connectedAccount)) return;
     await dispatch(setSmartWalletConnectedAccount(connectedAccount));
   };
 };

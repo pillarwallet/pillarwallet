@@ -21,8 +21,7 @@ import { NavigationActions } from 'react-navigation';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { ethers } from 'ethers';
-import { sdkConstants } from '@smartwallet/sdk';
-import { Api } from '@smartwallet/sdk/build/modules';
+import { sdkConstants, sdkModules } from '@smartwallet/sdk';
 
 // actions
 import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
@@ -97,14 +96,14 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       devices = [],
       activeDeviceAddress,
       address: connectedAccountAddress,
-    } = await smartWalletService.fetchConnectedAccount();
+    } = await smartWalletService.fetchConnectedAccount() || {};
     if (!activeDeviceAddress) return;
 
     const thisDevice = devices.find(({ device: { address } }) => addressesEqual(activeDeviceAddress, address));
     if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
 
     const recover = {
-      deviceAddress: activeDeviceAddress.toLowerCase(),
+      deviceAddress: activeDeviceAddress,
       accountAddress: connectedAccountAddress,
     };
 
@@ -157,7 +156,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       dispatch,
       getState,
       userInfo,
-      address: normalizeWalletAddress(activeDeviceAddress).toLowerCase(),
+      address: normalizeWalletAddress(activeDeviceAddress),
       privateKey,
       isImported: true,
     });
@@ -178,7 +177,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
   };
 };
 
-export const checkRecoveredSmartWalletStateAction = (event: Api.IEvent) => {
+export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEvent) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { recoveryPortal: { temporaryWallet } } = getState();
     if (!temporaryWallet) return;

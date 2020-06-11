@@ -307,7 +307,7 @@ class SmartWallet {
     } catch (e) {
       this.handleError(e);
     }
-    return {};
+    return null;
   }
 
   async transferAsset(transaction: AccountTransaction) {

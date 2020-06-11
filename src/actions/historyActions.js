@@ -162,7 +162,7 @@ export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId, connectedAccount: { devices } },
+      smartWallet: { lastSyncedTransactionId, connectedAccount: { devices = [] } },
     } = getState();
 
     const smartWalletAccount = findFirstSmartAccount(accounts);

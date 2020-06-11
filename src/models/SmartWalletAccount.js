@@ -17,12 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { IAccount, IAccountDevice } from '@smartwallet/sdk/build/interfaces';
+import { sdkInterfaces } from '@smartwallet/sdk';
 import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
-export type SmartWalletAccount = IAccount;
+export type SmartWalletAccount = sdkInterfaces.IAccount;
 
-export type SmartWalletAccountDevice = IAccountDevice;
+export type SmartWalletAccountDevice = sdkInterfaces.IAccountDevice;
 
 export type ConnectedSmartWalletAccount = {
   ...SmartWalletAccount,
