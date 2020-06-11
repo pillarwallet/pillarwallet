@@ -148,7 +148,7 @@ class Welcome extends React.Component<Props> {
         >
           <Button marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
           <ButtonText
-            buttonText="Restore wallet"
+            buttonText="Recover wallet"
             onPress={this.navigateToWalletImportPage}
             fontSize={fontSizes.big}
           />

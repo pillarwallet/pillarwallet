@@ -19,16 +19,26 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { BackHandler, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
+// actions
+import { setPinForNewWalletAction } from 'actions/walletActions';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import { MediumText, Paragraph } from 'components/Typography';
-import { setPinForNewWalletAction } from 'actions/walletActions';
+
+// utils
 import { validatePin } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
+
+// types
 import type { ImportedWallet } from 'reducers/walletReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
@@ -52,26 +62,39 @@ type State = {
 };
 
 class SetWalletPinCode extends React.Component<Props, State> {
+  noBack: boolean;
   state = {
     error: '',
   };
 
+  constructor(props: Props) {
+    super(props);
+    this.noBack = props.navigation.getParam('noBack', false);
+  }
+
+  componentDidMount() {
+    if (Platform.OS !== 'android' && !this.noBack) return;
+    BackHandler.addEventListener('hardwareBackPress', this.handleNavigationBack);
+  }
+
+  componentWillUnmount() {
+    if (Platform.OS !== 'android' && !this.noBack) return;
+    BackHandler.removeEventListener('hardwareBackPress', this.handleNavigationBack);
+  }
+
+  handleNavigationBack = () => false;
+
   handlePinSubmit = (pin: string) => {
     const validationError = validatePin(pin);
     if (validationError) {
-      this.setState({
-        error: validationError,
-      });
+      this.setState({ error: validationError });
       return;
     }
-
     this.props.setPinForNewWallet(pin);
   };
 
   handlePinChange = () => {
-    this.setState({
-      error: '',
-    });
+    this.setState({ error: '' });
   };
 
   render() {
@@ -83,7 +106,10 @@ class SetWalletPinCode extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Create PIN code' }] }}
+        headerProps={{
+          centerItems: [{ title: 'Create PIN code' }],
+          noBack: this.noBack,
+        }}
       >
         <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
           {!importedWallet &&

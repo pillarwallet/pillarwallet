@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import KeyPad from 'components/KeyPad';
 import { Wrapper } from 'components/Layout';
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
-import PinDots from './PinDots';
+import HorizontalDots from 'components/HorizontalDots';
 
 const PASS_CODE_LENGTH = 6;
 
@@ -158,7 +158,12 @@ export default class PinCode extends React.Component<Props, State> {
             customStyle,
           ]}
         >
-          <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
+          <HorizontalDots
+            wrapperWidth={156}
+            wrapperVerticalMargin={20}
+            numAllDots={PASS_CODE_LENGTH}
+            numActiveDots={numActiveDots}
+          />
         </PinDotsWrapperAnimated>
         <KeyPad
           type="pincode"

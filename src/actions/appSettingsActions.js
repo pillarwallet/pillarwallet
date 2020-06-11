@@ -272,3 +272,9 @@ export const setPreferredGasTokenAction = (preferredGasToken: string) => {
     });
   };
 };
+
+export const hasSeenRecoveryPortalIntroAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(updateAppSettingsAction('hasSeenRecoveryPortalIntro', true));
+  };
+};

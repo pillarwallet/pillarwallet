@@ -94,6 +94,8 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } 
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
   SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -886,7 +888,33 @@ export class EventDetail extends React.Component<Props, State> {
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
           name: 'Smart Wallet fees with PLR token',
-          actionTitle: 'Enabled',
+          actionTitle: isPending ? 'Enabling' : 'Enabled',
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+        eventData = {
+          name: 'New Smart Wallet account device',
+          actionTitle: isPending ? 'Adding' : 'Added',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+        eventData = {
+          name: 'Smart Wallet account device',
+          actionTitle: isPending ? 'Removing' : 'Removed',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
         };
         break;
       default:

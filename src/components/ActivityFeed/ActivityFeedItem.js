@@ -73,7 +73,12 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
+import {
+  SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
@@ -322,7 +327,12 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     let data: EventData = {};
 
-    const { smartWalletIcon, PPNIcon, keyWalletIcon } = images(theme);
+    const {
+      smartWalletIcon,
+      PPNIcon,
+      roundedPhoneIcon,
+      keyWalletIcon,
+    } = images(theme);
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -425,6 +435,22 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
           subtext: 'Enable transaction fees with PLR',
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+        data = {
+          label: NAMES.SMART_WALLET,
+          itemImageSource: roundedPhoneIcon,
+          subtext: 'New account device added',
+          actionLabel: 'Added',
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+        data = {
+          label: NAMES.SMART_WALLET,
+          itemImageSource: roundedPhoneIcon,
+          subtext: 'Account device removed',
+          actionLabel: 'Removed',
         };
         break;
       default:
