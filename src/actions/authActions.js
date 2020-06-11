@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { Linking } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
@@ -86,6 +87,7 @@ import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
 import { updateConnectionsAction } from './connectionsActions';
 import { fetchReferralRewardAction } from './referralsActions';
+import { executeDeepLinkAction } from './deepLinkActions';
 
 
 const storage = Storage.getInstance('db');
@@ -115,7 +117,7 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting } },
+      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
@@ -284,6 +286,14 @@ export const loginAction = (
 
       dispatch(checkForWalletBackupToastAction());
       dispatch(getWalletsCreationEventsAction());
+
+      if (!initialDeeplinkExecuted) {
+        Linking.getInitialURL()
+          .then(url => {
+            if (url) dispatch(executeDeepLinkAction(url, true));
+          })
+          .catch(() => {});
+      }
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));
