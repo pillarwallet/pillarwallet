@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { AppState } from 'react-native';
+import { AppState, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -45,6 +45,7 @@ import {
 
 import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
 
+import { executeDeepLinkAction } from 'actions/deepLinkActions';
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
@@ -63,6 +64,7 @@ type Props = {
   useBiometrics: ?boolean,
   initSmartWalletSdkWithPrivateKeyOrPin: (InitSmartWalletProps) => void,
   switchAccount: (accountId: string) => void,
+  executeDeepLink: (deepLink: string) => void,
 };
 
 type State = {
@@ -112,6 +114,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
+    Linking.getInitialURL()
+      .then(url => {
+        if (url) this.props.executeDeepLink(url);
+      })
+      .catch(() => {});
     removeAppStateChangeListener(this.handleAppStateChange);
     if (this.interval) {
       clearInterval(this.interval);
@@ -289,6 +296,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   initSmartWalletSdkWithPrivateKeyOrPin: ({ privateKey, pin }: InitSmartWalletProps) =>
     dispatch(initSmartWalletSdkWithPrivateKeyOrPinAction({ privateKey, pin })),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
+  executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

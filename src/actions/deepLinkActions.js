@@ -28,9 +28,11 @@ import { CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
 
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { requestSessionAction } from 'actions/walletConnectActions';
 
 const allowedDeepLinkProtocols = [
   'pillarwallet:',
+  'wc:',
 ];
 
 export const executeDeepLinkAction = (deepLink: string) => {
@@ -39,6 +41,12 @@ export const executeDeepLinkAction = (deepLink: string) => {
     if (isEmpty(params)) return;
     const { host, protocol, query = {} } = params;
     if (!allowedDeepLinkProtocols.includes(protocol)) return;
+
+    if (protocol === 'wc:') {
+      dispatch(requestSessionAction(deepLink));
+      return;
+    }
+
     switch (host) {
       case 'referral':
         const referralCode = get(query, 'code');
@@ -56,6 +64,14 @@ export const executeDeepLinkAction = (deepLink: string) => {
         const authStatus = get(query, 'status');
         if (!authStatus || !shapeshiftTokenHash) break;
         dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        break;
+      case 'wc':
+        let walletConnectUrl = get(query, 'url');
+        if (walletConnectUrl) {
+          const key = get(query, 'key');
+          if (key) walletConnectUrl += `&key=${key}`;
+          dispatch(requestSessionAction(walletConnectUrl));
+        }
         break;
       default:
         break;
