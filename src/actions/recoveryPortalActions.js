@@ -109,7 +109,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     };
 
     /**
-     * on this API part we only need f retrieve user,
+     * on this API part we only need to retrieve a user,
      * insert key based wallet creation date (it's not imported)
      * and initiate signal
      */
