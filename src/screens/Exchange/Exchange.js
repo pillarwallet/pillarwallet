@@ -309,6 +309,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.listeners = [];
+    const displayFiatOptionsFirst = get(props, 'navigation.state.params.displayFiatOptionsFirst');
     this.state = {
       shapeshiftAuthPressed: false,
       isSubmitted: false,
@@ -341,9 +342,9 @@ class ExchangeScreen extends React.Component<Props, State> {
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
-              displayFiatOptionsFirst: get(props, 'navigation.state.params.displayFiatOptionsFirst'),
+              displayFiatOptionsFirst,
               inputWrapperStyle: { width: '100%' },
-              rightLabel: 'Sell max',
+              rightLabel: displayFiatOptionsFirst ? '' : 'Sell max',
               onPressRightLabel: this.handleSellMax,
             },
             transformer: {
