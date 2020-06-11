@@ -39,14 +39,16 @@ import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 
 // constants
+import { ETH } from 'constants/assetsConstants';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 
 // utils
-import { transformAssetsToObject } from 'utils/assets';
+import { addressesEqual, transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { reportLog, uniqBy } from 'utils/common';
+import { formatUnits, reportLog, uniqBy } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
+import { normalizeWalletAddress } from 'utils/wallet';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -58,7 +60,7 @@ import type { ClaimTokenAction } from 'actions/referralsActions';
 
 // services
 import {
-  fetchAssetBalances,
+  fetchAssetBalancesOnChain,
   fetchLastBlockNumber,
   fetchTransactionInfo,
   fetchTransactionReceipt,
@@ -427,13 +429,11 @@ class SDKWrapper {
   }
 
   validateAddress(blockchainAddress: string): Promise<ValidatedUserResponse> {
+    blockchainAddress = normalizeWalletAddress(blockchainAddress);
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
       .then(({ data }) => data)
-      .catch(error => {
-        reportLog('Unable to restore user wallet', { blockchainAddress, error });
-        return { error: true };
-      });
+      .catch(() => ({ error: true }));
   }
 
   fetchSupportedAssets(walletId: string) {
@@ -569,15 +569,50 @@ class SDKWrapper {
     return fetchLastBlockNumber(network);
   }
 
-  fetchBalances({ address, assets }: BalancePayload) {
-    // TEMPORARY FETCH FROM BLOCKCHAIN DIRECTLY
-    return fetchAssetBalances(assets, address);
-    // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
-    //   const payload = { contractAddress, address, asset: symbol };
-    //   const { balance: response } = await this.BCXSdk.getBalance(payload);
-    //   return { balance: response.balance, symbol: response.ticker };
-    // });
-    // return Promise.all(promises).catch(() => []);
+  async fetchBalances({ address: accountAddress, assets }: BalancePayload) {
+    // NOTE: ethplorer could be used for the mainnet only
+    const addressInfo = (NETWORK_PROVIDER === 'homestead')
+      ? await ethplorerSdk.getAddressInfo(accountAddress).catch(() => ({}))
+      : {};
+
+    const balances = [];
+
+    // Get ETH balance
+    const accountHasEthAsset = assets.some(({ symbol }) => symbol === ETH);
+    if (accountHasEthAsset && addressInfo?.ETH) {
+      const ethBalance = (addressInfo?.ETH?.balance || 0).toString();
+      balances.push({
+        symbol: ETH,
+        balance: ethBalance,
+      });
+    }
+
+    // Get other ERC20 tokens balances
+    if (!isEmpty(addressInfo.tokens)) {
+      addressInfo.tokens.forEach(tokenData => {
+        const tokenAddress = tokenData.tokenInfo?.address;
+        const tokenBalance = tokenData.balance || 0;
+
+        const assetDetails = assets.find(({ address }) => addressesEqual(address, tokenAddress));
+        if (!assetDetails) return;
+
+        balances.push({
+          symbol: assetDetails.symbol,
+          balance: formatUnits(tokenBalance.toString(), assetDetails.decimals),
+        });
+      });
+    }
+
+    // if we were unable to get some balances from the Etherscan - check them onchain
+    const fetchAssetsOnChain = assets.filter(({ symbol }) => {
+      return !balances.some(balance => balance.symbol === symbol);
+    });
+    if (fetchAssetsOnChain.length) {
+      const onchainBalances = await fetchAssetBalancesOnChain(fetchAssetsOnChain, accountAddress);
+      balances.push(...onchainBalances);
+    }
+
+    return balances;
   }
 
   fetchBadges(walletId: string): Promise<UserBadgesResponse> {

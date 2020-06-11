@@ -62,6 +62,7 @@ import {
   getAssetDataByAddress,
   getAssetsAsList,
   getRate,
+  getBalance,
 } from 'utils/assets';
 import { buildTxFeeInfo, userHasSmartWallet } from 'utils/smartWallet';
 import { getOfferProviderLogo } from 'utils/exchange';
@@ -421,7 +422,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       });
     }
 
-    const errorMessage = !isEnoughForFee && `Not enough ${feeSymbol} for transaction fee`;
+    const errorMessage = !isEnoughForFee && `Not enough ${feeSymbol} for transaction fee
+    Current balance: ${getBalance(balances, feeSymbol)} ${feeSymbol}`;
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
 
     const providerLogo = getOfferProviderLogo(providersMeta, provider, theme, 'vertical');

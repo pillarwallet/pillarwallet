@@ -126,8 +126,8 @@ export const getTokenWalletAndRegister = async (
 
   const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user?.username, recover);
 
-  const registrationSucceed = !sdkWallet.error;
-  const userInfo = await api.userInfo(sdkWallet.walletId);
+  const registrationSucceed = !sdkWallet.error && sdkWallet.walletId;
+  const userInfo = registrationSucceed ? await api.userInfo(sdkWallet.walletId) : {};
   const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;
 
   if (userState === REGISTERED) {
