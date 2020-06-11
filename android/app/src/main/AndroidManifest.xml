@@ -108,6 +108,9 @@
         <!-- Branch init -->
         <meta-data android:name="io.branch.sdk.BranchKey" android:value="@string/branch_io_key_live" />
         <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="@string/branch_io_key_test" />
+
+        <!-- disable Sentry ANR reports -->
+        <meta-data android:name="io.sentry.anr.enable" android:value="false" />
     </application>
 
 </manifest>
