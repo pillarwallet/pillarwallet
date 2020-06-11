@@ -276,7 +276,7 @@ export function fetchERC20Balance(
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
-export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
+export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
