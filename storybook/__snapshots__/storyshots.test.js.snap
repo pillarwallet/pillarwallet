@@ -11171,64 +11171,83 @@ exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    someBitcoinAddress
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="received"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#497391",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      someBitcoinAddress
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="received"
+        style={
+          Array [
+            Object {
+              "color": "#497391",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -11446,64 +11465,83 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    someBitcoinAddress
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="sent"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#BD573A",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      someBitcoinAddress
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="sent"
+        style={
+          Array [
+            Object {
+              "color": "#BD573A",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -11741,56 +11779,75 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    CryptoKitty
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    backgroundColor="#FFFFFF"
-    border={true}
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#FFFFFF",
-          "borderColor": "#EDEDED",
-          "borderRadius": 32,
-          "borderWidth": 1,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      CryptoKitty
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      backgroundColor="#FFFFFF"
+      border={true}
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderColor": "#EDEDED",
+            "borderRadius": 32,
+            "borderWidth": 1,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -12007,35 +12064,54 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Key wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Key wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -12377,35 +12453,54 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Smart wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Smart wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -12622,38 +12717,9 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
-    style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    alexander
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -12665,20 +12731,68 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "borderColor": "#FFFFFF",
-        "borderRadius": 32,
-        "borderStyle": "solid",
-        "borderWidth": 0,
-        "display": "flex",
-        "height": 64,
-        "justifyContent": "center",
         "opacity": 1,
-        "overflow": "hidden",
-        "position": "relative",
-        "width": 64,
       }
     }
-  />
+  >
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      alexander
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={false}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "#FFFFFF",
+          "borderRadius": 32,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "display": "flex",
+          "height": 64,
+          "justifyContent": "center",
+          "opacity": 1,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 64,
+        }
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -13146,64 +13260,83 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    0x1234567...132456789
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="received"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#497391",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      0x1234567...132456789
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="received"
+        style={
+          Array [
+            Object {
+              "color": "#497391",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -13672,64 +13805,83 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    0x1234567...132456789
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="sent"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#BD573A",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      0x1234567...132456789
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="sent"
+        style={
+          Array [
+            Object {
+              "color": "#BD573A",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -14198,35 +14350,54 @@ exports[`Storyshots EventDetail Key wallet back up 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Key wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Key wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -14320,6 +14491,7 @@ exports[`Storyshots EventDetail Key wallet back up 1`] = `
         enableMergePathsAndroidForKitKatAndAbove={false}
         loop={true}
         onAnimationFinish={[Function]}
+        onLayout={[Function]}
         progress={0}
         resizeMode="contain"
         sourceJson="{\\"v\\":\\"4.8.0\\",\\"fr\\":29.9700012207031,\\"ip\\":0,\\"op\\":71.0000028918893,\\"w\\":160,\\"h\\":160,\\"nm\\":\\"loading 2 dark\\",\\"ddd\\":0,\\"assets\\":[],\\"layers\\":[{\\"ddd\\":0,\\"ind\\":1,\\"ty\\":4,\\"nm\\":\\"Shape Layer 1\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.478,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.003]},\\"n\\":[\\"0p176_0p988_0p762_0p003\\"],\\"t\\":23,\\"s\\":[0],\\"e\\":[45]},{\\"i\\":{\\"x\\":[0.319],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.581],\\"y\\":[0.016]},\\"n\\":[\\"0p319_1_0p581_0p016\\"],\\"t\\":35,\\"s\\":[45],\\"e\\":[99.9]},{\\"t\\":67.0000027289659}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.289],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.566],\\"y\\":[0]},\\"n\\":[\\"0p289_1_0p566_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[100]},{\\"t\\":44.0000017921567}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":67.0000027289659}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":-1.00000004073083,\\"op\\":299.00001217852,\\"st\\":-1.00000004073083,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":2,\\"ty\\":4,\\"nm\\":\\"Shape Layer 2\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.99]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.002]},\\"n\\":[\\"0p176_0p99_0p762_0p002\\"],\\"t\\":26,\\"s\\":[0],\\"e\\":[46]},{\\"i\\":{\\"x\\":[0.787],\\"y\\":[0.908]},\\"o\\":{\\"x\\":[0.647],\\"y\\":[0.014]},\\"n\\":[\\"0p787_0p908_0p647_0p014\\"],\\"t\\":37,\\"s\\":[46],\\"e\\":[80]},{\\"i\\":{\\"x\\":[0.392],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.171],\\"y\\":[0.125]},\\"n\\":[\\"0p392_1_0p171_0p125\\"],\\"t\\":53,\\"s\\":[80],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.443],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.637],\\"y\\":[0]},\\"n\\":[\\"0p443_0p887_0p637_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[33.78]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.276],\\"y\\":[0.032]},\\"n\\":[\\"0p833_1_0p276_0p032\\"],\\"t\\":37,\\"s\\":[33.78],\\"e\\":[61]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.167],\\"y\\":[0]},\\"n\\":[\\"0p833_1_0p167_0\\"],\\"t\\":53,\\"s\\":[61],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":69.0000028104276}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":2.00000008146167,\\"op\\":302.000012300712,\\"st\\":2.00000008146167,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":3,\\"ty\\":4,\\"nm\\":\\"Shape Layer 3\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.713],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.382],\\"y\\":[0.001]},\\"n\\":[\\"0p713_0p988_0p382_0p001\\"],\\"t\\":29,\\"s\\":[0],\\"e\\":[36]},{\\"i\\":{\\"x\\":[0.84],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.624],\\"y\\":[0.05]},\\"n\\":[\\"0p84_0p887_0p624_0p05\\"],\\"t\\":39,\\"s\\":[36],\\"e\\":[59.495]},{\\"i\\":{\\"x\\":[0.381],\\"y\\":[0.884]},\\"o\\":{\\"x\\":[0.234],\\"y\\":[0.157]},\\"n\\":[\\"0p381_0p884_0p234_0p157\\"],\\"t\\":52,\\"s\\":[59.495],\\"e\\":[80.321]},{\\"i\\":{\\"x\\":[0.568],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.247],\\"y\\":[0.036]},\\"n\\":[\\"0p568_1_0p247_0p036\\"],\\"t\\":63,\\"s\\":[80.321],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.72],\\"y\\":[0.909]},\\"o\\":{\\"x\\":[0.391],\\"y\\":[0]},\\"n\\":[\\"0p72_0p909_0p391_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[32]},{\\"i\\":{\\"x\\":[0.71],\\"y\\":[0.925]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.065]},\\"n\\":[\\"0p71_0p925_0p379_0p065\\"],\\"t\\":39,\\"s\\":[32],\\"e\\":[54.957]},{\\"i\\":{\\"x\\":[0.709],\\"y\\":[0.882]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.097]},\\"n\\":[\\"0p709_0p882_0p379_0p097\\"],\\"t\\":52,\\"s\\":[54.957],\\"e\\":[74.645]},{\\"i\\":{\\"x\\":[0.722],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.397],\\"y\\":[0.091]},\\"n\\":[\\"0p722_1_0p397_0p091\\"],\\"t\\":63,\\"s\\":[74.645],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":71.0000028918893}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":5.00000020365417,\\"op\\":305.000012422905,\\"st\\":5.00000020365417,\\"bm\\":0,\\"sr\\":1}]}"
@@ -14707,35 +14879,54 @@ exports[`Storyshots EventDetail Key wallet created 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Key wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Key wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -15173,35 +15364,54 @@ exports[`Storyshots EventDetail Key wallet imported 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Key wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Key wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -15295,6 +15505,7 @@ exports[`Storyshots EventDetail Key wallet imported 1`] = `
         enableMergePathsAndroidForKitKatAndAbove={false}
         loop={true}
         onAnimationFinish={[Function]}
+        onLayout={[Function]}
         progress={0}
         resizeMode="contain"
         sourceJson="{\\"v\\":\\"4.8.0\\",\\"fr\\":29.9700012207031,\\"ip\\":0,\\"op\\":71.0000028918893,\\"w\\":160,\\"h\\":160,\\"nm\\":\\"loading 2 dark\\",\\"ddd\\":0,\\"assets\\":[],\\"layers\\":[{\\"ddd\\":0,\\"ind\\":1,\\"ty\\":4,\\"nm\\":\\"Shape Layer 1\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.478,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.003]},\\"n\\":[\\"0p176_0p988_0p762_0p003\\"],\\"t\\":23,\\"s\\":[0],\\"e\\":[45]},{\\"i\\":{\\"x\\":[0.319],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.581],\\"y\\":[0.016]},\\"n\\":[\\"0p319_1_0p581_0p016\\"],\\"t\\":35,\\"s\\":[45],\\"e\\":[99.9]},{\\"t\\":67.0000027289659}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.289],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.566],\\"y\\":[0]},\\"n\\":[\\"0p289_1_0p566_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[100]},{\\"t\\":44.0000017921567}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":67.0000027289659}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":-1.00000004073083,\\"op\\":299.00001217852,\\"st\\":-1.00000004073083,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":2,\\"ty\\":4,\\"nm\\":\\"Shape Layer 2\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.99]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.002]},\\"n\\":[\\"0p176_0p99_0p762_0p002\\"],\\"t\\":26,\\"s\\":[0],\\"e\\":[46]},{\\"i\\":{\\"x\\":[0.787],\\"y\\":[0.908]},\\"o\\":{\\"x\\":[0.647],\\"y\\":[0.014]},\\"n\\":[\\"0p787_0p908_0p647_0p014\\"],\\"t\\":37,\\"s\\":[46],\\"e\\":[80]},{\\"i\\":{\\"x\\":[0.392],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.171],\\"y\\":[0.125]},\\"n\\":[\\"0p392_1_0p171_0p125\\"],\\"t\\":53,\\"s\\":[80],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.443],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.637],\\"y\\":[0]},\\"n\\":[\\"0p443_0p887_0p637_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[33.78]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.276],\\"y\\":[0.032]},\\"n\\":[\\"0p833_1_0p276_0p032\\"],\\"t\\":37,\\"s\\":[33.78],\\"e\\":[61]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.167],\\"y\\":[0]},\\"n\\":[\\"0p833_1_0p167_0\\"],\\"t\\":53,\\"s\\":[61],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":69.0000028104276}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":2.00000008146167,\\"op\\":302.000012300712,\\"st\\":2.00000008146167,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":3,\\"ty\\":4,\\"nm\\":\\"Shape Layer 3\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.713],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.382],\\"y\\":[0.001]},\\"n\\":[\\"0p713_0p988_0p382_0p001\\"],\\"t\\":29,\\"s\\":[0],\\"e\\":[36]},{\\"i\\":{\\"x\\":[0.84],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.624],\\"y\\":[0.05]},\\"n\\":[\\"0p84_0p887_0p624_0p05\\"],\\"t\\":39,\\"s\\":[36],\\"e\\":[59.495]},{\\"i\\":{\\"x\\":[0.381],\\"y\\":[0.884]},\\"o\\":{\\"x\\":[0.234],\\"y\\":[0.157]},\\"n\\":[\\"0p381_0p884_0p234_0p157\\"],\\"t\\":52,\\"s\\":[59.495],\\"e\\":[80.321]},{\\"i\\":{\\"x\\":[0.568],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.247],\\"y\\":[0.036]},\\"n\\":[\\"0p568_1_0p247_0p036\\"],\\"t\\":63,\\"s\\":[80.321],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.72],\\"y\\":[0.909]},\\"o\\":{\\"x\\":[0.391],\\"y\\":[0]},\\"n\\":[\\"0p72_0p909_0p391_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[32]},{\\"i\\":{\\"x\\":[0.71],\\"y\\":[0.925]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.065]},\\"n\\":[\\"0p71_0p925_0p379_0p065\\"],\\"t\\":39,\\"s\\":[32],\\"e\\":[54.957]},{\\"i\\":{\\"x\\":[0.709],\\"y\\":[0.882]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.097]},\\"n\\":[\\"0p709_0p882_0p379_0p097\\"],\\"t\\":52,\\"s\\":[54.957],\\"e\\":[74.645]},{\\"i\\":{\\"x\\":[0.722],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.397],\\"y\\":[0.091]},\\"n\\":[\\"0p722_1_0p397_0p091\\"],\\"t\\":63,\\"s\\":[74.645],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":71.0000028918893}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":5.00000020365417,\\"op\\":305.000012422905,\\"st\\":5.00000020365417,\\"bm\\":0,\\"sr\\":1}]}"
@@ -15682,35 +15893,54 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Pillar Network
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Pillar Network
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -15804,6 +16034,7 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
         enableMergePathsAndroidForKitKatAndAbove={false}
         loop={true}
         onAnimationFinish={[Function]}
+        onLayout={[Function]}
         progress={0}
         resizeMode="contain"
         sourceJson="{\\"v\\":\\"4.8.0\\",\\"fr\\":29.9700012207031,\\"ip\\":0,\\"op\\":71.0000028918893,\\"w\\":160,\\"h\\":160,\\"nm\\":\\"loading 2 dark\\",\\"ddd\\":0,\\"assets\\":[],\\"layers\\":[{\\"ddd\\":0,\\"ind\\":1,\\"ty\\":4,\\"nm\\":\\"Shape Layer 1\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.478,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.003]},\\"n\\":[\\"0p176_0p988_0p762_0p003\\"],\\"t\\":23,\\"s\\":[0],\\"e\\":[45]},{\\"i\\":{\\"x\\":[0.319],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.581],\\"y\\":[0.016]},\\"n\\":[\\"0p319_1_0p581_0p016\\"],\\"t\\":35,\\"s\\":[45],\\"e\\":[99.9]},{\\"t\\":67.0000027289659}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.289],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.566],\\"y\\":[0]},\\"n\\":[\\"0p289_1_0p566_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[100]},{\\"t\\":44.0000017921567}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":67.0000027289659}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":-1.00000004073083,\\"op\\":299.00001217852,\\"st\\":-1.00000004073083,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":2,\\"ty\\":4,\\"nm\\":\\"Shape Layer 2\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.99]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.002]},\\"n\\":[\\"0p176_0p99_0p762_0p002\\"],\\"t\\":26,\\"s\\":[0],\\"e\\":[46]},{\\"i\\":{\\"x\\":[0.787],\\"y\\":[0.908]},\\"o\\":{\\"x\\":[0.647],\\"y\\":[0.014]},\\"n\\":[\\"0p787_0p908_0p647_0p014\\"],\\"t\\":37,\\"s\\":[46],\\"e\\":[80]},{\\"i\\":{\\"x\\":[0.392],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.171],\\"y\\":[0.125]},\\"n\\":[\\"0p392_1_0p171_0p125\\"],\\"t\\":53,\\"s\\":[80],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.443],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.637],\\"y\\":[0]},\\"n\\":[\\"0p443_0p887_0p637_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[33.78]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.276],\\"y\\":[0.032]},\\"n\\":[\\"0p833_1_0p276_0p032\\"],\\"t\\":37,\\"s\\":[33.78],\\"e\\":[61]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.167],\\"y\\":[0]},\\"n\\":[\\"0p833_1_0p167_0\\"],\\"t\\":53,\\"s\\":[61],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":69.0000028104276}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":2.00000008146167,\\"op\\":302.000012300712,\\"st\\":2.00000008146167,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":3,\\"ty\\":4,\\"nm\\":\\"Shape Layer 3\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.713],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.382],\\"y\\":[0.001]},\\"n\\":[\\"0p713_0p988_0p382_0p001\\"],\\"t\\":29,\\"s\\":[0],\\"e\\":[36]},{\\"i\\":{\\"x\\":[0.84],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.624],\\"y\\":[0.05]},\\"n\\":[\\"0p84_0p887_0p624_0p05\\"],\\"t\\":39,\\"s\\":[36],\\"e\\":[59.495]},{\\"i\\":{\\"x\\":[0.381],\\"y\\":[0.884]},\\"o\\":{\\"x\\":[0.234],\\"y\\":[0.157]},\\"n\\":[\\"0p381_0p884_0p234_0p157\\"],\\"t\\":52,\\"s\\":[59.495],\\"e\\":[80.321]},{\\"i\\":{\\"x\\":[0.568],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.247],\\"y\\":[0.036]},\\"n\\":[\\"0p568_1_0p247_0p036\\"],\\"t\\":63,\\"s\\":[80.321],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.72],\\"y\\":[0.909]},\\"o\\":{\\"x\\":[0.391],\\"y\\":[0]},\\"n\\":[\\"0p72_0p909_0p391_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[32]},{\\"i\\":{\\"x\\":[0.71],\\"y\\":[0.925]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.065]},\\"n\\":[\\"0p71_0p925_0p379_0p065\\"],\\"t\\":39,\\"s\\":[32],\\"e\\":[54.957]},{\\"i\\":{\\"x\\":[0.709],\\"y\\":[0.882]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.097]},\\"n\\":[\\"0p709_0p882_0p379_0p097\\"],\\"t\\":52,\\"s\\":[54.957],\\"e\\":[74.645]},{\\"i\\":{\\"x\\":[0.722],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.397],\\"y\\":[0.091]},\\"n\\":[\\"0p722_1_0p397_0p091\\"],\\"t\\":63,\\"s\\":[74.645],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":71.0000028918893}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":5.00000020365417,\\"op\\":305.000012422905,\\"st\\":5.00000020365417,\\"bm\\":0,\\"sr\\":1}]}"
@@ -16191,35 +16422,54 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Pillar Network
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Pillar Network
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -16313,6 +16563,7 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
         enableMergePathsAndroidForKitKatAndAbove={false}
         loop={true}
         onAnimationFinish={[Function]}
+        onLayout={[Function]}
         progress={0}
         resizeMode="contain"
         sourceJson="{\\"v\\":\\"4.8.0\\",\\"fr\\":29.9700012207031,\\"ip\\":0,\\"op\\":71.0000028918893,\\"w\\":160,\\"h\\":160,\\"nm\\":\\"loading 2 dark\\",\\"ddd\\":0,\\"assets\\":[],\\"layers\\":[{\\"ddd\\":0,\\"ind\\":1,\\"ty\\":4,\\"nm\\":\\"Shape Layer 1\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.478,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.003]},\\"n\\":[\\"0p176_0p988_0p762_0p003\\"],\\"t\\":23,\\"s\\":[0],\\"e\\":[45]},{\\"i\\":{\\"x\\":[0.319],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.581],\\"y\\":[0.016]},\\"n\\":[\\"0p319_1_0p581_0p016\\"],\\"t\\":35,\\"s\\":[45],\\"e\\":[99.9]},{\\"t\\":67.0000027289659}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.289],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.566],\\"y\\":[0]},\\"n\\":[\\"0p289_1_0p566_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[100]},{\\"t\\":44.0000017921567}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":67.0000027289659}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":-1.00000004073083,\\"op\\":299.00001217852,\\"st\\":-1.00000004073083,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":2,\\"ty\\":4,\\"nm\\":\\"Shape Layer 2\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.99]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.002]},\\"n\\":[\\"0p176_0p99_0p762_0p002\\"],\\"t\\":26,\\"s\\":[0],\\"e\\":[46]},{\\"i\\":{\\"x\\":[0.787],\\"y\\":[0.908]},\\"o\\":{\\"x\\":[0.647],\\"y\\":[0.014]},\\"n\\":[\\"0p787_0p908_0p647_0p014\\"],\\"t\\":37,\\"s\\":[46],\\"e\\":[80]},{\\"i\\":{\\"x\\":[0.392],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.171],\\"y\\":[0.125]},\\"n\\":[\\"0p392_1_0p171_0p125\\"],\\"t\\":53,\\"s\\":[80],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.443],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.637],\\"y\\":[0]},\\"n\\":[\\"0p443_0p887_0p637_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[33.78]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.276],\\"y\\":[0.032]},\\"n\\":[\\"0p833_1_0p276_0p032\\"],\\"t\\":37,\\"s\\":[33.78],\\"e\\":[61]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.167],\\"y\\":[0]},\\"n\\":[\\"0p833_1_0p167_0\\"],\\"t\\":53,\\"s\\":[61],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":69.0000028104276}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":2.00000008146167,\\"op\\":302.000012300712,\\"st\\":2.00000008146167,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":3,\\"ty\\":4,\\"nm\\":\\"Shape Layer 3\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.713],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.382],\\"y\\":[0.001]},\\"n\\":[\\"0p713_0p988_0p382_0p001\\"],\\"t\\":29,\\"s\\":[0],\\"e\\":[36]},{\\"i\\":{\\"x\\":[0.84],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.624],\\"y\\":[0.05]},\\"n\\":[\\"0p84_0p887_0p624_0p05\\"],\\"t\\":39,\\"s\\":[36],\\"e\\":[59.495]},{\\"i\\":{\\"x\\":[0.381],\\"y\\":[0.884]},\\"o\\":{\\"x\\":[0.234],\\"y\\":[0.157]},\\"n\\":[\\"0p381_0p884_0p234_0p157\\"],\\"t\\":52,\\"s\\":[59.495],\\"e\\":[80.321]},{\\"i\\":{\\"x\\":[0.568],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.247],\\"y\\":[0.036]},\\"n\\":[\\"0p568_1_0p247_0p036\\"],\\"t\\":63,\\"s\\":[80.321],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.72],\\"y\\":[0.909]},\\"o\\":{\\"x\\":[0.391],\\"y\\":[0]},\\"n\\":[\\"0p72_0p909_0p391_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[32]},{\\"i\\":{\\"x\\":[0.71],\\"y\\":[0.925]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.065]},\\"n\\":[\\"0p71_0p925_0p379_0p065\\"],\\"t\\":39,\\"s\\":[32],\\"e\\":[54.957]},{\\"i\\":{\\"x\\":[0.709],\\"y\\":[0.882]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.097]},\\"n\\":[\\"0p709_0p882_0p379_0p097\\"],\\"t\\":52,\\"s\\":[54.957],\\"e\\":[74.645]},{\\"i\\":{\\"x\\":[0.722],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.397],\\"y\\":[0.091]},\\"n\\":[\\"0p722_1_0p397_0p091\\"],\\"t\\":63,\\"s\\":[74.645],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":71.0000028918893}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":5.00000020365417,\\"op\\":305.000012422905,\\"st\\":5.00000020365417,\\"bm\\":0,\\"sr\\":1}]}"
@@ -16582,38 +16833,9 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
-    style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    alexander
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -16625,20 +16847,68 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "borderColor": "#FFFFFF",
-        "borderRadius": 32,
-        "borderStyle": "solid",
-        "borderWidth": 0,
-        "display": "flex",
-        "height": 64,
-        "justifyContent": "center",
         "opacity": 1,
-        "overflow": "hidden",
-        "position": "relative",
-        "width": 64,
       }
     }
-  />
+  >
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      alexander
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={false}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "#FFFFFF",
+          "borderRadius": 32,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "display": "flex",
+          "height": 64,
+          "justifyContent": "center",
+          "opacity": 1,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 64,
+        }
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -17115,38 +17385,9 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
-    style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    alexander
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -17158,20 +17399,68 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "borderColor": "#FFFFFF",
-        "borderRadius": 32,
-        "borderStyle": "solid",
-        "borderWidth": 0,
-        "display": "flex",
-        "height": 64,
-        "justifyContent": "center",
         "opacity": 1,
-        "overflow": "hidden",
-        "position": "relative",
-        "width": 64,
       }
     }
-  />
+  >
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      alexander
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={false}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "#FFFFFF",
+          "borderRadius": 32,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "display": "flex",
+          "height": 64,
+          "justifyContent": "center",
+          "opacity": 1,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 64,
+        }
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -17522,35 +17811,54 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Settle
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Settle
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -18158,35 +18466,54 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Pillar Network
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Pillar Network
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -18654,35 +18981,54 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Smart Wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Smart Wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -19150,35 +19496,54 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Pillar Network
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Pillar Network
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -19520,35 +19885,54 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Smart Wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Smart Wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -19890,38 +20274,9 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
-    style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    alexander
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -19933,20 +20288,68 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "borderColor": "#FFFFFF",
-        "borderRadius": 32,
-        "borderStyle": "solid",
-        "borderWidth": 0,
-        "display": "flex",
-        "height": 64,
-        "justifyContent": "center",
         "opacity": 1,
-        "overflow": "hidden",
-        "position": "relative",
-        "width": 64,
       }
     }
-  />
+  >
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      alexander
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={false}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "#FFFFFF",
+          "borderRadius": 32,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "display": "flex",
+          "height": 64,
+          "justifyContent": "center",
+          "opacity": 1,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 64,
+        }
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -20302,38 +20705,9 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
-    style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    alexander
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -20345,20 +20719,68 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "borderColor": "#FFFFFF",
-        "borderRadius": 32,
-        "borderStyle": "solid",
-        "borderWidth": 0,
-        "display": "flex",
-        "height": 64,
-        "justifyContent": "center",
         "opacity": 1,
-        "overflow": "hidden",
-        "position": "relative",
-        "width": 64,
       }
     }
-  />
+  >
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      alexander
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={false}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "#FFFFFF",
+          "borderRadius": 32,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "display": "flex",
+          "height": 64,
+          "justifyContent": "center",
+          "opacity": 1,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 64,
+        }
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -20826,64 +21248,83 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    0x1234567...132456789
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="received"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#497391",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      0x1234567...132456789
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="received"
+        style={
+          Array [
+            Object {
+              "color": "#497391",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -21242,64 +21683,83 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    0x1234567...132456789
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="received"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#497391",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      0x1234567...132456789
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="received"
+        style={
+          Array [
+            Object {
+              "color": "#497391",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -21768,38 +22228,9 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
-    style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    alexander
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -21811,20 +22242,68 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "borderColor": "#FFFFFF",
-        "borderRadius": 32,
-        "borderStyle": "solid",
-        "borderWidth": 0,
-        "display": "flex",
-        "height": 64,
-        "justifyContent": "center",
         "opacity": 1,
-        "overflow": "hidden",
-        "position": "relative",
-        "width": 64,
       }
     }
-  />
+  >
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      alexander
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={false}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "#FFFFFF",
+          "borderRadius": 32,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "display": "flex",
+          "height": 64,
+          "justifyContent": "center",
+          "opacity": 1,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 64,
+        }
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -22180,38 +22659,9 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
-    style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    alexander
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
   <View
     accessible={true}
-    focusable={false}
+    focusable={true}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -22223,20 +22673,68 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "borderColor": "#FFFFFF",
-        "borderRadius": 32,
-        "borderStyle": "solid",
-        "borderWidth": 0,
-        "display": "flex",
-        "height": 64,
-        "justifyContent": "center",
         "opacity": 1,
-        "overflow": "hidden",
-        "position": "relative",
-        "width": 64,
       }
     }
-  />
+  >
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      alexander
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={false}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "#FFFFFF",
+          "borderRadius": 32,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "display": "flex",
+          "height": 64,
+          "justifyContent": "center",
+          "opacity": 1,
+          "overflow": "hidden",
+          "position": "relative",
+          "width": 64,
+        }
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -22704,64 +23202,83 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    0x1234567...132456789
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="sent"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#BD573A",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      0x1234567...132456789
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="sent"
+        style={
+          Array [
+            Object {
+              "color": "#BD573A",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -23120,64 +23637,83 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    0x1234567...132456789
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "backgroundColor": "#EBF0F6",
-          "borderRadius": 32,
-          "height": 64,
-          "justifyContent": "center",
-          "overflow": "hidden",
-          "textAlign": "center",
-          "width": 64,
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      name="sent"
+    <Text
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#BD573A",
-            "fontSize": 64,
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      0x1234567...132456789
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
           },
           undefined,
         ]
       }
     />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#EBF0F6",
+            "borderRadius": 32,
+            "height": 64,
+            "justifyContent": "center",
+            "overflow": "hidden",
+            "textAlign": "center",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        name="sent"
+        style={
+          Array [
+            Object {
+              "color": "#BD573A",
+              "fontSize": 64,
+            },
+            undefined,
+          ]
+        }
+      />
+    </View>
   </View>
   <View
     h={20}
@@ -23646,35 +24182,54 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Key wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Key wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -24018,35 +24573,54 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Smart Wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Smart Wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -24514,35 +25088,54 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Smart wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Smart wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -24980,35 +25573,54 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Smart wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Smart wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={
@@ -25320,35 +25932,54 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
       ]
     }
   />
-  <Text
-    medium={true}
+  <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "color": "#0A1427",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 16,
-          "lineHeight": 24,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
+      Object {
+        "alignItems": "center",
+        "opacity": 1,
+      }
     }
   >
-    Smart wallet
-  </Text>
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Smart wallet
+    </Text>
+    <View
+      h={20}
+      style={
+        Array [
+          Object {
+            "height": 20,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
   <View
     h={20}
     style={

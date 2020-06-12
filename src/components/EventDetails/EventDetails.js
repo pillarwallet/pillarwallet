@@ -94,6 +94,8 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } 
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
   SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -108,6 +110,7 @@ import {
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
+  CONTACT,
 } from 'constants/navigationConstants';
 
 // selectors
@@ -307,6 +310,10 @@ const EventTimeHolder = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
   padding: 0 8px;
+`;
+
+const AvatarWrapper = styled.TouchableOpacity`
+  align-items: center;
 `;
 
 
@@ -790,7 +797,7 @@ export class EventDetail extends React.Component<Props, State> {
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
-    const { itemValue, isBetweenAccounts, isReceived } = itemData;
+    const { fullItemValue, isBetweenAccounts, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
     let directionSymbol = isReceived ? '+' : '-';
@@ -881,7 +888,33 @@ export class EventDetail extends React.Component<Props, State> {
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
           name: 'Smart Wallet fees with PLR token',
-          actionTitle: 'Enabled',
+          actionTitle: isPending ? 'Enabling' : 'Enabled',
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+        eventData = {
+          name: 'New Smart Wallet account device',
+          actionTitle: isPending ? 'Adding' : 'Added',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+        eventData = {
+          name: 'Smart Wallet account device',
+          actionTitle: isPending ? 'Removing' : 'Removed',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
         };
         break;
       default:
@@ -932,7 +965,7 @@ export class EventDetail extends React.Component<Props, State> {
           }
         } else {
           eventData = {
-            actionTitle: itemValue,
+            actionTitle: fullItemValue,
             transactionNote,
           };
 
@@ -1324,8 +1357,9 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  renderFee = (hash: string, fee: ?string) => {
+  renderFee = (hash: string, fee: ?string, isReceived?: boolean) => {
     const { updatingTransaction, updatingCollectibleTransaction } = this.props;
+    if (isReceived) return null;
     if (fee) {
       return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
     } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
@@ -1333,6 +1367,15 @@ export class EventDetail extends React.Component<Props, State> {
     }
     return null;
   };
+
+  goToProfile = () => {
+    const { navigation, itemData: { username }, onClose } = this.props;
+
+    if (username) {
+      onClose();
+      navigation.navigate(CONTACT, { username });
+    }
+  }
 
   renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
@@ -1346,14 +1389,16 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       label: itemLabel,
       actionLabel,
-      itemValue,
+      fullItemValue,
       subtext,
       valueColor,
+      username,
+      isReceived,
     } = itemData;
 
-    const title = actionTitle || actionLabel || itemValue;
+    const title = actionTitle || actionLabel || fullItemValue;
     const label = name || itemLabel;
-    const subtitle = (actionSubtitle || itemValue) ? actionSubtitle || subtext : null;
+    const subtitle = (actionSubtitle || fullItemValue) ? actionSubtitle || subtext : null;
     const titleColor = this.getColor(valueColor);
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
 
@@ -1371,9 +1416,11 @@ export class EventDetail extends React.Component<Props, State> {
           </ButtonHolder>
         </Row>
         <Spacing h={10} />
-        <BaseText medium>{label}</BaseText>
-        <Spacing h={20} />
-        {this.renderImage(itemData)}
+        <AvatarWrapper onPress={this.goToProfile} disabled={!username}>
+          <BaseText medium>{label}</BaseText>
+          <Spacing h={20} />
+          {this.renderImage(itemData)}
+        </AvatarWrapper>
         <Spacing h={20} />
         {settleEventData ? this.renderSettle(settleEventData) : (
           <React.Fragment>
@@ -1391,7 +1438,7 @@ export class EventDetail extends React.Component<Props, State> {
             ) : (
               <Spacing h={32} />
             )}
-            {this.renderFee(event.hash, fee)}
+            {this.renderFee(event.hash, fee, isReceived)}
           </React.Fragment>
         )}
         <ButtonsContainer>

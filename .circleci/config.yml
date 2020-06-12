@@ -35,7 +35,7 @@ executors:
   node10-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: circleci/node:10.14
+      - image: circleci/node:10.19
     resource_class: large
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"

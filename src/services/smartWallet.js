@@ -43,7 +43,7 @@ import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportLog, reportOrWarn } from 'utils/common';
 
 // types
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
+import type { ConnectedSmartWalletAccount, SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
 import type { EstimatedTransactionFee, GasToken } from 'models/Transaction';
@@ -112,6 +112,21 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   };
 };
 
+export const formatEstimated = (estimated: ParsedEstimate) => {
+  let { gasTokenCost, totalCost } = estimated;
+  const { gasToken, relayerFeatures } = estimated;
+  const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
+
+  // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
+  gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
+  totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
+
+  return {
+    ethCost: totalCost,
+    gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
+    gasToken: hasGasTokenSupport ? gasToken : null,
+  };
+};
 
 class SmartWallet {
   sdk: Sdk;
@@ -182,18 +197,18 @@ class SmartWallet {
       });
   }
 
+  getConnectedAccountDevices() {
+    return this.sdk.getConnectedAccountDevices()
+      .then((result) => get(result, 'items', []))
+      .catch(this.handleError);
+  }
+
   async connectAccount(address: string) {
-    try {
-      const account = this.sdk.state.account || await this.sdk.connectAccount(address);
-      const devices = await this.sdk.getConnectedAccountDevices();
-      return {
-        ...account,
-        devices: get(devices, 'items', []),
-      };
-    } catch (e) {
-      this.handleError(e);
+    if (!get(this.sdk, 'state.account')) {
+      await this.sdk.connectAccount(address).catch(this.handleError);
     }
-    return null;
+
+    return this.fetchConnectedAccount();
   }
 
   async syncSmartAccountsWithBackend(
@@ -221,22 +236,32 @@ class SmartWallet {
       .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
-  async deploy() {
+  async deployAccount() {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
     return this.sdk.deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
-        this.reportError('Unable to deploy', { e });
+        this.reportError('Unable to deploy account', { e });
         return { error: e.message };
       });
   }
 
-  getAccountRealBalance() {
-    return get(this.sdk, 'state.account.balance.real', new BigNumber(0));
+  async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
+    const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
+    return this.sdk.submitAccountTransaction(deployEstimate, payForGasWithToken)
+      .catch((e) => {
+        this.reportError('Unable to deploy device', { e });
+        return null;
+      });
   }
 
-  getAccountVirtualBalance() {
-    return get(this.sdk, 'state.account.balance.virtual', new BigNumber(0));
+  async unDeployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
+    const unDeployEstimate = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress).catch(this.handleError);
+    return this.sdk.submitAccountTransaction(unDeployEstimate, payForGasWithToken)
+      .catch((e) => {
+        this.reportError('Unable to undeploy device', { e });
+        return null;
+      });
   }
 
   getAccountStakedAmount(tokenAddress: ?string): BigNumber {
@@ -265,14 +290,12 @@ class SmartWallet {
       });
   }
 
-  async fetchConnectedAccount() {
+  async fetchConnectedAccount(): Promise<ConnectedSmartWalletAccount> {
     try {
-      const { state: { account } } = this.sdk;
-      const devices = await this.sdk.getConnectedAccountDevices();
-      return {
-        ...account,
-        devices: get(devices, 'items', []),
-      };
+      const { state: { account: accountData } } = this.sdk;
+      const devices = await this.getConnectedAccountDevices();
+      const activeDeviceAddress = get(this.sdk, 'state.accountDevice.device.address');
+      return { ...accountData, devices, activeDeviceAddress };
     } catch (e) {
       this.handleError(e);
     }
@@ -434,19 +457,23 @@ class SmartWallet {
       transactionSpeed,
     ).then(parseEstimatePayload).catch(() => ({}));
 
-    let { gasTokenCost, totalCost } = estimated;
-    const { gasToken, relayerFeatures } = estimated;
-    const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
+    return formatEstimated(estimated);
+  }
 
-    // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
-    gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-    totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
+  async estimateAccountDeviceDeployment(deviceAddress: string) {
+    const estimated = await this.sdk.estimateAccountDeviceDeployment(deviceAddress)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
 
-    return {
-      ethCost: totalCost,
-      gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
-      gasToken: hasGasTokenSupport ? gasToken : null,
-    };
+    return formatEstimated(estimated);
+  }
+
+  async estimateAccountDeviceUnDeployment(deviceAddress: string) {
+    const estimated = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
+
+    return formatEstimated(estimated);
   }
 
   getTransactionStatus(hash: string) {
@@ -472,6 +499,14 @@ class SmartWallet {
 
   switchToGasTokenRelayer() {
     return this.sdk.switchToGasTokenRelayer().catch(() => null);
+  }
+
+  addAccountDevice(address: string) {
+    return this.sdk.createAccountDevice(address).catch(() => null);
+  }
+
+  removeAccountDevice(address: string) {
+    return this.sdk.removeAccountDevice(address).catch(() => null);
   }
 
   handleError(error: any) {

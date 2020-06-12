@@ -129,7 +129,6 @@ class App extends React.Component<Props, *> {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
-      executeDeepLink,
       startReferralsListener,
     } = this.props;
     NetInfo.fetch()
@@ -143,11 +142,6 @@ class App extends React.Component<Props, *> {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');
     }
-    Linking.getInitialURL()
-      .then(url => {
-        if (url) executeDeepLink(url);
-      })
-      .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
   }

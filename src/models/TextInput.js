@@ -41,6 +41,8 @@ export type InputPropsType = {
   onSelectorOpen?: () => void,
   onSelectorChange?: () => void,
   label?: string,
+  rightLabel?: string,
+  onPressRightLabel?: () => void,
 };
 
 export type SelectorOptions = {

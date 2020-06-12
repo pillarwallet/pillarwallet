@@ -34,7 +34,7 @@ import {
   DeviceEventEmitter,
 } from 'react-native';
 import { providers, utils } from 'ethers';
-import { format as formatDate } from 'date-fns';
+import { format as formatDate, isToday, isYesterday } from 'date-fns';
 import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
@@ -480,7 +480,7 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
   return utils.parseUnits(gasPrice.toString(), 'gwei');
 };
 
-export const formatUnits = (val: string = '0', decimals: number) => {
+export const formatUnits = (val: string = '0', decimals: number): string => {
   let formattedUnits = decimals === 0 ? '0' : '0.0';
   let preparedValue = null; // null for sentry reports
   let valueWithoutDecimals = null; // null for sentry reports
@@ -515,6 +515,16 @@ type GroupedAndSortedData = {|
   data: any[],
 |};
 
+export const humanizeDateString = (date: Date): string => {
+  // by default don't show the year if the event happened this year
+  if (isToday(date)) return 'Today';
+  if (isYesterday(date)) return 'Yesterday';
+  const dateFormat = date.getFullYear() === new Date().getFullYear()
+    ? 'MMM D'
+    : 'MMM D YYYY';
+  return formatDate(date, dateFormat);
+};
+
 // all default values makes common sense and usage
 export const groupAndSortByDate = (
   data: any[],
@@ -529,11 +539,7 @@ export const groupAndSortByDate = (
       : listItem[dateField];
     const itemCreatedDate = new Date(dateValue);
     const formattedDate = formatDate(itemCreatedDate, 'MMM D YYYY');
-    // don't show the year if the event happened this year
-    const titleDateFormat = itemCreatedDate.getFullYear() === new Date().getFullYear()
-      ? 'MMM D'
-      : 'MMM D YYYY';
-    const sectionTitle = formatDate(itemCreatedDate, titleDateFormat);
+    const sectionTitle = humanizeDateString(itemCreatedDate);
     const existingSection = grouped.find(({ date }) => date === formattedDate);
     if (!existingSection) {
       grouped.push({ title: sectionTitle, date: formattedDate, data: [{ ...listItem }] });
@@ -588,4 +594,23 @@ export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasTo
   }
 
   return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
+};
+
+export const humanizeHexString = (hexString: ?string) => {
+  if (!hexString) return '';
+
+  const startCharsCount = 6;
+  const endCharsCount = 4;
+  const separator = '...';
+  const totalTruncatedSum = startCharsCount + endCharsCount + separator.length;
+
+  const words = hexString.toString().split(' ');
+  const firstWord = words[0];
+
+  if (words.length === 1) {
+    if (firstWord.length <= totalTruncatedSum) return firstWord;
+    return `${firstWord.slice(0, startCharsCount)}${separator}${firstWord.slice(-endCharsCount)}`;
+  }
+
+  return hexString;
 };

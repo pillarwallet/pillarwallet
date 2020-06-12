@@ -190,7 +190,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Key wallet',
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         itemImageSource: keyWalletIcon,
         subtext: 'to Smart Wallet',
         isBetweenAccounts: true,
@@ -211,7 +211,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Smart Wallet',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         itemImageSource: smartWalletIcon,
         subtext: 'from Key wallet',
         isBetweenAccounts: true,
@@ -233,7 +233,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: '0x1234567...132456789',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'to Smart wallet',
         avatarUrl: '',
         iconName: 'received',
@@ -257,7 +257,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: '0x1234567...132456789',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'to Smart wallet',
         avatarUrl: '',
         iconName: 'received',
@@ -280,7 +280,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'alexander',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'to Smart wallet',
         avatarUrl: placeholderImage,
         iconName: null,
@@ -304,7 +304,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'alexander',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'to Smart wallet',
         avatarUrl: placeholderImage,
         iconName: null,
@@ -327,7 +327,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: '0x1234567...132456789',
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         subtext: 'from Smart wallet',
         avatarUrl: '',
         iconName: 'sent',
@@ -350,7 +350,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: '0x1234567...132456789',
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         subtext: 'from Smart wallet',
         avatarUrl: '',
         iconName: 'sent',
@@ -372,7 +372,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'alexander',
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         subtext: 'from Smart wallet',
         avatarUrl: placeholderImage,
         iconName: null,
@@ -395,7 +395,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'alexander',
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         subtext: 'from Smart wallet',
         avatarUrl: placeholderImage,
         iconName: null,
@@ -463,7 +463,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: '0x1234567...132456789',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'to Key wallet',
         avatarUrl: '',
         iconName: 'received',
@@ -486,7 +486,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'alexander',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'to Key wallet',
         avatarUrl: placeholderImage,
         iconName: null,
@@ -509,7 +509,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: '0x1234567...132456789',
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         subtext: 'from Key wallet',
         avatarUrl: '',
         iconName: 'sent',
@@ -531,7 +531,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Smart wallet',
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         itemImageSource: smartWalletIcon,
         subtext: 'to Key wallet',
         isBetweenAccounts: true,
@@ -552,7 +552,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Key wallet',
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         itemImageSource: keyWalletIcon,
         subtext: 'from Smart wallet',
         isBetweenAccounts: true,
@@ -624,7 +624,7 @@ storiesOf('EventDetail', module)
       itemData={{
         label: 'Pillar Network',
         itemImageSource: PPNIcon,
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'from Smart Wallet',
         valueColor: 'positive',
       }}
@@ -639,7 +639,7 @@ storiesOf('EventDetail', module)
       itemData={{
         label: 'Smart Wallet',
         itemImageSource: smartWalletIcon,
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         subtext: 'to Pillar Network',
         valueColor: 'text',
       }}
@@ -725,7 +725,7 @@ storiesOf('EventDetail', module)
       itemData={{
         label: 'Pillar Network',
         itemImageSource: PPNIcon,
-        itemValue: '- 10 PLR',
+        fullItemValue: '- 10 PLR',
         subtext: 'to Smart Wallet',
         valueColor: 'text',
       }}
@@ -744,7 +744,7 @@ storiesOf('EventDetail', module)
       itemData={{
         label: 'Smart Wallet',
         itemImageSource: smartWalletIcon,
-        itemValue: '+ 10 PLR',
+        fullItemValue: '+ 10 PLR',
         subtext: 'from Pillar Network',
         valueColor: 'positive',
       }}
@@ -765,7 +765,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'someBitcoinAddress',
-        itemValue: '+ 0.1 BTC',
+        fullItemValue: '+ 0.1 BTC',
         subtext: 'to Bitcoin Wallet',
         valueColor: 'positive',
         avatarUrl: '',
@@ -793,7 +793,7 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'someBitcoinAddress',
-        itemValue: '- 0.1 BTC',
+        fullItemValue: '- 0.1 BTC',
         subtext: 'from Bitcoin Wallet',
         valueColor: 'text',
         avatarUrl: '',
