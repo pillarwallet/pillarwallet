@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -81,7 +81,6 @@ import { HotSwapsHorizontalList } from './HotSwapsList';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import { calculateMaxAmount, getFormattedBalanceInFiat } from './utils';
-
 
 type Props = {
   rates: Rates,
@@ -242,6 +241,8 @@ function SelectorInputTemplate(locals) {
       fiatOptions,
       fiatOptionsTitle,
       displayFiatOptionsFirst,
+      rightLabel,
+      onPressRightLabel,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -265,31 +266,36 @@ function SelectorInputTemplate(locals) {
     onSelectorOpen,
     selectorValue,
     label,
+    rightLabel,
+    onPressRightLabel,
   };
 
   return (
-    <TextInput
-      errorMessage={errorMessage}
-      inputProps={inputProps}
-      leftSideText={inputAddonText}
-      numeric
-      selectorOptions={{
-        options,
-        horizontalOptions,
-        showOptionsTitles: !isEmpty(horizontalOptions),
-        optionsTitle,
-        horizontalOptionsTitle,
-        fiatOptions,
-        fiatOptionsTitle,
-        fullWidth: !hasInput,
-        selectorModalTitle: label,
-        selectorPlaceholder: placeholderSelector,
-        optionsSearchPlaceholder: 'Asset search',
-        displayFiatOptionsFirst,
-      }}
-      getInputRef={inputRef}
-      inputWrapperStyle={inputWrapperStyle}
-    />
+    <View style={{ flexDirection: 'row', flex: 1 }}>
+      <TextInput
+        style={{ width: '100%' }}
+        errorMessage={errorMessage}
+        inputProps={inputProps}
+        leftSideText={inputAddonText}
+        numeric
+        selectorOptions={{
+          options,
+          horizontalOptions,
+          showOptionsTitles: !isEmpty(horizontalOptions),
+          optionsTitle,
+          horizontalOptionsTitle,
+          fiatOptions,
+          fiatOptionsTitle,
+          fullWidth: !hasInput,
+          selectorModalTitle: label,
+          selectorPlaceholder: placeholderSelector,
+          optionsSearchPlaceholder: 'Asset search',
+          displayFiatOptionsFirst,
+        }}
+        getInputRef={inputRef}
+        inputWrapperStyle={inputWrapperStyle}
+      />
+    </View>
   );
 }
 
@@ -303,6 +309,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.listeners = [];
+    const displayFiatOptionsFirst = get(props, 'navigation.state.params.displayFiatOptionsFirst');
     this.state = {
       shapeshiftAuthPressed: false,
       isSubmitted: false,
@@ -335,7 +342,10 @@ class ExchangeScreen extends React.Component<Props, State> {
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
-              displayFiatOptionsFirst: get(props, 'navigation.state.params.displayFiatOptionsFirst'),
+              displayFiatOptionsFirst,
+              inputWrapperStyle: { width: '100%' },
+              rightLabel: displayFiatOptionsFirst ? '' : 'Sell max',
+              onPressRightLabel: this.handleSellMax,
             },
             transformer: {
               parse: (value) => {
@@ -361,7 +371,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'Select asset',
               onSelectorOpen: this.blurFromInput,
-              inputWrapperStyle: { marginTop: 6 },
+              inputWrapperStyle: { marginTop: 6, width: '100%' },
             },
           },
         },
@@ -442,6 +452,28 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
   }
 
+  handleSellMax = () => {
+    const { balances } = this.props;
+    const selectedAssetSymbol = this.getSelectedFromAssetSymbol();
+    const chosenAssetBalance = formatAmount(getBalance(balances, selectedAssetSymbol));
+    const value = { ...this.state.value };
+    value.fromInput.input = chosenAssetBalance;
+    this.handleFormChange(value);
+  }
+
+  shouldShowSellMax = () => {
+    const { balances } = this.props;
+    const selectedAssetSymbol = this.getSelectedFromAssetSymbol();
+    if (isFiatCurrency(selectedAssetSymbol)) return false;
+    const assetBalance = getBalance(balances, selectedAssetSymbol);
+    return !!assetBalance;
+  }
+
+  getSelectedFromAssetSymbol = () => {
+    const { value } = this.state;
+    return get(value, 'fromInput.selector.symbol', '');
+  }
+
   resetSearch = () => {
     const { resetOffers } = this.props;
     resetOffers();
@@ -466,7 +498,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       btcAddresses,
     } = this.props;
 
-    const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
+    const selectedFromAssetSymbol = this.getSelectedFromAssetSymbol();
     const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
 
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
@@ -663,7 +695,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       }).filter(asset => asset.key !== BTC);
   };
 
-  handleFormChange = (value: Object) => {
+  handleFormChange = (value: FormValue) => {
     this.resetSearch(); // reset all cards before they change according to input values
     const { value: currentValue } = this.state;
 
@@ -678,13 +710,16 @@ class ExchangeScreen extends React.Component<Props, State> {
       }
     }
 
-    this.setState({ value });
-    this.updateOptions(value);
-    if (!this.exchangeForm.getValue()) return; // this validates form!
-    this.triggerSearch();
+    this.setState({ value }, () => {
+      this.updateOptions(value, () => {
+        if (this.exchangeForm.getValue()) { // this validates form!
+          this.triggerSearch();
+        }
+      });
+    });
   };
 
-  updateOptions = (value) => {
+  updateOptions = (value: FormValue, callback: () => void) => {
     const {
       assets,
       exchangeSupportedAssets,
@@ -706,7 +741,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const optionsFrom = this.generateAssetsOptions(assets);
     const optionsTo = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
-    const selectedFromAssetSymbol = get(this.state, 'value.fromInput.selector.symbol', '');
+    const selectedFromAssetSymbol = this.getSelectedFromAssetSymbol();
     const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
     if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
       optionsTo.push(this.generateBTCAssetOption());
@@ -718,6 +753,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           config: {
             options: { $set: optionsFrom },
             inputAddonText: { $set: valueInFiatToShow },
+            rightLabel: { $set: this.shouldShowSellMax() ? 'Sell max' : '' },
           },
         },
         toInput: {
@@ -726,7 +762,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       },
     });
 
-    this.setState({ formOptions: newOptions });
+    this.setState({ formOptions: newOptions }, callback);
   };
 
   generatePopularSwaps = () => {
@@ -738,13 +774,16 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  onSwapPress = (fromAssetCode, toAssetCode) => {
+  onSwapPress = (fromAssetCode: string, toAssetCode: string) => {
     const { assets, exchangeSupportedAssets } = this.props;
+    const { fromInput, toInput } = this.state.value;
     const fromOptions = this.generateAssetsOptions(assets);
     const toOptions = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     const fromAsset = fromOptions.find(option => option.key === fromAssetCode);
     const toAsset = toOptions.find(option => option.key === toAssetCode);
-    this.handleFormChange({ fromInput: { selector: fromAsset, input: '' }, toInput: { selector: toAsset, input: '' } });
+    this.handleFormChange({
+      fromInput: { selector: fromAsset, input: fromInput.input }, toInput: { selector: toAsset, input: toInput.input },
+    });
   };
 
   render() {

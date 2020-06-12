@@ -27,6 +27,9 @@ import {
 } from 'constants/walletConstants';
 import reducer from '../walletReducer';
 
+import type { BackupStatus } from '../walletReducer';
+
+
 const mockWallet: Object = {
   address: '0x',
   privateKey: '',
@@ -43,9 +46,10 @@ const mockOnboarding: Object = {
   pin: '',
 };
 
-const mockBackupStatus: Object = {
+const mockBackupStatus: BackupStatus = {
   isImported: false,
   isBackedUp: false,
+  isRecoveryPending: false,
 };
 
 describe('Wallet reducer', () => {

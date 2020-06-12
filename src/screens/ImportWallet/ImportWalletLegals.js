@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform, BackHandler } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { WALLET_RECOVERY_OPTIONS } from 'constants/navigationConstants';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { TextLink, BaseText } from 'components/Typography';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
@@ -126,7 +126,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={({
-          centerItems: [{ title: 'Re-import wallet' }],
+          centerItems: [{ title: 'Recover wallet' }],
           customOnBack: this.handleBackAction,
         })}
       >
@@ -168,7 +168,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
             <StyledButton
               disabled={!canGoNext}
               title="Proceed"
-              onPress={() => navigation.navigate(IMPORT_WALLET)}
+              onPress={() => navigation.navigate(WALLET_RECOVERY_OPTIONS)}
             />
           </ButtonWrapper>
         </Wrapper>
