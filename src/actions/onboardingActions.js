@@ -191,7 +191,7 @@ export const finishRegistration = async ({
   privateKey: string,
   address: string,
   isImported: boolean,
-  mnemonic: string,
+  mnemonic?: string,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
