@@ -182,6 +182,7 @@ export const finishRegistration = async ({
   privateKey,
   address,
   isImported,
+  mnemonic,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
@@ -190,6 +191,7 @@ export const finishRegistration = async ({
   privateKey: string,
   address: string,
   isImported: boolean,
+  mnemonic: string,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -385,6 +387,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
       isImported,
+      mnemonic: wallet.mnemonic,
     });
 
     // STEP 6: add wallet created / imported events
@@ -417,10 +420,12 @@ export const registerOnBackendAction = () => {
           apiUser,
           privateKey,
           importedWallet,
+          mnemonic,
         },
         backupStatus: { isImported },
       },
     } = getState();
+    const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -450,6 +455,7 @@ export const registerOnBackendAction = () => {
       address: normalizeWalletAddress(walletData.address),
       privateKey: walletPrivateKey,
       isImported,
+      mnemonic: walletMnemonic,
     });
 
     dispatch(checkForWalletBackupToastAction());
