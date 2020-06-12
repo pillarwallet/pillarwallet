@@ -45,7 +45,6 @@ import {
 
 import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
 
-
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
