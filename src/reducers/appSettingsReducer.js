@@ -41,6 +41,7 @@ export type AppSettingsReducerState = {
     hideBadges?: boolean,
     preferredGasToken: ?string,
     initialDeeplinkExecuted: boolean,
+    hasSeenRecoveryPortalIntro?: boolean,
   },
   isFetched: boolean,
 };
@@ -69,6 +70,7 @@ export const initialState: AppSettingsReducerState = {
     hideBadges: false,
     preferredGasToken: null,
     initialDeeplinkExecuted: false,
+    hasSeenRecoveryPortalIntro: false,
   },
   isFetched: false,
 };

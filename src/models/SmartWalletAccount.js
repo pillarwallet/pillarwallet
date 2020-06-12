@@ -17,15 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { sdkInterfaces } from '@smartwallet/sdk';
 import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
-export type SmartWalletAccount = {
-  address: string,
-  deployMode: string,
-  id: number,
-  state: string,
-  updatedAt: string,
+export type SmartWalletAccount = sdkInterfaces.IAccount;
+
+export type SmartWalletAccountDevice = sdkInterfaces.IAccountDevice;
+
+export type ConnectedSmartWalletAccount = {
+  ...SmartWalletAccount,
+  activeDeviceAddress: ?string,
+  devices: ?SmartWalletAccountDevice[],
 };
+
 
 export type SmartWalletDeploymentError = $Keys<typeof SMART_WALLET_DEPLOYMENT_ERRORS>;
 

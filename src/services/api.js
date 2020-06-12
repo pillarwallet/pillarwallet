@@ -110,6 +110,15 @@ type SendReferralInvitationParams = {|
   phone?: string,
 |};
 
+type ValidatedUserResponse = $Shape<{
+  id: string,
+  walletId: string,
+  username: string,
+  profileImage: string,
+  profileLargeImage: string,
+  error: boolean,
+}>;
+
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 class SDKWrapper {
@@ -177,10 +186,20 @@ class SDKWrapper {
       }));
   }
 
-  registerOnAuthServer(walletPrivateKey: string, fcmToken: ?string, username: string) {
+  registerOnAuthServer(
+    walletPrivateKey: string,
+    fcmToken: ?string,
+    username: ?string,
+    recovery?: {
+      accountAddress: string,
+      deviceAddress: string,
+    },
+  ) {
     const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
-    let requestPayload = { privateKey, username };
+    let requestPayload = { privateKey };
+    if (username) requestPayload = { ...requestPayload, username };
     if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
+    if (!isEmpty(recovery)) requestPayload = { ...requestPayload, recovery };
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.wallet.registerAuthServer(requestPayload))
       .then(({ data }) => data)
@@ -369,7 +388,7 @@ class SDKWrapper {
       .catch(() => null);
   }
 
-  userInfo(walletId: string) {
+  userInfo(walletId: string): Promise<Object> {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.info({ walletId }))
       .then(({ data }) => ({ ...data, walletId }))
@@ -409,7 +428,7 @@ class SDKWrapper {
     // TODO: handle 404 and other errors in different ways (e.response.status === 404)
   }
 
-  validateAddress(blockchainAddress: string): Object {
+  validateAddress(blockchainAddress: string): Promise<ValidatedUserResponse> {
     blockchainAddress = normalizeWalletAddress(blockchainAddress);
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))

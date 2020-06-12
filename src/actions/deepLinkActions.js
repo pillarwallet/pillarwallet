@@ -18,42 +18,46 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Alert } from 'react-native';
-import url from 'url';
-import Toast from 'components/Toast';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { updateNavigationLastScreenState, navigate } from 'services/navigation';
-import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
-import { CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
 
-import type SDKWrapper from 'services/api';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+// actions
+import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
+
 import { requestSessionAction } from 'actions/walletConnectActions';
 import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
 
-const allowedDeepLinkProtocols = [
-  'pillarwallet:',
-  'wc:',
-];
+// constants
+import { CONFIRM_CLAIM } from 'constants/navigationConstants';
+
+// services
+import { updateNavigationLastScreenState } from 'services/navigation';
+
+// utils
+import { validateDeepLink } from 'utils/deepLink';
+
+// types
+import type { Dispatch } from 'reducers/rootReducer';
+
 
 export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) => {
   return async (dispatch: Dispatch) => {
-    const params = url.parse(deepLink, true);
-    if (isEmpty(params)) return;
-    const { host, protocol, query = {} } = params;
-    if (!allowedDeepLinkProtocols.includes(protocol)) return;
-
     // make sure a deeplink is only handled once
     if (onAppLaunch) {
       dispatch(initialDeeplinkExecuted());
     }
+
+    const validatedDeepLink = validateDeepLink(deepLink);
+    if (isEmpty(validatedDeepLink)) return;
+    const { action, query, protocol } = validatedDeepLink;
 
     if (protocol === 'wc:') {
       dispatch(requestSessionAction(deepLink));
       return;
     }
 
-    switch (host) {
+    // NOTE: actions (hosts) are parsed in lowercase
+    switch (action) {
       case 'referral':
         const referralCode = get(query, 'code');
         if (referralCode) {
@@ -68,8 +72,9 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
       case 'shapeshift':
         const shapeshiftTokenHash = get(query, 'auth');
         const authStatus = get(query, 'status');
-        if (!authStatus || !shapeshiftTokenHash) break;
-        dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        if (authStatus && shapeshiftTokenHash) {
+          dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        }
         break;
       case 'wc':
         let walletConnectUrl = get(query, 'url');
@@ -81,27 +86,6 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
         break;
       default:
         break;
-    }
-  };
-};
-
-export const approveLoginAttemptAction = (loginAttemptToken: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    try {
-      const result = await api.approveLoginToExternalResource(loginAttemptToken);
-      if (!result || result.error) throw new Error();
-      navigate(HOME);
-      Toast.show({
-        message: 'Your forum login was approved.',
-        type: 'success',
-        title: 'Success',
-      });
-    } catch (e) {
-      Toast.show({
-        message: 'Failed to approve your login, please try again.',
-        type: 'warning',
-        title: 'Something gone wrong',
-      });
     }
   };
 };

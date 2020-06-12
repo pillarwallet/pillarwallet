@@ -22,15 +22,16 @@ import styled from 'styled-components/native';
 
 const Wrapper = styled.View`
   flex-wrap: wrap;
-  margin-top: 20px;
-  margin-bottom: 20px;
   flex-direction: row;
   align-self: center;
   justify-content: space-between;
-  width: 156;
+  ${({ wrapperWidth, wrapperVerticalMargin }) => `
+    ${wrapperVerticalMargin && `margin-vertical: ${wrapperVerticalMargin}px;`}
+    ${wrapperWidth && `width: ${wrapperWidth}px;`}
+  `}
 `;
 
-const PinDot = styled.View`
+const Dot = styled.View`
   width: 16px;
   height: 16px;
   background-color: ${({ active, theme }) => active ? theme.colors.primary : theme.colors.secondaryAccent};
@@ -39,25 +40,37 @@ const PinDot = styled.View`
 
 type Props = {
   numAllDots: number,
-  numActiveDots: number,
+  numActiveDots?: number,
+  wrapperWidth?: number,
+  wrapperVerticalMargin?: number,
+  dotStyle?: Object,
 }
 
-const PinDots = (props: Props) => {
-  const { numAllDots, numActiveDots } = props;
+const HorizontalDots = (props: Props) => {
+  const {
+    numAllDots,
+    numActiveDots,
+    dotStyle,
+    wrapperWidth,
+    wrapperVerticalMargin,
+  } = props;
   const dotsArray = Array(numAllDots).fill('')
     .map((el, i) => ({
       key: i,
-      active: numActiveDots >= (i + 1),
+      active: numActiveDots && numActiveDots >= (i + 1),
     }));
 
   return (
-    <Wrapper>
+    <Wrapper
+      wrapperWidth={wrapperWidth}
+      wrapperVerticalMargin={wrapperVerticalMargin}
+    >
       {dotsArray.map(({ key, active }) => (
-        <PinDot key={key} active={active} />
+        <Dot style={dotStyle} key={key} active={active} />
       ))}
     </Wrapper>
   );
 };
 
 
-export default PinDots;
+export default HorizontalDots;

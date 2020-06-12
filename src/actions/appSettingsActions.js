@@ -281,3 +281,9 @@ export const initialDeeplinkExecuted = () => {
     });
   };
 };
+
+export const hasSeenRecoveryPortalIntroAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(updateAppSettingsAction('hasSeenRecoveryPortalIntro', true));
+  };
+};
