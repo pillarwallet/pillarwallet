@@ -239,9 +239,9 @@
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = J9DEY3FGPD;
+						DevelopmentTeam = 9W2WHQU3D5;
 						LastSwiftMigration = 1010;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -481,10 +481,11 @@
 				BRANCH_IO_KEY_LIVE = key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = J9DEY3FGPD;
+				DEVELOPMENT_TEAM = 9W2WHQU3D5;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -572,9 +573,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pillarproject.wallet-pedrouid";
 				PRODUCT_NAME = pillarwallet;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.pillarproject.wallet 1530870110";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
@@ -591,10 +592,10 @@
 				BRANCH_IO_KEY_LIVE = _branch_io_key_live_;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J9DEY3FGPD;
+				DEVELOPMENT_TEAM = 9W2WHQU3D5;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -682,9 +683,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pillarproject.wallet-pedrouid";
 				PRODUCT_NAME = pillarwallet;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet 1526587087";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -746,11 +747,11 @@
 				BRANCH_IO_KEY_LIVE = key_test_fdVQmXxlMInIG98ByzdqlbdkCxi8QO3a;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = J9DEY3FGPD;
+				DEVELOPMENT_TEAM = 9W2WHQU3D5;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -838,9 +839,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet.staging;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pillarproject.wallet.staging-pedrouid";
 				PRODUCT_NAME = "pillarwallet-staging";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet 1526587087";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				VERSIONING_SYSTEM = "apple-generic";
