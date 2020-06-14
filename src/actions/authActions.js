@@ -97,6 +97,7 @@ import {
   checkIfRecoveredSmartWalletFinishedAction,
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
+import { initChannel } from './connextActions';
 
 
 const storage = Storage.getInstance('db');
@@ -261,6 +262,7 @@ export const loginAction = (
           privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
         },
       });
+      dispatch(initChannel(wallet.privateKey));
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
