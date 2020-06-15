@@ -97,7 +97,7 @@ class SendSyntheticAsset extends React.Component<Props> {
     const { navigation } = this.props;
     const isAvailable = availableBalance > 0;
     const balanceFormatted = isAvailable ? formatAmount(availableBalance) : '0';
-    const availableLabel = isAvailable ? 'Available for use' : 'Unavailable';
+    const availableLabel = isAvailable ? '' : 'Unavailable';
     const assetData: AssetData = {
       token: assetSymbol,
       name: assetName,
