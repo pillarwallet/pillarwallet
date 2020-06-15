@@ -26,9 +26,9 @@
     "prestorybook": "rnstl"
   },
   "dependencies": {
-    "@connext/client": "^7.0.0-alpha.1",
-    "@connext/store": "^7.0.0-alpha.1",
-    "@connext/types": "^7.0.0-alpha.1",
+    "@connext/client": "^7.0.0-alpha.2",
+    "@connext/store": "^7.0.0-alpha.2",
+    "@connext/types": "^7.0.0-alpha.2",
     "@matt-block/react-native-in-app-browser": "^3.2.0",
     "@netgum/utils": "^0.1.3",
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.48.1851",
