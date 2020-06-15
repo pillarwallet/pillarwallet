@@ -26,7 +26,6 @@ import styled from 'styled-components/native';
 
 // components
 import PortfolioBalance from 'components/PortfolioBalance';
-import SimpleSwitcher from 'components/Switcher/SimpleSwitcher';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -40,9 +39,7 @@ import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActio
 import { toggleBalanceAction } from 'actions/appSettingsActions';
 
 // utils
-import { getAccountName, getActiveAccountType } from 'utils/accounts';
 import { themedColors } from 'utils/themes';
-import { noop } from 'utils/common';
 
 // models, types
 import type { Account } from 'models/Account';
@@ -99,31 +96,6 @@ class WalletsPart extends React.Component<Props, State> {
     this.setState({ isChangingAccount: false });
   };
 
-  getWalletTitle = () => {
-    const { availableWallets } = this.props;
-    const activeWalletType = getActiveAccountType(availableWallets);
-    if (!activeWalletType) return '';
-
-    switch (activeWalletType) {
-      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        return 'Bitcoin Wallet';
-      case ACCOUNT_TYPES.SMART_WALLET:
-      case ACCOUNT_TYPES.KEY_BASED:
-        return getAccountName(activeWalletType);
-      default:
-        return '';
-    }
-  };
-
-  getNextWalletInLine = () => {
-    const { availableWallets } = this.props;
-    const currentActiveType = getActiveAccountType(availableWallets);
-    const currentWalletIndex = availableWallets.findIndex(({ type }) => type === currentActiveType);
-    const nextIndex = (currentWalletIndex + 1) % availableWallets.length;
-
-    return availableWallets[nextIndex] || {};
-  };
-
   changeAcc = (nextWallet: Account, callback?: () => void, noFullScreenLoader?: boolean) => {
     const {
       switchAccount,
@@ -156,7 +128,6 @@ class WalletsPart extends React.Component<Props, State> {
   };
 
   render() {
-    const { isChangingAccount } = this.state;
     const {
       availableWallets,
       baseFiatCurrency,
@@ -165,17 +136,10 @@ class WalletsPart extends React.Component<Props, State> {
       hideBalance,
     } = this.props;
 
-    const activeWalletTitle = this.getWalletTitle();
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const nextWallet = this.getNextWalletInLine();
 
     return (
       <Wrapper>
-        <SimpleSwitcher
-          title={activeWalletTitle}
-          onPress={() => this.changeAcc(nextWallet, noop, true)}
-          isLoading={isChangingAccount}
-        />
         <PortfolioBalance
           fiatCurrency={fiatCurrency}
           showBalance={!hideBalance}

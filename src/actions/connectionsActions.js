@@ -49,11 +49,10 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { saveDbAction } from './dbActions';
 
 
-export const updateConnectionsAction = (theWalletId?: ?string = null) => {
+export const updateConnectionsAction = (theWalletId: ?string = null) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId = theWalletId } },
-      featureFlags: { data: { SMART_WALLET_ENABLED: smartWalletFeatureEnabled } },
       session: { data: { isOnline } },
     } = getState();
 
@@ -122,9 +121,7 @@ export const updateConnectionsAction = (theWalletId?: ?string = null) => {
     });
 
     dispatch(getExistingChatsAction());
-    if (smartWalletFeatureEnabled) {
-      dispatch(syncContactsSmartAddressesAction());
-    }
+    dispatch(syncContactsSmartAddressesAction());
   };
 };
 

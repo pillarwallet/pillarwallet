@@ -1,0 +1,6 @@
+{
+  "name": "HorizontalDots",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./HorizontalDots.js"
+}

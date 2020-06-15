@@ -17,54 +17,47 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
-import url from 'url';
-import Toast from 'components/Toast';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { updateNavigationLastScreenState, navigate } from 'services/navigation';
+
+// actions
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
-import { LOGIN, CONFIRM_CLAIM, HOME } from 'constants/navigationConstants';
-import { isNavigationAllowed } from 'utils/navigation';
 
-import type SDKWrapper from 'services/api';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { requestSessionAction } from 'actions/walletConnectActions';
+import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
 
-type ApproveLoginQuery = {
-  loginToken?: string,
-};
+// constants
+import { CONFIRM_CLAIM } from 'constants/navigationConstants';
 
-const allowedDeepLinkProtocols = [
-  'pillarwallet:',
-];
+// services
+import { updateNavigationLastScreenState } from 'services/navigation';
 
-const beginApproveLogin = (query: ApproveLoginQuery) => {
-  const { loginToken: loginAttemptToken } = query;
+// utils
+import { validateDeepLink } from 'utils/deepLink';
 
-  if (!isNavigationAllowed()) {
-    updateNavigationLastScreenState({
-      lastActiveScreen: LOGIN,
-      lastActiveScreenParams: { loginAttemptToken },
-    });
-    return;
-  }
+// types
+import type { Dispatch } from 'reducers/rootReducer';
 
-  const navigateToAppAction = NavigationActions.navigate({
-    routeName: LOGIN,
-    params: { loginAttemptToken },
-  });
 
-  navigate(navigateToAppAction);
-};
-
-export const executeDeepLinkAction = (deepLink: string) => {
+export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) => {
   return async (dispatch: Dispatch) => {
-    const params = url.parse(deepLink, true);
-    if (isEmpty(params)) return;
-    const { host, protocol, query = {} } = params;
-    if (!allowedDeepLinkProtocols.includes(protocol)) return;
-    switch (host) {
+    // make sure a deeplink is only handled once
+    if (onAppLaunch) {
+      dispatch(initialDeeplinkExecuted());
+    }
+
+    const validatedDeepLink = validateDeepLink(deepLink);
+    if (isEmpty(validatedDeepLink)) return;
+    const { action, query, protocol } = validatedDeepLink;
+
+    if (protocol === 'wc:') {
+      dispatch(requestSessionAction(deepLink));
+      return;
+    }
+
+    // NOTE: actions (hosts) are parsed in lowercase
+    switch (action) {
       case 'referral':
         const referralCode = get(query, 'code');
         if (referralCode) {
@@ -76,38 +69,23 @@ export const executeDeepLinkAction = (deepLink: string) => {
           Alert.alert('Invalid link', 'Referral code is missing');
         }
         break;
-      case 'approve':
-        beginApproveLogin(query);
-        break;
       case 'shapeshift':
         const shapeshiftTokenHash = get(query, 'auth');
         const authStatus = get(query, 'status');
-        if (!authStatus || !shapeshiftTokenHash) break;
-        dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        if (authStatus && shapeshiftTokenHash) {
+          dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        }
+        break;
+      case 'wc':
+        let walletConnectUrl = get(query, 'url');
+        if (walletConnectUrl) {
+          const key = get(query, 'key');
+          if (key) walletConnectUrl += `&key=${key}`;
+          dispatch(requestSessionAction(walletConnectUrl));
+        }
         break;
       default:
         break;
-    }
-  };
-};
-
-export const approveLoginAttemptAction = (loginAttemptToken: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    try {
-      const result = await api.approveLoginToExternalResource(loginAttemptToken);
-      if (!result || result.error) throw new Error();
-      navigate(HOME);
-      Toast.show({
-        message: 'Your forum login was approved.',
-        type: 'success',
-        title: 'Success',
-      });
-    } catch (e) {
-      Toast.show({
-        message: 'Failed to approve your login, please try again.',
-        type: 'warning',
-        title: 'Something gone wrong',
-      });
     }
   };
 };

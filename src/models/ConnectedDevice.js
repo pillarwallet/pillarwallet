@@ -17,13 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
-import { spacing, fontStyles } from 'utils/variables';
+import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 
-const SettingsModalTitle = styled(MediumText)`
-  ${fontStyles.big};
-  margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
-`;
-
-export default SettingsModalTitle;
+export type ConnectedDevice = {
+  category: $Keys<typeof DEVICE_CATEGORIES>,
+  address: string,
+  updatedAt: Date,
+};

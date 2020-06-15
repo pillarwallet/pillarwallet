@@ -17,23 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import styled from 'styled-components/native';
-
-type Props = {
-  children?: React.Node;
-}
-
-const ProfileHeaderWrapper = styled.View`
-  padding: 30px;
-`;
-
-const ProfileHeader = (props: Props) => {
-  return (
-    <ProfileHeaderWrapper>
-      {props.children}
-    </ProfileHeaderWrapper>
-  );
+export const DEVICE_CATEGORIES = {
+  SMART_WALLET_DEVICE: 'SMART_WALLET_DEVICE',
 };
-
-export default ProfileHeader;
+export const SET_CONNECTED_DEVICES = 'SET_CONNECTED_DEVICES';
+export const SET_ADDING_CONNECTED_DEVICE_ADDRESS = 'SET_ADDING_CONNECTED_DEVICE_ADDRESS';
+export const RESET_ADDING_CONNECTED_DEVICE_ADDRESS = 'RESET_ADDING_CONNECTED_DEVICE_ADDRESS';
+export const SET_REMOVING_CONNECTED_DEVICE_ADDRESS = 'SET_REMOVING_CONNECTED_DEVICE_ADDRESS';
+export const RESET_REMOVING_CONNECTED_DEVICE_ADDRESS = 'RESET_REMOVING_CONNECTED_DEVICE_ADDRESS';
+export const SET_CONNECTED_DEVICES_ERROR_MESSAGE = 'SET_CONNECTED_DEVICES_ERROR_MESSAGE';

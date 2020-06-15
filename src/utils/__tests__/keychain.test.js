@@ -36,10 +36,12 @@ describe('keychain utils test', () => {
     expect(shouldUpdateKeychainObject({ testKey: 'testValue' })).toEqual(true);
     expect(shouldUpdateKeychainObject({ privateKey: 'testValue' })).toEqual(true);
     expect(shouldUpdateKeychainObject({ mnemonic: 'testValue' })).toEqual(true);
-    expect(shouldUpdateKeychainObject({ privateKey: '', mnemonic: '' })).toEqual(true);
+    expect(shouldUpdateKeychainObject({ privateKey: '', mnemonic: '', pin: '' })).toEqual(true);
   });
 
   it('Should return false if keychain object update is not necessary', () => {
-    expect(shouldUpdateKeychainObject({ privateKey: 'testValue', mnemonic: 'testValue' })).toEqual(false);
+    expect(shouldUpdateKeychainObject({
+      privateKey: 'testValue', mnemonic: 'testValue', pin: 'testPin',
+    })).toEqual(false);
   });
 });

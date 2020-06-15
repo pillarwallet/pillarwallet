@@ -107,7 +107,6 @@ type Props = {
   setTokenAllowance: (string, string, string, string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
   connectedProviders: ExchangeProvider[],
-  smartWalletFeatureEnabled: boolean,
   providersMeta: ProvidersMeta,
   theme: Theme,
   showEmptyMessage: boolean,

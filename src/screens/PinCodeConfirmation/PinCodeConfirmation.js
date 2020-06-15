@@ -20,17 +20,28 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
+// actions
+import { confirmPinForNewWalletAction } from 'actions/walletActions';
+
+// components
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { MediumText } from 'components/Typography';
-import { confirmPinForNewWalletAction } from 'actions/walletActions';
-import { validatePin } from 'utils/validators';
+
+// constants
 import { BIOMETRICS_PROMPT, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+
+// utils
+import { validatePin } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 import { getSupportedBiometryType } from 'utils/keychain';
+
+// types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => void,

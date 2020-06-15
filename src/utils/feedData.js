@@ -19,14 +19,27 @@
 */
 
 import BigNumber from 'bignumber.js';
+import orderBy from 'lodash.orderby';
+import get from 'lodash.get';
+
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
+import type { BitcoinAddress } from 'models/Bitcoin';
+import type { CollectibleTrx } from 'models/Collectible';
+
+import { TX_PENDING_STATUS } from 'constants/historyConstants';
+import { PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+
 import {
-  TX_PENDING_STATUS,
-} from 'constants/historyConstants';
-import {
-  findAccountByAddress, checkIfSmartWalletAccount, checkIfKeyBasedAccount, getAccountName, getInactiveUserAccounts,
+  findAccountByAddress,
+  checkIfSmartWalletAccount,
+  checkIfKeyBasedAccount,
+  getAccountName,
+  getInactiveUserAccounts,
+  getAccountAddress,
+  getAccountTypeByAddress,
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
 import { findMatchingContact, getUserName } from './contacts';
@@ -39,6 +52,8 @@ export function mapTransactionsHistory(
   contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   eventType: string,
+  keepHashDuplicatesIfBetweenAccounts?: boolean,
+  duplicatePPN?: boolean,
 ) {
   const concatedHistory = history
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
@@ -47,7 +62,7 @@ export function mapTransactionsHistory(
         || findMatchingContact(from, contacts, contactsSmartAddresses);
 
       // apply to wallet accounts only if received from other account address
-      const account = !contact
+      const account = !contact && eventType !== COLLECTIBLE_TRANSACTION
         && (findAccountByAddress(from, getInactiveUserAccounts(accounts))
           || findAccountByAddress(to, getInactiveUserAccounts(accounts))
         );
@@ -66,11 +81,58 @@ export function mapTransactionsHistory(
         ...rest,
       };
     });
+
+  if (keepHashDuplicatesIfBetweenAccounts) {
+    const accountsAddresses = accounts.map((acc) => getAccountAddress(acc));
+    const ascendingHistory = orderBy(concatedHistory, ['createdAt'], ['asc']);
+
+    const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
+      const { from: fromAddress, to: toAddress, hash } = historyItem;
+      const isTransactionFromUsersAccount = accountsAddresses
+        .some((userAddress) => addressesEqual(fromAddress, userAddress));
+      const isTransactionToUsersAccount = accountsAddresses
+        .some((userAddress) => addressesEqual(toAddress, userAddress));
+      const eventWithSameHashExists = alteredHistory.some((item) => item.hash === hash);
+
+      if (eventWithSameHashExists) {
+        if (isTransactionFromUsersAccount && isTransactionToUsersAccount) {
+          return [...alteredHistory, {
+            ...historyItem,
+            accountType: getAccountTypeByAddress(toAddress, accounts),
+            isReceived: true,
+            betweenAccTrxDuplicate: true,
+            _id: `${historyItem._id}_duplicate`,
+            createdAt: historyItem.createdAt + 1,
+          }];
+        }
+        return alteredHistory;
+      } else if (duplicatePPN) {
+        const itemTag = get(historyItem, 'tag');
+        if (itemTag && itemTag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
+          const duplicate = {
+            ...historyItem,
+            smartWalletEvent: true,
+            _id: `${historyItem._id}_duplicate`,
+            createdAt: historyItem.createdAt - 1,
+          };
+          return [...alteredHistory, duplicate, historyItem];
+        }
+        return [...alteredHistory, historyItem];
+      }
+      return [...alteredHistory, historyItem];
+    }, []);
+    return orderBy(historyWithTrxBetweenAcc, ['createdAt'], ['desc']);
+  }
+
   return uniqBy(concatedHistory, 'hash');
 }
 
 // extending OpenSea transaction data with BCX data
-export function mapOpenSeaAndBCXTransactionsHistory(openSeaHistory: Object[], BCXHistory: Object[]) {
+export function mapOpenSeaAndBCXTransactionsHistory(
+  openSeaHistory: CollectibleTrx[],
+  BCXHistory: Object[],
+  keepDuplicates?: boolean,
+): CollectibleTrx[] {
   const concatedCollectiblesHistory = openSeaHistory
     .map(({ hash, ...rest }) => {
       const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
@@ -83,6 +145,8 @@ export function mapOpenSeaAndBCXTransactionsHistory(openSeaHistory: Object[], BC
         ...historyEntry,
       };
     }).sort((a, b) => b.createdAt - a.createdAt);
+
+  if (keepDuplicates) return concatedCollectiblesHistory;
   return uniqBy(concatedCollectiblesHistory, 'hash');
 }
 
@@ -94,6 +158,7 @@ export type TransactionsGroup = {
 
 export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGroup[] {
   const transactionsByAsset: {[string]: TransactionsGroup} = {};
+  if (!ppnTransactions.length) return [];
 
   ppnTransactions.forEach((trx) => {
     const { symbol: _symbol, asset, value: rawValue } = trx;
@@ -123,12 +188,16 @@ export const isPendingTransaction = ({ status }: Object) => {
 
 export const isSWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (account && checkIfSmartWalletAccount(account));
+  return (!!account && checkIfSmartWalletAccount(account));
 };
 
 export const isKWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (account && checkIfKeyBasedAccount(account));
+  return (!!account && checkIfKeyBasedAccount(account));
+};
+
+export const isBTCAddress = (address: string, bitcoinAddresses: BitcoinAddress[]) => {
+  return bitcoinAddresses.some(e => e.address === address);
 };
 
 export const getContactWithAddress = (contacts: ApiUser[], address: string) => {

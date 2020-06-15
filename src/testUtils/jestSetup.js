@@ -234,7 +234,6 @@ jest.setMock('react-native-cached-image', {
 const mockSmartWalletAccount = {
   id: 123,
   address: 'publicAddress',
-  deployMode: 'Unsecured',
   ensName: null,
   state: 'Created',
   nextState: null,
@@ -278,19 +277,24 @@ jest.setMock('@smartwallet/sdk', {
     initialize: () => Promise.resolve(),
     getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccount] }),
     createAccount: () => Promise.resolve(mockSmartWalletAccount),
+    connectAccount: () => Promise.resolve(),
     event$: {
       subscribe: jest.fn(),
+      next: jest.fn(),
     },
     estimateAccountTransaction: () => Promise.resolve({
       gasFee: new BN(70000),
       signedGasPrice: { gasPrice: new BN(5000000000) },
     }),
+    reset: () => Promise.resolve(),
   }),
 });
 
 jest.setMock('react-native-keychain', {
   setGenericPassword: jest.fn().mockResolvedValue(),
-  getGenericPassword: jest.fn().mockResolvedValue(),
+  getGenericPassword: jest.fn(() => new Promise((resolve) => resolve({
+    pin: '123456', privateKey: 'testKey', mnemonic: 'testMnemonic',
+  }))),
   resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {
     BIOMETRY_ANY: 'BIOMETRY_ANY',

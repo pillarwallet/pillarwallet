@@ -127,7 +127,9 @@ class ContainerWithHeader extends React.Component<Props, State> {
   };
 
   renderContent = (shouldRenderFooter, shouldRenderChildrenInScrollView) => {
-    const { children, footer, keyboardShouldPersistTaps = 'never' } = this.props;
+    const {
+      children, footer, keyboardShouldPersistTaps = 'never', shouldFooterAvoidKeyboard = true,
+    } = this.props;
     if (!shouldRenderFooter) {
       if (!shouldRenderChildrenInScrollView) {
         if (typeof children === 'function') {
@@ -142,18 +144,26 @@ class ContainerWithHeader extends React.Component<Props, State> {
         </ScrollView>
       );
     }
-    return (
-      <ScrollWrapper
-        style={{ flex: 1 }}
-        contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}
-        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
-      >
+    const content = (
+      <>
         <ContentWrapper>
           {children}
         </ContentWrapper>
         {footer}
-      </ScrollWrapper>
+      </>
     );
+    if (shouldFooterAvoidKeyboard) {
+      return (
+        <ScrollWrapper
+          style={{ flex: 1 }}
+          contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}
+          keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+        >
+          {content}
+        </ScrollWrapper>
+      );
+    }
+    return content;
   };
 
   onScroll = () => {

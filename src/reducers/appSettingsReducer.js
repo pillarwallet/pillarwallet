@@ -40,6 +40,8 @@ export type AppSettingsReducerState = {
     hasDismissedConnectAppsIntro?: boolean,
     hideBadges?: boolean,
     preferredGasToken: ?string,
+    initialDeeplinkExecuted: boolean,
+    hasSeenRecoveryPortalIntro?: boolean,
   },
   isFetched: boolean,
 };
@@ -61,11 +63,14 @@ export const initialState: AppSettingsReducerState = {
     transactionSpeed: null,
     themeType: '',
     isManualThemeSelection: false,
+    useBiometrics: false,
     hasSeenExchangeIntro: false,
     hideBalance: false,
     hasDismissedConnectAppsIntro: false,
     hideBadges: false,
     preferredGasToken: null,
+    initialDeeplinkExecuted: false,
+    hasSeenRecoveryPortalIntro: false,
   },
   isFetched: false,
 };

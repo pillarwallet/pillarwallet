@@ -46,13 +46,17 @@ export const getAccountId = (account: Account): string => {
   return get(account, 'id', '');
 };
 
+export const getAccountType = (account: Account): ?AccountTypes => {
+  return account.type;
+};
+
 export const getActiveAccountType = (accounts: Accounts): ?AccountTypes => {
   const activeAccount = getActiveAccount(accounts);
   if (!activeAccount) {
     return null;
   }
 
-  return activeAccount.type;
+  return getAccountType(activeAccount);
 };
 
 export const getAccountAddress = (account: Account): string => {
@@ -80,6 +84,7 @@ export const hasLegacyAccountBalance = (accounts: Accounts, balances: BalancesSt
   const accountBalances: Balances = balances[account.id];
   return Object.keys(accountBalances).some(token => getBalance(accountBalances, token) > 0);
 };
+
 export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 };
@@ -101,7 +106,7 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.KEY_BASED;
 };
 
-export const getAccountName = (accountType: AccountTypes): string => {
+export const getAccountName = (accountType: AccountTypes | string): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
       return 'Smart Wallet';
@@ -116,6 +121,12 @@ export const getAccountName = (accountType: AccountTypes): string => {
 
 export const findAccountByAddress = (address: string, accounts: Accounts): ?Account => {
   return accounts.find(account => addressesEqual(address, getAccountAddress(account)));
+};
+
+export const getAccountTypeByAddress = (address: string, accounts: Accounts): ?string => {
+  const relatedAccount = findAccountByAddress(address, accounts);
+  if (!relatedAccount) return null;
+  return relatedAccount.type;
 };
 
 export const findAccountById = (accountId: string, accounts: Accounts): ?Account => {
@@ -137,4 +148,21 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
     return omit(allAccountAssets, hiddenAssets);
   }
   return {};
+};
+
+export const getEnsName = (accounts: Accounts): string => {
+  const SWAccount = findFirstSmartAccount(accounts);
+  return get(SWAccount, 'extra.ensName', '');
+};
+
+export const getKeyWalletAddress = (accounts: Accounts): ?string => {
+  const kwAccount = findKeyBasedAccount(accounts);
+  if (!kwAccount) return null;
+  return getAccountAddress(kwAccount);
+};
+
+export const getSmartWalletAddress = (accounts: Accounts): ?string => {
+  const swAccount = findFirstSmartAccount(accounts);
+  if (!swAccount) return null;
+  return getAccountAddress(swAccount);
 };

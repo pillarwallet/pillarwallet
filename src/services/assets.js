@@ -70,6 +70,11 @@ type ETHTransferOptions = {
   data?: string,
 };
 
+type FetchBalancesResponse = Array<{
+  balance: string,
+  symbol: string,
+}>;
+
 function contractHasMethod(contractCode, encodedMethodName) {
   return contractCode.includes(encodedMethodName);
 }
@@ -251,34 +256,40 @@ export async function transferETH(options: ETHTransferOptions) {
 
 // Fetch methods are temporary until the BCX API provided
 
-export function fetchETHBalance(walletAddress: Address) {
+export function fetchETHBalance(walletAddress: Address): Promise<string> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchRinkebyETHBalance(walletAddress: Address) {
+export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> {
   const provider = getEthereumProvider('rinkeby');
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchERC20Balance(walletAddress: Address, contractAddress: Address, decimals: number = 18) {
+export function fetchERC20Balance(
+  walletAddress: Address,
+  contractAddress: Address,
+  decimals: number = 18,
+): Promise<string> {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
-export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<Object[]> {
+export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
-        ? await fetchETHBalance(walletAddress)
-        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => 0);
+        ? await fetchETHBalance(walletAddress).catch(() => null)
+        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => null);
       return {
         balance,
         symbol: asset.symbol,
       };
     });
-  return Promise.all(promises).catch(() => ([]));
+  return Promise.all(promises)
+    .then(balances => balances.filter(({ balance }) => balance !== null))
+    .catch(() => []);
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
@@ -306,19 +317,19 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status
-export function fetchTransactionInfo(hash: string): Promise<?Object> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchTransactionInfo(hash: string, network?: string): Promise<?Object> {
+  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
   return provider.getTransaction(hash).catch(() => null);
 }
 
 // receipt available for mined transactions only, here you can get the status of the tx
-export function fetchTransactionReceipt(hash: string): Promise<?Object> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchTransactionReceipt(hash: string, network?: string): Promise<?Object> {
+  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
   return provider.getTransactionReceipt(hash).catch(() => null);
 }
 
-export function fetchLastBlockNumber(): Promise<number> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+export function fetchLastBlockNumber(network?: string): Promise<number> {
+  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
 }
 

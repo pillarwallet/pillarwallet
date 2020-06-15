@@ -31,13 +31,18 @@ type SelectorValueType = {
 
 export type InputPropsType = {
   placeholder?: string,
-  onChange: (Value | SelectorValueType) => void, onBlur?: (Value | SelectorValueType) => void,
+  onChange: (Value | SelectorValueType) => void,
+  onBlur?: (Value | SelectorValueType) => void,
+  onSubmit?: () => void,
   value: Value,
   selectorValue: SelectorValueType,
+  onSelectorClose: () => void,
   multiline?: boolean,
   onSelectorOpen?: () => void,
   onSelectorChange?: () => void,
   label?: string,
+  rightLabel?: string,
+  onPressRightLabel?: () => void,
 };
 
 export type SelectorOptions = {

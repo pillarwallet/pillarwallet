@@ -44,7 +44,7 @@ export default class SmartWalletProvider {
       .init(privateKey)
       .then(() => smartWalletService.connectAccount(account.id))
       .then((connectedAccount) => {
-        if (connectedAccount) this.sdkInitialized = true;
+        if (!isEmpty(connectedAccount)) this.sdkInitialized = true;
       })
       .catch(() => null);
   }

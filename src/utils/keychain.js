@@ -21,14 +21,21 @@ import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import { BUILD_TYPE } from 'react-native-dotenv';
+import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'utils/wallet';
 
-const KEYCHAIN_SERVICE = 'com.pillarproject.wallet';
+const KEYCHAIN_SERVICE = `com.pillarproject.wallet${BUILD_TYPE === 'staging' ? '.staging' : ''}`;
 const KEYCHAIN_DATA_KEY = 'data';
-const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
+const BIOMETRICS_PROMPT_MESSAGE = {
+  title: 'Unlock with biometric sensor',
+  subtitle: '', // required as empty
+  description: '', // required as empty
+};
 
 export type KeyChainData = {
   privateKey?: string,
   mnemonic?: string,
+  pin?: string,
 };
 
 export const resetKeychainDataObject = () => Keychain
@@ -60,7 +67,7 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
 export const getKeychainDataObject = (errorHandler?: Function) => Keychain
   .getGenericPassword({
     service: KEYCHAIN_SERVICE,
-    authenticationPrompt: { title: BIOMETRICS_PROMPT_MESSAGE },
+    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
   })
   .then(({ password = '{}' }) => JSON.parse(password))
   .catch(errorHandler || (() => null));
@@ -75,5 +82,26 @@ export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
 };
 
 export const shouldUpdateKeychainObject = (data: KeyChainData) => {
-  return (!data || !data.privateKey || !Object.keys(data).includes('mnemonic'));
+  return (!data || !data.pin || !data.privateKey || !Object.keys(data).includes('mnemonic'));
+};
+
+export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) => {
+  const keychainData: KeyChainData = await getKeychainDataObject();
+  const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
+  if (pin && pin === pinFromKeychain && privateKey) {
+    const wallet = withMnemonic && mnemonic
+      ? constructWalletFromMnemonic(mnemonic)
+      : constructWalletFromPrivateKey(privateKey);
+    return wallet;
+  }
+
+  throw new Error(); // wrong pin
+};
+
+// check biometrics because we don't want users with BM on to trigger getKeychainDataObject
+// during migration or when providing pin as fallback after failed/rejected BM check
+export const canLoginWithPkFromPin = async (useBiometrics: boolean) => {
+  if (useBiometrics) return false;
+  const keychainData = await getKeychainDataObject();
+  return !!keychainData?.pin;
 };
