@@ -25,7 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { EXCHANGE } from 'constants/navigationConstants';
+import { EXCHANGE, POOLTOGETHER_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
@@ -98,6 +98,14 @@ class ServicesScreen extends React.Component<Props> {
         body: 'Swap tokens directly with others. Safe, secure, anonymous',
         disabled: true,
         label: 'soon',
+      },
+      {
+        key: 'poolTogether',
+        title: 'Pool Together savings game',
+        body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
+        disabled: false,
+        label: 'soon',
+        action: () => navigation.navigate(POOLTOGETHER_FLOW),
       },
     ];
   };

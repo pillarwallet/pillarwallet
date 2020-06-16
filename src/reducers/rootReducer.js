@@ -63,6 +63,7 @@ import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
 import recoveryPortalReducer from './recoveryPortalReducer';
+import poolTogetherReducer from "./poolTogetherReducer";
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -105,6 +106,7 @@ import type { ReferralsReducerAction, ReferralsReducerState } from './referralsR
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
 import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
+import type { PoolTogetherReducerState } from "./poolTogetherReducer";
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -144,6 +146,7 @@ export type RootReducerState = {|
   phoneContacts: PhoneContactsReducerState,
   connectedDevices: ConnectedDevicesReducerState,
   recoveryPortal: RecoveryPortalReducerState,
+  poolTogether: PoolTogetherReducerState,
 |};
 
 type RootReducerAction =
@@ -222,6 +225,7 @@ const appReducer = combineReducers({
   phoneContacts: phoneContactsReducer,
   connectedDevices: connectedDevicesReducer,
   recoveryPortal: recoveryPortalReducer,
+  poolTogether: poolTogetherReducer,
 });
 
 export const initialState = appReducer(undefined, {});

@@ -106,6 +106,7 @@ import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/Re
 import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
+import PoolTogetherDashScreen from 'screens/PoolTogether/PoolTogetherDash';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -242,6 +243,8 @@ import {
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
+  POOLTOGETHER_FLOW,
+  POOLTOGETHER_DASHBOARD,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -706,6 +709,13 @@ const recoveryPortalRecoveryFlow = createStackNavigator({
 
 recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// POOLTOGETHER FLOW
+const poolTogetherFlow = createStackNavigator({
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
+}, StackNavigatorConfig);
+
+poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -733,6 +743,7 @@ const AppFlowNavigation = createStackNavigator(
     [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
     [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
     [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
+    [POOLTOGETHER_FLOW]: poolTogetherFlow,
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
