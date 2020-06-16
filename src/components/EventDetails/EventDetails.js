@@ -61,6 +61,8 @@ import {
   isSWAddress,
   isKWAddress,
   isBTCAddress,
+  isFailedTransaction,
+  isTimedOutTransaction,
 } from 'utils/feedData';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
@@ -125,7 +127,7 @@ import {
   bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
@@ -200,6 +202,7 @@ type Props = {
   updateCollectibleTransaction: (hash: string) => void,
   updatingTransaction: string,
   updatingCollectibleTransaction: string,
+  isSmartAccount: boolean,
 };
 
 type State = {
@@ -228,6 +231,7 @@ type EventData = {
   imageBackground?: ?string,
   collectibleUrl?: ?string,
   transactionNote?: string,
+  isFailed?: boolean;
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -365,8 +369,14 @@ export class EventDetail extends React.Component<Props, State> {
   }
 
   cleanup() {
-    if (this.timer) clearInterval(this.timer);
-    if (this.timeout) clearTimeout(this.timeout);
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
   }
 
   findTxInfo = (isCollectible?: boolean) => {
@@ -390,8 +400,11 @@ export class EventDetail extends React.Component<Props, State> {
 
   syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
     if (txInfo.status === TX_PENDING_STATUS) {
+      const { isSmartAccount } = this.props;
       this.timeout = setTimeout(this.updateTransaction, 500);
-      this.timer = setInterval(this.updateTransaction, 10000);
+      if (!isSmartAccount) {
+        this.timer = setInterval(this.updateTransaction, 10000);
+      }
     }
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
@@ -807,6 +820,8 @@ export class EventDetail extends React.Component<Props, State> {
     }
 
     const isPending = isPendingTransaction(event);
+    const isFailed = isFailedTransaction(event);
+    const isTimedOut = isTimedOutTransaction(event);
 
     let eventData: ?EventData = null;
 
@@ -1088,6 +1103,14 @@ export class EventDetail extends React.Component<Props, State> {
     }
     if (isPending) {
       eventData.actionIcon = 'pending';
+    }
+    if (isFailed) {
+      eventData.isFailed = true;
+      eventData.actionSubtitle = 'Transaction failed';
+    }
+    if (isTimedOut) {
+      eventData.isFailed = true;
+      eventData.actionSubtitle = 'Transaction timed out';
     }
     return eventData;
   };
@@ -1384,6 +1407,7 @@ export class EventDetail extends React.Component<Props, State> {
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
       transactionNote,
+      isFailed,
     } = eventData;
 
     const {
@@ -1425,7 +1449,7 @@ export class EventDetail extends React.Component<Props, State> {
         {settleEventData ? this.renderSettle(settleEventData) : (
           <React.Fragment>
             <ActionWrapper>
-              {!!title && <MediumText large color={titleColor}>{title}</MediumText>}
+              {!!title && <MediumText large color={titleColor} lineThrough={!!isFailed}>{title}</MediumText>}
               {customActionTitle}
               {!!actionIcon && <ActionIcon name={actionIcon} />}
             </ActionWrapper>
@@ -1551,6 +1575,7 @@ const structuredSelector = createStructuredSelector({
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
+  isSmartAccount: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

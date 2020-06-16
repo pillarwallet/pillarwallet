@@ -117,6 +117,7 @@ type AddonProps = {
   acceptInvitation?: ?() => void,
   balance?: Object,
   colors: ThemeColors,
+  valueLineThrough?: boolean,
 };
 
 type ImageWrapperProps = {
@@ -258,6 +259,7 @@ const ItemValue = styled(BaseText)`
   ${fontStyles.big};
   color: ${({ color, theme }) => color || theme.colors.text};
   text-align: right;
+  ${({ valueLineThrough }) => valueLineThrough && 'text-decoration: line-through;'}
 `;
 
 const BalanceValue = styled(BaseText)`
@@ -487,6 +489,7 @@ const Addon = (props: AddonProps) => {
     itemValue,
     itemStatusIcon,
     valueColor,
+    valueLineThrough,
     buttonActionLabel,
     actionLabelAsButton,
     buttonAction,
@@ -502,7 +505,7 @@ const Addon = (props: AddonProps) => {
     return (
       <Wrapper horizontal style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
         {!!itemValue &&
-          <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
+          <ItemValue color={valueColor} valueLineThrough={valueLineThrough} numberOfLines={2} ellipsizeMode="tail">
             {itemValue}
           </ItemValue>
         }

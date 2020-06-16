@@ -38,6 +38,8 @@ import {
   groupPPNTransactions,
   getUsernameOrAddress,
   isBTCAddress,
+  isFailedTransaction,
+  isTimedOutTransaction,
 } from 'utils/feedData';
 import { findMatchingContact } from 'utils/contacts';
 import { findAccountByAddress, getAccountName } from 'utils/accounts';
@@ -141,6 +143,7 @@ export type EventData = {
   itemValue?: string,
   fullItemValue?: string,
   valueColor?: string,
+  valueLineThrough?: boolean,
   customAddon?: React.Node,
   itemStatusIcon?: string,
   iconBackgroundColor?: string,
@@ -324,6 +327,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
 
     const isPending = isPendingTransaction(event);
+    const isFailed = isFailedTransaction(event) || isTimedOutTransaction(event);
 
     let data: EventData = {};
 
@@ -575,6 +579,10 @@ export class ActivityFeedItem extends React.Component<Props> {
         }
     }
     data.itemStatusIcon = isPending ? TX_PENDING_STATUS : '';
+    if (isFailed) {
+      if (data.valueColor) data.valueColor = 'secondaryText';
+      data.valueLineThrough = true;
+    }
     return data;
   };
 
