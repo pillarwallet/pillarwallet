@@ -22,14 +22,21 @@ import isEmpty from 'lodash.isempty';
 
 const allowedDeepLinkProtocols = [
   'pillarwallet:',
+  'wc:',
 ];
 
-export const validateDeepLink = (url: string): { action?: string, query?: Object } => {
+type ParsedDeepLink = {
+  action?: string,
+  query?: Object,
+  protocol?: string,
+}
+
+export const validateDeepLink = (url: string): ParsedDeepLink => {
   if (!url || typeof url !== 'string') return {};
   const params = urlTools.parse(url, true);
   if (isEmpty(params)) return {};
   const { protocol } = params;
   if (!allowedDeepLinkProtocols.includes(protocol)) return {};
   const { host: action, query = {} } = params;
-  return { action, query };
+  return { action, query, protocol };
 };

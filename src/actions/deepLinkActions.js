@@ -24,6 +24,9 @@ import isEmpty from 'lodash.isempty';
 // actions
 import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
 
+import { requestSessionAction } from 'actions/walletConnectActions';
+import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
+
 // constants
 import { CONFIRM_CLAIM } from 'constants/navigationConstants';
 
@@ -37,11 +40,22 @@ import { validateDeepLink } from 'utils/deepLink';
 import type { Dispatch } from 'reducers/rootReducer';
 
 
-export const executeDeepLinkAction = (deepLink: string) => {
+export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) => {
   return async (dispatch: Dispatch) => {
+    // make sure a deeplink is only handled once
+    if (onAppLaunch) {
+      dispatch(initialDeeplinkExecuted());
+    }
+
     const validatedDeepLink = validateDeepLink(deepLink);
     if (isEmpty(validatedDeepLink)) return;
-    const { action, query } = validatedDeepLink;
+    const { action, query, protocol } = validatedDeepLink;
+
+    if (protocol === 'wc:') {
+      dispatch(requestSessionAction(deepLink));
+      return;
+    }
+
     // NOTE: actions (hosts) are parsed in lowercase
     switch (action) {
       case 'referral':
@@ -60,6 +74,14 @@ export const executeDeepLinkAction = (deepLink: string) => {
         const authStatus = get(query, 'status');
         if (authStatus && shapeshiftTokenHash) {
           dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
+        }
+        break;
+      case 'wc':
+        let walletConnectUrl = get(query, 'url');
+        if (walletConnectUrl) {
+          const key = get(query, 'key');
+          if (key) walletConnectUrl += `&key=${key}`;
+          dispatch(requestSessionAction(walletConnectUrl));
         }
         break;
       default:
