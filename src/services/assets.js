@@ -98,7 +98,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
 
   if (!data) {
     try {
-      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+      data = await contract.interface.encodeFunctionData('transfer', [to, contractAmount]);
     } catch (e) {
       //
     }
@@ -371,7 +371,7 @@ export async function calculateGasEstimate(transaction: Object) {
        */
       const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
       const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
-      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+      data = await contract.interface.encodeFunctionData('transfer', [to, contractAmount]);
       to = contractAddress;
     }
   } catch (e) {
