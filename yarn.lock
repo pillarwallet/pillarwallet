@@ -1899,6 +1899,18 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha1-K1o6s/kYzKSKjHVMCBaOPwPrphs=
 
+"@pillarwallet/blockchain-explorer-sdk@1.0.274":
+  version "1.0.274"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/blockchain-explorer-sdk/-/@pillarwallet/blockchain-explorer-sdk-1.0.274.tgz#a9f10cf580b8daa42a1204a98df11f2d43e9cc79"
+  integrity sha1-qfEM9YC42qQqEgSpjfEfLUPpzHk=
+  dependencies:
+    ajv "6.5.1"
+    convict "4.2.0"
+    request "2.87.0"
+    request-promise "4.2.2"
+    webpack "4.10.2"
+    webpack-cli "3.0.1"
+
 "@pillarwallet/pillarwallet-nodejs-sdk@1.48.1851":
   version "1.48.1851"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.48.1851.tgz#70902027e7b98536afea921785483af63b6d86c1"
@@ -5022,18 +5034,6 @@ blob@0.0.5:
   version "0.0.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blob/-/blob-0.0.5.tgz#d680eeef25f8cd91ad533f5b01eed48e64caf683"
   integrity sha1-1oDu7yX4zZGtUz9bAe7UjmTK9oM=
-
-blockchain-explorer-sdk@^0.1.163:
-  version "0.1.205"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blockchain-explorer-sdk/-/blockchain-explorer-sdk-0.1.205.tgz#44b59de358a5380bd3a56986510efde7c688e9ae"
-  integrity sha1-RLWd41ilOAvTpWmGUQ7958aI6a4=
-  dependencies:
-    ajv "6.5.1"
-    convict "4.2.0"
-    request "2.87.0"
-    request-promise "4.2.2"
-    webpack "4.10.2"
-    webpack-cli "3.0.1"
 
 bluebird@^3.3.5, bluebird@^3.5.0, bluebird@^3.5.1, bluebird@^3.5.2, bluebird@^3.5.3, bluebird@^3.5.5:
   version "3.7.2"

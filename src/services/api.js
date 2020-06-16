@@ -19,7 +19,7 @@
 */
 import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
-import BCX from 'blockchain-explorer-sdk';
+import BCX from '@pillarwallet/blockchain-explorer-sdk';
 import { Platform } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import {
@@ -130,7 +130,7 @@ class SDKWrapper {
     oAuthTokensStored?: ?OAuthTokens,
     onOAuthTokensFailed?: ?Function,
   ) {
-    this.BCXSdk = new BCX({ apiUrl: BCX_URL });
+    this.BCXSdk = new BCX({ apiUrl: BCX_URL, network: NETWORK_PROVIDER });
     this.pillarWalletSdk = new PillarSdk({
       apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
       notificationsUrl: NOTIFICATIONS_URL,
@@ -545,16 +545,15 @@ class SDKWrapper {
       .then(({ txHistory: { txHistory } }) => txHistory)
       .then(history => {
         return history.map(({
-          fromAddress,
-          toAddress,
+          from,
+          to,
           txHash,
-          timestamp,
           ...rest
         }): Transaction => ({
-          to: toAddress,
-          from: fromAddress,
+          to,
+          from,
           hash: txHash,
-          createdAt: timestamp || 0,
+          createdAt: rest.tx.timestamp || 0,
           ...rest,
         }));
       })

@@ -208,7 +208,7 @@ function BCXSDK() {
   };
 }
 
-jest.setMock('blockchain-explorer-sdk', BCXSDK);
+jest.setMock('@pillarwallet/blockchain-explorer-sdk', BCXSDK);
 
 const mockExchangeRates = {
   ETH: {
