@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@connext/client": "^7.0.0-alpha.2",
+    "@connext/store": "^7.0.0-alpha.2",
     "@connext/types": "^7.0.0-alpha.2",
     "@connext/utils": "^7.0.0-alpha.2",
     "@matt-block/react-native-in-app-browser": "^3.2.0",

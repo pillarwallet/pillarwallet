@@ -66,6 +66,7 @@ import {
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
+import { connectChannel } from 'services/connext';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 
@@ -261,6 +262,8 @@ export const loginAction = (
           privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
         },
       });
+
+      connectChannel(wallet.privateKey);
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));

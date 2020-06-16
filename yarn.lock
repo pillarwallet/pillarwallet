@@ -1125,7 +1125,7 @@
     "@connext/utils" "7.0.0-alpha.2"
     ts-natsutil "1.0.6"
 
-"@connext/store@7.0.0-alpha.2":
+"@connext/store@7.0.0-alpha.2", "@connext/store@^7.0.0-alpha.2":
   version "7.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@connext/store/-/store-7.0.0-alpha.2.tgz#d856ed5599efaf8b12b68f1a98d1c791a898d10e"
   integrity sha512-3pDPIcLwcQJxtm6nt4Iznf/ZPbxywssDwUGaWcxtiaYP1AS1FkPloa5QqedRglpdts3qoTJKcwe+AwTRwfdusg==
