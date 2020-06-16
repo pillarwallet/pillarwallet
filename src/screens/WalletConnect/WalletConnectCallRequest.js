@@ -194,23 +194,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   };
 
   getGasPriceWei = () => {
-    const useRequestPrice = this.shouldUseGasInfoFromRequest();
-    if (!useRequestPrice) {
-      const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
-      return utils.parseUnits(avgGasPrice.toString(), 'gwei');
-    }
-    const gasPriceFromRequestHex = this.getGasPriceFromRequest();
-    return utils.bigNumberify(gasPriceFromRequestHex);
+    const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
+    return utils.parseUnits(avgGasPrice.toString(), 'gwei');
   };
 
-  getGasLimit = () => {
-    if (this.shouldCalculateGasLimit()) {
-      return this.getCalculatedGasLimit();
-    }
-    return this.getGasLimitFromRequest();
-  };
-
-  getCalculatedGasLimit = async () => {
+  getGasLimit = async () => {
     const { accounts } = this.props;
     const account = findFirstSmartAccount(accounts);
     if (!account) return null;
@@ -231,24 +219,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     return utils.bigNumberify(requestGasLimit).toNumber();
   };
 
-  shouldUseGasInfoFromRequest = () => {
-    const params = this.getRequestParams();
-    if (!params.length || !params[0]?.gasPrice) return false;
-    return true;
-  };
-
-  shouldCalculateGasLimit = () => {
-    const shouldUseGasInfoFromRequest = this.shouldUseGasInfoFromRequest();
-    if (!shouldUseGasInfoFromRequest) return true;
-    const params = this.getRequestParams();
-    return !params[0]?.gas && !params[0]?.gasLimit;
-  }
-
-  getGasPriceFromRequest = () => {
-    const params = this.getRequestParams();
-    return params[0]?.gasPrice;
-  };
-
   getSmartWalletTxFee = async (): Promise<TransactionFeeInfo> => {
     const { accountAssets, supportedAssets, useGasToken } = this.props;
     const defaultResponse = { fee: new BigNumber(0) };
@@ -258,6 +228,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       contractAddress,
       data,
     } = this.transactionDetails;
+
     const value = Number(amount || 0);
 
     const { symbol, decimals } =
@@ -269,12 +240,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       value,
       data,
     };
-
-    if (this.shouldUseGasInfoFromRequest()) {
-      const gasPrice = this.getGasPriceFromRequest();
-      const { gasLimit } = this.state;
-      return { fee: utils.bigNumberify(gasPrice).mul(gasLimit) };
-    }
 
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
