@@ -76,3 +76,7 @@ export type SyntheticAsset = Asset & {
   availableBalance: number,
   exchangeRate?: number,
 };
+
+export type DepositableAsset = Asset & {
+  earnInterestRate: number,
+};

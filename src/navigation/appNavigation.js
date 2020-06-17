@@ -106,7 +106,7 @@ import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/Re
 import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
-import DespositPoolScreen from 'screens/Lending/DespositPool';
+import ChooseAssetDeposit from 'screens/Lending/ChooseAssetDeposit';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -244,7 +244,7 @@ import {
   REFERRAL_INCOMING_REWARD,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   LENDING_FLOW,
-  LENDING_DEPOSIT_POOL,
+  LENDING_CHOOSE_DEPOSIT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -710,7 +710,7 @@ const recoveryPortalRecoveryFlow = createStackNavigator({
 recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const lendingFlow = createStackNavigator({
-  [LENDING_DEPOSIT_POOL]: DespositPoolScreen,
+  [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDeposit,
 }, StackNavigatorConfig);
 
 lendingFlow.navigationOptions = hideTabNavigatorOnChildView;

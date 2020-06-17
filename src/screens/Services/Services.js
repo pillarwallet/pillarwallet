@@ -32,7 +32,7 @@ import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // constants
-import { EXCHANGE, LENDING_DEPOSIT_POOL } from 'constants/navigationConstants';
+import { EXCHANGE, LENDING_CHOOSE_DEPOSIT } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // utils
@@ -105,7 +105,7 @@ class ServicesScreen extends React.Component<Props> {
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
-        action: () => navigation.navigate(LENDING_DEPOSIT_POOL),
+        action: () => navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       },
       {
         key: 'peerToPeerTrading',

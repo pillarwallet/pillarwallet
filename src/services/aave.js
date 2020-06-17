@@ -17,16 +17,25 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Contract } from 'ethers';
+import { Contract, utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
-import { AAVE_LENDING_POOL_CORE_CONTRACT_ADDRESS, NETWORK_PROVIDER } from 'react-native-dotenv';
+import BigNumber from 'bignumber.js';
+import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS, NETWORK_PROVIDER } from 'react-native-dotenv';
+import AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI from 'abi/aaveLendingPoolAddressesProvider.json';
 import AAVE_LENDING_POOL_CORE_CONTRACT_ABI from 'abi/aaveLendingPoolCore.json';
 import AAVE_LENDING_POOL_CONTRACT_ABI from 'abi/aaveLendingPool.json';
-import { getEthereumProvider } from 'utils/common';
+import {
+  formatUnits,
+  getEthereumProvider,
+  parseTokenAmount,
+} from 'utils/common';
 import {
   getAssetDataByAddress,
 } from 'utils/assets';
-import type { Asset } from 'models/Asset';
+import type {
+  Asset,
+  DepositableAsset,
+} from 'models/Asset';
 
 
 const getContract = (
@@ -42,46 +51,101 @@ const getContract = (
   }
 };
 
-const aaveService = ({
-  getLendingPoolCoreContract: (provider?) => getContract(
-    AAVE_LENDING_POOL_CORE_CONTRACT_ADDRESS,
-    AAVE_LENDING_POOL_CORE_CONTRACT_ABI,
-    provider,
-  ),
-  getLendingPoolContract: (address, provider?) => getContract(
-    address,
-    AAVE_LENDING_POOL_CONTRACT_ABI,
-    provider,
-  ),
-  getAvailablePool: async (accountAssets: Asset[], supportedAssets: Asset[]) => {
-    const lendingPoolCoreContract = aaveService.getLendingPoolCoreContract()
+class AaveService {
+  lendingPoolCoreAddress: ?string;
+  lendingPoolAddress: ?string;
+  lendingPoolAddressesProvider: ?Object;
+
+  constructor() {
+    this.lendingPoolAddressesProvider = getContract(
+      AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS,
+      AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
+    );
+  }
+
+  async getLendingPoolCoreContract(provider?) {
+    if (!this.lendingPoolAddressesProvider) return null;
+
+    if (!this.lendingPoolCoreAddress) {
+      this.lendingPoolCoreAddress = await this.lendingPoolAddressesProvider.getLendingPoolCore();
+    }
+
+    return getContract(
+      this.lendingPoolCoreAddress,
+      AAVE_LENDING_POOL_CORE_CONTRACT_ABI,
+      provider,
+    );
+  }
+
+  async getLendingPoolContract(provider?) {
+    if (!this.lendingPoolAddressesProvider) return null;
+
+    if (!this.lendingPoolAddress) {
+      this.lendingPoolAddress = await this.lendingPoolAddressesProvider.getLendingPool();
+    }
+
+    return getContract(
+      this.lendingPoolAddress,
+      AAVE_LENDING_POOL_CONTRACT_ABI,
+      provider,
+    );
+  }
+
+  async getAssetsToDeposit(accountAssets: Asset[], supportedAssets: Asset[]): DepositableAsset[] {
+    const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
     if (!lendingPoolCoreContract) return [];
 
-    const lendingPoolContractAddress = await lendingPoolCoreContract.lendingPoolAddress();
-    const lendingPoolContract = aaveService.getLendingPoolContract(lendingPoolContractAddress);
+    const lendingPoolContract = await this.getLendingPoolContract();
     if (!lendingPoolContract) return [];
 
     const poolAddresses = await lendingPoolCoreContract.getReserves().catch(() => []);
-    const poolWithData = poolAddresses.reduce(async (pool, reserveAddress) => {
-      console.log('supportedAssets: ', supportedAssets)
-      const assetData = getAssetDataByAddress(accountAssets, supportedAssets, reserveAddress);
-      if (!isEmpty(assetData)) {
-        const reserveData = await lendingPoolContract.getReserveData(reserveAddress).catch((e) => {
-          console.log('err: ', e);
-          return {};
-        });
-        console.log('reserveData: ', reserveData)
-        const mappedReserveData = {
-          address: reserveAddress,
-        };
-        return [...pool, mappedReserveData];
-      }
-      return pool;
-    }, []);
-    await Promise.all(poolWithData);
-    console.log('poolWithData: ', poolWithData)
-    return poolWithData;
-  },
-});
 
-export default aaveService;
+    return Promise.all(poolAddresses
+      .reduce((pool, reserveAddress) => {
+        const assetData = getAssetDataByAddress(accountAssets, supportedAssets, reserveAddress);
+        if (!isEmpty(assetData)) pool.push(assetData);
+        return pool;
+      }, [])
+      .map(async (reserveAsset) => {
+        const reserveData = await lendingPoolContract.getReserveData(reserveAsset.address).catch(() => ([]));
+        // RAY has 27 decimals
+        const earnInterestRate = Number(formatUnits(reserveData[5].toString(), 27));
+        return {
+          ...reserveAsset,
+          earnInterestRate,
+        };
+      }),
+    );
+  }
+
+  async getDepositedAssets(accountAssets: Asset[], supportedAssets: Asset[]): DepositableAsset[] {
+    const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
+    if (!lendingPoolCoreContract) return [];
+
+    const lendingPoolContract = await this.getLendingPoolContract();
+    if (!lendingPoolContract) return [];
+
+    const poolAddresses = await lendingPoolCoreContract.getReserves().catch(() => []);
+
+    return Promise.all(poolAddresses
+      .reduce((pool, reserveAddress) => {
+        const assetData = getAssetDataByAddress(accountAssets, supportedAssets, reserveAddress);
+        if (!isEmpty(assetData)) pool.push(assetData);
+        return pool;
+      }, [])
+      .map(async (reserveAsset) => {
+        const reserveData = await lendingPoolContract.getReserveData(reserveAsset.address).catch(() => ([]));
+        // RAY has 27 decimals
+        const earnInterestRate = Number(formatUnits(reserveData[5].toString(), 27));
+        return {
+          ...reserveAsset,
+          earnInterestRate,
+        };
+      }),
+    );
+  }
+}
+
+const aaveInstance = new AaveService();
+
+export default aaveInstance;
