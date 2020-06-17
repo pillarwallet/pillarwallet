@@ -61,6 +61,7 @@ export const lightThemeColors = {
   labelTertiary: '#818eb3',
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
+  poolTogetherPink: '#e51fff',
 };
 
 export const darkThemeColors = {
@@ -103,6 +104,7 @@ export const darkThemeColors = {
   labelTertiary: '#818eb3',
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
+  poolTogetherPink: '#e51fff',
 };
 
 export const themedColors = {

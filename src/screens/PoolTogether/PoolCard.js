@@ -19,16 +19,20 @@
 */
 
 import * as React from 'react';
-import { Text } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-// constants
-import { DAI, USDC } from 'constants/assetsConstants';
+
+import { DAI } from 'constants/assetsConstants';
 
 import ShadowedCard from 'components/ShadowedCard';
+import { BaseText } from 'components/Typography';
 import Progress from 'components/Progress';
+
 import type { Theme } from 'models/Theme';
-import { getThemeColors } from 'utils/themes';
-import {sym} from "enzyme/src/Utils";
+
+import { getThemeColors, themedColors } from 'utils/themes';
+import { countDownDHMS } from 'utils/common';
+import { fontStyles } from 'utils/variables';
+import { Image } from 'react-native';
 
 const CardRow = styled.View`
   flex-direction: row;
@@ -36,6 +40,10 @@ const CardRow = styled.View`
   align-items: center;
   justify-content: center;
   padding: 8px 0;
+  ${({ withBorder, theme }) => withBorder
+    ? `border-bottom-width: 1px;
+     border-bottom-color: ${theme.colors.border};`
+    : ''}
 `;
 
 const CardColumn = styled.View`
@@ -43,6 +51,16 @@ const CardColumn = styled.View`
   align-items: center;
   justify-content: center;
   padding: 8px 0;
+  ${({ withBorder, theme }) => withBorder
+    ? `border-right-width: 1px;
+       border-right-color: ${theme.colors.border};`
+    : ''}
+`;
+
+const CardText = styled(BaseText)`
+  ${({ label }) => label ? fontStyles.regular : fontStyles.large};
+  letter-spacing: 0.18px;
+  color: ${({ label }) => label ? themedColors.secondaryText : themedColors.text};
 `;
 
 type Props = {
@@ -54,16 +72,23 @@ type Props = {
   theme: Theme,
 };
 
+const daiIcon = require('assets/images/dai_color.png');
+const usdcIcon = require('assets/images/usdc_color.png');
+
 const PoolCard = (props: Props) => {
   const {
     currentPrize,
     prizeEstimate,
-    remainingTimeMs,
+    remainingTimeMs = 0,
     activeTab: symbol,
     theme,
   } = props;
 
   const colors = getThemeColors(theme);
+
+  const { days, hours, minutes } = countDownDHMS(remainingTimeMs);
+
+  const iconSrc = symbol === DAI ? daiIcon : usdcIcon;
 
   return (
     <ShadowedCard
@@ -75,23 +100,28 @@ const PoolCard = (props: Props) => {
       contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40 }}
     >
       <CardRow>
-        <CardColumn>
+        <CardColumn withBorder>
           <CardRow>
-            <Text>Prize est.</Text>
+            <CardText label>Prize est.</CardText>
           </CardRow>
           <CardRow>
-            <Text>${prizeEstimate} {symbol}</Text>
+            <CardText>${prizeEstimate}</CardText>
+            <Image
+              source={iconSrc}
+              style={{
+                margin: 5,
+                height: 24,
+                width: 24,
+              }}
+            />
           </CardRow>
         </CardColumn>
         <CardColumn>
-          <Text > | </Text>
-        </CardColumn>
-        <CardColumn>
           <CardRow>
-            <Text>Current prize</Text>
+            <CardText label>Current prize</CardText>
           </CardRow>
           <CardRow>
-            <Text>${currentPrize} {symbol}</Text>
+            <CardText style={{ color: colors.poolTogetherPink }}>${currentPrize}</CardText>
           </CardRow>
         </CardColumn>
       </CardRow>
@@ -103,7 +133,7 @@ const PoolCard = (props: Props) => {
         />
       </CardRow>
       <CardRow style={{ paddingBottom: 16 }}>
-        <Text>Ends in {remainingTimeMs}</Text>
+        <CardText label>Ends in {days} days, {hours} hours, {minutes} minutes</CardText>
       </CardRow>
     </ShadowedCard>
   );

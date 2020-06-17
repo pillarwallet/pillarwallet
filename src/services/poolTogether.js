@@ -35,6 +35,7 @@ const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK
 export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
   const contractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
   const abi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
+  const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
   const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
   const contract = new Contract(contractAddress, abi, provider);
   const accountedBalance = await contract.accountedBalance();
@@ -54,13 +55,13 @@ export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
   if (balance && accountedBalance && currentDraw && supplyRatePerBlock) {
     const { feeFraction, openedBlock } = currentDraw;
 
-    const oneWeekMs = 604800000; // one week in ms
+    const prizeIntervalMs = symbol === DAI ? 604800000 : 86400000; // DAI weekly, USDC daily
     const { timestamp: blockTimestamp } = await provider.getBlock(openedBlock.toNumber());
-    drawDate = (blockTimestamp.toString() * 1000) + oneWeekMs; // adds 14 days to a timestamp in miliseconds
+    drawDate = (blockTimestamp.toString() * 1000) + prizeIntervalMs; // adds 14 days to a timestamp in miliseconds
 
     remainingTimeMs = drawDate - balanceTakenAt.getTime();
     remainingTimeMs = remainingTimeMs < 0 ? 0 : remainingTimeMs;
-    const remainingTimeS = remainingTimeMs > 0 ? remainingTimeMs / 1000 : oneWeekMs / 1000;
+    const remainingTimeS = remainingTimeMs > 0 ? remainingTimeMs / 1000 : prizeIntervalMs / 1000;
     const remainingBlocks = remainingTimeS / 15.0; // about 15 second block periods
     const blockFixedPoint18 = utils.parseEther(remainingBlocks.toString());
 
@@ -83,8 +84,8 @@ export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
   }
 
   return Promise.resolve({
-    currentPrize: formatMoney(utils.formatUnits(currentPrize.toString(), 18)),
-    prizeEstimate: formatMoney(utils.formatUnits(prizeEstimate.toString(), 18)),
+    currentPrize: formatMoney(utils.formatUnits(currentPrize.toString(), unitType)),
+    prizeEstimate: formatMoney(utils.formatUnits(prizeEstimate.toString(), unitType)),
     drawDate,
     remainingTimeMs,
   });
