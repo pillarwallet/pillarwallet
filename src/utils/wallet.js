@@ -39,7 +39,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
-  return mnemonicPhrase || utils.HDNode.entropyToMnemonic(utils.randomBytes(16));
+  return mnemonicPhrase || utils.entropyToMnemonic(utils.randomBytes(16));
 }
 
 export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
