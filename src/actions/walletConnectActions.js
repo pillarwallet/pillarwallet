@@ -57,7 +57,13 @@ import Storage from 'services/storage';
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
-import { getAccountAddress, findFirstSmartAccount, findKeyBasedAccount } from 'utils/accounts';
+import {
+  getAccountAddress,
+  findFirstSmartAccount,
+  findKeyBasedAccount,
+  getActiveAccount,
+  checkIfSmartWalletAccount,
+} from 'utils/accounts';
 import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
 
 // actions
@@ -430,9 +436,12 @@ export const approveSessionAction = (peerId: string) => {
       accounts: { data: accounts },
     } = getState();
     try {
-      const smartAcc = findFirstSmartAccount(accounts);
-      if (!smartAcc) return;
-      const smartAccAddress = getAccountAddress(smartAcc);
+      let account = getActiveAccount(accounts);
+      if (!account || !checkIfSmartWalletAccount(account)) {
+        account = findFirstSmartAccount(accounts);
+      }
+      if (!account) return;
+      const smartAccAddress = getAccountAddress(account);
       await connector.approveSession({
         accounts: [smartAccAddress],
         chainId: NETWORK_PROVIDER === 'ropsten' ? 3 : 1,
