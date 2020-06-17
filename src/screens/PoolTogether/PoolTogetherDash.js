@@ -50,7 +50,10 @@ import type { Theme } from 'models/Theme';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
+
+// local screen components
 import PoolCard from './PoolCard';
+import PoolTickets from './PoolTickets';
 
 const ContentWrapper = styled.View`
   padding-top: ${Platform.select({
@@ -179,6 +182,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
               remainingTimeMs={remainingTimeMs}
               activeTab={activeTab}
             />
+            <PoolTickets />
           </ContentWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>
