@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 
 import { DAI } from 'constants/assetsConstants';
@@ -32,7 +33,6 @@ import type { Theme } from 'models/Theme';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { countDownDHMS } from 'utils/common';
 import { fontStyles } from 'utils/variables';
-import { Image } from 'react-native';
 
 const CardRow = styled.View`
   flex-direction: row;
@@ -97,10 +97,10 @@ const PoolCard = (props: Props) => {
           marginBottom: 10,
           paddingHorizontal: 16,
         }}
-      contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40 }}
+      contentWrapperStyle={{ paddingLeft: 20, paddingRight: 20 }}
     >
-      <CardRow>
-        <CardColumn withBorder>
+      <CardRow style={{ width: '100%' }}>
+        <CardColumn style={{ width: '50%' }} withBorder>
           <CardRow>
             <CardText label>Prize est.</CardText>
           </CardRow>
@@ -116,7 +116,7 @@ const PoolCard = (props: Props) => {
             />
           </CardRow>
         </CardColumn>
-        <CardColumn>
+        <CardColumn style={{ width: '50%' }}>
           <CardRow>
             <CardText label>Current prize</CardText>
           </CardRow>
