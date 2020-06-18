@@ -49,7 +49,7 @@ const registeredMockUser: Object = {
   walletId: 'walletIdUnique',
 };
 
-Object.defineProperty(mockWallet, 'RNencrypt', {
+Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
