@@ -43,12 +43,16 @@ import {
   UPDATE_PIN_ATTEMPTS,
   UPDATE_WALLET_STATE,
   IMPORTING,
+  ENCRYPTING,
+  GENERATE_ENCRYPTED_WALLET,
 } from 'constants/walletConstants';
 import { PIN_CODE_CONFIRMATION, NEW_PROFILE, RECOVERY_SETTINGS } from 'constants/navigationConstants';
 
 // utils
-import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
+import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
 import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
+import { delay } from 'utils/common';
+import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import { navigate } from 'services/navigation';
@@ -56,6 +60,8 @@ import { navigate } from 'services/navigation';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+import type { KeyChainData } from 'utils/keychain';
+import type { BackupStatus } from 'reducers/walletReducer';
 
 // actions
 import { logEventAction } from './analyticsActions';
@@ -63,6 +69,7 @@ import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
 import { registerWalletAction } from './onboardingActions';
 import { addWalletBackupEventAction } from './userEventsActions';
+import { changeUseBiometricsAction } from './appSettingsActions';
 
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
@@ -149,7 +156,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
 };
 
 export const navigateToNewWalletPageAction = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch({ type: RESET_WALLET_IMPORT });
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
@@ -169,7 +176,7 @@ const NUM_WORDS_TO_CHECK = 3;
  * @param {String} mnemonicPhrase
  */
 export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     mnemonicPhrase = generateMnemonicPhrase(mnemonicPhrase);
     const mnemonicList = mnemonicPhrase.split(' ');
     const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
@@ -187,7 +194,7 @@ export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
 };
 
 export const setPinForNewWalletAction = (pin: string) => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch({
       type: NEW_WALLET_SET_PIN,
       payload: pin,
@@ -197,9 +204,8 @@ export const setPinForNewWalletAction = (pin: string) => {
 };
 
 export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { appSettings: { data: { themeType } } } = getState();
-
     dispatch({
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
@@ -210,7 +216,7 @@ export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?:
 };
 
 export const backupWalletAction = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(saveDbAction('wallet', {
       wallet: {
         backupStatus: { isBackedUp: true },
@@ -224,11 +230,7 @@ export const backupWalletAction = () => {
   };
 };
 
-export const removePrivateKeyFromMemoryAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({ type: REMOVE_PRIVATE_KEY });
-  };
-};
+export const removePrivateKeyFromMemoryAction = () => ({ type: REMOVE_PRIVATE_KEY });
 
 export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -248,6 +250,50 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
         lastPinAttempt: currentTimeStamp,
       },
     }));
+  };
+};
+
+export const encryptAndSaveWalletAction = (
+  pin: string,
+  wallet: ethers.Wallet,
+  backupStatus: BackupStatus,
+  enableBiometrics: boolean = false,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { wallet: { walletState } } = getState();
+    const { isImported, isBackedUp, isRecoveryPending } = backupStatus;
+
+    // might be already in ENCRYPTING state, i.e. on pin change
+    if (walletState !== ENCRYPTING) {
+      dispatch({ type: UPDATE_WALLET_STATE, payload: ENCRYPTING });
+    }
+
+    await delay(50);
+    const saltedPin = await getSaltedPin(pin, dispatch);
+    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
+      .then(JSON.parse)
+      .catch(() => ({}));
+
+    dispatch(saveDbAction('wallet', {
+      wallet: {
+        ...encryptedWallet,
+        backupStatus: { isImported, isBackedUp, isRecoveryPending },
+      },
+    }));
+
+    dispatch({
+      type: GENERATE_ENCRYPTED_WALLET,
+      payload: { address: wallet.address },
+    });
+
+    // save data to keychain
+    const { mnemonic, privateKey } = wallet;
+    const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey, pin };
+    if (enableBiometrics) {
+      await dispatch(changeUseBiometricsAction(true, keychainData, true));
+    } else {
+      await setKeychainDataObject(keychainData);
+    }
   };
 };
 

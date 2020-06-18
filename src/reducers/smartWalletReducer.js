@@ -28,12 +28,17 @@ import {
   SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
+  ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
 } from 'constants/smartWalletConstants';
-import type { SmartWalletAccount, SmartWalletDeploymentError } from 'models/SmartWalletAccount';
+import type {
+  SmartWalletAccount,
+  ConnectedSmartWalletAccount,
+  SmartWalletDeploymentError,
+} from 'models/SmartWalletAccount';
 
 export type SmartWalletReducerState = {
   sdkInitialized: boolean,
-  connectedAccount: Object, // TODO: right model will be added with work in "feature/web-recovery-portal"
+  connectedAccount: $Shape<ConnectedSmartWalletAccount>,
   accounts: SmartWalletAccount[],
   upgrade: {
     status: ?string,
@@ -132,6 +137,17 @@ export default function smartWalletReducer(
         upgrade: {
           ...state.upgrade,
           deploymentStarted: false,
+        },
+      };
+    case ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE:
+      return {
+        ...state,
+        connectedAccount: {
+          ...state.connectedAccount,
+          devices: [
+            ...state.connectedAccount.devices,
+            action.payload,
+          ],
         },
       };
     default:

@@ -62,6 +62,8 @@ import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
 import balancesHistoryReducer from './balancesHistoryReducer';
+import connectedDevicesReducer from './connectedDevicesReducer';
+import recoveryPortalReducer from './recoveryPortalReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -103,6 +105,8 @@ import type { InsightsReducerAction, InsightsReducerState } from './insightsRedu
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
 import type { BalancesHistoryReducerAction, BalancesHistoryReducerState } from './balancesHistoryReducer';
+import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
+import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -141,6 +145,8 @@ export type RootReducerState = {|
   insights: InsightsReducerState,
   phoneContacts: PhoneContactsReducerState,
   balancesHistory: BalancesHistoryReducerState,
+  connectedDevices: ConnectedDevicesReducerState,
+  recoveryPortal: RecoveryPortalReducerState,
 |};
 
 type RootReducerAction =
@@ -168,7 +174,9 @@ type RootReducerAction =
   | InsightsReducerAction
   | ReferralsReducerAction
   | PhoneContactsReducerAction
-  | BalancesHistoryReducerAction;
+  | BalancesHistoryReducerAction
+  | ConnectedDevicesReducerAction
+  | RecoveryPortalReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -217,6 +225,8 @@ const appReducer = combineReducers({
   referrals: referralsReducer,
   phoneContacts: phoneContactsReducer,
   balancesHistory: balancesHistoryReducer,
+  connectedDevices: connectedDevicesReducer,
+  recoveryPortal: recoveryPortalReducer,
 });
 
 export const initialState = appReducer(undefined, {});

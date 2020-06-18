@@ -73,7 +73,12 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
-import { SET_SMART_WALLET_ACCOUNT_ENS, SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/smartWalletConstants';
+import {
+  SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+  SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+} from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
@@ -129,10 +134,12 @@ export type EventData = {
   rejectInvitation?: Function,
   acceptInvitation?: Function,
   avatarUrl?: string,
+  username?: string,
   itemImageUrl?: string,
   iconName?: ?string,
   iconColor?: string,
   itemValue?: string,
+  fullItemValue?: string,
   valueColor?: string,
   customAddon?: React.Node,
   itemStatusIcon?: string,
@@ -201,6 +208,10 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     return addressesEqual(to, activeAccountAddress) || bitcoinAddresses.some(e => e.address === to);
   };
+
+  isZeroValue(value: string): boolean {
+    return value === '0' || value === '0.0';
+  }
 
   getRelevantAddress = (event: Object): string => {
     const isReceived = this.isReceived(event);
@@ -304,10 +315,11 @@ export class ActivityFeedItem extends React.Component<Props> {
     const assetSymbol = event ? event.asset : null;
     const decimalPlaces = getDecimalPlaces(assetSymbol);
     const formattedValue = formatAmount(value, decimalPlaces);
+    const formattedFullValue = formatAmount(value);
     const directionIcon = isReceived ? 'received' : 'sent';
     let directionSymbol = isReceived ? '+' : '-';
 
-    if (value === '0.0') {
+    if (this.isZeroValue(value)) {
       directionSymbol = '';
     }
 
@@ -315,7 +327,12 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     let data: EventData = {};
 
-    const { smartWalletIcon, PPNIcon, keyWalletIcon } = images(theme);
+    const {
+      smartWalletIcon,
+      PPNIcon,
+      roundedPhoneIcon,
+      keyWalletIcon,
+    } = images(theme);
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -331,6 +348,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
+            fullItemValue: `- ${formattedFullValue} ${event.asset}`,
             itemValue: `- ${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
@@ -339,6 +357,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: 'Top Up',
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
+            fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
@@ -347,6 +366,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.SMART_WALLET,
             subtext: 'To Pillar Network',
             itemImageSource: smartWalletIcon,
+            fullItemValue: `- ${formattedFullValue} ${event.asset}`,
             itemValue: `- ${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
@@ -355,6 +375,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: 'Top up',
             itemImageSource: PPNIcon,
+            fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
             itemValue: `+ ${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
@@ -369,6 +390,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
+          fullItemValue: `- ${formattedFullValue} ${event.asset}`,
           itemValue: `- ${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
@@ -415,6 +437,22 @@ export class ActivityFeedItem extends React.Component<Props> {
           subtext: 'Enable transaction fees with PLR',
         };
         break;
+      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+        data = {
+          label: NAMES.SMART_WALLET,
+          itemImageSource: roundedPhoneIcon,
+          subtext: 'New account device added',
+          actionLabel: 'Added',
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+        data = {
+          label: NAMES.SMART_WALLET,
+          itemImageSource: roundedPhoneIcon,
+          subtext: 'Account device removed',
+          actionLabel: 'Removed',
+        };
+        break;
       default:
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]
@@ -434,6 +472,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               subtext: isAssetView ? `to ${smartWallet}` : 'from Pillar Network',
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
+              fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
               itemValue: `+ ${formattedValue} ${event.asset}`,
               valueColor: 'positive',
             };
@@ -442,6 +481,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               label: usernameOrAddress,
               avatarUrl,
               isReceived,
+              username: contact?.username,
             };
 
             if (event.extra) {
@@ -525,8 +565,10 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: itemLabel,
             subtext,
             avatarUrl,
+            username: contact?.username,
+            fullItemValue: `${directionSymbol} ${formattedFullValue} ${event.asset}`,
             itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
-            valueColor: isReceived && formattedValue !== '0' ? 'positive' : 'text',
+            valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
           };
@@ -602,6 +644,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       label: username,
       actionLabel,
       avatarUrl: profileImage,
+      username,
     };
 
     if (type === TYPE_SENT) {

@@ -96,6 +96,14 @@ import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
 import WalletActivatedScreen from 'screens/WalletActivated';
+import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
+import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
+import RecoveryPortalSetupConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalSetupConnectDevice';
+import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
+import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
+import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
+import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryPending';
+import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 
@@ -220,6 +228,17 @@ import {
   EXPLORE_APPS,
   WALLET_ACTIVATED,
   REFERRAL_SENT,
+  RECOVERY_PORTAL_SETUP_FLOW,
+  RECOVERY_PORTAL_RECOVERY_FLOW,
+  RECOVERY_PORTAL_SETUP_INTRO,
+  RECOVERY_PORTAL_SETUP_SIGN_UP,
+  RECOVERY_PORTAL_SETUP_CONNECT_DEVICE,
+  RECOVERY_PORTAL_SETUP_COMPLETE,
+  MANAGE_CONNECTED_DEVICES,
+  CONNECTED_DEVICES_FLOW,
+  REMOVE_SMART_WALLET_CONNECTED_DEVICE,
+  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
+  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
@@ -665,6 +684,28 @@ const menuFlow = createStackNavigator({
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
+const recoveryPortalSetupFlow = createStackNavigator({
+  [RECOVERY_PORTAL_SETUP_SIGN_UP]: RecoveryPortalSetupSignUpScreen,
+  [RECOVERY_PORTAL_SETUP_CONNECT_DEVICE]: RecoveryPortalSetupConnectDeviceScreen,
+  [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
+}, StackNavigatorConfig);
+
+recoveryPortalSetupFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const connectedDevicesFlow = createStackNavigator({
+  [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
+  [REMOVE_SMART_WALLET_CONNECTED_DEVICE]: RemoveSmartWalletConnectedDeviceScreen,
+}, StackNavigatorConfig);
+
+connectedDevicesFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const recoveryPortalRecoveryFlow = createStackNavigator({
+  [RECOVERY_PORTAL_WALLET_RECOVERY_STARTED]: RecoveryPortalWalletRecoveryStartedSceeen,
+  [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
+}, StackNavigatorConfig);
+
+recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -689,6 +730,10 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
+    [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
+    [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
+    [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
+    [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
@@ -756,7 +801,18 @@ class AppFlow extends React.Component<Props, State> {
       getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
+      backupStatus,
     } = this.props;
+
+    /**
+     * If wallet recovery is pending do not initiate any listeners
+     * as we block user from accessing wallet, only pending screen is accessed.
+     *
+     * In future we can maybe unlock certain listeners/actions
+     * depending on chosen product/business logic.
+     */
+    if (backupStatus.isRecoveryPending) return;
+
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchAllAccountsBalances();
@@ -819,7 +875,12 @@ class AppFlow extends React.Component<Props, State> {
       stopListeningIntercomNotifications,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
+      backupStatus,
     } = this.props;
+
+    // case per what's defined on componentWillMount
+    if (backupStatus.isRecoveryPending) return;
+
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     stopListeningChatWebSocket();
@@ -872,9 +933,11 @@ class AppFlow extends React.Component<Props, State> {
       backupStatus,
       theme,
     } = this.props;
-    if (!userState) return null;
-    if (userState === PENDING) {
-      return <RetryApiRegistration />;
+
+    // wallet might be created, but recovery is pending and no user assigned yet
+    if (!backupStatus.isRecoveryPending) {
+      if (!userState) return null;
+      if (userState === PENDING) return <RetryApiRegistration />;
     }
 
     const { isImported, isBackedUp } = backupStatus;

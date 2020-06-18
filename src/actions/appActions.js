@@ -73,10 +73,14 @@ import {
 } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
+import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
 
-import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from 'actions/bitcoinActions';
 
+// utils
 import { getWalletFromStorage } from 'utils/wallet';
+
+// actions
+import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from './bitcoinActions';
 
 
 const storage = Storage.getInstance('db');
@@ -186,6 +190,9 @@ export const initAppAndRedirectAction = () => {
       const { userEvents = [] } = get(storageData, 'userEvents', {});
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
+      const { removingConnectedDeviceAddress = null } = get(storageData, 'connectedDevices', {});
+      dispatch({ type: SET_REMOVING_CONNECTED_DEVICE_ADDRESS, payload: removingConnectedDeviceAddress });
+
       const { insights = {} } = get(storageData, 'insights', {});
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
 
@@ -230,9 +237,9 @@ export const initAppAndRedirectAction = () => {
   };
 };
 
-export const setupSentryAction = (user: Object, wallet: Object) => {
+export const setupSentryAction = (user: ?Object, wallet: Object) => {
   return async () => {
-    const { id, username, walletId = '' } = user;
+    const { id, username, walletId = '' } = user || {};
     const { address } = wallet;
     Sentry.setUser({
       id,

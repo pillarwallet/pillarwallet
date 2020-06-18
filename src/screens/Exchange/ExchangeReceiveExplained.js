@@ -28,7 +28,7 @@ import Button from 'components/Button';
 // constants
 import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
 
-// util
+// utils
 import { spacing } from 'utils/variables';
 
 type Props = {
