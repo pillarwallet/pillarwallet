@@ -264,14 +264,6 @@ class SmartWallet {
       });
   }
 
-  getAccountRealBalance() {
-    return get(this.sdk, 'state.account.balance.real', new BigNumber(0));
-  }
-
-  getAccountVirtualBalance() {
-    return get(this.sdk, 'state.account.balance.virtual', new BigNumber(0));
-  }
-
   getAccountStakedAmount(tokenAddress: ?string): BigNumber {
     if (!tokenAddress) return new BigNumber(0);
     return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
@@ -366,7 +358,7 @@ class SmartWallet {
   }
 
   withdrawAccountPayment(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
+    return this.sdk.accountTransaction.submitAccountProxyTransaction(estimated, payForGasWithToken);
   }
 
   searchAccount(address: string) {
