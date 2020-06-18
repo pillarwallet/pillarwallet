@@ -24,8 +24,8 @@ export type AppItem = {
   logo: number,
   text: string,
   url: string,
-  disabled?: boolean
-}
+  disabled?: boolean,
+};
 
 const zerionLogo = require('assets/images/apps/zerion.png');
 const poolTogetherLogo = require('assets/images/apps/pool_together.png');
