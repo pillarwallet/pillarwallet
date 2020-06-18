@@ -31,19 +31,18 @@ import { BaseText } from 'components/Typography';
 
 import type { Assets, Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { getBalance, getRate, sortAssets } from 'utils/assets';
+import { getBalance, getRate, sortAssets, calculateMaxAmount } from 'utils/assets';
 import { themedColors } from 'utils/themes';
+import { SelectorInputTemplate, selectorStructure } from 'utils/formHelpers';
 import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-
-import { selectorStructure } from 'components/TextInput/InputStructures';
-import { selectorInputTemplate } from 'components/TextInput/InputTemplates';
 
 
 type FormSelector = {
@@ -59,6 +58,7 @@ type Props = {
   preselectedAsset?: string,
   rates: Rates,
   getFormValue: (?FormSelector) => void,
+  txFeeInfo: ?TransactionFeeInfo,
 };
 
 type FormValue = {
@@ -88,9 +88,9 @@ const ErrorMessage = styled(BaseText)`
 
 const { Form } = t.form;
 
-const getFormStructure = (balances: Balances) => {
+const getFormStructure = (balances: Balances, txFeeInfo: ?TransactionFeeInfo) => {
   return t.struct({
-    formSelector: selectorStructure(balances),
+    formSelector: selectorStructure(balances, false, txFeeInfo),
   });
 };
 
@@ -110,9 +110,10 @@ class ValueSelectorCard extends React.Component<Props, State> {
         fields: {
           formSelector: {
             keyboardType: 'decimal-pad',
-            template: selectorInputTemplate,
+            template: SelectorInputTemplate,
             config: {
               hasInput: true,
+              noErrorText: true,
               options: [],
               placeholderSelector: 'select',
               placeholderInput: '0',
@@ -200,7 +201,11 @@ class ValueSelectorCard extends React.Component<Props, State> {
   };
 
   renderCustomLabel = (symbol) => {
-    const { selectedAssetBalance, amountValueInFiat, selectedAssetSymbol } = this.getMaxBalanceOfSelectedAsset(symbol);
+    const {
+      selectedAssetBalance,
+      amountValueInFiat,
+      selectedAssetSymbol,
+    } = this.getMaxBalanceOfSelectedAsset(false, symbol);
     if (!selectedAssetBalance) return null;
 
     return (
@@ -249,14 +254,21 @@ class ValueSelectorCard extends React.Component<Props, State> {
     getFormValue(formValue?.formSelector);
   };
 
-  getMaxBalanceOfSelectedAsset = (symbol?: string) => {
-    const { balances, baseFiatCurrency, rates } = this.props;
+  getMaxBalanceOfSelectedAsset = (forSending: boolean, symbol?: string) => {
+    const {
+      balances,
+      baseFiatCurrency,
+      rates,
+      txFeeInfo,
+    } = this.props;
     const { value } = this.state;
     const selectedAssetSymbol = symbol || get(value, 'formSelector.selector.symbol');
     if (!selectedAssetSymbol) return {};
 
     const rawSelectedAssetBalance = getBalance(balances, selectedAssetSymbol);
-    const selectedAssetBalance = formatAmount(rawSelectedAssetBalance);
+    const selectedAssetBalance = forSending
+      ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
+      : formatAmount(rawSelectedAssetBalance);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const totalInFiat = parseFloat(rawSelectedAssetBalance) * getRate(rates, selectedAssetSymbol, fiatCurrency);
@@ -268,13 +280,10 @@ class ValueSelectorCard extends React.Component<Props, State> {
 
   handleUseMax = () => {
     const { value, formOptions } = this.state;
-
-    // todo: take into consideration transaction fee?
-
-    const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset();
+    const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
     const newValue = { ...value };
-    newValue.formSelector.input = selectedAssetBalance;
+    newValue.formSelector.input = selectedAssetBalance.toString();
 
     const newOptions = t.update(formOptions, {
       fields: {
@@ -291,8 +300,8 @@ class ValueSelectorCard extends React.Component<Props, State> {
 
   render() {
     const { value, formOptions, errorMessage } = this.state;
-    const { balances } = this.props;
-    const formStructure = getFormStructure(balances);
+    const { balances, txFeeInfo } = this.props;
+    const formStructure = getFormStructure(balances, txFeeInfo);
 
     return (
       <Wrapper>
