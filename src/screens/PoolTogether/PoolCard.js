@@ -88,6 +88,16 @@ const PoolCard = (props: Props) => {
 
   const { days, hours, minutes } = countDownDHMS(remainingTimeMs);
 
+  let remainingTime;
+  if (days === 0 && hours === 0 && minutes === 0) {
+    remainingTime = 'Ending soon';
+  } else {
+    const dayW = days === 1 ? 'day' : 'days';
+    const hourW = hours === 1 ? 'hour' : 'hours';
+    const minW = minutes === 1 ? 'minute' : 'minutes';
+    remainingTime = `Ends in ${days} ${dayW}, ${hours} ${hourW}, ${minutes} ${minW}`;
+  }
+
   const iconSrc = symbol === DAI ? daiIcon : usdcIcon;
 
   return (
@@ -133,7 +143,7 @@ const PoolCard = (props: Props) => {
         />
       </CardRow>
       <CardRow style={{ paddingBottom: 16 }}>
-        <CardText label>Ends in {days} days, {hours} hours, {minutes} minutes</CardText>
+        <CardText label>{remainingTime}</CardText>
       </CardRow>
     </ShadowedCard>
   );
