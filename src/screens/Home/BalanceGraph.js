@@ -25,8 +25,8 @@ import memoize from 'memoize-one';
 import styled, { withTheme } from 'styled-components/native';
 import LinearGraph from 'components/LinearGraph';
 import { LabelBadge } from 'components/LabelBadge';
-import { getDeviceWidth, formatUnits } from 'utils/common';
-import { getFormattedRate } from 'utils/assets';
+import { getDeviceWidth, formatUnits, formatFiat } from 'utils/common';
+import { getRate } from 'utils/assets';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 import { getThemeColors } from 'utils/themes';
@@ -91,12 +91,12 @@ const RANGES = {
     nextTimeRange: MONTH,
   },
 };
-/*
+
 const randomBalancesHistory = [...Array(1000).keys()].map(() => ({
   total_balance: Math.random() * 10000000000000000000,
   timestamp: (new Date(dateFns.getTime(new Date()) - Math.random() * (3 * 30 * 24 * 60 * 60 * 1000))).toString(),
 }));
-*/
+
 
 class BalanceGraph extends React.Component<Props, State> {
   now: Date;
@@ -171,11 +171,23 @@ class BalanceGraph extends React.Component<Props, State> {
     return this._getFormattedData(filteredHistory);
   }
 
+  getFiatCurrency = () => {
+    const { baseFiatCurrency } = this.props;
+    return baseFiatCurrency || defaultFiatCurrency;
+  }
+
+  getAmountInFiat = (amount: number) => {
+    const { rates } = this.props;
+    const fiatCurrency = this.getFiatCurrency();
+    const formattedAmount = parseFloat(formatUnits(amount.toString(), 18));
+    return formattedAmount * getRate(rates, ETH, fiatCurrency);
+  }
+
   getYAxisValue = (y: number) => {
-    const { rates, baseFiatCurrency } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const amount = parseFloat(formatUnits(y.toString(), 18));
-    return getFormattedRate(rates, amount, ETH, fiatCurrency);
+    const fiatCurrency = this.getFiatCurrency();
+    const amountInFiat = this.getAmountInFiat(y);
+    const roundedAmountInFiat = (+amountInFiat.toPrecision(2)).toString();
+    return formatFiat(roundedAmountInFiat, fiatCurrency);
   }
 
   getXAxisValue = (x: number) => {
@@ -195,7 +207,9 @@ class BalanceGraph extends React.Component<Props, State> {
     const { timeRange, activeDataPoint } = this.state;
     const entry = this.getFilteredHistory()[activeDataPoint];
     const dateFormat = RANGES[timeRange].tooltipFormat;
-    return `${dateFns.format(new Date(entry.timestamp), dateFormat)}\n${this.getYAxisValue(+entry.total_balance)}`;
+    const fiatCurrency = this.getFiatCurrency();
+    const formattedBalance = formatFiat(this.getAmountInFiat(+entry.total_balance), fiatCurrency);
+    return `${dateFns.format(new Date(entry.timestamp), dateFormat)}\n${formattedBalance}`;
   }
 
   getTimeRangeSwitcherLabel = () => {
@@ -252,7 +266,7 @@ const mapStateToProps = ({
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  balancesHistory,
+  balancesHistory: randomBalancesHistory,
 });
 
 
