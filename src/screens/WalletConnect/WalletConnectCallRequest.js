@@ -27,10 +27,6 @@ import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
-import isEqual from 'lodash.isequal';
-
-// actions
-import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import { Footer, ScrollWrapper } from 'components/Layout';
@@ -48,11 +44,9 @@ import { isEnoughBalanceForTransactionFee, getAssetDataByAddress, getAssetsAsLis
 import { images } from 'utils/images';
 import { formatTransactionFee } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
-import { findFirstSmartAccount } from 'utils/accounts';
 
 // services
 import smartWalletService from 'services/smartWallet';
-import { calculateGasEstimate } from 'services/assets';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -62,7 +56,6 @@ import type { Asset, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
-import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Account } from 'models/Account';
 
@@ -88,8 +81,6 @@ type Props = {
   getTransactionDetails: (request: ?CallRequest) => Object,
   getTransactionPayload: (estimate: Object, request: ?CallRequest) => TokenTransactionPayload,
   isUnsupportedTransaction: (transaction: Object) => boolean,
-  gasInfo: GasInfo,
-  fetchGasInfo: () => void,
   rejectWCRequest: (request: CallRequest) => void,
   acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
   accountAssets: Assets,
@@ -99,7 +90,6 @@ type Props = {
 
 type State = {
   txFeeInfo: ?TransactionFeeInfo,
-  gasLimit: number,
   gettingFee: boolean,
 };
 
@@ -140,7 +130,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   state = {
     txFeeInfo: null,
-    gasLimit: 0,
     gettingFee: false,
   };
 
@@ -165,58 +154,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (['eth_sendTransaction', 'eth_signTransaction'].includes(requestMethod)) {
       this.fetchTransactionEstimate();
     }
-    this.props.fetchGasInfo();
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const {
-      session: { isOnline },
-      gasInfo,
-      fetchGasInfo,
-    } = this.props;
-    if (prevProps.session.isOnline !== isOnline) {
-      fetchGasInfo();
-    }
-    if (!isEqual(prevProps.gasInfo, gasInfo)) {
-      this.fetchTransactionEstimate();
-    }
   }
 
   fetchTransactionEstimate = async () => {
     if (this.unsupportedTransaction) return;
     this.setState({ gettingFee: true });
 
-    const gasLimit = await this.getGasLimit();
-    this.setState({ gasLimit: gasLimit || 0 }, async () => {
-      const txFeeInfo = await this.getSmartWalletTxFee();
-      this.setState({ txFeeInfo, gettingFee: false });
-    });
-  };
-
-  getGasPriceWei = () => {
-    const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
-    return utils.parseUnits(avgGasPrice.toString(), 'gwei');
-  };
-
-  getGasLimit = async () => {
-    const { accounts } = this.props;
-    const account = findFirstSmartAccount(accounts);
-    if (!account) return null;
-    const address = account.id;
-    const gasLimit = await calculateGasEstimate({ ...this.transactionDetails, from: address });
-    return gasLimit;
-  }
-
-  getRequestParams = () => get(this, 'request.params') || [];
-
-  getGasLimitFromRequest = () => {
-    const params = this.getRequestParams();
-    let requestGasLimit = params[0]?.gas;
-    if (!requestGasLimit && requestGasLimit !== 0) {
-      requestGasLimit = params[0]?.gasLimit;
-    }
-    if (!requestGasLimit) return 0;
-    return utils.bigNumberify(requestGasLimit).toNumber();
+    const txFeeInfo = await this.getSmartWalletTxFee();
+    this.setState({ txFeeInfo, gettingFee: false });
   };
 
   getSmartWalletTxFee = async (): Promise<TransactionFeeInfo> => {
@@ -280,7 +225,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       handleNoteChange,
     } = this.props;
 
-    const { txFeeInfo, gasLimit, gettingFee } = this.state;
+    const { txFeeInfo, gettingFee } = this.state;
 
     const colors = getThemeColors(theme);
 
@@ -307,11 +252,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       case 'eth_signTransaction':
         type = 'Transaction';
 
-        const gasPrice = this.getGasPriceWei();
         const estimatePart = {
           txFeeInWei,
-          gasLimit,
-          gasPrice,
           gasToken: {},
         };
         if (gasToken) estimatePart.gasToken = gasToken;
@@ -497,14 +439,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   session: { data: session },
-  history: { gasInfo },
   assets: { supportedAssets },
   accounts: { data: accounts },
 }) => ({
   accounts,
   contacts,
   session,
-  gasInfo,
   supportedAssets,
 });
 
@@ -519,10 +459,6 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-});
-
 export default withWCRequests(
-  withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen)),
+  withTheme(connect(combinedMapStateToProps)(WalletConnectCallRequestScreen)),
 );
