@@ -440,7 +440,15 @@ export const approveSessionAction = (peerId: string) => {
       if (!account || !checkIfSmartWalletAccount(account)) {
         account = findFirstSmartAccount(accounts);
       }
-      if (!account) return;
+      if (!account) {
+        Toast.show({
+          type: 'warning',
+          title: 'Cannot connect',
+          message: 'Please activate Smart Wallet in order to use Wallet Connect.',
+          autoClose: false,
+        });
+        return;
+      }
       const smartAccAddress = getAccountAddress(account);
       await connector.approveSession({
         accounts: [smartAccAddress],
