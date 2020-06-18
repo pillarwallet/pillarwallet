@@ -45,6 +45,8 @@ export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
   const balanceTakenAt = new Date();
   const currentOpenDrawId = await contract.currentOpenDrawId();
   const currentDraw = await contract.getDraw(currentOpenDrawId);
+  const committedSupply = await contract.committedSupply();
+  const openSupply = await contract.openSupply();
 
   const supplyRatePerBlock = await contract.supplyRatePerBlock();
 
@@ -52,7 +54,10 @@ export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
   let prizeEstimate = ptUtils.toBN(0);
   let drawDate;
   let remainingTimeMs;
-  if (balance && accountedBalance && currentDraw && supplyRatePerBlock) {
+  let totalPoolTicketsCount = 0;
+  if (balance && openSupply && committedSupply && accountedBalance && currentDraw && supplyRatePerBlock) {
+    const totalSupply = openSupply.add(committedSupply);
+    totalPoolTicketsCount = parseInt(utils.formatUnits(totalSupply.toString(), unitType), 10);
     const { feeFraction, openedBlock } = currentDraw;
 
     const prizeIntervalMs = symbol === DAI ? 604800000 : 86400000; // DAI weekly, USDC daily
@@ -88,5 +93,6 @@ export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
     prizeEstimate: formatMoney(utils.formatUnits(prizeEstimate.toString(), unitType)),
     drawDate,
     remainingTimeMs,
+    totalPoolTicketsCount,
   });
 }

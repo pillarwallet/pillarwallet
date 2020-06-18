@@ -24,6 +24,7 @@ type PoolTogetherPrizeInfo = {
   prizeEstimate: string,
   drawDate: number,
   remainingTimeMs: number,
+  totalPoolTicketsCount: number,
 };
 
 export type PoolTogetherReducerState = {
@@ -44,12 +45,14 @@ const initialState = {
       prizeEstimate: '0',
       drawDate: 0,
       remainingTimeMs: 0,
+      totalPoolTicketsCount: 0,
     },
     USDC: {
       currentPrize: '0',
       prizeEstimate: '0',
       drawDate: 0,
       remainingTimeMs: 0,
+      totalPoolTicketsCount: 0,
     },
   },
 };

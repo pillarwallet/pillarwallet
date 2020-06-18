@@ -109,7 +109,7 @@ const PoolCard = (props: Props) => {
             <Image
               source={iconSrc}
               style={{
-                margin: 5,
+                margin: 6,
                 height: 24,
                 width: 24,
               }}

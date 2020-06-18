@@ -29,12 +29,13 @@ import type { Theme } from 'models/Theme';
 
 import { getThemeColors, themedColors } from 'utils/themes';
 import { fontStyles, fontSizes } from 'utils/variables';
+import { formatAmount } from 'utils/common';
 
 const PoolTicketsWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  padding: 0 10px;
-  margin: 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
 `;
 
 const Text = styled(BaseText)`
@@ -54,48 +55,112 @@ const ActionCircleButton = styled(IconButton)`
   opacity: ${({ active }) => active ? '1' : '0.5'};
 `;
 
+const TicketCounterRow = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  padding: 8px 0;
+`;
+
+const TicketCounterColumn = styled.View`
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 8px;
+`;
+
 type Props = {
+  maxCount: number,
+  currentCount: number,
+  totalPoolTicketsCount: number,
   theme: Theme,
+  onTicketCountChange: Function,
 };
 
-const PoolCard = (props: Props) => {
+const PoolTickets = (props: Props) => {
   const {
+    maxCount = 0,
+    currentCount = 0,
+    totalPoolTicketsCount = 0,
     theme,
+    onTicketCountChange,
   } = props;
 
   const colors = getThemeColors(theme);
 
-  const canAdd = true;
-  const canSubtract = false;
+  const canAdd = currentCount < maxCount;
+  const canSubtract = currentCount > 0;
+
+  const winChance = (currentCount * 100) / (totalPoolTicketsCount + 1); // win chance in %
+
+  const ticketSubtract = () => {
+    return canSubtract && onTicketCountChange(currentCount - 1);
+  };
+
+  const ticketAdd = () => {
+    return canAdd && onTicketCountChange(currentCount + 1);
+  };
 
   return (
     <PoolTicketsWrapper
       style={{
           marginTop: 40,
-          paddingHorizontal: 74,
         }}
     >
-      <Text label>Purchase tickets for pool</Text>
-      <ActionCircleButton
-        color={colors.control}
-        margin={0}
-        active={canSubtract}
-        icon="count-minus"
-        fontSize={fontSizes.large}
-        onPress={() => {}}
-      />
-      <Text>0 Tickets</Text>
-      <ActionCircleButton
-        color={colors.control}
-        margin={0}
-        active={canAdd}
-        icon="count-plus"
-        fontSize={fontSizes.large}
-        onPress={() => {}}
-      />
-      <Text label>0.00 ETH fee</Text>
+      <TicketCounterRow>
+        <Text label>Purchase tickets for pool</Text>
+      </TicketCounterRow>
+      <TicketCounterRow style={{ paddingBottom: 0 }}>
+        <TicketCounterColumn>
+          {!!canSubtract &&
+            <ActionCircleButton
+              color={colors.control}
+              margin={0}
+              active={canSubtract}
+              icon="count-minus"
+              fontSize={fontSizes.large}
+              onPress={ticketSubtract}
+            />
+          }
+          {!canSubtract && // must rerender like this so it will not stay active before a double action
+            <ActionCircleButton
+              color={colors.control}
+              margin={0}
+              active={canSubtract}
+              icon="count-minus"
+              fontSize={fontSizes.large}
+            />
+          }
+        </TicketCounterColumn>
+        <TicketCounterColumn>
+          <Text>{currentCount} Tickets</Text>
+        </TicketCounterColumn>
+        <TicketCounterColumn>
+          {!!canAdd &&
+            <ActionCircleButton
+              color={colors.control}
+              margin={0}
+              active={canAdd}
+              icon="count-plus"
+              fontSize={fontSizes.large}
+              onPress={ticketAdd}
+            />
+          }
+          {!canAdd &&
+            <ActionCircleButton
+              color={colors.control}
+              margin={0}
+              active={canAdd}
+              icon="count-plus"
+              fontSize={fontSizes.large}
+            />
+          }
+        </TicketCounterColumn>
+      </TicketCounterRow>
+      <TicketCounterRow style={{ paddingTop: 0 }}>
+        <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)}%</Text>
+        <Text label>chance of win</Text>
+      </TicketCounterRow>
     </PoolTicketsWrapper>
   );
 };
 
-export default withTheme(PoolCard);
+export default withTheme(PoolTickets);

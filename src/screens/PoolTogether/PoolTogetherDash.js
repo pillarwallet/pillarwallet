@@ -84,6 +84,7 @@ type Props = {
 
 type State = {
   activeTab: string,
+  ticketsCount: number,
 };
 
 class PoolTogetherDash extends React.Component<Props, State> {
@@ -92,6 +93,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
 
   state = {
     activeTab: DAI,
+    ticketsCount: 0,
   };
 
   constructor(props: Props) {
@@ -110,13 +112,19 @@ class PoolTogetherDash extends React.Component<Props, State> {
     this.isComponentMounted = false;
   }
 
-  setActiveTab = (activeTab) => {
+  setActiveTab = (activeTab: string) => {
     this.setState({
       activeTab,
     }, () => {
       this.props.fetchPoolStats(activeTab);
     });
   };
+
+  onTicketCountChange = (newTicketCount: number) => {
+    this.setState({
+      ticketsCount: newTicketCount,
+    });
+  }
 
   render() {
     const {
@@ -127,6 +135,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
 
     const {
       activeTab,
+      ticketsCount,
     } = this.state;
 
     const poolCurrencyTabs = [
@@ -146,7 +155,10 @@ class PoolTogetherDash extends React.Component<Props, State> {
       currentPrize,
       prizeEstimate,
       remainingTimeMs,
+      totalPoolTicketsCount,
     } = poolPrizeInfo[activeTab];
+
+    const daiBalance = 10;
 
     return (
       <ContainerWithHeader
@@ -182,7 +194,12 @@ class PoolTogetherDash extends React.Component<Props, State> {
               remainingTimeMs={remainingTimeMs}
               activeTab={activeTab}
             />
-            <PoolTickets />
+            <PoolTickets
+              currentCount={ticketsCount}
+              maxCount={daiBalance}
+              totalPoolTicketsCount={totalPoolTicketsCount}
+              onTicketCountChange={this.onTicketCountChange}
+            />
           </ContentWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>
