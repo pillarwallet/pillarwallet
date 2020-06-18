@@ -2,7 +2,7 @@
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import abi from 'ethjs-abi';
 import { sdkConstants } from '@smartwallet/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
@@ -134,7 +134,7 @@ export default class SmartWalletProvider {
     }
     const value = decimals > 0
       ? utils.parseUnits(amount.toString(), decimals)
-      : utils.bigNumberify(amount.toString());
+      : EthersBigNumber.from(amount.toString());
 
     if (!data) {
       const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
