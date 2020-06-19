@@ -57,6 +57,9 @@ import type SDKWrapper from 'services/api';
 import type { Offer, OfferOrder } from 'models/Offer';
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 
+// config
+import { EXCLUDED_SMARTWALLET_PROVIDERS } from 'configs/exchangeConfig';
+
 // actions
 import { saveDbAction } from './dbActions';
 
@@ -256,8 +259,9 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       connectExchangeService(getState());
       exchangeService.onOffers(offers =>
         offers
-          .filter(({ askRate, provider }) => !!askRate && !(isSmartWallet && provider === 'COINSWITCH-SHIM'))
-          .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+          .filter(({ askRate, provider }) =>
+            !!askRate && !(isSmartWallet && EXCLUDED_SMARTWALLET_PROVIDERS.includes(provider)),
+          ).map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established
       const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount, activeWalletId);
