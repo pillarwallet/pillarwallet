@@ -57,6 +57,14 @@ import Storage from 'services/storage';
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
+import {
+  getAccountAddress,
+  findFirstSmartAccount,
+  findKeyBasedAccount,
+  getActiveAccount,
+  checkIfSmartWalletAccount,
+} from 'utils/accounts';
+import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
 
 // actions
 import {
@@ -215,8 +223,18 @@ const subscribeToSessionRequestEvent = (connector: Connector) => {
 
         return;
       }
-      dispatch(walletConnectSessionReceived());
 
+      if (!shouldAllowSession(peerMeta.url)) {
+        Toast.show({
+          type: 'warning',
+          title: 'Cannot connect',
+          message: 'We are sorry. We don\'t support this application.',
+          autoClose: false,
+        });
+        return;
+      }
+
+      dispatch(walletConnectSessionReceived());
       navigate(
         NavigationActions.navigate({
           routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN,
@@ -257,6 +275,21 @@ export const killWalletConnectSession = (peerId: string) => {
     }
 
     dispatch(logEventAction('walletconnect_session_killed'));
+  };
+};
+
+const killAllWalletConnectSessions = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { walletConnectSessions: { sessions } } = getState();
+    sessions.forEach((s: Session) => {
+      dispatch(killWalletConnectSession(s.peerId));
+    });
+    Toast.show({
+      type: 'warning',
+      title: 'Connections removed',
+      message: 'WalletConnect now connects to Smart Wallet. Please re-initialize your connections.',
+      autoClose: false,
+    });
   };
 };
 
@@ -399,11 +432,26 @@ export const approveSessionAction = (peerId: string) => {
     if (peerMeta) {
       dispatch(killWalletConnectSessionByUrl(peerMeta.url, peerId));
     }
-    const { wallet: { data: { address } } } = getState();
-
+    const {
+      accounts: { data: accounts },
+    } = getState();
     try {
+      let account = getActiveAccount(accounts);
+      if (!account || !checkIfSmartWalletAccount(account)) {
+        account = findFirstSmartAccount(accounts);
+      }
+      if (!account) {
+        Toast.show({
+          type: 'warning',
+          title: 'Cannot connect',
+          message: 'Please activate Smart Wallet in order to use Wallet Connect.',
+          autoClose: false,
+        });
+        return;
+      }
+      const smartAccAddress = getAccountAddress(account);
       await connector.approveSession({
-        accounts: [address],
+        accounts: [smartAccAddress],
         chainId: NETWORK_PROVIDER === 'ropsten' ? 3 : 1,
       });
     } catch (e) {
@@ -510,7 +558,18 @@ const loadLegacySessions = async (): Promise<Session[]> => {
 
 export const initWalletConnectSessions = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnectSessions: { isImported, sessions } } = getState();
+    const {
+      walletConnectSessions: { isImported, sessions },
+      accounts: { data: accounts },
+    } = getState();
+
+    const keyWallet = findKeyBasedAccount(accounts);
+    if (!keyWallet) return;
+    const keyWalletAddress = getAccountAddress(keyWallet);
+
+    if (shouldClearWCSessions(sessions, keyWalletAddress)) {
+      dispatch(killAllWalletConnectSessions());
+    }
 
     let initialSessions = sessions;
     if (!isImported) {
