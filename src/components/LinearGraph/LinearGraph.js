@@ -55,6 +55,7 @@ type Props = {
   getTooltipContent: () => string,
   onDragStart?: () => void,
   onDragEnd?: () => void,
+  extra?: string,
 
   gradientFillTop?: string,
   gradientFillBottom?: string,
@@ -157,7 +158,7 @@ class LinearGraph extends React.Component<Props> {
   }
 
   renderTooltip = (tooltipX: number, tooltipY: number) => {
-    const { getTooltipContent } = this.props;
+    const { getTooltipContent, extra } = this.props;
     const content = getTooltipContent();
 
     const tooltipWidth = 90;
@@ -222,7 +223,7 @@ class LinearGraph extends React.Component<Props> {
           x={tooltipX - (tooltipWidth / 2)}
           y={tooltipY - tooltipHeight - tipHeight}
           width={tooltipWidth}
-          key={content}
+          key={`${content}${extra || ''}`} // https://github.com/react-native-community/react-native-svg/issues/1357
         >
           <View style={{ width: tooltipWidth, height: tooltipHeight, justifyContent: 'center' }}>
             <BaseText center small color="#fff">{content}</BaseText>

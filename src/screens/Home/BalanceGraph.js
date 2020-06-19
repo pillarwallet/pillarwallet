@@ -247,6 +247,7 @@ class BalanceGraph extends React.Component<Props, State> {
           getYAxisValue={this.getYAxisValue}
           activeDataPoint={Math.min(activeDataPoint, data.length - 1)}
           onActivePointChange={(point) => this.setState({ activeDataPoint: point })}
+          extra={timeRange}
         />
         <TimeRangeSwitcher onPress={this.switchTimeRange}>
           <LabelBadge
