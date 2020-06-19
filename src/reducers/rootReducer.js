@@ -61,7 +61,6 @@ import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
-import balancesHistoryReducer from './balancesHistoryReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
 import recoveryPortalReducer from './recoveryPortalReducer';
 
@@ -104,7 +103,6 @@ import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensReg
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
-import type { BalancesHistoryReducerAction, BalancesHistoryReducerState } from './balancesHistoryReducer';
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
 import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
 
@@ -144,7 +142,6 @@ export type RootReducerState = {|
   referrals: ReferralsReducerState,
   insights: InsightsReducerState,
   phoneContacts: PhoneContactsReducerState,
-  balancesHistory: BalancesHistoryReducerState,
   connectedDevices: ConnectedDevicesReducerState,
   recoveryPortal: RecoveryPortalReducerState,
 |};
@@ -174,7 +171,6 @@ type RootReducerAction =
   | InsightsReducerAction
   | ReferralsReducerAction
   | PhoneContactsReducerAction
-  | BalancesHistoryReducerAction
   | ConnectedDevicesReducerAction
   | RecoveryPortalReducerAction;
 
@@ -224,7 +220,6 @@ const appReducer = combineReducers({
   insights: insightsReducer,
   referrals: referralsReducer,
   phoneContacts: phoneContactsReducer,
-  balancesHistory: balancesHistoryReducer,
   connectedDevices: connectedDevicesReducer,
   recoveryPortal: recoveryPortalReducer,
 });

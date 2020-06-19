@@ -66,7 +66,7 @@ import {
   fetchReferralRewardAction,
 } from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
-import { fetchAllAccountsBalancesAction, fetchBalancesHistoryAction } from 'actions/assetsActions';
+import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 
@@ -135,7 +135,6 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
   dismissReferFriends: () => void,
   referFriendsOnHomeScreenDismissed: boolean,
-  fetchBalancesHistory: () => void,
 };
 
 type State = {
@@ -190,7 +189,6 @@ class HomeScreen extends React.Component<Props, State> {
       fetchBadgeAwardHistory,
       fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
-      fetchBalancesHistory,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -204,7 +202,6 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
     fetchBadgeAwardHistory();
     fetchReferralRewardsIssuerAddresses();
-    fetchBalancesHistory();
   }
 
   componentWillUnmount() {
@@ -239,7 +236,6 @@ class HomeScreen extends React.Component<Props, State> {
       refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
-      fetchBalancesHistory,
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
@@ -251,7 +247,6 @@ class HomeScreen extends React.Component<Props, State> {
     refreshBitcoinBalance();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
-    fetchBalancesHistory();
   };
 
   setActiveTab = (activeTab) => {
@@ -454,10 +449,10 @@ class HomeScreen extends React.Component<Props, State> {
               headerComponent={(
                 <React.Fragment>
                   <WalletsPart handleWalletChange={this.handleWalletChange} />
-                  <BalanceGraph
+                  {/* <BalanceGraph
                     onDragStart={() => this.setScrollViewScrollable(false)}
                     onDragEnd={() => this.setScrollViewScrollable(true)}
-                  />
+                  /> */}
                   {!!walletConnectRequests &&
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
                     {walletConnectRequests.length > 1 &&
@@ -595,7 +590,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
-  fetchBalancesHistory: () => dispatch(fetchBalancesHistoryAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

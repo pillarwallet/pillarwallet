@@ -38,7 +38,6 @@ import {
   COLLECTIBLES,
   PLR,
   BTC,
-  SET_BALANCES_HISTORY,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -645,34 +644,5 @@ export const checkForMissedAssetsAction = () => {
       dispatch(fetchAssetsBalancesAction());
       dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
     }
-  };
-};
-
-export const fetchBalancesHistoryAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { accounts: { data: accounts } } = getState();
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
-    const accountAddress = getAccountAddress(activeAccount);
-
-    /*
-    const payload = {
-      wallet: '0xc91eB53B03024676797AEBC0390b6a485E4774Fe',
-      asset: 'ETH',
-    };
-*/
-
-    const payload = {
-      wallet: accountAddress,
-      asset: 'ETH',
-    };
-
-    const history = await api.fetchBalancesHistory(payload);
-    dispatch(saveDbAction('balanceHistory', { balanceHistory: history }, true));
-
-    dispatch({
-      type: SET_BALANCES_HISTORY,
-      payload: history,
-    });
   };
 };

@@ -110,11 +110,6 @@ type SendReferralInvitationParams = {|
   phone?: string,
 |};
 
-type BalancesHistoryPayload = {
-  wallet: string,
-  asset: string,
-};
-
 type ValidatedUserResponse = $Shape<{
   id: string,
   walletId: string,
@@ -563,12 +558,6 @@ class SDKWrapper {
           ...rest,
         }));
       })
-      .catch(() => []);
-  }
-
-  fetchBalancesHistory(payload: BalancesHistoryPayload) {
-    return this.BCXSdk.balanceHistory(payload)
-      .then(({ balanceHistory: { balanceHistory } }) => balanceHistory)
       .catch(() => []);
   }
 

@@ -92,11 +92,18 @@ const RANGES = {
   },
 };
 
+/*
+temporary mock
 const randomBalancesHistory = [...Array(1000).keys()].map(() => ({
-  total_balance: Math.random() * 10000000000000000000,
-  timestamp: (new Date(dateFns.getTime(new Date()) - Math.random() * (3 * 30 * 24 * 60 * 60 * 1000))).toString(),
+  total_balance: (Math.random() * 10000000000000000000).toString(),
+  timestamp: (new Date(dateFns.getTime(new Date()) - (Math.random() * (3 * 30 * 24 * 60 * 60 * 1000)))).toString(),
+  asset: 'ETH',
+  blockNumber: 0,
+  total_incoming: '0',
+  total_outgoing: '0',
+  wallet: '',
 }));
-
+*/
 
 class BalanceGraph extends React.Component<Props, State> {
   now: Date;
@@ -263,11 +270,10 @@ class BalanceGraph extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
-  balancesHistory: { data: balancesHistory },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  balancesHistory: randomBalancesHistory,
+  // balancesHistory: randomBalancesHistory,
 });
 
 

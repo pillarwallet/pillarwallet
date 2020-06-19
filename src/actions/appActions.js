@@ -34,7 +34,6 @@ import {
   UPDATE_ASSETS,
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
-  SET_BALANCES_HISTORY,
 } from 'constants/assetsConstants';
 import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -195,9 +194,6 @@ export const initAppAndRedirectAction = () => {
 
       const { insights = {} } = get(storageData, 'insights', {});
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
-
-      const { balanceHistory = [] } = get(storageData, 'balanceHistory', {});
-      dispatch({ type: SET_BALANCES_HISTORY, payload: balanceHistory });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
