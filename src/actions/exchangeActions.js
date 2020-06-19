@@ -61,7 +61,7 @@ import type { Offer, OfferOrder } from 'models/Offer';
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 
 // config
-import { EXCLUDED_SMARTWALLET_PROVIDERS } from 'configs/exchangeConfig';
+import { EXCLUDED_SMARTWALLET_PROVIDERS, EXCLUDED_KEYWALLET_PROVIDERS } from 'configs/exchangeConfig';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -259,11 +259,13 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         toAddress = prodAssetsAddress[toAssetCode];
       }
 
+      const excludedProviders = isSmartWallet ? EXCLUDED_SMARTWALLET_PROVIDERS : EXCLUDED_KEYWALLET_PROVIDERS;
+
       connectExchangeService(getState());
       exchangeService.onOffers(offers =>
         offers
           .filter(({ askRate, provider }) =>
-            !!askRate && !(isSmartWallet && EXCLUDED_SMARTWALLET_PROVIDERS.includes(provider)),
+            !!askRate && !(isSmartWallet && excludedProviders.includes(provider)),
           ).map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established
