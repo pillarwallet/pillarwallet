@@ -63,3 +63,8 @@ export type SelectorOptions = {
   optionsSearchPlaceholder?: string,
   displayFiatOptionsFirst?: boolean,
 };
+
+export type FormSelector = {
+  selector: Object,
+  input: string,
+};

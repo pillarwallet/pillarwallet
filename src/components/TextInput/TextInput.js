@@ -547,11 +547,10 @@ class TextInput extends React.Component<Props, State> {
       }}
       >
         {customLabel}
-        {!!label &&
-        <InputLabel>{label}</InputLabel>
-        }
+        {!!label && <InputLabel>{label}</InputLabel>}
         {!!rightLabel &&
-        <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />}
+          <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />
+        }
       </View>
     );
   };

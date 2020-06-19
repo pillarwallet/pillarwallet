@@ -58,7 +58,7 @@ import { isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import { satoshisToBtc } from 'utils/bitcoin';
-import { SelectorInputTemplate, selectorStructure } from 'utils/formHelpers';
+import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -74,6 +74,7 @@ import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { Theme } from 'models/Theme';
+import type { FormSelector } from 'models/TextInput';
 
 // partials
 import { HotSwapsHorizontalList } from './HotSwapsList';
@@ -112,14 +113,9 @@ type Props = {
   isActiveAccountSmartWallet: boolean,
 };
 
-type InputValue = {
-  selector: Object,
-  input: string,
-}
-
 export type FormValue = {
-  fromInput: InputValue,
-  toInput: InputValue,
+  fromInput: FormSelector,
+  toInput: FormSelector,
 }
 
 type State = {
@@ -203,16 +199,8 @@ class ExchangeScreen extends React.Component<Props, State> {
               onPressRightLabel: this.handleSellMax,
             },
             transformer: {
-              parse: (value) => {
-                let formattedAmount = value.input;
-                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
-                return { ...value, input: formattedAmount };
-              },
-              format: (value) => {
-                let formattedAmount = value.input;
-                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
-                return { ...value, input: formattedAmount };
-              },
+              parse: inputParser,
+              format: inputFormatter,
             },
           },
           toInput: {

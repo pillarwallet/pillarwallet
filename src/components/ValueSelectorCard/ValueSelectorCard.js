@@ -32,23 +32,19 @@ import { BaseText } from 'components/Typography';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { FormSelector } from 'models/TextInput';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getBalance, getRate, sortAssets, calculateMaxAmount } from 'utils/assets';
 import { themedColors } from 'utils/themes';
-import { SelectorInputTemplate, selectorStructure } from 'utils/formHelpers';
+import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
 import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-
-type FormSelector = {
-  selector: Object,
-  input: string,
-};
 
 type Props = {
   assets: Assets,
@@ -125,16 +121,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               onPressRightLabel: this.handleUseMax,
             },
             transformer: {
-              parse: (value) => {
-                let formattedAmount = value.input;
-                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
-                return { ...value, input: formattedAmount };
-              },
-              format: (value) => {
-                let formattedAmount = value.input;
-                if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
-                return { ...value, input: formattedAmount };
-              },
+              parse: inputParser,
+              format: inputFormatter,
             },
           },
         },
