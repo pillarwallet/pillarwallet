@@ -46,8 +46,11 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getActiveAccountAddress } from 'utils/accounts';
-import { getPreferredWalletId, isSmartWalletActive } from 'utils/smartWallet';
+import { getPreferredWalletId } from 'utils/smartWallet';
 import { isFiatCurrency } from 'utils/exchange';
+
+// selectors
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // services
 import ExchangeService from 'services/exchange';
@@ -191,7 +194,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     } = getState();
 
     const activeWalletId = getPreferredWalletId(accounts);
-    const isSmartWallet = isSmartWalletActive(accounts);
+    const isSmartWallet = isActiveAccountSmartWalletSelector(getState());
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,

@@ -117,11 +117,6 @@ export const getSmartWalletStatus = (
   };
 };
 
-export const isSmartWalletActive = (accounts: Accounts) => {
-  const activeAccount = getActiveAccount(accounts);
-  return !!activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
-};
-
 export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
 export const getDeployErrorMessage = (errorType: string) => ({
