@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, Platform, View, Image, Text } from 'react-native';
+import { RefreshControl, Platform, Image } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -30,18 +30,12 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
-import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { DAI, USDC } from 'constants/assetsConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
-import Spinner from 'components/Spinner';
-import ShadowedCard from 'components/ShadowedCard';
-
-// utils
-import { themedColors } from 'utils/themes';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -50,6 +44,7 @@ import type { Theme } from 'models/Theme';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
+import { accountBalancesSelector } from 'selectors/balances';
 
 // local screen components
 import PoolCard from './PoolCard';
@@ -141,6 +136,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
       navigation,
       fetchPoolStats,
       poolPrizeInfo,
+      balances,
     } = this.props;
 
     const {
@@ -168,7 +164,9 @@ class PoolTogetherDash extends React.Component<Props, State> {
       totalPoolTicketsCount,
     } = poolPrizeInfo[activeTab];
 
-    const poolTokenBalance = 10;
+    const { balance = 0 } = balances[activeTab] || {};
+
+    const poolTokenBalance = Math.floor(balance); // get integer closest to balance for ticket enumeration
 
     const poolTicketsCount = ticketsCount[activeTab];
 
@@ -233,6 +231,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
+  balances: accountBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
