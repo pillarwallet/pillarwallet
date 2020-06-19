@@ -3086,10 +3086,10 @@
     "@walletconnect/types" "^1.0.0"
     "@walletconnect/utils" "^1.0.0"
 
-"@walletconnect/react-native@^1.0.0-beta.29":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0.tgz#393fb4bc9d7cd8d889914d2598b0d1a79cc711d2"
-  integrity sha512-cs9hsPOFbcnaNBcNpnZeJpk7KKfycM709NXSTinuvBxNMeKSfzpWgiwne4mih0tQ18uGG/DeTFHK8wLtLb5log==
+"@walletconnect/react-native@^1.0.0-beta.47":
+  version "1.0.0-beta.47"
+  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0-beta.47.tgz#34d5d834db4e7b857fde33cca4959cc1693dee1a"
+  integrity sha512-kvz4gO1N6PfIlXr0xVfT/me7yiqADj3xbghYxntdyOcDWDJxUBkNwnorieyh8ZZV2AMRdvgVed/TUzr+bpjl0w==
   dependencies:
     "@walletconnect/core" "^1.0.0"
     "@walletconnect/node-crypto" "^1.0.0"
