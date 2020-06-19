@@ -380,7 +380,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           ]
                         }
                       >
-                         0 undefined
+                        0 undefined
                       </Text>
                     </View>
                   </View>
@@ -775,7 +775,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           ]
                         }
                       >
-                         0 undefined
+                        0 undefined
                       </Text>
                     </View>
                   </View>
