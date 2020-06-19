@@ -24,7 +24,8 @@ export type AppItem = {
   logo: number,
   text: string,
   url: string,
-}
+  disabled?: boolean,
+};
 
 const zerionLogo = require('assets/images/apps/zerion.png');
 const poolTogetherLogo = require('assets/images/apps/pool_together.png');
@@ -56,6 +57,7 @@ Each ticket is a chance to win weekly prizes!`,
     logo: mooniLogo,
     text: 'A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.',
     url: 'mooni.tech',
+    disabled: true,
   },
   {
     name: 'Oasis',
@@ -74,13 +76,15 @@ Each ticket is a chance to win weekly prizes!`,
     logo: binanceLogo,
     text: `Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.`,
     url: 'binance.org',
+    disabled: true,
   },
   {
     name: 'Local Cryptos',
     logo: localCryptosLogo,
     text: `The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with \
-each other. Buy and sell crypto on your own terms, using any payment method.`,
+  each other. Buy and sell crypto on your own terms, using any payment method.`,
     url: 'localcryptos.com',
+    disabled: true,
   },
   {
     name: 'Async.art',

@@ -77,6 +77,9 @@ const getTextStyle = (props) => {
     textProps.lineHeight = getLineHeight(props);
   }
 
+  // other
+  if (props.lineThrough) textProps.textDecoration = 'line-through';
+
   return { ...textProps };
 };
 

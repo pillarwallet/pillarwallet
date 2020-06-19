@@ -358,7 +358,7 @@ class SmartWallet {
   }
 
   withdrawAccountPayment(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
+    return this.sdk.accountTransaction.submitAccountProxyTransaction(estimated, payForGasWithToken);
   }
 
   searchAccount(address: string) {
@@ -476,11 +476,9 @@ class SmartWallet {
     return formatEstimated(estimated);
   }
 
-  getTransactionStatus(hash: string) {
+  getTransactionInfo(hash: string) {
     if (!this.sdkInitialized) return null;
-    return this.sdk.getConnectedAccountTransaction(hash)
-      .then(({ state }) => state)
-      .catch(() => null);
+    return this.sdk.getConnectedAccountTransaction(hash).catch(() => null);
   }
 
   async setAccountEnsName(username: string) {
