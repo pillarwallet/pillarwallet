@@ -66,6 +66,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
   TX_PENDING_STATUS,
+  TX_FAILED_STATUS,
 } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
@@ -143,7 +144,6 @@ export type EventData = {
   itemValue?: string,
   fullItemValue?: string,
   valueColor?: string,
-  valueLineThrough?: boolean,
   customAddon?: React.Node,
   itemStatusIcon?: string,
   iconBackgroundColor?: string,
@@ -154,6 +154,8 @@ export type EventData = {
   isReceived?: boolean,
   isBetweenAccounts?: boolean,
   collectibleUrl?: string,
+  statusIconColor?: ?string,
+  isFailed?: boolean,
 };
 
 const NAMES = {
@@ -320,14 +322,18 @@ export class ActivityFeedItem extends React.Component<Props> {
     const formattedValue = formatAmount(value, decimalPlaces);
     const formattedFullValue = formatAmount(value);
     const directionIcon = isReceived ? 'received' : 'sent';
-    let directionSymbol = isReceived ? '+' : '-';
+    let directionSymbol = isReceived ? '+ ' : '- ';
+    let PPNDirectionSymbol = event.tag === PAYMENT_NETWORK_ACCOUNT_TOPUP
+    && !isAssetView && !event.smartWalletEvent ? '+ ' : '- ';
 
-    if (this.isZeroValue(value)) {
+    const isFailed = isFailedTransaction(event) || isTimedOutTransaction(event);
+
+    if (this.isZeroValue(value) || isFailed) {
       directionSymbol = '';
+      PPNDirectionSymbol = '';
     }
 
     const isPending = isPendingTransaction(event);
-    const isFailed = isFailedTransaction(event) || isTimedOutTransaction(event);
 
     let data: EventData = {};
 
@@ -352,8 +358,8 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
-            fullItemValue: `- ${formattedFullValue} ${event.asset}`,
-            itemValue: `- ${formattedValue} ${event.asset}`,
+            fullItemValue: `${PPNDirectionSymbol}${formattedFullValue} ${event.asset}`,
+            itemValue: `${PPNDirectionSymbol}${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
         } else if (isPPNView) {
@@ -361,17 +367,17 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: 'Top Up',
             subtext: `from ${NAMES.SMART_WALLET}`,
             itemImageSource: PPNIcon,
-            fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
-            itemValue: `+ ${formattedValue} ${event.asset}`,
+            fullItemValue: `${PPNDirectionSymbol}${formattedFullValue} ${event.asset}`,
+            itemValue: `${PPNDirectionSymbol}${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
         } else if (event.smartWalletEvent) {
           data = {
             label: NAMES.SMART_WALLET,
-            subtext: 'To Pillar Network',
+            subtext: 'to Pillar Network',
             itemImageSource: smartWalletIcon,
-            fullItemValue: `- ${formattedFullValue} ${event.asset}`,
-            itemValue: `- ${formattedValue} ${event.asset}`,
+            fullItemValue: `${PPNDirectionSymbol}${formattedFullValue} ${event.asset}`,
+            itemValue: `${PPNDirectionSymbol}${formattedValue} ${event.asset}`,
             valueColor: 'text',
           };
         } else {
@@ -379,8 +385,8 @@ export class ActivityFeedItem extends React.Component<Props> {
             label: NAMES.PPN_NETWORK,
             subtext: 'Top up',
             itemImageSource: PPNIcon,
-            fullItemValue: `+ ${formattedFullValue} ${event.asset}`,
-            itemValue: `+ ${formattedValue} ${event.asset}`,
+            fullItemValue: `${PPNDirectionSymbol}${formattedFullValue} ${event.asset}`,
+            itemValue: `${PPNDirectionSymbol}${formattedValue} ${event.asset}`,
             valueColor: 'positive',
           };
         }
@@ -394,8 +400,8 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
         data = {
-          fullItemValue: `- ${formattedFullValue} ${event.asset}`,
-          itemValue: `- ${formattedValue} ${event.asset}`,
+          fullItemValue: `${PPNDirectionSymbol}${formattedFullValue} ${event.asset}`,
+          itemValue: `${PPNDirectionSymbol}${formattedValue} ${event.asset}`,
           valueColor: 'text',
         };
         if (isPPNView) {
@@ -412,23 +418,26 @@ export class ActivityFeedItem extends React.Component<Props> {
       case PAYMENT_NETWORK_TX_SETTLEMENT:
         const transactionsCount = event.extra.length;
         const formattedValuesArray = this.getFormattedSettleValues();
+        const valueSymbol = isFailed ? '' : '- ';
         data = {
           label: 'Settle',
           itemImageSource: PPNIcon,
           subtext: 'to Smart Wallet',
+          customAddonAlignLeft: true,
+          rightColumnInnerStyle: { flexDirection: 'row', alignItems: 'center' },
           customAddon: (
             <ListWrapper>
               {formattedValuesArray.map(({ formatted, symbol }) => (
                 <TankAssetBalance
                   key={symbol}
-                  amount={`- ${formatted} ${symbol}`}
-                  monoColor
+                  amount={`${valueSymbol}${formatted} ${symbol}`}
+                  secondary={isFailed}
                 />
               ))}
-              {isPPNView && transactionsCount > 1 && (
+              {!isFailed && isPPNView && transactionsCount > 1 && (
                 <BaseText regular secondary>Total {transactionsCount}</BaseText>
               )}
-              {!isPPNView && formattedValuesArray.map(({ formatted, symbol }) =>
+              {!isFailed && !isPPNView && formattedValuesArray.map(({ formatted, symbol }) =>
                 <ItemValue key={symbol}>{`+ ${formatted} ${symbol}`}</ItemValue>,
               )}
             </ListWrapper>),
@@ -492,14 +501,14 @@ export class ActivityFeedItem extends React.Component<Props> {
               const { syntheticTransaction: { toAmount, toAssetCode } } = event.extra;
               data.customAddon = (
                 <ListWrapper>
-                  <TankAssetBalance amount={`${directionSymbol} ${toAmount} ${toAssetCode}`} />
+                  <TankAssetBalance amount={`${directionSymbol}${toAmount} ${toAssetCode}`} />
                   {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
                 </ListWrapper>
               );
             } else {
               data.customAddon = (
                 <ListWrapper>
-                  <TankAssetBalance amount={`${directionSymbol} ${formattedValue} ${event.asset}`} />
+                  <TankAssetBalance amount={`${directionSymbol}${formattedValue} ${event.asset}`} />
                 </ListWrapper>
               );
             }
@@ -570,8 +579,8 @@ export class ActivityFeedItem extends React.Component<Props> {
             subtext,
             avatarUrl,
             username: contact?.username,
-            fullItemValue: `${directionSymbol} ${formattedFullValue} ${event.asset}`,
-            itemValue: `${directionSymbol} ${formattedValue} ${event.asset}`,
+            fullItemValue: `${directionSymbol}${formattedFullValue} ${event.asset}`,
+            itemValue: `${directionSymbol}${formattedValue} ${event.asset}`,
             valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
@@ -580,8 +589,9 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
     data.itemStatusIcon = isPending ? TX_PENDING_STATUS : '';
     if (isFailed) {
-      if (data.valueColor) data.valueColor = 'secondaryText';
-      data.valueLineThrough = true;
+      data.itemStatusIcon = TX_FAILED_STATUS;
+      data.statusIconColor = this.getColor('negative');
+      data.isFailed = true;
     }
     return data;
   };
@@ -705,6 +715,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       iconColor,
       valueColor,
       iconBackgroundColor,
+      isFailed,
     } = itemData;
 
     return (
@@ -715,7 +726,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         iconColor={this.getColor(iconColor)}
         diameter={48}
         iconBackgroundColor={this.getColor(iconBackgroundColor)}
-        valueColor={this.getColor(valueColor)}
+        valueColor={isFailed ? this.getColor('secondaryText') : this.getColor(valueColor)}
       />
     );
   }

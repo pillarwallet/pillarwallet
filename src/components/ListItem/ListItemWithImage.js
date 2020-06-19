@@ -100,6 +100,7 @@ type Props = {
   collectibleUrl?: string,
   iconImageResizeMode?: string,
   iconImageSize?: number,
+  statusIconColor?: string,
 }
 
 type AddonProps = {
@@ -117,7 +118,7 @@ type AddonProps = {
   acceptInvitation?: ?() => void,
   balance?: Object,
   colors: ThemeColors,
-  valueLineThrough?: boolean,
+  statusIconColor?: string,
 };
 
 type ImageWrapperProps = {
@@ -259,7 +260,6 @@ const ItemValue = styled(BaseText)`
   ${fontStyles.big};
   color: ${({ color, theme }) => color || theme.colors.text};
   text-align: right;
-  ${({ valueLineThrough }) => valueLineThrough && 'text-decoration: line-through;'}
 `;
 
 const BalanceValue = styled(BaseText)`
@@ -276,7 +276,7 @@ const BalanceFiatValue = styled(BaseText)`
 
 const ItemValueStatus = styled(Icon)`
   margin-left: 12px;
-  color: ${themedColors.secondaryText};
+  color: ${({ iconColor }) => iconColor || themedColors.secondaryText};
   ${fontStyles.big};
 `;
 
@@ -488,8 +488,8 @@ const Addon = (props: AddonProps) => {
     unreadCount,
     itemValue,
     itemStatusIcon,
+    statusIconColor,
     valueColor,
-    valueLineThrough,
     buttonActionLabel,
     actionLabelAsButton,
     buttonAction,
@@ -505,11 +505,11 @@ const Addon = (props: AddonProps) => {
     return (
       <Wrapper horizontal style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
         {!!itemValue &&
-          <ItemValue color={valueColor} valueLineThrough={valueLineThrough} numberOfLines={2} ellipsizeMode="tail">
+          <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
             {itemValue}
           </ItemValue>
         }
-        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} />}
+        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} iconColor={statusIconColor} />}
       </Wrapper>
     );
   }
@@ -588,7 +588,6 @@ const Addon = (props: AddonProps) => {
             {!!tokenBalance.toString() && <BalanceValue>{`${roundedBalance} ${token}`}</BalanceValue>}
             {!!syntheticBalance.toString() &&
             <TankAssetBalance
-              monoColor
               amount={syntheticBalance}
               token={token}
             />}

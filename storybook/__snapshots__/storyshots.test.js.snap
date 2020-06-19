@@ -8268,7 +8268,10 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
           <View
             style={
               Array [
-                undefined,
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                },
                 Object {
                   "flexWrap": "wrap",
                 },
@@ -8299,6 +8302,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                   }
                 >
                   <Text
+                    secondary={false}
                     style={
                       Array [
                         Object {
@@ -11276,7 +11280,6 @@ exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -11333,11 +11336,11 @@ exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
     to Bitcoin Wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -11571,7 +11574,6 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -11628,11 +11630,11 @@ exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
     from Bitcoin Wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -11877,7 +11879,6 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -11934,11 +11935,11 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
     Collectible from Smart Wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -12142,7 +12143,6 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -12199,11 +12199,11 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
     from Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -12532,7 +12532,6 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -12589,11 +12588,11 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
     to Key wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -12825,7 +12824,6 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -12882,11 +12880,11 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
     to Key wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -13371,7 +13369,6 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -13428,11 +13425,11 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
     to Key wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -13917,7 +13914,6 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -13974,11 +13970,11 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
     from Key wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -14433,7 +14429,6 @@ exports[`Storyshots EventDetail Key wallet back up 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -14963,7 +14958,6 @@ exports[`Storyshots EventDetail Key wallet created 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -15449,7 +15443,6 @@ exports[`Storyshots EventDetail Key wallet imported 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -15979,7 +15972,6 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -16509,7 +16501,6 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -17014,11 +17005,11 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
     to Pillar Network
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -17566,11 +17557,11 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
     from Pillar Network
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -18013,7 +18004,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
           ]
         }
       >
-        -
+        - 
         1
          
         PLR
@@ -18134,7 +18125,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
           ]
         }
       >
-        -
+        - 
         2
          
         ETH
@@ -18554,7 +18545,6 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -18611,11 +18601,11 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
     from Smart Wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -19070,7 +19060,6 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -19127,11 +19116,11 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
     to Pillar Network
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -19586,7 +19575,6 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -19643,11 +19631,11 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
     to Smart Wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -19976,7 +19964,6 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -20033,11 +20020,11 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
     from Pillar Network
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -20394,7 +20381,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -20465,11 +20451,11 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
     to Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -20826,7 +20812,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -20883,11 +20868,11 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
     to Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -21372,7 +21357,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -21443,11 +21427,11 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
     to Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -21808,7 +21792,6 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -21865,11 +21848,11 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
     to Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -22352,7 +22335,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -22423,11 +22405,11 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
     from Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -22784,7 +22766,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -22841,11 +22822,11 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
     from Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -23330,7 +23311,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -23401,11 +23381,11 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
     from Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -23766,7 +23746,6 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -23823,11 +23802,11 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
     from Smart wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -24282,7 +24261,6 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
     <Text
       color="#0A1427"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -24339,11 +24317,11 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
     to Smart Wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -24674,7 +24652,6 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
     <Text
       color="#2AA057"
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -24731,11 +24708,11 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
     from Key wallet
   </Text>
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -25190,7 +25167,6 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -25676,7 +25652,6 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
@@ -26036,7 +26011,6 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
     <Text
       color={null}
       large={true}
-      lineThrough={false}
       style={
         Array [
           Object {
