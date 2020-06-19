@@ -264,9 +264,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       connectExchangeService(getState());
       exchangeService.onOffers(offers =>
         offers
-          .filter(({ askRate, provider }) =>
-            !!askRate && !(isSmartWallet && excludedProviders.includes(provider)),
-          ).map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+          .filter(({ askRate, provider }) => !!askRate && !excludedProviders.includes(provider))
+          .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established
       const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount, activeWalletId);
