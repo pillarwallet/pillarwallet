@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { View, PanResponder } from 'react-native';
+import { withTheme } from 'styled-components/native';
 import Svg, {
   Polygon,
   Defs,
@@ -34,6 +35,8 @@ import Svg, {
 import memoize from 'memoize-one';
 import { BaseText } from 'components/Typography';
 import { range } from 'utils/common';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type DataPoint = {
   x: number,
@@ -56,15 +59,7 @@ type Props = {
   onDragStart?: () => void,
   onDragEnd?: () => void,
   extra?: string,
-
-  gradientFillTop?: string,
-  gradientFillBottom?: string,
-  strokeColor?: string,
-  tooltipColor?: String,
-  tooltipOpacity?: String,
-  tooltipTextStyle?: Object,
-  xAxisTextStyle?: Object,
-  yAxisTextStyle?: Object,
+  theme: Theme,
 };
 
 const BOTTOM_MARGIN = 17;
@@ -158,10 +153,12 @@ class LinearGraph extends React.Component<Props> {
   }
 
   renderTooltip = (tooltipX: number, tooltipY: number) => {
-    const { getTooltipContent, extra } = this.props;
+    const { getTooltipContent, extra, theme } = this.props;
     const content = getTooltipContent();
 
-    const tooltipWidth = 90;
+    const { chart: { shadow, tooltipBackground, tooltipText } } = getThemeColors(theme);
+
+    const tooltipWidth = 80;
     const tooltipHeight = 40;
     const tipHeight = 7;
     const tipWidth = 10;
@@ -174,12 +171,12 @@ class LinearGraph extends React.Component<Props> {
       <>
         <Defs>
           <LinearGradient id="grad-shadow" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor="#260a14" stopOpacity="0.2" />
-            <Stop offset="1" stopColor="#fff" stopOpacity="0" />
+            <Stop offset="0" stopColor={shadow} stopOpacity="0.2" />
+            <Stop offset="1" stopColor={shadow} stopOpacity="0" />
           </LinearGradient>
         </Defs>
         <Path
-          fill="#106be9"
+          fill={tooltipBackground}
           fillOpacity="0.73"
           d={`
             M ${tooltipX}, ${tooltipY}
@@ -226,7 +223,7 @@ class LinearGraph extends React.Component<Props> {
           key={`${content}${extra || ''}`} // https://github.com/react-native-community/react-native-svg/issues/1357
         >
           <View style={{ width: tooltipWidth, height: tooltipHeight, justifyContent: 'center' }}>
-            <BaseText center small color="#fff">{content}</BaseText>
+            <BaseText center small color={tooltipText}>{content}</BaseText>
           </View>
         </ForeignObject>
       </>
@@ -235,8 +232,10 @@ class LinearGraph extends React.Component<Props> {
 
   renderXAxis = () => {
     const {
-      xAxisValuesCount = 6, getXAxisValue, height, width,
+      xAxisValuesCount = 6, getXAxisValue, height, width, theme,
     } = this.props;
+
+    const { chart: { xAxisText } } = getThemeColors(theme);
 
     const values = range(xAxisValuesCount + 2).map(v => getXAxisValue(v / xAxisValuesCount)).slice(1);
     const valueWidth = 35;
@@ -252,7 +251,7 @@ class LinearGraph extends React.Component<Props> {
               }}
               center
               tiny
-              color="#518df8"
+              color={xAxisText}
               key={`${i}-${v}`}
             >
               {v}
@@ -264,8 +263,9 @@ class LinearGraph extends React.Component<Props> {
   }
 
   renderHorizontalLines = () => {
-    const { width, yAxisValuesCount = 3 } = this.props;
+    const { width, yAxisValuesCount = 3, theme } = this.props;
     const maxY = this.getMaxY();
+    const { chart: { grid } } = getThemeColors(theme);
 
     return (
       range(yAxisValuesCount + 1).map < React.Node > ((_, i): React.Node => {
@@ -276,7 +276,7 @@ class LinearGraph extends React.Component<Props> {
             y1={y}
             x2={width}
             y2={y}
-            stroke="#3a66ab"
+            stroke={grid}
             strokeWidth="1"
             strokeOpacity="0.23"
             strokeDasharray="5, 2"
@@ -314,8 +314,14 @@ class LinearGraph extends React.Component<Props> {
 
   render() {
     const {
-      data, width, height, activeDataPoint,
+      data, width, height, activeDataPoint, theme,
     } = this.props;
+
+    const {
+      chart: {
+        stroke, gradientTopFill, gradientBottomFill, grid, activePointDotBorder,
+      },
+    } = getThemeColors(theme);
 
     const activePointX = this.getScreenX(data[activeDataPoint].x);
     const activePointY = this.getScreenY(data[activeDataPoint].y);
@@ -333,8 +339,8 @@ class LinearGraph extends React.Component<Props> {
         >
           <Defs>
             <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#007eff" stopOpacity="0.12" />
-              <Stop offset="1" stopColor="#ffffff" stopOpacity="0.12" />
+              <Stop offset="0" stopColor={gradientTopFill} stopOpacity="0.12" />
+              <Stop offset="1" stopColor={gradientBottomFill} stopOpacity="0.12" />
             </LinearGradient>
           </Defs>
           {this.renderHorizontalLines()}
@@ -345,7 +351,7 @@ class LinearGraph extends React.Component<Props> {
           <Polyline
             points={linePoints.join(' ')}
             fill="none"
-            stroke="#007aff"
+            stroke={stroke}
             strokeWidth="1"
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -355,19 +361,19 @@ class LinearGraph extends React.Component<Props> {
             y1={this.getScreenY(0)}
             x2={activePointX}
             y2={this.getScreenY(this.getMaxY())}
-            stroke="#3a66ab"
+            stroke={grid}
             strokeWidth="1"
             strokeOpacity="0.23"
           />
           {this.renderXAxis()}
           {this.renderYAxis()}
-          <Circle cx={activePointX} cy={activePointY} r="4.5" fill="#007aff" />
+          <Circle cx={activePointX} cy={activePointY} r="4.5" fill={stroke} />
           <Circle
             cx={activePointX}
             cy={activePointY}
             r="3.5"
             fill="none"
-            stroke="#86ffff"
+            stroke={activePointDotBorder}
             strokeWidth="2"
             strokeOpacity="0.52"
           />
@@ -378,4 +384,4 @@ class LinearGraph extends React.Component<Props> {
   }
 }
 
-export default LinearGraph;
+export default withTheme(LinearGraph);

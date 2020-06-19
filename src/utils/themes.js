@@ -59,6 +59,17 @@ export const lightThemeColors = {
   avatarPlaceholderBackground: '#e0eeff',
   avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
+  chart: {
+    stroke: '#007aff',
+    grid: '#3a66ab',
+    activePointDotBorder: '#86ffff',
+    gradientTopFill: '#007eff',
+    gradientBottomFill: '#ffffff',
+    shadow: '#260a14',
+    tooltipBackground: '#106be9',
+    tooltipText: '#fff',
+    xAxisText: '#518df8',
+  },
 };
 
 export const darkThemeColors = {
@@ -99,6 +110,17 @@ export const darkThemeColors = {
   avatarPlaceholderBackground: '#181f31',
   avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
+  chart: {
+    stroke: '#007aff',
+    grid: '#3a66ab',
+    activePointDotBorder: '#86ffff',
+    gradientTopFill: '#007eff',
+    gradientBottomFill: '#ffffff',
+    shadow: '#260a14',
+    tooltipBackground: '#106be9',
+    tooltipText: '#fff',
+    xAxisText: '#518df8',
+  },
 };
 
 export const themedColors = {
@@ -249,6 +271,10 @@ export const themedColors = {
   labelTertiary: theme('current', {
     lightTheme: lightThemeColors.labelTertiary,
     darkTheme: darkThemeColors.labelTertiary,
+  }),
+  chart: theme('current', {
+    lightTheme: lightThemeColors.chart,
+    darkTheme: darkThemeColors.chart,
   }),
 };
 
