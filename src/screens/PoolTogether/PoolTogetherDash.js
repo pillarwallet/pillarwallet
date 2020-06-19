@@ -84,7 +84,7 @@ type Props = {
 
 type State = {
   activeTab: string,
-  ticketsCount: number,
+  ticketsCount: Object,
 };
 
 class PoolTogetherDash extends React.Component<Props, State> {
@@ -93,7 +93,10 @@ class PoolTogetherDash extends React.Component<Props, State> {
 
   state = {
     activeTab: DAI,
-    ticketsCount: 0,
+    ticketsCount: {
+      DAI: 0,
+      USDC: 0,
+    },
   };
 
   constructor(props: Props) {
@@ -121,8 +124,15 @@ class PoolTogetherDash extends React.Component<Props, State> {
   };
 
   onTicketCountChange = (newTicketCount: number) => {
+    const {
+      ticketsCount,
+      activeTab,
+    } = this.state;
     this.setState({
-      ticketsCount: newTicketCount,
+      ticketsCount: {
+        ...ticketsCount,
+        [activeTab]: newTicketCount,
+      },
     });
   }
 
@@ -158,7 +168,9 @@ class PoolTogetherDash extends React.Component<Props, State> {
       totalPoolTicketsCount,
     } = poolPrizeInfo[activeTab];
 
-    const daiBalance = 10;
+    const poolTokenBalance = 10;
+
+    const poolTicketsCount = ticketsCount[activeTab];
 
     return (
       <ContainerWithHeader
@@ -195,8 +207,8 @@ class PoolTogetherDash extends React.Component<Props, State> {
               activeTab={activeTab}
             />
             <PoolTickets
-              currentCount={ticketsCount}
-              maxCount={daiBalance}
+              currentCount={poolTicketsCount}
+              maxCount={poolTokenBalance}
               totalPoolTicketsCount={totalPoolTicketsCount}
               onTicketCountChange={this.onTicketCountChange}
             />
