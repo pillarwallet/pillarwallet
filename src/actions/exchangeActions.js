@@ -46,7 +46,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getActiveAccountAddress } from 'utils/accounts';
-import { getPreferredWalletId } from 'utils/smartWallet';
+import { getPreferredWalletId, isSmartWalletActive } from 'utils/smartWallet';
 import { isFiatCurrency } from 'utils/exchange';
 
 // services
@@ -188,6 +188,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     } = getState();
 
     const activeWalletId = getPreferredWalletId(accounts);
+    const isSmartWallet = isSmartWalletActive(accounts);
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -255,7 +256,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       connectExchangeService(getState());
       exchangeService.onOffers(offers =>
         offers
-          .filter(({ askRate }) => !!askRate)
+          .filter(({ askRate, provider }) => !!askRate && !(isSmartWallet && provider === 'COINSWITCH-SHIM'))
           .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established
