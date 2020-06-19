@@ -66,7 +66,14 @@ const ExploreAppsItem = (props: Props) => {
         <Image source={item.logo} style={{ height: 48, width: 48, marginRight: 15 }} />
         <AppName>{item.name}</AppName>
         <ButtonWrapper>
-          <Button title="View" onPress={handleAppUrl} small height={32} horizontalPaddings={9} />
+          <Button
+            title={item.disabled ? 'Coming soon' : 'View'}
+            onPress={handleAppUrl}
+            small
+            height={32}
+            horizontalPaddings={9}
+            disabled={item.disabled}
+          />
         </ButtonWrapper>
       </AppItemRowWrapper>
       <AppText>{item.text}</AppText>
