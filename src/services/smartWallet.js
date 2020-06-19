@@ -358,7 +358,7 @@ class SmartWallet {
   }
 
   withdrawAccountPayment(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
+    return this.sdk.accountTransaction.submitAccountProxyTransaction(estimated, payForGasWithToken);
   }
 
   searchAccount(address: string) {

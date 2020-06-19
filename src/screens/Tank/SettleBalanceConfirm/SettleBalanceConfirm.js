@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
+import { BigNumber } from 'bignumber.js';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -39,7 +40,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // types
-import type { Balances } from 'models/Asset';
+import type { Balance, Balances } from 'models/Asset';
 import type { SettleTxFee, TxToSettle } from 'models/PaymentNetwork';
 
 // utils
@@ -99,7 +100,23 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const gasToken = getGasToken(useGasToken, feeInfo);
     const payForGasWithToken = !!gasToken;
     const feeSymbol = get(gasToken, 'symbol', ETH);
-    const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
+
+    // add unsettled amounts to balances
+    const combinedBalances = Object.keys(balances)
+      .reduce((memo, assetName) => {
+        const balanceData: Balance = balances[assetName];
+        let balance = new BigNumber(balanceData.balance);
+        this.txToSettle.forEach(asset => { balance = balance.plus(asset.value); });
+        return {
+          [assetName]: {
+            ...balanceData,
+            balance: balance.toString(),
+          },
+          ...memo,
+        };
+      }, {});
+
+    const isEnoughForFee = isEnoughBalanceForTransactionFee(combinedBalances, {
       txFeeInWei,
       gasToken,
     });
