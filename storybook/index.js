@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
+import { View } from 'react-native';
 import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { loadStories } from './storyLoader';
@@ -31,7 +32,10 @@ const StorybookUIRoot = () => {
   const StorybookComponent = getStorybookUI({
     asyncStorage: AsyncStorage,
   });
-  return <StorybookComponent />;
+  return (
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <StorybookComponent />
+    </View>);
 };
 
 export default StorybookUIRoot;

@@ -196,7 +196,7 @@ const Selector = styled.TouchableOpacity`
   justify-content: space-between;
   align-items: center;
   padding-left: 16px;
-  padding-right: 10px;
+  padding-right: ${({ paddingRight }) => paddingRight || 10}px;
   background-color: ${themedColors.card};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
@@ -660,6 +660,7 @@ class TextInput extends React.Component<Props, State> {
     const errorTop = !!errorMessage && !!errorMessageOnTop;
     const errorBottom = !!errorMessage && !errorMessageOnTop;
     const showErrorIndicator = hasError || !!errorMessage;
+    const disabledSelector = selectorOptionsCount <= 1;
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
@@ -674,9 +675,10 @@ class TextInput extends React.Component<Props, State> {
               {!!Object.keys(selectorOptions).length &&
               <Selector
                 fullWidth={fullWidthSelector}
-                onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
-                disabled={selectorOptionsCount < 1}
+                onPress={!disabledSelector ? this.openSelector : noop}
+                disabled={disabledSelector}
                 height={inputHeight}
+                paddingRight={disabledSelector && 16}
               >
                 {this.renderSelector()}
                 {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}

@@ -58,7 +58,7 @@ type Props = {
   preselectedAsset?: string,
   rates: Rates,
   getFormValue: (?FormSelector) => void,
-  txFeeInfo: ?TransactionFeeInfo,
+  txFeeInfo?: ?TransactionFeeInfo,
 };
 
 type FormValue = {
@@ -94,7 +94,7 @@ const getFormStructure = (balances: Balances, txFeeInfo: ?TransactionFeeInfo) =>
   });
 };
 
-class ValueSelectorCard extends React.Component<Props, State> {
+export class ValueSelectorCard extends React.Component<Props, State> {
   form: Form;
 
   constructor(props: Props) {
@@ -153,35 +153,39 @@ class ValueSelectorCard extends React.Component<Props, State> {
       balances,
       baseFiatCurrency,
       rates,
-
       maxLabel,
       preselectedAsset,
     } = this.props;
     const { formOptions, value } = this.state;
 
-
-    // todo: filter out assets without balance
-    const assetsOptions = sortAssets(assets)
-      .map(({ symbol, iconUrl, ...rest }) => {
-        const assetBalance = formatAmount(getBalance(balances, symbol));
-        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-        return ({
-          key: symbol,
-          value: symbol,
-          icon: iconUrl,
-          iconUrl,
-          symbol,
-          ...rest,
-          assetBalance,
-          formattedBalanceInFiat,
-        });
-      });
+    const assetsOptions = sortAssets(assets).reduce((options, asset) => {
+      const { symbol, iconUrl } = asset;
+      const rawBalance = getBalance(balances, symbol);
+      const assetBalance = formatAmount(rawBalance);
+      if (rawBalance <= 0) return options;
+      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+      const option = {
+        key: symbol,
+        value: symbol,
+        icon: iconUrl,
+        ...asset,
+        assetBalance,
+        formattedBalanceInFiat,
+      };
+      return [...options, option];
+    }, []);
 
     const thisStateFormOptionsCopy = { ...formOptions };
     thisStateFormOptionsCopy.fields.formSelector.config.options = assetsOptions;
 
     const newValue = { ...value };
-    const pickedAsset = assetsOptions.find(({ symbol }) => symbol === preselectedAsset) || {};
+
+    const preselectedOption = preselectedAsset &&
+      assetsOptions.find(({ symbol }) => symbol === preselectedAsset);
+
+    const singleOption = assetsOptions.length === 1 && assetsOptions[0];
+
+    const pickedAsset = preselectedOption || singleOption || {};
     newValue.formSelector.selector = pickedAsset;
     const { symbol } = pickedAsset;
 
@@ -200,20 +204,20 @@ class ValueSelectorCard extends React.Component<Props, State> {
     this.setState({ formOptions: newOptions, value: newValue });
   };
 
-  renderCustomLabel = (symbol) => {
+  renderCustomLabel = (symbol?: string) => {
     const {
       selectedAssetBalance,
       amountValueInFiat,
       selectedAssetSymbol,
     } = this.getMaxBalanceOfSelectedAsset(false, symbol);
-    if (!selectedAssetBalance) return null;
+    if (!selectedAssetBalance || !symbol) return null;
 
     return (
       <BaseText regular secondary>{selectedAssetBalance} {selectedAssetSymbol} ({amountValueInFiat})</BaseText>
     );
   };
 
-  handleFromChange = (value) => {
+  handleFromChange = (value: FormValue) => {
     const { getFormValue, baseFiatCurrency, rates } = this.props;
     const { errorMessage, formOptions } = this.state;
     const formValue = this.form.getValue();
@@ -234,7 +238,7 @@ class ValueSelectorCard extends React.Component<Props, State> {
       const { symbol } = selector;
       const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
       const totalInFiat = parseFloat(amount) * getRate(rates, symbol, fiatCurrency);
-      valueInFiat = formatFiat(totalInFiat, baseFiatCurrency);
+      valueInFiat = symbol ? formatFiat(totalInFiat, baseFiatCurrency) : null;
     }
 
     const newOptions = t.update(formOptions, {
