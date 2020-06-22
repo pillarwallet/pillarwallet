@@ -92,7 +92,7 @@ import type { User } from 'models/User';
 
 // partials
 import WalletsPart from './WalletsPart';
-import BalanceGraph from './BalanceGraph';
+// import BalanceGraph from './BalanceGraph';
 
 type Props = {
   navigation: NavigationScreenProp<*>,

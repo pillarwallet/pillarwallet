@@ -33,9 +33,10 @@ import Svg, {
   ForeignObject,
 } from 'react-native-svg';
 import memoize from 'memoize-one';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 import { BaseText } from 'components/Typography';
 import { range } from 'utils/common';
-import { getThemeColors } from 'utils/themes';
+import { getThemeType } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 type DataPoint = {
@@ -67,6 +68,41 @@ const TOP_MARGIN = 30;
 const GRAPH_TOP_PADDING = 25;
 const GRAPH_RIGHT_PADDING = 45;
 const TOOLTIP_OFFSET = 5;
+
+const chartColorsLight = {
+  stroke: '#007aff',
+  grid: '#3a66ab',
+  activePointDotBorder: '#86ffff',
+  gradientTopFill: '#007eff',
+  gradientBottomFill: '#ffffff',
+  shadow: '#260a14',
+  tooltipBackground: '#106be9',
+  tooltipText: '#fff',
+  xAxisText: '#518df8',
+};
+
+const chartColorsDark = {
+  stroke: '#007aff',
+  grid: '#3a66ab',
+  activePointDotBorder: '#86ffff',
+  gradientTopFill: '#007eff',
+  gradientBottomFill: '#ffffff',
+  shadow: '#260a14',
+  tooltipBackground: '#106be9',
+  tooltipText: '#fff',
+  xAxisText: '#518df8',
+};
+
+const getChartTheme = (theme: Theme) => {
+  const themeType = getThemeType(theme);
+  switch (themeType) {
+    case DARK_THEME:
+      return chartColorsDark;
+    default:
+      return chartColorsLight;
+  }
+};
+
 
 class LinearGraph extends React.Component<Props> {
   panResponder: Object;
@@ -156,7 +192,7 @@ class LinearGraph extends React.Component<Props> {
     const { getTooltipContent, extra, theme } = this.props;
     const content = getTooltipContent();
 
-    const { chart: { shadow, tooltipBackground, tooltipText } } = getThemeColors(theme);
+    const { shadow, tooltipBackground, tooltipText } = getChartTheme(theme);
 
     const tooltipWidth = 80;
     const tooltipHeight = 40;
@@ -235,7 +271,7 @@ class LinearGraph extends React.Component<Props> {
       xAxisValuesCount = 6, getXAxisValue, height, width, theme,
     } = this.props;
 
-    const { chart: { xAxisText } } = getThemeColors(theme);
+    const { xAxisText } = getChartTheme(theme);
 
     const values = range(xAxisValuesCount + 2).map(v => getXAxisValue(v / xAxisValuesCount)).slice(1);
     const valueWidth = 35;
@@ -265,7 +301,7 @@ class LinearGraph extends React.Component<Props> {
   renderHorizontalLines = () => {
     const { width, yAxisValuesCount = 3, theme } = this.props;
     const maxY = this.getMaxY();
-    const { chart: { grid } } = getThemeColors(theme);
+    const { grid } = getChartTheme(theme);
 
     return (
       range(yAxisValuesCount + 1).map < React.Node > ((_, i): React.Node => {
@@ -318,10 +354,8 @@ class LinearGraph extends React.Component<Props> {
     } = this.props;
 
     const {
-      chart: {
-        stroke, gradientTopFill, gradientBottomFill, grid, activePointDotBorder,
-      },
-    } = getThemeColors(theme);
+      stroke, gradientTopFill, gradientBottomFill, grid, activePointDotBorder,
+    } = getChartTheme(theme);
 
     const activePointX = this.getScreenX(data[activeDataPoint].x);
     const activePointY = this.getScreenY(data[activeDataPoint].y);

@@ -1254,17 +1254,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       "border": "#EDEDED",
                       "buttonSecondaryBackground": "#e6f1f9",
                       "card": "#FFFFFF",
-                      "chart": Object {
-                        "activePointDotBorder": "#86ffff",
-                        "gradientBottomFill": "#ffffff",
-                        "gradientTopFill": "#007eff",
-                        "grid": "#3a66ab",
-                        "shadow": "#260a14",
-                        "stroke": "#007aff",
-                        "tooltipBackground": "#106be9",
-                        "tooltipText": "#fff",
-                        "xAxisText": "#518df8",
-                      },
                       "control": "#FCFDFF",
                       "danger": "#ff0005",
                       "helpIcon": "#f7931a",
@@ -1739,59 +1728,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   }
                 >
                   <View
-                    rounded={true}
-                    small={true}
-                    style={
-                      Array [
-                        Object {
-                          "backgroundColor": "#BD573A",
-                          "borderRadius": 8,
-                          "justifyContent": "center",
-                          "paddingBottom": 8,
-                          "paddingLeft": 8,
-                          "paddingRight": 8,
-                          "paddingTop": 8,
-                          "width": "100%",
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <Text
-                      small={true}
-                      style={
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Regular",
-                            "fontSize": 12,
-                            "lineHeight": 18,
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Medium",
-                              "fontSize": 12,
-                              "lineHeight": 18,
-                              "textAlignVertical": "center",
-                            },
-                            Array [
-                              Object {
-                                "color": "#FCFDFF",
-                                "fontSize": 14,
-                                "lineHeight": 22,
-                              },
-                              undefined,
-                            ],
-                          ],
-                        ]
-                      }
-                    >
-                      Do not send real ETH or ERC20 tokens.
-                    </Text>
-                  </View>
-                  <View
                     style={
                       Array [
                         Object {
@@ -1927,17 +1863,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border": "#EDEDED",
                               "buttonSecondaryBackground": "#e6f1f9",
                               "card": "#FFFFFF",
-                              "chart": Object {
-                                "activePointDotBorder": "#86ffff",
-                                "gradientBottomFill": "#ffffff",
-                                "gradientTopFill": "#007eff",
-                                "grid": "#3a66ab",
-                                "shadow": "#260a14",
-                                "stroke": "#007aff",
-                                "tooltipBackground": "#106be9",
-                                "tooltipText": "#fff",
-                                "xAxisText": "#518df8",
-                              },
                               "control": "#FCFDFF",
                               "danger": "#ff0005",
                               "helpIcon": "#f7931a",
@@ -2061,17 +1986,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "border": "#007AFF",
                               "buttonSecondaryBackground": "#e6f1f9",
                               "card": "#FFFFFF",
-                              "chart": Object {
-                                "activePointDotBorder": "#86ffff",
-                                "gradientBottomFill": "#ffffff",
-                                "gradientTopFill": "#007eff",
-                                "grid": "#3a66ab",
-                                "shadow": "#260a14",
-                                "stroke": "#007aff",
-                                "tooltipBackground": "#106be9",
-                                "tooltipText": "#fff",
-                                "xAxisText": "#518df8",
-                              },
                               "control": "#FCFDFF",
                               "danger": "#ff0005",
                               "helpIcon": "#f7931a",
