@@ -169,7 +169,8 @@
     "util": "~0.10.3",
     "uuid": "^3.3.2",
     "vm-browserify": "0.0.4",
-    "wallet-address-validator": "^0.2.4"
+    "wallet-address-validator": "^0.2.4",
+    "moment": "^2.27.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

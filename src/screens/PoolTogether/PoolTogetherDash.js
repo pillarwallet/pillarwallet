@@ -208,6 +208,8 @@ class PoolTogetherDash extends React.Component<Props, State> {
               currentCount={poolTicketsCount}
               maxCount={poolTokenBalance}
               totalPoolTicketsCount={totalPoolTicketsCount}
+              remainingTimeMs={remainingTimeMs}
+              onPressCallback={() => null}
               onTicketCountChange={this.onTicketCountChange}
             />
           </ContentWrapper>

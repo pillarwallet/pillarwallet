@@ -20,10 +20,11 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-
+import moment from 'moment';
 
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+import Button from 'components/Button';
 
 import type { Theme } from 'models/Theme';
 
@@ -71,8 +72,10 @@ type Props = {
   maxCount: number,
   currentCount: number,
   totalPoolTicketsCount: number,
+  remainingTimeMs: number,
   theme: Theme,
   onTicketCountChange: Function,
+  onPressCallback: Function,
 };
 
 const PoolTickets = (props: Props) => {
@@ -80,8 +83,10 @@ const PoolTickets = (props: Props) => {
     maxCount = 0,
     currentCount = 0,
     totalPoolTicketsCount = 0,
+    remainingTimeMs = 0,
     theme,
     onTicketCountChange,
+    onPressCallback,
   } = props;
 
   const colors = getThemeColors(theme);
@@ -99,10 +104,14 @@ const PoolTickets = (props: Props) => {
     return canAdd && onTicketCountChange(currentCount + 1);
   };
 
+  const nextDate = new Date(Date.now() + remainingTimeMs);
+  const eligibleDate = moment(nextDate).format('MMMM D, Y');
+
   return (
     <PoolTicketsWrapper
       style={{
           marginTop: 40,
+          paddingHorizontal: 20,
         }}
     >
       <TicketCounterRow>
@@ -158,6 +167,19 @@ const PoolTickets = (props: Props) => {
       <TicketCounterRow style={{ paddingTop: 0 }}>
         <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)}%</Text>
         <Text label>chance of win</Text>
+      </TicketCounterRow>
+      <TicketCounterRow style={{ marginTop: 40 }}>
+        <Button
+          title={currentCount > 0 ? 'Next' : 'Join Pool'}
+          disabled={currentCount === 0}
+          onPress={onPressCallback}
+          style={{ marginBottom: 13, width: '100%' }}
+        />
+      </TicketCounterRow>
+      <TicketCounterRow style={{ paddingTop: 0 }}>
+        <Text style={{ textAlign: 'center' }} label>
+          Tickets purchased today will be eligible for prizes starting on {eligibleDate}.
+        </Text>
       </TicketCounterRow>
     </PoolTicketsWrapper>
   );
