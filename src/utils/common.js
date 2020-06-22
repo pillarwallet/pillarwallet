@@ -615,19 +615,3 @@ export const humanizeHexString = (hexString: ?string) => {
 
   return hexString;
 };
-
-export const countDownDHMS = (remainingTimeMs: number) => {
-  const seconds = remainingTimeMs / 1000;
-  const days = Math.floor(seconds / 24 / 60 / 60);
-  const hoursLeft = Math.floor((seconds) - (days * 86400));
-  const hours = Math.floor(hoursLeft / 3600);
-  const minutesLeft = Math.floor((hoursLeft) - (hours * 3600));
-  const minutes = Math.floor(minutesLeft / 60);
-  const remainingSeconds = seconds % 60;
-  return {
-    days,
-    hours,
-    minutes,
-    remainingSeconds,
-  };
-};

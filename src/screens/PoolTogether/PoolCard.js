@@ -31,7 +31,7 @@ import Progress from 'components/Progress';
 import type { Theme } from 'models/Theme';
 
 import { getThemeColors, themedColors } from 'utils/themes';
-import { countDownDHMS } from 'utils/common';
+import { countDownDHMS } from 'utils/poolTogether';
 import { fontStyles } from 'utils/variables';
 
 const CardRow = styled.View`
