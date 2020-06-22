@@ -84,6 +84,7 @@ const glyphMap = {
   'rounded-close': '\uE879',
   'connect-active': '\uE87A',
   hidden: '\uE83E',
+  failed: '\uE880',
   'count-plus': '\uE83F',
   'count-minus': '\uE840',
 };

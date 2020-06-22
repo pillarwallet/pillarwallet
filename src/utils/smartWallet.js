@@ -32,7 +32,12 @@ import {
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
+import {
+  TX_CONFIRMED_STATUS,
+  TX_FAILED_STATUS,
+  TX_PENDING_STATUS,
+  TX_TIMEDOUT_STATUS,
+} from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
@@ -47,7 +52,13 @@ import { parseEstimatePayload } from 'services/smartWallet';
 // types
 import type { Accounts } from 'models/Account';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { TransactionFeeInfo, EstimatedTransactionFee, Transaction, TransactionExtra } from 'models/Transaction';
+import type {
+  TransactionFeeInfo,
+  EstimatedTransactionFee,
+  Transaction,
+  TransactionExtra,
+  GasToken,
+} from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { EstimatePayload } from 'services/smartWallet';
@@ -142,6 +153,27 @@ export const accountHasGasTokenSupport = (account: Object): boolean => {
 
 const extractAddress = details => get(details, 'account.address', '') || get(details, 'address', '');
 
+export const getGasTokenDetails = (assets: Asset[], supportedAssets: Asset[], gasTokenAddress: string): ?GasToken => {
+  const assetData = getAssetDataByAddress(assets, supportedAssets, gasTokenAddress);
+  if (isEmpty(assetData)) return null;
+
+  const { decimals, symbol, address } = assetData;
+  return { decimals, symbol, address };
+};
+
+export const mapSdkToAppTxStatus = (sdkStatus: sdkConstants.AccountTransactionStates): string => {
+  switch (sdkStatus) {
+    case sdkConstants.AccountTransactionStates.Completed:
+      return TX_CONFIRMED_STATUS;
+    case sdkConstants.AccountTransactionStates.Failed:
+      return TX_FAILED_STATUS;
+    case sdkConstants.AccountTransactionStates.DroppedOrReplaced:
+      return TX_TIMEDOUT_STATUS;
+    default:
+      return TX_PENDING_STATUS;
+  }
+};
+
 export const parseSmartWalletTransactions = (
   smartWalletTransactions: IAccountTransaction[],
   supportedAssets: Asset[],
@@ -191,10 +223,7 @@ export const parseSmartWalletTransactions = (
     // ignore some transaction types
     if (transactionType === AccountTransactionTypes.TopUpErc20Approve) return mapped;
 
-    const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
-    // TODO: add support for failed transactions
-    const status = state === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
-
+    const status = mapSdkToAppTxStatus(state);
     let value = tokenAddress ? tokenValue : rawValue;
     value = new BigNumber(value.toString());
 
@@ -279,16 +308,12 @@ export const parseSmartWalletTransactions = (
       };
     }
 
-    if (!isEmpty(gasTokenAddress)) {
-      const gasToken = getAssetDataByAddress(assets, supportedAssets, gasTokenAddress);
+    if (!isEmpty(gasTokenAddress) && transactionFee) {
+      // TODO: this should be returned from the backend
+      const gasToken = getGasTokenDetails(assets, supportedAssets, gasTokenAddress);
       if (!isEmpty(gasToken)) {
-        const { decimals: gasTokenDecimals, symbol: gasTokenSymbol } = gasToken;
-        const feeWithGasToken = parseFeeWithGasToken({
-          decimals: gasTokenDecimals,
-          symbol: gasTokenSymbol,
-          address: gasTokenAddress,
-        }, transactionFee);
-        if (transactionFee) transaction = { ...transaction, feeWithGasToken };
+        const feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
+        transaction = { ...transaction, feeWithGasToken };
       }
     }
 
