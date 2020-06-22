@@ -8241,7 +8241,10 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
           <View
             style={
               Array [
-                undefined,
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                },
                 Object {
                   "flexWrap": "wrap",
                 },
@@ -8272,6 +8275,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                   }
                 >
                   <Text
+                    secondary={false}
                     style={
                       Array [
                         Object {
@@ -11293,11 +11297,11 @@ Array [
     to Bitcoin Wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -11575,11 +11579,11 @@ Array [
     from Bitcoin Wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -11868,11 +11872,11 @@ Array [
     Collectible from Smart Wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -12120,11 +12124,11 @@ Array [
     from Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -12497,11 +12501,11 @@ Array [
     to Key wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -12777,11 +12781,11 @@ Array [
     to Key wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -13310,11 +13314,11 @@ Array [
     to Key wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -13843,11 +13847,11 @@ Array [
     from Key wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -16806,11 +16810,11 @@ Array [
     to Pillar Network
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -17346,11 +17350,11 @@ Array [
     from Pillar Network
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -17781,7 +17785,7 @@ Array [
           ]
         }
       >
-        -
+        - 
         1
          
         PLR
@@ -17902,7 +17906,7 @@ Array [
           ]
         }
       >
-        -
+        - 
         2
          
         ETH
@@ -18366,11 +18370,11 @@ Array [
     from Smart Wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -18869,11 +18873,11 @@ Array [
     to Pillar Network
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -19372,11 +19376,11 @@ Array [
     to Smart Wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -19749,11 +19753,11 @@ Array [
     from Pillar Network
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -20168,11 +20172,11 @@ Array [
     to Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -20573,11 +20577,11 @@ Array [
     to Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -21120,11 +21124,11 @@ Array [
     to Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -21529,11 +21533,11 @@ Array [
     to Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -22074,11 +22078,11 @@ Array [
     from Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -22479,11 +22483,11 @@ Array [
     from Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -23026,11 +23030,11 @@ Array [
     from Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -23435,11 +23439,11 @@ Array [
     from Smart wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -23938,11 +23942,11 @@ Array [
     to Smart Wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
@@ -24317,11 +24321,11 @@ Array [
     from Key wallet
   </Text>,
   <View
-    h={24}
+    h={16}
     style={
       Array [
         Object {
-          "height": 24,
+          "height": 16,
           "width": 0,
         },
         undefined,
