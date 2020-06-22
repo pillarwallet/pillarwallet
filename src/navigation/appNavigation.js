@@ -106,7 +106,8 @@ import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/Re
 import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
-import ChooseAssetDeposit from 'screens/Lending/ChooseAssetDeposit';
+import ChooseAssetDepositScreen from 'screens/Lending/ChooseAssetDeposit';
+import DepositedAssetsListScreen from 'screens/Lending/DepositedAssetsList';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -243,8 +244,10 @@ import {
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
-  LENDING_FLOW,
   LENDING_CHOOSE_DEPOSIT,
+  LENDING_DEPOSITED_ASSETS_LIST,
+  LENDING_ADD_DEPOSIT_FLOW,
+  LENDING_MANAGE_DEPOSITS_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -709,11 +712,17 @@ const recoveryPortalRecoveryFlow = createStackNavigator({
 
 recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-const lendingFlow = createStackNavigator({
-  [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDeposit,
+const lendingAddDepositsFlow = createStackNavigator({
+  [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDepositScreen,
 }, StackNavigatorConfig);
 
-lendingFlow.navigationOptions = hideTabNavigatorOnChildView;
+lendingAddDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const lendingManageDepositsFlow = createStackNavigator({
+  [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
+}, StackNavigatorConfig);
+
+lendingManageDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -751,7 +760,8 @@ const AppFlowNavigation = createStackNavigator(
     [REFERRAL_SENT]: ReferralSentScreen,
     [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
     [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
-    [LENDING_FLOW]: lendingFlow,
+    [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
+    [LENDING_MANAGE_DEPOSITS_FLOW]: lendingManageDepositsFlow,
   },
   modalTransition,
 );

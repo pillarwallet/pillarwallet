@@ -80,7 +80,7 @@ const ChooseAssetDeposit = ({
     <ListItemWithImage
       label={name}
       subtext={`Available: ${formatAmountDisplay(getBalance(balances, symbol))} ${symbol}`}
-      avatarUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
+      itemImageUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
       onPress={() => {}}
       diameter={48}
       rightColumnInnerStyle={{ alignItems: 'flex-end' }}

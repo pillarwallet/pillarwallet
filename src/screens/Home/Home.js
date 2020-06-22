@@ -42,7 +42,12 @@ import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 // constants
-import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
+import {
+  BADGE,
+  LENDING_DEPOSITED_ASSETS_LIST,
+  MENU,
+  WALLETCONNECT,
+} from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -145,6 +150,7 @@ type Props = {
   hideLendingDeposits: boolean,
   fetchDepositedAssets: () => void,
   toggleLendingDeposits: () => void,
+  isFetchingDepositedAssets: boolean,
 };
 
 type State = {
@@ -305,7 +311,7 @@ class HomeScreen extends React.Component<Props, State> {
       itemImageRoundedSquare
     >
       <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
-      <BaseText secondary>{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
+      <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
     </ListItemWithImage>
   );
 
@@ -341,6 +347,7 @@ class HomeScreen extends React.Component<Props, State> {
       hideLendingDeposits,
       depositedAssets,
       toggleLendingDeposits,
+      isFetchingDepositedAssets,
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
@@ -536,7 +543,10 @@ class HomeScreen extends React.Component<Props, State> {
                   />
                   {!isEmpty(depositedAssets) &&
                     <CollapsibleSection
-                      label="Aave Deposit"
+                      label="Aave Deposits"
+                      labelRight={!isFetchingDepositedAssets && 'View all'}
+                      showLoadingSpinner={isFetchingDepositedAssets}
+                      onPressLabelRight={() => navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST)}
                       collapseContent={
                         <FlatList
                           data={depositedAssets}
@@ -591,7 +601,7 @@ const mapStateToProps = ({
   walletConnect: { requests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
-  lending: { depositedAssets },
+  lending: { depositedAssets, isFetchingDepositedAssets },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -609,6 +619,7 @@ const mapStateToProps = ({
   referFriendsOnHomeScreenDismissed,
   hideLendingDeposits,
   depositedAssets,
+  isFetchingDepositedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
