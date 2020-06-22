@@ -107,6 +107,7 @@ import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/Re
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 import PoolTogetherDashScreen from 'screens/PoolTogether/PoolTogetherDash';
+import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -245,6 +246,7 @@ import {
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   POOLTOGETHER_FLOW,
   POOLTOGETHER_DASHBOARD,
+  POOLTOGETHER_PURCHASE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -713,6 +715,7 @@ recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 // POOLTOGETHER FLOW
 const poolTogetherFlow = createStackNavigator({
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
 }, StackNavigatorConfig);
 
 poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;

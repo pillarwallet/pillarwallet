@@ -19,9 +19,9 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, Platform, Image } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -30,13 +30,14 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
-import { DAI, USDC } from 'constants/assetsConstants';
-import { POOLTOGETHER_PURCHASE } from 'constants/navigationConstants';
+import { DAI } from 'constants/assetsConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Tabs from 'components/Tabs';
+import ValueSelectorCard from 'components/ValueSelectorCard/ValueSelectorCard';
+import { BaseText } from 'components/Typography';
+import Button from 'components/Button';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -49,9 +50,11 @@ import type { Theme } from 'models/Theme';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
-// local screen components
-import PoolCard from './PoolCard';
-import PoolTickets from './PoolTickets';
+// utils
+import { themedColors, getThemeColors } from 'utils/themes';
+import { fontStyles } from 'utils/variables';
+import { formatAmount } from 'utils/common';
+import { getWinChance } from 'utils/poolTogether';
 
 const ContentWrapper = styled.View`
   padding-top: ${Platform.select({
@@ -60,14 +63,17 @@ const ContentWrapper = styled.View`
   })};
 `;
 
-const LogoWrapper = styled.View`
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  margin: 0px 20px;
+const Text = styled(BaseText)`
+  ${({ label }) => label ? fontStyles.regular : fontStyles.large};
+  letter-spacing: 0.18px;
+  color: ${({ label }) => label ? themedColors.secondaryText : themedColors.text};
 `;
 
-const poolTogetherLogo = require('assets/images/pool_together.png');
+const ContentRow = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  padding: 8px 20px 8px 20px;
+`;
 
 type Props = {
   name: string,
@@ -83,142 +89,105 @@ type Props = {
 };
 
 type State = {
-  activeTab: string,
-  ticketsCount: Object,
+  poolToken: string,
+  tokenValue: number,
+  totalPoolTicketsCount: number
 };
 
-class PoolTogetherDash extends React.Component<Props, State> {
+class PoolTogetherPurchase extends React.Component<Props, State> {
   isComponentMounted: boolean = false;
   scroll: Object;
 
-  state = {
-    activeTab: DAI,
-    ticketsCount: {
-      DAI: 0,
-      USDC: 0,
-    },
-  };
+  constructor(props) {
+    const { navigation } = props;
+    const {
+      poolToken = DAI,
+      poolTicketsCount = 0,
+      totalPoolTicketsCount = 0,
+    } = navigation.state.params || {};
+    super(props);
+    this.state = {
+      poolToken,
+      tokenValue: poolTicketsCount,
+      totalPoolTicketsCount,
+    };
+  }
 
   componentDidMount() {
     const { logScreenView } = this.props;
     this.isComponentMounted = true;
-    this.props.fetchPoolStats(DAI);
-    logScreenView('View PoolTogether', 'PoolTogether');
+    logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
   }
 
   componentWillUnmount() {
     this.isComponentMounted = false;
   }
 
-  setActiveTab = (activeTab: string) => {
+  getFormValue = (value) => {
+    const { input = '0' } = value || {};
+    const newValue = Math.floor(parseFloat(input));
     this.setState({
-      activeTab,
-    }, () => {
-      this.props.fetchPoolStats(activeTab);
-    });
-  };
-
-  onTicketCountChange = (newTicketCount: number) => {
-    const {
-      ticketsCount,
-      activeTab,
-    } = this.state;
-    this.setState({
-      ticketsCount: {
-        ...ticketsCount,
-        [activeTab]: newTicketCount,
-      },
+      tokenValue: newValue,
     });
   }
 
   render() {
     const {
-      navigation,
       fetchPoolStats,
-      poolPrizeInfo,
-      balances,
+      theme,
     } = this.props;
 
     const {
-      activeTab,
-      ticketsCount,
+      poolToken,
+      tokenValue,
+      totalPoolTicketsCount,
     } = this.state;
 
-    const poolCurrencyTabs = [
-      {
-        id: DAI,
-        name: 'DAI Pool',
-        onPress: () => this.setActiveTab(DAI),
-      },
-      {
-        id: USDC,
-        name: 'USDC Pool',
-        onPress: () => this.setActiveTab(USDC),
-      },
-    ];
+    const colors = getThemeColors(theme);
 
-    const {
-      currentPrize,
-      prizeEstimate,
-      remainingTimeMs,
-      totalPoolTicketsCount,
-    } = poolPrizeInfo[activeTab];
-
-    const { balance = '0' } = balances[activeTab] || {};
-
-    const poolTokenBalance = Math.floor(parseFloat(balance)); // get integer closest to balance for ticket enumeration
-
-    const poolTicketsCount = ticketsCount[activeTab];
+    const winChance = getWinChance(tokenValue, totalPoolTicketsCount);
 
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Pool Together' }] }}
+        headerProps={{ centerItems: [{ title: 'Purchase Tickets' }] }}
       >
         <ScrollWrapper
           refreshControl={
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchPoolStats(activeTab);
+                fetchPoolStats(poolToken);
               }}
             />
           }
           innerRef={ref => { this.scroll = ref; }}
         >
           <ContentWrapper>
-            <LogoWrapper>
-              <Image
-                style={{
-                  height: 64,
-                  width: 64,
-                }}
-                source={poolTogetherLogo}
-                resizeMode="contain"
+            <ContentRow style={{ paddingLeft: 4, paddingRight: 4 }}>
+              <ValueSelectorCard
+                preselectedAsset={poolToken}
+                getFormValue={this.getFormValue}
+                maxLabel="Spend max"
+                txFeeInfo={null}
               />
-            </LogoWrapper>
-            <Tabs tabs={poolCurrencyTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
-            <PoolCard
-              currentPrize={currentPrize}
-              prizeEstimate={prizeEstimate}
-              remainingTimeMs={remainingTimeMs}
-              activeTab={activeTab}
-            />
-            <PoolTickets
-              currentCount={poolTicketsCount}
-              maxCount={poolTokenBalance}
-              totalPoolTicketsCount={totalPoolTicketsCount}
-              remainingTimeMs={remainingTimeMs}
-              onPressCallback={() => {
-                navigation.navigate(POOLTOGETHER_PURCHASE, {
-                  poolToken: activeTab,
-                  poolTicketsCount,
-                  poolTokenBalance,
-                  totalPoolTicketsCount,
-                });
-              }}
-              onTicketCountChange={this.onTicketCountChange}
-            />
+            </ContentRow>
+            <ContentRow>
+              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)}%</Text>
+              <Text label>chance of win </Text>
+            </ContentRow>
+            <ContentRow>
+              <Text style={{ textAlign: 'center' }} label>
+                In order to join Pool Together you will need to automate transactions first.
+              </Text>
+            </ContentRow>
+            <ContentRow>
+              <Button
+                title="Next"
+                onPress={() => null}
+                style={{ marginBottom: 13, width: '100%' }}
+              />
+            </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>
@@ -251,4 +220,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherDash);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(withTheme(PoolTogetherPurchase));

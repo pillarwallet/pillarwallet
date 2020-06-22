@@ -33,3 +33,7 @@ export const countDownDHMS = (remainingTimeMs: number) => {
     remainingSeconds,
   };
 };
+
+export const getWinChance = (currentCount: number = 0, totalPoolTicketsCount: number = 0): number => {
+  return (currentCount * 100) / (totalPoolTicketsCount > 0 ? totalPoolTicketsCount : 1); // win chance in %
+};
