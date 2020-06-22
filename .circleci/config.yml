@@ -297,7 +297,7 @@ jobs:
             cp environments/.env.staging ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
@@ -381,7 +381,7 @@ jobs:
             cp environments/.env.staging ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" .env
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
@@ -453,7 +453,7 @@ jobs:
       - *homebrew_save_cache
 
       - run:
-          name: Append circleCI build number to version
+          name: Set production environment
           command: |
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"

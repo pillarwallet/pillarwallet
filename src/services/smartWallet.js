@@ -28,7 +28,7 @@ import {
 } from '@smartwallet/sdk';
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
@@ -358,7 +358,7 @@ class SmartWallet {
   }
 
   withdrawAccountPayment(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
+    return this.sdk.accountTransaction.submitAccountProxyTransaction(estimated, payForGasWithToken);
   }
 
   searchAccount(address: string) {
@@ -443,7 +443,7 @@ class SmartWallet {
     } else if (!data) {
       const tokenTransferValue = decimals > 0
         ? utils.parseUnits(rawValue.toString(), decimals)
-        : utils.bigNumberify(rawValue.toString());
+        : EthersBigNumber.from(rawValue.toString());
       const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
       data = abi.encodeMethod(transferMethod, [recipient, tokenTransferValue]);
       recipient = contractAddress;
