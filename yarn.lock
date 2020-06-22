@@ -3089,10 +3089,10 @@
     "@walletconnect/types" "^1.0.0-beta.47"
     "@walletconnect/utils" "^1.0.0-beta.47"
 
-"@walletconnect/react-native@^1.0.0-beta.29":
+"@walletconnect/react-native@^1.0.0-beta.47":
   version "1.0.0-beta.47"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@walletconnect/react-native/-/react-native-1.0.0-beta.47.tgz#34d5d834db4e7b857fde33cca4959cc1693dee1a"
-  integrity sha1-NNXYNNtOe4V/3jPMpJWcwWk97ho=
+  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0-beta.47.tgz#34d5d834db4e7b857fde33cca4959cc1693dee1a"
+  integrity sha512-kvz4gO1N6PfIlXr0xVfT/me7yiqADj3xbghYxntdyOcDWDJxUBkNwnorieyh8ZZV2AMRdvgVed/TUzr+bpjl0w==
   dependencies:
     "@walletconnect/core" "^1.0.0-beta.47"
     "@walletconnect/types" "^1.0.0-beta.47"
