@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 export type AssetData = {|
   token: string,
   contractAddress?: string,
@@ -77,6 +76,14 @@ export type SyntheticAsset = Asset & {
   exchangeRate?: number,
 };
 
-export type DepositableAsset = Asset & {
-  earnInterestRate: number,
+export type AssetToDeposit = Asset & {
+  interestRate: number,
+};
+
+export type DepositedAsset = Asset & {
+  interestRate: number,
+  earnedAmount: number,
+  earningsPercentageGain: number,
+  currentBalance: number,
+  initialBalance: number,
 };

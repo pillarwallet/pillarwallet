@@ -290,7 +290,7 @@ export const loginAction = (
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
         // current active screen will be always AUTH_FLOW due to login/logout
-        routeName: 'LENDING_CHOOSE_DEPOSIT', //lastActiveScreen || HOME,
+        routeName: lastActiveScreen || HOME,
         params: lastActiveScreenParams,
       });
 

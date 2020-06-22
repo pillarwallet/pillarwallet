@@ -23,11 +23,12 @@ import {
   SET_FETCHING_ASSETS_TO_DEPOSIT,
   SET_FETCHING_DEPOSITED_ASSETS,
 } from 'constants/lendingConstants';
-import type { DepositableAsset } from 'models/Asset';
+import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
+
 
 export type LendingReducerState = {
-  assetsToDeposit: DepositableAsset[],
-  depositedAssets: DepositableAsset[],
+  assetsToDeposit: AssetToDeposit[],
+  depositedAssets: DepositedAsset[],
   isFetchingDepositedAssets: boolean,
   isFetchingAssetsToDeposit: boolean,
 };
@@ -52,11 +53,11 @@ export default function lendingReducer(
     case SET_FETCHING_ASSETS_TO_DEPOSIT:
       return { ...state, isFetchingAssetsToDeposit: action.payload || true };
     case SET_ASSETS_TO_DEPOSIT:
-      return { ...state, data: action.payload, isFetchingAssetsToDeposit: false };
+      return { ...state, assetsToDeposit: action.payload, isFetchingAssetsToDeposit: false };
     case SET_FETCHING_DEPOSITED_ASSETS:
       return { ...state, isFetchingDepositedAssets: action.payload || true };
     case SET_DEPOSITED_ASSETS:
-      return { ...state, data: action.payload, isFetchingDepositedAssets: false };
+      return { ...state, depositedAssets: action.payload, isFetchingDepositedAssets: false };
     default:
       return state;
   }

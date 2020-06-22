@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+// actions
+import { saveDbAction } from 'actions/dbActions';
 
 // services
 import aaveService from 'services/aave';
@@ -26,6 +28,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { getAssetsAsList } from 'utils/assets';
+import { findKeyBasedAccount, getAccountAddress } from 'utils/accounts';
 
 // constants
 import {
@@ -52,9 +55,20 @@ export const fetchAssetsToDepositAction = () => {
 export const fetchDepositedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_FETCHING_DEPOSITED_ASSETS });
-    const { assets: { supportedAssets } } = getState();
+    const {
+      assets: { supportedAssets },
+      accounts: { data: accounts },
+    } = getState();
     const currentAccountAssets = accountAssetsSelector(getState());
-    const assets = await aaveService.getDepositedAssets(getAssetsAsList(currentAccountAssets), supportedAssets);
-    dispatch({ type: SET_DEPOSITED_ASSETS, payload: assets });
+    // TODO: switch back to smart wallet
+    const smartWalletAccount = findKeyBasedAccount(accounts); // findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+    const depositedAssets = await aaveService.getAccountDepositedAssets(
+      getAccountAddress(smartWalletAccount),
+      getAssetsAsList(currentAccountAssets),
+      supportedAssets,
+    );
+    dispatch({ type: SET_DEPOSITED_ASSETS, payload: depositedAssets });
+    dispatch(saveDbAction('lending', { depositedAssets }));
   };
 };

@@ -22,31 +22,36 @@ import { connect } from 'react-redux';
 import orderBy from 'lodash.orderby';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import { fetchAssetsToDepositAction } from 'actions/lendingActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
 import { FlatList, RefreshControl } from 'react-native';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText } from 'components/Typography';
 
 // utils
-import { formatAmount } from 'utils/common';
+import { formatAmountDisplay } from 'utils/common';
 import { fontSizes } from 'utils/variables';
+import { getBalance } from 'utils/assets';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { DepositableAsset } from 'models/Asset';
+import type { Balances, AssetToDeposit } from 'models/Asset';
 
 
 type Props = {
-  assetsToDeposit: DepositableAsset[],
+  assetsToDeposit: AssetToDeposit[],
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
+  balances: Balances,
 };
 
 const InterestText = styled(BaseText)`
@@ -58,6 +63,7 @@ const ChooseAssetDeposit = ({
   assetsToDeposit,
   isFetchingAssetsToDeposit,
   fetchAssetsToDeposit,
+  balances,
 }: Props) => {
   useEffect(() => {
     fetchAssetsToDeposit();
@@ -70,17 +76,17 @@ const ChooseAssetDeposit = ({
       iconUrl,
       earnInterestRate,
     },
-  }: DepositableAsset) => (
+  }: { item: AssetToDeposit }) => (
     <ListItemWithImage
       label={name}
-      subtext={`Available: 0.00 ${symbol}`}
+      subtext={`Available: ${formatAmountDisplay(getBalance(balances, symbol))} ${symbol}`}
       avatarUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
       onPress={() => {}}
       diameter={48}
       rightColumnInnerStyle={{ alignItems: 'flex-end' }}
     >
       <BaseText secondary>Current APY</BaseText>
-      <InterestText primary>{formatAmount(earnInterestRate, 2)}%</InterestText>
+      <InterestText primary>{formatAmountDisplay(earnInterestRate)}%</InterestText>
     </ListItemWithImage>
   );
 
@@ -89,22 +95,20 @@ const ChooseAssetDeposit = ({
 
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Choose asset to deposit' }] }}>
-      <ScrollWrapper contentContainerStyle={!assetsByHighestInterest.length && emptyStyle}>
-        <FlatList
-          data={assetsByHighestInterest}
-          keyExtractor={({ address }) => address}
-          renderItem={renderListItem}
-          initialNumToRender={9}
-          contentContainerStyle={!assetsByHighestInterest.length && emptyStyle}
-          ListEmptyComponent={!isFetchingAssetsToDeposit && <EmptyStateParagraph title="No assets to deposit" />}
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetchingAssetsToDeposit}
-              onRefresh={() => fetchAssetsToDeposit()}
-            />
-          }
-        />
-      </ScrollWrapper>
+      <FlatList
+        data={assetsByHighestInterest}
+        keyExtractor={({ address }) => address}
+        renderItem={renderListItem}
+        initialNumToRender={9}
+        contentContainerStyle={!assetsByHighestInterest.length && emptyStyle}
+        ListEmptyComponent={!isFetchingAssetsToDeposit && <EmptyStateParagraph title="No assets to deposit" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetchingAssetsToDeposit}
+            onRefresh={() => fetchAssetsToDeposit()}
+          />
+        }
+      />
     </ContainerWithHeader>
   );
 };
@@ -116,8 +120,17 @@ const mapStateToProps = ({
   isFetchingAssetsToDeposit,
 });
 
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChooseAssetDeposit);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ChooseAssetDeposit);
