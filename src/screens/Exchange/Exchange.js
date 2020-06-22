@@ -19,22 +19,20 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard, View } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import { formatAmount, formatFiat, isValidNumber, reportOrWarn } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import TextInput from 'components/TextInput';
 import SWActivationCard from 'components/SWActivationCard';
 
 // actions
@@ -60,6 +58,7 @@ import { isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import { satoshisToBtc } from 'utils/bitcoin';
+import { SelectorInputTemplate, selectorStructure } from 'utils/formHelpers';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -80,7 +79,7 @@ import type { Theme } from 'models/Theme';
 import { HotSwapsHorizontalList } from './HotSwapsList';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
-import { calculateMaxAmount, getFormattedBalanceInFiat } from './utils';
+import { getFormattedBalanceInFiat } from './utils';
 
 type Props = {
   rates: Rates,
@@ -138,77 +137,9 @@ const FormWrapper = styled.View`
 
 const { Form } = t.form;
 
-const MIN_TX_AMOUNT = 0.000000000000000001;
-
 const settingsIcon = require('assets/icons/icon_key.png');
 
 const generateFormStructure = (balances: Balances) => {
-  let balance;
-  let maxAmount;
-  let amount;
-
-  const FromOption = t.refinement(t.Object, ({ selector, input }) => {
-    if (!selector
-      || isEmpty(selector)
-      || !input
-      || !isValidNumber(input)) return false;
-
-    const { symbol, decimals } = selector;
-
-    if (isFiatCurrency(symbol)) return true;
-
-    amount = parseFloat(input);
-
-    if (decimals === 0 && amount.toString().includes('.')) return false;
-
-    balance = getBalance(balances, symbol);
-    maxAmount = calculateMaxAmount(symbol, balance);
-
-    return amount <= maxAmount && amount >= MIN_TX_AMOUNT;
-  });
-
-  FromOption.getValidationErrorMessage = ({ selector, input }) => {
-    if (!selector) {
-      reportOrWarn('Wrong exchange selector value', selector, 'critical');
-      return true;
-    }
-
-    const { symbol, decimals } = selector;
-
-    const isFiat = isFiatCurrency(symbol);
-
-    if (!isValidNumber(input.toString())) {
-      return 'Incorrect number entered.';
-    }
-
-    const numericAmount = parseFloat(input || 0);
-
-    if (numericAmount === 0) {
-      /**
-       * 0 is the first number that can be typed therefore we don't want
-       * to show any error message on the input, however,
-       * the form validation would still not go through,
-       * but it's obvious that you cannot send 0 amount
-       */
-      return null;
-    } else if (numericAmount < 0) {
-      return 'Amount should be bigger than 0.';
-    }
-
-    // all possible fiat validation is done
-    if (isFiat) return true;
-
-    if (amount > maxAmount) {
-      return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
-    } else if (amount < MIN_TX_AMOUNT) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH).';
-    } else if (decimals === 0 && amount.toString().includes('.')) {
-      return 'Amount should not contain decimal places';
-    }
-
-    return true;
-  };
-
   const ToOption = t.refinement(t.Object, ({ selector }) => {
     return !isEmpty(selector);
   });
@@ -218,86 +149,10 @@ const generateFormStructure = (balances: Balances) => {
   };
 
   return t.struct({
-    fromInput: FromOption,
+    fromInput: selectorStructure(balances, true),
     toInput: ToOption,
   });
 };
-
-function SelectorInputTemplate(locals) {
-  const {
-    config: {
-      label,
-      hasInput,
-      placeholderSelector,
-      placeholderInput,
-      options,
-      horizontalOptions = [],
-      inputAddonText,
-      inputRef,
-      onSelectorOpen,
-      horizontalOptionsTitle,
-      optionsTitle,
-      inputWrapperStyle,
-      fiatOptions,
-      fiatOptionsTitle,
-      displayFiatOptionsFirst,
-      rightLabel,
-      onPressRightLabel,
-    },
-  } = locals;
-  const value = get(locals, 'value', {});
-  const { selector = {} } = value;
-  const { iconUrl } = selector;
-  const selectedOptionIcon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-  const selectorValue = {
-    ...value,
-    selector: { ...selector, icon: selectedOptionIcon },
-  };
-
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    keyboardType: locals.keyboardType,
-    autoCapitalize: locals.autoCapitalize,
-    maxLength: 42,
-    placeholderSelector,
-    placeholder: placeholderInput,
-    onSelectorOpen,
-    selectorValue,
-    label,
-    rightLabel,
-    onPressRightLabel,
-  };
-
-  return (
-    <View style={{ flexDirection: 'row', flex: 1 }}>
-      <TextInput
-        style={{ width: '100%' }}
-        errorMessage={errorMessage}
-        inputProps={inputProps}
-        leftSideText={inputAddonText}
-        numeric
-        selectorOptions={{
-          options,
-          horizontalOptions,
-          showOptionsTitles: !isEmpty(horizontalOptions),
-          optionsTitle,
-          horizontalOptionsTitle,
-          fiatOptions,
-          fiatOptionsTitle,
-          fullWidth: !hasInput,
-          selectorModalTitle: label,
-          selectorPlaceholder: placeholderSelector,
-          optionsSearchPlaceholder: 'Asset search',
-          displayFiatOptionsFirst,
-        }}
-        getInputRef={inputRef}
-        inputWrapperStyle={inputWrapperStyle}
-      />
-    </View>
-  );
-}
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
