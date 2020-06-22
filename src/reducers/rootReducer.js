@@ -63,7 +63,7 @@ import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
 import recoveryPortalReducer from './recoveryPortalReducer';
-import poolTogetherReducer from "./poolTogetherReducer";
+import poolTogetherReducer from './poolTogetherReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -106,7 +106,7 @@ import type { ReferralsReducerAction, ReferralsReducerState } from './referralsR
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
 import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
-import type { PoolTogetherReducerState } from "./poolTogetherReducer";
+import type { PoolTogetherReducerState } from './poolTogetherReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,

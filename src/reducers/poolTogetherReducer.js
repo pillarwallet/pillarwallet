@@ -18,19 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { SET_POOL_TOGETHER_PRIZE_INFO } from 'constants/poolTogetherConstants';
-
-type PoolTogetherPrizeInfo = {
-  currentPrize: string,
-  prizeEstimate: string,
-  drawDate: number,
-  remainingTimeMs: number,
-  totalPoolTicketsCount: number,
-};
+import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 export type PoolTogetherReducerState = {
-  poolStats: {
-    [string]: PoolTogetherPrizeInfo,
-  }
+  poolStats: PoolPrizeInfo
 }
 
 export type PoolTogetherReducerAction = {

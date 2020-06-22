@@ -17,23 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-// constants
-import { SET_POOL_TOGETHER_PRIZE_INFO } from 'constants/poolTogetherConstants';
 
-// services
-import { getPoolTogetherInfo } from 'services/poolTogether';
-
-// models, types
-import type { Dispatch, GetState } from 'reducers/rootReducer';
-
-export const fetchPoolPrizeInfo = (symbol: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { poolTogether: { poolStats: currentPoolStats = {} } } = getState();
-    const newPoolStats = await getPoolTogetherInfo(symbol);
-    const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
-    dispatch({
-      type: SET_POOL_TOGETHER_PRIZE_INFO,
-      payload: updatedPoolStats,
-    });
-  };
+export type PoolInfo = {
+  currentPrize: string,
+  prizeEstimate: string,
+  drawDate: number,
+  remainingTimeMs: number,
+  totalPoolTicketsCount: number,
 };
+
+export type PoolPrizeInfo = {
+  [symbol: string]: PoolInfo,
+}

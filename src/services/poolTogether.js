@@ -25,6 +25,9 @@ import {
 } from 'react-native-dotenv';
 import { utils as ptUtils } from 'pooltogetherjs';
 import { DAI } from 'constants/assetsConstants';
+
+import type { PoolInfo } from 'models/PoolTogether';
+
 import { getEthereumProvider, formatMoney } from 'utils/common';
 
 import POOL_DAI_ABI from 'abi/poolDAI.json';
@@ -32,7 +35,7 @@ import POOL_USDC_ABI from 'abi/poolUSDC.json';
 
 const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK_PROVIDER;
 
-export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
+export async function getPoolTogetherInfo(symbol: string): Promise<PoolInfo> {
   const contractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
   const abi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
   const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
@@ -52,8 +55,8 @@ export async function getPoolTogetherInfo(symbol: string): Promise<Object> {
 
   let currentPrize = ptUtils.toBN(0);
   let prizeEstimate = ptUtils.toBN(0);
-  let drawDate;
-  let remainingTimeMs;
+  let drawDate = 0;
+  let remainingTimeMs = 0;
   let totalPoolTicketsCount = 0;
   if (balance && openSupply && committedSupply && accountedBalance && currentDraw && supplyRatePerBlock) {
     const totalSupply = openSupply.add(committedSupply);

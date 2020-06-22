@@ -35,6 +35,7 @@ type Props = {
   children?: React.Node,
   theme: Theme,
   showLabel?: boolean,
+  activeTab?: string,
 };
 
 

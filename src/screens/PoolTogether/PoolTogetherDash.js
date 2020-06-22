@@ -39,6 +39,8 @@ import Tabs from 'components/Tabs';
 
 // models
 import type { Accounts } from 'models/Account';
+import type { Balances } from 'models/Asset';
+import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 
@@ -71,7 +73,9 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   smartWallet: Object,
-  accounts: Accounts[],
+  accounts: Accounts,
+  balances: Balances,
+  poolPrizeInfo: PoolPrizeInfo,
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,
@@ -93,11 +97,6 @@ class PoolTogetherDash extends React.Component<Props, State> {
       USDC: 0,
     },
   };
-
-  constructor(props: Props) {
-    super(props);
-    const { navigation } = this.props;
-  }
 
   componentDidMount() {
     const { logScreenView } = this.props;
@@ -133,7 +132,6 @@ class PoolTogetherDash extends React.Component<Props, State> {
 
   render() {
     const {
-      navigation,
       fetchPoolStats,
       poolPrizeInfo,
       balances,
@@ -164,9 +162,9 @@ class PoolTogetherDash extends React.Component<Props, State> {
       totalPoolTicketsCount,
     } = poolPrizeInfo[activeTab];
 
-    const { balance = 0 } = balances[activeTab] || {};
+    const { balance = '0' } = balances[activeTab] || {};
 
-    const poolTokenBalance = Math.floor(balance); // get integer closest to balance for ticket enumeration
+    const poolTokenBalance = Math.floor(parseFloat(balance)); // get integer closest to balance for ticket enumeration
 
     const poolTicketsCount = ticketsCount[activeTab];
 
@@ -221,12 +219,10 @@ class PoolTogetherDash extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
-  smartWallet: smartWalletState,
   accounts: { data: accounts },
   poolTogether: { poolStats: poolPrizeInfo },
 }: RootReducerState): $Shape<Props> => ({
   session,
-  smartWalletState,
   accounts,
   poolPrizeInfo,
 });
