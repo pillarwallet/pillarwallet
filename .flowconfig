@@ -2,9 +2,6 @@
 ; We fork some components by platform
 .*/*[.]android.js
 
-; Ignore node_modules for OOM issue
-<PROJECT_ROOT>/node_modules/.*
-
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/\.buckd/
 

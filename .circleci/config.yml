@@ -36,7 +36,7 @@ executors:
     working_directory: ~/pillarwallet
     docker:
       - image: circleci/node:10.19
-    resource_class: large
+    resource_class: medium+
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
     shell: /bin/bash --login -o pipefail
