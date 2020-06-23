@@ -125,7 +125,6 @@ type Props = {
   history: Object[],
   badges: Badges,
   fetchBadges: Function,
-  connectors: Connector[],
   pendingConnector: ?Connector,
   logScreenView: (view: string, screen: string) => void,
   activeAccount: ?Account,

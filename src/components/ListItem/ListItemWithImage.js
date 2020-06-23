@@ -100,6 +100,7 @@ type Props = {
   collectibleUrl?: string,
   iconImageResizeMode?: string,
   iconImageSize?: number,
+  statusIconColor?: string,
   itemImageRoundedSquare?: boolean,
 }
 
@@ -118,6 +119,7 @@ type AddonProps = {
   acceptInvitation?: ?() => void,
   balance?: Object,
   colors: ThemeColors,
+  statusIconColor?: string,
 };
 
 type ImageWrapperProps = {
@@ -278,7 +280,7 @@ const BalanceFiatValue = styled(BaseText)`
 
 const ItemValueStatus = styled(Icon)`
   margin-left: 12px;
-  color: ${themedColors.secondaryText};
+  color: ${({ iconColor }) => iconColor || themedColors.secondaryText};
   ${fontStyles.big};
 `;
 
@@ -519,6 +521,7 @@ const Addon = (props: AddonProps) => {
     unreadCount,
     itemValue,
     itemStatusIcon,
+    statusIconColor,
     valueColor,
     buttonActionLabel,
     actionLabelAsButton,
@@ -539,7 +542,7 @@ const Addon = (props: AddonProps) => {
             {itemValue}
           </ItemValue>
         }
-        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} />}
+        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} iconColor={statusIconColor} />}
       </Wrapper>
     );
   }
@@ -618,7 +621,6 @@ const Addon = (props: AddonProps) => {
             {!!tokenBalance.toString() && <BalanceValue>{`${roundedBalance} ${token}`}</BalanceValue>}
             {!!syntheticBalance.toString() &&
             <TankAssetBalance
-              monoColor
               amount={syntheticBalance}
               token={token}
             />}

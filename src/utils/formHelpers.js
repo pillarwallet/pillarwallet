@@ -17,8 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import t from 'tcomb-form-native';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -26,8 +30,15 @@ import { ETH } from 'constants/assetsConstants';
 // components
 import TextInput from 'components/TextInput';
 
+// models
+import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Balances } from 'models/Asset';
+import type { FormSelector } from 'models/TextInput';
+
 // utils
-import { isValidNumber, parseNumber } from './common';
+import { isValidNumber, parseNumber, reportOrWarn } from './common';
+import { isFiatCurrency } from './exchange';
+import { getBalance, calculateMaxAmount } from './assets';
 
 
 export function makeAmountForm(
@@ -126,3 +137,181 @@ export function getAmountFormFields(config: Object): Object {
     },
   };
 }
+
+
+export function SelectorInputTemplate(locals: Object) {
+  const {
+    config: {
+      label,
+      customLabel,
+      hasInput,
+      placeholderSelector,
+      placeholderInput,
+      options,
+      horizontalOptions = [],
+      inputAddonText,
+      inputRef,
+      onSelectorOpen,
+      horizontalOptionsTitle,
+      optionsTitle,
+      selectorModalTitle,
+      inputWrapperStyle,
+      fiatOptions,
+      fiatOptionsTitle,
+      displayFiatOptionsFirst,
+      rightLabel,
+      onPressRightLabel,
+      customInputHeight,
+      inputHeaderStyle,
+      noErrorText,
+    },
+  } = locals;
+  const value = get(locals, 'value', {});
+  const { selector = {} } = value;
+  const { iconUrl } = selector;
+  const selectedOptionIcon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+  const selectorValue = {
+    ...value,
+    selector: { ...selector, icon: selectedOptionIcon },
+  };
+  const errorMessage = noErrorText ? '' : locals.error;
+  const inputProps = {
+    onChange: locals.onChange,
+    onBlur: locals.onBlur,
+    keyboardType: locals.keyboardType,
+    autoCapitalize: locals.autoCapitalize,
+    maxLength: 42,
+    placeholderSelector,
+    placeholder: placeholderInput,
+    onSelectorOpen,
+    selectorValue,
+    label,
+    customLabel,
+    rightLabel,
+    onPressRightLabel,
+    inputHeaderStyle,
+  };
+
+  return (
+    <TextInput
+      style={{ width: '100%' }}
+      hasError={!!locals.error}
+      errorMessage={errorMessage}
+      inputProps={inputProps}
+      leftSideText={inputAddonText}
+      numeric
+      selectorOptions={{
+        options,
+        horizontalOptions,
+        showOptionsTitles: !isEmpty(horizontalOptions),
+        optionsTitle,
+        horizontalOptionsTitle,
+        fiatOptions,
+        fiatOptionsTitle,
+        fullWidth: !hasInput,
+        selectorModalTitle: selectorModalTitle || label,
+        selectorPlaceholder: placeholderSelector,
+        optionsSearchPlaceholder: 'Asset search',
+        displayFiatOptionsFirst,
+      }}
+      getInputRef={inputRef}
+      inputWrapperStyle={inputWrapperStyle}
+      customInputHeight={customInputHeight}
+    />
+  );
+}
+
+const MIN_TX_AMOUNT = 0.000000000000000001;
+
+export const selectorStructure = (
+  balances: Balances, showErrorMessageWithBalance?: boolean, txFeeInfo: ?TransactionFeeInfo,
+) => {
+  let balance;
+  let maxAmount;
+  let amount;
+
+  const Selector = t.refinement(t.Object, ({ selector, input }) => {
+    if (!selector
+      || isEmpty(selector)
+      || !input
+      || !isValidNumber(input)) return false;
+
+    const { symbol, decimals } = selector;
+
+    if (isFiatCurrency(symbol)) return true;
+
+    amount = parseFloat(input);
+
+    if (decimals === 0 && amount.toString().includes('.')) return false;
+
+    balance = getBalance(balances, symbol);
+    maxAmount = calculateMaxAmount(symbol, balance, txFeeInfo?.fee, txFeeInfo?.gasToken);
+
+    return amount <= maxAmount && amount >= MIN_TX_AMOUNT;
+  });
+
+  Selector.getValidationErrorMessage = ({ selector, input }) => {
+    if (!selector) {
+      reportOrWarn('Wrong selector value', selector, 'critical');
+      return true;
+    }
+
+    const { symbol, decimals } = selector;
+
+    const isFiat = isFiatCurrency(symbol);
+
+    if (!isValidNumber(input.toString())) {
+      return 'Incorrect number entered';
+    }
+
+    const numericAmount = parseFloat(input || 0);
+
+    if (numericAmount === 0) {
+      /**
+       * 0 is the first number that can be typed therefore we don't want
+       * to show any error message on the input, however,
+       * the form validation would still not go through,
+       * but it's obvious that you cannot send 0 amount
+       */
+      return null;
+    } else if (numericAmount < 0) {
+      return 'Amount should be bigger than 0';
+    }
+
+    // all possible fiat validation is done
+    if (isFiat) return true;
+
+    // do not validate value if asset is not yet selected
+    if (!symbol) {
+      return false;
+    }
+
+    if (amount > maxAmount) {
+      if (showErrorMessageWithBalance) {
+        return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
+      }
+      return `Not enough ${symbol}`;
+    } else if (amount < MIN_TX_AMOUNT) {
+      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
+    } else if (decimals === 0 && amount.toString().includes('.')) {
+      return 'Amount should not contain decimal places';
+    }
+
+    return true;
+  };
+
+  return Selector;
+};
+
+
+export const inputParser = (value: FormSelector) => {
+  let formattedAmount = value.input;
+  if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+  return { ...value, input: formattedAmount };
+};
+
+export const inputFormatter = (value: FormSelector) => {
+  let formattedAmount = value.input;
+  if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+  return { ...value, input: formattedAmount };
+};

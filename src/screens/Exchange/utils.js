@@ -19,11 +19,10 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { utils } from 'ethers';
 import type { Rates } from 'models/Asset';
 import { getRate } from 'utils/assets';
 import { formatFiat, formatMoney } from 'utils/common';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 
 export const getFormattedBalanceInFiat = (
@@ -63,16 +62,4 @@ export const getAvailable = (_min: string, _max: string, rate: string) => {
 
 export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
-};
-
-export const calculateMaxAmount = (token: string, balance: number | string): number => {
-  if (typeof balance !== 'string') {
-    balance = balance.toString();
-  }
-  if (token !== ETH) {
-    return +balance;
-  }
-  const maxAmount = utils.parseUnits(balance, 'ether');
-  if (maxAmount.lt(0)) return 0;
-  return new BigNumber(utils.formatEther(maxAmount)).toNumber();
 };

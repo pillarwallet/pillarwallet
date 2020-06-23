@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import * as React from 'react';
+
 type Value = string | number;
 
 type SelectorValueType = {
@@ -43,6 +45,8 @@ export type InputPropsType = {
   label?: string,
   rightLabel?: string,
   onPressRightLabel?: () => void,
+  inputHeaderStyle?: Object,
+  customLabel?: React.Node,
 };
 
 export type SelectorOptions = {
@@ -58,4 +62,9 @@ export type SelectorOptions = {
   selectorModalTitle?: string,
   optionsSearchPlaceholder?: string,
   displayFiatOptionsFirst?: boolean,
+};
+
+export type FormSelector = {
+  selector: Object,
+  input: string,
 };

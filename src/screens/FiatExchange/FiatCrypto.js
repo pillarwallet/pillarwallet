@@ -23,55 +23,16 @@ import t from 'tcomb-form-native';
 import { Container, Wrapper } from 'components/Layout';
 import ErrorMessage from 'components/ErrorMessage';
 import Header from 'components/Header';
-import TextInput from 'components/TextInput';
 
 import { createStructuredSelector } from 'reselect';
 import { accountAssetsSelector } from 'selectors/assets';
 import { sortAssets } from 'utils/assets';
+import { SelectorInputTemplate } from 'utils/formHelpers';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Accounts } from 'models/Account';
 import type { Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
-
-function SelectorInputTemplate(locals) {
-  const {
-    config: {
-      label,
-      hasInput,
-      wrapperStyle,
-      placeholderSelector,
-      placeholderInput,
-      options,
-      inputAddonText,
-    },
-  } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    keyboardType: locals.keyboardType,
-    maxLength: 42,
-    label,
-    placeholderSelector,
-    placeholder: placeholderInput,
-  };
-
-  return (
-    <TextInput
-      errorMessage={errorMessage}
-      inputProps={inputProps}
-      leftSideText={inputAddonText}
-      numeric
-      selectorOptions={{
-        options,
-        fullWidth: !hasInput,
-        selectorModalTitle: label,
-      }}
-      inputWrapperStyle={wrapperStyle}
-    />
-  );
-}
 
 const { Form } = t.form;
 

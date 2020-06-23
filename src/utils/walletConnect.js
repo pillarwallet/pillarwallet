@@ -17,25 +17,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
-import { View } from 'react-native';
-import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import { loadStories } from './storyLoader';
-import withTheme from './withTheme';
-import './rn-addons';
 
-configure(loadStories, module);
-addDecorator(withTheme);
+import type { Session } from 'models/WalletConnect';
 
-const StorybookUIRoot = () => {
-  const StorybookComponent = getStorybookUI({
-    asyncStorage: AsyncStorage,
-  });
-  return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <StorybookComponent />
-    </View>);
+// urls of dapps that don't support smart accounts
+// or that we don't want to support for any reason
+const UNSUPPORTED_APPS_URLS: string[] = [
+  'https://app.mooni.tech',
+  'https://localcryptos.com',
+  'https://www.binance.org',
+];
+
+export const shouldClearWCSessions = (sessions: Session[], keyWalletAddress: string) => {
+  if (!sessions[0]) return false;
+  return sessions[0].accounts.includes(keyWalletAddress);
 };
 
-export default StorybookUIRoot;
+
+export const shouldAllowSession = (url: string) => {
+  return !UNSUPPORTED_APPS_URLS.includes(url);
+};
