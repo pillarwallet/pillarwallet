@@ -237,9 +237,15 @@ jobs:
       - *yarn_install
       - *yarn_save_cache
       - *node_save_cache
+      # - run:
+      #     name: Run validation
+      #     command: yarn validate
       - run:
           name: Run validation
-          command: yarn validate
+          command: yarn test & yarn lint
+      - run:
+          name: Run validation
+          command: yarn flow
       - slack/status:
           fail_only: true
           failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
