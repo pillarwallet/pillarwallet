@@ -20,7 +20,7 @@ node_modules/warning/.*
 ; ;;; custom ignore start ;;;
 
 [untyped]
-.*/node_modules/**/.*
+.*/node_modules/@react-native-community/cli/.*/.*
 
 ; ;;; custom untyped start ;;;
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
