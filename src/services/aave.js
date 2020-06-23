@@ -137,46 +137,49 @@ class AaveService {
     }));
   }
 
+  async fetchAccountDepositedAsset(accountAddress: string, asset: Asset): DepositedAsset {
+    const lendingPoolContract = await this.getLendingPoolContract();
+    const depositedAssetData = await lendingPoolContract
+      .getUserReserveData(asset.address, accountAddress)
+      .catch(() => ([]));
+
+    const earnInterestRateBN = depositedAssetData[5];
+    const earnInterestRate = rayToNumeric(earnInterestRateBN) * 100; // %
+    const currentBalanceBN = depositedAssetData[0];
+    const currentBalance = Number(utils.formatUnits(currentBalanceBN, asset.decimals));
+
+    let earnedAmount = 0;
+    let initialBalance = 0;
+    const aaveTokenContract = await this.getAaveTokenContractForAsset(asset.address);
+    if (aaveTokenContract) {
+      const initialBalanceBN = await aaveTokenContract.principalBalanceOf(accountAddress);
+      const earnedAmountBN = currentBalanceBN.sub(initialBalanceBN);
+      initialBalance = Number(utils.formatUnits(initialBalanceBN, asset.decimals));
+      earnedAmount = Number(utils.formatUnits(earnedAmountBN, asset.decimals));
+    }
+
+    // percentage gain formula
+    const earningsPercentageGain = ((currentBalance - initialBalance) / initialBalance) * 100;
+
+    return {
+      ...asset,
+      earnInterestRate,
+      currentBalance,
+      earnedAmount,
+      earningsPercentageGain,
+      initialBalance,
+    };
+  }
+
   async getAccountDepositedAssets(
     accountAddress: string,
     accountAssets: Asset[],
     supportedAssets: Asset[],
   ): DepositedAsset[] {
     const supportedDeposits = await this.getSupportedDeposits(accountAssets, supportedAssets);
-    const lendingPoolContract = await this.getLendingPoolContract();
-
-    const depositedAssets = await Promise.all(supportedDeposits.map(async (asset) => {
-      const depositedAssetData = await lendingPoolContract
-        .getUserReserveData(asset.address, accountAddress)
-        .catch(() => ([]));
-      const earnInterestRateBN = depositedAssetData[5];
-      const earnInterestRate = rayToNumeric(earnInterestRateBN) * 100; // %
-      const currentBalanceBN = depositedAssetData[0];
-      const currentBalance = Number(utils.formatUnits(currentBalanceBN, asset.decimals));
-
-      let earnedAmount = 0;
-      let initialBalance = 0;
-      const aaveTokenContract = await this.getAaveTokenContractForAsset(asset.address);
-      if (aaveTokenContract) {
-        const initialBalanceBN = await aaveTokenContract.principalBalanceOf(accountAddress);
-        const earnedAmountBN = currentBalanceBN.sub(initialBalanceBN);
-        initialBalance = Number(utils.formatUnits(initialBalanceBN, asset.decimals));
-        earnedAmount = Number(utils.formatUnits(earnedAmountBN, asset.decimals));
-      }
-
-      // percentage gain formula
-      const earningsPercentageGain = ((currentBalance - initialBalance) / initialBalance) * 100;
-
-      return {
-        ...asset,
-        earnInterestRate,
-        currentBalance,
-        earnedAmount,
-        earningsPercentageGain,
-        initialBalance,
-      };
+    const depositedAssets = await Promise.all(supportedDeposits.map((asset) => {
+      return this.fetchAccountDepositedAsset(accountAddress, asset);
     }));
-
     return depositedAssets.filter(({ initialBalance }) => !!initialBalance);
   }
 }

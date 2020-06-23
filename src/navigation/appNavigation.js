@@ -108,6 +108,7 @@ import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 import ChooseAssetDepositScreen from 'screens/Lending/ChooseAssetDeposit';
 import DepositedAssetsListScreen from 'screens/Lending/DepositedAssetsList';
+import ViewDepositedAssetScreen from 'screens/Lending/ViewDepositedAsset';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -248,6 +249,7 @@ import {
   LENDING_DEPOSITED_ASSETS_LIST,
   LENDING_ADD_DEPOSIT_FLOW,
   LENDING_MANAGE_DEPOSITS_FLOW,
+  LENDING_VIEW_DEPOSITED_ASSET,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -720,6 +722,7 @@ lendingAddDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const lendingManageDepositsFlow = createStackNavigator({
   [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
+  [LENDING_VIEW_DEPOSITED_ASSET]: ViewDepositedAssetScreen,
 }, StackNavigatorConfig);
 
 lendingManageDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -762,6 +765,7 @@ const AppFlowNavigation = createStackNavigator(
     [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
     [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
     [LENDING_MANAGE_DEPOSITS_FLOW]: lendingManageDepositsFlow,
+    [LENDING_VIEW_DEPOSITED_ASSET]: ViewDepositedAssetScreen,
   },
   modalTransition,
 );

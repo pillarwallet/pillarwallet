@@ -81,7 +81,7 @@ export type AssetToDeposit = Asset & {
 };
 
 export type DepositedAsset = Asset & {
-  interestRate: number,
+  earnInterestRate: number,
   earnedAmount: number,
   earningsPercentageGain: number,
   currentBalance: number,

@@ -45,6 +45,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import {
   BADGE,
   LENDING_DEPOSITED_ASSETS_LIST,
+  LENDING_VIEW_DEPOSITED_ASSET,
   MENU,
   WALLETCONNECT,
 } from 'constants/navigationConstants';
@@ -292,28 +293,29 @@ class HomeScreen extends React.Component<Props, State> {
     );
   };
 
-  renderDepositedAsset = ({
-    item: {
+  renderDepositedAsset = ({ item: depositedAsset }: { item: DepositedAsset }) => {
+    const {
       symbol,
       earnInterestRate,
       currentBalance,
       earnedAmount,
       earningsPercentageGain,
-    },
-  }: { item: DepositedAsset }) => (
-    <ListItemWithImage
-      label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
-      subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
-      iconSource={aaveImage}
-      onPress={() => {}}
-      iconImageSize={52}
-      rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-      itemImageRoundedSquare
-    >
-      <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
-      <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
-    </ListItemWithImage>
-  );
+    } = depositedAsset;
+    return (
+      <ListItemWithImage
+        label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
+        subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
+        iconSource={aaveImage}
+        onPress={() => this.props.navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
+        iconImageSize={52}
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+        itemImageRoundedSquare
+      >
+        <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
+        <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
+      </ListItemWithImage>
+    );
+  }
 
   handleWalletChange = (loaderMessage: string) => {
     this.setState({ loaderMessage });

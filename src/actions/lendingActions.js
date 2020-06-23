@@ -27,8 +27,8 @@ import aaveService from 'services/aave';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
-import { getAssetsAsList } from 'utils/assets';
-import { findKeyBasedAccount, getAccountAddress } from 'utils/accounts';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
+import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 
 // constants
 import {
@@ -40,10 +40,13 @@ import {
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { DepositedAsset } from 'models/Asset';
 
 
 export const fetchAssetsToDepositAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const { lending: { isFetchingAssetsToDeposit } } = getState();
+    if (isFetchingAssetsToDeposit) return;
     dispatch({ type: SET_FETCHING_ASSETS_TO_DEPOSIT });
     const { assets: { supportedAssets } } = getState();
     const currentAccountAssets = accountAssetsSelector(getState());
@@ -52,23 +55,58 @@ export const fetchAssetsToDepositAction = () => {
   };
 };
 
+export const setDepositedAssetsAction = (depositedAssets: DepositedAsset[]) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({ type: SET_DEPOSITED_ASSETS, payload: depositedAssets });
+    dispatch(saveDbAction('lending', { depositedAssets }));
+  };
+}
+
 export const fetchDepositedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_FETCHING_DEPOSITED_ASSETS });
     const {
       assets: { supportedAssets },
       accounts: { data: accounts },
+      lending: { isFetchingDepositedAssets },
     } = getState();
+    if (isFetchingDepositedAssets) return;
+    dispatch({ type: SET_FETCHING_DEPOSITED_ASSETS });
     const currentAccountAssets = accountAssetsSelector(getState());
-    // TODO: switch back to smart wallet
-    const smartWalletAccount = findKeyBasedAccount(accounts); // findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount) return;
     const depositedAssets = await aaveService.getAccountDepositedAssets(
       getAccountAddress(smartWalletAccount),
       getAssetsAsList(currentAccountAssets),
       supportedAssets,
     );
-    dispatch({ type: SET_DEPOSITED_ASSETS, payload: depositedAssets });
-    dispatch(saveDbAction('lending', { depositedAssets }));
+    dispatch(setDepositedAssetsAction(depositedAssets));
+  };
+};
+
+export const fetchDepositedAssetAction = (symbol: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_FETCHING_DEPOSITED_ASSETS });
+    const {
+      assets: { supportedAssets },
+      accounts: { data: accounts },
+      lending: { depositedAssets },
+    } = getState();
+    const currentAccountAssets = accountAssetsSelector(getState());
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+    const asset = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
+    const accountAddress = getAccountAddress(smartWalletAccount);
+    const updatedDepositedAsset = await aaveService.fetchAccountDepositedAsset(accountAddress, asset);
+    const updatedDepositedAssets = depositedAssets.reduce((
+      currentList,
+      depositedAsset,
+      depositedAssetIndex,
+    ) => {
+      if (updatedDepositedAsset.symbol === depositedAsset.symbol) {
+        currentList[depositedAssetIndex] = updatedDepositedAsset;
+      }
+      return currentList;
+    }, depositedAssets);
+    dispatch(setDepositedAssetsAction(updatedDepositedAssets));
   };
 };
