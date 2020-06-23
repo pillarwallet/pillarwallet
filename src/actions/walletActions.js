@@ -288,7 +288,7 @@ export const encryptAndSaveWalletAction = (
 
     // save data to keychain
     const { mnemonic, privateKey } = wallet;
-    const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey, pin };
+    const keychainData: KeyChainData = { mnemonic: mnemonic?.phrase || '', privateKey, pin };
     if (enableBiometrics) {
       await dispatch(changeUseBiometricsAction(true, keychainData, true));
     } else {
