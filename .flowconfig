@@ -19,11 +19,8 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/findup/.*
 ; ;;; custom ignore start ;;;
 
-[declarations]
-<PROJECT_ROOT>/node_modules/.*
-
 [untyped]
-.*/node_modules/@react-native-community/cli/.*/.*
+.*/node_modules/**/.*
 
 ; ;;; custom untyped start ;;;
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
