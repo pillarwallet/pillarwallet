@@ -47,6 +47,7 @@ export const PIN_CODE = 'PIN_CODE';
 // ASSETS FLOW
 export const ACCOUNTS = 'ACCOUNTS';
 export const UNSETTLED_ASSETS = 'UNSETTLED_ASSETS';
+export const ASSET_SEARCH = 'ASSET_SEARCH';
 
 // CHANGE PIN FLOW
 export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';

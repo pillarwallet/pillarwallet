@@ -29,6 +29,7 @@ import { withTheme } from 'styled-components';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
+import AssetSearchScreen from 'screens/Assets/AssetSearch';
 import PeopleScreen from 'screens/People';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
@@ -137,6 +138,7 @@ import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions
 import {
   ASSETS,
   ASSET,
+  ASSET_SEARCH,
   SERVICES_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
@@ -307,6 +309,7 @@ const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
+    [ASSET_SEARCH]: AssetSearchScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [EXCHANGE]: ExchangeScreen,
