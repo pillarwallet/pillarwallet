@@ -24,13 +24,16 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import get from 'lodash.get';
+import { utils } from 'ethers';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
-import { DAI } from 'constants/assetsConstants';
+import { DAI, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -49,12 +52,21 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
 import { themedColors, getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
-import { formatAmount } from 'utils/common';
+import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
+import { getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
+
+// services
+import { getApproveFeeAndTransaction } from 'services/poolTogether';
+
+// local components
+import PoolTokenAllowModal from './PoolTokenAllowModal';
+
 
 const ContentWrapper = styled.View`
   padding-top: ${Platform.select({
@@ -86,12 +98,17 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,
+  useGasToken: boolean,
 };
 
 type State = {
   poolToken: string,
   tokenValue: number,
-  totalPoolTicketsCount: number
+  totalPoolTicketsCount: number,
+  isAllowModalVisible: boolean,
+  allowPayload: Object,
+  gasToken: Object,
+  txFeeInWei: number,
 };
 
 class PoolTogetherPurchase extends React.Component<Props, State> {
@@ -110,17 +127,34 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       poolToken,
       tokenValue: poolTicketsCount,
       totalPoolTicketsCount,
+      isAllowModalVisible: false,
+      allowPayload: null,
+      gasToken: null,
+      txFeeInWei: 0,
     };
   }
 
   componentDidMount() {
     const { logScreenView } = this.props;
     this.isComponentMounted = true;
+    // TODO: check if poolTogether is already allowed
+    this.getAllowFeeAndTransaction();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
   }
 
   componentWillUnmount() {
     this.isComponentMounted = false;
+  }
+
+  getAllowFeeAndTransaction = async () => {
+    const { poolToken } = this.state;
+    const { useGasToken } = this.props;
+    const { txFeeInWei, gasToken, transactionPayload } = await getApproveFeeAndTransaction(poolToken, useGasToken);
+    this.setState({
+      gasToken,
+      allowPayload: transactionPayload,
+      txFeeInWei,
+    });
   }
 
   getFormValue = (value) => {
@@ -131,21 +165,65 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     });
   }
 
+  hideAllowAssetModal = () => {
+    const { setDismissTransaction } = this.props;
+    // setDismissTransaction();
+    this.setState({ isAllowModalVisible: false });
+  };
+
+  allowPoolAsset = () => {
+    const { navigation } = this.props;
+    const { allowPayload } = this.state;
+    this.hideAllowAssetModal();
+
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
+      transactionPayload: allowPayload,
+      goBackDismiss: true,
+      transactionType: 'POOL_TOGETHER_ALLOW',
+    });
+  };
+
   render() {
     const {
       fetchPoolStats,
       theme,
+      balances,
+      baseFiatCurrency,
+      rates,
     } = this.props;
 
     const {
       poolToken,
       tokenValue,
       totalPoolTicketsCount,
+      isAllowModalVisible,
+      gasToken,
+      txFeeInWei,
+      allowPayload,
     } = this.state;
 
     const colors = getThemeColors(theme);
 
     const winChance = getWinChance(tokenValue, totalPoolTicketsCount);
+
+    let allowData;
+    if (allowPayload) {
+      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+      const feeSymbol = get(gasToken, 'symbol', ETH);
+      const feeDecimals = get(gasToken, 'decimals', 'ether');
+      const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+      const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+      const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+      const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
+
+      allowData = {
+        assetSymbol: poolToken,
+        feeDisplayValue,
+        feeInFiat,
+        isDisabled,
+        feeToken: feeSymbol,
+      };
+    }
 
     return (
       <ContainerWithHeader
@@ -184,30 +262,43 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             <ContentRow>
               <Button
                 title="Next"
-                onPress={() => null}
+                onPress={() => {
+                  this.setState({ isAllowModalVisible: true });
+                }}
                 style={{ marginBottom: 13, width: '100%' }}
               />
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
+        <PoolTokenAllowModal
+          isVisible={!!isAllowModalVisible}
+          onModalHide={this.hideAllowAssetModal}
+          onAllow={this.allowPoolAsset}
+          allowData={allowData}
+        />
       </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
+  appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   accounts: { data: accounts },
   poolTogether: { poolStats: poolPrizeInfo },
+  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
+  baseFiatCurrency,
   session,
   accounts,
   poolPrizeInfo,
+  rates,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   balances: accountBalancesSelector,
+  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

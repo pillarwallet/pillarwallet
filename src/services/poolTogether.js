@@ -22,25 +22,35 @@ import {
   NETWORK_PROVIDER,
   POOL_DAI_CONTRACT_ADDRESS,
   POOL_USDC_CONTRACT_ADDRESS,
+  DAI_ADDRESS,
+  USDC_ADDRESS,
 } from 'react-native-dotenv';
 import { utils as ptUtils } from 'pooltogetherjs';
-import { DAI } from 'constants/assetsConstants';
+import abi from 'ethjs-abi';
+import { BigNumber } from 'bignumber.js';
+
+import { DAI, ETH } from 'constants/assetsConstants';
 
 import type { PoolInfo } from 'models/PoolTogether';
 
 import { getEthereumProvider, formatMoney } from 'utils/common';
+import { buildTxFeeInfo } from 'utils/smartWallet';
 
 import POOL_DAI_ABI from 'abi/poolDAI.json';
 import POOL_USDC_ABI from 'abi/poolUSDC.json';
+import DAI_ABI from 'abi/DAI.json';
+import USDC_ABI from 'abi/USDC.json';
+
+import smartWalletService from './smartWallet';
 
 const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK_PROVIDER;
 
 export async function getPoolTogetherInfo(symbol: string): Promise<PoolInfo> {
   const contractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
-  const abi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
+  const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
   const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
   const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
-  const contract = new Contract(contractAddress, abi, provider);
+  const contract = new Contract(contractAddress, poolAbi, provider);
   const accountedBalance = await contract.accountedBalance();
   const balanceCallData = contract.interface.functions.balance.encode([]);
   const result = await provider.call({ to: contract.address, data: balanceCallData });
@@ -98,4 +108,61 @@ export async function getPoolTogetherInfo(symbol: string): Promise<PoolInfo> {
     remainingTimeMs,
     totalPoolTicketsCount,
   });
+}
+
+export const getSmartWalletTxFee = async (transaction, useGasToken): Promise<TransactionFeeInfo> => {
+  const defaultResponse = { fee: new BigNumber(0) };
+  const estimateTransaction = {
+    data: transaction.data,
+    recipient: transaction.to,
+    value: transaction.amount,
+  };
+
+  const estimated = await smartWalletService
+    .estimateAccountTransaction(estimateTransaction)
+    .then(result => buildTxFeeInfo(result, useGasToken))
+    .catch(() => null);
+
+  if (!estimated) {
+    return defaultResponse;
+  }
+
+  return estimated;
+};
+
+export async function getApproveFeeAndTransaction(symbol: string, useGasToken: boolean) {
+  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
+  const contractAddress = symbol === DAI ? DAI_ADDRESS : USDC_ADDRESS;
+  const decimals = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
+  const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
+  const transferMethod = tokenABI.find(item => item.name === 'approve');
+  const rawValue = 10000000;
+  const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
+  const data = abi.encodeMethod(transferMethod, [poolContractAddress, valueToApprove]);
+  let transactionPayload = {
+    amount: 0,
+    to: poolContractAddress,
+    symbol: ETH,
+    contractAddress,
+    decimals,
+    data,
+    extra: {
+      poolTogetherApproval: {
+        symbol,
+      },
+    },
+  };
+
+  const { fee: txFeeInWei, gasToken } = await getSmartWalletTxFee(transactionPayload, useGasToken);
+  if (gasToken) {
+    transactionPayload = { ...transactionPayload, gasToken };
+  }
+
+  transactionPayload = { ...transactionPayload, txFeeInWei };
+
+  return {
+    gasToken,
+    txFeeInWei,
+    transactionPayload,
+  };
 }
