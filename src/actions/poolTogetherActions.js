@@ -18,10 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 // constants
-import { SET_POOL_TOGETHER_PRIZE_INFO } from 'constants/poolTogetherConstants';
+import {
+  SET_POOL_TOGETHER_PRIZE_INFO,
+  SET_EXECUTING_POOL_APPROVE,
+  SET_DISMISS_POOL_APPROVE,
+  SET_POOL_TOGETHER_ALLOWANCE,
+} from 'constants/poolTogetherConstants';
 
 // services
-import { getPoolTogetherInfo } from 'services/poolTogether';
+import {
+  getPoolTogetherInfo,
+  checkPoolAllowance,
+} from 'services/poolTogether';
+
+// selectors
+import { activeAccountAddressSelector } from 'selectors/selectors';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -37,3 +48,30 @@ export const fetchPoolPrizeInfo = (symbol: string) => {
     });
   };
 };
+
+export const fetchPoolAllowanceStatusAction = (symbol: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      poolTogether: {
+        poolAllowance: currentPoolAllowance = {},
+      },
+    } = getState();
+    const activeAccountAddress = activeAccountAddressSelector(getState());
+    const hasAllowance = await checkPoolAllowance(symbol, activeAccountAddress);
+    const updatedAllowance = { ...currentPoolAllowance, [symbol]: hasAllowance };
+    dispatch({
+      type: SET_POOL_TOGETHER_ALLOWANCE,
+      payload: updatedAllowance,
+    });
+  };
+};
+
+export const setExecutingApproveAction = (poolToken: string) => ({
+  type: SET_EXECUTING_POOL_APPROVE,
+  payload: poolToken,
+});
+
+export const setDismissApproveAction = (poolToken: string) => ({
+  type: SET_DISMISS_POOL_APPROVE,
+  payload: poolToken,
+});

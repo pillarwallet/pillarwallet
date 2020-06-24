@@ -137,8 +137,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
   componentDidMount() {
     const { logScreenView } = this.props;
     this.isComponentMounted = true;
-    // TODO: check if poolTogether is already allowed
-    this.getAllowFeeAndTransaction();
+    // check if poolTogether is already allowed and get fee if not
+    this.checkForAllowance();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
   }
 
@@ -146,15 +146,18 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     this.isComponentMounted = false;
   }
 
-  getAllowFeeAndTransaction = async () => {
+  checkForAllowance = async () => {
     const { poolToken } = this.state;
-    const { useGasToken } = this.props;
-    const { txFeeInWei, gasToken, transactionPayload } = await getApproveFeeAndTransaction(poolToken, useGasToken);
-    this.setState({
-      gasToken,
-      allowPayload: transactionPayload,
-      txFeeInWei,
-    });
+    const { useGasToken, poolAllowance } = this.props;
+    const hasAllowance = poolAllowance[poolToken];
+    if (!hasAllowance) {
+      const { txFeeInWei, gasToken, transactionPayload } = await getApproveFeeAndTransaction(poolToken, useGasToken);
+      this.setState({
+        gasToken,
+        allowPayload: transactionPayload,
+        txFeeInWei,
+      });
+    }
   }
 
   getFormValue = (value) => {
@@ -190,6 +193,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       balances,
       baseFiatCurrency,
       rates,
+      poolAllowance,
     } = this.props;
 
     const {
@@ -201,6 +205,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       txFeeInWei,
       allowPayload,
     } = this.state;
+
+    const hasAllowance = poolAllowance[poolToken];
 
     const colors = getThemeColors(theme);
 
@@ -255,15 +261,25 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               <Text label>chance of win </Text>
             </ContentRow>
             <ContentRow>
+              {!hasAllowance &&
+                <Text style={{ textAlign: 'center' }} label>
+                  In order to join Pool Together you will need to automate transactions first.
+                </Text>
+              }
+              {!!hasAllowance &&
               <Text style={{ textAlign: 'center' }} label>
-                In order to join Pool Together you will need to automate transactions first.
+                Click Next to review the ticket purchase.
               </Text>
+              }
             </ContentRow>
             <ContentRow>
               <Button
                 title="Next"
                 onPress={() => {
-                  this.setState({ isAllowModalVisible: true });
+                  if (!hasAllowance) {
+                    this.setState({ isAllowModalVisible: true });
+                  }
+                  return null;
                 }}
                 style={{ marginBottom: 13, width: '100%' }}
               />
@@ -285,13 +301,14 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   accounts: { data: accounts },
-  poolTogether: { poolStats: poolPrizeInfo },
+  poolTogether: { poolStats: poolPrizeInfo, poolAllowance },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   session,
   accounts,
   poolPrizeInfo,
+  poolAllowance,
   rates,
 });
 

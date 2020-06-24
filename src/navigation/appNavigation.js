@@ -336,6 +336,7 @@ const servicesFlow = createStackNavigator({
   [FIAT_EXCHANGE]: FiatExchangeScreen,
   [FIAT_CRYPTO]: FiatCryptoScreen,
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;

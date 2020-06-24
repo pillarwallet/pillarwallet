@@ -28,12 +28,13 @@ import {
 import { utils as ptUtils } from 'pooltogetherjs';
 import abi from 'ethjs-abi';
 import { BigNumber } from 'bignumber.js';
+import * as Sentry from '@sentry/react-native';
 
-import { DAI, ETH } from 'constants/assetsConstants';
+import { DAI } from 'constants/assetsConstants';
 
 import type { PoolInfo } from 'models/PoolTogether';
 
-import { getEthereumProvider, formatMoney } from 'utils/common';
+import { getEthereumProvider, formatMoney, reportLog } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 
 import POOL_DAI_ABI from 'abi/poolDAI.json';
@@ -166,3 +167,28 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
     transactionPayload,
   };
 }
+
+export const checkPoolAllowance = async (symbol: string, address: string): boolean => {
+  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
+  const contractAddress = symbol === DAI ? DAI_ADDRESS : USDC_ADDRESS;
+  const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
+  let hasAllowance = false;
+  try {
+    const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
+    const contract = new Contract(contractAddress, tokenABI, provider);
+    const allowanceResult = await contract.allowance(address, poolContractAddress);
+    if (allowanceResult) {
+      hasAllowance = allowanceResult.toString() !== '0';
+    }
+  } catch (e) {
+    reportLog('Error checking PoolTogether Allowance', {
+      address,
+      poolContractAddress,
+      contractAddress,
+      symbol,
+      message: e.message,
+    }, Sentry.Severity.Error);
+    hasAllowance = false;
+  }
+  return hasAllowance;
+};
