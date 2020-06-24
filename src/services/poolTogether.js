@@ -192,3 +192,39 @@ export const checkPoolAllowance = async (symbol: string, address: string): boole
   }
   return hasAllowance;
 };
+
+export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, symbol: string, useGasToken: boolean) {
+  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
+  const decimals = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
+  const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
+  const depositMethod = poolAbi.find(item => item.name === 'depositPool');
+  const valueToDeposit = utils.parseUnits(depositAmount.toString(), decimals);
+  const data = abi.encodeMethod(depositMethod, [valueToDeposit]);
+  let transactionPayload = {
+    amount: 0,
+    to: poolContractAddress,
+    symbol,
+    poolContractAddress,
+    decimals,
+    data,
+    extra: {
+      poolTogetherDeposit: {
+        symbol,
+        depositAmount,
+      },
+    },
+  };
+
+  const { fee: txFeeInWei, gasToken } = await getSmartWalletTxFee(transactionPayload, useGasToken);
+  if (gasToken) {
+    transactionPayload = { ...transactionPayload, gasToken };
+  }
+
+  transactionPayload = { ...transactionPayload, txFeeInWei };
+
+  return {
+    gasToken,
+    txFeeInWei,
+    transactionPayload,
+  };
+}

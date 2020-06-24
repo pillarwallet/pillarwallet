@@ -62,7 +62,10 @@ import { getWinChance } from 'utils/poolTogether';
 import { getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // services
-import { getApproveFeeAndTransaction } from 'services/poolTogether';
+import {
+  getApproveFeeAndTransaction,
+  getPurchaseTicketFeeAndTransaction,
+} from 'services/poolTogether';
 
 // local components
 import PoolTokenAllowModal from './PoolTokenAllowModal';
@@ -109,6 +112,7 @@ type State = {
   allowPayload: Object,
   gasToken: Object,
   txFeeInWei: number,
+  purchasePayload: Object,
 };
 
 class PoolTogetherPurchase extends React.Component<Props, State> {
@@ -131,6 +135,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       allowPayload: null,
       gasToken: null,
       txFeeInWei: 0,
+      purchasePayload: null,
     };
   }
 
@@ -138,7 +143,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const { logScreenView } = this.props;
     this.isComponentMounted = true;
     // check if poolTogether is already allowed and get fee if not
-    this.checkForAllowance();
+    this.updateFeeAndCheckAllowance();
+    this.updatePurchaseFeeAndTransaction();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
   }
 
@@ -146,7 +152,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     this.isComponentMounted = false;
   }
 
-  checkForAllowance = async () => {
+  updateFeeAndCheckAllowance = async () => {
     const { poolToken } = this.state;
     const { useGasToken, poolAllowance } = this.props;
     const hasAllowance = poolAllowance[poolToken];
@@ -160,11 +166,52 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     }
   }
 
+  updatePurchaseFeeAndTransaction = () => {
+    const { poolToken, tokenValue } = this.state;
+    const {
+      useGasToken,
+      poolAllowance,
+      baseFiatCurrency,
+      balances,
+      rates,
+    } = this.props;
+    if (poolAllowance[poolToken]) {
+      this.setState({
+        purchasePayload: null,
+      }, async () => {
+        const {
+          txFeeInWei,
+          gasToken,
+          transactionPayload,
+        } = await getPurchaseTicketFeeAndTransaction(tokenValue, poolToken, useGasToken);
+        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+        const feeSymbol = get(gasToken, 'symbol', ETH);
+        const feeDecimals = get(gasToken, 'decimals', 'ether');
+        const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+        const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+        const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+        const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+        const purchasePayload = {
+          transactionPayload,
+          feeInFiat,
+          feeSymbol,
+          feeDisplayValue,
+          isDisabled,
+        };
+        this.setState({ purchasePayload });
+      });
+    }
+  }
+
   getFormValue = (value) => {
     const { input = '0' } = value || {};
     const newValue = Math.floor(parseFloat(input));
     this.setState({
       tokenValue: newValue,
+    }, () => {
+      if (newValue > 0) {
+        this.updatePurchaseFeeAndTransaction();
+      }
     });
   }
 
@@ -204,6 +251,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       gasToken,
       txFeeInWei,
       allowPayload,
+      purchasePayload,
     } = this.state;
 
     const hasAllowance = poolAllowance[poolToken];
@@ -211,6 +259,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
 
     const winChance = getWinChance(tokenValue, totalPoolTicketsCount);
+
+    const isLoading = (!allowPayload && !hasAllowance) || (!purchasePayload && hasAllowance);
+
+    const purchaseDisabled = hasAllowance && (tokenValue === 0 || (purchasePayload && purchasePayload.isDisabled));
 
     let allowData;
     if (allowPayload) {
@@ -266,23 +318,40 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                   In order to join Pool Together you will need to automate transactions first.
                 </Text>
               }
-              {!!hasAllowance &&
+              {(!!hasAllowance && !purchasePayload) &&
+                <Text style={{ textAlign: 'center' }} label>
+                  Fetching fee...
+                </Text>
+              }
+              {(!!hasAllowance && !!purchasePayload) &&
               <Text style={{ textAlign: 'center' }} label>
-                Click Next to review the ticket purchase.
+                {`Fee ${purchasePayload.feeDisplayValue} (${purchasePayload.feeInFiat})`}
+                {purchasePayload.isDisabled && `\nNot enough ${purchasePayload.feeSymbol} for the transaction fee`}
               </Text>
               }
             </ContentRow>
             <ContentRow>
-              <Button
-                title="Next"
-                onPress={() => {
-                  if (!hasAllowance) {
-                    this.setState({ isAllowModalVisible: true });
-                  }
-                  return null;
-                }}
-                style={{ marginBottom: 13, width: '100%' }}
-              />
+              {!purchaseDisabled &&
+                <Button
+                  title="Next"
+                  onPress={() => {
+                    if (!hasAllowance) {
+                      this.setState({isAllowModalVisible: true});
+                    }
+                    return null;
+                  }}
+                  isLoading={isLoading}
+                  disabled={purchaseDisabled}
+                  style={{ marginBottom: 13, width: '100%' }}
+                />
+              }
+              {!!purchaseDisabled && // has to update like this so it shows the disabled style
+                <Button
+                  title="Next"
+                  disabled={purchaseDisabled}
+                  style={{ marginBottom: 13, width: '100%' }}
+                />
+              }
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
