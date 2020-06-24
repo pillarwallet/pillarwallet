@@ -108,6 +108,7 @@ import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
 import PoolTogetherDashScreen from 'screens/PoolTogether/PoolTogetherDash';
 import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
+import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -247,6 +248,7 @@ import {
   POOLTOGETHER_FLOW,
   POOLTOGETHER_DASHBOARD,
   POOLTOGETHER_PURCHASE,
+  POOLTOGETHER_PURCHASE_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -337,6 +339,7 @@ const servicesFlow = createStackNavigator({
   [FIAT_CRYPTO]: FiatCryptoScreen,
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -717,6 +720,7 @@ recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 const poolTogetherFlow = createStackNavigator({
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
 }, StackNavigatorConfig);
 
 poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;

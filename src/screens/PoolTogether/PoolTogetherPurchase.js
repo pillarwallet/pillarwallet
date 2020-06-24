@@ -33,7 +33,7 @@ import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
 import { DAI, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM, POOLTOGETHER_PURCHASE_CONFIRM } from 'constants/navigationConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -235,6 +235,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
   render() {
     const {
+      navigation,
       fetchPoolStats,
       theme,
       balances,
@@ -280,6 +281,19 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
         feeInFiat,
         isDisabled,
         feeToken: feeSymbol,
+      };
+    }
+
+    let nextNavigationFunction;
+    if (purchasePayload) {
+      nextNavigationFunction = () => {
+        navigation.navigate(POOLTOGETHER_PURCHASE_CONFIRM,
+          {
+            poolToken,
+            tokenValue,
+            totalPoolTicketsCount,
+            ...purchasePayload,
+          });
       };
     }
 
@@ -336,9 +350,9 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                   title="Next"
                   onPress={() => {
                     if (!hasAllowance) {
-                      this.setState({isAllowModalVisible: true});
+                      this.setState({ isAllowModalVisible: true });
                     }
-                    return null;
+                    return nextNavigationFunction && nextNavigationFunction();
                   }}
                   isLoading={isLoading}
                   disabled={purchaseDisabled}
