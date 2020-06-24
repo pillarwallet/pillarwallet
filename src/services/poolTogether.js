@@ -136,13 +136,13 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
   const decimals = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
   const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
   const transferMethod = tokenABI.find(item => item.name === 'approve');
-  const rawValue = 10000000;
+  const rawValue = 1000000000;
   const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
   const data = abi.encodeMethod(transferMethod, [poolContractAddress, valueToApprove]);
   let transactionPayload = {
     amount: 0,
-    to: poolContractAddress,
-    symbol: ETH,
+    to: contractAddress,
+    symbol,
     contractAddress,
     decimals,
     data,
