@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { FlatList, Keyboard } from 'react-native';
+import { FlatList, Keyboard, ScrollView } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
@@ -252,6 +252,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Invite friends' }] }}
+        inset={{ bottom: 0 }}
       >
         {!!isFetchingPhoneContacts &&
         <Wrapper flex={1} center>
@@ -259,7 +260,9 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         </Wrapper>}
 
         {!isFetchingPhoneContacts &&
-          <React.Fragment>
+          <ScrollView
+            stickyHeaderIndices={[0]}
+          >
             <SearchBlock
               searchInputPlaceholder="Email or phone"
               onSearchChange={(q) => this.handleSearch(q)}
@@ -300,7 +303,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
                 </EmptyStateWrapper>
               )}
             />
-          </React.Fragment>
+          </ScrollView>
         }
         {showConfirmButton && (
           <ButtonWrapper>
