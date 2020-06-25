@@ -8675,7 +8675,7 @@ ethers@5.0.0-beta.190:
     "@ethersproject/web" ">=5.0.0-beta.138"
     "@ethersproject/wordlists" ">=5.0.0-beta.136"
 
-ethers@5.0.2:
+ethers@5.0.2, ethers@^5.0.0:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.0.2.tgz#b7ccca12592c8f5f45e172c3c32fd13d77225048"
   integrity sha512-hAWTPQXvjFlrtnPLCnOOJJuqiqmJv820egPHpOwcWTIQxXRrcfZyse2692eaqsXMeYLNM2CRfYgEomBiBGvgjw==
