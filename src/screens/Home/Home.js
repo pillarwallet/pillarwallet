@@ -231,6 +231,7 @@ class HomeScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
+      fetchBadgeAwardHistory,
       fetchAllAccountsBalances,
       refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
@@ -241,6 +242,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
+    fetchBadgeAwardHistory();
     fetchTransactionsHistory();
     fetchAllAccountsBalances();
     refreshBitcoinBalance();
