@@ -20,7 +20,6 @@
 import get from 'lodash.get';
 import orderBy from 'lodash.orderby';
 import isEmpty from 'lodash.isempty';
-import { sdkConstants } from '@smartwallet/sdk';
 
 // constants
 import {
@@ -40,7 +39,13 @@ import { ETH } from 'constants/assetsConstants';
 import { SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID } from 'constants/smartWalletConstants';
 
 // utils
-import { buildHistoryTransaction, getTrxInfo, updateAccountHistory, updateHistoryRecord } from 'utils/history';
+import {
+  buildHistoryTransaction,
+  getTrxInfo,
+  parseFeeWithGasToken,
+  updateAccountHistory,
+  updateHistoryRecord,
+} from 'utils/history';
 import {
   checkIfKeyBasedAccount,
   checkIfSmartWalletAccount,
@@ -53,7 +58,12 @@ import {
 } from 'utils/accounts';
 import { addressesEqual, getAssetsAsList } from 'utils/assets';
 import { reportLog, uniqBy } from 'utils/common';
-import { deviceHasGasTokenSupport, parseSmartWalletTransactions } from 'utils/smartWallet';
+import {
+  deviceHasGasTokenSupport,
+  getGasTokenDetails,
+  mapSdkToAppTxStatus,
+  parseSmartWalletTransactions,
+} from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
 
 // services
@@ -61,6 +71,7 @@ import smartWalletService from 'services/smartWallet';
 
 // selectors
 import { smartAccountAssetsSelector } from 'selectors/assets';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -204,7 +215,7 @@ export const fetchSmartWalletTransactionsAction = () => {
 };
 
 // NOTE: use this action for key based accounts only
-export const fetchContactTransactionsAction = (contactAddress: string, asset?: string = 'ALL') => {
+export const fetchContactTransactionsAction = (contactAddress: string, asset: string = 'ALL') => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const { accounts: { data: accounts } } = getState();
 
@@ -338,44 +349,74 @@ const transactionUpdate = (hash: string) => {
 
 export const updateTransactionStatusAction = (hash: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      accounts: { data: accounts },
-      session: { data: { isOnline } },
-    } = getState();
-
+    const { session: { data: { isOnline } } } = getState();
     if (!isOnline) return;
 
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount) return;
-
+    const isSmartAccount = isActiveAccountSmartWalletSelector(getState());
     dispatch(transactionUpdate(hash));
 
     const trxInfo = await getTrxInfo(api, hash);
-    if (!trxInfo) {
+
+    let sdkTransactionInfo;
+    let sdkToAppStatus;
+    if (isSmartAccount) {
+      sdkTransactionInfo = await smartWalletService.getTransactionInfo(hash);
+      if (!sdkTransactionInfo) {
+        dispatch(transactionUpdate(''));
+        return;
+      }
+      sdkToAppStatus = mapSdkToAppTxStatus(sdkTransactionInfo.state);
+    }
+
+    // NOTE: if trxInfo is not null, that means transaction was mined or failed
+    if (isSmartAccount && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+      reportLog('Wrong transaction status', {
+        hash,
+        sdkToAppStatus,
+        sdkStatus: sdkTransactionInfo?.state,
+        blockchainStatus: trxInfo.status,
+      });
       dispatch(transactionUpdate(''));
       return;
     }
-    const {
-      txInfo,
-      txReceipt,
-      nbConfirmations,
-      status,
-    } = trxInfo;
 
-    if (checkIfSmartWalletAccount(activeAccount)) {
-      const sdkRawStatus = await smartWalletService.getTransactionStatus(hash);
-      const TRANSACTION_COMPLETED = get(sdkConstants, 'AccountTransactionStates.Completed', '');
-      // TODO: add support for failed transactions
-      const sdkStatus = sdkRawStatus === TRANSACTION_COMPLETED ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS;
-      if (sdkStatus !== status) {
-        reportLog('Wrong transaction status', {
-          hash,
-          sdkStatus,
-          blockchainStatus: status,
-        });
-      }
+    // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
+    const stillPending = isSmartAccount
+      ? sdkToAppStatus === TX_PENDING_STATUS
+      : !trxInfo;
+
+    if (stillPending) {
       dispatch(transactionUpdate(''));
       return;
+    }
+
+    let gasPrice;
+    let gasUsed;
+    let status;
+    let feeWithGasToken;
+
+    if (isSmartAccount && sdkTransactionInfo) {
+      gasPrice = sdkTransactionInfo.gas.price;
+      gasUsed = sdkTransactionInfo.gas.used;
+      status = sdkToAppStatus;
+
+      // attach gas token info
+      const gasTokenAddress = sdkTransactionInfo.gasToken;
+      const transactionFee = sdkTransactionInfo.fee;
+      if (!isEmpty(gasTokenAddress) && transactionFee) {
+        const supportedAssets = get(getState(), 'assets.supportedAssets', []);
+        const accountAssets = getAssetsAsList(smartAccountAssetsSelector(getState()));
+        const gasToken = getGasTokenDetails(accountAssets, supportedAssets, gasTokenAddress);
+        if (!isEmpty(gasToken)) {
+          feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
+        }
+      }
+    } else if (trxInfo) {
+      ({
+        txInfo: { gasPrice },
+        txReceipt: { gasUsed },
+        status,
+      } = trxInfo);
     }
 
     const { history: { data: currentHistory } } = getState();
@@ -384,10 +425,10 @@ export const updateTransactionStatusAction = (hash: string) => {
       hash,
       (transaction) => ({
         ...transaction,
-        nbConfirmations,
         status,
-        gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
-        gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
+        gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
+        gasUsed: gasUsed ? gasUsed.toNumber() : transaction.gasUsed,
+        feeWithGasToken: feeWithGasToken || transaction.feeWithGasToken,
       }));
 
     dispatch({

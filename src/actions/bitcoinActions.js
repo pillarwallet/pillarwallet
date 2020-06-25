@@ -339,15 +339,6 @@ const fetchBTCTransactionsFailed = () => {
   });
 };
 
-const fetchBalanceFailed = () => {
-  Toast.show({
-    message: 'There was an error fetching the Bitcoin balance',
-    type: 'warning',
-    title: 'Cannot fetch balance',
-    autoClose: false,
-  });
-};
-
 const transactionSent = () => {
   Toast.show({
     message: 'The transaction was sent to the Bitcoin network',
@@ -415,7 +406,7 @@ export const refreshBitcoinBalanceAction = (force: boolean) => {
     await Promise.all(addressesToUpdate.map(({ address }) => {
       return fetchBalanceAction(address)
         .then(action => dispatch(action))
-        .catch(fetchBalanceFailed);
+        .catch(() => null);
     }));
 
     const { bitcoin: { data: { balances } } } = getState();

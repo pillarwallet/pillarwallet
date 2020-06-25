@@ -264,7 +264,6 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     const {
       txInfo,
       txReceipt,
-      nbConfirmations,
       status,
     } = trxInfo;
 
@@ -276,7 +275,6 @@ export const updateCollectibleTransactionAction = (hash: string) => {
         }
         return {
           ...transaction,
-          nbConfirmations,
           status,
           gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
           gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
