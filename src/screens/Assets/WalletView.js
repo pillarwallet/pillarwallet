@@ -126,17 +126,11 @@ const initialSWInsights = [
 ];
 
 class WalletView extends React.Component<Props, State> {
-  scrollViewRef: ?Object;
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      query: '',
-      activeTab: TOKENS,
-      hideInsightForSearch: false,
-    };
-    this.scrollViewRef = null;
-  }
+  state = {
+    query: '',
+    activeTab: TOKENS,
+    hideInsightForSearch: false,
+  };
 
   handleSearchChange = (query: string) => {
     const formattedQuery = !query ? '' : query.trim();
@@ -194,11 +188,6 @@ class WalletView extends React.Component<Props, State> {
     />
   );
 
-  getRefProps = () => Platform.select({
-    ios: { innerRef: ref => { this.scrollViewRef = ref; } },
-    android: { ref: ref => { this.scrollViewRef = ref; } },
-  });
-
   render() {
     const { query, activeTab } = this.state;
     const {
@@ -244,7 +233,6 @@ class WalletView extends React.Component<Props, State> {
       <ScrollComponent
         stickyHeaderIndices={[1]}
         refreshControl={this.renderRefreshControl()}
-        {...this.getRefProps()}
         onScroll={onScroll}
         keyboardShouldPersistTaps="always"
       >
@@ -311,7 +299,7 @@ class WalletView extends React.Component<Props, State> {
         {!blockAssetsView &&
         <ListWrapper>
           {activeTab === TOKENS && (
-            <AssetsList balance={balance} scrollViewRef={this.scrollViewRef} />
+            <AssetsList balance={balance} />
           )}
           {activeTab === COLLECTIBLES && (
             <CollectiblesList
