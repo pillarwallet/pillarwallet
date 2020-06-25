@@ -47,7 +47,16 @@ export type SyntheticTransactionExtra = {
   syntheticTransaction: $Shape<SyntheticTransaction>,
 };
 
-export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra | EnsTransactionExtra;
+export type LendingDepositExtra = {
+  symbol: string,
+  amount: string,
+};
+
+export type TransactionExtra = TxSettlementItem[]
+  | TxWithdrawalExtra
+  | SyntheticTransactionExtra
+  | EnsTransactionExtra
+  | LendingDepositExtra;
 
 export type GasToken = {
   address: string,
@@ -105,6 +114,7 @@ export type TokenTransactionPayload = {
   extra?: Object,
   usePPN?: boolean,
   gasToken?: ?GasToken,
+  sequentialSmartWalletTransactions?: TokenTransactionPayload[],
 }
 
 export type CollectibleTransactionPayload = {

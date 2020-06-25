@@ -114,6 +114,7 @@ import {
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   CONTACT,
 } from 'constants/navigationConstants';
+import { AAVE_LENDING_DEPOSIT, AAVE_LENDING_WITHDRAW } from 'constants/lendingConstants';
 
 // selectors
 import {
@@ -934,6 +935,38 @@ export class EventDetail extends React.Component<Props, State> {
             {
               title: 'View on the blockchain',
               onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case AAVE_LENDING_DEPOSIT:
+        eventData = {
+          name: 'Aave deposit',
+          buttons: [
+            {
+              title: 'Deposit more',
+              onPress: () => {},
+            },
+            {
+              title: 'View deposit',
+              onPress: () => {},
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case AAVE_LENDING_WITHDRAW:
+        eventData = {
+          name: 'Aave deposit',
+          buttons: [
+            {
+              title: 'Withdraw more',
+              onPress: () => {},
+            },
+            {
+              title: 'View deposit',
+              onPress: () => {},
               secondary: true,
             },
           ],

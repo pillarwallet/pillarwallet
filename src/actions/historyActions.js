@@ -68,6 +68,7 @@ import { extractBitcoinTransactions } from 'utils/bitcoin';
 
 // services
 import smartWalletService from 'services/smartWallet';
+import aaveService from 'services/aave';
 
 // selectors
 import { smartAccountAssetsSelector } from 'selectors/assets';
@@ -190,11 +191,13 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountAssets = smartAccountAssetsSelector(getState());
     const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     const assetsList = getAssetsAsList(accountAssets);
+    const aaveLendingPoolContract = await aaveService.getLendingPoolContract();
     const history = parseSmartWalletTransactions(
       smartWalletTransactions,
       supportedAssets,
       assetsList,
       relayerExtensionDevice?.address,
+      aaveLendingPoolContract?.address,
     );
 
     if (!history.length) return;

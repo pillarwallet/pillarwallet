@@ -17,11 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import orderBy from 'lodash.orderby';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
@@ -40,12 +40,14 @@ import { fontSizes } from 'utils/variables';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { DepositedAsset } from 'models/Asset';
+import { LENDING_VIEW_DEPOSITED_ASSET } from 'constants/navigationConstants';
 
 
 type Props = {
   depositedAssets: DepositedAsset[],
   isFetchingDepositedAssets: boolean,
   fetchDepositedAssets: () => void,
+  navigation: NavigationScreenProp<*>,
 };
 
 const DepositedAssetGain = styled(BaseText)`
@@ -53,53 +55,58 @@ const DepositedAssetGain = styled(BaseText)`
   font-size: ${fontSizes.big};
 `;
 
-const renderListItem = ({
-  item: {
-    symbol,
-    earnInterestRate,
-    currentBalance,
-    earnedAmount,
-    earningsPercentageGain,
-    iconUrl,
-  },
-}: { item: DepositedAsset }) => (
-  <ListItemWithImage
-    label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
-    subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
-    itemImageUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
-    onPress={() => {}}
-    diameter={48}
-    rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-  >
-    <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
-    <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
-  </ListItemWithImage>
-);
-
 const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
 
 const DepositedAssetsList = ({
   depositedAssets,
   isFetchingDepositedAssets,
   fetchDepositedAssets,
-}: Props) => (
-  <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Your deposits' }] }}>
-    <FlatList
-      data={depositedAssets}
-      keyExtractor={({ address }) => address}
-      renderItem={renderListItem}
-      initialNumToRender={9}
-      contentContainerStyle={!depositedAssets.length && emptyStyle}
-      ListEmptyComponent={!isFetchingDepositedAssets && <EmptyStateParagraph title="No deposited assets" />}
-      refreshControl={
-        <RefreshControl
-          refreshing={isFetchingDepositedAssets}
-          onRefresh={() => fetchDepositedAssets()}
-        />
-      }
-    />
-  </ContainerWithHeader>
-);
+  navigation,
+}: Props) => {
+  const renderListItem = ({ item: depositedAsset }: { item: DepositedAsset }) => {
+    const {
+      symbol,
+      earnInterestRate,
+      currentBalance,
+      earnedAmount,
+      earningsPercentageGain,
+      iconUrl,
+    } = depositedAsset;
+
+    return (
+      <ListItemWithImage
+        label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
+        subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
+        itemImageUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
+        onPress={() => navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
+        diameter={48}
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+      >
+        <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
+        <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
+      </ListItemWithImage>
+    );
+  };
+
+  return (
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Your deposits' }] }}>
+      <FlatList
+        data={depositedAssets}
+        keyExtractor={({ address }) => address}
+        renderItem={renderListItem}
+        initialNumToRender={9}
+        contentContainerStyle={!depositedAssets.length && emptyStyle}
+        ListEmptyComponent={!isFetchingDepositedAssets && <EmptyStateParagraph title="No deposited assets" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetchingDepositedAssets}
+            onRefresh={() => fetchDepositedAssets()}
+          />
+        }
+      />
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
   lending: { depositedAssets, isFetchingDepositedAssets },

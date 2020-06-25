@@ -24,6 +24,7 @@ import isEmpty from 'lodash.isempty';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchDepositedAssetAction } from 'actions/lendingActions';
@@ -35,10 +36,12 @@ import { ScrollWrapper } from 'components/Layout';
 import { BaseText, MediumText, TextLink } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
+import ShadowedCard from 'components/ShadowedCard';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { LENDING_ENTER_DEPOSIT_AMOUNT } from 'constants/navigationConstants';
 
 // utils
 import { formatAmountDisplay, formatFiat } from 'utils/common';
@@ -67,6 +70,7 @@ type Props = {
   smartAccountHistory: Object[],
   contacts: ApiUser[],
   contactsSmartAddresses: ContactSmartAddressData[],
+  navigation: NavigationScreenProp<*>,
 };
 
 const ValuesWrapper = styled.View`
@@ -78,7 +82,6 @@ const ValuesWrapper = styled.View`
 const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
   text-align: center;
-  color: ${({ isSynthetic, theme }) => isSynthetic ? theme.colors.primary : theme.colors.text};
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -114,6 +117,10 @@ const AssetButtonsWrapper = styled.View`
   border-color: ${themedColors.border};
 `;
 
+const DetailsWrapper = styled.View`
+  padding: ${spacing.large}px ${spacing.large}px 0px;
+`;
+
 const aaveImage = require('assets/images/apps/aave.png');
 
 const filterAaveTansactions = ({ tag }) => tag && [].includes(tag);
@@ -135,6 +142,8 @@ const ViewDepositedAsset = ({
     currentBalance,
     earnInterestRate,
     symbol: assetSymbol,
+    earnedAmount,
+    earningsPercentageGain,
   } = depositedAsset;
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const valueInFiat = parseFloat(currentBalance) * getRate(rates, assetSymbol, fiatCurrency);
@@ -180,12 +189,31 @@ const ViewDepositedAsset = ({
           <TokenValue>{`${formatAmountDisplay(currentBalance)} ${assetSymbol}`}</TokenValue>
           <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
         </ValuesWrapper>
+        <DetailsWrapper>
+          <ShadowedCard
+            contentWrapperStyle={{
+              padding: spacing.large,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <BaseText secondary fontSize={fontSizes.medium}>
+              Earned
+            </BaseText>
+            <MediumText positive fontSize={fontSizes.medium}>
+              + {formatAmountDisplay(earnedAmount)} {assetSymbol}
+            </MediumText>
+            <BaseText success fontSize={fontSizes.medium}>
+              +{formatAmountDisplay(earningsPercentageGain)}%
+            </BaseText>
+          </ShadowedCard>
+        </DetailsWrapper>
         <AssetButtonsWrapper>
           <CircleButton
             label="Add funds"
             fontIcon="plus"
             fontIconStyle={{ fontSize: fontSizes.big }}
-            onPress={() => {}}
+            onPress={() => navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: assetSymbol })}
           />
           <CircleButton
             label="Withdraw"

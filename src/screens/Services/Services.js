@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { createStructuredSelector } from 'reselect';
 
 // actions
 import { getMetaDataAction } from 'actions/exchangeActions';
@@ -39,6 +40,9 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
+// selectors
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+
 // types
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
@@ -51,6 +55,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   getMetaData: () => void,
+  isActiveAccountSmartWallet: boolean,
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -66,7 +71,7 @@ class ServicesScreen extends React.Component<Props> {
 
   getServices = () => {
     const {
-      navigation, theme, baseFiatCurrency, providersMeta,
+      navigation, theme, baseFiatCurrency, providersMeta, isActiveAccountSmartWallet,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -105,7 +110,9 @@ class ServicesScreen extends React.Component<Props> {
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
-        action: () => navigation.navigate(LENDING_CHOOSE_DEPOSIT),
+        disabled: !isActiveAccountSmartWallet,
+        label: !isActiveAccountSmartWallet && 'Only with Smart Wallet',
+        action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       },
       {
         key: 'peerToPeerTrading',
@@ -174,8 +181,17 @@ const mapStateToProps = ({
   baseFiatCurrency,
 });
 
+const structuredSelector = createStructuredSelector({
+  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getMetaData: () => dispatch(getMetaDataAction()),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ServicesScreen));
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));

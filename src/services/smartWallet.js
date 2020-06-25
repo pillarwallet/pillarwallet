@@ -72,6 +72,7 @@ export type AccountTransaction = {
   data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
   gasToken?: ?GasToken,
+  sequentialTransactions?: AccountTransaction[],
 };
 
 export type EstimatePayload = {
@@ -310,13 +311,30 @@ class SmartWallet {
       data,
       transactionSpeed = TransactionSpeeds[AVG],
       gasToken,
+      sequentialTransactions,
     } = transaction;
-    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
+
+    let estimateMethodParams = [
       recipient,
       value,
       data,
-      transactionSpeed,
-    ).catch((e) => { estimateError = e; });
+    ];
+
+    // supporting 2, can be added up to 5
+    if (!isEmpty(sequentialTransactions)) {
+      estimateMethodParams = [
+        ...estimateMethodParams,
+        sequentialTransactions[0].recipient,
+        sequentialTransactions[0].value,
+        sequentialTransactions[0].data,
+      ];
+    }
+
+    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
+
+    const estimatedTransaction = await this.sdk
+      .estimateAccountTransaction(...estimateMethodParams)
+      .catch((e) => { estimateError = e; });
 
     if (!estimatedTransaction) {
       return Promise.reject(new Error(estimateError));
@@ -429,14 +447,17 @@ class SmartWallet {
     transaction: AccountTransaction,
     assetData?: AssetData,
   ): Promise<EstimatedTransactionFee> {
-    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
+    const {
+      value: rawValue,
+      sequentialTransactions,
+      transactionSpeed = TransactionSpeeds[AVG],
+    } = transaction;
     let { data, recipient } = transaction;
     const decimals = get(assetData, 'decimals');
     const assetSymbol = get(assetData, 'token');
     const contractAddress = get(assetData, 'contractAddress');
 
     let value;
-
     // eth or token transfer
     if (assetSymbol === ETH) {
       value = ethToWei(rawValue);
@@ -450,12 +471,27 @@ class SmartWallet {
       value = 0; // value is in encoded token transfer
     }
 
-    const estimated = await this.sdk.estimateAccountTransaction(
+    let estimateMethodParams = [
       recipient,
       value,
       data,
-      transactionSpeed,
-    ).then(parseEstimatePayload).catch(() => ({}));
+    ];
+
+    // supporting 2, can be added up to 5
+    if (!isEmpty(sequentialTransactions)) {
+      estimateMethodParams = [
+        ...estimateMethodParams,
+        sequentialTransactions[0].recipient,
+        sequentialTransactions[0].value,
+        sequentialTransactions[0].data,
+      ];
+    }
+
+    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
+
+    const estimated = await this.sdk
+      .estimateAccountTransaction(...estimateMethodParams)
+      .then(parseEstimatePayload).catch(() => ({}));
 
     return formatEstimated(estimated);
   }

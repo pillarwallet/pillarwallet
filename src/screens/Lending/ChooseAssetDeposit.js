@@ -23,6 +23,7 @@ import orderBy from 'lodash.orderby';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import { fetchAssetsToDepositAction } from 'actions/lendingActions';
@@ -33,6 +34,9 @@ import { FlatList, RefreshControl } from 'react-native';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText } from 'components/Typography';
+
+// constants
+import { LENDING_ENTER_DEPOSIT_AMOUNT } from 'constants/navigationConstants';
 
 // utils
 import { formatAmountDisplay } from 'utils/common';
@@ -52,10 +56,10 @@ type Props = {
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
   balances: Balances,
+  navigation: NavigationScreenProp<*>,
 };
 
 const InterestText = styled(BaseText)`
-  margin-top: 3px;
   font-size: ${fontSizes.medium};
 `;
 
@@ -64,6 +68,7 @@ const ChooseAssetDeposit = ({
   isFetchingAssetsToDeposit,
   fetchAssetsToDeposit,
   balances,
+  navigation,
 }: Props) => {
   useEffect(() => {
     fetchAssetsToDeposit();
@@ -81,12 +86,12 @@ const ChooseAssetDeposit = ({
       label={name}
       subtext={`Available: ${formatAmountDisplay(getBalance(balances, symbol))} ${symbol}`}
       itemImageUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
-      onPress={() => {}}
+      onPress={() => navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol })}
       diameter={48}
       rightColumnInnerStyle={{ alignItems: 'flex-end' }}
     >
       <BaseText secondary>Current APY</BaseText>
-      <InterestText primary>{formatAmountDisplay(earnInterestRate)}%</InterestText>
+      <InterestText primary>&nbsp;{formatAmountDisplay(earnInterestRate)}%</InterestText>
     </ListItemWithImage>
   );
 

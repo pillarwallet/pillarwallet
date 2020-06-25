@@ -45,6 +45,7 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ETH } from 'constants/assetsConstants';
+import { AAVE_LENDING_DEPOSIT, AAVE_LENDING_WITHDRAW } from 'constants/lendingConstants';
 
 // services
 import { parseEstimatePayload } from 'services/smartWallet';
@@ -68,6 +69,7 @@ import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
+import { isAaveDepositMethod, isAaveWithdrawMethod } from './aave';
 
 
 type IAccountTransaction = sdkInterfaces.IAccountTransaction;
@@ -179,6 +181,7 @@ export const parseSmartWalletTransactions = (
   supportedAssets: Asset[],
   assets: Asset[],
   relayerExtensionAddress: ?string,
+  aaveLendingPoolContractAddress: ?string,
 ): Transaction[] => smartWalletTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
@@ -200,6 +203,7 @@ export const parseSmartWalletTransactions = (
       },
       gasToken: gasTokenAddress,
       fee: transactionFee,
+      data: transactionDataPayload, // TODO: ask archanova back-end team to add tx data
     } = smartWalletTransaction;
 
     // NOTE: same transaction could have multiple records, those are different by index
@@ -315,6 +319,14 @@ export const parseSmartWalletTransactions = (
         const feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
         transaction = { ...transaction, feeWithGasToken };
       }
+    }
+
+    if (addressesEqual(aaveLendingPoolContractAddress, to) && isAaveDepositMethod(transactionDataPayload)) {
+      transaction = { ...transaction, tag: AAVE_LENDING_DEPOSIT };
+    }
+
+    if (addressesEqual(aaveLendingPoolContractAddress, to) && isAaveWithdrawMethod(transactionDataPayload)) {
+      transaction = { ...transaction, tag: AAVE_LENDING_WITHDRAW };
     }
 
     const mappedTransaction = buildHistoryTransaction(transaction);

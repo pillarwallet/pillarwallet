@@ -63,10 +63,18 @@ export default class SmartWalletProvider {
       amount,
       gasToken,
       data: transactionData,
+      sequentialSmartWalletTransactions,
     } = transaction;
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);
     const value = ethToWei(amount);
+
+    const sequentialTransactions = sequentialSmartWalletTransactions.map((sequential) => ({
+      from,
+      recipient: sequential.to,
+      value: sequential.value,
+      data: sequential.data || '',
+    }));
 
     return smartWalletService
       .transferAsset({
@@ -75,6 +83,7 @@ export default class SmartWalletProvider {
         data: transactionData || '',
         transactionSpeed,
         gasToken,
+        sequentialTransactions,
       })
       .then(hash => ({
         from,

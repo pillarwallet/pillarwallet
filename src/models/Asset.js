@@ -77,7 +77,7 @@ export type SyntheticAsset = Asset & {
 };
 
 export type AssetToDeposit = Asset & {
-  interestRate: number,
+  earnInterestRate: number,
 };
 
 export type DepositedAsset = Asset & {

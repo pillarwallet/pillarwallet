@@ -17,13 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Contract, utils } from 'ethers';
+import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
-import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS, NETWORK_PROVIDER } from 'react-native-dotenv';
+import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS } from 'react-native-dotenv';
 
 // utils
-import { getEthereumProvider } from 'utils/common';
 import { getAssetDataByAddress } from 'utils/assets';
+
+// services
+import { getContract } from 'services/assets';
 
 // abis
 import AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI from 'abi/aaveLendingPoolAddressesProvider.json';
@@ -34,19 +36,6 @@ import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 // types
 import type { Asset, AssetToDeposit, DepositedAsset } from 'models/Asset';
 
-
-const getContract = (
-  address,
-  abi,
-  // for wallet calls set wallet provider, for general purpose use default
-  provider = getEthereumProvider(NETWORK_PROVIDER),
-) => {
-  try {
-    return new Contract(address, abi, provider);
-  } catch {
-    return null;
-  }
-};
 
 const rayToNumeric = (rayNumberBN: any) => Number(utils.formatUnits(rayNumberBN, 27));
 
@@ -63,35 +52,35 @@ class AaveService {
     );
   }
 
-  async getLendingPoolCoreContract(provider?) {
+  async getLendingPoolCoreContract(provider?): Promise<?Object> {
     if (!this.lendingPoolAddressesProvider) return null;
 
     if (!this.lendingPoolCoreAddress) {
       this.lendingPoolCoreAddress = await this.lendingPoolAddressesProvider.getLendingPoolCore();
     }
 
-    return getContract(
+    return Promise.resolve(getContract(
       this.lendingPoolCoreAddress,
       AAVE_LENDING_POOL_CORE_CONTRACT_ABI,
       provider,
-    );
+    ));
   }
 
-  async getLendingPoolContract(provider?) {
+  async getLendingPoolContract(provider?): Promise<?Object> {
     if (!this.lendingPoolAddressesProvider) return null;
 
     if (!this.lendingPoolAddress) {
       this.lendingPoolAddress = await this.lendingPoolAddressesProvider.getLendingPool();
     }
 
-    return getContract(
+    return Promise.resolve(getContract(
       this.lendingPoolAddress,
       AAVE_LENDING_POOL_CONTRACT_ABI,
       provider,
-    );
+    ));
   }
 
-  async getAaveTokenContractForAsset(assetAddress, provider?) {
+  async getAaveTokenContractForAsset(assetAddress, provider?): Promise<?Object> {
     if (!this.lendingPoolAddressesProvider) return null;
 
     if (!this.aaveTokenAddresses[assetAddress]) {
@@ -99,11 +88,11 @@ class AaveService {
       this.aaveTokenAddresses[assetAddress] = await lendingPoolCoreContract.getReserveATokenAddress(assetAddress);
     }
 
-    return getContract(
+    return Promise.resolve(getContract(
       this.aaveTokenAddresses[assetAddress],
       AAVE_TOKEN_ABI,
       provider,
-    );
+    ));
   }
 
   async getSupportedDeposits(accountAssets: Asset[], supportedAssets: Asset[]): DepositableAsset[] {
@@ -122,7 +111,7 @@ class AaveService {
     }, []);
   }
 
-  async getAssetsToDeposit(accountAssets: Asset[], supportedAssets: Asset[]): AssetToDeposit[] {
+  async getAssetsToDeposit(accountAssets: Asset[], supportedAssets: Asset[]): Promise<AssetToDeposit[]> {
     const supportedDeposits = await this.getSupportedDeposits(accountAssets, supportedAssets);
     const lendingPoolContract = await this.getLendingPoolContract();
     return Promise.all(supportedDeposits.map(async (reserveAsset) => {
@@ -137,7 +126,7 @@ class AaveService {
     }));
   }
 
-  async fetchAccountDepositedAsset(accountAddress: string, asset: Asset): DepositedAsset {
+  async fetchAccountDepositedAsset(accountAddress: string, asset: Asset): Promise<DepositedAsset> {
     const lendingPoolContract = await this.getLendingPoolContract();
     const depositedAssetData = await lendingPoolContract
       .getUserReserveData(asset.address, accountAddress)
@@ -161,26 +150,26 @@ class AaveService {
     // percentage gain formula
     const earningsPercentageGain = ((currentBalance - initialBalance) / initialBalance) * 100;
 
-    return {
+    return Promise.resolve({
       ...asset,
       earnInterestRate,
       currentBalance,
       earnedAmount,
       earningsPercentageGain,
       initialBalance,
-    };
+    });
   }
 
   async getAccountDepositedAssets(
     accountAddress: string,
     accountAssets: Asset[],
     supportedAssets: Asset[],
-  ): DepositedAsset[] {
+  ): Promise<DepositedAsset[]> {
     const supportedDeposits = await this.getSupportedDeposits(accountAssets, supportedAssets);
     const depositedAssets = await Promise.all(supportedDeposits.map((asset) => {
       return this.fetchAccountDepositedAsset(accountAddress, asset);
     }));
-    return depositedAssets.filter(({ initialBalance }) => !!initialBalance);
+    return Promise.resolve(depositedAssets.filter(({ initialBalance }) => !!initialBalance));
   }
 }
 
