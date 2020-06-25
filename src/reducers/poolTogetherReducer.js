@@ -32,7 +32,7 @@ export type PoolTogetherReducerState = {
     [string]: boolean,
   },
   poolApproveExecuting: {
-    [string]: boolean,
+    [string]: string | boolean,
   }
 }
 
@@ -88,7 +88,7 @@ export default function poolTogetherReducer(
         ...state,
         poolApproveExecuting: {
           ...state.poolApproveExecuting,
-          [action.payload]: true,
+          [action.payload.poolToken]: action.payload.txHash,
         },
       };
     case SET_DISMISS_POOL_APPROVE:

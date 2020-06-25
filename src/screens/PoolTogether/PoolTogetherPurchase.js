@@ -29,11 +29,15 @@ import { utils } from 'ethers';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { fetchPoolPrizeInfo, setDismissApproveAction } from 'actions/poolTogetherActions';
+import {
+  fetchPoolPrizeInfo,
+  setDismissApproveAction,
+} from 'actions/poolTogetherActions';
 
 // constants
 import { DAI, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM, POOLTOGETHER_PURCHASE_CONFIRM } from 'constants/navigationConstants';
+import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -105,6 +109,7 @@ type Props = {
   useGasToken: boolean,
   baseFiatCurrency: ?string,
   poolAllowance: { [string]: boolean },
+  poolApproveExecuting: { [string]: boolean | string },
   rates: Rates
 };
 
@@ -230,11 +235,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const { navigation } = this.props;
     const { allowPayload } = this.state;
     this.hideAllowAssetModal();
-
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: allowPayload,
       goBackDismiss: true,
-      transactionType: 'POOL_TOGETHER_ALLOW',
+      transactionType: POOL_TOGETHER_ALLOW,
     });
   };
 
@@ -247,6 +251,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       poolAllowance,
+      poolApproveExecuting,
     } = this.props;
 
     const {
@@ -266,7 +271,9 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const winChance = getWinChance(tokenValue, totalPoolTicketsCount);
 
-    const isLoading = (!allowPayload && !hasAllowance) || (!purchasePayload && hasAllowance);
+    const isApprovalExecuting = !!poolApproveExecuting[poolToken];
+
+    const isLoading = (!allowPayload && !hasAllowance) || (!purchasePayload && hasAllowance) || isApprovalExecuting;
 
     const purchaseDisabled = hasAllowance && (tokenValue === 0 || (purchasePayload && purchasePayload.isDisabled));
 
@@ -332,9 +339,14 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               <Text label>chance of win </Text>
             </ContentRow>
             <ContentRow>
-              {!hasAllowance &&
+              {(!hasAllowance && !isApprovalExecuting) &&
                 <Text style={{ textAlign: 'center' }} label>
                   In order to join Pool Together you will need to automate transactions first.
+                </Text>
+              }
+              {!!isApprovalExecuting &&
+                <Text style={{ textAlign: 'center' }} label>
+                  Please wait for Pool Together automation
                 </Text>
               }
               {(!!hasAllowance && !purchasePayload) &&
@@ -343,10 +355,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 </Text>
               }
               {(!!hasAllowance && !!purchasePayload) &&
-              <Text style={{ textAlign: 'center' }} label>
-                {`Fee ${purchasePayload.feeDisplayValue} (${purchasePayload.feeInFiat})`}
-                {purchasePayload.isDisabled && `\nNot enough ${purchasePayload.feeSymbol} for the transaction fee`}
-              </Text>
+                <Text style={{ textAlign: 'center' }} label>
+                  {`Fee ${purchasePayload.feeDisplayValue} (${purchasePayload.feeInFiat})`}
+                  {purchasePayload.isDisabled && `\nNot enough ${purchasePayload.feeSymbol} for the transaction fee`}
+                </Text>
               }
             </ContentRow>
             <ContentRow>
@@ -354,7 +366,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 <Button
                   title="Next"
                   onPress={() => {
-                    if (!hasAllowance) {
+                    if (!hasAllowance && !isApprovalExecuting) {
                       this.setState({ isAllowModalVisible: true });
                     }
                     return nextNavigationFunction && nextNavigationFunction();
@@ -389,7 +401,11 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   accounts: { data: accounts },
-  poolTogether: { poolStats: poolPrizeInfo, poolAllowance },
+  poolTogether: {
+    poolStats: poolPrizeInfo,
+    poolAllowance,
+    poolApproveExecuting,
+  },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
@@ -397,6 +413,7 @@ const mapStateToProps = ({
   accounts,
   poolPrizeInfo,
   poolAllowance,
+  poolApproveExecuting,
   rates,
 });
 

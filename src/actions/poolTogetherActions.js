@@ -24,6 +24,10 @@ import {
   SET_DISMISS_POOL_APPROVE,
   SET_POOL_TOGETHER_ALLOWANCE,
 } from 'constants/poolTogetherConstants';
+import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
+
+// components
+import Toast from 'components/Toast';
 
 // services
 import {
@@ -49,6 +53,16 @@ export const fetchPoolPrizeInfo = (symbol: string) => {
   };
 };
 
+export const setExecutingApproveAction = (poolToken: string, txHash: string) => ({
+  type: SET_EXECUTING_POOL_APPROVE,
+  payload: { poolToken, txHash },
+});
+
+export const setDismissApproveAction = (poolToken: string) => ({
+  type: SET_DISMISS_POOL_APPROVE,
+  payload: poolToken,
+});
+
 export const fetchPoolAllowanceStatusAction = (symbol: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -63,15 +77,54 @@ export const fetchPoolAllowanceStatusAction = (symbol: string) => {
       type: SET_POOL_TOGETHER_ALLOWANCE,
       payload: updatedAllowance,
     });
+    if (hasAllowance) {
+      dispatch(setDismissApproveAction(symbol));
+    }
   };
 };
 
-export const setExecutingApproveAction = (poolToken: string) => ({
-  type: SET_EXECUTING_POOL_APPROVE,
-  payload: poolToken,
-});
-
-export const setDismissApproveAction = (poolToken: string) => ({
-  type: SET_DISMISS_POOL_APPROVE,
-  payload: poolToken,
-});
+export const checkPoolTogetherApprovalTransactionAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      history: {
+        data: transactionsHistory,
+      },
+      poolTogether: {
+        poolApproveExecuting,
+      },
+    } = getState();
+    Object.keys(poolApproveExecuting).forEach((symbol: string) => {
+      const txHash = poolApproveExecuting[symbol];
+      if (txHash) {
+        const accountIds = Object.keys(transactionsHistory);
+        const allHistory: Object[] = accountIds.reduce(
+          (existing = [], accountId) => {
+            const walletAssetsHistory = transactionsHistory[accountId] || [];
+            return [...existing, ...walletAssetsHistory];
+          },
+          [],
+        );
+        const allowanceTransaction = allHistory.find(({ hash = null }) => hash === txHash);
+        if (allowanceTransaction) {
+          if (allowanceTransaction.status === TX_CONFIRMED_STATUS) {
+            dispatch(fetchPoolAllowanceStatusAction(symbol));
+            Toast.show({
+              message: `PoolTogether ${symbol} Pool automation was enabled`,
+              type: 'success',
+              title: 'Success',
+              autoClose: true,
+            });
+          } else if (allowanceTransaction.status === TX_FAILED_STATUS) {
+            dispatch(setDismissApproveAction(symbol));
+            Toast.show({
+              message: `PoolTogether ${symbol} Pool automation transaction failed`,
+              type: 'warning',
+              title: 'Transaction failed',
+              autoClose: true,
+            });
+          }
+        }
+      }
+    });
+  };
+};

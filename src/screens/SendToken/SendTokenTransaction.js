@@ -38,6 +38,7 @@ import { themedColors } from 'utils/themes';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
+import { setDismissApproveAction, setExecutingApproveAction } from 'actions/poolTogetherActions';
 
 // constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
@@ -48,6 +49,9 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   executingExchangeTransaction: boolean,
   setDismissExchangeTransaction: Function,
+  setDismissPoolTogetherApprove: Function,
+  setExecutingPoolTogetherApprove: Function,
+  poolApproveExecuting: { [string]: boolean | string },
 }
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -108,13 +112,26 @@ class SendTokenTransaction extends React.Component<Props> {
       navigation,
       executingExchangeTransaction,
       setDismissExchangeTransaction,
+      setDismissPoolTogetherApprove,
+      setExecutingPoolTogetherApprove,
+      poolApproveExecuting,
     } = this.props;
     if (executingExchangeTransaction) {
       setDismissExchangeTransaction();
     }
     navigation.dismiss();
 
-    const { isSuccess, transactionPayload } = navigation.state.params;
+    const { isSuccess, transactionPayload, txHash = null } = navigation.state.params;
+
+    const { symbol } = transactionPayload;
+    if (symbol && !poolApproveExecuting[symbol]) {
+      if (isSuccess && txHash) {
+        setExecutingPoolTogetherApprove(symbol, txHash);
+      } else {
+        setDismissPoolTogetherApprove(symbol);
+      }
+    }
+
     if (transactionPayload.usePPN && isSuccess) {
       Toast.show({
         message: 'Transaction was successfully sent!',
@@ -208,12 +225,17 @@ class SendTokenTransaction extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
+  poolTogether: { poolApproveExecuting },
 }: RootReducerState): $Shape<Props> => ({
   executingExchangeTransaction,
+  poolApproveExecuting,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
+  setDismissPoolTogetherApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
+  setExecutingPoolTogetherApprove:
+    (symbol: string, txHash: string) => dispatch(setExecutingApproveAction(symbol, txHash)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);
