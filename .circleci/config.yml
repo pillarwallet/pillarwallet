@@ -259,6 +259,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
+
       - *homebrew_restore_cache
       - *homebrew_install
       - *homebrew_save_cache
@@ -336,6 +337,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
+
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -362,6 +364,7 @@ jobs:
           name: Accept Android SDK licenses 2
           command: |
             yes | sdkmanager --update || exit 0
+
       - *gradle_restore_cache
       - *gradle_dependencies
 
@@ -389,6 +392,7 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             cd android && ./gradlew clean app:assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+
       - *gradle_save_cache
 
       - run:
@@ -443,6 +447,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
+
       - *homebrew_restore_cache
       - *homebrew_install
       - *homebrew_save_cache
@@ -464,6 +469,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+
       - restore_cache:
           name: Restore node modules cache
           keys:
@@ -554,6 +560,7 @@ jobs:
           name: Set slack message
           command: |
             aws --region eu-west-2 s3 cp $PROD_KEYSTORE_S3_BUCKET/android_prod.txt .
+
       - *android_latest_npm
 
       - run:
@@ -579,6 +586,7 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" android/app/src/main/assets/branch.json
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+
       - restore_cache:
           name: Restore node modules cache
           keys:
@@ -630,6 +638,7 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             ./gradlew clean app:assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+
       - *gradle_save_cache
 
       - run:
@@ -712,6 +721,7 @@ jobs:
             chmod +x .circleci/announceProdBuilds.sh
             .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)"
             .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)"
+
 workflows:
   version: 2.1
   build_and_deploy:
