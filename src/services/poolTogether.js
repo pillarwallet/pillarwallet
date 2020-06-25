@@ -33,6 +33,7 @@ import * as Sentry from '@sentry/react-native';
 import { DAI } from 'constants/assetsConstants';
 
 import type { PoolInfo } from 'models/PoolTogether';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 import { getEthereumProvider, formatMoney, reportLog } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
@@ -111,7 +112,7 @@ export async function getPoolTogetherInfo(symbol: string): Promise<PoolInfo> {
   });
 }
 
-export const getSmartWalletTxFee = async (transaction, useGasToken): Promise<TransactionFeeInfo> => {
+export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<TransactionFeeInfo> => {
   const defaultResponse = { fee: new BigNumber(0) };
   const estimateTransaction = {
     data: transaction.data,
@@ -168,7 +169,7 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
   };
 }
 
-export const checkPoolAllowance = async (symbol: string, address: string): boolean => {
+export const checkPoolAllowance = async (symbol: string, address: string): Promise<boolean> => {
   const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
   const contractAddress = symbol === DAI ? DAI_ADDRESS : USDC_ADDRESS;
   const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;

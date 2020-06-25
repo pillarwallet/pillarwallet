@@ -29,7 +29,7 @@ import { utils } from 'ethers';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
+import { fetchPoolPrizeInfo, setDismissApproveAction } from 'actions/poolTogetherActions';
 
 // constants
 import { DAI, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -44,7 +44,7 @@ import Button from 'components/Button';
 
 // models
 import type { Accounts } from 'models/Account';
-import type { Balances } from 'models/Asset';
+import type { Balances, Rates } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -100,8 +100,12 @@ type Props = {
   poolPrizeInfo: PoolPrizeInfo,
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
+  setDismissApprove: (symbol: string) => void,
   theme: Theme,
   useGasToken: boolean,
+  baseFiatCurrency: ?string,
+  poolAllowance: { [string]: boolean },
+  rates: Rates
 };
 
 type State = {
@@ -216,8 +220,9 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
   }
 
   hideAllowAssetModal = () => {
-    const { setDismissTransaction } = this.props;
-    // setDismissTransaction();
+    const { setDismissApprove } = this.props;
+    const { poolToken } = this.state;
+    setDismissApprove(poolToken);
     this.setState({ isAllowModalVisible: false });
   };
 
@@ -409,6 +414,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
+  setDismissApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(withTheme(PoolTogetherPurchase));

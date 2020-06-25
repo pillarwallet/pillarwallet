@@ -37,7 +37,6 @@ import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import ExchangeScheme from 'screens/Exchange/ExchangeScheme';
 
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -51,6 +50,9 @@ import { themedColors, getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
+
+// local components
+import PoolTogetherPurchaseScheme from './PoolTogetherPurchaseScheme';
 
 
 const ContentWrapper = styled.View`
@@ -89,10 +91,8 @@ type State = {
   totalPoolTicketsCount: number,
   transactionPayload: Object,
   feeInFiat: string,
-  feeSymbol: string,
   feeDisplayValue: string,
   isDisabled: boolean,
-  purchasePayload: Object,
 };
 
 const poolTogetherLogo = require('assets/images/pool_together.png');
@@ -180,7 +180,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
           innerRef={ref => { this.scroll = ref; }}
         >
           <ContentWrapper>
-            <ExchangeScheme
+            <PoolTogetherPurchaseScheme
               fromValue={tokenValue}
               fromAssetCode={poolToken}
               toValue={tokenValue}
