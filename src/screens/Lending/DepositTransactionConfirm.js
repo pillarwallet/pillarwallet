@@ -97,9 +97,11 @@ const TokenSymbol = styled(MediumText)`
 const ValueInFiat = styled(BaseText)`
   ${fontStyles.small};
   text-align: center;
+  margin-bottom: ${spacing.rhythm}px;
 `;
 
 const aaveImage = require('assets/images/apps/aave.png');
+const arrowDownGrey = require('assets/icons/arrow_down_grey.png');
 
 const DepositTransactionConfirm = ({
   navigation,
@@ -159,6 +161,11 @@ const DepositTransactionConfirm = ({
           <TokenSymbol>{depositAssetSymbol}</TokenSymbol>
         </TokenValueWrapper>
         <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
+        <CachedImage
+          style={{ width: 17, height: 41, marginBottom: spacing.small }}
+          source={arrowDownGrey}
+          resizeMode="contain"
+        />
         <CachedImage
           style={{ width: 64, height: 64, marginBottom: spacing.large }}
           source={aaveImage}
