@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Keyboard, SectionList, FlatList, Alert } from 'react-native';
+import { Keyboard, SectionList, FlatList, Alert, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -325,42 +325,50 @@ class AssetSearch extends React.Component<Props, State> {
           centerItems: [{ title: 'Tokens' }],
         }}
       >
-        <SearchBlock
-          searchInputPlaceholder="Search asset"
-          onSearchChange={this.handleSearchChange}
-          wrapperStyle={{
-            paddingHorizontal: 20,
-            paddingVertical: 16,
-          }}
-          itemSearchState={!!isInSearchMode}
-          navigation={navigation}
-        />
-        {!isInSearchMode && (
+        <ScrollView
+          stickyHeaderIndices={[0]}
+        >
           <>
-            <Tabs
-              tabs={this.getTabs()}
-              activeTab={activeTab}
+            <SearchBlock
+              searchInputPlaceholder="Search asset"
+              onSearchChange={this.handleSearchChange}
+              wrapperStyle={{
+                paddingHorizontal: 20,
+                paddingVertical: 16,
+              }}
+              itemSearchState={!!isInSearchMode}
+              navigation={navigation}
             />
-            <ButtonsWrapper>
-              <ButtonText
-                buttonText="Select all"
-                onPress={this.selectAllAssets}
-                wrapperStyle={{ alignSelf: 'flex-start' }}
+            {!isInSearchMode && (
+              <Tabs
+                tabs={this.getTabs()}
+                activeTab={activeTab}
               />
-            </ButtonsWrapper>
-            <FlatList
-              extraData={assets}
-              data={this.getAssetsList()}
-              renderItem={this.renderToken}
-            />
+            )}
           </>
+          {!isInSearchMode && (
+            <>
+              <ButtonsWrapper>
+                <ButtonText
+                  buttonText="Select all"
+                  onPress={this.selectAllAssets}
+                  wrapperStyle={{ alignSelf: 'flex-start' }}
+                />
+              </ButtonsWrapper>
+              <FlatList
+                extraData={assets}
+                data={this.getAssetsList()}
+                renderItem={this.renderToken}
+              />
+            </>
         )}
-        {isSearching &&
+          {isSearching &&
           <SearchSpinner center>
             <Spinner />
           </SearchSpinner>
         }
-        {isInSearchMode && this.renderFoundTokensList()}
+          {isInSearchMode && this.renderFoundTokensList()}
+        </ScrollView>
       </ContainerWithHeader>
     );
   }
