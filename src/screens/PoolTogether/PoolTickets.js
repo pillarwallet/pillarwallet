@@ -73,6 +73,7 @@ type Props = {
   maxCount: number,
   currentCount: number,
   totalPoolTicketsCount: number,
+  userTickets: number,
   remainingTimeMs: number,
   theme: Theme,
   onTicketCountChange: Function,
@@ -84,6 +85,7 @@ const PoolTickets = (props: Props) => {
     maxCount = 0,
     currentCount = 0,
     totalPoolTicketsCount = 0,
+    userTickets = 0,
     remainingTimeMs = 0,
     theme,
     onTicketCountChange,
@@ -95,7 +97,7 @@ const PoolTickets = (props: Props) => {
   const canAdd = currentCount < maxCount;
   const canSubtract = currentCount > 0;
 
-  const winChance = getWinChance(currentCount, totalPoolTicketsCount);
+  const winChance = getWinChance(currentCount + userTickets, totalPoolTicketsCount);
 
   const ticketSubtract = () => {
     return canSubtract && onTicketCountChange(currentCount - 1);
@@ -166,7 +168,7 @@ const PoolTickets = (props: Props) => {
         </TicketCounterColumn>
       </TicketCounterRow>
       <TicketCounterRow style={{ paddingTop: 0 }}>
-        <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)}%</Text>
+        <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
         <Text label>chance of win</Text>
       </TicketCounterRow>
       <TicketCounterRow style={{ marginTop: 40 }}>
@@ -179,7 +181,7 @@ const PoolTickets = (props: Props) => {
       </TicketCounterRow>
       <TicketCounterRow style={{ paddingTop: 0 }}>
         <Text style={{ textAlign: 'center' }} label>
-          Tickets purchased today will be eligible for prizes starting on {eligibleDate}.
+          Tickets purchased today will be eligible for prizes starting after {eligibleDate}.
         </Text>
       </TicketCounterRow>
     </PoolTicketsWrapper>

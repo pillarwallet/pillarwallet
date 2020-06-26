@@ -44,7 +44,8 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 export const fetchPoolPrizeInfo = (symbol: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { poolTogether: { poolStats: currentPoolStats = {} } } = getState();
-    const newPoolStats = await getPoolTogetherInfo(symbol);
+    const activeAccountAddress = activeAccountAddressSelector(getState());
+    const newPoolStats = await getPoolTogetherInfo(symbol, activeAccountAddress);
     const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
     dispatch({
       type: SET_POOL_TOGETHER_PRIZE_INFO,

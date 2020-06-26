@@ -47,7 +47,7 @@ import smartWalletService from './smartWallet';
 
 const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK_PROVIDER;
 
-export async function getPoolTogetherInfo(symbol: string): Promise<PoolInfo> {
+export async function getPoolTogetherInfo(symbol: string, address: string): Promise<PoolInfo> {
   const contractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
   const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
   const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
@@ -62,6 +62,25 @@ export async function getPoolTogetherInfo(symbol: string): Promise<PoolInfo> {
   const currentDraw = await contract.getDraw(currentOpenDrawId);
   const committedSupply = await contract.committedSupply();
   const openSupply = await contract.openSupply();
+
+  let userInfo;
+  try {
+    const totalBalance = await contract.totalBalanceOf(address); // balance including open, committed, fees, sponsorship
+    if (!totalBalance.eq(0)) {
+      const openBalance = await contract.openBalanceOf(address); // balance in the open Draw
+      const userCurrentPoolBalance = await contract.balanceOf(address); // balance in the current committed Draw
+      const ticketBalance = openBalance.add(userCurrentPoolBalance); // this is the current ticket balance in total
+      userInfo = {
+        openBalance: formatMoney(utils.formatUnits(openBalance.toString(), unitType)),
+        totalBalance: formatMoney(utils.formatUnits(totalBalance.toString(), unitType)),
+        userCurrentPoolBalance: formatMoney(utils.formatUnits(userCurrentPoolBalance.toString(), unitType)),
+        ticketBalance: formatMoney(utils.formatUnits(ticketBalance.toString(), unitType)),
+      };
+      console.log(userInfo);
+    }
+  } catch (e) {
+    console.log(e);
+  }
 
   const supplyRatePerBlock = await contract.supplyRatePerBlock();
 
@@ -109,6 +128,7 @@ export async function getPoolTogetherInfo(symbol: string): Promise<PoolInfo> {
     drawDate,
     remainingTimeMs,
     totalPoolTicketsCount,
+    userInfo,
   });
 }
 

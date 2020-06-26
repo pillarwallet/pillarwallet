@@ -49,6 +49,7 @@ const initialState = {
       drawDate: 0,
       remainingTimeMs: 0,
       totalPoolTicketsCount: 0,
+      userInfo: null,
     },
     USDC: {
       currentPrize: '0',
@@ -56,6 +57,7 @@ const initialState = {
       drawDate: 0,
       remainingTimeMs: 0,
       totalPoolTicketsCount: 0,
+      userInfo: null,
     },
   },
   poolAllowance: {

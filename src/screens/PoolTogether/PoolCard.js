@@ -31,8 +31,9 @@ import Progress from 'components/Progress';
 import type { Theme } from 'models/Theme';
 
 import { getThemeColors, themedColors } from 'utils/themes';
-import { countDownDHMS } from 'utils/poolTogether';
+import { countDownDHMS, getWinChance } from 'utils/poolTogether';
 import { fontStyles } from 'utils/variables';
+import { formatAmount } from 'utils/common';
 
 const CardRow = styled.View`
   flex-direction: row;
@@ -69,6 +70,8 @@ type Props = {
   prizeEstimate: string,
   remainingTimeMs: number,
   activeTab: string,
+  userTickets: number,
+  totalPoolTicketsCount: number,
   theme: Theme,
 };
 
@@ -81,6 +84,8 @@ const PoolCard = (props: Props) => {
     prizeEstimate,
     remainingTimeMs = 0,
     activeTab: symbol,
+    userTickets = 0,
+    totalPoolTicketsCount,
     theme,
   } = props;
 
@@ -96,6 +101,11 @@ const PoolCard = (props: Props) => {
     const hourW = hours === 1 ? 'hour' : 'hours';
     const minW = minutes === 1 ? 'minute' : 'minutes';
     remainingTime = `Ends in ${days} ${dayW}, ${hours} ${hourW}, ${minutes} ${minW}`;
+  }
+
+  let winChance = 0;
+  if (userTickets > 0) {
+    winChance = getWinChance(userTickets, totalPoolTicketsCount);
   }
 
   const iconSrc = symbol === DAI ? daiIcon : usdcIcon;
@@ -145,6 +155,20 @@ const PoolCard = (props: Props) => {
       <CardRow style={{ paddingBottom: 16 }}>
         <CardText label>{remainingTime}</CardText>
       </CardRow>
+      {userTickets > 0 &&
+        <>
+          <CardRow>
+            <CardText style={{ paddingRight: 4 }}>{userTickets} tickets</CardText>
+            <CardText style={{ paddingTop: 4 }} label>({userTickets} {symbol})</CardText>
+          </CardRow>
+          <CardRow style={{ paddingTop: 0, marginBottom: 16 }}>
+            <CardText label style={{ color: colors.primary, paddingRight: 4 }}>
+              {formatAmount(winChance, 6)} %
+            </CardText>
+            <CardText label>chance of win </CardText>
+          </CardRow>
+        </>
+      }
     </ShadowedCard>
   );
 };

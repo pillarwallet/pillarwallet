@@ -18,12 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type PoolUserInfo = {
+  openBalance: string,
+  totalBalance: string,
+  userCurrentPoolBalance: string,
+  ticketBalance: string,
+}
+
 export type PoolInfo = {
   currentPrize: string,
   prizeEstimate: string,
   drawDate: number,
   remainingTimeMs: number,
   totalPoolTicketsCount: number,
+  userInfo: ?PoolUserInfo,
 };
 
 export type PoolPrizeInfo = {

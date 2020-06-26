@@ -169,6 +169,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
       prizeEstimate,
       remainingTimeMs,
       totalPoolTicketsCount,
+      userInfo = null,
     } = poolPrizeInfo[activeTab];
 
     const { balance = '0' } = balances[activeTab] || {};
@@ -176,6 +177,11 @@ class PoolTogetherDash extends React.Component<Props, State> {
     const poolTokenBalance = Math.floor(parseFloat(balance)); // get integer closest to balance for ticket enumeration
 
     const poolTicketsCount = ticketsCount[activeTab];
+
+    let userTickets = 0;
+    if (userInfo) {
+      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
+    }
 
     return (
       <ContainerWithHeader
@@ -209,12 +215,15 @@ class PoolTogetherDash extends React.Component<Props, State> {
               currentPrize={currentPrize}
               prizeEstimate={prizeEstimate}
               remainingTimeMs={remainingTimeMs}
+              totalPoolTicketsCount={totalPoolTicketsCount}
               activeTab={activeTab}
+              userTickets={userTickets}
             />
             <PoolTickets
               currentCount={poolTicketsCount}
               maxCount={poolTokenBalance}
               totalPoolTicketsCount={totalPoolTicketsCount}
+              userTickets={userTickets}
               remainingTimeMs={remainingTimeMs}
               onPressCallback={() => {
                 navigation.navigate(POOLTOGETHER_PURCHASE, {
@@ -222,6 +231,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
                   poolTicketsCount,
                   poolTokenBalance,
                   totalPoolTicketsCount,
+                  userTickets,
                 });
               }}
               onTicketCountChange={this.onTicketCountChange}

@@ -88,6 +88,7 @@ type Props = {
 type State = {
   poolToken: string,
   tokenValue: number,
+  userTickets: number,
   totalPoolTicketsCount: number,
   transactionPayload: Object,
   feeInFiat: string,
@@ -106,6 +107,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
+      userTickets,
       totalPoolTicketsCount,
       transactionPayload,
       feeInFiat,
@@ -116,6 +118,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
     this.state = {
       poolToken,
       tokenValue,
+      userTickets,
       totalPoolTicketsCount,
       transactionPayload,
       feeInFiat,
@@ -153,6 +156,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
+      userTickets,
       totalPoolTicketsCount,
       feeDisplayValue,
       feeInFiat,
@@ -161,7 +165,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
 
     const colors = getThemeColors(theme);
 
-    const winChance = getWinChance(tokenValue, totalPoolTicketsCount);
+    const winChance = getWinChance(tokenValue + userTickets, totalPoolTicketsCount);
 
     return (
       <ContainerWithHeader
@@ -188,7 +192,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               imageSource={poolTogetherLogo}
             />
             <ContentRow>
-              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)}%</Text>
+              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
               <Text label>chance of win </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 64 }}>

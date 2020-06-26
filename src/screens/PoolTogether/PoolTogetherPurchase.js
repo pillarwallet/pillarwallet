@@ -118,6 +118,7 @@ type Props = {
 type State = {
   poolToken: string,
   tokenValue: number,
+  userTickets: number,
   totalPoolTicketsCount: number,
   isAllowModalVisible: boolean,
   allowPayload: Object,
@@ -135,12 +136,14 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const {
       poolToken = DAI,
       poolTicketsCount = 0,
+      userTickets = 0,
       totalPoolTicketsCount = 0,
     } = navigation.state.params || {};
     super(props);
     this.state = {
       poolToken,
       tokenValue: poolTicketsCount,
+      userTickets,
       totalPoolTicketsCount,
       isAllowModalVisible: false,
       allowPayload: null,
@@ -260,6 +263,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
+      userTickets,
       totalPoolTicketsCount,
       isAllowModalVisible,
       gasToken,
@@ -272,7 +276,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const colors = getThemeColors(theme);
 
-    const winChance = getWinChance(tokenValue, totalPoolTicketsCount);
+    const winChance = getWinChance(tokenValue + userTickets, totalPoolTicketsCount);
 
     const isApprovalExecuting = !!poolApproveExecuting[poolToken];
 
@@ -307,6 +311,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             poolToken,
             tokenValue,
             totalPoolTicketsCount,
+            userTickets,
             ...purchasePayload,
           });
       };
@@ -341,7 +346,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               />
             </ContentRow>
             <ContentRow>
-              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)}%</Text>
+              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
               <Text label>chance of win </Text>
             </ContentRow>
             <ContentRow>
