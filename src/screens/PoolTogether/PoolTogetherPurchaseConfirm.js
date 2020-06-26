@@ -184,7 +184,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               fromValue={tokenValue}
               fromAssetCode={poolToken}
               toValue={tokenValue}
-              toAssetCode="tickets"
+              toAssetCode={tokenValue === 1 ? 'ticket' : 'tickets'}
               imageSource={poolTogetherLogo}
             />
             <ContentRow>

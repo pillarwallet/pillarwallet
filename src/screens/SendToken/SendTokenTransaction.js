@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { TouchableOpacity } from 'react-native';
+import get from 'lodash.get';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
@@ -123,12 +124,12 @@ class SendTokenTransaction extends React.Component<Props> {
 
     const { isSuccess, transactionPayload, txHash = null } = navigation.state.params;
 
-    const { symbol } = transactionPayload;
-    if (symbol && !poolApproveExecuting[symbol]) {
+    const poolToken = get(transactionPayload, 'extra.poolTogetherApproval.symbol', null);
+    if (poolToken && !poolApproveExecuting[poolToken]) {
       if (isSuccess && txHash) {
-        setExecutingPoolTogetherApprove(symbol, txHash);
+        setExecutingPoolTogetherApprove(poolToken, txHash);
       } else {
-        setDismissPoolTogetherApprove(symbol);
+        setDismissPoolTogetherApprove(poolToken);
       }
     }
 
