@@ -726,11 +726,10 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - build-and-test:
-          filters:
-            branches:
-              ignore:
-                - ethers-migration
+      - build-and-test
+        branches:
+          only:
+            - develop
       - appcenter_ios:
           requires:
             - build-and-test
