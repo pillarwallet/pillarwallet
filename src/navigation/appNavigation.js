@@ -109,6 +109,8 @@ import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingR
 import PoolTogetherDashScreen from 'screens/PoolTogether/PoolTogetherDash';
 import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
 import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
+import PoolTogetherWithdrawScreen from 'screens/PoolTogether/PoolTogetherWithdraw';
+import PoolTogetherWithdrawConfirmScreen from 'screens/PoolTogether/PoolTogetherWithdrawConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -249,6 +251,8 @@ import {
   POOLTOGETHER_DASHBOARD,
   POOLTOGETHER_PURCHASE,
   POOLTOGETHER_PURCHASE_CONFIRM,
+  POOLTOGETHER_WITHDRAW,
+  POOLTOGETHER_WITHDRAW_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -340,6 +344,8 @@ const servicesFlow = createStackNavigator({
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -721,6 +727,8 @@ const poolTogetherFlow = createStackNavigator({
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
 }, StackNavigatorConfig);
 
 poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;

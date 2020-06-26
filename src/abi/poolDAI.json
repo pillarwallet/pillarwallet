@@ -186,6 +186,26 @@
     "name": "winner",
     "type": "address"
   }, {
+    "indexed": true,
+    "internalType": "address",
+    "name": "impl",
+    "type": "address"
+  }],
+  "name": "RewardListenerFailed",
+  "type": "event"
+}, {
+  "anonymous": false,
+  "inputs": [{
+    "indexed": true,
+    "internalType": "uint256",
+    "name": "drawId",
+    "type": "uint256"
+  }, {
+    "indexed": true,
+    "internalType": "address",
+    "name": "winner",
+    "type": "address"
+  }, {
     "indexed": false,
     "internalType": "bytes32",
     "name": "entropy",
@@ -1028,7 +1048,11 @@
   "type": "function"
 }, {
   "constant": false,
-  "inputs": [],
+  "inputs": [{
+    "internalType": "uint256",
+    "name": "amount",
+    "type": "uint256"
+  }],
   "name": "withdraw",
   "outputs": [],
   "payable": false,

@@ -31,7 +31,7 @@ import { fetchPoolPrizeInfo, fetchPoolAllowanceStatusAction } from 'actions/pool
 
 // constants
 import { DAI, USDC } from 'constants/assetsConstants';
-import { POOLTOGETHER_PURCHASE } from 'constants/navigationConstants';
+import { POOLTOGETHER_PURCHASE, POOLTOGETHER_WITHDRAW } from 'constants/navigationConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -250,7 +250,15 @@ class PoolTogetherDash extends React.Component<Props, State> {
                   label="Withdraw"
                   fontIcon="up-arrow"
                   fontIconStyle={{ fontSize: fontSizes.big }}
-                  onPress={() => navigation.navigate('withdraw')}
+                  onPress={() => {
+                    navigation.navigate(POOLTOGETHER_WITHDRAW, {
+                      poolToken: activeTab,
+                      poolTicketsCount,
+                      poolTokenBalance,
+                      totalPoolTicketsCount,
+                      userTickets,
+                    });
+                  }}
                   disabled={userTickets <= 0}
                 />
               </TicketButtonsWrapper>
