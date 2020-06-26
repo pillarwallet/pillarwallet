@@ -727,9 +727,6 @@ workflows:
   build_and_deploy:
     jobs:
       - build-and-test
-        branches:
-          only:
-            - develop
       - appcenter_ios:
           requires:
             - build-and-test
