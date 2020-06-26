@@ -21,11 +21,9 @@ import { Contract, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import abiHelper from 'ethjs-abi';
-import isEmpty from 'lodash.isempty';
 
 import { BTC, ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { getEthereumProvider, parseTokenBigNumberAmount, reportLog } from 'utils/common';
-import { addressesEqual } from 'utils/assets';
 
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
