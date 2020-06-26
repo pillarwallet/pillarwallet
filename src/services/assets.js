@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Contract, utils } from 'ethers';
-import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK, BALANCE_CHECK_CONTRACT } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import abiHelper from 'ethjs-abi';
 
@@ -299,14 +299,10 @@ export async function fetchAddressBalancesFromProxyContract(
 ): Promise<FetchBalancesResponse> {
   if (!['homestead', 'ropsten'].includes(NETWORK_PROVIDER)) return [];
 
-  const contractAddress = NETWORK_PROVIDER === 'ropsten'
-    ? '0x6077113dB6d2Fb7A2E8b96D7ee470B136315C0E7'
-    : '0xb1F8e55c7f64D203C1400B9D8555d050F94aDF39';
-
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
   const tokens = assets.map(({ address }) => address);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const contract = new Contract(BALANCE_CHECK_CONTRACT, BALANCE_CHECKER_CONTRACT_ABI, provider);
 
-  const contract = new Contract(contractAddress, BALANCE_CHECKER_CONTRACT_ABI, provider);
   const balances = await contract.balances([accountAddress], tokens)
     .then(values =>
       assets.map((asset, assetIdx) => ({
