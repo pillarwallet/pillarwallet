@@ -32,6 +32,7 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 import {
   fetchPoolPrizeInfo,
   setDismissApproveAction,
+  fetchPoolAllowanceStatusAction,
 } from 'actions/poolTogetherActions';
 
 // constants
@@ -104,6 +105,7 @@ type Props = {
   poolPrizeInfo: PoolPrizeInfo,
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
+  fetchPoolAllowanceStatus: (symbol: string) => void,
   setDismissApprove: (symbol: string) => void,
   theme: Theme,
   useGasToken: boolean,
@@ -252,6 +254,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       rates,
       poolAllowance,
       poolApproveExecuting,
+      fetchPoolAllowanceStatus,
     } = this.props;
 
     const {
@@ -320,6 +323,9 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchPoolStats(poolToken);
+                if (isApprovalExecuting) {
+                  fetchPoolAllowanceStatus(poolToken);
+                }
               }}
             />
           }
@@ -431,6 +437,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
+  fetchPoolAllowanceStatus: (symbol: string) => dispatch(fetchPoolAllowanceStatusAction(symbol)),
   setDismissApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
 });
 
