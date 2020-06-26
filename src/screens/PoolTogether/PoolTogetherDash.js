@@ -37,6 +37,7 @@ import { POOLTOGETHER_PURCHASE } from 'constants/navigationConstants';
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
+import CircleButton from 'components/CircleButton';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -48,6 +49,9 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
+
+// utils
+import { fontSizes } from 'utils/variables';
 
 // local screen components
 import PoolCard from './PoolCard';
@@ -65,6 +69,12 @@ const LogoWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin: 0px 20px;
+`;
+
+const TicketButtonsWrapper = styled.View`
+  padding: 14px 85px 36px;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const poolTogetherLogo = require('assets/images/pool_together.png');
@@ -219,23 +229,51 @@ class PoolTogetherDash extends React.Component<Props, State> {
               activeTab={activeTab}
               userTickets={userTickets}
             />
-            <PoolTickets
-              currentCount={poolTicketsCount}
-              maxCount={poolTokenBalance}
-              totalPoolTicketsCount={totalPoolTicketsCount}
-              userTickets={userTickets}
-              remainingTimeMs={remainingTimeMs}
-              onPressCallback={() => {
-                navigation.navigate(POOLTOGETHER_PURCHASE, {
-                  poolToken: activeTab,
-                  poolTicketsCount,
-                  poolTokenBalance,
-                  totalPoolTicketsCount,
-                  userTickets,
-                });
-              }}
-              onTicketCountChange={this.onTicketCountChange}
-            />
+            {!!userInfo &&
+              <TicketButtonsWrapper>
+                <CircleButton
+                  label="Purchase"
+                  onPress={() => {
+                    navigation.navigate(POOLTOGETHER_PURCHASE, {
+                      poolToken: activeTab,
+                      poolTicketsCount,
+                      poolTokenBalance,
+                      totalPoolTicketsCount,
+                      userTickets,
+                    });
+                  }}
+                  fontIcon="plus"
+                  fontIconStyle={{ fontSize: fontSizes.big }}
+                  disabled={poolTokenBalance <= 0}
+                />
+                <CircleButton
+                  label="Withdraw"
+                  fontIcon="up-arrow"
+                  fontIconStyle={{ fontSize: fontSizes.big }}
+                  onPress={() => navigation.navigate('withdraw')}
+                  disabled={userTickets <= 0}
+                />
+              </TicketButtonsWrapper>
+            }
+            {!userInfo &&
+              <PoolTickets
+                currentCount={poolTicketsCount}
+                maxCount={poolTokenBalance}
+                totalPoolTicketsCount={totalPoolTicketsCount}
+                userTickets={userTickets}
+                remainingTimeMs={remainingTimeMs}
+                onPressCallback={() => {
+                  navigation.navigate(POOLTOGETHER_PURCHASE, {
+                    poolToken: activeTab,
+                    poolTicketsCount,
+                    poolTokenBalance,
+                    totalPoolTicketsCount,
+                    userTickets,
+                  });
+                }}
+                onTicketCountChange={this.onTicketCountChange}
+              />
+            }
           </ContentWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>

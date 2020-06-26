@@ -76,10 +76,14 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
         userCurrentPoolBalance: formatMoney(utils.formatUnits(userCurrentPoolBalance.toString(), unitType)),
         ticketBalance: formatMoney(utils.formatUnits(ticketBalance.toString(), unitType)),
       };
-      console.log(userInfo);
     }
   } catch (e) {
-    console.log(e);
+    reportLog('Error checking PoolTogether User Info', {
+      address,
+      contractAddress,
+      symbol,
+      message: e.message,
+    }, Sentry.Severity.Error);
   }
 
   const supplyRatePerBlock = await contract.supplyRatePerBlock();
