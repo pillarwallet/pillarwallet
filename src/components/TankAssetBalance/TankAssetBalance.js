@@ -33,6 +33,7 @@ type Props = {
   iconStyle?: ?Object,
   token?: string,
   bottomExtra?: any,
+  secondary?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -41,7 +42,7 @@ const Wrapper = styled.View`
 `;
 
 const BalanceInTank = styled(BaseText)`
-  color: ${themedColors.synthetic};
+  color: ${({ secondary }) => secondary ? themedColors.secondaryText : themedColors.synthetic};
   font-size: ${fontSizes.big}px;
 `;
 
@@ -49,7 +50,7 @@ const Icon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   margin-right: 4px;
-  tint-color: ${themedColors.synthetic};
+  tint-color: ${({ secondary }) => secondary ? themedColors.secondaryText : themedColors.synthetic};
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');
@@ -62,13 +63,14 @@ const TankAssetBalance = (props: Props) => {
     token,
     bottomExtra,
     iconStyle,
+    secondary,
   } = props;
 
   return (
     <View>
       <Wrapper style={wrapperStyle}>
-        <Icon style={iconStyle} source={lightningIcon} />
-        <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
+        <Icon style={iconStyle} source={lightningIcon} secondary={secondary} />
+        <BalanceInTank style={textStyle} secondary={secondary}>{amount}</BalanceInTank>
         {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
       </Wrapper>
       {bottomExtra}

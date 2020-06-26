@@ -37,7 +37,7 @@ import { ETH } from 'constants/assetsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { getAssetDataByAddress } from 'utils/assets';
+import { getAssetDataByAddress, getAssetData } from 'utils/assets';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -99,9 +99,10 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
         to = methodToAddress;
       }
 
+      const ethAssetData = getAssetData([], supportedAssets, ETH);
       const {
         symbol = ETH,
-        address: contractAddress = '',
+        address: contractAddress = ethAssetData.address,
         decimals = 18,
       } = assetData;
 

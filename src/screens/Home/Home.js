@@ -112,7 +112,6 @@ type Props = {
   history: Object[],
   badges: Badges,
   fetchBadges: Function,
-  connectors: Connector[],
   pendingConnector: ?Connector,
   logScreenView: (view: string, screen: string) => void,
   activeAccount: ?Account,
@@ -230,6 +229,7 @@ class HomeScreen extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
+      fetchBadgeAwardHistory,
       fetchAllAccountsBalances,
       refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
@@ -240,6 +240,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
+    fetchBadgeAwardHistory();
     fetchTransactionsHistory();
     fetchAllAccountsBalances();
     refreshBitcoinBalance();
