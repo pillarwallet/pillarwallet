@@ -26,6 +26,10 @@ import CodeInput from 'components/CodeInput';
 // utils
 import { spacing } from 'utils/variables';
 
+// constants
+import { OTP_DIGITS } from 'constants/referralsConstants';
+
+
 const FormWrapper = styled.View`
   padding: 30px ${spacing.layoutSides}px ${spacing.layoutSides}px;
   display: flex;
@@ -36,7 +40,7 @@ type Props = {
   errorMessage: ?string,
 };
 
-const maxDigits = 5;
+const maxDigits = OTP_DIGITS;
 
 const ConfirmCode = (props: Props) => {
   const {
