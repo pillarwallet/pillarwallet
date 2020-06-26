@@ -86,4 +86,5 @@ export type DepositedAsset = Asset & {
   earningsPercentageGain: number,
   currentBalance: number,
   initialBalance: number,
+  aaveTokenAddress: string,
 };

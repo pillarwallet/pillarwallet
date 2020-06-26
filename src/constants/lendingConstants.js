@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-// lending naviation
+// lending navigation
 export const SET_LENDING_ASSETS_TO_DEPOSIT = 'SET_LENDING_ASSETS_TO_DEPOSIT';
 export const SET_FETCHING_LENDING_ASSETS_TO_DEPOSIT = 'SET_FETCHING_LENDING_ASSETS_TO_DEPOSIT';
 export const SET_LENDING_DEPOSITED_ASSETS = 'SET_LENDING_DEPOSITED_ASSETS';

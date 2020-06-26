@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { AssetToDeposit } from 'models/Asset';
 import { BigNumber } from 'bignumber.js';
 import abiHelper from 'ethjs-abi';
 
@@ -28,13 +27,14 @@ import aaveService from 'services/aave';
 // utils
 import { parseTokenBigNumberAmount } from 'utils/common';
 
-// types
-import type { TransactionPayload } from 'models/Transaction';
-
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import AAVE_LENDING_POOL_CONTRACT_ABI from 'abi/aaveLendingPool.json';
+import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 
+// types
+import type { TransactionPayload } from 'models/Transaction';
+import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
 
 export const isAaveDepositMethod = (data: string) => data && data.includes('d2d0e066');
 
@@ -47,7 +47,17 @@ export const buildAaveDepositTransactionData = (
 ): string => {
   const methodAbi = getContractMethodAbi(AAVE_LENDING_POOL_CONTRACT_ABI, 'deposit');
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);
-  return abiHelper.encodeMethod(methodAbi, [assetAddress, contractAmount, 0]);
+  const referralCode = 0; // TODO: get Pillar's unique
+  return abiHelper.encodeMethod(methodAbi, [assetAddress, contractAmount, referralCode]);
+};
+
+export const buildAaveWithdrawTransactionData = (
+  amount: number,
+  decimals: number,
+): string => {
+  const methodAbi = getContractMethodAbi(AAVE_TOKEN_ABI, 'redeem');
+  const contractAmount = parseTokenBigNumberAmount(amount, decimals);
+  return abiHelper.encodeMethod(methodAbi, [contractAmount]);
 };
 
 export const getAaveDepositTransactions = async (
@@ -92,4 +102,23 @@ export const getAaveDepositTransactions = async (
   aaveDepositTransactions[0].extra = { amount, symbol: assetSymbol };
 
   return aaveDepositTransactions;
+};
+
+export const getAaveWithdrawTransaction = async (
+  senderAddress: string,
+  amount: number,
+  depositedAsset: DepositedAsset,
+  txFeeInWei?: BigNumber,
+): TransactionPayload => {
+  const { decimals, aaveTokenAddress, symbol: assetSymbol } = depositedAsset;
+  const withdrawTransactionData = await buildAaveWithdrawTransactionData(amount, decimals);
+
+  return {
+    from: senderAddress,
+    data: withdrawTransactionData,
+    to: aaveTokenAddress,
+    extra: { amount, symbol: assetSymbol },
+    amount: 0,
+    txFeeInWei,
+  };
 };

@@ -32,7 +32,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 // utils
 import { getAssetData, getAssetsAsList } from 'utils/assets';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
-import { getAaveDepositTransactions } from 'utils/aave';
+import { getAaveDepositTransactions, getAaveWithdrawTransaction } from 'utils/aave';
 
 // constants
 import {
@@ -42,6 +42,8 @@ import {
   SET_FETCHING_LENDING_DEPOSITED_ASSETS,
   SET_CALCULATING_LENDING_DEPOSIT_TRANSACTION_ESTIMATE,
   SET_LENDING_DEPOSIT_TRANSACTION_ESTIMATE,
+  SET_CALCULATING_LENDING_WITHDRAW_TRANSACTION_ESTIMATE,
+  SET_LENDING_WITHDRAW_TRANSACTION_ESTIMATE,
 } from 'constants/lendingConstants';
 
 // types
@@ -160,5 +162,31 @@ export const calculateLendingDepositTransactionEstimateAction = (
       .catch(() => null);
 
     dispatch({ type: SET_LENDING_DEPOSIT_TRANSACTION_ESTIMATE, payload: estimate });
+  };
+};
+
+export const calculateLendingWithdrawTransactionEstimateAction = (
+  amount: number,
+  depositedAsset: DepositedAsset,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch({ type: SET_CALCULATING_LENDING_WITHDRAW_TRANSACTION_ESTIMATE });
+
+    // may include approve transaction
+    const { to: recipient, amount: value, data } = await getAaveWithdrawTransaction(
+      getAccountAddress(smartWalletAccount),
+      amount,
+      depositedAsset,
+    );
+
+    const estimate = await smartWalletService
+      .estimateAccountTransaction({ recipient, value, data })
+      .catch(() => null);
+
+    dispatch({ type: SET_LENDING_WITHDRAW_TRANSACTION_ESTIMATE, payload: estimate });
   };
 };

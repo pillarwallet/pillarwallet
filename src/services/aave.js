@@ -157,6 +157,7 @@ class AaveService {
       earnedAmount,
       earningsPercentageGain,
       initialBalance,
+      aaveTokenAddress: aaveTokenContract.address,
     });
   }
 

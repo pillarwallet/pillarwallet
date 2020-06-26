@@ -41,7 +41,7 @@ import ShadowedCard from 'components/ShadowedCard';
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { LENDING_ENTER_DEPOSIT_AMOUNT } from 'constants/navigationConstants';
+import { LENDING_ENTER_DEPOSIT_AMOUNT, LENDING_ENTER_WITHDRAW_AMOUNT } from 'constants/navigationConstants';
 
 // utils
 import { formatAmountDisplay, formatFiat } from 'utils/common';
@@ -219,7 +219,7 @@ const ViewDepositedAsset = ({
             label="Withdraw"
             fontIcon="up-arrow"
             fontIconStyle={{ fontSize: fontSizes.big }}
-            onPress={() => {}}
+            onPress={() => navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: assetSymbol })}
           />
         </AssetButtonsWrapper>
         {!isEmpty(aaveTransactions) && (
