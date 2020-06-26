@@ -17,11 +17,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_POOL_TOGETHER_PRIZE_INFO } from 'constants/poolTogetherConstants';
+import {
+  SET_POOL_TOGETHER_PRIZE_INFO,
+  SET_POOL_TOGETHER_ALLOWANCE,
+  SET_EXECUTING_POOL_APPROVE,
+  SET_DISMISS_POOL_APPROVE,
+} from 'constants/poolTogetherConstants';
+
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 export type PoolTogetherReducerState = {
-  poolStats: PoolPrizeInfo
+  poolStats: PoolPrizeInfo,
+  poolAllowance: {
+    [string]: boolean,
+  },
+  poolApproveExecuting: {
+    [string]: string | boolean,
+  }
 }
 
 export type PoolTogetherReducerAction = {
@@ -46,6 +58,14 @@ const initialState = {
       totalPoolTicketsCount: 0,
     },
   },
+  poolAllowance: {
+    DAI: false,
+    USDC: false,
+  },
+  poolApproveExecuting: {
+    DAI: false,
+    USDC: false,
+  },
 };
 
 export default function poolTogetherReducer(
@@ -57,6 +77,27 @@ export default function poolTogetherReducer(
       return {
         ...state,
         poolStats: action.payload,
+      };
+    case SET_POOL_TOGETHER_ALLOWANCE:
+      return {
+        ...state,
+        poolAllowance: action.payload,
+      };
+    case SET_EXECUTING_POOL_APPROVE:
+      return {
+        ...state,
+        poolApproveExecuting: {
+          ...state.poolApproveExecuting,
+          [action.payload.poolToken]: action.payload.txHash,
+        },
+      };
+    case SET_DISMISS_POOL_APPROVE:
+      return {
+        ...state,
+        poolApproveExecuting: {
+          ...state.poolApproveExecuting,
+          [action.payload]: false,
+        },
       };
     default:
       return state;

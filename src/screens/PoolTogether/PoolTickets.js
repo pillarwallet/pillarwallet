@@ -31,6 +31,7 @@ import type { Theme } from 'models/Theme';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { fontStyles, fontSizes } from 'utils/variables';
 import { formatAmount } from 'utils/common';
+import { getWinChance } from 'utils/poolTogether';
 
 const PoolTicketsWrapper = styled.View`
   flex-wrap: wrap;
@@ -94,7 +95,7 @@ const PoolTickets = (props: Props) => {
   const canAdd = currentCount < maxCount;
   const canSubtract = currentCount > 0;
 
-  const winChance = (currentCount * 100) / (totalPoolTicketsCount + 1); // win chance in %
+  const winChance = getWinChance(currentCount, totalPoolTicketsCount);
 
   const ticketSubtract = () => {
     return canSubtract && onTicketCountChange(currentCount - 1);

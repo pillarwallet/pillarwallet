@@ -18,10 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 // constants
-import { SET_POOL_TOGETHER_PRIZE_INFO } from 'constants/poolTogetherConstants';
+import {
+  SET_POOL_TOGETHER_PRIZE_INFO,
+  SET_EXECUTING_POOL_APPROVE,
+  SET_DISMISS_POOL_APPROVE,
+  SET_POOL_TOGETHER_ALLOWANCE,
+} from 'constants/poolTogetherConstants';
+import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
+
+// components
+import Toast from 'components/Toast';
 
 // services
-import { getPoolTogetherInfo } from 'services/poolTogether';
+import {
+  getPoolTogetherInfo,
+  checkPoolAllowance,
+} from 'services/poolTogether';
+
+// selectors
+import { activeAccountAddressSelector } from 'selectors/selectors';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -34,6 +49,82 @@ export const fetchPoolPrizeInfo = (symbol: string) => {
     dispatch({
       type: SET_POOL_TOGETHER_PRIZE_INFO,
       payload: updatedPoolStats,
+    });
+  };
+};
+
+export const setExecutingApproveAction = (poolToken: string, txHash: string) => ({
+  type: SET_EXECUTING_POOL_APPROVE,
+  payload: { poolToken, txHash },
+});
+
+export const setDismissApproveAction = (poolToken: string) => ({
+  type: SET_DISMISS_POOL_APPROVE,
+  payload: poolToken,
+});
+
+export const fetchPoolAllowanceStatusAction = (symbol: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      poolTogether: {
+        poolAllowance: currentPoolAllowance = {},
+      },
+    } = getState();
+    const activeAccountAddress = activeAccountAddressSelector(getState());
+    const hasAllowance = await checkPoolAllowance(symbol, activeAccountAddress);
+    const updatedAllowance = { ...currentPoolAllowance, [symbol]: hasAllowance };
+    dispatch({
+      type: SET_POOL_TOGETHER_ALLOWANCE,
+      payload: updatedAllowance,
+    });
+    if (hasAllowance) {
+      dispatch(setDismissApproveAction(symbol));
+    }
+  };
+};
+
+export const checkPoolTogetherApprovalTransactionAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      history: {
+        data: transactionsHistory,
+      },
+      poolTogether: {
+        poolApproveExecuting,
+      },
+    } = getState();
+    Object.keys(poolApproveExecuting).forEach((symbol: string) => {
+      const txHash = poolApproveExecuting[symbol];
+      if (txHash) {
+        const accountIds = Object.keys(transactionsHistory);
+        const allHistory: Object[] = accountIds.reduce(
+          (existing = [], accountId) => {
+            const walletAssetsHistory = transactionsHistory[accountId] || [];
+            return [...existing, ...walletAssetsHistory];
+          },
+          [],
+        );
+        const allowanceTransaction = allHistory.find(({ hash = null }) => hash === txHash);
+        if (allowanceTransaction) {
+          if (allowanceTransaction.status === TX_CONFIRMED_STATUS) {
+            dispatch(fetchPoolAllowanceStatusAction(symbol));
+            Toast.show({
+              message: `PoolTogether ${symbol} Pool automation was enabled`,
+              type: 'success',
+              title: 'Success',
+              autoClose: true,
+            });
+          } else if (allowanceTransaction.status === TX_FAILED_STATUS) {
+            dispatch(setDismissApproveAction(symbol));
+            Toast.show({
+              message: `PoolTogether ${symbol} Pool automation transaction failed`,
+              type: 'warning',
+              title: 'Transaction failed',
+              autoClose: true,
+            });
+          }
+        }
+      }
     });
   };
 };
