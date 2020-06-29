@@ -38,7 +38,7 @@ import AAVE_LENDING_POOL_CONTRACT_ABI from 'abi/aaveLendingPool.json';
 import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 
 // types
-import type { Transaction, TransactionPayload } from 'models/Transaction';
+import type { TokenTransactionPayload, Transaction } from 'models/Transaction';
 import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
 
 
@@ -72,7 +72,7 @@ export const getAaveDepositTransactions = async (
   amount: number,
   asset: AssetToDeposit,
   txFeeInWei?: BigNumber,
-): TransactionPayload[] => {
+): TokenTransactionPayload[] => {
   const { decimals, address: assetAddress, symbol: assetSymbol } = asset;
   const depositTransactionData = await buildAaveDepositTransactionData(assetAddress, amount, decimals);
   const { address: lendingPoolContractAddress } = await aaveService.getLendingPoolContract();
@@ -122,7 +122,7 @@ export const getAaveWithdrawTransaction = async (
   amount: number,
   depositedAsset: DepositedAsset,
   txFeeInWei?: BigNumber,
-): TransactionPayload => {
+): TokenTransactionPayload => {
   const {
     decimals,
     aaveTokenAddress,

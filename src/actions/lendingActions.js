@@ -113,7 +113,10 @@ export const fetchDepositedAssetAction = (symbol: string) => {
 
     const asset = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
     const accountAddress = getAccountAddress(smartWalletAccount);
+
     const updatedDepositedAsset = await aaveService.fetchAccountDepositedAsset(accountAddress, asset);
+    if (!updatedDepositedAsset) return;
+
     const updatedDepositedAssets = depositedAssets.reduce((
       currentList,
       depositedAsset,
@@ -124,6 +127,7 @@ export const fetchDepositedAssetAction = (symbol: string) => {
       }
       return currentList;
     }, depositedAssets);
+
     dispatch(setDepositedAssetsAction(updatedDepositedAssets));
   };
 };

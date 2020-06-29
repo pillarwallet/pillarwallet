@@ -121,11 +121,11 @@ const EnterDepositAmount = ({
   }, [assetsToDeposit]);
 
   useEffect(() => {
-    if (!depositAmount) return;
+    if (!depositAmount || !assetToDeposit) return;
     calculateLendingDepositTransactionEstimate(depositAmount, assetToDeposit);
-  }, [depositAmount, selectedAssetSymbol]);
+  }, [depositAmount, assetToDeposit]);
 
-  const txFeeInfo = buildTxFeeInfo(depositTransactionEstimate || {}, useGasToken);
+  const txFeeInfo = buildTxFeeInfo(depositTransactionEstimate, useGasToken);
   const gasTokenSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
   const showTxFee = !!depositAmount && (!!txFeeInfo?.fee || isCalculatingDepositTransactionEstimate);
   const isEnoughForFee = !!txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, {
@@ -152,13 +152,15 @@ const EnterDepositAmount = ({
     [asset.symbol]: asset,
   }), {});
 
-  const onValueChanged = (value) => {
+  const onValueChanged = (value: Object) => {
     if (!value) {
       if (depositAmount) setDepositAmount(0);
       return;
     }
 
-    const { symbol: selectedValueSymbol, input: newAmount } = value;
+    const selectedValueSymbol = value?.symbol;
+    const newAmount = value?.input;
+
     if (selectedValueSymbol && selectedValueSymbol !== selectedAssetSymbol) {
       setSelectedAssetSymbol(selectedValueSymbol);
     }
@@ -215,7 +217,7 @@ const EnterDepositAmount = ({
           getFormValue={onValueChanged}
         />
       )}
-      {!isFetchingAssetsToDeposit && (
+      {!isFetchingAssetsToDeposit && assetToDeposit && (
         <CurrentInterestRate>
           <BaseText secondary>Current APY</BaseText>
           <InterestRate>&nbsp;{formatAmountDisplay(assetToDeposit?.earnInterestRate)}%</InterestRate>

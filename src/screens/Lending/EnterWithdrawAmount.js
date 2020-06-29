@@ -49,7 +49,7 @@ import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetToDeposit, Balances, DepositedAsset, Rates } from 'models/Asset';
+import type { Balances, DepositedAsset, Rates } from 'models/Asset';
 
 
 type Props = {
@@ -59,7 +59,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isCalculatingWithdrawTransactionEstimate: boolean,
   withdrawTransactionEstimate: ?Object,
-  calculateLendingWithdrawTransactionEstimate: (amount: number, asset: AssetToDeposit) => void,
+  calculateLendingWithdrawTransactionEstimate: (amount: number, asset: DepositedAsset) => void,
   useGasToken: boolean,
   balances: Balances,
 };
@@ -98,17 +98,17 @@ const EnterWithdrawAmount = ({
   const depositedAsset = depositedAssets.find(({ symbol }) => symbol === selectedAssetSymbol);
 
   useEffect(() => {
-    if (!depositAmount) return;
+    if (!depositAmount || !depositedAsset) return;
     calculateLendingWithdrawTransactionEstimate(depositAmount, depositedAsset);
-  }, [depositAmount, selectedAssetSymbol]);
+  }, [depositAmount, depositedAsset]);
 
-  const txFeeInfo = buildTxFeeInfo(withdrawTransactionEstimate || {}, useGasToken);
+  const txFeeInfo = buildTxFeeInfo(withdrawTransactionEstimate, useGasToken);
   const gasTokenSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
   const showTxFee = !!depositAmount && (!!txFeeInfo?.fee || isCalculatingWithdrawTransactionEstimate);
   const isEnoughForFee = !!txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, {
     txFeeInWei: txFeeInfo.fee,
     amount: depositAmount,
-    decimals: depositedAsset.decimals,
+    decimals: depositedAsset?.decimals,
     symbol: selectedAssetSymbol,
     gasToken: txFeeInfo.gasToken,
   });
@@ -134,13 +134,15 @@ const EnterWithdrawAmount = ({
     {},
   );
 
-  const onValueChanged = (value) => {
+  const onValueChanged = (value: Object) => {
     if (!value) {
       if (depositAmount) setDepositAmount(0);
       return;
     }
 
-    const { symbol: selectedValueSymbol, input: newAmount } = value;
+    const selectedValueSymbol = value?.symbol;
+    const newAmount = value?.input;
+
     if (selectedValueSymbol && selectedValueSymbol !== selectedAssetSymbol) {
       setSelectedAssetSymbol(selectedValueSymbol);
     }

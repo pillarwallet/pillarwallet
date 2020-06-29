@@ -608,7 +608,7 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(TANK_FUND_FLOW);
   };
 
-  onAaveViewDeposit = (depositedAsset: DepositedAsset) => {
+  onAaveViewDeposit = (depositedAsset: ?DepositedAsset) => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
@@ -979,43 +979,45 @@ export class EventDetail extends React.Component<Props, State> {
         eventData = {
           name: 'Aave deposit',
           actionTitle: fullItemValue,
-          buttons: [],
         };
+        const aaveDepositButtons = [];
         if (event?.asset) {
-          eventData.buttons.push({
+          aaveDepositButtons.push({
             title: 'Deposit more',
             onPress: this.onAaveDepositMore,
             secondary: true,
           });
           if (aaveDepositedAsset) {
-            eventData.buttons.push({
+            aaveDepositButtons.push({
               title: 'View deposit',
               onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
               squarePrimary: true,
             });
           }
         }
+        eventData.buttons = aaveDepositButtons;
         break;
       case AAVE_LENDING_WITHDRAW_TRANSACTION:
         eventData = {
           name: 'Aave deposit',
           actionTitle: fullItemValue,
-          buttons: [],
         };
+        const aaveWithdrawButtons = [];
         if (event?.asset && aaveDepositedAsset) {
           if (aaveDepositedAsset?.currentBalance > 0) {
-            eventData.buttons.push({
+            aaveWithdrawButtons.push({
               title: 'Withdraw more',
               onPress: this.onAaveWithdrawMore,
               secondary: true,
             });
           }
-          eventData.buttons.push({
+          aaveWithdrawButtons.push({
             title: 'View deposit',
             onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
             squarePrimary: true,
           });
         }
+        eventData.buttons = aaveWithdrawButtons;
         break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);

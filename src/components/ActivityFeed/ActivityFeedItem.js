@@ -158,6 +158,7 @@ export type EventData = {
   collectibleUrl?: string,
   statusIconColor?: ?string,
   isFailed?: boolean,
+  itemImageRoundedSquare?: boolean,
 };
 
 const NAMES = {
@@ -480,7 +481,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       case AAVE_LENDING_DEPOSIT_TRANSACTION:
-        const depositDisplayValue = !isFailed && this.getAaveDisplayAmount('-');
+        const depositDisplayValue = !isFailed ? this.getAaveDisplayAmount('-') : '';
         data = {
           label: NAMES.AAVE_DEPOSIT,
           itemValue: depositDisplayValue,
@@ -495,7 +496,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       case AAVE_LENDING_WITHDRAW_TRANSACTION:
-        const withdrawDisplayValue = !isFailed && this.getAaveDisplayAmount('+');
+        const withdrawDisplayValue = !isFailed ? this.getAaveDisplayAmount('+') : '';
         data = {
           label: NAMES.AAVE_DEPOSIT,
           itemValue: withdrawDisplayValue,

@@ -193,8 +193,7 @@ const IconRounded = styled.View`
   ${({ diameter, borderRadius }) => `
     width: ${(!borderRadius && diameter) || 52}px;
     height: ${(!borderRadius && diameter) || 52}px;
-    ${borderRadius && `border-radius: ${borderRadius}px`};
-    ${!borderRadius && `border-radius: ${diameter ? diameter / 2 : 26}px`};
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 26)}px;
   `}
   background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
