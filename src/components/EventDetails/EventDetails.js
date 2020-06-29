@@ -251,7 +251,7 @@ const ButtonsContainer = styled.View`
 const TokenImage = styled(CachedImage)`
   width: 64px;
   height: 64px;
-  border-radius: 64px;
+  border-radius: ${({ borderRadius }) => borderRadius || 64}px;
 `;
 
 const StyledCollectibleImage = styled(CollectibleImage)`
@@ -263,14 +263,15 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 const IconCircle = styled.View`
   width: 64px;
   height: 64px;
-  border-radius: 32px;
+  border-radius: ${({ borderRadius }) => borderRadius || 32}px;
   background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border &&
-  `border-color: ${theme.colors.border};
-    border-width: 1px;`};
+  ${({ border, theme }) => border && `
+    border-color: ${theme.colors.border};
+    border-width: 1px;
+  `}
   overflow: hidden;
 `;
 
@@ -865,7 +866,7 @@ export class EventDetail extends React.Component<Props, State> {
     ].includes(event?.tag)) {
       aaveDepositedAsset = depositedAssets.find(({
         symbol: depositedAssetSymbol,
-      }) => depositedAssetSymbol === event?.asset);
+      }) => depositedAssetSymbol === event?.extra?.symbol);
     }
 
     switch (event.tag) {
@@ -1351,31 +1352,45 @@ export class EventDetail extends React.Component<Props, State> {
       iconBackgroundColor,
       iconBorder,
       collectibleUrl,
+      itemImageRoundedSquare,
     } = itemData;
+    const borderRadius = itemImageRoundedSquare && 13;
 
     const { genericToken: fallbackSource } = images(theme);
     if (itemImageUrl) {
       return (
-        <IconCircle border={iconBorder} backgroundColor={this.getColor(iconBackgroundColor)}>
+        <IconCircle
+          borderRadius={borderRadius}
+          border={iconBorder}
+          backgroundColor={this.getColor(iconBackgroundColor)}
+        >
           <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
     if (itemImageSource) {
-      return <TokenImage source={itemImageSource} />;
+      return <TokenImage borderRadius={borderRadius} source={itemImageSource} />;
     }
     if (iconName) {
       return (
-        <IconCircle>
-          <ItemIcon name={iconName} iconColor={this.getColor(iconColor)} />
+        <IconCircle borderRadius={borderRadius}>
+          <ItemIcon
+            borderRadius={borderRadius}
+            name={iconName}
+            iconColor={this.getColor(iconColor)}
+          />
         </IconCircle>
       );
     }
 
     if (collectibleUrl) {
       return (
-        <IconCircle border backgroundColor={this.getColor('card')}>
-          <StyledCollectibleImage source={{ uri: collectibleUrl }} fallbackSource={fallbackSource} />
+        <IconCircle borderRadius={borderRadius} border backgroundColor={this.getColor('card')}>
+          <StyledCollectibleImage
+            borderRadius={borderRadius}
+            source={{ uri: collectibleUrl }}
+            fallbackSource={fallbackSource}
+          />
         </IconCircle>
       );
     }
