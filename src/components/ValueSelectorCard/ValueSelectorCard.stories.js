@@ -104,11 +104,11 @@ const reduxMock = {
 
 storiesOf('Value Selector Card', module)
   .add('Selector without preselected asset', () => (
-    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} storyBook />
+    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} />
   ))
   .add('Selector with preselected asset', () => (
-    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} preselectedAsset={PLR} storyBook />
+    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} preselectedAsset={PLR} />
   ))
   .add('Selector with custom max label', () => (
-    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} maxLabel="Use Max" storyBook />
+    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} maxLabel="Use Max" />
   ));
