@@ -1,5 +1,5 @@
 diff --git a/node_modules/ethers/dist/ethers.umd.js b/node_modules/ethers/dist/ethers.umd.js
-index fa28443..c49a78a 100644
+index 4a532cc..19cc8c3 100644
 --- a/node_modules/ethers/dist/ethers.umd.js
 +++ b/node_modules/ethers/dist/ethers.umd.js
 @@ -1,3 +1,4 @@
@@ -7,7 +7,7 @@ index fa28443..c49a78a 100644
  (function (global, factory) {
  	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
  	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-@@ -16447,19 +16448,19 @@
+@@ -16502,19 +16503,19 @@
  	            return new Promise(function(resolve, reject) {
  	                let lastProgress = 0;
  	                if (progressCallback) { progressCallback(0); }
@@ -22,20 +22,20 @@ index fa28443..c49a78a 100644
 -	                    } else if (progressCallback && progress !== lastProgress) {
 -	                        lastProgress = progress;
 -	                        return progressCallback(progress);
-+	                // convert salt to RNScrypt accepted value
-+	                var _salt = Object.keys(salt)
-+	                    .map(function (key) { return salt[key]; })
-+	                    .filter(function (v) { return Number.isInteger(v); });
-+	                // convert password to RNScrypt accepted value
-+	                var _password = lib$8.toUtf8String(password);
-+	                RNScrypt(_password, _salt, N, r, p, dkLen).then(function(key) {
-+	                    if (key) {
-+	                        if (progressCallback) { progressCallback(1) };
-+	                        resolve(utils$1.looseArrayify(key));
++								// convert salt to RNScrypt accepted value
++								var _salt = Object.keys(salt)
++									.map(function (key) { return salt[key]; })
++									.filter(function (v) { return Number.isInteger(v); });
++								// convert password to RNScrypt accepted value
++								var _password = lib$8.toUtf8String(password);
++								RNScrypt(_password, _salt, N, r, p, dkLen).then(function(key) {
++									if (key) {
++										if (progressCallback) { progressCallback(1) };
++										resolve(utils$1.looseArrayify(key));
  	                    }
 -	                });
 +	                })
-+	                .catch(function(error) { reject(error); });
++									.catch(function(error) { reject(error); });
  	            });
  	        },
  	        syncScrypt: function(password, salt, N, r, p, dkLen) {
