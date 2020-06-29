@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Contract, utils } from 'ethers';
-import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK, BALANCE_CHECK_CONTRACT } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import abiHelper from 'ethjs-abi';
 
@@ -33,6 +33,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
+import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
 
 import type { Asset } from 'models/Asset';
 
@@ -295,6 +296,26 @@ export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string
   return Promise.all(promises)
     .then(balances => balances.filter(({ balance }) => balance !== null))
     .catch(() => []);
+}
+
+export async function fetchAddressBalancesFromProxyContract(
+  assets: Asset[],
+  accountAddress: string,
+): Promise<FetchBalancesResponse> {
+  if (!['homestead', 'ropsten'].includes(NETWORK_PROVIDER)) return [];
+
+  const tokens = assets.map(({ address }) => address);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const contract = new Contract(BALANCE_CHECK_CONTRACT, BALANCE_CHECKER_CONTRACT_ABI, provider);
+
+  const balances = await contract.balances([accountAddress], tokens)
+    .then(values =>
+      assets.map((asset, assetIdx) => ({
+        symbol: asset.symbol,
+        balance: utils.formatUnits(values[assetIdx], asset.decimals),
+      })))
+    .catch(() => []);
+  return balances;
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {

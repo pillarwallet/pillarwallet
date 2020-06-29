@@ -24,6 +24,7 @@ import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
 import { utils } from 'ethers';
+import mocktract from 'mocktract';
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
 
@@ -123,6 +124,7 @@ jest.setMock('ethers', {
       RNfromEncryptedJson: () => mockWallet,
     },
   },
+  Contract: mocktract,
   utils: {
     parseEther: x => x,
     bigNumberify: x => x,
