@@ -38,7 +38,7 @@ import AAVE_LENDING_POOL_CONTRACT_ABI from 'abi/aaveLendingPool.json';
 import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 
 // types
-import type { TokenTransactionPayload, Transaction } from 'models/Transaction';
+import type { Transaction } from 'models/Transaction';
 import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
 
 
@@ -72,7 +72,7 @@ export const getAaveDepositTransactions = async (
   amount: number,
   asset: AssetToDeposit,
   txFeeInWei?: BigNumber,
-): TokenTransactionPayload[] => {
+): Promise<Object[]> => {
   const { decimals, address: assetAddress, symbol: assetSymbol } = asset;
   const depositTransactionData = await buildAaveDepositTransactionData(assetAddress, amount, decimals);
   const { address: lendingPoolContractAddress } = await aaveService.getLendingPoolContract();
@@ -88,10 +88,12 @@ export const getAaveDepositTransactions = async (
   // allowance must be set for core contract
   const { address: lendingPoolCoreContractAddress } = await aaveService.getLendingPoolCoreContract();
   const erc20Contract = getContract(assetAddress, ERC20_CONTRACT_ABI);
-  const approvedAmountBN = await erc20Contract.allowance(senderAddress, lendingPoolCoreContractAddress);
+  const approvedAmountBN = erc20Contract
+    ? await erc20Contract.allowance(senderAddress, lendingPoolCoreContractAddress)
+    : null;
   const neededAmountBN = parseTokenBigNumberAmount(amount, decimals);
 
-  if (neededAmountBN.gt(approvedAmountBN)) {
+  if (!approvedAmountBN || neededAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData = buildERC20ApproveTransactionData(lendingPoolCoreContractAddress, amount, decimals);
     // approve must be first
     aaveDepositTransactions = [
@@ -122,7 +124,7 @@ export const getAaveWithdrawTransaction = async (
   amount: number,
   depositedAsset: DepositedAsset,
   txFeeInWei?: BigNumber,
-): TokenTransactionPayload => {
+): Promise<Object> => {
   const {
     decimals,
     aaveTokenAddress,
@@ -173,7 +175,7 @@ const buildAaveTransaction = (
   };
 };
 
-export const isAaveTransactionTag = (tag?: string): boolean => tag && [
+export const isAaveTransactionTag = (tag?: string): boolean => !!tag && [
   AAVE_LENDING_DEPOSIT_TRANSACTION,
   AAVE_LENDING_WITHDRAW_TRANSACTION,
 ].includes(tag);
@@ -181,8 +183,11 @@ export const isAaveTransactionTag = (tag?: string): boolean => tag && [
 export const mapTransactionsHistoryWithAave = async (
   accountAddress: string,
   transactionHistory: Transaction[],
-): Transaction[] => {
-  const { address: aaveLendingPoolContractAddress } = await aaveService.getLendingPoolContract();
+): Promise<Transaction[]> => {
+  const lendingPoolContract = await aaveService.getLendingPoolContract();
+  if (!lendingPoolContract) return [];
+
+  const { address: aaveLendingPoolContractAddress } = lendingPoolContract;
   const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
   const {
     deposits = [],

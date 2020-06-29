@@ -44,7 +44,7 @@ const rayToNumeric = (rayNumberBN: any) => Number(utils.formatUnits(rayNumberBN,
 class AaveService {
   lendingPoolCoreAddress: ?string;
   lendingPoolAddress: ?string;
-  aaveTokenAddresses: ?Object = {};
+  aaveTokenAddresses: { [string]: string } = {};
   lendingPoolAddressesProvider: ?Object;
 
   constructor() {
@@ -54,7 +54,7 @@ class AaveService {
     );
   }
 
-  async getLendingPoolCoreContract(provider?): Promise<?Object> {
+  async getLendingPoolCoreContract(provider?: Object): Promise<?Object> {
     if (!this.lendingPoolAddressesProvider) return null;
 
     if (!this.lendingPoolCoreAddress) {
@@ -117,10 +117,10 @@ class AaveService {
 
   async getSupportedDeposits(accountAssets: Asset[], supportedAssets: Asset[]): DepositableAsset[] {
     const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
-    if (!lendingPoolCoreContract) return [];
+    if (!lendingPoolCoreContract) return Promise.resolve([]);
 
     const lendingPoolContract = await this.getLendingPoolContract();
-    if (!lendingPoolContract) return [];
+    if (!lendingPoolContract) return Promise.resolve([]);
 
     const poolAddresses = await lendingPoolCoreContract.getReserves().catch(() => []);
 
@@ -134,6 +134,7 @@ class AaveService {
   async getAssetsToDeposit(accountAssets: Asset[], supportedAssets: Asset[]): Promise<AssetToDeposit[]> {
     const supportedDeposits = await this.getSupportedDeposits(accountAssets, supportedAssets);
     const lendingPoolContract = await this.getLendingPoolContract();
+    if (!lendingPoolContract) return Promise.resolve([]);
     return Promise.all(supportedDeposits.map(async (reserveAsset) => {
       const reserveData = await lendingPoolContract
         .getReserveData(reserveAsset.address)
@@ -146,8 +147,10 @@ class AaveService {
     }));
   }
 
-  async fetchAccountDepositedAsset(accountAddress: string, asset: Asset): Promise<DepositedAsset> {
+  async fetchAccountDepositedAsset(accountAddress: string, asset: Asset): Promise<?DepositedAsset> {
     const lendingPoolContract = await this.getLendingPoolContract();
+    if (!lendingPoolContract) return Promise.resolve({});
+
     const depositedAssetData = await lendingPoolContract
       .getUserReserveData(asset.address, accountAddress)
       .catch(() => ([]));
@@ -193,7 +196,7 @@ class AaveService {
     return Promise.resolve(depositedAssets.filter(({ initialBalance }) => !!initialBalance));
   }
 
-  async fetchAccountDepositAndWithdrawTransactions(accountAddress: string): Promise<DepositedAsset> {
+  async fetchAccountDepositAndWithdrawTransactions(accountAddress: string): Promise<Object> {
     const url = `https://api.thegraph.com/subgraphs/id/${AAVE_THE_GRAPH_ID}`;
     return axios
       .post(url, {

@@ -311,7 +311,7 @@ class SmartWallet {
       data,
       transactionSpeed = TransactionSpeeds[AVG],
       gasToken,
-      sequentialTransactions,
+      sequentialTransactions = [],
     } = transaction;
 
     let estimateMethodParams = [
@@ -321,7 +321,7 @@ class SmartWallet {
     ];
 
     // supporting 2, can be added up to 5
-    if (!isEmpty(sequentialTransactions)) {
+    if (sequentialTransactions.length) {
       estimateMethodParams = [
         ...estimateMethodParams,
         sequentialTransactions[0].recipient,
@@ -449,7 +449,7 @@ class SmartWallet {
   ): Promise<EstimatedTransactionFee> {
     const {
       value: rawValue,
-      sequentialTransactions,
+      sequentialTransactions = [],
       transactionSpeed = TransactionSpeeds[AVG],
     } = transaction;
     let { data, recipient } = transaction;
@@ -478,7 +478,7 @@ class SmartWallet {
     ];
 
     // supporting 2, can be added up to 5
-    if (!isEmpty(sequentialTransactions)) {
+    if (sequentialTransactions.length) {
       estimateMethodParams = [
         ...estimateMethodParams,
         sequentialTransactions[0].recipient,
