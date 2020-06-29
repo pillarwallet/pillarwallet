@@ -32549,12 +32549,12 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                       "default": "",
                                     },
                                     "name": "Source Item",
-                                    "value": "Smart Wallet",
+                                    "value": "Source Item",
                                   },
                                   Object {
                                     "imageUrl": "https://picsum.photos/203",
                                     "name": "Url item",
-                                    "value": "Smart Wallet",
+                                    "value": "Url item",
                                   },
                                 ]
                               }
@@ -32787,12 +32787,12 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                   "default": "",
                                 },
                                 "name": "Source Item",
-                                "value": "Smart Wallet",
+                                "value": "Source Item",
                               },
                               Object {
                                 "imageUrl": "https://picsum.photos/203",
                                 "name": "Url item",
-                                "value": "Smart Wallet",
+                                "value": "Url item",
                               },
                             ]
                           }
@@ -34388,7 +34388,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                             </View>
                             <RCTScrollView
                               ListHeaderComponent={
-                                <TextInput__SearchBarWrapper>
+                                <SelectorOptions__SearchBarWrapper>
                                   <WithTheme(SearchBar)
                                     inputProps={
                                       Object {
@@ -34402,7 +34402,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                     noClose={true}
                                     placeholder="Asset search"
                                   />
-                                </TextInput__SearchBarWrapper>
+                                </SelectorOptions__SearchBarWrapper>
                               }
                               data={
                                 Array [
@@ -34689,20 +34689,32 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                         }
                                       >
                                         <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
                                           style={
-                                            Array [
-                                              Object {
-                                                "alignItems": "center",
-                                                "backgroundColor": "#EBF0F6",
-                                                "borderRadius": 26,
-                                                "height": 52,
-                                                "justifyContent": "center",
-                                                "overflow": "hidden",
-                                                "textAlign": "center",
-                                                "width": 52,
-                                              },
-                                              undefined,
-                                            ]
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
                                           }
                                         />
                                       </View>
@@ -34815,93 +34827,13 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                             <View
                                               style={
                                                 Array [
-                                                  Object {
-                                                    "alignItems": "flex-end",
-                                                  },
+                                                  undefined,
                                                   Object {
                                                     "flexWrap": "wrap",
                                                   },
                                                 ]
                                               }
-                                            >
-                                              <View
-                                                style={
-                                                  Object {
-                                                    "flexDirection": "row",
-                                                  }
-                                                }
-                                              >
-                                                <View
-                                                  style={
-                                                    Array [
-                                                      Object {
-                                                        "marginBottom": 0,
-                                                        "marginLeft": 0,
-                                                        "marginRight": 0,
-                                                        "marginTop": 0,
-                                                      },
-                                                      Object {
-                                                        "alignItems": "flex-end",
-                                                      },
-                                                    ]
-                                                  }
-                                                >
-                                                  <View
-                                                    style={
-                                                      Object {
-                                                        "alignItems": "center",
-                                                        "flexDirection": "row",
-                                                      }
-                                                    }
-                                                  >
-                                                    <Text
-                                                      style={
-                                                        Array [
-                                                          Object {
-                                                            "color": "#0A1427",
-                                                            "fontFamily": "EuclidCircularB-Regular",
-                                                            "textAlignVertical": "center",
-                                                          },
-                                                          Array [
-                                                            Object {
-                                                              "color": "#0A1427",
-                                                              "fontSize": 18,
-                                                              "lineHeight": 28,
-                                                              "textAlign": "right",
-                                                            },
-                                                            undefined,
-                                                          ],
-                                                        ]
-                                                      }
-                                                    >
-                                                      0.5123 ETH
-                                                    </Text>
-                                                  </View>
-                                                  <Text
-                                                    style={
-                                                      Array [
-                                                        Object {
-                                                          "color": "#0A1427",
-                                                          "fontFamily": "EuclidCircularB-Regular",
-                                                          "textAlignVertical": "center",
-                                                        },
-                                                        Array [
-                                                          Object {
-                                                            "color": "#8B939E",
-                                                            "fontSize": 14,
-                                                            "lineHeight": 22,
-                                                            "textAlign": "right",
-                                                          },
-                                                          undefined,
-                                                        ],
-                                                      ]
-                                                    }
-                                                  >
-                                                    £ 94.78
-                                                  </Text>
-                                                </View>
-                                              </View>
-                                            </View>
+                                            />
                                           </View>
                                         </View>
                                       </View>
@@ -34961,20 +34893,32 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                         }
                                       >
                                         <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
                                           style={
-                                            Array [
-                                              Object {
-                                                "alignItems": "center",
-                                                "backgroundColor": "#EBF0F6",
-                                                "borderRadius": 26,
-                                                "height": 52,
-                                                "justifyContent": "center",
-                                                "overflow": "hidden",
-                                                "textAlign": "center",
-                                                "width": 52,
-                                              },
-                                              undefined,
-                                            ]
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
                                           }
                                         />
                                       </View>
@@ -35087,93 +35031,13 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                             <View
                                               style={
                                                 Array [
-                                                  Object {
-                                                    "alignItems": "flex-end",
-                                                  },
+                                                  undefined,
                                                   Object {
                                                     "flexWrap": "wrap",
                                                   },
                                                 ]
                                               }
-                                            >
-                                              <View
-                                                style={
-                                                  Object {
-                                                    "flexDirection": "row",
-                                                  }
-                                                }
-                                              >
-                                                <View
-                                                  style={
-                                                    Array [
-                                                      Object {
-                                                        "marginBottom": 0,
-                                                        "marginLeft": 0,
-                                                        "marginRight": 0,
-                                                        "marginTop": 0,
-                                                      },
-                                                      Object {
-                                                        "alignItems": "flex-end",
-                                                      },
-                                                    ]
-                                                  }
-                                                >
-                                                  <View
-                                                    style={
-                                                      Object {
-                                                        "alignItems": "center",
-                                                        "flexDirection": "row",
-                                                      }
-                                                    }
-                                                  >
-                                                    <Text
-                                                      style={
-                                                        Array [
-                                                          Object {
-                                                            "color": "#0A1427",
-                                                            "fontFamily": "EuclidCircularB-Regular",
-                                                            "textAlignVertical": "center",
-                                                          },
-                                                          Array [
-                                                            Object {
-                                                              "color": "#0A1427",
-                                                              "fontSize": 18,
-                                                              "lineHeight": 28,
-                                                              "textAlign": "right",
-                                                            },
-                                                            undefined,
-                                                          ],
-                                                        ]
-                                                      }
-                                                    >
-                                                      54321 PLR
-                                                    </Text>
-                                                  </View>
-                                                  <Text
-                                                    style={
-                                                      Array [
-                                                        Object {
-                                                          "color": "#0A1427",
-                                                          "fontFamily": "EuclidCircularB-Regular",
-                                                          "textAlignVertical": "center",
-                                                        },
-                                                        Array [
-                                                          Object {
-                                                            "color": "#8B939E",
-                                                            "fontSize": 14,
-                                                            "lineHeight": 22,
-                                                            "textAlign": "right",
-                                                          },
-                                                          undefined,
-                                                        ],
-                                                      ]
-                                                    }
-                                                  >
-                                                    £ 80,395.08
-                                                  </Text>
-                                                </View>
-                                              </View>
-                                            </View>
+                                            />
                                           </View>
                                         </View>
                                       </View>
@@ -36251,7 +36115,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             </View>
                             <RCTScrollView
                               ListHeaderComponent={
-                                <TextInput__SearchBarWrapper>
+                                <SelectorOptions__SearchBarWrapper>
                                   <WithTheme(SearchBar)
                                     inputProps={
                                       Object {
@@ -36265,7 +36129,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                     noClose={true}
                                     placeholder="Asset search"
                                   />
-                                </TextInput__SearchBarWrapper>
+                                </SelectorOptions__SearchBarWrapper>
                               }
                               data={
                                 Array [
@@ -36552,20 +36416,32 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                         }
                                       >
                                         <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
                                           style={
-                                            Array [
-                                              Object {
-                                                "alignItems": "center",
-                                                "backgroundColor": "#EBF0F6",
-                                                "borderRadius": 26,
-                                                "height": 52,
-                                                "justifyContent": "center",
-                                                "overflow": "hidden",
-                                                "textAlign": "center",
-                                                "width": 52,
-                                              },
-                                              undefined,
-                                            ]
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
                                           }
                                         />
                                       </View>
@@ -36678,93 +36554,13 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                             <View
                                               style={
                                                 Array [
-                                                  Object {
-                                                    "alignItems": "flex-end",
-                                                  },
+                                                  undefined,
                                                   Object {
                                                     "flexWrap": "wrap",
                                                   },
                                                 ]
                                               }
-                                            >
-                                              <View
-                                                style={
-                                                  Object {
-                                                    "flexDirection": "row",
-                                                  }
-                                                }
-                                              >
-                                                <View
-                                                  style={
-                                                    Array [
-                                                      Object {
-                                                        "marginBottom": 0,
-                                                        "marginLeft": 0,
-                                                        "marginRight": 0,
-                                                        "marginTop": 0,
-                                                      },
-                                                      Object {
-                                                        "alignItems": "flex-end",
-                                                      },
-                                                    ]
-                                                  }
-                                                >
-                                                  <View
-                                                    style={
-                                                      Object {
-                                                        "alignItems": "center",
-                                                        "flexDirection": "row",
-                                                      }
-                                                    }
-                                                  >
-                                                    <Text
-                                                      style={
-                                                        Array [
-                                                          Object {
-                                                            "color": "#0A1427",
-                                                            "fontFamily": "EuclidCircularB-Regular",
-                                                            "textAlignVertical": "center",
-                                                          },
-                                                          Array [
-                                                            Object {
-                                                              "color": "#0A1427",
-                                                              "fontSize": 18,
-                                                              "lineHeight": 28,
-                                                              "textAlign": "right",
-                                                            },
-                                                            undefined,
-                                                          ],
-                                                        ]
-                                                      }
-                                                    >
-                                                      0.5123 ETH
-                                                    </Text>
-                                                  </View>
-                                                  <Text
-                                                    style={
-                                                      Array [
-                                                        Object {
-                                                          "color": "#0A1427",
-                                                          "fontFamily": "EuclidCircularB-Regular",
-                                                          "textAlignVertical": "center",
-                                                        },
-                                                        Array [
-                                                          Object {
-                                                            "color": "#8B939E",
-                                                            "fontSize": 14,
-                                                            "lineHeight": 22,
-                                                            "textAlign": "right",
-                                                          },
-                                                          undefined,
-                                                        ],
-                                                      ]
-                                                    }
-                                                  >
-                                                    £ 94.78
-                                                  </Text>
-                                                </View>
-                                              </View>
-                                            </View>
+                                            />
                                           </View>
                                         </View>
                                       </View>
@@ -36824,20 +36620,32 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                         }
                                       >
                                         <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
                                           style={
-                                            Array [
-                                              Object {
-                                                "alignItems": "center",
-                                                "backgroundColor": "#EBF0F6",
-                                                "borderRadius": 26,
-                                                "height": 52,
-                                                "justifyContent": "center",
-                                                "overflow": "hidden",
-                                                "textAlign": "center",
-                                                "width": 52,
-                                              },
-                                              undefined,
-                                            ]
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
                                           }
                                         />
                                       </View>
@@ -36950,93 +36758,13 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                             <View
                                               style={
                                                 Array [
-                                                  Object {
-                                                    "alignItems": "flex-end",
-                                                  },
+                                                  undefined,
                                                   Object {
                                                     "flexWrap": "wrap",
                                                   },
                                                 ]
                                               }
-                                            >
-                                              <View
-                                                style={
-                                                  Object {
-                                                    "flexDirection": "row",
-                                                  }
-                                                }
-                                              >
-                                                <View
-                                                  style={
-                                                    Array [
-                                                      Object {
-                                                        "marginBottom": 0,
-                                                        "marginLeft": 0,
-                                                        "marginRight": 0,
-                                                        "marginTop": 0,
-                                                      },
-                                                      Object {
-                                                        "alignItems": "flex-end",
-                                                      },
-                                                    ]
-                                                  }
-                                                >
-                                                  <View
-                                                    style={
-                                                      Object {
-                                                        "alignItems": "center",
-                                                        "flexDirection": "row",
-                                                      }
-                                                    }
-                                                  >
-                                                    <Text
-                                                      style={
-                                                        Array [
-                                                          Object {
-                                                            "color": "#0A1427",
-                                                            "fontFamily": "EuclidCircularB-Regular",
-                                                            "textAlignVertical": "center",
-                                                          },
-                                                          Array [
-                                                            Object {
-                                                              "color": "#0A1427",
-                                                              "fontSize": 18,
-                                                              "lineHeight": 28,
-                                                              "textAlign": "right",
-                                                            },
-                                                            undefined,
-                                                          ],
-                                                        ]
-                                                      }
-                                                    >
-                                                      54321 PLR
-                                                    </Text>
-                                                  </View>
-                                                  <Text
-                                                    style={
-                                                      Array [
-                                                        Object {
-                                                          "color": "#0A1427",
-                                                          "fontFamily": "EuclidCircularB-Regular",
-                                                          "textAlignVertical": "center",
-                                                        },
-                                                        Array [
-                                                          Object {
-                                                            "color": "#8B939E",
-                                                            "fontSize": 14,
-                                                            "lineHeight": 22,
-                                                            "textAlign": "right",
-                                                          },
-                                                          undefined,
-                                                        ],
-                                                      ]
-                                                    }
-                                                  >
-                                                    £ 80,395.08
-                                                  </Text>
-                                                </View>
-                                              </View>
-                                            </View>
+                                            />
                                           </View>
                                         </View>
                                       </View>
@@ -38040,7 +37768,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                             </View>
                             <RCTScrollView
                               ListHeaderComponent={
-                                <TextInput__SearchBarWrapper>
+                                <SelectorOptions__SearchBarWrapper>
                                   <WithTheme(SearchBar)
                                     inputProps={
                                       Object {
@@ -38054,7 +37782,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                     noClose={true}
                                     placeholder="Asset search"
                                   />
-                                </TextInput__SearchBarWrapper>
+                                </SelectorOptions__SearchBarWrapper>
                               }
                               data={
                                 Array [
@@ -38341,20 +38069,32 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                         }
                                       >
                                         <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
                                           style={
-                                            Array [
-                                              Object {
-                                                "alignItems": "center",
-                                                "backgroundColor": "#EBF0F6",
-                                                "borderRadius": 26,
-                                                "height": 52,
-                                                "justifyContent": "center",
-                                                "overflow": "hidden",
-                                                "textAlign": "center",
-                                                "width": 52,
-                                              },
-                                              undefined,
-                                            ]
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
                                           }
                                         />
                                       </View>
@@ -38467,93 +38207,13 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                             <View
                                               style={
                                                 Array [
-                                                  Object {
-                                                    "alignItems": "flex-end",
-                                                  },
+                                                  undefined,
                                                   Object {
                                                     "flexWrap": "wrap",
                                                   },
                                                 ]
                                               }
-                                            >
-                                              <View
-                                                style={
-                                                  Object {
-                                                    "flexDirection": "row",
-                                                  }
-                                                }
-                                              >
-                                                <View
-                                                  style={
-                                                    Array [
-                                                      Object {
-                                                        "marginBottom": 0,
-                                                        "marginLeft": 0,
-                                                        "marginRight": 0,
-                                                        "marginTop": 0,
-                                                      },
-                                                      Object {
-                                                        "alignItems": "flex-end",
-                                                      },
-                                                    ]
-                                                  }
-                                                >
-                                                  <View
-                                                    style={
-                                                      Object {
-                                                        "alignItems": "center",
-                                                        "flexDirection": "row",
-                                                      }
-                                                    }
-                                                  >
-                                                    <Text
-                                                      style={
-                                                        Array [
-                                                          Object {
-                                                            "color": "#0A1427",
-                                                            "fontFamily": "EuclidCircularB-Regular",
-                                                            "textAlignVertical": "center",
-                                                          },
-                                                          Array [
-                                                            Object {
-                                                              "color": "#0A1427",
-                                                              "fontSize": 18,
-                                                              "lineHeight": 28,
-                                                              "textAlign": "right",
-                                                            },
-                                                            undefined,
-                                                          ],
-                                                        ]
-                                                      }
-                                                    >
-                                                      0.5123 ETH
-                                                    </Text>
-                                                  </View>
-                                                  <Text
-                                                    style={
-                                                      Array [
-                                                        Object {
-                                                          "color": "#0A1427",
-                                                          "fontFamily": "EuclidCircularB-Regular",
-                                                          "textAlignVertical": "center",
-                                                        },
-                                                        Array [
-                                                          Object {
-                                                            "color": "#8B939E",
-                                                            "fontSize": 14,
-                                                            "lineHeight": 22,
-                                                            "textAlign": "right",
-                                                          },
-                                                          undefined,
-                                                        ],
-                                                      ]
-                                                    }
-                                                  >
-                                                    £ 94.78
-                                                  </Text>
-                                                </View>
-                                              </View>
-                                            </View>
+                                            />
                                           </View>
                                         </View>
                                       </View>
@@ -38613,20 +38273,32 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                         }
                                       >
                                         <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
                                           style={
-                                            Array [
-                                              Object {
-                                                "alignItems": "center",
-                                                "backgroundColor": "#EBF0F6",
-                                                "borderRadius": 26,
-                                                "height": 52,
-                                                "justifyContent": "center",
-                                                "overflow": "hidden",
-                                                "textAlign": "center",
-                                                "width": 52,
-                                              },
-                                              undefined,
-                                            ]
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
                                           }
                                         />
                                       </View>
@@ -38739,93 +38411,13 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                             <View
                                               style={
                                                 Array [
-                                                  Object {
-                                                    "alignItems": "flex-end",
-                                                  },
+                                                  undefined,
                                                   Object {
                                                     "flexWrap": "wrap",
                                                   },
                                                 ]
                                               }
-                                            >
-                                              <View
-                                                style={
-                                                  Object {
-                                                    "flexDirection": "row",
-                                                  }
-                                                }
-                                              >
-                                                <View
-                                                  style={
-                                                    Array [
-                                                      Object {
-                                                        "marginBottom": 0,
-                                                        "marginLeft": 0,
-                                                        "marginRight": 0,
-                                                        "marginTop": 0,
-                                                      },
-                                                      Object {
-                                                        "alignItems": "flex-end",
-                                                      },
-                                                    ]
-                                                  }
-                                                >
-                                                  <View
-                                                    style={
-                                                      Object {
-                                                        "alignItems": "center",
-                                                        "flexDirection": "row",
-                                                      }
-                                                    }
-                                                  >
-                                                    <Text
-                                                      style={
-                                                        Array [
-                                                          Object {
-                                                            "color": "#0A1427",
-                                                            "fontFamily": "EuclidCircularB-Regular",
-                                                            "textAlignVertical": "center",
-                                                          },
-                                                          Array [
-                                                            Object {
-                                                              "color": "#0A1427",
-                                                              "fontSize": 18,
-                                                              "lineHeight": 28,
-                                                              "textAlign": "right",
-                                                            },
-                                                            undefined,
-                                                          ],
-                                                        ]
-                                                      }
-                                                    >
-                                                      54321 PLR
-                                                    </Text>
-                                                  </View>
-                                                  <Text
-                                                    style={
-                                                      Array [
-                                                        Object {
-                                                          "color": "#0A1427",
-                                                          "fontFamily": "EuclidCircularB-Regular",
-                                                          "textAlignVertical": "center",
-                                                        },
-                                                        Array [
-                                                          Object {
-                                                            "color": "#8B939E",
-                                                            "fontSize": 14,
-                                                            "lineHeight": 22,
-                                                            "textAlign": "right",
-                                                          },
-                                                          undefined,
-                                                        ],
-                                                      ]
-                                                    }
-                                                  >
-                                                    £ 80,395.08
-                                                  </Text>
-                                                </View>
-                                              </View>
-                                            </View>
+                                            />
                                           </View>
                                         </View>
                                       </View>

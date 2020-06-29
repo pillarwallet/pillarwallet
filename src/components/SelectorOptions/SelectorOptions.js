@@ -152,11 +152,11 @@ class SelectorOptions extends React.Component<Props, State> {
     const { showOptionsTitles } = this.props;
     if (!horizontalOptionsData) return null;
 
-    return horizontalOptionsData.map((optionsInfo) => {
+    return horizontalOptionsData.map((optionsInfo: HorizontalOption, index) => {
       const { title, data } = optionsInfo;
       if (!data?.length) return null;
       return (
-        <HorizontalOptions>
+        <HorizontalOptions key={title || index.toString()}>
           {(showOptionsTitles && !!title) &&
           <OptionsHeader>{title}</OptionsHeader>
           }
@@ -214,7 +214,7 @@ class SelectorOptions extends React.Component<Props, State> {
   };
 
   renderOption = ({ item: option }: Object) => {
-    if (option.value === 'extendedHeaderItems') {
+    if (option?.value === 'extendedHeaderItems') {
       return option.component;
     }
     const { renderOption } = this.props;
@@ -222,6 +222,7 @@ class SelectorOptions extends React.Component<Props, State> {
     if (renderOption) {
       return renderOption(option, () => this.selectValue(option));
     }
+    if (!option) return null;
 
     const {
       name,
@@ -314,6 +315,7 @@ class SelectorOptions extends React.Component<Props, State> {
     if (filteredOptions.length) {
       allFeedListData = [extendedHeaderItems, ...filteredOptions];
     }
+
 
     return (
       <SlideModal

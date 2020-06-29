@@ -84,12 +84,12 @@ storiesOf('Selector', module)
             title: '',
             data: [
               {
-                value: 'Smart Wallet',
+                value: 'Source Item',
                 name: 'Source Item',
                 imageSource: smartWalletIcon,
               },
               {
-                value: 'Smart Wallet',
+                value: 'Url item',
                 name: 'Url item',
                 imageUrl: horizontalOpt,
               },

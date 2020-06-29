@@ -158,7 +158,6 @@ export function SelectorInputTemplate(locals: Object) {
       inputWrapperStyle,
       fiatOptions,
       fiatOptionsTitle,
-      displayFiatOptionsFirst,
       rightLabel,
       onPressRightLabel,
       customInputHeight,
@@ -212,7 +211,6 @@ export function SelectorInputTemplate(locals: Object) {
         selectorModalTitle: selectorModalTitle || label,
         selectorPlaceholder: placeholderSelector,
         optionsSearchPlaceholder: 'Asset search',
-        displayFiatOptionsFirst,
       }}
       getInputRef={inputRef}
       inputWrapperStyle={inputWrapperStyle}

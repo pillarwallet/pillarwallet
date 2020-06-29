@@ -23,6 +23,7 @@ export type Option = {
   value: string,
   imageUrl?: string,
   lastUpdateTime?: string,
+  imageSource?: string,
 };
 
 export type HorizontalOption = {

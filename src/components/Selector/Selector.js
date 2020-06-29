@@ -77,6 +77,7 @@ class Selector extends React.Component<Props, State> {
     if (!option) return null;
     const { onOptionImagePress } = this.props;
     const { name, imageUrl, lastUpdateTime } = option;
+
     return (
       <ListItemWithImage
         label={name}
