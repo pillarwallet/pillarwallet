@@ -69,6 +69,7 @@ import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
+import { isAaveTransactionTag } from 'utils/aave';
 
 // constants
 import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -160,6 +161,7 @@ import type { EventData as PassedEventData } from 'components/ActivityFeed/Activ
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { TxNote } from 'reducers/txNoteReducer';
+
 
 type Props = {
   theme: Theme,
@@ -860,10 +862,7 @@ export class EventDetail extends React.Component<Props, State> {
     let eventData: ?EventData = null;
 
     let aaveDepositedAsset;
-    if ([
-      AAVE_LENDING_DEPOSIT_TRANSACTION,
-      AAVE_LENDING_WITHDRAW_TRANSACTION,
-    ].includes(event?.tag)) {
+    if (isAaveTransactionTag(event?.tag)) {
       aaveDepositedAsset = depositedAssets.find(({
         symbol: depositedAssetSymbol,
       }) => depositedAssetSymbol === event?.extra?.symbol);

@@ -41,9 +41,6 @@ import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 import type { Transaction, TransactionPayload } from 'models/Transaction';
 import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
 
-export const isAaveDepositMethod = (data: string) => data && data.includes('d2d0e066');
-
-export const isAaveWithdrawMethod = (data: string) => data && data.includes('---'); // TODO: add withdraw method hash
 
 export const buildAaveDepositTransactionData = (
   assetAddress: string,
@@ -176,6 +173,11 @@ const buildAaveTransaction = (
   };
 };
 
+export const isAaveTransactionTag = (tag?: string): boolean => tag && [
+  AAVE_LENDING_DEPOSIT_TRANSACTION,
+  AAVE_LENDING_WITHDRAW_TRANSACTION,
+].includes(tag);
+
 export const mapTransactionsHistoryWithAave = async (
   accountAddress: string,
   transactionHistory: Transaction[],
@@ -193,22 +195,26 @@ export const mapTransactionsHistoryWithAave = async (
     transactionIndex,
   ) => {
     const { to, tag } = transaction;
-    if (tag !== AAVE_LENDING_DEPOSIT_TRANSACTION
-      && addressesEqual(aaveLendingPoolContractAddress, to)) {
+
+    // do not update
+    if (isAaveTransactionTag(tag)) return transactions;
+
+    if (addressesEqual(aaveLendingPoolContractAddress, to)) {
       transactions[transactionIndex] = buildAaveTransaction(
         AAVE_LENDING_DEPOSIT_TRANSACTION,
         transaction,
         deposits,
       );
     }
-    if (tag !== AAVE_LENDING_WITHDRAW_TRANSACTION
-      && aaveTokenAddresses.some((aaveTokenAddress) => addressesEqual(aaveTokenAddress, to))) {
+
+    if (aaveTokenAddresses.some((aaveTokenAddress) => addressesEqual(aaveTokenAddress, to))) {
       transactions[transactionIndex] = buildAaveTransaction(
         AAVE_LENDING_WITHDRAW_TRANSACTION,
         transaction,
         withdraws,
       );
     }
+
     return transactions;
   }, transactionHistory);
 };

@@ -42,7 +42,6 @@ import ShadowedCard from 'components/ShadowedCard';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { LENDING_ENTER_DEPOSIT_AMOUNT, LENDING_ENTER_WITHDRAW_AMOUNT } from 'constants/navigationConstants';
-import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 
 // utils
 import { formatAmountDisplay, formatFiat } from 'utils/common';
@@ -50,6 +49,7 @@ import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { getRate } from 'utils/assets';
 import { mapTransactionsHistory } from 'utils/feedData';
+import { isAaveTransactionTag } from 'utils/aave';
 
 // selectors
 import { smartAccountHistorySelector } from 'selectors/history';
@@ -124,11 +124,6 @@ const DetailsWrapper = styled.View`
 
 const aaveImage = require('assets/images/apps/aave.png');
 
-const filterAaveTansactions = ({ tag }) => tag && [
-  AAVE_LENDING_DEPOSIT_TRANSACTION,
-  AAVE_LENDING_WITHDRAW_TRANSACTION,
-].includes(tag);
-
 const ViewDepositedAsset = ({
   navigation,
   isFetchingDepositedAssets,
@@ -153,7 +148,7 @@ const ViewDepositedAsset = ({
   const valueInFiat = parseFloat(currentBalance) * getRate(rates, assetSymbol, fiatCurrency);
   const valueInFiatFormatted = formatFiat(valueInFiat, fiatCurrency);
   const aaveTransactions = mapTransactionsHistory(
-    smartAccountHistory.filter(filterAaveTansactions),
+    smartAccountHistory.filter(({ tag }) => isAaveTransactionTag(tag)),
     contacts,
     contactsSmartAddresses,
     accounts,
