@@ -718,7 +718,7 @@ export class EventDetail extends React.Component<Props, State> {
         const activateButton = {
           title: 'Activate',
           onPress: this.activateSW,
-          secondary: true,
+          secondary: false,
         };
 
         const topUpButton = {
@@ -727,14 +727,8 @@ export class EventDetail extends React.Component<Props, State> {
           secondary: true,
         };
 
-        const topUpButtonSecondary = {
-          title: 'Top Up',
-          onPress: this.topUpSW,
-          squarePrimary: true,
-        };
-
         return {
-          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton, topUpButtonSecondary],
+          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton],
         };
       case 'Wallet imported':
         return {
@@ -748,7 +742,7 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated } = this.props;
+    const { isPPNActivated, isSmartWalletActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -771,11 +765,22 @@ export class EventDetail extends React.Component<Props, State> {
             ],
           };
         }
+        if (!isSmartWalletActivated) {
+          return {
+            actionTitle: 'Created',
+            buttons: [
+              {
+                title: 'Activate',
+                onPress: this.activateSW,
+              },
+            ],
+          };
+        }
         return {
           actionTitle: 'Created',
           buttons: [
             {
-              title: 'Activate',
+              title: 'Top up',
               onPress: this.topUpPillarNetwork,
             },
           ],
