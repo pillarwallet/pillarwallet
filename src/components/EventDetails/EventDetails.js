@@ -718,7 +718,6 @@ export class EventDetail extends React.Component<Props, State> {
         const activateButton = {
           title: 'Activate',
           onPress: this.activateSW,
-          secondary: false,
         };
 
         const topUpButton = {
