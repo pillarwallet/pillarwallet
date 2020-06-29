@@ -65,6 +65,7 @@ import {
   parseSmartWalletTransactions,
 } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
+import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -192,12 +193,14 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountAssets = smartAccountAssetsSelector(getState());
     const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     const assetsList = getAssetsAsList(accountAssets);
-    const history = parseSmartWalletTransactions(
+    const smartWalletTransactionHistory = parseSmartWalletTransactions(
       smartWalletTransactions,
       supportedAssets,
       assetsList,
       relayerExtensionDevice?.address,
     );
+
+    const history = await mapTransactionsPoolTogether(smartWalletAccount.id, smartWalletTransactionHistory);
 
     if (!history.length) return;
 

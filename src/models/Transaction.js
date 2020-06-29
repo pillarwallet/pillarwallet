@@ -26,6 +26,12 @@ export type TxSettlementItem = {
   hash: string,
 };
 
+export type TxPoolTogetherExtra = {
+  symbol: string,
+  decimals: number,
+  amount: string | number,
+}
+
 type TxWithdrawalExtra = {
   paymentHash: string,
 };
@@ -47,7 +53,8 @@ export type SyntheticTransactionExtra = {
   syntheticTransaction: $Shape<SyntheticTransaction>,
 };
 
-export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra | EnsTransactionExtra;
+export type TransactionExtra =
+  TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra | EnsTransactionExtra | TxPoolTogetherExtra;
 
 export type GasToken = {
   address: string,

@@ -31,6 +31,10 @@ import { BigNumber } from 'bignumber.js';
 import * as Sentry from '@sentry/react-native';
 
 import { DAI } from 'constants/assetsConstants';
+import {
+  POOLTOGETHER_WITHDRAW_TRANSACTION,
+  POOLTOGETHER_DEPOSIT_TRANSACTION,
+} from 'constants/poolTogetherConstants';
 
 import type { PoolInfo } from 'models/PoolTogether';
 import type { TransactionFeeInfo } from 'models/Transaction';
@@ -287,5 +291,70 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
     gasToken,
     txFeeInWei,
     transactionPayload,
+  };
+}
+
+export async function getPoolTogetherTransactions(symbol: string, address: string): Promise<Object> {
+  const contractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
+  const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
+  const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
+  const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
+  const contract = new Contract(contractAddress, poolAbi, provider);
+  let deposits = [];
+  try {
+    const depositedFilter = contract.filters.Deposited(address);
+    const depositsLogs = await contract.provider.getLogs({
+      fromBlock: 0,
+      toBlock: 'latest',
+      ...depositedFilter,
+    });
+    deposits = depositsLogs.map((log) => {
+      const parsedLog = contract.interface.parseLog(log);
+      return {
+        hash: log.transactionHash,
+        amount: parsedLog.values.amount.toString(),
+        symbol,
+        decimals: unitType,
+        tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
+      };
+    });
+  } catch (e1) {
+    reportLog('Error getting PoolTogether deposit transaction logs', {
+      address,
+      contractAddress,
+      symbol,
+      message: e1.message,
+    }, Sentry.Severity.Error);
+  }
+
+  let withdrawals = [];
+  try {
+    const withdrawnFilter = contract.filters.Withdrawn(address);
+    const withdrawalsLogs = await contract.provider.getLogs({
+      fromBlock: 0,
+      toBlock: 'latest',
+      ...withdrawnFilter,
+    });
+    withdrawals = withdrawalsLogs.map((log) => {
+      const parsedLog = contract.interface.parseLog(log);
+      return {
+        hash: log.transactionHash,
+        amount: parsedLog.values.amount.toString(),
+        symbol,
+        decimals: unitType,
+        tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
+      };
+    });
+  } catch (e2) {
+    reportLog('Error getting PoolTogether withdrawal transaction logs', {
+      address,
+      contractAddress,
+      symbol,
+      message: e2.message,
+    }, Sentry.Severity.Error);
+  }
+  return {
+    withdrawals,
+    deposits,
   };
 }

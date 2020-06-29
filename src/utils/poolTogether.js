@@ -17,6 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { POOL_DAI_CONTRACT_ADDRESS, POOL_USDC_CONTRACT_ADDRESS } from 'react-native-dotenv';
+
+import { DAI, USDC } from 'constants/assetsConstants';
+
+import {
+  POOLTOGETHER_WITHDRAW_TRANSACTION,
+  POOLTOGETHER_DEPOSIT_TRANSACTION,
+} from 'constants/poolTogetherConstants';
+
+import type { Transaction } from 'models/Transaction';
+
+import { getPoolTogetherTransactions } from 'services/poolTogether';
+
+import { addressesEqual } from './assets';
 
 export const countDownDHMS = (remainingTimeMs: number) => {
   const seconds = remainingTimeMs / 1000;
@@ -36,4 +50,67 @@ export const countDownDHMS = (remainingTimeMs: number) => {
 
 export const getWinChance = (currentCount: number = 0, totalPoolTicketsCount: number = 0): number => {
   return (currentCount * 100) / (totalPoolTicketsCount > 0 ? totalPoolTicketsCount : 1); // win chance in %
+};
+
+const isPoolTogetherTag = (tag: ?string) => {
+  return tag && (tag === POOLTOGETHER_WITHDRAW_TRANSACTION || tag === POOLTOGETHER_DEPOSIT_TRANSACTION);
+};
+
+const isPoolTogetherAddress = (address: string) => {
+  return addressesEqual(POOL_DAI_CONTRACT_ADDRESS, address) || addressesEqual(POOL_USDC_CONTRACT_ADDRESS, address);
+};
+
+const buildPoolTogetherTransaction = (
+  transaction: Transaction,
+  poolTogetherTransactions: Object[],
+) => {
+  let extra;
+  let tag;
+  const poolTogetherTransaction = poolTogetherTransactions.find(({ hash }) => hash === transaction.hash);
+  if (poolTogetherTransaction) {
+    extra = {
+      symbol: poolTogetherTransaction.symbol,
+      decimals: poolTogetherTransaction.decimals,
+      amount: poolTogetherTransaction.amount,
+    };
+    ({ tag } = poolTogetherTransaction);
+  }
+  return {
+    ...transaction,
+    extra,
+    tag,
+  };
+};
+
+export const mapTransactionsPoolTogether = async (
+  accountAddress: string,
+  transactionHistory: Transaction[],
+): Promise<Transaction[]> => {
+  const daiTransactions = await getPoolTogetherTransactions(DAI, accountAddress);
+  const usdcTransactions = await getPoolTogetherTransactions(USDC, accountAddress);
+
+  const deposits = daiTransactions.deposits.concat(usdcTransactions.deposits);
+  const withdrawals = daiTransactions.withdrawals.concat(usdcTransactions.withdrawals);
+
+  const allPoolTransactions = deposits.concat(withdrawals);
+
+  return transactionHistory.reduce((
+    transactions,
+    transaction,
+    transactionIndex,
+  ) => {
+    const { to, tag } = transaction;
+
+    // do not update
+    if (isPoolTogetherTag(tag)) return transactions;
+
+    if (isPoolTogetherAddress(to)) {
+      transactions[transactionIndex] = buildPoolTogetherTransaction(
+        transaction,
+        allPoolTransactions,
+      );
+    }
+
+    return transactions;
+  }, transactionHistory);
 };
