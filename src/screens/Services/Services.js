@@ -41,7 +41,7 @@ import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // selectors
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -56,6 +56,7 @@ type Props = {
   baseFiatCurrency: ?string,
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
+  isSmartWalletActivated: boolean,
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -71,7 +72,12 @@ class ServicesScreen extends React.Component<Props> {
 
   getServices = () => {
     const {
-      navigation, theme, baseFiatCurrency, providersMeta, isActiveAccountSmartWallet,
+      navigation,
+      theme,
+      baseFiatCurrency,
+      providersMeta,
+      isActiveAccountSmartWallet,
+      isSmartWalletActivated,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -79,6 +85,12 @@ class ServicesScreen extends React.Component<Props> {
       label: `${providersMeta.length} exchanges`,
       color: colors.primary,
     } : null;
+
+    const aaveServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
+    let aaveServiceLabel;
+    if (aaveServiceDisabled) {
+      aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
+    }
 
     return [
       {
@@ -110,8 +122,8 @@ class ServicesScreen extends React.Component<Props> {
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
-        disabled: !isActiveAccountSmartWallet,
-        label: !isActiveAccountSmartWallet && 'Only with Smart Wallet',
+        disabled: aaveServiceDisabled,
+        label: aaveServiceLabel,
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       },
       {
@@ -183,6 +195,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
+  isSmartWalletActivated: isSmartWalletActivatedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

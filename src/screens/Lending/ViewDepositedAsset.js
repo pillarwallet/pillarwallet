@@ -42,6 +42,7 @@ import ShadowedCard from 'components/ShadowedCard';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { LENDING_ENTER_DEPOSIT_AMOUNT, LENDING_ENTER_WITHDRAW_AMOUNT } from 'constants/navigationConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 
 // utils
 import { formatAmountDisplay, formatFiat } from 'utils/common';
@@ -123,7 +124,10 @@ const DetailsWrapper = styled.View`
 
 const aaveImage = require('assets/images/apps/aave.png');
 
-const filterAaveTansactions = ({ tag }) => tag && [].includes(tag);
+const filterAaveTansactions = ({ tag }) => tag && [
+  AAVE_LENDING_DEPOSIT_TRANSACTION,
+  AAVE_LENDING_WITHDRAW_TRANSACTION,
+].includes(tag);
 
 const ViewDepositedAsset = ({
   navigation,
@@ -262,7 +266,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchDepositedAsset: () => dispatch(fetchDepositedAssetAction()),
+  fetchDepositedAsset: (symbol: string) => dispatch(fetchDepositedAssetAction(symbol)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ViewDepositedAsset);

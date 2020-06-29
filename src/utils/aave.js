@@ -20,12 +20,17 @@
 import { BigNumber } from 'bignumber.js';
 import abiHelper from 'ethjs-abi';
 
+// constants
+import { ETH } from 'constants/assetsConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+
 // services
 import { buildERC20ApproveTransactionData, getContract, getContractMethodAbi } from 'services/assets';
 import aaveService from 'services/aave';
 
 // utils
-import { parseTokenBigNumberAmount } from 'utils/common';
+import { isCaseInsensitiveMatch, parseTokenBigNumberAmount } from 'utils/common';
+import { addressesEqual } from 'utils/assets';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -33,7 +38,7 @@ import AAVE_LENDING_POOL_CONTRACT_ABI from 'abi/aaveLendingPool.json';
 import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 
 // types
-import type { TransactionPayload } from 'models/Transaction';
+import type { Transaction, TransactionPayload } from 'models/Transaction';
 import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
 
 export const isAaveDepositMethod = (data: string) => data && data.includes('d2d0e066');
@@ -53,11 +58,16 @@ export const buildAaveDepositTransactionData = (
 
 export const buildAaveWithdrawTransactionData = (
   amount: number,
+  balance: number,
   decimals: number,
 ): string => {
   const methodAbi = getContractMethodAbi(AAVE_TOKEN_ABI, 'redeem');
-  const contractAmount = parseTokenBigNumberAmount(amount, decimals);
-  return abiHelper.encodeMethod(methodAbi, [contractAmount]);
+  const amountBN = parseTokenBigNumberAmount(amount, decimals);
+  const balanceBN = parseTokenBigNumberAmount(balance, decimals);
+  const withdrawAmount = balanceBN.sub(amountBN).gt(0)
+    ? amountBN
+    : -1; // -1 is all
+  return abiHelper.encodeMethod(methodAbi, [withdrawAmount]);
 };
 
 export const getAaveDepositTransactions = async (
@@ -72,9 +82,10 @@ export const getAaveDepositTransactions = async (
 
   let aaveDepositTransactions = [{
     from: senderAddress,
-    data: depositTransactionData,
     to: lendingPoolContractAddress,
+    data: depositTransactionData,
     amount: 0,
+    symbol: ETH,
   }];
 
   // allowance must be set for core contract
@@ -89,17 +100,22 @@ export const getAaveDepositTransactions = async (
     aaveDepositTransactions = [
       {
         from: senderAddress,
-        data: approveTransactionData,
         to: assetAddress,
+        data: approveTransactionData,
         amount: 0,
+        symbol: ETH,
       },
       ...aaveDepositTransactions,
     ];
   }
 
   // only in first transaction payload:
-  aaveDepositTransactions[0].txFeeInWei = txFeeInWei;
-  aaveDepositTransactions[0].extra = { amount, symbol: assetSymbol };
+  aaveDepositTransactions[0] = {
+    ...aaveDepositTransactions[0],
+    txFeeInWei,
+    tag: AAVE_LENDING_DEPOSIT_TRANSACTION,
+    extra: { amount: neededAmountBN.toString(), symbol: assetSymbol, decimals },
+  };
 
   return aaveDepositTransactions;
 };
@@ -110,15 +126,89 @@ export const getAaveWithdrawTransaction = async (
   depositedAsset: DepositedAsset,
   txFeeInWei?: BigNumber,
 ): TransactionPayload => {
-  const { decimals, aaveTokenAddress, symbol: assetSymbol } = depositedAsset;
-  const withdrawTransactionData = await buildAaveWithdrawTransactionData(amount, decimals);
+  const {
+    decimals,
+    aaveTokenAddress,
+    symbol: assetSymbol,
+    currentBalance,
+  } = depositedAsset;
+
+  const withdrawTransactionData = await buildAaveWithdrawTransactionData(
+    amount,
+    currentBalance,
+    decimals,
+  );
+
+  const amountBN = parseTokenBigNumberAmount(amount, decimals);
 
   return {
     from: senderAddress,
-    data: withdrawTransactionData,
     to: aaveTokenAddress,
-    extra: { amount, symbol: assetSymbol },
+    data: withdrawTransactionData,
     amount: 0,
+    symbol: ETH,
+    tag: AAVE_LENDING_WITHDRAW_TRANSACTION,
+    extra: { amount: amountBN.toString(), symbol: assetSymbol, decimals },
     txFeeInWei,
   };
+};
+
+const buildAaveTransaction = (
+  tag: string,
+  transaction: Transaction,
+  aaveTransactions: Object[],
+) => {
+  let extra;
+  const aaveTransaction = aaveTransactions.find(({
+    id,
+  }) => isCaseInsensitiveMatch(id.split(':')[0], transaction.hash));
+  if (aaveTransaction) {
+    extra = {
+      symbol: aaveTransaction?.reserve?.symbol,
+      decimals: aaveTransaction?.reserve?.decimals,
+      amount: aaveTransaction?.amount,
+    };
+  }
+  return {
+    ...transaction,
+    extra,
+    tag,
+  };
+};
+
+export const mapTransactionsHistoryWithAave = async (
+  accountAddress: string,
+  transactionHistory: Transaction[],
+): Transaction[] => {
+  const { address: aaveLendingPoolContractAddress } = await aaveService.getLendingPoolContract();
+  const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
+  const {
+    deposits = [],
+    withdraws = [],
+  } = await aaveService.fetchAccountDepositAndWithdrawTransactions(accountAddress);
+
+  return transactionHistory.reduce((
+    transactions,
+    transaction,
+    transactionIndex,
+  ) => {
+    const { to, tag } = transaction;
+    if (tag !== AAVE_LENDING_DEPOSIT_TRANSACTION
+      && addressesEqual(aaveLendingPoolContractAddress, to)) {
+      transactions[transactionIndex] = buildAaveTransaction(
+        AAVE_LENDING_DEPOSIT_TRANSACTION,
+        transaction,
+        deposits,
+      );
+    }
+    if (tag !== AAVE_LENDING_WITHDRAW_TRANSACTION
+      && aaveTokenAddresses.some((aaveTokenAddress) => addressesEqual(aaveTokenAddress, to))) {
+      transactions[transactionIndex] = buildAaveTransaction(
+        AAVE_LENDING_WITHDRAW_TRANSACTION,
+        transaction,
+        withdraws,
+      );
+    }
+    return transactions;
+  }, transactionHistory);
 };

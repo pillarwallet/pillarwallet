@@ -113,8 +113,11 @@ import {
   TANK_WITHDRAWAL_FLOW,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   CONTACT,
+  LENDING_ENTER_WITHDRAW_AMOUNT,
+  LENDING_ENTER_DEPOSIT_AMOUNT,
+  LENDING_VIEW_DEPOSITED_ASSET,
 } from 'constants/navigationConstants';
-import { AAVE_LENDING_DEPOSIT, AAVE_LENDING_WITHDRAW } from 'constants/lendingConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 
 // selectors
 import {
@@ -143,7 +146,7 @@ import { updateCollectibleTransactionAction } from 'actions/collectiblesActions'
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, AssetData } from 'models/Asset';
+import type { Rates, Assets, Asset, AssetData, DepositedAsset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -203,6 +206,7 @@ type Props = {
   updatingTransaction: string,
   updatingCollectibleTransaction: string,
   isSmartAccount: boolean,
+  depositedAssets: DepositedAsset[],
 };
 
 type State = {
@@ -601,6 +605,26 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(TANK_FUND_FLOW);
   };
 
+  onAaveViewDeposit = (depositedAsset: DepositedAsset) => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
+  };
+
+  onAaveDepositMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.asset });
+  };
+
+  onAaveWithdrawMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.asset });
+  };
+
   PPNWithdraw = async () => {
     const { onClose, navigation } = this.props;
     onClose();
@@ -813,6 +837,7 @@ export class EventDetail extends React.Component<Props, State> {
       bitcoinAddresses,
       bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
+      depositedAssets,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -832,6 +857,16 @@ export class EventDetail extends React.Component<Props, State> {
     const isTimedOut = isTimedOutTransaction(event);
 
     let eventData: ?EventData = null;
+
+    let aaveDepositedAsset;
+    if ([
+      AAVE_LENDING_DEPOSIT_TRANSACTION,
+      AAVE_LENDING_WITHDRAW_TRANSACTION,
+    ].includes(event?.tag)) {
+      aaveDepositedAsset = depositedAssets.find(({
+        symbol: depositedAssetSymbol,
+      }) => depositedAssetSymbol === event?.asset);
+    }
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -940,37 +975,47 @@ export class EventDetail extends React.Component<Props, State> {
           ],
         };
         break;
-      case AAVE_LENDING_DEPOSIT:
+      case AAVE_LENDING_DEPOSIT_TRANSACTION:
         eventData = {
           name: 'Aave deposit',
-          buttons: [
-            {
-              title: 'Deposit more',
-              onPress: () => {},
-            },
-            {
-              title: 'View deposit',
-              onPress: () => {},
-              secondary: true,
-            },
-          ],
+          actionTitle: fullItemValue,
+          buttons: [],
         };
+        if (event?.asset) {
+          eventData.buttons.push({
+            title: 'Deposit more',
+            onPress: this.onAaveDepositMore,
+            secondary: true,
+          });
+          if (aaveDepositedAsset) {
+            eventData.buttons.push({
+              title: 'View deposit',
+              onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+              squarePrimary: true,
+            });
+          }
+        }
         break;
-      case AAVE_LENDING_WITHDRAW:
+      case AAVE_LENDING_WITHDRAW_TRANSACTION:
         eventData = {
           name: 'Aave deposit',
-          buttons: [
-            {
-              title: 'Withdraw more',
-              onPress: () => {},
-            },
-            {
-              title: 'View deposit',
-              onPress: () => {},
-              secondary: true,
-            },
-          ],
+          actionTitle: fullItemValue,
+          buttons: [],
         };
+        if (event?.asset && aaveDepositedAsset) {
+          if (aaveDepositedAsset?.currentBalance > 0) {
+            eventData.buttons.push({
+              title: 'Withdraw more',
+              onPress: this.onAaveWithdrawMore,
+              secondary: true,
+            });
+          }
+          eventData.buttons.push({
+            title: 'View deposit',
+            onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+            squarePrimary: true,
+          });
+        }
         break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
@@ -1593,6 +1638,7 @@ const mapStateToProps = ({
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
+  lending: { depositedAssets },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1609,6 +1655,7 @@ const mapStateToProps = ({
   txNotes,
   updatingTransaction,
   updatingCollectibleTransaction,
+  depositedAssets,
 });
 
 const structuredSelector = createStructuredSelector({

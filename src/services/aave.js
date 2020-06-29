@@ -19,10 +19,12 @@
 */
 import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
-import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS } from 'react-native-dotenv';
+import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS, AAVE_THE_GRAPH_ID } from 'react-native-dotenv';
+import axios from 'axios';
 
 // utils
 import { getAssetDataByAddress } from 'utils/assets';
+import { formatAmount } from 'utils/common';
 
 // services
 import { getContract } from 'services/assets';
@@ -42,7 +44,7 @@ const rayToNumeric = (rayNumberBN: any) => Number(utils.formatUnits(rayNumberBN,
 class AaveService {
   lendingPoolCoreAddress: ?string;
   lendingPoolAddress: ?string;
-  aaveTokenAddresses: string[] = [];
+  aaveTokenAddresses: ?Object = {};
   lendingPoolAddressesProvider: ?Object;
 
   constructor() {
@@ -80,19 +82,37 @@ class AaveService {
     ));
   }
 
+  async getAaveTokenAddress(assetAddress): Promise<?string> {
+    if (!this.aaveTokenAddresses[assetAddress]) {
+      const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
+      if (!lendingPoolCoreContract) return null;
+      this.aaveTokenAddresses[assetAddress] = await lendingPoolCoreContract.getReserveATokenAddress(assetAddress);
+    }
+    return Promise.resolve(this.aaveTokenAddresses[assetAddress]);
+  }
+
   async getAaveTokenContractForAsset(assetAddress, provider?): Promise<?Object> {
     if (!this.lendingPoolAddressesProvider) return null;
 
-    if (!this.aaveTokenAddresses[assetAddress]) {
-      const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
-      this.aaveTokenAddresses[assetAddress] = await lendingPoolCoreContract.getReserveATokenAddress(assetAddress);
-    }
+    const aaveTokenAddress = await this.getAaveTokenAddress(assetAddress);
+    if (!aaveTokenAddress) return null;
 
     return Promise.resolve(getContract(
-      this.aaveTokenAddresses[assetAddress],
+      aaveTokenAddress,
       AAVE_TOKEN_ABI,
       provider,
     ));
+  }
+
+  async getAaveTokenAddresses(): Promise<string[]> {
+    const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
+    if (!lendingPoolCoreContract) return [];
+
+    const reserveAddresses = await lendingPoolCoreContract.getReserves().catch(() => []);
+
+    await Promise.all(reserveAddresses.map((address) => this.getAaveTokenAddress(address)));
+
+    return Promise.resolve(Object.values(this.aaveTokenAddresses));
   }
 
   async getSupportedDeposits(accountAssets: Asset[], supportedAssets: Asset[]): DepositableAsset[] {
@@ -135,7 +155,7 @@ class AaveService {
     const earnInterestRateBN = depositedAssetData[5];
     const earnInterestRate = rayToNumeric(earnInterestRateBN) * 100; // %
     const currentBalanceBN = depositedAssetData[0];
-    const currentBalance = Number(utils.formatUnits(currentBalanceBN, asset.decimals));
+    const currentBalance = Number(formatAmount(utils.formatUnits(currentBalanceBN, asset.decimals)));
 
     let earnedAmount = 0;
     let initialBalance = 0;
@@ -143,8 +163,8 @@ class AaveService {
     if (aaveTokenContract) {
       const initialBalanceBN = await aaveTokenContract.principalBalanceOf(accountAddress);
       const earnedAmountBN = currentBalanceBN.sub(initialBalanceBN);
-      initialBalance = Number(utils.formatUnits(initialBalanceBN, asset.decimals));
-      earnedAmount = Number(utils.formatUnits(earnedAmountBN, asset.decimals));
+      initialBalance = Number(formatAmount(utils.formatUnits(initialBalanceBN, asset.decimals)));
+      earnedAmount = Number(formatAmount(utils.formatUnits(earnedAmountBN, asset.decimals)));
     }
 
     // percentage gain formula
@@ -171,6 +191,40 @@ class AaveService {
       return this.fetchAccountDepositedAsset(accountAddress, asset);
     }));
     return Promise.resolve(depositedAssets.filter(({ initialBalance }) => !!initialBalance));
+  }
+
+  async fetchAccountDepositAndWithdrawTransactions(accountAddress: string): Promise<DepositedAsset> {
+    const url = `https://api.thegraph.com/subgraphs/id/${AAVE_THE_GRAPH_ID}`;
+    return axios
+      .post(url, {
+        timeout: 5000,
+        query: `
+        {
+          deposits (orderBy: timestamp, orderDirection: desc, where: { 
+            user: "${accountAddress.toLowerCase()}"
+          }) {
+            id
+            amount
+            reserve {
+              symbol
+              decimals
+            }
+          }
+          withdraws: redeemUnderlyings (orderBy: timestamp, orderDirection: desc, where:{
+            user: "${accountAddress.toLowerCase()}"
+          }) {
+            id
+            amount
+            reserve {
+              symbol
+              decimals
+            }
+          }
+        }
+      `,
+      })
+      .then(({ data: response }) => response.data)
+      .catch(() => ({}));
   }
 }
 

@@ -22,10 +22,11 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
-import { calculateLendingDepositTransactionEstimateAction } from 'actions/lendingActions';
+import { calculateLendingDepositTransactionEstimateAction, fetchAssetsToDepositAction } from 'actions/lendingActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -33,6 +34,7 @@ import { BaseText, TextLink } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Button from 'components/Button';
 import { ValueSelectorCard } from 'components/ValueSelectorCard';
+import Spinner from 'components/Spinner';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -63,6 +65,8 @@ type Props = {
   depositTransactionEstimate: ?Object,
   calculateLendingDepositTransactionEstimate: (amount: number, asset: AssetToDeposit) => void,
   useGasToken: boolean,
+  isFetchingAssetsToDeposit: boolean,
+  fetchAssetsToDeposit: () => void,
 };
 
 const CurrentInterestRate = styled.View`
@@ -102,12 +106,19 @@ const EnterDepositAmount = ({
   isCalculatingDepositTransactionEstimate,
   calculateLendingDepositTransactionEstimate,
   useGasToken,
+  fetchAssetsToDeposit,
+  isFetchingAssetsToDeposit,
 }: Props) => {
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
   const [depositAmount, setDepositAmount] = useState(null);
 
   const assetToDeposit = assetsToDeposit.find(({ symbol }) => symbol === selectedAssetSymbol);
+
+  useEffect(() => {
+    if (!isEmpty(assetsToDeposit) || isFetchingAssetsToDeposit) return;
+    fetchAssetsToDeposit();
+  }, [assetsToDeposit]);
 
   useEffect(() => {
     if (!depositAmount) return;
@@ -120,7 +131,7 @@ const EnterDepositAmount = ({
   const isEnoughForFee = !!txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, {
     txFeeInWei: txFeeInfo.fee,
     amount: depositAmount,
-    decimals: assetToDeposit.decimals,
+    decimals: assetToDeposit?.decimals,
     symbol: selectedAssetSymbol,
     gasToken: txFeeInfo.gasToken,
   });
@@ -192,25 +203,35 @@ const EnterDepositAmount = ({
       )}
       minAvoidHeight={200}
     >
-      <ValueSelectorCard
-        preselectedAsset={preselectedAssetSymbol}
-        assets={assetSelectOptions}
-        balances={balances}
-        baseFiatCurrency={baseFiatCurrency}
-        rates={rates}
-        maxLabel="Use max"
-        getFormValue={onValueChanged}
-      />
-      <CurrentInterestRate>
-        <BaseText secondary>Current APY</BaseText>
-        <InterestRate>&nbsp;{formatAmountDisplay(assetToDeposit.earnInterestRate)}%</InterestRate>
-      </CurrentInterestRate>
+      {isFetchingAssetsToDeposit && <Spinner style={{ marginTop: spacing.large, alignSelf: 'center' }} />}
+      {!isFetchingAssetsToDeposit && (
+        <ValueSelectorCard
+          preselectedAsset={preselectedAssetSymbol}
+          assets={assetSelectOptions}
+          balances={balances}
+          baseFiatCurrency={baseFiatCurrency}
+          rates={rates}
+          maxLabel="Use max"
+          getFormValue={onValueChanged}
+        />
+      )}
+      {!isFetchingAssetsToDeposit && (
+        <CurrentInterestRate>
+          <BaseText secondary>Current APY</BaseText>
+          <InterestRate>&nbsp;{formatAmountDisplay(assetToDeposit?.earnInterestRate)}%</InterestRate>
+        </CurrentInterestRate>
+      )}
     </ContainerWithHeader>
   );
 };
 
 const mapStateToProps = ({
-  lending: { assetsToDeposit, isCalculatingDepositTransactionEstimate, depositTransactionEstimate },
+  lending: {
+    assetsToDeposit,
+    isCalculatingDepositTransactionEstimate,
+    depositTransactionEstimate,
+    isFetchingAssetsToDeposit,
+  },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
@@ -219,6 +240,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   isCalculatingDepositTransactionEstimate,
   depositTransactionEstimate,
+  isFetchingAssetsToDeposit,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -236,6 +258,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     amount: number,
     asset: AssetToDeposit,
   ) => dispatch(calculateLendingDepositTransactionEstimateAction(amount, asset)),
+  fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EnterDepositAmount);

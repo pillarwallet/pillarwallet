@@ -45,7 +45,7 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ETH } from 'constants/assetsConstants';
-import { AAVE_LENDING_DEPOSIT, AAVE_LENDING_WITHDRAW } from 'constants/lendingConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 
 // services
 import { parseEstimatePayload } from 'services/smartWallet';
@@ -181,7 +181,6 @@ export const parseSmartWalletTransactions = (
   supportedAssets: Asset[],
   assets: Asset[],
   relayerExtensionAddress: ?string,
-  aaveLendingPoolContractAddress: ?string,
 ): Transaction[] => smartWalletTransactions
   .reduce((mapped, smartWalletTransaction) => {
     const {
@@ -319,14 +318,6 @@ export const parseSmartWalletTransactions = (
         const feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
         transaction = { ...transaction, feeWithGasToken };
       }
-    }
-
-    if (addressesEqual(aaveLendingPoolContractAddress, to) && isAaveDepositMethod(transactionDataPayload)) {
-      transaction = { ...transaction, tag: AAVE_LENDING_DEPOSIT };
-    }
-
-    if (addressesEqual(aaveLendingPoolContractAddress, to) && isAaveWithdrawMethod(transactionDataPayload)) {
-      transaction = { ...transaction, tag: AAVE_LENDING_WITHDRAW };
     }
 
     const mappedTransaction = buildHistoryTransaction(transaction);
