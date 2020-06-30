@@ -93,7 +93,7 @@ const CollapsibleSection = (props: Props) => {
   return (
     <Section style={sectionWrapperStyle}>
       <SectionHeader>
-        <SectionHeaderPart onPress={!collapseContent && onPress}>
+        <SectionHeaderPart onPress={collapseContent && onPress}>
           <SectionTitle>{label}</SectionTitle>
           {!!collapseContent && <ChevronIcon name="chevron-right" style={{ transform: [{ rotate }] }} />}
         </SectionHeaderPart>
