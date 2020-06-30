@@ -79,6 +79,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 
 import { isEnsName } from 'utils/validators';
+import { getAccountName } from 'utils/accounts';
 
 
 const SendTokenDetailsValue = styled(BaseText)`
@@ -121,7 +122,7 @@ type Props = {
   isSmartAccount: boolean,
   useGasToken: boolean,
   contacts: Option[],
-  inactiveUserAccount: Option[],
+  inactiveUserAccounts: Option[],
   assetsWithBalance: Assets,
   baseFiatCurrency: ?string,
 };
@@ -202,7 +203,12 @@ class SendEthereumTokens extends React.Component<Props, State> {
   }
 
   setPreselectedValues = () => {
-    const { navigation, assetsWithBalance, contacts } = this.props;
+    const {
+      navigation,
+      assetsWithBalance,
+      contacts,
+      inactiveUserAccounts,
+    } = this.props;
     const assetData = navigation.getParam('assetData');
     const contact = navigation.getParam('contact');
     if (assetData) {
@@ -210,7 +216,8 @@ class SendEthereumTokens extends React.Component<Props, State> {
       if (formattedSelectedAsset) this.handleAmountChange({ selector: formattedSelectedAsset, input: '' });
     }
     if (contact) {
-      const formattedContact = contacts.find(({ name }) => contact.username === name);
+      const formattedContact = [...contacts, ...inactiveUserAccounts]
+        .find(({ name }) => name === contact.username || name === getAccountName(contact.type));
       if (formattedContact) this.setReceiver(formattedContact);
     }
   };
@@ -556,7 +563,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
       isGasTokenSupported,
       isSmartAccount,
       contacts,
-      inactiveUserAccount,
+      inactiveUserAccounts,
       assetsWithBalance,
       baseFiatCurrency,
     } = this.props;
@@ -586,7 +593,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
           onOptionSelect={this.handleReceiverSelect}
           options={contacts}
           selectedOption={selectedContact}
-          horizontalOptionsData={[{ data: [...inactiveUserAccount] }]}
+          horizontalOptionsData={[{ data: [...inactiveUserAccounts] }]}
           wrapperStyle={{ marginTop: spacing.medium }}
           noOptionImageFallback
         />
@@ -642,7 +649,7 @@ const structuredSelector = createStructuredSelector({
   isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
   contacts: contactsForSendFlowSelector,
-  inactiveUserAccount: innactiveUserWalletForSendSellector,
+  inactiveUserAccounts: innactiveUserWalletForSendSellector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
 });
 

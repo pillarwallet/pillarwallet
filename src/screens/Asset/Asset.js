@@ -54,9 +54,10 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
 } from 'constants/paymentNetworkConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { checkIfSmartWalletAccount } from 'utils/accounts';
+import { checkIfSmartWalletAccount, getAccountName } from 'utils/accounts';
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
@@ -74,6 +75,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -81,6 +83,7 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Option } from 'models/Selector';
 
 // local components
 import ReceiveModal from './ReceiveModal';
@@ -119,6 +122,7 @@ type Props = {
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
   isActiveAccountSmartWallet: boolean,
+  inactiveUserAccounts: Option[],
 };
 
 type State = {
@@ -242,8 +246,8 @@ class AssetScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  goToSendTokenFlow = (assetData: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
+  goToSendTokenFlow = (assetData: Object, contact?: Object) => {
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData, contact });
   };
 
   goToExchangeFlow = (fromAssetCode: string, toAssetCode?: string) => {
@@ -308,6 +312,7 @@ class AssetScreen extends React.Component<Props, State> {
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
       isActiveAccountSmartWallet,
+      inactiveUserAccounts,
     } = this.props;
     const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -362,6 +367,8 @@ class AssetScreen extends React.Component<Props, State> {
     });
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
+    const smartWalletAccount = inactiveUserAccounts
+      .find(({ name }) => name === getAccountName(ACCOUNT_TYPES.SMART_WALLET));
 
     return (
       <ContainerWithHeader
@@ -432,7 +439,7 @@ class AssetScreen extends React.Component<Props, State> {
               <TransferButtonWrapper>
                 <Button
                   title="Transfer to Smart Wallet"
-                  onPress={() => this.goToSendTokenFlow(assetData)}
+                  onPress={() => this.goToSendTokenFlow(assetData, smartWalletAccount)}
                   disabled={!isSendActive || isWalletEmpty}
                   secondary
                   regularText
@@ -501,6 +508,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
+  inactiveUserAccounts: innactiveUserWalletForSendSellector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
