@@ -550,7 +550,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
           onOptionSelect: this.handleReceiverSelect,
           options: contacts,
           selectedOption: selectedContact,
-          horizontalOptionsData: [{ data: [...inactiveUserAccounts] }]
+          horizontalOptionsData: [{ data: [...inactiveUserAccounts] }],
         }}
         customValueSelectorProps={{
           getFormValue: this.handleAmountChange,
@@ -570,7 +570,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
             showRelayerMigration,
             showFee,
             isLoading: gettingFee && !!amount && !!parseFloat(amount) && !inputHasError,
-          })
+          }),
         }}
       >
         {showTransactionSpeeds &&
