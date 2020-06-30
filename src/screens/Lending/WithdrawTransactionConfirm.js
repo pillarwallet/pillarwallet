@@ -69,7 +69,6 @@ const FeeInfo = styled.View`
 `;
 
 const BottomWrapper = styled.View`
-  margin-top: 64px;
   padding: ${spacing.large}px;
   width: 100%;
   justify-content: center;
@@ -153,6 +152,26 @@ const WithdrawTransactionConfirm = ({
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: 'Review' }] }}
+      footer={
+        <BottomWrapper>
+          <FeeInfo alignItems="center">
+            <FeeLabelToggle
+              labelText="Fee"
+              txFeeInWei={txFeeInfo?.fee}
+              gasToken={txFeeInfo?.gasToken}
+              showFiatDefault
+            />
+          </FeeInfo>
+          <Button
+            regularText
+            block
+            disabled={isSubmitted}
+            isLoading={isSubmitted}
+            title="Confirm withdraw"
+            onPress={onNextButtonPress}
+          />
+        </BottomWrapper>
+      }
       minAvoidHeight={200}
     >
       <DepositWrapper>
@@ -182,24 +201,6 @@ const WithdrawTransactionConfirm = ({
         </TokenValueWrapper>
         <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
       </DepositWrapper>
-      <BottomWrapper>
-        <FeeInfo alignItems="center">
-          <FeeLabelToggle
-            labelText="Fee"
-            txFeeInWei={txFeeInfo?.fee}
-            gasToken={txFeeInfo?.gasToken}
-            showFiatDefault
-          />
-        </FeeInfo>
-        <Button
-          regularText
-          block
-          disabled={isSubmitted}
-          isLoading={isSubmitted}
-          title="Confirm withdraw"
-          onPress={onNextButtonPress}
-        />
-      </BottomWrapper>
     </ContainerWithHeader>
   );
 };

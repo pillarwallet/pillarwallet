@@ -66,7 +66,6 @@ const FeeInfo = styled.View`
 `;
 
 const BottomWrapper = styled.View`
-  margin-top: 64px;
   padding: ${spacing.large}px;
   width: 100%;
   justify-content: center;
@@ -155,6 +154,26 @@ const DepositTransactionConfirm = ({
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: 'Review' }] }}
+      footer={
+        <BottomWrapper>
+          <FeeInfo alignItems="center">
+            <FeeLabelToggle
+              labelText="Fee"
+              txFeeInWei={txFeeInfo?.fee}
+              gasToken={txFeeInfo?.gasToken}
+              showFiatDefault
+            />
+          </FeeInfo>
+          <Button
+            regularText
+            block
+            disabled={isSubmitted}
+            isLoading={isSubmitted}
+            title="Confirm deposit"
+            onPress={onNextButtonPress}
+          />
+        </BottomWrapper>
+      }
       minAvoidHeight={200}
     >
       <DepositWrapper>
@@ -175,24 +194,6 @@ const DepositTransactionConfirm = ({
         />
         <BaseText fontSize={15}>Aave Deposit</BaseText>
       </DepositWrapper>
-      <BottomWrapper>
-        <FeeInfo alignItems="center">
-          <FeeLabelToggle
-            labelText="Fee"
-            txFeeInWei={txFeeInfo?.fee}
-            gasToken={txFeeInfo?.gasToken}
-            showFiatDefault
-          />
-        </FeeInfo>
-        <Button
-          regularText
-          block
-          disabled={isSubmitted}
-          isLoading={isSubmitted}
-          title="Confirm deposit"
-          onPress={onNextButtonPress}
-        />
-      </BottomWrapper>
     </ContainerWithHeader>
   );
 };

@@ -80,9 +80,20 @@ const ValuesWrapper = styled.View`
   align-items: center;
 `;
 
+const TokenValueWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
 const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
-  text-align: center;
+`;
+
+const TokenSymbol = styled(MediumText)`
+  ${fontStyles.medium};
+  margin-top: 14px;
+  margin-left: ${spacing.small}px;
 `;
 
 const ValueInFiat = styled(BaseText)`
@@ -189,7 +200,10 @@ const ViewDepositedAsset = ({
           />
         </ImagesWrapper>
         <ValuesWrapper>
-          <TokenValue>{`${formatAmountDisplay(currentBalance)} ${assetSymbol}`}</TokenValue>
+          <TokenValueWrapper>
+            <TokenValue>{formatAmountDisplay(currentBalance)}</TokenValue>
+            <TokenSymbol>{assetSymbol}</TokenSymbol>
+          </TokenValueWrapper>
           <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
         </ValuesWrapper>
         <DetailsWrapper>
