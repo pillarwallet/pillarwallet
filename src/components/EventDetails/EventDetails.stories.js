@@ -823,10 +823,10 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Pool Together',
-          itemImageSource: poolTogetherLogo,
-          cornerIcon: daiIcon,
-          itemValue: '- 1 DAI',
-          itemImageRoundedSquare: true,
+        itemImageSource: poolTogetherLogo,
+        cornerIcon: daiIcon,
+        itemValue: '- 1 DAI',
+        itemImageRoundedSquare: true,
       }}
     />
   ))
@@ -843,10 +843,10 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Pool Together',
-          itemImageSource: poolTogetherLogo,
-          cornerIcon: usdcIcon,
-          itemValue: '-1 USDC',
-          itemImageRoundedSquare: true,
+        itemImageSource: poolTogetherLogo,
+        cornerIcon: usdcIcon,
+        itemValue: '-1 USDC',
+        itemImageRoundedSquare: true,
       }}
     />
   ))
@@ -863,10 +863,10 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Pool Together',
-          itemImageSource: poolTogetherLogo,
-          cornerIcon: daiIcon,
-          itemValue: '+1 DAI',
-          itemImageRoundedSquare: true,
+        itemImageSource: poolTogetherLogo,
+        cornerIcon: daiIcon,
+        itemValue: '+1 DAI',
+        itemImageRoundedSquare: true,
       }}
     />
   ))
@@ -883,10 +883,10 @@ storiesOf('EventDetail', module)
       }}
       itemData={{
         label: 'Pool Together',
-          itemImageSource: poolTogetherLogo,
-          cornerIcon: usdcIcon,
-          itemValue: '- 1 USDC',
-          itemImageRoundedSquare: true,
+        itemImageSource: poolTogetherLogo,
+        cornerIcon: usdcIcon,
+        itemValue: '- 1 USDC',
+        itemImageRoundedSquare: true,
       }}
     />
   ));
