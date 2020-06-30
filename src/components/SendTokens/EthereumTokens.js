@@ -32,14 +32,11 @@ import { createStructuredSelector } from 'reselect';
 // components
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import Spinner from 'components/Spinner';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import { Spacing } from 'components/Layout';
-import { ValueSelectorCard } from 'components/ValueSelectorCard';
-import Selector from 'components/Selector';
 
 // utils
 import { formatAmount, formatFiat, resolveEnsName } from 'utils/common';
@@ -61,6 +58,7 @@ import { activeAccountAddressSelector } from 'selectors';
 import { contactsForSendFlowSelector } from 'selectors/contacts';
 import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { GasInfo } from 'models/GasInfo';
@@ -80,6 +78,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 import { isEnsName } from 'utils/validators';
 import { getAccountName } from 'utils/accounts';
+import SendContainer from 'containers/SendContainer';
 
 
 const SendTokenDetailsValue = styled(BaseText)`
@@ -97,11 +96,6 @@ const Btn = styled(Button)`
   justify-content: space-between;
 `;
 
-const FooterInner = styled.View`
-  align-items: center;
-  width: 100%;
-  padding: ${spacing.large}px;
-`;
 
 type Props = {
   receiver: string,
@@ -509,40 +503,6 @@ class SendEthereumTokens extends React.Component<Props, State> {
     return this.renderFeeToggle(showFee);
   };
 
-  renderFooter = ({ showFee, showTransactionSpeeds, showRelayerMigration }) => {
-    const {
-      submitPressed,
-      amount,
-      inputHasError,
-      gettingFee,
-      receiver,
-    } = this.state;
-    const { session } = this.props;
-    const showNextButton = !!amount && !!parseFloat(amount) && !!receiver && !inputHasError && !gettingFee;
-    const isNextButtonDisabled = gettingFee || !session.isOnline;
-
-    return (
-      <FooterInner>
-        {this.renderFee({
-          showTransactionSpeeds,
-          showRelayerMigration,
-          showFee,
-          isLoading: gettingFee && !!amount && !!parseFloat(amount) && !inputHasError,
-        })}
-        {showNextButton &&
-        <Button
-          disabled={isNextButtonDisabled}
-          title="Next"
-          onPress={this.handleFormSubmit}
-          block
-          isLoading={submitPressed}
-          marginTop={spacing.medium}
-        />
-        }
-      </FooterInner>
-    );
-  };
-
   render() {
     const {
       amount,
@@ -554,18 +514,18 @@ class SendEthereumTokens extends React.Component<Props, State> {
       showRelayerMigrationModal,
       assetData,
       selectedContact,
+      submitPressed,
+      receiver,
     } = this.state;
     const {
       balances,
-      rates,
       accountAssets,
       accountHistory,
       isGasTokenSupported,
       isSmartAccount,
       contacts,
       inactiveUserAccounts,
-      assetsWithBalance,
-      baseFiatCurrency,
+      session,
     } = this.props;
 
     const token = get(assetData, 'token');
@@ -581,35 +541,38 @@ class SendEthereumTokens extends React.Component<Props, State> {
     const showRelayerMigration = showFee && isSmartAccount && !isGasTokenSupported;
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
 
+    const showNextButton = !!amount && !!parseFloat(amount) && !!receiver && !inputHasError && !gettingFee;
+    const isNextButtonDisabled = gettingFee || !session.isOnline;
+
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Send' }] }}
-        footer={this.renderFooter({ showFee, showTransactionSpeeds, showRelayerMigration })}
-        minAvoidHeight={260}
+      <SendContainer
+        customSelectorProps={{
+          onOptionSelect: this.handleReceiverSelect,
+          options: contacts,
+          selectedOption: selectedContact,
+          horizontalOptionsData: [{ data: [...inactiveUserAccounts] }]
+        }}
+        customValueSelectorProps={{
+          getFormValue: this.handleAmountChange,
+          getError: this.manageFormErrorState,
+          txFeeInfo,
+          preselectedAsset: token,
+        }}
+        footerProps={{
+          disableNext: isNextButtonDisabled,
+          isNextButtonVisible: showNextButton,
+          buttonProps: {
+            onPress: this.handleFormSubmit,
+            isLoading: submitPressed,
+          },
+          footerTopAddon: this.renderFee({
+            showTransactionSpeeds,
+            showRelayerMigration,
+            showFee,
+            isLoading: gettingFee && !!amount && !!parseFloat(amount) && !inputHasError,
+          })
+        }}
       >
-        <Selector
-          label="To"
-          placeholder="Choose contact"
-          onOptionSelect={this.handleReceiverSelect}
-          options={contacts}
-          selectedOption={selectedContact}
-          horizontalOptionsData={[{ data: [...inactiveUserAccounts] }]}
-          wrapperStyle={{ marginTop: spacing.medium }}
-          noOptionImageFallback
-        />
-        <ValueSelectorCard
-          assets={assetsWithBalance}
-          balances={balances}
-          baseFiatCurrency={baseFiatCurrency}
-          rates={rates}
-          getFormValue={this.handleAmountChange}
-          getError={this.manageFormErrorState}
-          selectorModalTitle="Send"
-          maxLabel="Send max"
-          txFeeInfo={txFeeInfo}
-          preselectedAsset={token}
-          wrapperStyle={{ paddingTop: spacing.medium }}
-        />
         {showTransactionSpeeds &&
           <SlideModal
             isVisible={showTransactionSpeedModal}
@@ -629,7 +592,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
             accountHistory={accountHistory}
           />
         }
-      </ContainerWithHeader>
+      </SendContainer>
     );
   }
 }

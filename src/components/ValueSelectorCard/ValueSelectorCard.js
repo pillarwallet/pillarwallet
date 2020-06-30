@@ -42,22 +42,25 @@ import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser }
 import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
+import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 
-type Props = {
-  assets: Assets,
-  balances: Balances,
-  baseFiatCurrency: ?string,
+export type ExternalProps = {
   maxLabel?: string,
   preselectedAsset?: string,
-  rates: Rates,
   getFormValue: (?FormSelector) => void,
   txFeeInfo?: ?TransactionFeeInfo,
   selectorModalTitle?: string,
   getError?: (errorMessage: ?string) => void,
   wrapperStyle?: Object,
+}
+
+type Props = ExternalProps & {
+  assets: Assets,
+  balances: Balances,
+  baseFiatCurrency: ?string,
+  rates: Rates,
 };
 
 type FormValue = {
@@ -353,7 +356,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: visibleActiveAccountAssetsWithBalanceSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

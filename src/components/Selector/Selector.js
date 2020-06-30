@@ -30,14 +30,14 @@ import { spacing } from 'utils/variables';
 import type { HorizontalOption, Option } from 'models/Selector';
 
 
-type Props = {
+export type Props = {
   selectedOption?: ?Option,
-  onOptionSelect: (option: Option) => void,
+  onOptionSelect?: (option: Option) => void,
   onOptionImagePress?: (option: Option) => void,
   label?: string,
   placeholder?: string,
   optionsTitle?: string,
-  options: Option[],
+  options?: Option[],
   searchPlaceholder?: string,
   horizontalOptionsData?: HorizontalOption[],
   wrapperStyle?: Object,
@@ -70,7 +70,7 @@ class Selector extends React.Component<Props, State> {
 
   onOptionSelect = (option: Option) => {
     const { onOptionSelect } = this.props;
-    onOptionSelect(option);
+    if (onOptionSelect) onOptionSelect(option);
   };
 
   renderOption = (option: ?Option, onPress?: () => void) => {
@@ -110,7 +110,7 @@ class Selector extends React.Component<Props, State> {
     } = this.props;
     const { areOptionsVisible } = this.state;
     const hasValue = !isEmpty(selectedOption);
-    const hasOptions = !!options.length;
+    const hasOptions = !!options?.length;
     const placeholderText = hasOptions ? `${placeholder}...` : 'no options to select';
 
     return (
