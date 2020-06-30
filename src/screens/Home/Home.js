@@ -79,6 +79,7 @@ import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 import { combinedHistorySelector } from 'selectors/history';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 import { poolTogetherUserStatsSelector } from 'selectors/poolTogether';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -144,6 +145,7 @@ type Props = {
   isFetchingPoolStats: boolean,
   poolTogetherUserStats: Object[],
   fetchPoolStats: (string) => void,
+  isSmartWalletActive: boolean,
 };
 
 type State = {
@@ -250,6 +252,7 @@ class HomeScreen extends React.Component<Props, State> {
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
       fetchPoolStats,
+      isSmartWalletActive,
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
@@ -262,8 +265,10 @@ class HomeScreen extends React.Component<Props, State> {
     refreshBitcoinBalance();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
-    fetchPoolStats(DAI);
-    fetchPoolStats(USDC);
+    if (isSmartWalletActive) {
+      fetchPoolStats(DAI);
+      fetchPoolStats(USDC);
+    }
   };
 
   setActiveTab = (activeTab) => {
@@ -342,6 +347,7 @@ class HomeScreen extends React.Component<Props, State> {
       referFriendsOnHomeScreenDismissed,
       poolTogetherUserStats = [],
       isFetchingPoolStats,
+      isSmartWalletActive,
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
@@ -537,7 +543,7 @@ class HomeScreen extends React.Component<Props, State> {
                     onPress={toggleBadges}
                     open={!hideBadges}
                   />
-                  {!!hasPoolTickets &&
+                  {!!hasPoolTickets && !!isSmartWalletActive &&
                   <CollapsibleSection
                     label="PoolTogether savings game"
                     showLoadingSpinner={isFetchingPoolStats}
@@ -619,6 +625,7 @@ const structuredSelector = createStructuredSelector({
   history: combinedHistorySelector,
   openSeaTxHistory: combinedCollectiblesHistorySelector,
   poolTogetherUserStats: poolTogetherUserStatsSelector,
+  isSmartWalletActive: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

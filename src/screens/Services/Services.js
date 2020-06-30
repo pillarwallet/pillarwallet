@@ -23,6 +23,9 @@ import { FlatList, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import { createStructuredSelector } from 'reselect';
+import { withTheme } from 'styled-components/native';
+
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { EXCHANGE, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
@@ -30,11 +33,11 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
-import { withTheme } from 'styled-components/native';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import { spacing } from 'utils/variables';
 import { getMetaDataAction } from 'actions/exchangeActions';
 
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 type Props = {
   theme: Theme,
@@ -42,6 +45,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   getMetaData: () => void,
+  isSmartWalletActive: boolean,
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -57,7 +61,7 @@ class ServicesScreen extends React.Component<Props> {
 
   getServices = () => {
     const {
-      navigation, theme, baseFiatCurrency, providersMeta,
+      navigation, theme, baseFiatCurrency, providersMeta, isSmartWalletActive,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -103,8 +107,8 @@ class ServicesScreen extends React.Component<Props> {
         key: 'poolTogether',
         title: 'Pool Together savings game',
         body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
-        disabled: false,
-        label: 'soon',
+        disabled: !isSmartWalletActive,
+        hidden: !isSmartWalletActive,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       },
     ];
@@ -118,8 +122,12 @@ class ServicesScreen extends React.Component<Props> {
       disabled,
       label,
       labelBadge,
+      hidden = false,
     } = item;
 
+    if (hidden) {
+      return null;
+    }
     return (
       <ListCard
         title={title}
@@ -167,8 +175,17 @@ const mapStateToProps = ({
   baseFiatCurrency,
 });
 
+const structuredSelector = createStructuredSelector({
+  isSmartWalletActive: isActiveAccountSmartWalletSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getMetaData: () => dispatch(getMetaDataAction()),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ServicesScreen));
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));

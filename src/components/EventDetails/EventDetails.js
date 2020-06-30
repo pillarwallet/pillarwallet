@@ -908,6 +908,7 @@ export class EventDetail extends React.Component<Props, State> {
       bitcoinAddresses,
       bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
+      isSmartAccount,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -1038,27 +1039,29 @@ export class EventDetail extends React.Component<Props, State> {
       case POOLTOGETHER_DEPOSIT_TRANSACTION:
       case POOLTOGETHER_WITHDRAW_TRANSACTION: {
         const buttons = [];
-        const { extra: { symbol } } = event;
-        if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-          buttons.push({
-            title: 'Purchase more',
-            onPress: () => this.goToPoolTogetherPurcharse(symbol),
-            secondary: true,
-          });
-        } else {
-          buttons.push({
-            title: 'Withdraw more',
-            onPress: () => this.goToPoolTogetherWithdraw(symbol),
-            secondary: true,
-          });
+        if (isSmartAccount) {
+          const { extra: { symbol } } = event;
+          if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+            buttons.push({
+              title: 'Purchase more',
+              onPress: () => this.goToPoolTogetherPurcharse(symbol),
+              secondary: true,
+            });
+          } else {
+            buttons.push({
+              title: 'Withdraw more',
+              onPress: () => this.goToPoolTogetherWithdraw(symbol),
+              secondary: true,
+            });
+          }
+          buttons.push(
+            {
+              title: 'View pool',
+              onPress: () => this.goToPoolTogetherPool(symbol),
+              squarePrimary: true,
+            },
+          );
         }
-        buttons.push(
-          {
-            title: 'View pool',
-            onPress: () => this.goToPoolTogetherPool(symbol),
-            squarePrimary: true,
-          },
-        );
         eventData = {
           name: 'Pool Together',
           customActionTitle: this.renderPoolTogetherTickets(event),
