@@ -547,7 +547,7 @@ class HomeScreen extends React.Component<Props, State> {
                   {!isEmpty(depositedAssets) &&
                     <CollapsibleSection
                       label="Aave Deposits"
-                      labelRight={isFetchingDepositedAssets ? 'View all' : ''}
+                      labelRight={isFetchingDepositedAssets ? null : 'View all'}
                       showLoadingSpinner={isFetchingDepositedAssets}
                       onPressLabelRight={() => navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST)}
                       collapseContent={
