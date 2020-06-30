@@ -200,7 +200,7 @@ export const mapTransactionsHistoryWithAave = async (
   ) => {
     const { to, tag } = transaction;
 
-    // do not update
+    // do not update if already tagged
     if (isAaveTransactionTag(tag)) return transactions;
 
     if (addressesEqual(aaveLendingPoolContractAddress, to)) {

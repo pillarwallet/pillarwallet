@@ -481,7 +481,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       case AAVE_LENDING_DEPOSIT_TRANSACTION:
-        const depositDisplayValue = !isFailed ? this.getAaveDisplayAmount('-') : '';
+        const depositDisplayValue = this.getAaveDisplayAmount('-');
         data = {
           label: NAMES.AAVE_DEPOSIT,
           itemValue: depositDisplayValue,
@@ -491,12 +491,10 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemImageSource: aaveImage,
           itemImageRoundedSquare: true,
           iconImageSize: 52,
-          isFailed,
-          isReceived,
         };
         break;
       case AAVE_LENDING_WITHDRAW_TRANSACTION:
-        const withdrawDisplayValue = !isFailed ? this.getAaveDisplayAmount('+') : '';
+        const withdrawDisplayValue = this.getAaveDisplayAmount('+');
         data = {
           label: NAMES.AAVE_DEPOSIT,
           itemValue: withdrawDisplayValue,
@@ -506,8 +504,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemImageSource: aaveImage,
           itemImageRoundedSquare: true,
           iconImageSize: 52,
-          isFailed,
-          isReceived,
         };
         break;
       default:
