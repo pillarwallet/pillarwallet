@@ -256,6 +256,18 @@ export const toggleBadgesAction = () => {
   };
 };
 
+export const togglePoolTogetherAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hidePoolTogether } },
+    } = getState();
+    const newPoolTogetherState = !hidePoolTogether;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hidePoolTogether: newPoolTogetherState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hidePoolTogether: newPoolTogetherState } });
+  };
+};
+
 export const dismissConnectAppsIntroAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { hasDismissedConnectAppsIntro: true } }));

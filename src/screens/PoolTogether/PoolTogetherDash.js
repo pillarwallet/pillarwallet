@@ -90,6 +90,7 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   fetchPoolAllowanceStatus: (symbol: string) => void,
+  isFetchingPoolStats: boolean,
   theme: Theme,
 };
 
@@ -102,13 +103,20 @@ class PoolTogetherDash extends React.Component<Props, State> {
   isComponentMounted: boolean = false;
   scroll: Object;
 
-  state = {
-    activeTab: DAI,
-    ticketsCount: {
-      DAI: 0,
-      USDC: 0,
-    },
-  };
+  constructor(props) {
+    super(props);
+    const {
+      navigation,
+    } = this.props;
+    const symbol = navigation.getParam('symbol', DAI);
+    this.state = {
+      activeTab: symbol || DAI,
+      ticketsCount: {
+        DAI: 0,
+        USDC: 0,
+      },
+    };
+  }
 
   componentDidMount() {
     const {
@@ -154,6 +162,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
       fetchPoolStats,
       poolPrizeInfo,
       balances,
+      isFetchingPoolStats,
     } = this.props;
 
     const {
@@ -201,7 +210,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
         <ScrollWrapper
           refreshControl={
             <RefreshControl
-              refreshing={false}
+              refreshing={isFetchingPoolStats}
               onRefresh={() => {
                 fetchPoolStats(activeTab);
               }}
@@ -292,11 +301,12 @@ class PoolTogetherDash extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   accounts: { data: accounts },
-  poolTogether: { poolStats: poolPrizeInfo },
+  poolTogether: { poolStats: poolPrizeInfo, isFetchingPoolStats },
 }: RootReducerState): $Shape<Props> => ({
   session,
   accounts,
   poolPrizeInfo,
+  isFetchingPoolStats,
 });
 
 const structuredSelector = createStructuredSelector({

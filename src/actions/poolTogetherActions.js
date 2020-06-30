@@ -23,6 +23,7 @@ import {
   SET_EXECUTING_POOL_APPROVE,
   SET_DISMISS_POOL_APPROVE,
   SET_POOL_TOGETHER_ALLOWANCE,
+  SET_POOL_TOGETHER_FETCHING_STATS,
 } from 'constants/poolTogetherConstants';
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 
@@ -45,11 +46,19 @@ export const fetchPoolPrizeInfo = (symbol: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { poolTogether: { poolStats: currentPoolStats = {} } } = getState();
     const activeAccountAddress = activeAccountAddressSelector(getState());
+    dispatch({
+      type: SET_POOL_TOGETHER_FETCHING_STATS,
+      payload: true,
+    });
     const newPoolStats = await getPoolTogetherInfo(symbol, activeAccountAddress);
     const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
     dispatch({
       type: SET_POOL_TOGETHER_PRIZE_INFO,
       payload: updatedPoolStats,
+    });
+    dispatch({
+      type: SET_POOL_TOGETHER_FETCHING_STATS,
+      payload: false,
     });
   };
 };
