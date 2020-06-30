@@ -84,6 +84,11 @@ import {
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import {
+  POOLTOGETHER_WITHDRAW_TRANSACTION,
+  POOLTOGETHER_DEPOSIT_TRANSACTION,
+} from 'constants/poolTogetherConstants';
+import { DAI } from 'constants/assetsConstants';
 
 // selectors
 import { activeAccountAddressSelector, bitcoinAddressSelector } from 'selectors';
@@ -156,6 +161,8 @@ export type EventData = {
   collectibleUrl?: string,
   statusIconColor?: ?string,
   isFailed?: boolean,
+  itemImageRoundedSquare?: boolean,
+  cornerIcon?: string,
 };
 
 const NAMES = {
@@ -174,6 +181,10 @@ const STATUSES = {
   BACKUP: 'Backup secured',
   ACTIVATED: 'Activated',
 };
+
+const poolTogetherLogo = require('assets/images/pool_together.png');
+const daiIcon = require('assets/images/dai_color.png');
+const usdcIcon = require('assets/images/usdc_color.png');
 
 const ListWrapper = styled.View`
   align-items: flex-end;
@@ -466,6 +477,20 @@ export class ActivityFeedItem extends React.Component<Props> {
           actionLabel: 'Removed',
         };
         break;
+      case POOLTOGETHER_DEPOSIT_TRANSACTION:
+      case POOLTOGETHER_WITHDRAW_TRANSACTION: {
+        const { symbol, decimals, amount } = event.extra;
+        directionSymbol = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? '-' : '+';
+        data = {
+          label: 'Pool Together',
+          itemImageSource: poolTogetherLogo,
+          cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
+          itemValue: `${directionSymbol} ${parseFloat(formatUnits(amount, decimals))} ${symbol}`,
+          itemImageRoundedSquare: true,
+          valueColor: event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? 'text' : 'positive',
+        };
+        break;
+      }
       default:
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]

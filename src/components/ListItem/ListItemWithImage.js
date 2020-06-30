@@ -101,6 +101,8 @@ type Props = {
   iconImageResizeMode?: string,
   iconImageSize?: number,
   statusIconColor?: string,
+  itemImageRoundedSquare?: boolean,
+  cornerIcon?: string,
 }
 
 type AddonProps = {
@@ -322,6 +324,14 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
+const CornerIcon = styled(CachedImage)`
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
 const ImageWrapper = (props: ImageWrapperProps) => {
   const {
     children,
@@ -377,10 +387,13 @@ const ItemImage = (props: Props) => {
     collectibleUrl,
     iconImageResizeMode,
     iconImageSize,
+    itemImageRoundedSquare,
+    cornerIcon,
   } = props;
 
   let { fallbackSource } = props;
   if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
+  const roundedImageCustomBorderRadius = itemImageRoundedSquare && 13;
 
   if (iconName) {
     return (
@@ -426,7 +439,17 @@ const ItemImage = (props: Props) => {
   }
 
   if (itemImageSource) {
-    return (<TokenImage diameter={diameter} source={itemImageSource} fallbackSource={fallbackSource} />);
+    return (
+      <View>
+        <TokenImage
+          diameter={diameter}
+          source={itemImageSource}
+          fallbackSource={fallbackSource}
+          style={{ borderRadius: roundedImageCustomBorderRadius }}
+        />
+        {cornerIcon && <CornerIcon source={cornerIcon} />}
+      </View>
+    );
   }
 
   const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;

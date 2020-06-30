@@ -33,6 +33,10 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import {
+  POOLTOGETHER_WITHDRAW_TRANSACTION,
+  POOLTOGETHER_DEPOSIT_TRANSACTION,
+} from 'constants/poolTogetherConstants';
 
 
 const placeholderImage = 'https://picsum.photos/200';
@@ -126,6 +130,9 @@ const commonProps = {
 const keyWalletIcon = require('assets/icons/icon_key_wallet.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 const PPNIcon = require('assets/icons/icon_PPN.png');
+const poolTogetherLogo = require('assets/images/pool_together.png');
+const daiIcon = require('assets/images/dai_color.png');
+const usdcIcon = require('assets/images/usdc_color.png');
 
 const EventDetailsStoryItem = withTheme(EventDetailsClass);
 
@@ -801,5 +808,85 @@ storiesOf('EventDetail', module)
         iconColor: 'negative',
       }}
       assetDecimals={8}
+    />
+  ))
+  .add('PoolTogether Deposit DAI', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
+        hash: '0xHash',
+        extra: { symbol: 'DAI', decimals: 18, amount: '1000000000000000000' },
+      }}
+      itemData={{
+        label: 'Pool Together',
+          itemImageSource: poolTogetherLogo,
+          cornerIcon: daiIcon,
+          itemValue: '- 1 DAI',
+          itemImageRoundedSquare: true,
+      }}
+    />
+  ))
+  .add('PoolTogether Deposit USDC', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
+        hash: '0xHash',
+        extra: { symbol: 'USDC', decimals: 18, amount: '2000000000000000000' },
+      }}
+      itemData={{
+        label: 'Pool Together',
+          itemImageSource: poolTogetherLogo,
+          cornerIcon: usdcIcon,
+          itemValue: '-1 USDC',
+          itemImageRoundedSquare: true,
+      }}
+    />
+  ))
+  .add('PoolTogether Withdraw DAI', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
+        hash: '0xHash',
+        extra: { symbol: 'DAI', decimals: 18, amount: '1000000000000000000' },
+      }}
+      itemData={{
+        label: 'Pool Together',
+          itemImageSource: poolTogetherLogo,
+          cornerIcon: daiIcon,
+          itemValue: '+1 DAI',
+          itemImageRoundedSquare: true,
+      }}
+    />
+  ))
+  .add('PoolTogether Withdraw USDC', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
+        hash: '0xHash',
+        extra: { symbol: 'USDC', decimals: 18, amount: '2000000000000000000' },
+      }}
+      itemData={{
+        label: 'Pool Together',
+          itemImageSource: poolTogetherLogo,
+          cornerIcon: usdcIcon,
+          itemValue: '- 1 USDC',
+          itemImageRoundedSquare: true,
+      }}
     />
   ));
