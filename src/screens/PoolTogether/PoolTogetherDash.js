@@ -32,12 +32,14 @@ import { fetchPoolPrizeInfo, fetchPoolAllowanceStatusAction } from 'actions/pool
 // constants
 import { DAI, USDC } from 'constants/assetsConstants';
 import { POOLTOGETHER_PURCHASE, POOLTOGETHER_WITHDRAW } from 'constants/navigationConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 // components
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
 import CircleButton from 'components/CircleButton';
+import ActivityFeed from 'components/ActivityFeed';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -45,6 +47,7 @@ import type { Balances } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { ContactSmartAddressData } from 'models/Contacts';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -52,6 +55,8 @@ import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { fontSizes } from 'utils/variables';
+import { isPoolTogetherTag } from 'utils/poolTogether';
+import { mapTransactionsHistory } from 'utils/feedData';
 
 // local screen components
 import PoolCard from './PoolCard';
@@ -92,6 +97,9 @@ type Props = {
   fetchPoolAllowanceStatus: (symbol: string) => void,
   isFetchingPoolStats: boolean,
   theme: Theme,
+  contacts: Object[],
+  contactsSmartAddresses: ContactSmartAddressData[],
+  history: Object[],
 };
 
 type State = {
@@ -162,6 +170,10 @@ class PoolTogetherDash extends React.Component<Props, State> {
       fetchPoolStats,
       poolPrizeInfo,
       balances,
+      history,
+      accounts,
+      contacts,
+      contactsSmartAddresses,
       isFetchingPoolStats,
     } = this.props;
 
@@ -201,6 +213,17 @@ class PoolTogetherDash extends React.Component<Props, State> {
     if (userInfo) {
       userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
     }
+
+    const transactionsOnMainnet = mapTransactionsHistory(
+      history,
+      contacts,
+      contactsSmartAddresses,
+      accounts,
+      TRANSACTION_EVENT,
+    );
+
+    const relatedHistory = transactionsOnMainnet
+      .filter(ev => isPoolTogetherTag(ev.tag) && ev.extra.symbol === activeTab);
 
     return (
       <ContainerWithHeader
@@ -291,6 +314,16 @@ class PoolTogetherDash extends React.Component<Props, State> {
                 onTicketCountChange={this.onTicketCountChange}
               />
             }
+            {!!relatedHistory.length && (
+              <>
+                <ActivityFeed
+                  feedTitle="History"
+                  navigation={navigation}
+                  feedData={relatedHistory}
+                />
+                <Spacing h={50} />
+              </>
+            )}
           </ContentWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>
@@ -301,11 +334,14 @@ class PoolTogetherDash extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   accounts: { data: accounts },
+  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   poolTogether: { poolStats: poolPrizeInfo, isFetchingPoolStats },
 }: RootReducerState): $Shape<Props> => ({
   session,
   accounts,
   poolPrizeInfo,
+  contacts,
+  contactsSmartAddresses,
   isFetchingPoolStats,
 });
 
