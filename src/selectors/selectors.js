@@ -72,3 +72,6 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
 
 export const featureFlagsSelector = ({ featureFlags }: RootReducerState) => featureFlags.data;
+
+export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
+  get(poolTogether, 'poolStats', {});

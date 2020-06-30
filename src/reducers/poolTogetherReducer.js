@@ -22,6 +22,7 @@ import {
   SET_POOL_TOGETHER_ALLOWANCE,
   SET_EXECUTING_POOL_APPROVE,
   SET_DISMISS_POOL_APPROVE,
+  SET_POOL_TOGETHER_FETCHING_STATS,
 } from 'constants/poolTogetherConstants';
 
 import type { PoolPrizeInfo } from 'models/PoolTogether';
@@ -33,7 +34,8 @@ export type PoolTogetherReducerState = {
   },
   poolApproveExecuting: {
     [string]: string | boolean,
-  }
+  },
+  isFetchingPoolStats: boolean,
 }
 
 export type PoolTogetherReducerAction = {
@@ -68,6 +70,7 @@ const initialState = {
     DAI: false,
     USDC: false,
   },
+  isFetchingPoolStats: false,
 };
 
 export default function poolTogetherReducer(
@@ -84,6 +87,11 @@ export default function poolTogetherReducer(
       return {
         ...state,
         poolAllowance: action.payload,
+      };
+    case SET_POOL_TOGETHER_FETCHING_STATS:
+      return {
+        ...state,
+        isFetchingPoolStats: action.payload,
       };
     case SET_EXECUTING_POOL_APPROVE:
       return {
