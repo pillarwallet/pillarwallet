@@ -417,10 +417,10 @@ export async function calculateGasEstimate(transaction: Object) {
 }
 
 export const getContract = (
-  address,
-  abi,
+  address: string,
+  abi: string,
   // for wallet calls set wallet provider, for general purpose use default
-  provider = getEthereumProvider(NETWORK_PROVIDER),
+  provider: Object = getEthereumProvider(NETWORK_PROVIDER),
 ) => {
   try {
     return new Contract(address, abi, provider);

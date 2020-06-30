@@ -38,7 +38,7 @@ type Props = {
   collapseContent?: React.Node,
   sectionWrapperStyle?: Object,
   onAnimationEnd?: () => void,
-  labelRight?: string,
+  labelRight?: ?string,
   onPressLabelRight?: () => void,
   showLoadingSpinner?: boolean,
 };
@@ -98,7 +98,7 @@ const CollapsibleSection = (props: Props) => {
           {!!collapseContent && <ChevronIcon name="chevron-right" style={{ transform: [{ rotate }] }} />}
         </SectionHeaderPart>
         {showLoadingSpinner && <Spinner width={20} height={20} />}
-        {!showLoadingSpinner && labelRight && (
+        {!showLoadingSpinner && !!labelRight && (
           <SectionHeaderPart
             onPress={onPressLabelRight}
             style={{}}

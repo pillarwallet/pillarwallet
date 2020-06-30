@@ -92,7 +92,7 @@ class AaveService {
     ));
   }
 
-  async getAaveTokenAddress(assetAddress): Promise<?string> {
+  async getAaveTokenAddress(assetAddress: string): Promise<?string> {
     if (!this.aaveTokenAddresses[assetAddress]) {
       const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
       if (!lendingPoolCoreContract) return null;
@@ -101,7 +101,7 @@ class AaveService {
     return Promise.resolve(this.aaveTokenAddresses[assetAddress]);
   }
 
-  async getAaveTokenContractForAsset(assetAddress): Promise<?Object> {
+  async getAaveTokenContractForAsset(assetAddress: string): Promise<?Object> {
     if (!this.lendingPoolAddressesProvider) return null;
 
     const aaveTokenAddress = await this.getAaveTokenAddress(assetAddress);
@@ -121,10 +121,10 @@ class AaveService {
 
     await Promise.all(reserveAddresses.map((address) => this.getAaveTokenAddress(address)));
 
-    return Promise.resolve(Object.values(this.aaveTokenAddresses));
+    return Promise.resolve((Object.values(this.aaveTokenAddresses): any));
   }
 
-  async getSupportedDeposits(accountAssets: Asset[], supportedAssets: Asset[]): DepositableAsset[] {
+  async getSupportedDeposits(accountAssets: Asset[], supportedAssets: Asset[]): Promise<AssetToDeposit[]> {
     const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
     if (!lendingPoolCoreContract) return Promise.resolve([]);
 
@@ -155,7 +155,7 @@ class AaveService {
     }));
   }
 
-  async fetchAccountDepositedAsset(accountAddress: string, asset: Asset): Promise<?DepositedAsset> {
+  async fetchAccountDepositedAsset(accountAddress: string, asset: Asset): Promise<$Shape<DepositedAsset>> {
     const lendingPoolContract = await this.getLendingPoolContract();
     if (!lendingPoolContract) return Promise.resolve({});
 
@@ -188,7 +188,7 @@ class AaveService {
       earnedAmount,
       earningsPercentageGain,
       initialBalance,
-      aaveTokenAddress: aaveTokenContract.address,
+      aaveTokenAddress: aaveTokenContract?.address,
     });
   }
 
