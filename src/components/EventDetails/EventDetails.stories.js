@@ -104,6 +104,7 @@ const reduxData = {
   isPillarRewardCampaignActive: true,
   txNotes: [],
   collectiblesHistory: [],
+  isSmartAccount: true,
 };
 
 const actions = {
