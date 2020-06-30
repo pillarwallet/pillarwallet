@@ -52,7 +52,7 @@ export const getWinChance = (currentCount: number = 0, totalPoolTicketsCount: nu
   return (currentCount * 100) / (totalPoolTicketsCount > 0 ? totalPoolTicketsCount : 1); // win chance in %
 };
 
-const isPoolTogetherTag = (tag: ?string) => {
+export const isPoolTogetherTag = (tag: ?string) => {
   return tag && (tag === POOLTOGETHER_WITHDRAW_TRANSACTION || tag === POOLTOGETHER_DEPOSIT_TRANSACTION);
 };
 
