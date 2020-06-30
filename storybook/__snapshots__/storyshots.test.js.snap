@@ -488,7 +488,7 @@ exports[`Storyshots ActionModal default 1`] = `
                     ]
                   }
                 >
-                  
+
                 </Text>
               </View>
             </View>
@@ -17667,7 +17667,7 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
           }
         }
       >
-        Activate
+        Top up
       </Text>
     </View>
     <View
@@ -18972,9 +18972,9 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
           ]
         }
       >
-        - 
+        -
         1
-         
+
         PLR
       </Text>
     </View>
@@ -19093,9 +19093,9 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
           ]
         }
       >
-        - 
+        -
         2
-         
+
         ETH
       </Text>
     </View>
@@ -19162,9 +19162,9 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
             ]
           }
         >
-          + 
+          +
           1.0
-           
+
           PLR
         </Text>
         <Text
@@ -19183,9 +19183,9 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
             ]
           }
         >
-          + 
+          +
           2.0
-           
+
           ETH
         </Text>
       </View>
@@ -29281,11 +29281,12 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
         Object {
           "alignItems": "center",
           "alignSelf": "auto",
-          "backgroundColor": "#e6f1f9",
-          "borderColor": "#EDEDED",
+          "backgroundColor": "#007AFF",
+          "borderColor": "#007AFF",
           "borderRadius": 6,
           "borderStyle": "solid",
           "borderWidth": 0,
+          "elevation": 1,
           "flexDirection": "row",
           "height": 48,
           "justifyContent": "center",
@@ -29298,6 +29299,9 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
           "paddingLeft": 19,
           "paddingRight": 19,
           "paddingTop": 0,
+          "shadowColor": "rgba(0,0,0,.12)",
+          "shadowOffset": Object {
+            "height": 2,
           "width": "auto",
         }
       }
@@ -29389,42 +29393,8 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
             "height": 4,
             "width": 0,
           },
-          undefined,
-        ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "alignSelf": "auto",
-          "backgroundColor": "transparent",
-          "borderColor": "transparent",
-          "borderRadius": 6,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "flexDirection": "column",
-          "height": 48,
-          "justifyContent": "center",
-          "marginBottom": 0,
-          "marginLeft": 0,
-          "marginRight": 0,
-          "marginTop": 0,
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 19,
-          "paddingRight": 19,
-          "paddingTop": 0,
+          "shadowOpacity": 1,
+          "shadowRadius": 7,
           "width": "auto",
         }
       }
@@ -29432,10 +29402,8 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
       <Text
         customTheme={
           Object {
-            "borderRadius": 0,
             "borderWidth": 0,
-            "flexDirection": "column",
-            "iconHorizontalMargin": 0,
+            "shadow": true,
           }
         }
         style={
@@ -29449,7 +29417,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
             },
             Array [
               Object {
-                "color": "#007AFF",
+                "color": "#FCFDFF",
                 "fontSize": 18,
                 "lineHeight": 18,
                 "marginBottom": 0,
@@ -29469,7 +29437,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
               "bitcoinWallet": "#F79319",
-              "border": "transparent",
+              "border": "#007AFF",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
               "control": "#FCFDFF",
@@ -29495,10 +29463,10 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
               "smartWallet": "#3C71FE",
               "smartWalletSurface": "#f3f7ff",
               "smartWalletText": "#1D24D8",
-              "surface": "transparent",
+              "surface": "#007AFF",
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
-              "text": "#007AFF",
+              "text": "#FCFDFF",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -29507,7 +29475,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
           }
         }
       >
-        Top Up
+        Activate
       </Text>
     </View>
     <View
@@ -30908,7 +30876,7 @@ Array [
                       ]
                     }
                   >
-                    
+
                   </Text>
                 </View>
               </View>
