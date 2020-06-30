@@ -204,12 +204,15 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
         const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
         const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
         const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+        const tokenValueInFiat = formatFiat(tokenValue * getRate(rates, poolToken, fiatCurrency), fiatCurrency);
+
         const withdrawPayload = {
           transactionPayload,
           feeInFiat,
           feeSymbol,
           feeDisplayValue,
           isDisabled,
+          tokenValueInFiat,
         };
         this.setState({ withdrawPayload });
       });

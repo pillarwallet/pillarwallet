@@ -81,11 +81,13 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,
+  user: Object,
 };
 
 type State = {
   poolToken: string,
   tokenValue: number,
+  tokenValueInFiat: string,
   transactionPayload: Object,
   feeInFiat: string,
   feeDisplayValue: string,
@@ -103,6 +105,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
+      tokenValueInFiat,
       transactionPayload,
       feeInFiat,
       feeDisplayValue,
@@ -112,6 +115,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
     this.state = {
       poolToken,
       tokenValue,
+      tokenValueInFiat,
       transactionPayload,
       feeInFiat,
       feeDisplayValue,
@@ -143,11 +147,13 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
   render() {
     const {
       fetchPoolStats,
+      user,
     } = this.props;
 
     const {
       poolToken,
       tokenValue,
+      tokenValueInFiat,
       feeDisplayValue,
       feeInFiat,
       isDisabled,
@@ -171,11 +177,11 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
         >
           <ContentWrapper>
             <PoolTogetherWithdrawScheme
-              fromValue={tokenValue}
-              fromAssetCode={tokenValue === 1 ? 'ticket' : 'tickets'}
               toValue={tokenValue}
+              toValueInFiat={tokenValueInFiat}
               toAssetCode={poolToken}
               imageSource={poolTogetherLogo}
+              user={user}
             />
             <ContentRow style={{ paddingTop: 64 }}>
               <Text label>{`Fee ${feeDisplayValue} (${feeInFiat})`}</Text>
@@ -199,8 +205,10 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   session: { data: session },
+  user: { data: user },
 }: RootReducerState): $Shape<Props> => ({
   session,
+  user,
 });
 
 const structuredSelector = createStructuredSelector({
