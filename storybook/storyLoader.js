@@ -16,7 +16,7 @@ const stories = [
 	'../src/components/ActivityFeed/ActivityFeedItem.stories',
 	'../src/components/EventDetails/EventDetails.stories',
 	'../src/components/InsightWithButton/InsightWithButton.stories',
-	'../src/components/SWActivationCard/SWActivationCard.stories'
+	'../src/components/SWActivationCard/SWActivationCard.stories',
 ];
 
 module.exports = {

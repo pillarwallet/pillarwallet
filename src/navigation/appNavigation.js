@@ -405,6 +405,11 @@ const homeFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -113,7 +113,11 @@ import {
   TANK_WITHDRAWAL_FLOW,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   CONTACT,
+  POOLTOGETHER_DASHBOARD,
+  POOLTOGETHER_PURCHASE,
+  POOLTOGETHER_WITHDRAW,
 } from 'constants/navigationConstants';
+import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
 
 // selectors
 import {
@@ -325,6 +329,18 @@ const ErrorMessage = styled(BaseText)`
   margin-bottom: ${spacing.large}px;
   width: 100%;
   text-align: center;
+`;
+
+const PoolTogetherTicketsWrapper = styled.View`
+  align-items: center;
+`;
+
+const CornerIcon = styled(CachedImage)`
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 0;
+  right: 0;
 `;
 
 
@@ -676,6 +692,24 @@ export class EventDetail extends React.Component<Props, State> {
     }
   };
 
+  goToPoolTogetherPurcharse = () => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(POOLTOGETHER_PURCHASE);
+  }
+
+  goToPoolTogetherWithdraw = () => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(POOLTOGETHER_WITHDRAW);
+  }
+
+  goToPoolTogetherPool = () => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(POOLTOGETHER_DASHBOARD);
+  }
+
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return 'Refer friends';
@@ -693,6 +727,24 @@ export class EventDetail extends React.Component<Props, State> {
     }
     return transactionNote;
   };
+
+  renderPoolTogetherTickets = (event: Object) => {
+    const { symbol, amount, decimals } = event.extra;
+    const formattedAmount = parseFloat(formatUnits(amount, decimals));
+    const directionSymbol = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? '-' : '+';
+    const amountText = `${directionSymbol} ${formattedAmount} ${symbol}`;
+    const ticketsText = `(${formattedAmount} ticket${formattedAmount === 1 ? '' : 's'})`;
+    const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
+    const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? 'Purcharse' : 'Withdraw';
+
+    return (
+      <PoolTogetherTicketsWrapper>
+        <BaseText secondary regular>{title}</BaseText>
+        <MediumText large color={this.getColor(amountTextColor)}>{amountText}</MediumText>
+        <BaseText secondary medium>{ticketsText}</BaseText>
+      </PoolTogetherTicketsWrapper>
+    );
+  }
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
@@ -939,6 +991,36 @@ export class EventDetail extends React.Component<Props, State> {
           ],
         };
         break;
+      case POOLTOGETHER_DEPOSIT_TRANSACTION:
+      case POOLTOGETHER_WITHDRAW_TRANSACTION: {
+        const buttons = [];
+        if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+          buttons.push({
+            title: 'Purchase more',
+            onPress: this.goToPoolTogetherPurcharse,
+            secondary: true,
+          });
+        } else {
+          buttons.push({
+            title: 'Withdraw more',
+            onPress: this.goToPoolTogetherWithdraw,
+            secondary: true,
+          });
+        }
+        buttons.push(
+          {
+            title: 'View pool',
+            onPress: this.goToPoolTogetherPool,
+            squarePrimary: true,
+          },
+        );
+        eventData = {
+          name: 'Pool Together',
+          customActionTitle: this.renderPoolTogetherTickets(event),
+          buttons,
+        };
+        break;
+      }
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
@@ -1273,7 +1355,10 @@ export class EventDetail extends React.Component<Props, State> {
       iconBackgroundColor,
       iconBorder,
       collectibleUrl,
+      itemImageRoundedSquare,
+      cornerIcon,
     } = itemData;
+    const borderRadius = itemImageRoundedSquare && 13;
 
     const { genericToken: fallbackSource } = images(theme);
     if (itemImageUrl) {
@@ -1284,7 +1369,12 @@ export class EventDetail extends React.Component<Props, State> {
       );
     }
     if (itemImageSource) {
-      return <TokenImage source={itemImageSource} />;
+      return (
+        <View>
+          <TokenImage style={{ borderRadius }} source={itemImageSource} />
+          <CornerIcon source={cornerIcon} />
+        </View>
+      );
     }
     if (iconName) {
       return (
