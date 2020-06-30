@@ -21,13 +21,17 @@
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { createSelector } from 'reselect';
+import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { images } from 'utils/images';
+import { getThemeByType } from 'utils/themes';
 import {
   accountsSelector,
   activeAccountSelector,
   activeBlockchainSelector,
   bitcoinAddressSelector,
-  featureFlagsSelector,
+  featureFlagsSelector, themeSelector,
 } from './selectors';
+
 
 const isBitcoinNetwork = (network: string): boolean => {
   return network === BLOCKCHAIN_NETWORK_TYPES.BITCOIN;
@@ -75,5 +79,26 @@ export const availableWalletsSelector = createSelector(
       availableWallets.push(getBitcoinObject(bitcoinAddresses[0].address, isBitcoinActive));
     }
     return availableWallets;
+  },
+);
+
+export const innactiveUserWalletForSendSellector = createSelector(
+  accountsSelector, themeSelector, (accounts, themeType) => {
+    return getInactiveUserAccounts(accounts).map(account => {
+      const accountName = getAccountName(account.type);
+      const theme = getThemeByType(themeType);
+      const { smartWalletIcon } = images(theme);
+      const { keyWalletIcon } = images(theme);
+      const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
+
+      return {
+        ...account,
+        ethAddress: getAccountAddress(account),
+        username: accountName,
+        name: accountName,
+        isUserAccount: true,
+        imageSource: walletIcon,
+      };
+    });
   },
 );

@@ -20,8 +20,11 @@
 
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
+import type { Assets, Balance, Rates } from 'models/Asset';
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
+import { getAssetData, getAssetsAsList, getBalance } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import {
   assetsSelector,
@@ -29,6 +32,9 @@ import {
   hiddenAssetsSelector,
   supportedAssetsSelector,
   accountsSelector,
+  ratesSelector,
+  balancesSelector,
+  baseFiatCurrencySelector,
 } from './selectors';
 
 
@@ -93,5 +99,41 @@ export const assetDecimalsSelector = (assetSelector: (state: Object, props: Obje
   (assets, supportedAssets, asset) => {
     const { decimals = 18 } = getAssetData(getAssetsAsList(assets), supportedAssets, asset);
     return decimals;
+  },
+);
+
+export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
+  activeAccountIdSelector,
+  balancesSelector,
+  ratesSelector,
+  baseFiatCurrencySelector,
+  accountAssetsSelector,
+  (activeAccountId: string, balances: Balance, rates: Rates, baseFiatCurrency: ?string, assets: Assets) => {
+    if (!activeAccountId || !balances || !assets) return {};
+    const activeAccountBalance = balances[activeAccountId] || {};
+
+    return Object.keys(assets).reduce((assetsWithBalance, symbol) => {
+      const relatedAsset = assets[symbol];
+      const assetBalance = getBalance(activeAccountBalance, symbol);
+      if (assetBalance) {
+        const { iconUrl, address } = relatedAsset;
+        const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+
+        assetsWithBalance[symbol] = {
+          imageUrl,
+          formattedBalanceInFiat,
+          balance: !!formattedBalanceInFiat && {
+            balance: assetBalance,
+            value: formattedBalanceInFiat,
+            token: symbol,
+          },
+          token: symbol,
+          contractAddress: address,
+          ...relatedAsset,
+        };
+      }
+      return assetsWithBalance;
+    }, {});
   },
 );

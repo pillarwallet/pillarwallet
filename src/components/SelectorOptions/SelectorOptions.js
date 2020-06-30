@@ -228,7 +228,6 @@ class SelectorOptions extends React.Component<Props, State> {
       name,
       imageUrl,
       imageSource,
-      customProps = {},
     } = option;
 
     return (
@@ -238,7 +237,7 @@ class SelectorOptions extends React.Component<Props, State> {
         itemImageUrl={imageUrl}
         iconSource={imageSource}
         fallbackToGenericToken
-        {...customProps}
+        {...option}
       />
     );
   };

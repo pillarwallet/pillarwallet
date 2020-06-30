@@ -26987,10 +26987,10 @@ exports[`Storyshots Selector default 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "justifyContent": "space-between",
-          "paddingBottom": 0,
+          "paddingBottom": 24,
           "paddingLeft": 16,
           "paddingRight": 16,
-          "paddingTop": 0,
+          "paddingTop": 24,
           "width": "100%",
         },
         undefined,
@@ -27071,8 +27071,7 @@ exports[`Storyshots Selector default 1`] = `
           ]
         }
       >
-        Choose option
-        ...
+        Choose option...
       </Text>
     </View>
   </View>
@@ -28312,10 +28311,10 @@ exports[`Storyshots Selector no options 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "justifyContent": "space-between",
-          "paddingBottom": 0,
+          "paddingBottom": 24,
           "paddingLeft": 16,
           "paddingRight": 16,
-          "paddingTop": 0,
+          "paddingTop": 24,
           "width": "100%",
         },
         undefined,
@@ -28396,8 +28395,7 @@ exports[`Storyshots Selector no options 1`] = `
           ]
         }
       >
-        Choose option
-        ...
+        no options to select
       </Text>
     </View>
   </View>
@@ -29288,10 +29286,10 @@ exports[`Storyshots Selector selected option 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "justifyContent": "space-between",
-          "paddingBottom": 0,
+          "paddingBottom": 24,
           "paddingLeft": 16,
           "paddingRight": 16,
-          "paddingTop": 0,
+          "paddingTop": 24,
           "width": "100%",
         },
         undefined,
@@ -29359,7 +29357,7 @@ exports[`Storyshots Selector selected option 1`] = `
       >
         <View
           accessible={true}
-          focusable={false}
+          focusable={true}
           isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
@@ -30782,10 +30780,10 @@ exports[`Storyshots Selector with custom wording 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "justifyContent": "space-between",
-          "paddingBottom": 0,
+          "paddingBottom": 24,
           "paddingLeft": 16,
           "paddingRight": 16,
-          "paddingTop": 0,
+          "paddingTop": 24,
           "width": "100%",
         },
         undefined,
@@ -30866,8 +30864,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
           ]
         }
       >
-        Choose contact
-        ...
+        Choose contact...
       </Text>
     </View>
   </View>
@@ -32107,10 +32104,10 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "justifyContent": "space-between",
-          "paddingBottom": 0,
+          "paddingBottom": 24,
           "paddingLeft": 16,
           "paddingRight": 16,
-          "paddingTop": 0,
+          "paddingTop": 24,
           "width": "100%",
         },
         undefined,
@@ -32191,8 +32188,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           ]
         }
       >
-        Choose option
-        ...
+        Choose option...
       </Text>
     </View>
   </View>
@@ -33722,7 +33718,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
   >
     <View
       accessible={true}
-      borderRadius={6}
+      borderRadius={10}
       focusable={false}
       onClick={[Function]}
       onResponderGrant={[Function]}
@@ -33736,7 +33732,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
         Array [
           Object {
             "backgroundColor": "#FFFFFF",
-            "borderRadius": 6,
+            "borderRadius": 10,
             "flexDirection": "column",
             "justifyContent": "flex-start",
             "opacity": 1,
@@ -33772,81 +33768,12 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
               style={
                 Object {
                   "flexDirection": "column",
-                  "paddingBottom": 10,
+                  "paddingBottom": 0,
+                  "paddingTop": 4,
                   "width": "100%",
                 }
               }
             >
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "justifyContent": "flex-end",
-                    "marginBottom": 16,
-                    "minHeight": 22,
-                    "width": "100%",
-                  }
-                }
-              >
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                    }
-                  }
-                >
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "alignItems": "center",
-                          "alignSelf": "center",
-                          "flexDirection": "row",
-                          "marginBottom": 0,
-                          "marginLeft": 0,
-                          "marginRight": 0,
-                          "marginTop": 0,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <Text
-                      fontSize={14}
-                      style={
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Regular",
-                            "fontSize": 14,
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "color": "#007aff",
-                              "fontSize": 14,
-                            },
-                            undefined,
-                          ],
-                        ]
-                      }
-                    >
-                      Use Max
-                    </Text>
-                  </View>
-                </View>
-              </View>
               <View
                 error={false}
                 style={
@@ -33992,7 +33919,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                         Object {
                           "alignItems": "center",
                           "marginBottom": 16,
-                          "minHeight": 22,
                         }
                       }
                       keyboardAppearance="light"
@@ -34008,7 +33934,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       placeholderSelector="select"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
-                      rightLabel="Use Max"
+                      rightLabel=""
                       selectorValue={
                         Object {
                           "input": "",
@@ -35375,7 +35301,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
   >
     <View
       accessible={true}
-      borderRadius={6}
+      borderRadius={10}
       focusable={false}
       onClick={[Function]}
       onResponderGrant={[Function]}
@@ -35389,7 +35315,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
         Array [
           Object {
             "backgroundColor": "#FFFFFF",
-            "borderRadius": 6,
+            "borderRadius": 10,
             "flexDirection": "column",
             "justifyContent": "flex-start",
             "opacity": 1,
@@ -35425,7 +35351,8 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
               style={
                 Object {
                   "flexDirection": "column",
-                  "paddingBottom": 10,
+                  "paddingBottom": 0,
+                  "paddingTop": 4,
                   "width": "100%",
                 }
               }
@@ -35437,7 +35364,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                     "flexDirection": "row",
                     "justifyContent": "space-between",
                     "marginBottom": 16,
-                    "minHeight": 22,
                     "width": "100%",
                   }
                 }
@@ -35694,7 +35620,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                         Object {
                           "alignItems": "center",
                           "marginBottom": 16,
-                          "minHeight": 22,
                         }
                       }
                       keyboardAppearance="light"
@@ -37102,7 +37027,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
   >
     <View
       accessible={true}
-      borderRadius={6}
+      borderRadius={10}
       focusable={false}
       onClick={[Function]}
       onResponderGrant={[Function]}
@@ -37116,7 +37041,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
         Array [
           Object {
             "backgroundColor": "#FFFFFF",
-            "borderRadius": 6,
+            "borderRadius": 10,
             "flexDirection": "column",
             "justifyContent": "flex-start",
             "opacity": 1,
@@ -37152,81 +37077,12 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
               style={
                 Object {
                   "flexDirection": "column",
-                  "paddingBottom": 10,
+                  "paddingBottom": 0,
+                  "paddingTop": 4,
                   "width": "100%",
                 }
               }
             >
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "justifyContent": "flex-end",
-                    "marginBottom": 16,
-                    "minHeight": 22,
-                    "width": "100%",
-                  }
-                }
-              >
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                    }
-                  }
-                >
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "alignItems": "center",
-                          "alignSelf": "center",
-                          "flexDirection": "row",
-                          "marginBottom": 0,
-                          "marginLeft": 0,
-                          "marginRight": 0,
-                          "marginTop": 0,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <Text
-                      fontSize={14}
-                      style={
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Regular",
-                            "fontSize": 14,
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "color": "#007aff",
-                              "fontSize": 14,
-                            },
-                            undefined,
-                          ],
-                        ]
-                      }
-                    >
-                      Max
-                    </Text>
-                  </View>
-                </View>
-              </View>
               <View
                 error={false}
                 style={
@@ -37372,7 +37228,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                         Object {
                           "alignItems": "center",
                           "marginBottom": 16,
-                          "minHeight": 22,
                         }
                       }
                       keyboardAppearance="light"
@@ -37388,7 +37243,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       placeholderSelector="select"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
-                      rightLabel="Max"
+                      rightLabel=""
                       selectorValue={
                         Object {
                           "input": "",

@@ -563,7 +563,6 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
         </InputFooter>}
-
         <SelectorOptions
           isVisible={showOptionsSelector}
           onHide={this.closeSelector}

@@ -27,20 +27,20 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SelectorOptions from 'components/SelectorOptions';
 
 import { spacing } from 'utils/variables';
-import { noop } from 'utils/common';
 import type { HorizontalOption, Option } from 'models/Selector';
 
 
 type Props = {
-  selectedOption?: Option,
+  selectedOption?: ?Option,
   onOptionSelect: (option: Option) => void,
   onOptionImagePress?: (option: Option) => void,
   label?: string,
   placeholder?: string,
   optionsTitle?: string,
-  options?: Option[],
+  options: Option[],
   searchPlaceholder?: string,
   horizontalOptionsData?: HorizontalOption[],
+  wrapperStyle?: Object,
 };
 type State = {
   areOptionsVisible: boolean,
@@ -51,7 +51,7 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0 ${spacing.layoutSides}px;
+  padding: 24px ${spacing.layoutSides}px;
 `;
 
 const SelectedOption = styled.TouchableOpacity`
@@ -72,19 +72,24 @@ class Selector extends React.Component<Props, State> {
     onOptionSelect(option);
   };
 
-
-  renderOption = (option?: Option, onPress?: () => void) => {
+  renderOption = (option: ?Option, onPress?: () => void) => {
     if (!option) return null;
     const { onOptionImagePress } = this.props;
-    const { name, imageUrl, lastUpdateTime } = option;
+    const {
+      name,
+      imageUrl,
+      lastUpdateTime,
+      imageSource,
+    } = option;
 
     return (
       <ListItemWithImage
         label={name}
         onPress={onPress}
         avatarUrl={imageUrl}
-        navigateToProfile={onOptionImagePress ? () => onOptionImagePress(option) : noop}
+        navigateToProfile={onOptionImagePress ? () => onOptionImagePress(option) : onPress}
         imageUpdateTimeStamp={lastUpdateTime}
+        itemImageSource={imageSource}
       />
     );
   };
@@ -98,18 +103,21 @@ class Selector extends React.Component<Props, State> {
       searchPlaceholder = 'Search',
       selectedOption,
       horizontalOptionsData,
+      wrapperStyle,
     } = this.props;
     const { areOptionsVisible } = this.state;
     const hasValue = !isEmpty(selectedOption);
+    const hasOptions = !!options.length;
+    const placeholderText = hasOptions ? `${placeholder}...` : 'no options to select';
 
     return (
       <>
-        <Wrapper>
+        <Wrapper style={wrapperStyle}>
           <MediumText regular accent>{label}: </MediumText>
-          <SelectedOption onPress={this.toggleOptions}>
+          <SelectedOption onPress={this.toggleOptions} disabled={!hasOptions}>
             {hasValue
-              ? this.renderOption(selectedOption)
-              : <MediumText big style={{ paddingHorizontal: spacing.layoutSides }}>{placeholder}...</MediumText>}
+              ? this.renderOption(selectedOption, this.toggleOptions)
+              : <MediumText big style={{ paddingHorizontal: spacing.layoutSides }}>{placeholderText}</MediumText>}
           </SelectedOption>
         </Wrapper>
         <SelectorOptions

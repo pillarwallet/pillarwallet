@@ -55,6 +55,8 @@ type Props = {
   rates: Rates,
   getFormValue: (?FormSelector) => void,
   txFeeInfo?: ?TransactionFeeInfo,
+  selectorModalTitle?: string,
+  getError?: (errorMessage: ?string) => void,
 };
 
 type FormValue = {
@@ -113,11 +115,10 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               options: [],
               placeholderSelector: 'select',
               placeholderInput: '0',
-              inputWrapperStyle: { width: '100%' },
+              inputWrapperStyle: { width: '100%', paddingTop: 4, paddingBottom: 0 },
               rightLabel: '',
               customInputHeight: 56,
-              selectorModalTitle: 'Select',
-              inputHeaderStyle: { marginBottom: 16, alignItems: 'center', minHeight: 22 },
+              inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
               onPressRightLabel: this.handleUseMax,
             },
             transformer: {
@@ -143,6 +144,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       rates,
       maxLabel,
       preselectedAsset,
+      selectorModalTitle,
     } = this.props;
     const { formOptions, value } = this.state;
 
@@ -176,14 +178,16 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     const pickedAsset = preselectedOption || singleOption || {};
     newValue.formSelector.selector = pickedAsset;
     const { symbol } = pickedAsset;
+    const label = maxLabel || 'Max';
 
     const newOptions = t.update(formOptions, {
       fields: {
         formSelector: {
           config: {
             options: { $set: assetsOptions },
-            rightLabel: { $set: maxLabel || 'Max' },
+            rightLabel: { $set: !isEmpty(pickedAsset) ? label : '' },
             customLabel: { $set: this.renderCustomLabel(symbol) },
+            selectorModalTitle: { $set: selectorModalTitle || 'Select' },
           },
         },
       },
@@ -206,11 +210,18 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   };
 
   handleFromChange = (value: FormValue) => {
-    const { getFormValue, baseFiatCurrency, rates } = this.props;
+    const {
+      getFormValue,
+      baseFiatCurrency,
+      rates,
+      maxLabel,
+      getError,
+    } = this.props;
     const { errorMessage, formOptions } = this.state;
     const formValue = this.form.getValue();
     const validation = this.form.validate();
     const currentErrorMessage = get(validation, 'errors[0].message', '');
+    if (getError) getError(currentErrorMessage);
 
     const stateUpdates = {};
     stateUpdates.value = value;
@@ -228,6 +239,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       const totalInFiat = parseFloat(amount) * getRate(rates, symbol, fiatCurrency);
       valueInFiat = symbol ? formatFiat(totalInFiat, baseFiatCurrency) : null;
     }
+    const label = maxLabel || 'Max';
 
     const newOptions = t.update(formOptions, {
       fields: {
@@ -235,6 +247,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             inputAddonText: { $set: valueInFiat },
             customLabel: { $set: this.renderCustomLabel(formSelector?.selector?.symbol) },
+            rightLabel: { $set: formSelector ? label : '' },
           },
         },
       },
@@ -272,6 +285,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
   handleUseMax = () => {
     const { value, formOptions } = this.state;
+    const { getFormValue } = this.props;
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
     const newValue = { ...value };
@@ -288,6 +302,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     });
 
     this.setState({ value: newValue, formOptions: newOptions });
+    getFormValue(newValue.formSelector);
   };
 
   render() {
@@ -300,6 +315,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         <ShadowedCard
           wrapperStyle={{ marginBottom: 10, width: '100%' }}
           contentWrapperStyle={{ padding: 20, paddingTop: 16 }}
+          borderRadius={10}
         >
           <FormWrapper>
             <Form

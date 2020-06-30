@@ -18,16 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type Option = {
-  name: string,
-  value: string,
-  imageUrl?: string,
-  lastUpdateTime?: string,
-  imageSource?: string,
-  ethAddress?: string,
-};
+import { createSelector } from 'reselect';
+import { contactsSelector } from './selectors';
 
-export type HorizontalOption = {
-  title?: string,
-  data: Option[],
-};
+export const contactsForSendFlowSelector = createSelector(contactsSelector, (contacts) => {
+  return contacts.map((contact) => {
+    const {
+      username,
+      profileImage,
+      updatedAt,
+      ethAddress,
+    } = contact;
+
+    return {
+      name: username,
+      value: ethAddress,
+      imageUrl: profileImage,
+      lastUpdateTime: updatedAt,
+      ...contact,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+});
