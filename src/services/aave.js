@@ -54,31 +54,41 @@ class AaveService {
     );
   }
 
-  async getLendingPoolCoreContract(provider?: Object): Promise<?Object> {
-    if (!this.lendingPoolAddressesProvider) return null;
+  async getLendingPoolCoreAddress(): Promise<string> {
+    if (!this.lendingPoolAddressesProvider) return '';
 
     if (!this.lendingPoolCoreAddress) {
       this.lendingPoolCoreAddress = await this.lendingPoolAddressesProvider.getLendingPoolCore();
     }
 
+    return this.lendingPoolCoreAddress;
+  }
+
+  async getLendingPoolCoreContract(): Promise<Object> {
+    const lendingPoolCoreAddress = await this.getLendingPoolCoreAddress();
+
     return Promise.resolve(getContract(
-      this.lendingPoolCoreAddress,
+      lendingPoolCoreAddress,
       AAVE_LENDING_POOL_CORE_CONTRACT_ABI,
-      provider,
     ));
   }
 
-  async getLendingPoolContract(provider?): Promise<?Object> {
-    if (!this.lendingPoolAddressesProvider) return null;
+  async getLendingPoolAddress(): Promise<string> {
+    if (!this.lendingPoolAddressesProvider) return '';
 
     if (!this.lendingPoolAddress) {
       this.lendingPoolAddress = await this.lendingPoolAddressesProvider.getLendingPool();
     }
 
+    return this.lendingPoolAddress;
+  }
+
+  async getLendingPoolContract(): Promise<Object> {
+    const lendingPoolAddress = await this.getLendingPoolAddress();
+
     return Promise.resolve(getContract(
-      this.lendingPoolAddress,
+      lendingPoolAddress,
       AAVE_LENDING_POOL_CONTRACT_ABI,
-      provider,
     ));
   }
 
@@ -91,7 +101,7 @@ class AaveService {
     return Promise.resolve(this.aaveTokenAddresses[assetAddress]);
   }
 
-  async getAaveTokenContractForAsset(assetAddress, provider?): Promise<?Object> {
+  async getAaveTokenContractForAsset(assetAddress): Promise<?Object> {
     if (!this.lendingPoolAddressesProvider) return null;
 
     const aaveTokenAddress = await this.getAaveTokenAddress(assetAddress);
@@ -100,7 +110,6 @@ class AaveService {
     return Promise.resolve(getContract(
       aaveTokenAddress,
       AAVE_TOKEN_ABI,
-      provider,
     ));
   }
 
@@ -119,9 +128,6 @@ class AaveService {
     const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
     if (!lendingPoolCoreContract) return Promise.resolve([]);
 
-    const lendingPoolContract = await this.getLendingPoolContract();
-    if (!lendingPoolContract) return Promise.resolve([]);
-
     const poolAddresses = await lendingPoolCoreContract.getReserves().catch(() => []);
 
     return poolAddresses.reduce((pool, reserveAddress) => {
@@ -133,8 +139,10 @@ class AaveService {
 
   async getAssetsToDeposit(accountAssets: Asset[], supportedAssets: Asset[]): Promise<AssetToDeposit[]> {
     const supportedDeposits = await this.getSupportedDeposits(accountAssets, supportedAssets);
+
     const lendingPoolContract = await this.getLendingPoolContract();
     if (!lendingPoolContract) return Promise.resolve([]);
+
     return Promise.all(supportedDeposits.map(async (reserveAsset) => {
       const reserveData = await lendingPoolContract
         .getReserveData(reserveAsset.address)

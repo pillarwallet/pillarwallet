@@ -75,7 +75,7 @@ export const getAaveDepositTransactions = async (
 ): Promise<Object[]> => {
   const { decimals, address: assetAddress, symbol: assetSymbol } = asset;
   const depositTransactionData = await buildAaveDepositTransactionData(assetAddress, amount, decimals);
-  const { address: lendingPoolContractAddress } = await aaveService.getLendingPoolContract();
+  const lendingPoolContractAddress = await aaveService.getLendingPoolAddress();
 
   let aaveDepositTransactions = [{
     from: senderAddress,
@@ -86,7 +86,7 @@ export const getAaveDepositTransactions = async (
   }];
 
   // allowance must be set for core contract
-  const { address: lendingPoolCoreContractAddress } = await aaveService.getLendingPoolCoreContract();
+  const lendingPoolCoreContractAddress = await aaveService.getLendingPoolCoreAddress();
   const erc20Contract = getContract(assetAddress, ERC20_CONTRACT_ABI);
   const approvedAmountBN = erc20Contract
     ? await erc20Contract.allowance(senderAddress, lendingPoolCoreContractAddress)
@@ -184,10 +184,9 @@ export const mapTransactionsHistoryWithAave = async (
   accountAddress: string,
   transactionHistory: Transaction[],
 ): Promise<Transaction[]> => {
-  const lendingPoolContract = await aaveService.getLendingPoolContract();
-  if (!lendingPoolContract) return [];
+  const aaveLendingPoolContractAddress = await aaveService.getLendingPoolAddress();
+  if (!aaveLendingPoolContractAddress) return [];
 
-  const { address: aaveLendingPoolContractAddress } = lendingPoolContract;
   const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
   const {
     deposits = [],

@@ -134,16 +134,20 @@ const ViewDepositedAsset = ({
   smartAccountHistory,
   contacts,
   contactsSmartAddresses,
+  depositedAssets,
 }: Props) => {
   const depositedAsset: DepositedAsset = navigation.getParam('depositedAsset', {});
   const {
     iconUrl,
-    currentBalance,
     earnInterestRate,
     symbol: assetSymbol,
     earnedAmount,
     earningsPercentageGain,
   } = depositedAsset;
+
+  // always fetch balance from what's latest updated while also keep the screen present if whole asset was withdrawn
+  const { currentBalance = 0 } = depositedAssets.find(({ symbol }) => symbol === depositedAsset.symbol) || {};
+
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const valueInFiat = parseFloat(currentBalance) * getRate(rates, assetSymbol, fiatCurrency);
   const valueInFiatFormatted = formatFiat(valueInFiat, fiatCurrency);

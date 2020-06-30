@@ -91,6 +91,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
+import aaveService from 'services/aave';
 
 // selectors
 import { accountAssetsSelector, smartAccountAssetsSelector } from 'selectors/assets';
@@ -155,6 +156,7 @@ import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchSmartWalletTransactionsAction, insertTransactionAction } from './historyActions';
 import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
+import { fetchDepositedAssetsAction } from './lendingActions';
 
 
 const storage = Storage.getInstance('db');
@@ -652,12 +654,16 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const txGasInfo = get(event, 'payload.gas', {});
       const txSenderAddress = get(event, 'payload.from.account.address', '');
+      const txReceiverAddress = get(event, 'payload.to.address', '');
       const txSenderEnsName = get(event, 'payload.from.account.ensName', '');
       const txType = get(event, 'payload.transactionType', '');
       const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
       if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
+        const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
+        const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
+
         let notificationMessage;
         if (txType === transactionTypes.TopUp) {
           notificationMessage = 'Your Pillar Tank was successfully funded!';
@@ -667,6 +673,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           notificationMessage = 'Settlement process completed!';
         } else if (txType === transactionTypes.Erc20Transfer) {
           notificationMessage = 'New transaction received!';
+        } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
+          notificationMessage = 'Your funds have been deposited!';
+          dispatch(fetchDepositedAssetsAction());
+        } else if (aaveTokenAddresses.some((aaveTokenAddress) => addressesEqual(txReceiverAddress, aaveTokenAddress))) {
+          notificationMessage = 'Your funds have been withdrawn!';
+          dispatch(fetchDepositedAssetsAction());
         } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
           notificationMessage = 'Transaction was successfully sent!';
         }
