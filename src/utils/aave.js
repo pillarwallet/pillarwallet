@@ -49,7 +49,7 @@ export const buildAaveDepositTransactionData = (
 ): string => {
   const methodAbi = getContractMethodAbi(AAVE_LENDING_POOL_CONTRACT_ABI, 'deposit');
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);
-  const referralCode = 0; // TODO: get Pillar's unique
+  const referralCode = 80; // Pillar's unique
   return abiHelper.encodeMethod(methodAbi, [assetAddress, contractAmount, referralCode]);
 };
 
