@@ -618,14 +618,14 @@ export class EventDetail extends React.Component<Props, State> {
     const { onClose, navigation, event } = this.props;
     onClose();
     await this.switchToSW();
-    navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.asset });
+    navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
   onAaveWithdrawMore = async () => {
     const { onClose, navigation, event } = this.props;
     onClose();
     await this.switchToSW();
-    navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.asset });
+    navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
   PPNWithdraw = async () => {
