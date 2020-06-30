@@ -82,6 +82,8 @@ const DepositWrapper = styled.View`
 
 const TokenValueWrapper = styled.View`
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 
 const TokenValue = styled(MediumText)`
@@ -90,7 +92,7 @@ const TokenValue = styled(MediumText)`
 
 const TokenSymbol = styled(MediumText)`
   ${fontStyles.medium};
-  margin-top: ${spacing.medium}px;
+  margin-top: 14px;
   margin-left: ${spacing.small}px;
 `;
 

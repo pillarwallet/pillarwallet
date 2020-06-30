@@ -30,7 +30,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Button from 'components/Button';
 import { BaseText, MediumText } from 'components/Typography';
-import UserNameAndImage from 'components/UserNameAndImage';
+import ProfileImage from 'components/ProfileImage';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -86,6 +86,8 @@ const DepositWrapper = styled.View`
 const TokenValueWrapper = styled.View`
   margin-top: ${spacing.large}px;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 
 const TokenValue = styled(MediumText)`
@@ -94,7 +96,7 @@ const TokenValue = styled(MediumText)`
 
 const TokenSymbol = styled(MediumText)`
   ${fontStyles.medium};
-  margin-top: ${spacing.medium}px;
+  margin-top: 14px;
   margin-left: ${spacing.small}px;
 `;
 
@@ -144,6 +146,9 @@ const WithdrawTransactionConfirm = ({
     setIsSubmitted(false);
   };
 
+  const { profileImage, lastUpdateTime, username } = user;
+  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
+
   return (
     <ContainerWithHeader
       navigation={navigation}
@@ -152,7 +157,7 @@ const WithdrawTransactionConfirm = ({
     >
       <DepositWrapper>
         <CachedImage
-          style={{ width: 64, height: 64, marginBottom: spacing.large }}
+          style={{ width: 64, height: 64, marginBottom: spacing.small }}
           source={aaveImage}
           resizeMode="contain"
         />
@@ -162,12 +167,15 @@ const WithdrawTransactionConfirm = ({
           source={arrowDownGrey}
           resizeMode="contain"
         />
-        <UserNameAndImage
-          wrapperStyle={{ flexDirection: 'column', marginTop: spacing.large }}
-          userProps={{ style: { marginBottom: spacing.small } }}
-          profileImageWidth={64}
-          user={user}
+        <ProfileImage
+          style={{ marginTop: spacing.large, marginBottom: spacing.small }}
+          uri={userImageUri}
+          userName={username}
+          diameter={64}
+          noShadow
+          borderWidth={0}
         />
+        <BaseText fontSize={15}>{username}</BaseText>
         <TokenValueWrapper>
           <TokenValue>{formatAmountDisplay(withdrawAmount)}</TokenValue>
           <TokenSymbol>{depositedAssetSymbol}</TokenSymbol>

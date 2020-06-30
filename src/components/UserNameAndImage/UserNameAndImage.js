@@ -39,7 +39,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   userProps: ExternalProfileImageProps,
   profileImageWidth?: number,
-  wrapperStyle?: Object,
 };
 
 
@@ -62,12 +61,11 @@ const UserNameAndImage = (props: Props) => {
     navigation,
     userProps = {},
     profileImageWidth = 24,
-    wrapperStyle,
   } = props;
   const { profileImage, lastUpdateTime, username } = user;
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
   return (
-    <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)} style={wrapperStyle}>
+    <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
       <ProfileImage
         uri={userImageUri}
         userName={username}

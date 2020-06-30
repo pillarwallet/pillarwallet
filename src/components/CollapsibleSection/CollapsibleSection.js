@@ -99,10 +99,7 @@ const CollapsibleSection = (props: Props) => {
         </SectionHeaderPart>
         {showLoadingSpinner && <Spinner width={20} height={20} />}
         {!showLoadingSpinner && !!labelRight && (
-          <SectionHeaderPart
-            onPress={onPressLabelRight}
-            style={{}}
-          >
+          <SectionHeaderPart onPress={onPressLabelRight}>
             <SectionLink>{labelRight}</SectionLink>
           </SectionHeaderPart>
         )}
