@@ -160,6 +160,7 @@ import type { EventData as PassedEventData } from 'components/ActivityFeed/Activ
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { TxNote } from 'reducers/txNoteReducer';
+import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 type Props = {
   theme: Theme,
@@ -206,6 +207,7 @@ type Props = {
   updatingTransaction: string,
   updatingCollectibleTransaction: string,
   isSmartAccount: boolean,
+  poolStats: PoolPrizeInfo,
 };
 
 type State = {
@@ -692,22 +694,64 @@ export class EventDetail extends React.Component<Props, State> {
     }
   };
 
-  goToPoolTogetherPurcharse = () => {
-    const { onClose, navigation } = this.props;
+  goToPoolTogetherPurcharse = (symbol: string) => {
+    const {
+      onClose,
+      navigation,
+      poolStats = {},
+    } = this.props;
+
+    const {
+      totalPoolTicketsCount,
+      userInfo,
+    } = poolStats[symbol];
+
+    let userTickets = 0;
+    if (userInfo) {
+      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
+    }
+
     onClose();
-    navigation.navigate(POOLTOGETHER_PURCHASE);
+
+    navigation.navigate(POOLTOGETHER_PURCHASE, {
+      poolToken: symbol,
+      poolTicketsCount: 0,
+      totalPoolTicketsCount,
+      userTickets,
+    });
   }
 
-  goToPoolTogetherWithdraw = () => {
-    const { onClose, navigation } = this.props;
+  goToPoolTogetherWithdraw = (symbol: string) => {
+    const {
+      onClose,
+      navigation,
+      poolStats = {},
+    } = this.props;
+
+    const {
+      totalPoolTicketsCount,
+      userInfo,
+    } = poolStats[symbol];
+
+    let userTickets = 0;
+    if (userInfo) {
+      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
+    }
+
     onClose();
-    navigation.navigate(POOLTOGETHER_WITHDRAW);
+
+    navigation.navigate(POOLTOGETHER_WITHDRAW, {
+      poolToken: symbol,
+      poolTicketsCount: 0,
+      totalPoolTicketsCount,
+      userTickets,
+    });
   }
 
-  goToPoolTogetherPool = () => {
+  goToPoolTogetherPool = (symbol: string) => {
     const { onClose, navigation } = this.props;
     onClose();
-    navigation.navigate(POOLTOGETHER_DASHBOARD);
+    navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
   }
 
   getReferButtonTitle = () => {
@@ -994,23 +1038,24 @@ export class EventDetail extends React.Component<Props, State> {
       case POOLTOGETHER_DEPOSIT_TRANSACTION:
       case POOLTOGETHER_WITHDRAW_TRANSACTION: {
         const buttons = [];
+        const { extra: { symbol } } = event;
         if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
           buttons.push({
             title: 'Purchase more',
-            onPress: this.goToPoolTogetherPurcharse,
+            onPress: () => this.goToPoolTogetherPurcharse(symbol),
             secondary: true,
           });
         } else {
           buttons.push({
             title: 'Withdraw more',
-            onPress: this.goToPoolTogetherWithdraw,
+            onPress: () => this.goToPoolTogetherWithdraw(symbol),
             secondary: true,
           });
         }
         buttons.push(
           {
             title: 'View pool',
-            onPress: this.goToPoolTogetherPool,
+            onPress: () => this.goToPoolTogetherPool(symbol),
             squarePrimary: true,
           },
         );
@@ -1650,6 +1695,7 @@ const mapStateToProps = ({
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
+  poolTogether: { poolStats },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1666,6 +1712,7 @@ const mapStateToProps = ({
   txNotes,
   updatingTransaction,
   updatingCollectibleTransaction,
+  poolStats,
 });
 
 const structuredSelector = createStructuredSelector({
