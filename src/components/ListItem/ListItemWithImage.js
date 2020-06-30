@@ -101,6 +101,7 @@ type Props = {
   iconImageResizeMode?: string,
   iconImageSize?: number,
   statusIconColor?: string,
+  padding?: string,
 }
 
 type AddonProps = {
@@ -138,7 +139,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
-  padding: 14px 20px;
+  padding: ${({ padding }) => padding || '14px 20px'};
   width: 100%;
 `;
 
@@ -645,6 +646,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       theme,
       badge,
       customLabel,
+      padding,
     } = this.props;
 
     const type = getType(this.props);
@@ -652,7 +654,13 @@ class ListItemWithImage extends React.Component<Props, {}> {
 
     return (
       <ItemWrapper wrapperOpacity={wrapperOpacity}>
-        <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
+        <InnerWrapper
+          type={type}
+          onPress={onPress}
+          disabled={!onPress}
+          horizontalAlign={innerWrapperHorizontalAlign}
+          padding={padding}
+        >
           <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
             <ItemImage {...this.props} />
             {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}

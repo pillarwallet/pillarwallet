@@ -41,6 +41,7 @@ type Props = {
   searchPlaceholder?: string,
   horizontalOptionsData?: HorizontalOption[],
   wrapperStyle?: Object,
+  noOptionImageFallback?: boolean,
 };
 type State = {
   areOptionsVisible: boolean,
@@ -90,6 +91,7 @@ class Selector extends React.Component<Props, State> {
         navigateToProfile={onOptionImagePress ? () => onOptionImagePress(option) : onPress}
         imageUpdateTimeStamp={lastUpdateTime}
         itemImageSource={imageSource}
+        padding="0 14px"
       />
     );
   };
@@ -104,6 +106,7 @@ class Selector extends React.Component<Props, State> {
       selectedOption,
       horizontalOptionsData,
       wrapperStyle,
+      noOptionImageFallback,
     } = this.props;
     const { areOptionsVisible } = this.state;
     const hasValue = !isEmpty(selectedOption);
@@ -126,10 +129,10 @@ class Selector extends React.Component<Props, State> {
           title={optionsTitle || placeholder}
           options={options}
           searchPlaceholder={searchPlaceholder}
-          renderOption={(option, onPress) => this.renderOption(option, onPress)}
           optionKeyExtractor={({ name }) => name}
           horizontalOptionsData={horizontalOptionsData}
           onOptionSelect={this.onOptionSelect}
+          noImageFallback={noOptionImageFallback}
         />
       </>
     );

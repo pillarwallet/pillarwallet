@@ -58,6 +58,7 @@ type Props = {
   optionsTitle?: string,
   searchPlaceholder?: string,
   theme: Theme,
+  noImageFallback?: boolean,
 }
 
 type State = {
@@ -217,7 +218,7 @@ class SelectorOptions extends React.Component<Props, State> {
     if (option?.value === 'extendedHeaderItems') {
       return option.component;
     }
-    const { renderOption } = this.props;
+    const { renderOption, noImageFallback } = this.props;
 
     if (renderOption) {
       return renderOption(option, () => this.selectValue(option));
@@ -236,7 +237,7 @@ class SelectorOptions extends React.Component<Props, State> {
         label={name}
         itemImageUrl={imageUrl}
         iconSource={imageSource}
-        fallbackToGenericToken
+        fallbackToGenericToken={!noImageFallback}
         {...option}
       />
     );

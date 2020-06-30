@@ -57,6 +57,7 @@ type Props = {
   txFeeInfo?: ?TransactionFeeInfo,
   selectorModalTitle?: string,
   getError?: (errorMessage: ?string) => void,
+  wrapperStyle?: Object,
 };
 
 type FormValue = {
@@ -134,6 +135,15 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
   componentDidMount() {
     this.addCustomFormInfo();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { preselectedAsset } = this.props;
+    const { value } = this.state;
+    const selectedAsset = get(value, 'formSelector.selector.token');
+    if (!prevProps.preselectedAsset && preselectedAsset && !selectedAsset) {
+      this.addCustomFormInfo();
+    }
   }
 
   addCustomFormInfo = () => {
@@ -307,11 +317,11 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
   render() {
     const { value, formOptions, errorMessage } = this.state;
-    const { balances, txFeeInfo } = this.props;
+    const { balances, txFeeInfo, wrapperStyle } = this.props;
     const formStructure = getFormStructure(balances, txFeeInfo);
 
     return (
-      <Wrapper>
+      <Wrapper style={wrapperStyle}>
         <ShadowedCard
           wrapperStyle={{ marginBottom: 10, width: '100%' }}
           contentWrapperStyle={{ padding: 20, paddingTop: 16 }}

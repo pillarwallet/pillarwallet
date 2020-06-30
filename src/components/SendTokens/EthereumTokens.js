@@ -133,7 +133,6 @@ type State = {
   showTransactionSpeedModal: boolean,
   gasLimit: number,
   gettingFee: boolean,
-  calculatingMaxValue: boolean,
   inputHasError: boolean,
   txFeeInfo: ?TransactionFeeInfo,
   submitPressed: boolean,
@@ -151,30 +150,29 @@ type FooterProps = {
 };
 
 class SendEthereumTokens extends React.Component<Props, State> {
-  state = {
-    amount: null,
-    showTransactionSpeedModal: false,
-    gasLimit: 0,
-    gettingFee: true,
-    calculatingMaxValue: false,
-    inputHasError: false,
-    txFeeInfo: null,
-    submitPressed: false,
-    showRelayerMigrationModal: false,
-    selectedContact: null,
-    receiver: '',
-    receiverEnsName: '',
-    assetData: null,
-  };
-
   constructor(props: Props) {
     super(props);
 
     this.updateTxFee = debounce(this.updateTxFee, 500);
     this.updateKeyWalletGasLimitAndTxFee = debounce(this.updateKeyWalletGasLimitAndTxFee, 500);
+    this.state = {
+      amount: null,
+      showTransactionSpeedModal: false,
+      gasLimit: 0,
+      gettingFee: true,
+      inputHasError: false,
+      txFeeInfo: null,
+      submitPressed: false,
+      showRelayerMigrationModal: false,
+      selectedContact: null,
+      receiver: '',
+      receiverEnsName: '',
+      assetData: null,
+    };
   }
 
   componentDidMount() {
+    this.setPreselectedValues();
     if (!this.props.isSmartAccount) {
       this.props.fetchGasInfo();
     }
@@ -203,6 +201,20 @@ class SendEthereumTokens extends React.Component<Props, State> {
     }
   }
 
+  setPreselectedValues = () => {
+    const { navigation, assetsWithBalance, contacts } = this.props;
+    const assetData = navigation.getParam('assetData');
+    const contact = navigation.getParam('contact');
+    if (assetData) {
+      const formattedSelectedAsset = assetsWithBalance[assetData.token];
+      if (formattedSelectedAsset) this.handleAmountChange({ selector: formattedSelectedAsset, input: '' });
+    }
+    if (contact) {
+      const formattedContact = contacts.find(({ name }) => contact.username === name);
+      if (formattedContact) this.setReceiver(formattedContact);
+    }
+  };
+
 
   // form methods
 
@@ -227,7 +239,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   setReceiver = async (value) => {
     const { receiverEnsName, receiver } = await this.getEnsName(value?.ethAddress);
-    if (!receiverEnsName || !receiver) {
+    if (!receiver) {
       // todo: handle error!
       this.setState({ selectedContact: {}, receiver: '', receiverEnsName: '' });
     } else {
@@ -238,7 +250,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
   };
 
   handleReceiverSelect = (value) => {
-    if (value?.ethAddress) {
+    if (!value?.ethAddress) {
       this.setState({ selectedContact: null, receiver: '', receiverEnsName: '' }, () => {
         this.updateTxFee();
       });
@@ -575,6 +587,8 @@ class SendEthereumTokens extends React.Component<Props, State> {
           options={contacts}
           selectedOption={selectedContact}
           horizontalOptionsData={[{ data: [...inactiveUserAccount] }]}
+          wrapperStyle={{ marginTop: spacing.medium }}
+          noOptionImageFallback
         />
         <ValueSelectorCard
           assets={assetsWithBalance}
@@ -586,6 +600,8 @@ class SendEthereumTokens extends React.Component<Props, State> {
           selectorModalTitle="Send"
           maxLabel="Send max"
           txFeeInfo={txFeeInfo}
+          preselectedAsset={token}
+          wrapperStyle={{ paddingTop: spacing.medium }}
         />
         {showTransactionSpeeds &&
           <SlideModal

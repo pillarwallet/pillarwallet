@@ -27650,31 +27650,20 @@ exports[`Storyshots Selector default 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
@@ -27853,31 +27842,20 @@ exports[`Storyshots Selector default 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
@@ -29372,10 +29350,10 @@ exports[`Storyshots Selector selected option 1`] = `
               "flexDirection": "row",
               "justifyContent": "center",
               "opacity": 1,
-              "paddingBottom": 14,
-              "paddingLeft": 20,
-              "paddingRight": 20,
-              "paddingTop": 14,
+              "paddingBottom": 0,
+              "paddingLeft": 14,
+              "paddingRight": 14,
+              "paddingTop": 0,
               "width": "100%",
             }
           }
@@ -30119,31 +30097,20 @@ exports[`Storyshots Selector selected option 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
@@ -30322,31 +30289,20 @@ exports[`Storyshots Selector selected option 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
@@ -31443,31 +31399,20 @@ exports[`Storyshots Selector with custom wording 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
@@ -31646,31 +31591,20 @@ exports[`Storyshots Selector with custom wording 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
@@ -33047,31 +32981,20 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
@@ -33250,31 +33173,20 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                             }
                           >
                             <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
                               style={
-                                Object {
-                                  "alignItems": "center",
-                                  "borderColor": "#FFFFFF",
-                                  "borderRadius": 26,
-                                  "borderStyle": "solid",
-                                  "borderWidth": 0,
-                                  "display": "flex",
-                                  "height": 52,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "overflow": "hidden",
-                                  "position": "relative",
-                                  "width": 52,
-                                }
+                                Array [
+                                  Object {
+                                    "alignItems": "center",
+                                    "backgroundColor": "#EBF0F6",
+                                    "borderRadius": 26,
+                                    "height": 52,
+                                    "justifyContent": "center",
+                                    "overflow": "hidden",
+                                    "textAlign": "center",
+                                    "width": 52,
+                                  },
+                                  undefined,
+                                ]
                               }
                             />
                           </View>
