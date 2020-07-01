@@ -81,6 +81,7 @@ const SendContainer = (props: Props) => {
     footerProps = {},
     children,
   } = props;
+
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: 'Send' }] }}

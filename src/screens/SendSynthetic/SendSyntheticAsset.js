@@ -30,7 +30,6 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { Container, Wrapper } from 'components/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
-import { TooltipButton } from 'components/Button';
 import { BaseText } from 'components/Typography';
 
 // actions
@@ -42,7 +41,7 @@ import { formatAmount } from 'utils/common';
 import { themedColors } from 'utils/themes';
 
 // constants
-import { SEND_SYNTHETIC_UNAVAILABLE, SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
+import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 
 // models, types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -118,12 +117,6 @@ class SendSyntheticAsset extends React.Component<Props> {
           syntheticBalance: balanceFormatted,
           value: availableLabel,
           token: assetSymbol,
-          customOnRight: !isAvailable && (
-            <TooltipButton
-              onPress={() => navigation.navigate(SEND_SYNTHETIC_UNAVAILABLE, { assetSymbol })}
-              style={{ marginTop: 4, marginLeft: 10 }}
-            />
-          ),
         }}
       />
     );

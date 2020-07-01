@@ -45,13 +45,12 @@ import {
   ACCOUNTS,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_COLLECTIBLE_CONTACTS,
-  SEND_TOKEN_ASSETS,
+  SEND_TOKEN_ASSETS, SEND_TOKEN_AMOUNT,
 } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
-import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
 import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
 // utils
@@ -70,7 +69,6 @@ import { activeAccountSelector } from 'selectors';
 import type { Account, Accounts } from 'models/Account';
 import type { ContactSmartAddressData } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
-import type { SendNavigateOptions } from 'models/Navigation';
 import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -81,7 +79,6 @@ type Props = {
   accounts: Accounts,
   localContacts: Object[],
   wallet: Object,
-  navigateToSendTokenAmount: (options: SendNavigateOptions) => void,
   contactsSmartAddressesSynced: boolean,
   syncContactsSmartAddresses: () => void,
   contactsSmartAddresses: ContactSmartAddressData[],
@@ -352,7 +349,6 @@ class SendTokenContacts extends React.Component<Props, State> {
   navigateToNextScreen(receiverAddress: string, receiverEnsName?: string) {
     const {
       navigation,
-      navigateToSendTokenAmount,
       localContacts,
       contactsSmartAddresses,
       accounts,
@@ -380,7 +376,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       });
       return;
     }
-    navigateToSendTokenAmount({
+    navigation.navigate(SEND_TOKEN_AMOUNT, {
       assetData: this.assetData,
       receiver: receiverAddress,
       source: 'Contact',
@@ -570,7 +566,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  navigateToSendTokenAmount: (options: SendNavigateOptions) => dispatch(navigateToSendTokenAmountAction(options)),
   syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 

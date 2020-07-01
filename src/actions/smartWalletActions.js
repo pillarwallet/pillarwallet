@@ -17,11 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Alert } from 'react-native';
+
 import { sdkModules, sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 
@@ -74,13 +73,7 @@ import {
   RESET_ESTIMATED_WITHDRAWAL_FEE,
   RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
-import {
-  SEND_TOKEN_AMOUNT,
-  ACCOUNTS,
-  SEND_SYNTHETIC_AMOUNT,
-  PIN_CODE,
-  WALLET_ACTIVATED,
-} from 'constants/navigationConstants';
+import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
@@ -109,7 +102,6 @@ import type {
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
-import type { SendNavigateOptions } from 'models/Navigation';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 // utils
@@ -144,7 +136,6 @@ import {
   printLog,
   reportLog,
 } from 'utils/common';
-import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getPrivateKeyFromPin } from 'utils/wallet';
 
 // actions
@@ -1265,63 +1256,6 @@ export const cleanSmartWalletAccountsAction = () => {
       type: 'success',
       autoClose: false,
     });
-  };
-};
-
-export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      blockchainNetwork: { data: blockchainNetworks },
-      accounts: { data: accounts },
-    } = getState();
-
-    const standardSendFlow = NavigationActions.navigate({
-      routeName: SEND_TOKEN_AMOUNT,
-      params: navOptions,
-    });
-
-    const ppnSendFlow = NavigationActions.navigate({
-      routeName: SEND_SYNTHETIC_AMOUNT,
-      params: navOptions,
-    });
-
-    if (isPillarPaymentNetworkActive(blockchainNetworks)) {
-      if (!smartWalletService || !smartWalletService.sdkInitialized) {
-        notifySmartWalletNotInitialized();
-        return;
-      }
-
-      const activeAccountAddress = getActiveAccountAddress(accounts);
-
-      // prevent PPN self sending
-      if (addressesEqual(navOptions.receiver, activeAccountAddress)) {
-        Toast.show({
-          title: 'Wrong receiver address',
-          message: 'Cannot send synthetic asset to yourself',
-          type: 'warning',
-          autoClose: false,
-        });
-        return;
-      }
-
-      const userInfo = await smartWalletService.searchAccount(navOptions.receiver).catch(null);
-      if (userInfo) {
-        navigate(ppnSendFlow);
-        return;
-      }
-      Alert.alert(
-        'This address is not on Pillar Network',
-        'Address should be connected to Pillar Network in order to be able to send instant transactions for free',
-        [
-          { text: 'Switch to Ethereum Mainnet', onPress: () => navigate(ACCOUNTS) },
-          { text: 'Cancel', style: 'cancel' },
-        ],
-        { cancelable: true },
-      );
-      return;
-    }
-
-    navigate(standardSendFlow);
   };
 };
 

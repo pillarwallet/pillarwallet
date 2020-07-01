@@ -594,7 +594,7 @@ const Addon = (props: AddonProps) => {
             />}
             {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
           </View>
-          <BalanceFiatValue>{value}</BalanceFiatValue>
+          {!!value && <BalanceFiatValue>{value}</BalanceFiatValue>}
         </Wrapper>
         {customOnRight}
       </View>

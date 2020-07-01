@@ -77,10 +77,8 @@ import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
-import SendSyntheticAssetScreen from 'screens/SendSynthetic/SendSyntheticAsset';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
-import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
@@ -204,10 +202,8 @@ import {
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
-  SEND_SYNTHETIC_ASSET,
-  SEND_SYNTHETIC_CONFIRM,
   SEND_SYNTHETIC_AMOUNT,
-  SEND_SYNTHETIC_UNAVAILABLE,
+  SEND_SYNTHETIC_CONFIRM,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   REFER_FLOW,
@@ -528,7 +524,6 @@ const tabNavigation = createBottomTabNavigator(
 // SEND TOKEN FROM ASSET FLOW
 const sendTokenFromAssetFlow = createStackNavigator(
   {
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
@@ -581,9 +576,8 @@ const sendCollectibleFromAssetFlow = createStackNavigator({
 
 // SEND TOKEN FROM CONTACT FLOW
 const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -612,14 +606,11 @@ const ppnSendTokenFromAssetFlow = createStackNavigator(
 // PPN SEND SYNTHETIC ASSET FULL FLOW
 const ppnSendSyntheticAssetFlow = createStackNavigator(
   {
-    [SEND_SYNTHETIC_ASSET]: SendSyntheticAssetScreen,
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
     // synthetic
     [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmountScreen,
     [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [SEND_SYNTHETIC_UNAVAILABLE]: SendSyntheticUnavailableScreen,
     // other
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,

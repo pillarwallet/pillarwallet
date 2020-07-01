@@ -21,9 +21,11 @@
 import orderBy from 'lodash.orderby';
 import get from 'lodash.get';
 import { STATUS_BLOCKED } from 'constants/connectionsConstants';
+import Toast from 'components/Toast';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import { addressesEqual } from './assets';
-import { isCaseInsensitiveMatch } from './common';
+import { isCaseInsensitiveMatch, resolveEnsName } from './common';
+import { isEnsName } from './validators';
 
 export const sortLocalContacts = (contacts: Object[], chats: Object[]) => {
   const localContactsWithUnreads = contacts.map((contact) => {
@@ -56,9 +58,7 @@ export const excludeLocalContacts = (globalContacts: ApiUser[] = [], localContac
 };
 
 export const getUserName = (contact: ?Object) => {
-  if (!contact || !contact.username) {
-    return '';
-  }
+  if (!contact || !contact.username) return '';
   return contact.username;
 };
 
@@ -90,4 +90,27 @@ export const isContactAvailable = (contact: ApiUser) => {
 export const findContactIdByUsername = (contacts: ApiUser[], username: string): string => {
   const foundContact = contacts.find(contact => isCaseInsensitiveMatch(contact.username, username));
   return get(foundContact, 'id', '');
+};
+
+export const getContactsEnsName = async (address: ?string) => {
+  let receiverEnsName = '';
+  let receiver = address;
+  if (!address) return Promise.resolve({ receiverEnsName, receiver });
+
+  if (isEnsName(address)) {
+    const resolvedAddress = await resolveEnsName(address);
+    if (!resolvedAddress) {
+      Toast.show({
+        title: 'Invalid ENS name',
+        message: 'Could not get address',
+        type: 'error',
+        autoClose: false,
+      });
+      return Promise.resolve({ receiverEnsName, receiver });
+    }
+    receiverEnsName = address;
+    receiver = resolvedAddress;
+  }
+
+  return { receiverEnsName, receiver };
 };

@@ -50,7 +50,7 @@ type Props = {
   showOptionsTitles?: boolean,
   renderOption?: (option: Option, onSelect: (option: Option) => void) => void,
   onHide?: () => void,
-  onOptionSelect?: (option: Option) => void,
+  onOptionSelect?: (option: Option, onSuccess: () => void) => void,
   optionKeyExtractor?: (item: Object) => string,
   isVisible: boolean,
   title: string,
@@ -59,7 +59,7 @@ type Props = {
   searchPlaceholder?: string,
   theme: Theme,
   noImageFallback?: boolean,
-}
+};
 
 type State = {
   query: string,
@@ -229,15 +229,18 @@ class SelectorOptions extends React.Component<Props, State> {
       name,
       imageUrl,
       imageSource,
+      opacity,
+      disabled,
     } = option;
 
     return (
       <ListItemWithImage
-        onPress={() => this.selectValue(option)}
+        onPress={!disabled ? () => this.selectValue(option) : null}
         label={name}
         itemImageUrl={imageUrl}
         iconSource={imageSource}
         fallbackToGenericToken={!noImageFallback}
+        wrapperOpacity={opacity}
         {...option}
       />
     );
@@ -254,10 +257,9 @@ class SelectorOptions extends React.Component<Props, State> {
     if (onHide) onHide();
   };
 
-  selectValue = (selectedValue: Option) => {
+  selectValue = (selectedValue) => {
     const { onOptionSelect } = this.props;
-    if (onOptionSelect) onOptionSelect(selectedValue);
-    this.closeOptions();
+    if (onOptionSelect) onOptionSelect(selectedValue, this.closeOptions);
   };
 
   optionKeyExtractor = (option) => {
@@ -315,7 +317,6 @@ class SelectorOptions extends React.Component<Props, State> {
     if (filteredOptions.length) {
       allFeedListData = [extendedHeaderItems, ...filteredOptions];
     }
-
 
     return (
       <SlideModal

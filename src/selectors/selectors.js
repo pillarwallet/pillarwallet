@@ -58,6 +58,8 @@ export const activeAccountAddressSelector = createSelector(
 );
 
 export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
+export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
+
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
@@ -74,6 +76,8 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
 export const featureFlagsSelector = ({ featureFlags }: RootReducerState) => featureFlags.data;
 
 export const contactsSelector = ({ contacts }: RootReducerState) => contacts.data;
+export const contactsSmartWalletAddressesSelector = ({ contacts }: RootReducerState) =>
+  contacts.contactsSmartAddresses.addresses;
 
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
 export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;

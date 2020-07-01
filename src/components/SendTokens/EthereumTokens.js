@@ -37,12 +37,14 @@ import Spinner from 'components/Spinner';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import { Spacing } from 'components/Layout';
+import Toast from 'components/Toast';
 
 // utils
-import { formatAmount, formatFiat, resolveEnsName } from 'utils/common';
+import { formatAmount, formatFiat } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
+import { getContactsEnsName } from 'utils/contacts';
 
 // services
 import { calculateGasEstimate } from 'services/assets';
@@ -75,8 +77,6 @@ import { ETH, SPEED_TYPES, SPEED_TYPE_LABELS } from 'constants/assetsConstants';
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-
-import { isEnsName } from 'utils/validators';
 import { getAccountName } from 'utils/accounts';
 import SendContainer from 'containers/SendContainer';
 
@@ -117,7 +117,7 @@ type Props = {
   useGasToken: boolean,
   contacts: Option[],
   inactiveUserAccounts: Option[],
-  assetsWithBalance: Assets,
+  assetsWithBalance: Option[],
   baseFiatCurrency: ?string,
 };
 
@@ -134,7 +134,7 @@ type State = {
   showRelayerMigrationModal: boolean,
   receiver?: string,
   receiverEnsName?: string,
-  selectedContact?: Object, // todo: add proper type
+  selectedContact: ?Option,
 };
 
 type FooterProps = {
@@ -206,7 +206,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     const assetData = navigation.getParam('assetData');
     const contact = navigation.getParam('contact');
     if (assetData) {
-      const formattedSelectedAsset = assetsWithBalance[assetData.token];
+      const formattedSelectedAsset = assetsWithBalance.find(({ token }) => assetData.token === token);
       if (formattedSelectedAsset) this.handleAmountChange({ selector: formattedSelectedAsset, input: '' });
     }
     if (contact) {
@@ -219,44 +219,32 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   // form methods
 
-  getEnsName = async (address: ?string) => {
-    if (!address) return {};
-    let receiverEnsName = '';
-    let receiver = address;
-
-    if (isEnsName(address)) {
-      const resolvedAddress = await resolveEnsName(address);
-      if (!resolvedAddress) {
-        // this.setInvalidEns(); // todo: handle ens validation
-        return {};
-      }
-      receiverEnsName = address;
-      receiver = resolvedAddress;
-    }
-
-    return { receiverEnsName, receiver };
-  };
-
-
-  setReceiver = async (value) => {
-    const { receiverEnsName, receiver } = await this.getEnsName(value?.ethAddress);
+  setReceiver = async (value: Option, onSuccess?: () => void) => {
+    const { receiverEnsName, receiver } = await getContactsEnsName(value?.ethAddress);
     if (!receiver) {
-      // todo: handle error!
-      this.setState({ selectedContact: {}, receiver: '', receiverEnsName: '' });
+      Toast.show({
+        title: 'Invalid ENS Name',
+        message: 'Could not get address',
+        type: 'error',
+        autoClose: false,
+      });
+      this.setState({ selectedContact: null, receiver: '', receiverEnsName: '' });
     } else {
       this.setState({ selectedContact: value, receiver, receiverEnsName }, () => {
         if (receiver) this.updateTxFee();
       });
     }
+    if (onSuccess) onSuccess();
   };
 
-  handleReceiverSelect = (value) => {
+  handleReceiverSelect = (value: Option, onSuccess: () => void) => {
     if (!value?.ethAddress) {
       this.setState({ selectedContact: null, receiver: '', receiverEnsName: '' }, () => {
+        onSuccess();
         this.updateTxFee();
       });
     } else {
-      this.setReceiver(value);
+      this.setReceiver(value, onSuccess);
     }
   };
 
@@ -559,11 +547,11 @@ class SendEthereumTokens extends React.Component<Props, State> {
           preselectedAsset: token,
         }}
         footerProps={{
-          disableNext: isNextButtonDisabled,
           isNextButtonVisible: showNextButton,
           buttonProps: {
             onPress: this.handleFormSubmit,
             isLoading: submitPressed,
+            disabled: isNextButtonDisabled,
           },
           footerTopAddon: this.renderFee({
             showTransactionSpeeds,

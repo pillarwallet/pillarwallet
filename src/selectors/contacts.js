@@ -19,7 +19,8 @@
 */
 
 import { createSelector } from 'reselect';
-import { contactsSelector } from './selectors';
+import { isCaseInsensitiveMatch } from 'utils/common';
+import { contactsSelector, contactsSmartWalletAddressesSelector } from './selectors';
 
 export const contactsForSendFlowSelector = createSelector(contactsSelector, (contacts) => {
   return contacts.map((contact) => {
@@ -39,3 +40,30 @@ export const contactsForSendFlowSelector = createSelector(contactsSelector, (con
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 });
+
+export const contactsByWalletForSendSelector =
+  createSelector(contactsForSendFlowSelector, contactsSmartWalletAddressesSelector,
+    (contacts, contactsSmartWalletAddresses) => {
+      return contacts
+        .map(contact => {
+          const { smartWallets = [] } = contactsSmartWalletAddresses.find(
+            ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
+          ) || {};
+          return {
+            ...contact,
+            ethAddress: smartWallets[0] || contact.ethAddress,
+            hasSmartWallet: !!smartWallets.length,
+            opacity: !smartWallets.length ? 0.3 : 1,
+          };
+        })
+        .sort((a, b) => {
+          // keep as it is
+          if (a.hasSmartWallet === b.hasSmartWallet
+            || (a.sortToTop && a.sortToTop === b.sortToTop)) return 0;
+          // sort user accounts to top
+          if (a.sortToTop || b.sortToTop) return 1;
+          // sort smart wallet contacts to top
+          return a.hasSmartWallet ? -1 : 1;
+        });
+    },
+  );

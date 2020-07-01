@@ -163,6 +163,7 @@ export function SelectorInputTemplate(locals: Object) {
       customInputHeight,
       inputHeaderStyle,
       noErrorText,
+      renderOption,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -215,6 +216,7 @@ export function SelectorInputTemplate(locals: Object) {
       getInputRef={inputRef}
       inputWrapperStyle={inputWrapperStyle}
       customInputHeight={customInputHeight}
+      renderOption={renderOption}
     />
   );
 }

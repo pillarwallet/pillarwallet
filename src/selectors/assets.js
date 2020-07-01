@@ -120,7 +120,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
         const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
-        assetsWithBalance[symbol] = {
+        assetsWithBalance.push({
           imageUrl,
           formattedBalanceInFiat,
           balance: !!formattedBalanceInFiat && {
@@ -129,11 +129,12 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
             token: symbol,
           },
           token: symbol,
+          value: symbol,
           contractAddress: address,
           ...relatedAsset,
-        };
+        });
       }
       return assetsWithBalance;
-    }, {});
+    }, []);
   },
 );

@@ -32,7 +32,7 @@ import type { HorizontalOption, Option } from 'models/Selector';
 
 export type Props = {
   selectedOption?: ?Option,
-  onOptionSelect?: (option: Option) => void,
+  onOptionSelect?: (option: Option, onSuccess: () => void) => void,
   onOptionImagePress?: (option: Option) => void,
   label?: string,
   placeholder?: string,
@@ -64,13 +64,18 @@ class Selector extends React.Component<Props, State> {
     areOptionsVisible: false,
   };
 
-  toggleOptions = () => {
-    this.setState(({ areOptionsVisible }) => ({ areOptionsVisible: !areOptionsVisible }));
+  closeOptions = () => {
+    this.setState({ areOptionsVisible: false });
   };
 
-  onOptionSelect = (option: Option) => {
+  openOptions = () => {
+    this.setState({ areOptionsVisible: true });
+  };
+
+
+  onOptionSelect = (option: Option, onSuccess: () => void) => {
     const { onOptionSelect } = this.props;
-    if (onOptionSelect) onOptionSelect(option);
+    if (onOptionSelect) onOptionSelect(option, onSuccess);
   };
 
   renderOption = (option: ?Option, onPress?: () => void) => {
@@ -117,15 +122,15 @@ class Selector extends React.Component<Props, State> {
       <>
         <Wrapper style={wrapperStyle}>
           <MediumText regular accent>{label}: </MediumText>
-          <SelectedOption onPress={this.toggleOptions} disabled={!hasOptions}>
+          <SelectedOption onPress={this.openOptions} disabled={!hasOptions}>
             {hasValue
-              ? this.renderOption(selectedOption, this.toggleOptions)
+              ? this.renderOption(selectedOption, this.openOptions)
               : <MediumText big style={{ paddingHorizontal: spacing.layoutSides }}>{placeholderText}</MediumText>}
           </SelectedOption>
         </Wrapper>
         <SelectorOptions
           isVisible={areOptionsVisible}
-          onHide={this.toggleOptions}
+          onHide={this.closeOptions}
           title={optionsTitle || placeholder}
           options={options}
           searchPlaceholder={searchPlaceholder}

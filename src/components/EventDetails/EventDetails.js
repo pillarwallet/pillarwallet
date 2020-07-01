@@ -108,7 +108,7 @@ import {
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_FROM_HOME_FLOW,
-  SEND_SYNTHETIC_ASSET,
+  SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
@@ -622,7 +622,7 @@ export class EventDetail extends React.Component<Props, State> {
     const { onClose, navigation } = this.props;
     onClose();
     await this.switchToSW();
-    navigation.navigate(SEND_SYNTHETIC_ASSET);
+    navigation.navigate(SEND_SYNTHETIC_AMOUNT);
   };
 
   settle = async () => {

@@ -28,21 +28,24 @@ import get from 'lodash.get';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
+import Spinner from 'components/Spinner';
 
-import type { Assets, Balances, Rates } from 'models/Asset';
+import type { Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { FormSelector } from 'models/TextInput';
+import type { Option } from 'models/Selector';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { getBalance, getRate, sortAssets, calculateMaxAmount } from 'utils/assets';
+import { getBalance, getRate, calculateMaxAmount } from 'utils/assets';
 import { themedColors } from 'utils/themes';
 import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
-import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
+
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 
@@ -54,13 +57,18 @@ export type ExternalProps = {
   selectorModalTitle?: string,
   getError?: (errorMessage: ?string) => void,
   wrapperStyle?: Object,
-}
+  renderOption?: () => void,
+  isLoading?: boolean,
+};
 
 type Props = ExternalProps & {
-  assets: Assets,
+  assets: Option[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
+  showSyntheticOptions?: boolean,
+  customError?: string,
+  syntheticAssets: Option[],
 };
 
 type FormValue = {
@@ -141,10 +149,12 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { preselectedAsset } = this.props;
+    const { preselectedAsset, isLoading } = this.props;
     const { value } = this.state;
-    const selectedAsset = get(value, 'formSelector.selector.token');
-    if (!prevProps.preselectedAsset && preselectedAsset && !selectedAsset) {
+    const selectedAsset = get(value, 'formSelector.selector.symbol');
+    const preselectedAssetChanged = !prevProps.preselectedAsset && preselectedAsset && !selectedAsset;
+    const finishedLoading = prevProps.isLoading && !isLoading;
+    if (preselectedAssetChanged || finishedLoading) {
       this.addCustomFormInfo();
     }
   }
@@ -152,41 +162,26 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   addCustomFormInfo = () => {
     const {
       assets,
-      balances,
-      baseFiatCurrency,
-      rates,
+      syntheticAssets,
       maxLabel,
       preselectedAsset,
       selectorModalTitle,
+      renderOption,
+      showSyntheticOptions,
     } = this.props;
     const { formOptions, value } = this.state;
 
-    const assetsOptions = sortAssets(assets).reduce((options, asset) => {
-      const { symbol, iconUrl } = asset;
-      const rawBalance = getBalance(balances, symbol);
-      const assetBalance = formatAmount(rawBalance);
-      if (rawBalance <= 0) return options;
-      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const option = {
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        ...asset,
-        assetBalance,
-        formattedBalanceInFiat,
-      };
-      return [...options, option];
-    }, []);
+    const assetsOptions: Option[] = showSyntheticOptions ? syntheticAssets : assets;
 
     const thisStateFormOptionsCopy = { ...formOptions };
-    thisStateFormOptionsCopy.fields.formSelector.config.options = assetsOptions;
+    thisStateFormOptionsCopy.fields.formSelector.config.options = assetsOptions || [];
 
     const newValue = { ...value };
 
     const preselectedOption = preselectedAsset &&
       assetsOptions.find(({ symbol }) => symbol === preselectedAsset);
 
-    const singleOption = assetsOptions.length === 1 && assetsOptions[0];
+    const singleOption = assetsOptions?.length === 1 && assetsOptions[0];
 
     const pickedAsset = preselectedOption || singleOption || {};
     newValue.formSelector.selector = pickedAsset;
@@ -201,6 +196,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
             rightLabel: { $set: !isEmpty(pickedAsset) ? label : '' },
             customLabel: { $set: this.renderCustomLabel(symbol) },
             selectorModalTitle: { $set: selectorModalTitle || 'Select' },
+            renderOption: { $set: renderOption },
           },
         },
       },
@@ -215,7 +211,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       amountValueInFiat,
       selectedAssetSymbol,
     } = this.getMaxBalanceOfSelectedAsset(false, symbol);
-    if (!selectedAssetBalance || !symbol) return null;
+    if (!selectedAssetBalance) return null;
 
     return (
       <BaseText regular secondary>{selectedAssetBalance} {selectedAssetSymbol} ({amountValueInFiat})</BaseText>
@@ -278,16 +274,27 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       txFeeInfo,
+      showSyntheticOptions,
+      syntheticAssets,
     } = this.props;
     const { value } = this.state;
     const selectedAssetSymbol = symbol || get(value, 'formSelector.selector.symbol');
     if (!selectedAssetSymbol) return {};
 
-    const rawSelectedAssetBalance = getBalance(balances, selectedAssetSymbol);
-    const selectedAssetBalance = forSending
-      ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
-      : formatAmount(rawSelectedAssetBalance);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+    let selectedAssetBalance;
+    let rawSelectedAssetBalance;
+    if (showSyntheticOptions) {
+      const syntheticAsset = syntheticAssets.find(({ symbol: _symbol }) => _symbol === selectedAssetSymbol);
+      rawSelectedAssetBalance = get(syntheticAsset, 'availableBalance', 0);
+      selectedAssetBalance = formatAmount(rawSelectedAssetBalance);
+    } else {
+      rawSelectedAssetBalance = getBalance(balances, selectedAssetSymbol);
+      selectedAssetBalance = forSending
+        ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
+        : formatAmount(rawSelectedAssetBalance);
+    }
 
     const totalInFiat = parseFloat(rawSelectedAssetBalance) * getRate(rates, selectedAssetSymbol, fiatCurrency);
     const amountValueInFiat = formatFiat(totalInFiat, baseFiatCurrency);
@@ -320,8 +327,28 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
   render() {
     const { value, formOptions, errorMessage } = this.state;
-    const { balances, txFeeInfo, wrapperStyle } = this.props;
-    const formStructure = getFormStructure(balances, txFeeInfo);
+    const {
+      balances,
+      txFeeInfo,
+      wrapperStyle,
+      showSyntheticOptions,
+      syntheticAssets,
+      customError,
+      isLoading,
+    } = this.props;
+
+    const syntheticBalances = !showSyntheticOptions || !syntheticAssets.length
+      ? {}
+      : syntheticAssets.reduce((_balances, asset) => {
+        const symbol = get(asset, 'symbol', 0);
+        const balance = get(asset, 'availableBalance', 0);
+        if (!symbol) return _balances;
+        _balances[symbol] = { symbol, balance };
+        return _balances;
+      }, {});
+    const balancesForValidation = showSyntheticOptions ? syntheticBalances : balances;
+    const formStructure = getFormStructure(balancesForValidation, txFeeInfo);
+    const errorToShow = customError || errorMessage;
 
     return (
       <Wrapper style={wrapperStyle}>
@@ -331,16 +358,21 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           borderRadius={10}
         >
           <FormWrapper>
-            <Form
-              ref={node => { this.form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleFromChange}
-            />
+            {isLoading
+              ? <Spinner style={{ alignSelf: 'center' }} />
+              : (
+                <Form
+                  ref={node => { this.form = node; }}
+                  type={formStructure}
+                  options={formOptions}
+                  value={value}
+                  onChange={this.handleFromChange}
+                />
+              )
+            }
           </FormWrapper>
         </ShadowedCard>
-        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {!!errorToShow && <ErrorMessage>{errorToShow}</ErrorMessage>}
       </Wrapper>
     );
   }
@@ -357,6 +389,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: visibleActiveAccountAssetsWithBalanceSelector,
+  syntheticAssets: activeSyntheticAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

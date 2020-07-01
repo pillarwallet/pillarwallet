@@ -21,10 +21,15 @@
 export type Option = {
   name: string,
   value: string,
+  token?: string,
+  symbol?: string,
   imageUrl?: string,
   lastUpdateTime?: string,
   imageSource?: string,
   ethAddress?: string,
+  opacity?: number,
+  hasSmartWallet?: number,
+  disabled?: boolean,
 };
 
 export type HorizontalOption = {
