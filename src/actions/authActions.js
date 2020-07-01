@@ -64,7 +64,7 @@ import {
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
-import { navigate, getNavigationState } from 'services/navigation';
+import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 
 // types
@@ -280,6 +280,9 @@ export const loginAction = (
       dispatch(fetchTransactionsHistoryAction());
       if (user.walletId) dispatch(updateConnectionsAction());
       dispatch(fetchReferralRewardAction());
+
+      const pathAndParams = getNavigationPathAndParamsState();
+      if (!pathAndParams) return;
 
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
