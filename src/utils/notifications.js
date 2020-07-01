@@ -89,14 +89,6 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
-  // if (!!parsedNotification.type && parsedNotification.type.toUpperCase() === SIGNAL) {
-  //   return {
-  //     message: 'New message',
-  //     title: parsedNotification.sender,
-  //     type: SIGNAL,
-  //     navigationParams: { username: parsedNotification.sender },
-  //   };
-  // }
 
   if (connectionEvents.includes(parsedNotification.type)) {
     if (parsedNotification.type === 'connectionRequestedEvent') {
