@@ -159,7 +159,7 @@ export type EventData = {
   statusIconColor?: ?string,
   isFailed?: boolean,
   itemImageRoundedSquare?: boolean,
-  cornerIcon?: string,
+  cornerIcon?: any,
 };
 
 const NAMES = {
@@ -261,9 +261,9 @@ export class ActivityFeedItem extends React.Component<Props> {
 
   getAaveDepositedAssetImage = () => {
     const { event, supportedAssets } = this.props;
-    if (!event?.extra?.symbol) return '';
+    if (!event?.extra?.symbol) return null;
     const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
-    return iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : '';
+    return iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : null;
   };
 
   getWalletCreatedEventData = (event: Object) => {

@@ -102,7 +102,7 @@ type Props = {
   iconImageSize?: number,
   statusIconColor?: string,
   itemImageRoundedSquare?: boolean,
-  cornerIcon?: string,
+  cornerIcon?: any,
 };
 
 type AddonProps = {

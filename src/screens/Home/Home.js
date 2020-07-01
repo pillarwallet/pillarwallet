@@ -23,6 +23,7 @@ import type { NavigationScreenProp, NavigationEventSubscription } from 'react-na
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import isEmpty from 'lodash.isempty';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
@@ -301,14 +302,17 @@ class HomeScreen extends React.Component<Props, State> {
       currentBalance,
       earnedAmount,
       earningsPercentageGain,
+      iconUrl,
     } = depositedAsset;
+    const cornerIcon = iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : '';
     return (
       <ListItemWithImage
         label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
         subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
-        iconSource={aaveImage}
+        itemImageSource={aaveImage}
         onPress={() => this.props.navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
         iconImageSize={52}
+        cornerIcon={cornerIcon}
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}
         itemImageRoundedSquare
       >
