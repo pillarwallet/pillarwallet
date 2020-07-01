@@ -335,6 +335,13 @@ const ErrorMessage = styled(BaseText)`
   text-align: center;
 `;
 
+const CornerIcon = styled(CachedImage)`
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
 
 export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -1358,6 +1365,7 @@ export class EventDetail extends React.Component<Props, State> {
       iconBorder,
       collectibleUrl,
       itemImageRoundedSquare,
+      cornerIcon,
     } = itemData;
     const borderRadius = itemImageRoundedSquare && 13;
 
@@ -1374,7 +1382,12 @@ export class EventDetail extends React.Component<Props, State> {
       );
     }
     if (itemImageSource) {
-      return <TokenImage borderRadius={borderRadius} source={itemImageSource} />;
+      return (
+        <View>
+          <TokenImage style={{ borderRadius }} source={itemImageSource} />
+          {cornerIcon && <CornerIcon source={cornerIcon} />}
+        </View>
+      );
     }
     if (iconName) {
       return (

@@ -102,7 +102,8 @@ type Props = {
   iconImageSize?: number,
   statusIconColor?: string,
   itemImageRoundedSquare?: boolean,
-}
+  cornerIcon?: string,
+};
 
 type AddonProps = {
   unreadCount?: number | string,
@@ -219,15 +220,19 @@ const IconImage = styled(CachedImage)`
 `;
 
 const TokenImage = styled(CachedImage)`
-  width: ${props => props.diameter || 54}px;
-  height: ${props => props.diameter || 54}px;
-  border-radius: ${props => props.diameter / 2 || 27}px;
+  ${({ borderRadius, diameter }) => `
+    width: ${(!borderRadius && diameter) || 54}px;
+    height: ${(!borderRadius && diameter) || 54}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 27)}px;
+  `}
 `;
 
 const StyledCollectibleImage = styled(CollectibleImage)`
-  width: ${props => props.diameter || 54}px;
-  height: ${props => props.diameter || 54}px;
-  border-radius: ${props => props.diameter / 2 || 27}px;
+  ${({ borderRadius, diameter }) => `
+    width: ${(!borderRadius && diameter) || 54}px;
+    height: ${(!borderRadius && diameter) || 54}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 27)}px;
+  `}
 `;
 
 const TimeWrapper = styled.View`
@@ -325,6 +330,14 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
+const CornerIcon = styled(CachedImage)`
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
 const ImageWrapper = (props: ImageWrapperProps) => {
   const {
     children,
@@ -381,6 +394,7 @@ const ItemImage = (props: Props) => {
     iconImageResizeMode,
     iconImageSize,
     itemImageRoundedSquare,
+    cornerIcon,
   } = props;
 
   let { fallbackSource } = props;
@@ -452,12 +466,15 @@ const ItemImage = (props: Props) => {
 
   if (itemImageSource) {
     return (
-      <TokenImage
-        diameter={diameter}
-        source={itemImageSource}
-        fallbackSource={fallbackSource}
-        borderRadius={roundedImageCustomBorderRadius}
-      />
+      <View>
+        <TokenImage
+          diameter={diameter}
+          source={itemImageSource}
+          fallbackSource={fallbackSource}
+          borderRadius={roundedImageCustomBorderRadius}
+        />
+        {cornerIcon && <CornerIcon source={cornerIcon} />}
+      </View>
     );
   }
 

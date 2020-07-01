@@ -159,6 +159,7 @@ export type EventData = {
   statusIconColor?: ?string,
   isFailed?: boolean,
   itemImageRoundedSquare?: boolean,
+  cornerIcon?: string,
 };
 
 const NAMES = {
@@ -255,6 +256,14 @@ export class ActivityFeedItem extends React.Component<Props> {
     if (!amount || !symbol) return '';
     const value = formatUnits(amount, decimals);
     return `${prefix} ${formatAmount(value, getDecimalPlaces(symbol))} ${symbol}`;
+  };
+
+
+  getAaveDepositedAssetImage = () => {
+    const { event, supportedAssets } = this.props;
+    if (!event?.extra?.symbol) return '';
+    const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
+    return iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : '';
   };
 
   getWalletCreatedEventData = (event: Object) => {
@@ -487,10 +496,10 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: depositDisplayValue,
           fullItemValue: depositDisplayValue,
           valueColor: 'text',
-          iconSource: aaveImage,
           itemImageSource: aaveImage,
           itemImageRoundedSquare: true,
           iconImageSize: 52,
+          cornerIcon: this.getAaveDepositedAssetImage(),
         };
         break;
       case AAVE_LENDING_WITHDRAW_TRANSACTION:
@@ -500,10 +509,10 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: withdrawDisplayValue,
           fullItemValue: withdrawDisplayValue,
           valueColor: 'positive',
-          iconSource: aaveImage,
           itemImageSource: aaveImage,
           itemImageRoundedSquare: true,
           iconImageSize: 52,
+          cornerIcon: this.getAaveDepositedAssetImage(),
         };
         break;
       default:
