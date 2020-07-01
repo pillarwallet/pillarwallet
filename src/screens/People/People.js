@@ -30,9 +30,9 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 
 // actions
 import {
-  searchContactsAction,
-  resetSearchContactsStateAction,
-  disconnectContactAction,
+  searchContactsAction, // done
+  resetSearchContactsStateAction, // done
+  disconnectContactAction, // leave
   muteContactAction,
   blockContactAction,
 } from 'actions/contactsActions';
@@ -76,7 +76,7 @@ import type { Theme } from 'models/Theme';
 // utils
 import { fontSizes, spacing, fontStyles, itemSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { sortLocalContacts } from 'utils/contacts';
+import { sortLocalContacts } from 'utils/contacts'; // done
 
 import unionBy from 'lodash.unionby';
 import intersectionBy from 'lodash.intersectionby';
