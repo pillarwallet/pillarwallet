@@ -462,7 +462,7 @@ exports[`Storyshots ActionModal default 1`] = `
                   ]
                 }
               >
-                
+
               </Text>
             </View>
           </View>
@@ -4465,7 +4465,9 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -4670,7 +4672,9 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -4883,7 +4887,9 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7104,7 +7110,9 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7383,7 +7391,9 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7634,7 +7644,9 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7885,7 +7897,9 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -8098,7 +8112,9 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -8375,7 +8391,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -10874,7 +10892,9 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -12040,6 +12060,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -12417,6 +12438,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -14266,6 +14288,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -14783,6 +14806,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -15256,6 +15280,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -15773,6 +15798,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -16290,6 +16316,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -17643,6 +17670,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -17785,9 +17813,9 @@ Array [
           ]
         }
       >
-        - 
+        -
         1
-         
+
         PLR
       </Text>
     </View>
@@ -17906,9 +17934,9 @@ Array [
           ]
         }
       >
-        - 
+        -
         2
-         
+
         ETH
       </Text>
     </View>
@@ -17975,9 +18003,9 @@ Array [
             ]
           }
         >
-          + 
+          +
           1.0
-           
+
           PLR
         </Text>
         <Text
@@ -17996,9 +18024,9 @@ Array [
             ]
           }
         >
-          + 
+          +
           2.0
-           
+
           ETH
         </Text>
       </View>
@@ -18286,6 +18314,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -18789,6 +18818,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -19292,6 +19322,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -19669,6 +19700,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -23858,6 +23890,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -24237,6 +24270,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -24740,6 +24774,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -25213,6 +25248,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -25560,6 +25596,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -27115,7 +27152,7 @@ Array [
                     ]
                   }
                 >
-                  
+
                 </Text>
               </View>
             </View>
@@ -28898,7 +28935,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                 ]
                               }
                             >
-                              
+
                             </Text>
                           </View>
                         </View>
@@ -29172,7 +29209,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                   }
                 >
                   54321
-                   
+
                   PLR
                    (
                   £ 80,395.08
@@ -29396,7 +29433,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           secondary={true}
                         >
                           54321
-                           
+
                           PLR
                            (
                           £ 80,395.08
@@ -30761,7 +30798,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                 ]
                               }
                             >
-                              
+
                             </Text>
                           </View>
                         </View>
@@ -32550,7 +32587,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                 ]
                               }
                             >
-                              
+
                             </Text>
                           </View>
                         </View>
