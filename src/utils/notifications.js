@@ -36,7 +36,7 @@ import {
   MESSAGE_DISCONNECTED,
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
-import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
+import { COLLECTIBLE, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
 
 // utils
 import { reportLog } from 'utils/common';
@@ -89,14 +89,14 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
-  if (!!parsedNotification.type && parsedNotification.type.toUpperCase() === SIGNAL) {
-    return {
-      message: 'New message',
-      title: parsedNotification.sender,
-      type: SIGNAL,
-      navigationParams: { username: parsedNotification.sender },
-    };
-  }
+  // if (!!parsedNotification.type && parsedNotification.type.toUpperCase() === SIGNAL) {
+  //   return {
+  //     message: 'New message',
+  //     title: parsedNotification.sender,
+  //     type: SIGNAL,
+  //     navigationParams: { username: parsedNotification.sender },
+  //   };
+  // }
 
   if (connectionEvents.includes(parsedNotification.type)) {
     if (parsedNotification.type === 'connectionRequestedEvent') {
