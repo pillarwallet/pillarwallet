@@ -462,6 +462,40 @@ export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) 
   };
 };
 
+export const addMultipleAssetsAction = (assetsToAdd: Asset[]) => {
+  return async (dispatch: Dispatch, getState: () => Object) => {
+    const {
+      assets: { data: assets },
+      accounts: { data: accounts },
+    } = getState();
+
+    const accountId = getActiveAccountId(accounts);
+    if (!accountId) return;
+
+    const accountAssets = accountAssetsSelector(getState());
+    const updatedAssets = {
+      ...assets,
+      [accountId]: {
+        ...accountAssets,
+        ...assetsToAdd.reduce((newAssets, asset) => ({ ...newAssets, [asset.symbol]: { ...asset } }), {}),
+      },
+    };
+
+    assetsToAdd.forEach(asset => {
+      dispatch(showAssetAction(asset));
+    });
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+
+    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
+
+    dispatch(fetchAssetsBalancesAction());
+
+    assetsToAdd.forEach(asset => {
+      dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
+    });
+  };
+};
+
 export const addAssetAction = (asset: Asset) => {
   return async (dispatch: Dispatch, getState: () => Object) => {
     const {
