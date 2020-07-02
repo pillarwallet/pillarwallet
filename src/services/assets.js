@@ -204,6 +204,7 @@ export const buildERC721TransactionData = async (transaction: Object, provider: 
     // unable to transfer
   }
 
+  // $FlowFixMe – asks for contractAbi to be surely initialized
   return encodeContractMethod(contractAbi, contractTransferMethod, params);
 };
 
