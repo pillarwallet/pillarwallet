@@ -40,10 +40,9 @@ import UserNameAndImage from 'components/UserNameAndImage';
 
 // constants
 import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
-import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import { ALL, TRANSACTIONS } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 // actions
 import {
@@ -96,7 +95,6 @@ import WalletsPart from './WalletsPart';
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
-  invitations: Object[],
   user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
@@ -280,7 +278,6 @@ class HomeScreen extends React.Component<Props, State> {
       history,
       openSeaTxHistory,
       contacts,
-      invitations,
       badges,
       contactsSmartAddresses,
       accounts,
@@ -324,8 +321,6 @@ class HomeScreen extends React.Component<Props, State> {
       true,
     );
 
-    const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-
     const activityFeedTabs = [
       {
         id: ALL,
@@ -335,8 +330,6 @@ class HomeScreen extends React.Component<Props, State> {
         data: [
           ...transactionsOnMainnet,
           ...mappedCTransactions,
-          ...mappedContacts,
-          ...invitations,
           ...userEvents,
           ...badgesEvents,
         ],
@@ -354,17 +347,6 @@ class HomeScreen extends React.Component<Props, State> {
         emptyState: {
           title: 'Make your first step',
           bodyText: 'Your transactions will appear here. Send or receive tokens to start.',
-        },
-      },
-      {
-        id: SOCIAL,
-        name: 'Social',
-        icon: 'cup',
-        onPress: () => this.setActiveTab(SOCIAL),
-        data: [...mappedContacts, ...invitations],
-        emptyState: {
-          title: 'Make your first step',
-          bodyText: 'Information on your connections will appear here. Send a connection request to start.',
         },
       },
     ];
@@ -521,7 +503,6 @@ class HomeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   user: { data: user },
-  invitations: { data: invitations },
   notifications: { intercomNotificationsCount },
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
@@ -533,7 +514,6 @@ const mapStateToProps = ({
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
-  invitations,
   intercomNotificationsCount,
   badges,
   badgesEvents,

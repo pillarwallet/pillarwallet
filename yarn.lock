@@ -2230,10 +2230,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha1-K1o6s/kYzKSKjHVMCBaOPwPrphs=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.48.1851":
-  version "1.48.1851"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.48.1851.tgz#70902027e7b98536afea921785483af63b6d86c1"
-  integrity sha1-cJAgJ+e5hTav6pIXhUg69jtthsE=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.48.1856":
+  version "1.48.1856"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.48.1856.tgz#bc4f3b91b03427e1b418fd1f1154180e56e7bfc0"
+  integrity sha1-vE87kbA0J+G0GP0fEVQYDlbnv8A=
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
