@@ -227,7 +227,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateLendingWithdrawTransactionEstimate: debounce((
     amount: number,
     depositedAsset: DepositedAsset,
-  ) => dispatch(calculateLendingWithdrawTransactionEstimateAction(amount, depositedAsset))),
+  ) => dispatch(calculateLendingWithdrawTransactionEstimateAction(amount, depositedAsset)), 500),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EnterWithdrawAmount);
