@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Contract, utils } from 'ethers';
+import { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK, BALANCE_CHECK_CONTRACT } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import abiHelper from 'ethjs-abi';
@@ -99,7 +99,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
 
   if (!data) {
     try {
-      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+      data = await contract.interface.encodeFunctionData('transfer', [to, contractAmount]);
     } catch (e) {
       //
     }
@@ -108,7 +108,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
 
   const transaction = {
     gasLimit,
-    gasPrice: utils.bigNumberify(gasPrice),
+    gasPrice: EthersBigNumber.from(gasPrice),
     to,
     nonce,
     data,
@@ -210,7 +210,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   if (data) {
     const transaction = {
       gasLimit,
-      gasPrice: utils.bigNumberify(gasPrice),
+      gasPrice: EthersBigNumber.from(gasPrice),
       to: contractAddress,
       nonce,
       data,
@@ -243,7 +243,7 @@ export async function transferETH(options: ETHTransferOptions) {
   const value = utils.parseEther(amount.toString());
   const trx = {
     gasLimit,
-    gasPrice: utils.bigNumberify(gasPrice),
+    gasPrice: EthersBigNumber.from(gasPrice),
     value,
     to,
     nonce,
@@ -392,7 +392,7 @@ export async function calculateGasEstimate(transaction: Object) {
        */
       const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
       const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
-      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+      data = await contract.interface.encodeFunctionData('transfer', [to, contractAmount]);
       to = contractAddress;
     }
   } catch (e) {
@@ -406,7 +406,7 @@ export async function calculateGasEstimate(transaction: Object) {
     value,
   })
     .then(calculatedGasLimit =>
-      Math.round(utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
+      Math.round(EthersBigNumber.from(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
     )
     .catch(() => DEFAULT_GAS_LIMIT);
 }

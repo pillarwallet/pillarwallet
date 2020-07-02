@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Platform } from 'react-native';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { Notifications } from 'react-native-notifications';
 import isEmpty from 'lodash.isempty';
 // $FlowFixMe – throws "react-native-android-badge" not found
@@ -132,7 +132,7 @@ export const processNotification = (notification: Object, myEthAddress?: string)
     } = parsedNotification;
     const sender = parsedNotification.fromAddress.toUpperCase();
     const receiver = parsedNotification.toAddress.toUpperCase();
-    const amount = utils.formatUnits(utils.bigNumberify(value.toString()), decimals);
+    const amount = utils.formatUnits(EthersBigNumber.from(value.toString()), decimals);
 
     if (receiver === myEthAddress && status === 'pending') {
       title = `${amount} ${asset}`;
