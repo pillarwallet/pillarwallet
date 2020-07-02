@@ -4465,7 +4465,9 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -4670,7 +4672,9 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -4883,7 +4887,9 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7104,7 +7110,9 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7383,7 +7391,9 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7634,7 +7644,9 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -7885,7 +7897,9 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -8098,7 +8112,9 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -8375,7 +8391,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -10874,7 +10892,9 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
           undefined,
         ]
       }
-    />
+    >
+      <View />
+    </View>
     <View
       style={
         Object {
@@ -12040,6 +12060,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -12417,6 +12438,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -14142,6 +14164,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -14659,6 +14682,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -15132,6 +15156,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -15649,6 +15674,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -16166,6 +16192,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -17395,6 +17422,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -18038,6 +18066,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -18541,6 +18570,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -19044,6 +19074,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -19421,6 +19452,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -23366,6 +23398,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -23745,6 +23778,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -24248,6 +24282,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -24721,6 +24756,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}
@@ -25068,6 +25104,7 @@ Array [
         ]
       }
     />
+    <View />
   </View>,
   <View
     h={20}

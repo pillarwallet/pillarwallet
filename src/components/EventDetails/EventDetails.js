@@ -69,6 +69,7 @@ import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
+import { isAaveTransactionTag } from 'utils/aave';
 
 // constants
 import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -112,7 +113,11 @@ import {
   TANK_WITHDRAWAL_FLOW,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   CONTACT,
+  LENDING_ENTER_WITHDRAW_AMOUNT,
+  LENDING_ENTER_DEPOSIT_AMOUNT,
+  LENDING_VIEW_DEPOSITED_ASSET,
 } from 'constants/navigationConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 
 // selectors
 import {
@@ -141,7 +146,7 @@ import { updateCollectibleTransactionAction } from 'actions/collectiblesActions'
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, AssetData } from 'models/Asset';
+import type { Rates, Assets, Asset, AssetData, DepositedAsset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -155,6 +160,7 @@ import type { EventData as PassedEventData } from 'components/ActivityFeed/Activ
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { TxNote } from 'reducers/txNoteReducer';
+
 
 type Props = {
   theme: Theme,
@@ -201,6 +207,7 @@ type Props = {
   updatingTransaction: string,
   updatingCollectibleTransaction: string,
   isSmartAccount: boolean,
+  depositedAssets: DepositedAsset[],
 };
 
 type State = {
@@ -245,7 +252,7 @@ const ButtonsContainer = styled.View`
 const TokenImage = styled(CachedImage)`
   width: 64px;
   height: 64px;
-  border-radius: 64px;
+  border-radius: ${({ borderRadius }) => borderRadius || 64}px;
 `;
 
 const StyledCollectibleImage = styled(CollectibleImage)`
@@ -257,14 +264,15 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 const IconCircle = styled.View`
   width: 64px;
   height: 64px;
-  border-radius: 32px;
+  border-radius: ${({ borderRadius }) => borderRadius || 32}px;
   background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border &&
-  `border-color: ${theme.colors.border};
-    border-width: 1px;`};
+  ${({ border, theme }) => border && `
+    border-color: ${theme.colors.border};
+    border-width: 1px;
+  `}
   overflow: hidden;
 `;
 
@@ -326,6 +334,13 @@ const ErrorMessage = styled(BaseText)`
   text-align: center;
 `;
 
+const CornerIcon = styled(CachedImage)`
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
 
 export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -594,6 +609,26 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(TANK_FUND_FLOW);
   };
 
+  onAaveViewDeposit = (depositedAsset: ?DepositedAsset) => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
+  };
+
+  onAaveDepositMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
+  };
+
+  onAaveWithdrawMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
+  };
+
   PPNWithdraw = async () => {
     const { onClose, navigation } = this.props;
     onClose();
@@ -810,6 +845,7 @@ export class EventDetail extends React.Component<Props, State> {
       bitcoinAddresses,
       bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
+      depositedAssets,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -829,6 +865,13 @@ export class EventDetail extends React.Component<Props, State> {
     const isTimedOut = isTimedOutTransaction(event);
 
     let eventData: ?EventData = null;
+
+    let aaveDepositedAsset;
+    if (isAaveTransactionTag(event?.tag)) {
+      aaveDepositedAsset = depositedAssets.find(({
+        symbol: depositedAssetSymbol,
+      }) => depositedAssetSymbol === event?.extra?.symbol);
+    }
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -936,6 +979,50 @@ export class EventDetail extends React.Component<Props, State> {
             },
           ],
         };
+        break;
+      case AAVE_LENDING_DEPOSIT_TRANSACTION:
+        eventData = {
+          name: 'Aave deposit',
+          actionTitle: fullItemValue,
+        };
+        const aaveDepositButtons = [];
+        if (event?.asset) {
+          aaveDepositButtons.push({
+            title: 'Deposit more',
+            onPress: this.onAaveDepositMore,
+            secondary: true,
+          });
+          if (aaveDepositedAsset) {
+            aaveDepositButtons.push({
+              title: 'View deposit',
+              onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+              squarePrimary: true,
+            });
+          }
+        }
+        eventData.buttons = aaveDepositButtons;
+        break;
+      case AAVE_LENDING_WITHDRAW_TRANSACTION:
+        eventData = {
+          name: 'Aave deposit',
+          actionTitle: fullItemValue,
+        };
+        const aaveWithdrawButtons = [];
+        if (event?.asset && aaveDepositedAsset) {
+          if (aaveDepositedAsset?.currentBalance > 0) {
+            aaveWithdrawButtons.push({
+              title: 'Withdraw more',
+              onPress: this.onAaveWithdrawMore,
+              secondary: true,
+            });
+          }
+          aaveWithdrawButtons.push({
+            title: 'View deposit',
+            onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+            squarePrimary: true,
+          });
+        }
+        eventData.buttons = aaveWithdrawButtons;
         break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
@@ -1251,31 +1338,51 @@ export class EventDetail extends React.Component<Props, State> {
       iconBackgroundColor,
       iconBorder,
       collectibleUrl,
+      itemImageRoundedSquare,
+      cornerIcon,
     } = itemData;
+    const borderRadius = itemImageRoundedSquare && 13;
 
     const { genericToken: fallbackSource } = images(theme);
     if (itemImageUrl) {
       return (
-        <IconCircle border={iconBorder} backgroundColor={this.getColor(iconBackgroundColor)}>
+        <IconCircle
+          borderRadius={borderRadius}
+          border={iconBorder}
+          backgroundColor={this.getColor(iconBackgroundColor)}
+        >
           <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
     if (itemImageSource) {
-      return <TokenImage source={itemImageSource} />;
+      return (
+        <View>
+          <TokenImage style={{ borderRadius }} source={itemImageSource} />
+          {cornerIcon && <CornerIcon source={cornerIcon} />}
+        </View>
+      );
     }
     if (iconName) {
       return (
-        <IconCircle>
-          <ItemIcon name={iconName} iconColor={this.getColor(iconColor)} />
+        <IconCircle borderRadius={borderRadius}>
+          <ItemIcon
+            borderRadius={borderRadius}
+            name={iconName}
+            iconColor={this.getColor(iconColor)}
+          />
         </IconCircle>
       );
     }
 
     if (collectibleUrl) {
       return (
-        <IconCircle border backgroundColor={this.getColor('card')}>
-          <StyledCollectibleImage source={{ uri: collectibleUrl }} fallbackSource={fallbackSource} />
+        <IconCircle borderRadius={borderRadius} border backgroundColor={this.getColor('card')}>
+          <StyledCollectibleImage
+            borderRadius={borderRadius}
+            source={{ uri: collectibleUrl }}
+            fallbackSource={fallbackSource}
+          />
         </IconCircle>
       );
     }
@@ -1538,6 +1645,7 @@ const mapStateToProps = ({
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
+  lending: { depositedAssets },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1554,6 +1662,7 @@ const mapStateToProps = ({
   txNotes,
   updatingTransaction,
   updatingCollectibleTransaction,
+  depositedAssets,
 });
 
 const structuredSelector = createStructuredSelector({

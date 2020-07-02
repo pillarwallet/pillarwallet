@@ -73,7 +73,7 @@ import {
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
-
+import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -194,6 +194,9 @@ export const initAppAndRedirectAction = () => {
 
       const { insights = {} } = get(storageData, 'insights', {});
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
+
+      const { depositedAssets = [] } = get(storageData, 'lending', []);
+      dispatch({ type: SET_LENDING_DEPOSITED_ASSETS, payload: depositedAssets });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

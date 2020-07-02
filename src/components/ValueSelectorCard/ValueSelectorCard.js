@@ -55,6 +55,7 @@ type Props = {
   rates: Rates,
   getFormValue: (?FormSelector) => void,
   txFeeInfo?: ?TransactionFeeInfo,
+  hideZeroBalanceAssets?: boolean,
 };
 
 type FormValue = {
@@ -143,6 +144,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       rates,
       maxLabel,
       preselectedAsset,
+      hideZeroBalanceAssets,
     } = this.props;
     const { formOptions, value } = this.state;
 
@@ -150,7 +152,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       const { symbol, iconUrl } = asset;
       const rawBalance = getBalance(balances, symbol);
       const assetBalance = formatAmount(rawBalance);
-      if (rawBalance <= 0) return options;
+      if (hideZeroBalanceAssets && rawBalance <= 0) return options;
       const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
       const option = {
         key: symbol,
@@ -269,8 +271,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     return { selectedAssetBalance, amountValueInFiat, selectedAssetSymbol };
   };
 
-
   handleUseMax = () => {
+    const { getFormValue } = this.props;
     const { value, formOptions } = this.state;
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
@@ -288,6 +290,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     });
 
     this.setState({ value: newValue, formOptions: newOptions });
+
+    getFormValue(newValue?.formSelector);
   };
 
   render() {

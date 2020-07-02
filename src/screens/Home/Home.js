@@ -22,6 +22,8 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
+import isEmpty from 'lodash.isempty';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
@@ -37,9 +39,17 @@ import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
 import Requests from 'screens/WalletConnect/Requests';
 import UserNameAndImage from 'components/UserNameAndImage';
+import { BaseText } from 'components/Typography';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 // constants
-import { BADGE, MENU, WALLETCONNECT } from 'constants/navigationConstants';
+import {
+  BADGE,
+  LENDING_DEPOSITED_ASSETS_LIST,
+  LENDING_VIEW_DEPOSITED_ASSET,
+  MENU,
+  WALLETCONNECT,
+} from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -64,10 +74,11 @@ import {
   fetchReferralRewardsIssuerAddressesAction,
   fetchReferralRewardAction,
 } from 'actions/referralsActions';
-import { toggleBadgesAction } from 'actions/appSettingsActions';
+import { toggleBadgesAction, toggleLendingDepositsAction } from 'actions/appSettingsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
+import { fetchDepositedAssetsAction } from 'actions/lendingActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -78,6 +89,7 @@ import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
+import { formatAmountDisplay } from 'utils/common';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -88,9 +100,11 @@ import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
+import type { DepositedAsset } from 'models/Asset';
 
 // partials
 import WalletsPart from './WalletsPart';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -131,6 +145,11 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
   dismissReferFriends: () => void,
   referFriendsOnHomeScreenDismissed: boolean,
+  depositedAssets: DepositedAsset[],
+  hideLendingDeposits: boolean,
+  fetchDepositedAssets: () => void,
+  toggleLendingDeposits: () => void,
+  isFetchingDepositedAssets: boolean,
 };
 
 type State = {
@@ -166,7 +185,13 @@ const LoaderWrapper = styled.View`
   z-index: 99999;
 `;
 
+const DepositedAssetGain = styled(BaseText)`
+  margin-bottom: 5px;
+  font-size: ${fontSizes.big};
+`;
+
 const referralImage = require('assets/images/referral_gift.png');
+const aaveImage = require('assets/images/apps/aave.png');
 
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -184,6 +209,7 @@ class HomeScreen extends React.Component<Props, State> {
       fetchBadgeAwardHistory,
       fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
+      fetchDepositedAssets,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -197,6 +223,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadges();
     fetchBadgeAwardHistory();
     fetchReferralRewardsIssuerAddresses();
+    fetchDepositedAssets();
   }
 
   componentWillUnmount() {
@@ -232,6 +259,7 @@ class HomeScreen extends React.Component<Props, State> {
       refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
+      fetchDepositedAssets,
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
@@ -244,6 +272,7 @@ class HomeScreen extends React.Component<Props, State> {
     refreshBitcoinBalance();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
+    fetchDepositedAssets();
   };
 
   setActiveTab = (activeTab) => {
@@ -263,6 +292,33 @@ class HomeScreen extends React.Component<Props, State> {
       />
     );
   };
+
+  renderDepositedAsset = ({ item: depositedAsset }: { item: DepositedAsset }) => {
+    const {
+      symbol,
+      earnInterestRate,
+      currentBalance,
+      earnedAmount,
+      earningsPercentageGain,
+      iconUrl,
+    } = depositedAsset;
+    const cornerIcon = iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : '';
+    return (
+      <ListItemWithImage
+        label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
+        subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
+        itemImageSource={aaveImage}
+        onPress={() => this.props.navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
+        iconImageSize={52}
+        cornerIcon={cornerIcon}
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+        itemImageRoundedSquare
+      >
+        <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
+        <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
+      </ListItemWithImage>
+    );
+  }
 
   handleWalletChange = (loaderMessage: string) => {
     this.setState({ loaderMessage });
@@ -292,6 +348,10 @@ class HomeScreen extends React.Component<Props, State> {
       isPillarRewardCampaignActive,
       dismissReferFriends,
       referFriendsOnHomeScreenDismissed,
+      hideLendingDeposits,
+      depositedAssets,
+      toggleLendingDeposits,
+      isFetchingDepositedAssets,
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
@@ -470,6 +530,24 @@ class HomeScreen extends React.Component<Props, State> {
                     onPress={toggleBadges}
                     open={!hideBadges}
                   />
+                  {!isEmpty(depositedAssets) &&
+                    <CollapsibleSection
+                      label="Aave Deposits"
+                      labelRight={isFetchingDepositedAssets ? null : 'View all'}
+                      showLoadingSpinner={isFetchingDepositedAssets}
+                      onPressLabelRight={() => navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST)}
+                      collapseContent={
+                        <FlatList
+                          data={depositedAssets}
+                          keyExtractor={(item) => item.symbol}
+                          renderItem={this.renderDepositedAsset}
+                          initialNumToRender={5}
+                        />
+                      }
+                      onPress={toggleLendingDeposits}
+                      open={!hideLendingDeposits}
+                    />
+                  }
                 </React.Fragment>
               )}
               tabsComponent={(
@@ -507,10 +585,11 @@ const mapStateToProps = ({
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency, hideBadges } },
+  appSettings: { data: { baseFiatCurrency, hideBadges, hideLendingDeposits } },
   walletConnect: { requests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
+  lending: { depositedAssets, isFetchingDepositedAssets },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -525,6 +604,9 @@ const mapStateToProps = ({
   walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
+  hideLendingDeposits,
+  depositedAssets,
+  isFetchingDepositedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -556,6 +638,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
+  fetchDepositedAssets: () => dispatch(fetchDepositedAssetsAction()),
+  toggleLendingDeposits: () => dispatch(toggleLendingDepositsAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

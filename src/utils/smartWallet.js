@@ -389,7 +389,9 @@ export const buildSmartWalletTransactionEstimate = (apiEstimate: EstimatePayload
   return estimate;
 };
 
-export const buildTxFeeInfo = (estimated: EstimatedTransactionFee, useGasToken: boolean): TransactionFeeInfo => {
+export const buildTxFeeInfo = (estimated: ?EstimatedTransactionFee, useGasToken: boolean): TransactionFeeInfo => {
+  if (!estimated) return { fee: null };
+
   const { gasTokenCost, gasToken, ethCost } = estimated;
 
   if (!useGasToken || !gasToken) {

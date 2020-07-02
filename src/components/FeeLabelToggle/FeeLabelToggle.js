@@ -23,19 +23,23 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
+import { useState } from 'react';
 
-import type { RootReducerState } from 'reducers/rootReducer';
-
+// components
 import { Label } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
+// constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
+// utils
 import { formatTransactionFee, getCurrencySymbol } from 'utils/common';
 import { getRate } from 'utils/assets';
 
+// types
 import type { Rates } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
@@ -44,57 +48,45 @@ type Props = {
   txFeeInWei: BigNumber | number,
   gasToken: ?GasToken,
   isLoading?: boolean,
+  labelText?: string,
+  showFiatDefault?: boolean,
 };
-
-type State = {
-  isFiatValueVisible: boolean,
-};
-
 
 const LabelWrapper = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
+const FeeLabelToggle = ({
+  txFeeInWei,
+  gasToken,
+  baseFiatCurrency,
+  rates,
+  isLoading,
+  labelText,
+  showFiatDefault,
+}: Props) => {
+  const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
 
-class FeeLabelToggle extends React.Component<Props, State> {
-  state = {
-    isFiatValueVisible: false,
-  };
-
-  toggleValue = () => {
-    this.setState(({ isFiatValueVisible }) => ({ isFiatValueVisible: !isFiatValueVisible }));
-  };
-
-  render() {
-    const { isFiatValueVisible } = this.state;
-    const {
-      txFeeInWei,
-      gasToken,
-      baseFiatCurrency,
-      rates,
-      isLoading,
-    } = this.props;
-
-    if (isLoading) {
-      return <Spinner width={20} height={20} />;
-    }
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-    const gasTokenSymbol = get(gasToken, 'symbol', ETH);
-    const currencySymbol = getCurrencySymbol(fiatCurrency);
-
-    const feeInFiat = parseFloat(feeDisplayValue) * getRate(rates, gasTokenSymbol, fiatCurrency);
-    const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
-    const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
-    return (
-      <LabelWrapper onPress={this.toggleValue}>
-        <Label>Estimated fee: </Label>
-        <Label>{labelValue}</Label>
-      </LabelWrapper>
-    );
+  if (isLoading) {
+    return <Spinner width={20} height={20} />;
   }
-}
+
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+  const gasTokenSymbol = get(gasToken, 'symbol', ETH);
+  const currencySymbol = getCurrencySymbol(fiatCurrency);
+
+  const feeInFiat = parseFloat(feeDisplayValue) * getRate(rates, gasTokenSymbol, fiatCurrency);
+  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
+  const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
+
+  return (
+    <LabelWrapper onPress={() => setIsFiatValueVisible(!isFiatValueVisible)}>
+      <Label>{labelText || 'Estimated fee:'}&nbsp;</Label>
+      <Label>{labelValue}</Label>
+    </LabelWrapper>
+  );
+};
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
@@ -103,6 +95,5 @@ const mapStateToProps = ({
   baseFiatCurrency,
   rates,
 });
-
 
 export default connect(mapStateToProps)(FeeLabelToggle);

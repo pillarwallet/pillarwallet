@@ -101,7 +101,9 @@ type Props = {
   iconImageResizeMode?: string,
   iconImageSize?: number,
   statusIconColor?: string,
-}
+  itemImageRoundedSquare?: boolean,
+  cornerIcon?: any,
+};
 
 type AddonProps = {
   unreadCount?: number | string,
@@ -188,10 +190,12 @@ const ItemSubText = styled(BaseText)`
   font-size: ${fontSizes.regular}px;
 `;
 
-const IconCircle = styled.View`
-  width: ${props => props.diameter || 52}px;
-  height: ${props => props.diameter || 52}px;
-  border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
+const IconRounded = styled.View`
+  ${({ diameter, borderRadius }) => `
+    width: ${(!borderRadius && diameter) || 52}px;
+    height: ${(!borderRadius && diameter) || 52}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 26)}px;
+  `}
   background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
@@ -199,7 +203,7 @@ const IconCircle = styled.View`
   ${({ border, theme }) => border && `
     border-color: ${theme.colors.border};
     border-width: 1px;
-  `};
+  `}
   overflow: hidden;
 `;
 
@@ -216,15 +220,19 @@ const IconImage = styled(CachedImage)`
 `;
 
 const TokenImage = styled(CachedImage)`
-  width: ${props => props.diameter || 54}px;
-  height: ${props => props.diameter || 54}px;
-  border-radius: ${props => props.diameter / 2 || 27}px;
+  ${({ borderRadius, diameter }) => `
+    width: ${(!borderRadius && diameter) || 54}px;
+    height: ${(!borderRadius && diameter) || 54}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 27)}px;
+  `}
 `;
 
 const StyledCollectibleImage = styled(CollectibleImage)`
-  width: ${props => props.diameter || 54}px;
-  height: ${props => props.diameter || 54}px;
-  border-radius: ${props => props.diameter / 2 || 27}px;
+  ${({ borderRadius, diameter }) => `
+    width: ${(!borderRadius && diameter) || 54}px;
+    height: ${(!borderRadius && diameter) || 54}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 27)}px;
+  `}
 `;
 
 const TimeWrapper = styled.View`
@@ -322,6 +330,14 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
+const CornerIcon = styled(CachedImage)`
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
 const ImageWrapper = (props: ImageWrapperProps) => {
   const {
     children,
@@ -377,28 +393,41 @@ const ItemImage = (props: Props) => {
     collectibleUrl,
     iconImageResizeMode,
     iconImageSize,
+    itemImageRoundedSquare,
+    cornerIcon,
   } = props;
 
   let { fallbackSource } = props;
   if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
+  const roundedImageCustomBorderRadius = itemImageRoundedSquare && 13;
 
   if (iconName) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
         <ItemIcon name={iconName} iconColor={iconColor} />
-      </IconCircle>
+      </IconRounded>
     );
   }
 
   if (iconSource) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
         <IconImage
           source={iconSource}
           size={iconImageSize}
           resizeMode={iconImageResizeMode}
         />
-      </IconCircle>
+      </IconRounded>
     );
   }
 
@@ -406,27 +435,47 @@ const ItemImage = (props: Props) => {
 
   if (itemImageUrl) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
         <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
-      </IconCircle>
+      </IconRounded>
     );
   }
 
   if (collectibleUrl) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
         <StyledCollectibleImage
           width={diameter}
           height={diameter}
           diameter={diameter}
           source={{ uri: collectibleUrl }}
         />
-      </IconCircle>
+      </IconRounded>
     );
   }
 
   if (itemImageSource) {
-    return (<TokenImage diameter={diameter} source={itemImageSource} fallbackSource={fallbackSource} />);
+    return (
+      <View>
+        <TokenImage
+          diameter={diameter}
+          source={itemImageSource}
+          fallbackSource={fallbackSource}
+          borderRadius={roundedImageCustomBorderRadius}
+        />
+        {cornerIcon && <CornerIcon source={cornerIcon} />}
+      </View>
+    );
   }
 
   const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;
@@ -456,14 +505,14 @@ const ImageAddon = (props: Props) => {
   if (imageAddonIconName) {
     return (
       <ImageAddonHolder>
-        <IconCircle diameter={22}>
+        <IconRounded diameter={22}>
           <ItemIcon
             name={imageAddonIconName}
             color={iconColor}
             fontSize={30}
             style={{ lineHeight: 30, width: 30, height: 30 }}
           />
-        </IconCircle>
+        </IconRounded>
       </ImageAddonHolder>
     );
   }
@@ -649,13 +698,14 @@ class ListItemWithImage extends React.Component<Props, {}> {
 
     const type = getType(this.props);
     const colors = getThemeColors(theme);
+    const hasImageAddon = !!(imageAddonUrl || imageAddonIconName || imageAddonName);
 
     return (
       <ItemWrapper wrapperOpacity={wrapperOpacity}>
         <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
           <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
             <ItemImage {...this.props} />
-            {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
+            {hasImageAddon && <ImageAddon {...this.props} />}
           </ImageWrapper>
           <View style={{ flex: 1 }}>
             <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
