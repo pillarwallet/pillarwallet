@@ -291,8 +291,9 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
-
-    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const tokenTxHistory = history
+      .filter(({ tranType }) => tranType !== 'collectible')
+      .filter(historyItem => historyItem.asset !== 'BTC');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
     const transactionsOnMainnet = mapTransactionsHistory(

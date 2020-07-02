@@ -28,7 +28,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
+import { TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -69,7 +69,7 @@ import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 
 // constants
-import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -119,7 +119,6 @@ import {
 import {
   activeAccountAddressSelector,
   activeBlockchainSelector,
-  bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -130,8 +129,6 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
@@ -143,7 +140,6 @@ import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
-import type { BitcoinAddress } from 'models/Bitcoin';
 import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -175,7 +171,6 @@ type Props = {
   activeAccountAddress: string,
   accountAssets: Assets,
   activeBlockchainNetwork: string,
-  bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
   isPPNActivated: boolean,
@@ -184,9 +179,7 @@ type Props = {
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
-  bitcoinFeatureEnabled?: boolean,
   setActiveBlockchainNetwork: (id: string) => void,
-  refreshBitcoinBalance: () => void,
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
@@ -439,9 +432,8 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getFeeLabel = (event: Object) => {
-    const { assetDecimals } = this.props;
     const {
-      gasUsed, gasPrice, btcFee, feeWithGasToken,
+      gasUsed, gasPrice, feeWithGasToken,
     } = event;
 
     if (!isEmpty(feeWithGasToken)) {
@@ -452,9 +444,6 @@ export class EventDetail extends React.Component<Props, State> {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const formattedFee = parseFloat(utils.formatEther(fee.toString()));
       return this.getFormattedGasFee(formattedFee, ETH);
-    } else if (btcFee) {
-      const formattedBTCFee = parseFloat(formatUnits(btcFee, assetDecimals));
-      return this.getFormattedGasFee(formattedBTCFee, BTC);
     }
     return null;
   };
@@ -490,11 +479,8 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   viewOnTheBlockchain = () => {
-    const { hash, asset } = this.props.event;
-    let url = TX_DETAILS_URL + hash;
-    if (asset && asset === 'BTC') {
-      url = BITCOIN_TX_DETAILS_URL + hash;
-    }
+    const { hash } = this.props.event;
+    const url = TX_DETAILS_URL + hash;
     Linking.openURL(url);
   };
 
@@ -1454,11 +1440,6 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history, updatingTransaction },
-  featureFlags: {
-    data: {
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
-    },
-  },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
@@ -1472,7 +1453,6 @@ const mapStateToProps = ({
   ensRegistry,
   supportedAssets,
   history,
-  bitcoinFeatureEnabled,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
   txNotes,
@@ -1488,7 +1468,6 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
-  bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
@@ -1505,8 +1484,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
