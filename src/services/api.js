@@ -39,14 +39,13 @@ import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { ETH } from 'constants/assetsConstants';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 
 // utils
-import { addressesEqual, transformAssetsToObject } from 'utils/assets';
+import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { formatUnits, reportLog, uniqBy } from 'utils/common';
+import { reportLog, uniqBy } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
 import { normalizeWalletAddress } from 'utils/wallet';
 
@@ -60,6 +59,7 @@ import type { ClaimTokenAction } from 'actions/referralsActions';
 
 // services
 import {
+  fetchAddressBalancesFromProxyContract,
   fetchAssetBalancesOnChain,
   fetchLastBlockNumber,
   fetchTransactionInfo,
@@ -569,50 +569,13 @@ class SDKWrapper {
     return fetchLastBlockNumber(network);
   }
 
-  async fetchBalances({ address: accountAddress, assets }: BalancePayload) {
-    // NOTE: ethplorer could be used for the mainnet only
-    const addressInfo = (NETWORK_PROVIDER === 'homestead')
-      ? await ethplorerSdk.getAddressInfo(accountAddress).catch(() => ({}))
-      : {};
+  async fetchBalances({ address, assets }: BalancePayload) {
+    // try to get all the balances in one call (mainnet and ropsten only)
+    const balances = await fetchAddressBalancesFromProxyContract(assets, address);
+    if (!isEmpty(balances)) return balances;
 
-    const balances = [];
-
-    // Get ETH balance
-    const accountHasEthAsset = assets.some(({ symbol }) => symbol === ETH);
-    if (accountHasEthAsset && addressInfo?.ETH) {
-      const ethBalance = (addressInfo?.ETH?.balance || 0).toString();
-      balances.push({
-        symbol: ETH,
-        balance: ethBalance,
-      });
-    }
-
-    // Get other ERC20 tokens balances
-    if (!isEmpty(addressInfo.tokens)) {
-      addressInfo.tokens.forEach(tokenData => {
-        const tokenAddress = tokenData.tokenInfo?.address;
-        const tokenBalance = tokenData.balance || 0;
-
-        const assetDetails = assets.find(({ address }) => addressesEqual(address, tokenAddress));
-        if (!assetDetails) return;
-
-        balances.push({
-          symbol: assetDetails.symbol,
-          balance: formatUnits(tokenBalance.toString(), assetDetails.decimals),
-        });
-      });
-    }
-
-    // if we were unable to get some balances from the Etherscan - check them onchain
-    const fetchAssetsOnChain = assets.filter(({ symbol }) => {
-      return !balances.some(balance => balance.symbol === symbol);
-    });
-    if (fetchAssetsOnChain.length) {
-      const onchainBalances = await fetchAssetBalancesOnChain(fetchAssetsOnChain, accountAddress);
-      balances.push(...onchainBalances);
-    }
-
-    return balances;
+    // if we fail to get the balances in one call, let's use the fallback method
+    return fetchAssetBalancesOnChain(assets, address);
   }
 
   fetchBadges(walletId: string): Promise<UserBadgesResponse> {

@@ -166,6 +166,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
 
     // all done
     dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
+    dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
     dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
     Toast.show({
       message: 'Wallet successfully recovered!',

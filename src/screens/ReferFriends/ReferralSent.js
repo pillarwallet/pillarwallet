@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 
-import { REFER_MAIN_SCREEN, REFERRAL_CONTACTS } from 'constants/navigationConstants';
+import { HOME, REFERRAL_CONTACTS } from 'constants/navigationConstants';
 import { DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -117,7 +117,7 @@ class ReferralSent extends React.PureComponent<Props> {
               secondary
               block
               marginTop={12}
-              onPress={() => navigation.navigate(REFER_MAIN_SCREEN)}
+              onPress={() => navigation.navigate(HOME)}
             />
           </Wrapper>
         </ContainerWithHeader>

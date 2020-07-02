@@ -18,8 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const UPDATE_CONTACTS = 'UPDATE_CONTACTS';
-export const DISCONNECT_CONTACT = 'DISCONNECT_CONTACT';
-export const START_SYNC_CONTACTS_SMART_ADDRESSES = 'START_SYNC_CONTACTS_SMART_ADDRESSES';
-export const UPDATE_CONTACTS_SMART_ADDRESSES = 'UPDATE_CONTACTS_SMART_ADDRESSES';
-export const SET_CONTACTS_SMART_ADDRESSES = 'SET_CONTACTS_SMART_ADDRESSES';
+import type { Session } from 'models/WalletConnect';
+
+// urls of dapps that don't support smart accounts
+// or that we don't want to support for any reason
+const UNSUPPORTED_APPS_URLS: string[] = [
+  'https://app.mooni.tech',
+  'https://localcryptos.com',
+  'https://www.binance.org',
+];
+
+export const shouldClearWCSessions = (sessions: Session[], keyWalletAddress: string) => {
+  if (!sessions[0]) return false;
+  return sessions[0].accounts.includes(keyWalletAddress);
+};
+
+
+export const shouldAllowSession = (url: string) => {
+  return !UNSUPPORTED_APPS_URLS.includes(url);
+};

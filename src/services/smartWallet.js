@@ -236,8 +236,10 @@ class SmartWallet {
       .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
-  async deployAccount() {
+  async deployAccount(): Promise<{ error?: string, deployTxHash?: string }> {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
+    if (!deployEstimate) return { error: 'reverted' };
+
     return this.sdk.deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
@@ -246,8 +248,10 @@ class SmartWallet {
       });
   }
 
-  async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
+  async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false): Promise<?string> {
     const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
+    if (!deployEstimate) return null;
+
     return this.sdk.submitAccountTransaction(deployEstimate, payForGasWithToken)
       .catch((e) => {
         this.reportError('Unable to deploy device', { e });
@@ -476,11 +480,9 @@ class SmartWallet {
     return formatEstimated(estimated);
   }
 
-  getTransactionStatus(hash: string) {
+  getTransactionInfo(hash: string) {
     if (!this.sdkInitialized) return null;
-    return this.sdk.getConnectedAccountTransaction(hash)
-      .then(({ state }) => state)
-      .catch(() => null);
+    return this.sdk.getConnectedAccountTransaction(hash).catch(() => null);
   }
 
   async setAccountEnsName(username: string) {

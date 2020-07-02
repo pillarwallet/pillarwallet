@@ -61,6 +61,8 @@ import {
   isSWAddress,
   isKWAddress,
   isBTCAddress,
+  isFailedTransaction,
+  isTimedOutTransaction,
 } from 'utils/feedData';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
@@ -101,7 +103,6 @@ import {
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
-  CHAT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
@@ -125,7 +126,7 @@ import {
   bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
@@ -154,7 +155,6 @@ import type { EventData as PassedEventData } from 'components/ActivityFeed/Activ
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { TxNote } from 'reducers/txNoteReducer';
-
 
 type Props = {
   theme: Theme,
@@ -200,6 +200,7 @@ type Props = {
   updateCollectibleTransaction: (hash: string) => void,
   updatingTransaction: string,
   updatingCollectibleTransaction: string,
+  isSmartAccount: boolean,
 };
 
 type State = {
@@ -228,6 +229,8 @@ type EventData = {
   imageBackground?: ?string,
   collectibleUrl?: ?string,
   transactionNote?: string,
+  isFailed?: boolean;
+  errorMessage?: string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -272,7 +275,7 @@ const ItemIcon = styled(Icon)`
 
 const ActionIcon = styled(Icon)`
   margin-left: 4px;
-  color: ${themedColors.secondaryText};
+  color: ${({ iconColor, theme }) => iconColor || theme.colors.secondaryText};
   ${fontStyles.large};
 `;
 
@@ -314,6 +317,13 @@ const EventTimeHolder = styled.TouchableOpacity`
 
 const AvatarWrapper = styled.TouchableOpacity`
   align-items: center;
+`;
+
+const ErrorMessage = styled(BaseText)`
+  color: ${themedColors.negative};
+  margin-bottom: ${spacing.large}px;
+  width: 100%;
+  text-align: center;
 `;
 
 
@@ -365,8 +375,14 @@ export class EventDetail extends React.Component<Props, State> {
   }
 
   cleanup() {
-    if (this.timer) clearInterval(this.timer);
-    if (this.timeout) clearTimeout(this.timeout);
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
   }
 
   findTxInfo = (isCollectible?: boolean) => {
@@ -390,8 +406,11 @@ export class EventDetail extends React.Component<Props, State> {
 
   syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
     if (txInfo.status === TX_PENDING_STATUS) {
+      const { isSmartAccount } = this.props;
       this.timeout = setTimeout(this.updateTransaction, 500);
-      this.timer = setInterval(this.updateTransaction, 10000);
+      if (!isSmartAccount) {
+        this.timer = setInterval(this.updateTransaction, 10000);
+      }
     }
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
@@ -442,11 +461,6 @@ export class EventDetail extends React.Component<Props, State> {
       return this.getFormattedGasFee(formattedBTCFee, BTC);
     }
     return null;
-  };
-
-  messageContact = (contact: ApiUser) => {
-    this.props.navigation.navigate(CHAT, { username: contact.username });
-    this.props.onClose();
   };
 
   sendTokensToContact = (contact: ApiUser) => {
@@ -698,7 +712,6 @@ export class EventDetail extends React.Component<Props, State> {
         const activateButton = {
           title: 'Activate',
           onPress: this.activateSW,
-          secondary: true,
         };
 
         const topUpButton = {
@@ -707,14 +720,8 @@ export class EventDetail extends React.Component<Props, State> {
           secondary: true,
         };
 
-        const topUpButtonSecondary = {
-          title: 'Top Up',
-          onPress: this.topUpSW,
-          squarePrimary: true,
-        };
-
         return {
-          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton, topUpButtonSecondary],
+          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton],
         };
       case 'Wallet imported':
         return {
@@ -728,7 +735,7 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated } = this.props;
+    const { isPPNActivated, isSmartWalletActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -751,11 +758,22 @@ export class EventDetail extends React.Component<Props, State> {
             ],
           };
         }
+        if (!isSmartWalletActivated) {
+          return {
+            actionTitle: 'Created',
+            buttons: [
+              {
+                title: 'Activate',
+                onPress: this.activateSW,
+              },
+            ],
+          };
+        }
         return {
           actionTitle: 'Created',
           buttons: [
             {
-              title: 'Activate',
+              title: 'Top up',
               onPress: this.topUpPillarNetwork,
             },
           ],
@@ -807,6 +825,8 @@ export class EventDetail extends React.Component<Props, State> {
     }
 
     const isPending = isPendingTransaction(event);
+    const isFailed = isFailedTransaction(event);
+    const isTimedOut = isTimedOutTransaction(event);
 
     let eventData: ?EventData = null;
 
@@ -943,11 +963,6 @@ export class EventDetail extends React.Component<Props, State> {
             } else {
               eventData.buttons = [
                 {
-                  title: 'Message',
-                  onPress: () => this.messageContact(contact),
-                  secondary: true,
-                },
-                {
                   title: 'Send back',
                   onPress: this.sendSynthetic,
                   squarePrimary: true,
@@ -973,12 +988,6 @@ export class EventDetail extends React.Component<Props, State> {
           const contactFound = Object.keys(contact).length > 0;
           const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
-          const messageButton = {
-            title: 'Message',
-            onPress: () => this.messageContact(contact),
-            secondary: true,
-          };
 
           const sendBackButtonSecondary = {
             title: 'Send back',
@@ -1055,9 +1064,7 @@ export class EventDetail extends React.Component<Props, State> {
                 buttons = [];
               }
             } else if (contactFound) {
-              buttons = isPending
-                ? [messageButton]
-                : [messageButton, sendBackButtonSecondary];
+              buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
@@ -1070,9 +1077,7 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [];
             }
           } else if (contactFound) {
-            buttons = isPending
-              ? [messageButton]
-              : [messageButton, sendMoreButtonSecondary];
+            buttons = [sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
@@ -1089,6 +1094,12 @@ export class EventDetail extends React.Component<Props, State> {
     if (isPending) {
       eventData.actionIcon = 'pending';
     }
+    if (isFailed || isTimedOut) {
+      eventData.isFailed = true;
+      eventData.errorMessage = isFailed ? 'Transaction failed' : 'Transaction timed out';
+      eventData.actionIcon = 'failed';
+    }
+
     return eventData;
   };
 
@@ -1182,11 +1193,6 @@ export class EventDetail extends React.Component<Props, State> {
         profileImage,
         actionTitle: 'Connected',
         buttons: [
-          {
-            title: 'Message',
-            onPress: () => this.messageContact(acceptedContact),
-            secondary: true,
-          },
           {
             title: 'Send tokens',
             onPress: () => this.sendTokensToContact(acceptedContact),
@@ -1292,8 +1298,9 @@ export class EventDetail extends React.Component<Props, State> {
     return colors[color] || color;
   };
 
-  renderSettle = (settleEventData: Object) => {
+  renderSettle = (settleEventData: Object, eventData: EventData) => {
     const { PPNTransactions, isForAllAccounts, mergedPPNTransactions } = this.props;
+    const { isFailed, errorMessage } = eventData;
     const mappedTransactions = isForAllAccounts
       ? settleEventData.extra.reduce((mapped, event) => {
         const relatedTrx = mergedPPNTransactions.find(tx => tx.hash === event.hash);
@@ -1307,6 +1314,7 @@ export class EventDetail extends React.Component<Props, State> {
       }, []);
 
     const groupedTransactions: TransactionsGroup[] = groupPPNTransactions(mappedTransactions);
+    const valueSymbol = isFailed ? '' : '- ';
 
     return (
       <SettleWrapper>
@@ -1315,9 +1323,10 @@ export class EventDetail extends React.Component<Props, State> {
             <Row marginBottom={10}>
               <BaseText regular synthetic>From Pillar Tank</BaseText>
               <TankAssetBalance
-                amount={`- ${formatUnits(group.value.toString(), 18)} ${group.symbol}`}
+                amount={`${valueSymbol}${formatUnits(group.value.toString(), 18)} ${group.symbol}`}
                 textStyle={{ fontSize: fontSizes.big }}
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
+                secondary={isFailed}
               />
             </Row>
             {group.transactions.map(({
@@ -1328,21 +1337,25 @@ export class EventDetail extends React.Component<Props, State> {
               return (
                 <Row marginBottom={13} key={hash}>
                   <BaseText secondary tiny>{formattedDate}</BaseText>
-                  <BaseText secondary small>-{formattedAmount} {asset}</BaseText>
+                  <BaseText secondary small>{valueSymbol}{formattedAmount} {asset}</BaseText>
                 </Row>
               );
             })}
           </React.Fragment>
         ))}
-        <Divider />
-        <Row>
-          <BaseText regular positive>To Smart Wallet</BaseText>
-          <View>
-            {groupedTransactions.map(({ value, symbol }) => (
-              <BaseText positive large key={symbol}>+ {formatUnits(value.toString(), 18)} {symbol}</BaseText>
-            ))}
-          </View>
-        </Row>
+        {!isFailed &&
+        <>
+          <Divider />
+          <Row>
+            <BaseText regular positive>To Smart Wallet</BaseText>
+            <View>
+              {groupedTransactions.map(({ value, symbol }) => (
+                <BaseText positive large key={symbol}>+ {formatUnits(value.toString(), 18)} {symbol}</BaseText>
+              ))}
+            </View>
+          </Row>
+        </>}
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </SettleWrapper>
     );
   };
@@ -1375,7 +1388,7 @@ export class EventDetail extends React.Component<Props, State> {
       onClose();
       navigation.navigate(CONTACT, { username });
     }
-  }
+  };
 
   renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
@@ -1384,6 +1397,7 @@ export class EventDetail extends React.Component<Props, State> {
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
       transactionNote,
+      errorMessage,
     } = eventData;
 
     const {
@@ -1394,6 +1408,7 @@ export class EventDetail extends React.Component<Props, State> {
       valueColor,
       username,
       isReceived,
+      statusIconColor,
     } = itemData;
 
     const title = actionTitle || actionLabel || fullItemValue;
@@ -1422,22 +1437,23 @@ export class EventDetail extends React.Component<Props, State> {
           {this.renderImage(itemData)}
         </AvatarWrapper>
         <Spacing h={20} />
-        {settleEventData ? this.renderSettle(settleEventData) : (
+        {settleEventData ? this.renderSettle(settleEventData, eventData) : (
           <React.Fragment>
             <ActionWrapper>
               {!!title && <MediumText large color={titleColor}>{title}</MediumText>}
               {customActionTitle}
-              {!!actionIcon && <ActionIcon name={actionIcon} />}
+              {!!actionIcon && <ActionIcon name={actionIcon} iconColor={statusIconColor} />}
             </ActionWrapper>
             {subtitle ? (
               <React.Fragment>
                 <Spacing h={4} />
                 <BaseText regular secondary>{subtitle}</BaseText>
-                <Spacing h={24} />
+                <Spacing h={16} />
               </React.Fragment>
             ) : (
               <Spacing h={32} />
             )}
+            {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {this.renderFee(event.hash, fee, isReceived)}
           </React.Fragment>
         )}
@@ -1551,6 +1567,7 @@ const structuredSelector = createStructuredSelector({
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
+  isSmartAccount: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
