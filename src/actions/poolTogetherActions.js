@@ -94,7 +94,7 @@ export const fetchPoolAllowanceStatusAction = (symbol: string) => {
 };
 
 export const checkPoolTogetherApprovalTransactionAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const {
       history: {
         data: transactionsHistory,

@@ -155,14 +155,14 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
     );
   }
 
-  return Promise.resolve({
+  return {
     currentPrize: formatMoney(utils.formatUnits(currentPrize.toString(), unitType)),
     prizeEstimate: formatMoney(utils.formatUnits(prizeEstimate.toString(), unitType)),
     drawDate,
     remainingTimeMs,
     totalPoolTicketsCount,
     userInfo,
-  });
+  };
 }
 
 export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<TransactionFeeInfo> => {
