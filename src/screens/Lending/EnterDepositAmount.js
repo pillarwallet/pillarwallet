@@ -260,8 +260,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateLendingDepositTransactionEstimate: debounce((
     amount: number,
     asset: AssetToDeposit,
-  ) => dispatch(calculateLendingDepositTransactionEstimateAction(amount, asset))),
-  fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction(), 500),
+  ) => dispatch(calculateLendingDepositTransactionEstimateAction(amount, asset)), 500),
+  fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EnterDepositAmount);
