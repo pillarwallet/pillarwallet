@@ -108,7 +108,7 @@ const PoolTickets = (props: Props) => {
   };
 
   const nextDate = new Date(Date.now() + remainingTimeMs);
-  const eligibleDate = format(nextDate, 'MMMM D, Y');
+  const eligibleDate = format(nextDate, 'MMMM D, YYYY');
 
   return (
     <PoolTicketsWrapper
