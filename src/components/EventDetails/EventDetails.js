@@ -103,7 +103,6 @@ import {
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
-  CHAT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
@@ -464,11 +463,6 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
-  messageContact = (contact: ApiUser) => {
-    this.props.navigation.navigate(CHAT, { username: contact.username });
-    this.props.onClose();
-  };
-
   sendTokensToContact = (contact: ApiUser) => {
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
     this.props.onClose();
@@ -718,7 +712,6 @@ export class EventDetail extends React.Component<Props, State> {
         const activateButton = {
           title: 'Activate',
           onPress: this.activateSW,
-          secondary: true,
         };
 
         const topUpButton = {
@@ -727,14 +720,8 @@ export class EventDetail extends React.Component<Props, State> {
           secondary: true,
         };
 
-        const topUpButtonSecondary = {
-          title: 'Top Up',
-          onPress: this.topUpSW,
-          squarePrimary: true,
-        };
-
         return {
-          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton, topUpButtonSecondary],
+          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton],
         };
       case 'Wallet imported':
         return {
@@ -748,7 +735,7 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated } = this.props;
+    const { isPPNActivated, isSmartWalletActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -771,11 +758,22 @@ export class EventDetail extends React.Component<Props, State> {
             ],
           };
         }
+        if (!isSmartWalletActivated) {
+          return {
+            actionTitle: 'Created',
+            buttons: [
+              {
+                title: 'Activate',
+                onPress: this.activateSW,
+              },
+            ],
+          };
+        }
         return {
           actionTitle: 'Created',
           buttons: [
             {
-              title: 'Activate',
+              title: 'Top up',
               onPress: this.topUpPillarNetwork,
             },
           ],
@@ -965,11 +963,6 @@ export class EventDetail extends React.Component<Props, State> {
             } else {
               eventData.buttons = [
                 {
-                  title: 'Message',
-                  onPress: () => this.messageContact(contact),
-                  secondary: true,
-                },
-                {
                   title: 'Send back',
                   onPress: this.sendSynthetic,
                   squarePrimary: true,
@@ -995,12 +988,6 @@ export class EventDetail extends React.Component<Props, State> {
           const contactFound = Object.keys(contact).length > 0;
           const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
-          const messageButton = {
-            title: 'Message',
-            onPress: () => this.messageContact(contact),
-            secondary: true,
-          };
 
           const sendBackButtonSecondary = {
             title: 'Send back',
@@ -1077,9 +1064,7 @@ export class EventDetail extends React.Component<Props, State> {
                 buttons = [];
               }
             } else if (contactFound) {
-              buttons = isPending
-                ? [messageButton]
-                : [messageButton, sendBackButtonSecondary];
+              buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
@@ -1092,9 +1077,7 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [];
             }
           } else if (contactFound) {
-            buttons = isPending
-              ? [messageButton]
-              : [messageButton, sendMoreButtonSecondary];
+            buttons = [sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
@@ -1210,11 +1193,6 @@ export class EventDetail extends React.Component<Props, State> {
         profileImage,
         actionTitle: 'Connected',
         buttons: [
-          {
-            title: 'Message',
-            onPress: () => this.messageContact(acceptedContact),
-            secondary: true,
-          },
           {
             title: 'Send tokens',
             onPress: () => this.sendTokensToContact(acceptedContact),

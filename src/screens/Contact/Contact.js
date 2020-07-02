@@ -39,7 +39,7 @@ import { fetchContactBadgesAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
 // constants
-import { BADGE, CHAT, CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { BADGE, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import {
   DISCONNECT,
   MUTE,
@@ -120,7 +120,6 @@ type Props = {
   contacts: ApiUser[],
   syncContact: Function,
   fetchContactTransactions: (contactAddress: string, asset?: string) => void,
-  chats: Object[],
   session: Object,
   disconnectContact: Function,
   muteContact: Function,
@@ -363,7 +362,6 @@ class Contact extends React.Component<Props, State> {
       navigation,
       contacts,
       fetchContactTransactions,
-      chats,
       smartWalletState,
       accounts,
     } = this.props;
@@ -404,7 +402,6 @@ class Contact extends React.Component<Props, State> {
     }
 
     const { username: contactUsername } = contact;
-    const unreadChats = chats.filter(chat => chat.username === contactUsername && !!chat.unread);
 
     return (
       <ContainerWithHeader
@@ -441,14 +438,6 @@ class Contact extends React.Component<Props, State> {
                     label="Send"
                     fontIcon="paperPlane"
                     onPress={() => this.onSendPress(this.localContact)}
-                  />
-                  <CircleButton
-                    disabled={!displayContact.status}
-                    label="Chat"
-                    fontIcon="chat"
-                    onPress={() => navigation.navigate(CHAT, { username: contactUsername, backTo: CONTACT })}
-                    showIndicator={!!unreadChats.length}
-                    fontIconStyle={{ fontSize: 20 }}
                   />
                 </CircleButtonsWrapper>
                 {disableSend &&
@@ -533,7 +522,6 @@ class Contact extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-  chat: { data: { chats } },
   session: { data: session },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
@@ -543,7 +531,6 @@ const mapStateToProps = ({
   },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
-  chats,
   session,
   smartWalletState,
   accounts,
