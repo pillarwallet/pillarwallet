@@ -3,12 +3,11 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
-import abi from 'ethjs-abi';
 import { sdkConstants } from '@smartwallet/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
 // services
-import { buildERC721TransactionData } from 'services/assets';
+import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 
 // constants
@@ -63,10 +62,18 @@ export default class SmartWalletProvider {
       amount,
       gasToken,
       data: transactionData,
+      sequentialSmartWalletTransactions = [],
     } = transaction;
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);
     const value = ethToWei(amount);
+
+    const sequentialTransactions = sequentialSmartWalletTransactions.map((sequential) => ({
+      from,
+      recipient: sequential.to,
+      value: ethToWei(sequential.amount || 0),
+      data: sequential.data || '',
+    }));
 
     return smartWalletService
       .transferAsset({
@@ -75,6 +82,7 @@ export default class SmartWalletProvider {
         data: transactionData || '',
         transactionSpeed,
         gasToken,
+        sequentialTransactions,
       })
       .then(hash => ({
         from,
@@ -137,8 +145,7 @@ export default class SmartWalletProvider {
       : EthersBigNumber.from(amount.toString());
 
     if (!data) {
-      const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
-      data = abi.encodeMethod(transferMethod, [recipient, value]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, value]);
       recipient = contractAddress;
     }
 

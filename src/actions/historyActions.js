@@ -65,6 +65,7 @@ import {
   parseSmartWalletTransactions,
 } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
+import { mapTransactionsHistoryWithAave } from 'utils/aave';
 import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 
 // services
@@ -188,6 +189,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     await dispatch(syncVirtualAccountTransactionsAction());
 
     const accountId = getAccountId(smartWalletAccount);
+    const accountAddress = getAccountAddress(smartWalletAccount);
 
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = smartAccountAssetsSelector(getState());
@@ -199,8 +201,9 @@ export const fetchSmartWalletTransactionsAction = () => {
       assetsList,
       relayerExtensionDevice?.address,
     );
+    const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
 
-    const history = await mapTransactionsPoolTogether(smartWalletAccount.id, smartWalletTransactionHistory);
+    const history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
 
     if (!history.length) return;
 

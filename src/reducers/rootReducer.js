@@ -63,6 +63,7 @@ import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
 import recoveryPortalReducer from './recoveryPortalReducer';
+import lendingReducer from './lendingReducer';
 import poolTogetherReducer from './poolTogetherReducer';
 
 // types
@@ -106,6 +107,7 @@ import type { ReferralsReducerAction, ReferralsReducerState } from './referralsR
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
 import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
+import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
 import type { PoolTogetherReducerState } from './poolTogetherReducer';
 
 export type RootReducerState = {|
@@ -146,6 +148,7 @@ export type RootReducerState = {|
   phoneContacts: PhoneContactsReducerState,
   connectedDevices: ConnectedDevicesReducerState,
   recoveryPortal: RecoveryPortalReducerState,
+  lending: LendingReducerState,
   poolTogether: PoolTogetherReducerState,
 |};
 
@@ -175,7 +178,8 @@ type RootReducerAction =
   | ReferralsReducerAction
   | PhoneContactsReducerAction
   | ConnectedDevicesReducerAction
-  | RecoveryPortalReducerAction;
+  | RecoveryPortalReducerAction
+  | LendingReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -225,6 +229,7 @@ const appReducer = combineReducers({
   phoneContacts: phoneContactsReducer,
   connectedDevices: connectedDevicesReducer,
   recoveryPortal: recoveryPortalReducer,
+  lending: lendingReducer,
   poolTogether: poolTogetherReducer,
 });
 

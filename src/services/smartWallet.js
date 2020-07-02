@@ -32,7 +32,6 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
-import abi from 'ethjs-abi';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -41,6 +40,9 @@ import { ETH } from 'constants/assetsConstants';
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportLog, reportOrWarn } from 'utils/common';
+
+// services
+import { encodeContractMethod } from 'services/assets';
 
 // types
 import type { ConnectedSmartWalletAccount, SmartWalletAccount } from 'models/SmartWalletAccount';
@@ -72,6 +74,7 @@ export type AccountTransaction = {
   data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
   gasToken?: ?GasToken,
+  sequentialTransactions?: AccountTransaction[],
 };
 
 export type EstimatePayload = {
@@ -314,13 +317,30 @@ class SmartWallet {
       data,
       transactionSpeed = TransactionSpeeds[AVG],
       gasToken,
+      sequentialTransactions = [],
     } = transaction;
-    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
+
+    let estimateMethodParams = [
       recipient,
       value,
       data,
-      transactionSpeed,
-    ).catch((e) => { estimateError = e; });
+    ];
+
+    // supporting 2, can be added up to 5
+    if (sequentialTransactions.length) {
+      estimateMethodParams = [
+        ...estimateMethodParams,
+        sequentialTransactions[0].recipient,
+        sequentialTransactions[0].value,
+        sequentialTransactions[0].data,
+      ];
+    }
+
+    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
+
+    const estimatedTransaction = await this.sdk
+      .estimateAccountTransaction(...estimateMethodParams)
+      .catch((e) => { estimateError = e; });
 
     if (!estimatedTransaction) {
       return Promise.reject(new Error(estimateError));
@@ -433,14 +453,17 @@ class SmartWallet {
     transaction: AccountTransaction,
     assetData?: AssetData,
   ): Promise<EstimatedTransactionFee> {
-    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
+    const {
+      value: rawValue,
+      sequentialTransactions = [],
+      transactionSpeed = TransactionSpeeds[AVG],
+    } = transaction;
     let { data, recipient } = transaction;
     const decimals = get(assetData, 'decimals');
     const assetSymbol = get(assetData, 'token');
     const contractAddress = get(assetData, 'contractAddress');
 
     let value;
-
     // eth or token transfer
     if (assetSymbol === ETH) {
       value = ethToWei(rawValue);
@@ -448,18 +471,33 @@ class SmartWallet {
       const tokenTransferValue = decimals > 0
         ? utils.parseUnits(rawValue.toString(), decimals)
         : EthersBigNumber.from(rawValue.toString());
-      const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
-      data = abi.encodeMethod(transferMethod, [recipient, tokenTransferValue]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, tokenTransferValue]);
       recipient = contractAddress;
       value = 0; // value is in encoded token transfer
     }
 
-    const estimated = await this.sdk.estimateAccountTransaction(
+    let estimateMethodParams = [
       recipient,
       value,
       data,
-      transactionSpeed,
-    ).then(parseEstimatePayload).catch(() => ({}));
+    ];
+
+    // supporting 2, can be added up to 5
+    if (sequentialTransactions.length) {
+      estimateMethodParams = [
+        ...estimateMethodParams,
+        sequentialTransactions[0].recipient,
+        sequentialTransactions[0].value,
+        sequentialTransactions[0].data,
+      ];
+    }
+
+    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
+
+    const estimated = await this.sdk
+      .estimateAccountTransaction(...estimateMethodParams)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
 
     return formatEstimated(estimated);
   }

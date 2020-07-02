@@ -111,6 +111,13 @@ import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchas
 import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
 import PoolTogetherWithdrawScreen from 'screens/PoolTogether/PoolTogetherWithdraw';
 import PoolTogetherWithdrawConfirmScreen from 'screens/PoolTogether/PoolTogetherWithdrawConfirm';
+import ChooseAssetDepositScreen from 'screens/Lending/ChooseAssetDeposit';
+import DepositedAssetsListScreen from 'screens/Lending/DepositedAssetsList';
+import ViewDepositedAssetScreen from 'screens/Lending/ViewDepositedAsset';
+import EnterDepositAmountScreen from 'screens/Lending/EnterDepositAmount';
+import EnterWithdrawAmountScreen from 'screens/Lending/EnterWithdrawAmount';
+import DepositTransactionConfirmScreen from 'screens/Lending/DepositTransactionConfirm';
+import WithdrawTransactionConfirmScreen from 'screens/Lending/WithdrawTransactionConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -247,6 +254,15 @@ import {
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
+  LENDING_CHOOSE_DEPOSIT,
+  LENDING_DEPOSITED_ASSETS_LIST,
+  LENDING_ADD_DEPOSIT_FLOW,
+  LENDING_VIEW_DEPOSITED_ASSET,
+  LENDING_ENTER_DEPOSIT_AMOUNT,
+  LENDING_DEPOSIT_TRANSACTION_CONFIRM,
+  LENDING_ENTER_WITHDRAW_AMOUNT,
+  LENDING_WITHDRAW_DEPOSIT_FLOW,
+  LENDING_WITHDRAW_TRANSACTION_CONFIRM,
   POOLTOGETHER_FLOW,
   POOLTOGETHER_DASHBOARD,
   POOLTOGETHER_PURCHASE,
@@ -713,6 +729,24 @@ const poolTogetherFlow = createStackNavigator({
 
 poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const lendingAddDepositsFlow = createStackNavigator({
+  [LENDING_ENTER_DEPOSIT_AMOUNT]: EnterDepositAmountScreen,
+  [LENDING_DEPOSIT_TRANSACTION_CONFIRM]: DepositTransactionConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+lendingAddDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const lendingWithdrawDepositsFlow = createStackNavigator({
+  [LENDING_ENTER_WITHDRAW_AMOUNT]: EnterWithdrawAmountScreen,
+  [LENDING_WITHDRAW_TRANSACTION_CONFIRM]: WithdrawTransactionConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -750,6 +784,11 @@ const AppFlowNavigation = createStackNavigator(
     [REFERRAL_SENT]: ReferralSentScreen,
     [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
     [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
+    [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDepositScreen,
+    [LENDING_VIEW_DEPOSITED_ASSET]: ViewDepositedAssetScreen,
+    [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
+    [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
+    [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
   },
   modalTransition,
 );

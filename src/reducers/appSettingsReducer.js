@@ -43,6 +43,7 @@ export type AppSettingsReducerState = {
     preferredGasToken: ?string,
     initialDeeplinkExecuted: boolean,
     hasSeenRecoveryPortalIntro?: boolean,
+    hideLendingDeposits?: boolean,
   },
   isFetched: boolean,
 };
@@ -73,6 +74,7 @@ export const initialState: AppSettingsReducerState = {
     preferredGasToken: null,
     initialDeeplinkExecuted: false,
     hasSeenRecoveryPortalIntro: false,
+    hideLendingDeposits: false,
   },
   isFetched: false,
 };

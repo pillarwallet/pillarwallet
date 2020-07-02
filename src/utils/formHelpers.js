@@ -244,7 +244,6 @@ export const selectorStructure = (
 
     if (decimals === 0 && amount.toString().includes('.')) return false;
 
-
     balance = getBalance(balances, symbol);
     maxAmount = calculateMaxAmount(symbol, balance, txFeeInfo?.fee, txFeeInfo?.gasToken);
 
@@ -282,6 +281,11 @@ export const selectorStructure = (
     // all possible fiat validation is done
     if (isFiat) return true;
 
+    // do not validate value if asset is not yet selected
+    if (!symbol) {
+      return false;
+    }
+
     if (amount > maxAmount) {
       if (showErrorMessageWithBalance) {
         return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
@@ -298,6 +302,7 @@ export const selectorStructure = (
 
   return Selector;
 };
+
 
 export const inputParser = (value: FormSelector) => {
   let formattedAmount = value.input;

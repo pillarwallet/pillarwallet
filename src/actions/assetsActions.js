@@ -201,6 +201,8 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          extra: transaction.extra || null,
+          tag: transaction.tag || null,
           feeWithGasToken,
         });
       }
