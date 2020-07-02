@@ -664,7 +664,11 @@ const mapStateToProps = ({
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether } },
+  appSettings: {
+    data: {
+      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether,
+    },
+  },
   walletConnect: { requests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },

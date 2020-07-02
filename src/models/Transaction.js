@@ -29,7 +29,7 @@ export type TxSettlementItem = {
 export type TxPoolTogetherExtra = {
   symbol: string,
   decimals: number,
-  amount: string | number,
+  amount: string,
 }
 
 type TxWithdrawalExtra = {

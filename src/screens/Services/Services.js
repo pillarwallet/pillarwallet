@@ -48,8 +48,6 @@ import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
-
 type Props = {
   theme: Theme,
   providersMeta: ProvidersMeta,
