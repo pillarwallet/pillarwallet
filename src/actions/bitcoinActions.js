@@ -137,7 +137,6 @@ import {
   UPDATE_BITCOIN_BALANCE,
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
-  SET_BITCOIN_BALANCES,
   UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
@@ -153,13 +152,11 @@ import {
   getBTCTransactions,
   rootFromPrivateKey,
 } from 'services/bitcoin';
-import Storage from 'services/storage';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type {
   BitcoinReducerAction,
   SetBitcoinAddressesAction,
-  SetBitcoinBalancesAction,
   UpdateBitcoinBalanceAction,
   UpdateUnspentTransactionsAction,
   UpdateBTCTransactionsAction,
@@ -172,32 +169,19 @@ import type {
   BitcoinStore,
   BTCBalance,
   BTCTransaction,
-  BitcoinBalance,
 } from 'models/Bitcoin';
 
 import { initialAssets } from 'fixtures/assets';
 
-import { removeAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
-
-const storage = Storage.getInstance('db');
 
 const saveDb = (data: BitcoinStore) => {
   return saveDbAction('bitcoin', data, true);
 };
 
-const loadDb = (): Promise<BitcoinStore> => {
-  return storage.get('bitcoin');
-};
-
 const setBitcoinAddressesAction = (addresses: string[]): SetBitcoinAddressesAction => ({
   type: SET_BITCOIN_ADDRESSES,
   addresses,
-});
-
-const setBitcoinBalancesAction = (balances: BitcoinBalance): SetBitcoinBalancesAction => ({
-  type: SET_BITCOIN_BALANCES,
-  balances,
 });
 
 const updateBitcoinBalance = (
@@ -261,33 +245,6 @@ export const initializeBitcoinWalletAction = (wallet: EthereumWallet) => {
     }));
 
     await dispatch(setBitcoinAddressesAction([address]));
-  };
-};
-
-export const loadBitcoinBalancesAction = () => {
-  return async (dispatch: Dispatch) => {
-    const { balances = {} } = await storage.get('bitcoinBalances');
-
-    if (Object.keys(balances).length > 0) {
-      dispatch(setBitcoinBalancesAction(balances));
-    }
-  };
-};
-
-export const loadBitcoinAddressesAction = () => {
-  return async (dispatch: Dispatch) => {
-    const { addresses = [], keys = {} } = await loadDb();
-
-    const migrateAddresses = Object.keys(keys);
-    if (addresses.length === 0 && migrateAddresses.length > 0) {
-      await dispatch(saveDb({ addresses: migrateAddresses }));
-    }
-    const loaded: string[] = addresses.length > 0 ? addresses : migrateAddresses;
-
-    if (loaded.length) {
-      dispatch(setBitcoinAddressesAction(loaded));
-      dispatch(removeAccountAction(loaded[0]));
-    }
   };
 };
 

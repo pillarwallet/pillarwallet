@@ -46,13 +46,14 @@ import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history
 import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
 import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
 import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
-import { findFirstSmartAccount, getAccountId, getActiveAccountType } from 'utils/accounts';
+import { findFirstSmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { navigate } from 'services/navigation';
 
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
+import { activeAccountSelector } from 'selectors';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { setUserEnsIfEmptyAction } from './ensRegistryActions';
 
@@ -295,5 +296,17 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     }
 
     dispatch(setUserEnsIfEmptyAction());
+  };
+};
+
+export const fallbackToSmartOrKeyAccountAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const activeAccount = activeAccountSelector(getState());
+    const { accounts: { data: accounts } } = getState();
+    if (activeAccount && !isSupportedAccountType(activeAccount.type)) {
+      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET)
+     || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+      if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
+    }
   };
 };
