@@ -131,7 +131,6 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
       fetchPoolStats,
       fetchPoolAllowanceStatus,
     } = this.props;
-    this.isComponentMounted = true;
     fetchPoolStats(DAI);
     fetchPoolAllowanceStatus(DAI);
     logScreenView('View PoolTogether', 'PoolTogether');
