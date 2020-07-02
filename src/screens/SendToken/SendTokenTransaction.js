@@ -36,15 +36,17 @@ import Toast from 'components/Toast';
 // utils
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import { isPoolTogetherTag } from 'utils/poolTogether';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { setDismissApproveAction, setExecutingApproveAction } from 'actions/poolTogetherActions';
 
 // constants
-import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
+import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -73,6 +75,8 @@ const getTransactionErrorMessage = (error: string): string => {
 const getTransactionSuccessMessage = (transactionType: ?string) => {
   if (transactionType === EXCHANGE) {
     return 'It may take some time for this transaction to complete';
+  } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+    return 'Watch the pool and let luck be with you';
   }
   return 'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
 };
@@ -86,6 +90,8 @@ const getTransactionSuccessTitle = (props) => {
     return 'Swapping tokens...';
   } else if (transactionTokenType === COLLECTIBLES) {
     return 'Collectible is on its way';
+  } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+    return 'You\'re in the pool!';
   }
   return 'Tokens are on their way';
 };
@@ -120,7 +126,6 @@ class SendTokenTransaction extends React.Component<Props> {
     if (executingExchangeTransaction) {
       setDismissExchangeTransaction();
     }
-    navigation.dismiss();
 
     const { isSuccess, transactionPayload, txHash = null } = navigation.state.params;
 
@@ -132,6 +137,21 @@ class SendTokenTransaction extends React.Component<Props> {
         setDismissPoolTogetherApprove(poolToken);
       }
     }
+
+    const txTag = get(transactionPayload, 'tag', '');
+    if (isSuccess && isPoolTogetherTag(txTag) && poolToken) {
+      navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol: poolToken });
+      if (txTag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+        Toast.show({
+          message: 'You\'ve purchased new tickets',
+          type: 'success',
+          title: 'Success',
+          autoClose: true,
+        });
+      }
+    }
+
+    navigation.dismiss();
 
     if (transactionPayload.usePPN && isSuccess) {
       Toast.show({

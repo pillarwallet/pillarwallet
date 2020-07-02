@@ -33,6 +33,7 @@ import TextInput from 'components/TextInput';
 // models
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Balances } from 'models/Asset';
+import type { FormSelector } from 'models/TextInput';
 
 // utils
 import { isValidNumber, parseNumber, reportOrWarn } from './common';
@@ -298,3 +299,14 @@ export const selectorStructure = (
   return Selector;
 };
 
+export const inputParser = (value: FormSelector) => {
+  let formattedAmount = value.input;
+  if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+  return { ...value, input: formattedAmount };
+};
+
+export const inputFormatter = (value: FormSelector) => {
+  let formattedAmount = value.input;
+  if (value.input) formattedAmount = value.input.toString().replace(/,/g, '.');
+  return { ...value, input: formattedAmount };
+};

@@ -51,12 +51,37 @@ import smartWalletService from './smartWallet';
 
 const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK_PROVIDER;
 
-export async function getPoolTogetherInfo(symbol: string, address: string): Promise<PoolInfo> {
-  const contractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
+const getPoolTogetherTokenContract = (symbol: string) => {
+  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
   const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
   const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
   const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
-  const contract = new Contract(contractAddress, poolAbi, provider);
+  const poolContract = new Contract(poolContractAddress, poolAbi, provider);
+
+  const tokenContractAddress = symbol === DAI ? DAI_ADDRESS : USDC_ADDRESS;
+  const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
+  const tokenContract = new Contract(tokenContractAddress, tokenABI, provider);
+
+
+  return {
+    poolContract,
+    poolContractAddress,
+    poolAbi,
+    unitType,
+    provider,
+    tokenContractAddress,
+    tokenABI,
+    tokenContract,
+  };
+};
+
+export async function getPoolTogetherInfo(symbol: string, address: string): Promise<PoolInfo> {
+  const {
+    poolContract: contract,
+    unitType,
+    provider,
+    poolContractAddress: contractAddress,
+  } = getPoolTogetherTokenContract(symbol);
   const accountedBalance = await contract.accountedBalance();
   const balanceCallData = contract.interface.functions.balance.encode([]);
   const result = await provider.call({ to: contract.address, data: balanceCallData });
@@ -161,10 +186,12 @@ export const getSmartWalletTxFee = async (transaction: Object, useGasToken: bool
 };
 
 export async function getApproveFeeAndTransaction(symbol: string, useGasToken: boolean) {
-  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
-  const contractAddress = symbol === DAI ? DAI_ADDRESS : USDC_ADDRESS;
-  const decimals = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
-  const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
+  const {
+    tokenContractAddress: contractAddress,
+    poolContractAddress,
+    unitType: decimals,
+    tokenABI,
+  } = getPoolTogetherTokenContract(symbol);
   const transferMethod = tokenABI.find(item => item.name === 'approve');
   const rawValue = 1000000000;
   const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
@@ -198,13 +225,13 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
 }
 
 export const checkPoolAllowance = async (symbol: string, address: string): Promise<boolean> => {
-  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
-  const contractAddress = symbol === DAI ? DAI_ADDRESS : USDC_ADDRESS;
-  const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
+  const {
+    poolContractAddress,
+    tokenContractAddress: contractAddress,
+    tokenContract: contract,
+  } = getPoolTogetherTokenContract(symbol);
   let hasAllowance = false;
   try {
-    const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
-    const contract = new Contract(contractAddress, tokenABI, provider);
     const allowanceResult = await contract.allowance(address, poolContractAddress);
     if (allowanceResult) {
       hasAllowance = allowanceResult.toString() !== '0';
@@ -223,9 +250,11 @@ export const checkPoolAllowance = async (symbol: string, address: string): Promi
 };
 
 export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, symbol: string, useGasToken: boolean) {
-  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
-  const decimals = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
-  const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
+  const {
+    poolAbi,
+    unitType: decimals,
+    poolContractAddress,
+  } = getPoolTogetherTokenContract(symbol);
   const depositMethod = poolAbi.find(item => item.name === 'depositPool');
   const valueToDeposit = utils.parseUnits(depositAmount.toString(), decimals);
   const data = abi.encodeMethod(depositMethod, [valueToDeposit]);
@@ -237,11 +266,11 @@ export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, 
     decimals,
     data,
     extra: {
-      poolTogetherDeposit: {
-        symbol,
-        depositAmount,
-      },
+      symbol,
+      amount: valueToDeposit,
+      decimals,
     },
+    tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
   };
 
   const { fee: txFeeInWei, gasToken } = await getSmartWalletTxFee(transactionPayload, useGasToken);
@@ -259,9 +288,11 @@ export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, 
 }
 
 export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number, symbol: string, useGasToken: boolean) {
-  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
-  const decimals = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
-  const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
+  const {
+    poolAbi,
+    unitType: decimals,
+    poolContractAddress,
+  } = getPoolTogetherTokenContract(symbol);
   const withdrawMethod = poolAbi.find(item => item.name === 'withdraw');
   const valueToWithdraw = utils.parseUnits(withdrawAmount.toString(), decimals);
   const data = abi.encodeMethod(withdrawMethod, [valueToWithdraw]);
@@ -273,11 +304,11 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
     decimals,
     data,
     extra: {
-      poolTogetherWithdraw: {
-        symbol,
-        withdrawAmount,
-      },
+      symbol,
+      amount: valueToWithdraw,
+      decimals,
     },
+    tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
   };
 
   const { fee: txFeeInWei, gasToken } = await getSmartWalletTxFee(transactionPayload, useGasToken);
@@ -295,11 +326,11 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
 }
 
 export async function getPoolTogetherTransactions(symbol: string, address: string): Promise<Object> {
-  const contractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
-  const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
-  const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
-  const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
-  const contract = new Contract(contractAddress, poolAbi, provider);
+  const {
+    poolContract: contract,
+    unitType,
+    poolContractAddress: contractAddress,
+  } = getPoolTogetherTokenContract(symbol);
   let deposits = [];
   try {
     const depositedFilter = contract.filters.Deposited(address);
@@ -329,13 +360,26 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
 
   let withdrawals = [];
   try {
-    const withdrawnFilter = contract.filters.Withdrawn(address);
-    const withdrawalsLogs = await contract.provider.getLogs({
+    const withdrawnCommitedFilter = contract.filters.CommittedDepositWithdrawn(address);
+    const withdrawnOpenFilter = contract.filters.OpenDepositWithdrawn(address);
+    const withdrawnSponsorFilter = contract.filters.SponsorshipAndFeesWithdrawn(address);
+    const commitedWithdrawLogs = await contract.provider.getLogs({
       fromBlock: 0,
       toBlock: 'latest',
-      ...withdrawnFilter,
+      ...withdrawnCommitedFilter,
     });
-    withdrawals = withdrawalsLogs.map((log) => {
+    const openWithdrawLogs = await contract.provider.getLogs({
+      fromBlock: 0,
+      toBlock: 'latest',
+      ...withdrawnOpenFilter,
+    });
+    const sponsorWithdrawLogs = await contract.provider.getLogs({
+      fromBlock: 0,
+      toBlock: 'latest',
+      ...withdrawnSponsorFilter,
+    });
+    const withdrawalsLogs = [].concat(commitedWithdrawLogs, openWithdrawLogs, sponsorWithdrawLogs);
+    const allWithdrawals = withdrawalsLogs.map((log) => {
       const parsedLog = contract.interface.parseLog(log);
       return {
         hash: log.transactionHash,
@@ -345,6 +389,18 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
         tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
       };
     });
+    withdrawals = allWithdrawals.reduce((txs, tx, i) => {
+      const index = txs.findIndex(({ hash }) => hash === tx.hash);
+      if (index > -1) {
+        txs[index] = {
+          ...txs[index],
+          amount: ptUtils.toBN(txs[index].amount).add(ptUtils.toBN(tx.amount)).toString(),
+        };
+      } else {
+        txs[i] = tx;
+      }
+      return txs;
+    }, []);
   } catch (e2) {
     reportLog('Error getting PoolTogether withdrawal transaction logs', {
       address,

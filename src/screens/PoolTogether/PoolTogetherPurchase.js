@@ -43,13 +43,13 @@ import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 // components
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ValueSelectorCard from 'components/ValueSelectorCard/ValueSelectorCard';
+import { ValueSelectorCard } from 'components/ValueSelectorCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
 // models
 import type { Accounts } from 'models/Account';
-import type { Balances, Rates } from 'models/Asset';
+import type { Balances, Rates, Assets } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -58,6 +58,7 @@ import type { Theme } from 'models/Theme';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/smartWallet';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { themedColors, getThemeColors } from 'utils/themes';
@@ -112,7 +113,8 @@ type Props = {
   baseFiatCurrency: ?string,
   poolAllowance: { [string]: boolean },
   poolApproveExecuting: { [string]: boolean | string },
-  rates: Rates
+  rates: Rates,
+  assets: Assets,
 };
 
 type State = {
@@ -258,6 +260,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       poolAllowance,
       poolApproveExecuting,
       fetchPoolAllowanceStatus,
+      assets,
     } = this.props;
 
     const {
@@ -317,6 +320,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       };
     }
 
+    const assetOptions = {
+      [poolToken]: assets[poolToken],
+    };
+
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
@@ -342,6 +349,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
                 maxLabel="Spend max"
+                assets={assetOptions}
+                balances={balances}
+                baseFiatCurrency={baseFiatCurrency}
+                rates={rates}
                 txFeeInfo={null}
               />
             </ContentRow>
@@ -432,6 +443,7 @@ const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   balances: accountBalancesSelector,
   useGasToken: useGasTokenSelector,
+  assets: accountAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

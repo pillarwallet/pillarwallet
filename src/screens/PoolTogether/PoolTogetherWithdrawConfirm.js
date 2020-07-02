@@ -31,6 +31,7 @@ import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -140,7 +141,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
       goBackDismiss: true,
-      transactionType: 'POOL_TOGETHER_WITHDRAW',
+      transactionType: POOLTOGETHER_WITHDRAW_TRANSACTION,
     });
   };
 

@@ -109,6 +109,7 @@ export type TokenTransactionPayload = {
   signOnly?: ?boolean,
   signedHash?: ?string,
   data?: string,
+  tag?: string,
   extra?: Object,
   usePPN?: boolean,
   gasToken?: ?GasToken,

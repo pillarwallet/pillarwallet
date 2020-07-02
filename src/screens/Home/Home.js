@@ -203,6 +203,8 @@ class HomeScreen extends React.Component<Props, State> {
       fetchBadgeAwardHistory,
       fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
+      isSmartWalletActive,
+      fetchPoolStats,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -212,6 +214,10 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
     });
+    if (isSmartWalletActive) {
+      fetchPoolStats(DAI);
+      fetchPoolStats(USDC);
+    }
     fetchTransactionsHistory();
     fetchBadges();
     fetchBadgeAwardHistory();

@@ -17,6 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import isEmpty from 'lodash.isempty';
+
 import { POOL_DAI_CONTRACT_ADDRESS, POOL_USDC_CONTRACT_ADDRESS } from 'react-native-dotenv';
 
 import { DAI, USDC } from 'constants/assetsConstants';
@@ -99,10 +102,10 @@ export const mapTransactionsPoolTogether = async (
     transaction,
     transactionIndex,
   ) => {
-    const { to, tag } = transaction;
+    const { to, tag, extra } = transaction;
 
-    // do not update
-    if (isPoolTogetherTag(tag)) return transactions;
+    // do not update if there is no difference in the transaction
+    if (isPoolTogetherTag(tag) && !isEmpty(extra)) return transactions;
 
     if (isPoolTogetherAddress(to)) {
       transactions[transactionIndex] = buildPoolTogetherTransaction(

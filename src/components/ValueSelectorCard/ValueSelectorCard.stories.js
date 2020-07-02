@@ -20,10 +20,9 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { Container, Wrapper } from 'components/Layout';
+import { PLR, GBP } from 'constants/assetsConstants';
 
-import ValueSelectorCard from './ValueSelectorCard';
-
+import { ValueSelectorCard as ValueSelectorCardElement } from 'components/ValueSelectorCard';
 
 const reduxMock = {
   assets: {
@@ -76,13 +75,40 @@ const reduxMock = {
         icos: [],
       },
   },
+  balances: {
+    ETH: {
+      balance: '0.512345',
+      symbol: 'ETH',
+    },
+    PLR: {
+      balance: '54321',
+      symbol: 'ETH',
+    },
+  },
+  rates: {
+    ETH: {
+      ETH: 1,
+      EUR: 206,
+      GBP: 185,
+      UDS: 230,
+    },
+    PLR: {
+      ETH: 0.008,
+      EUR: 0.25,
+      GBP: 0.1,
+      UDS: 0.3,
+    },
+  },
+  baseFiatCurrency: GBP,
 };
 
 storiesOf('Value Selector Card', module)
-  .add('Selector', () => (
-    <Container>
-      <Wrapper fullScreen center>
-        <ValueSelectorCard {...reduxMock} />
-      </Wrapper>
-    </Container>
+  .add('Selector without preselected asset', () => (
+    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} storyBook />
+  ))
+  .add('Selector with preselected asset', () => (
+    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} preselectedAsset={PLR} storyBook />
+  ))
+  .add('Selector with custom max label', () => (
+    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} maxLabel="Use Max" storyBook />
   ));
