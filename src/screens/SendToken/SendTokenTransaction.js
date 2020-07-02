@@ -44,7 +44,7 @@ import { setDismissApproveAction, setExecutingApproveAction } from 'actions/pool
 
 // constants
 import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
-import { COLLECTIBLES } from 'constants/assetsConstants';
+import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 
@@ -139,8 +139,9 @@ class SendTokenTransaction extends React.Component<Props> {
     }
 
     const txTag = get(transactionPayload, 'tag', '');
-    if (isSuccess && isPoolTogetherTag(txTag) && poolToken) {
-      navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol: poolToken });
+    if (isSuccess && isPoolTogetherTag(txTag)) {
+      const { extra: { symbol = DAI } = {} } = transactionPayload;
+      navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
       if (txTag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
         Toast.show({
           message: 'You\'ve purchased new tickets',
@@ -149,6 +150,7 @@ class SendTokenTransaction extends React.Component<Props> {
           autoClose: true,
         });
       }
+      return;
     }
 
     navigation.dismiss();
