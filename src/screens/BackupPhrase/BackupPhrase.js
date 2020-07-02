@@ -95,17 +95,17 @@ class BackupPhrase extends React.Component<Props, State> {
 
   onPinValid = (wallet: Object) => {
     const { generateWalletMnemonic } = this.props;
-    generateWalletMnemonic(wallet.mnemonic);
+    generateWalletMnemonic(wallet.mnemonic.phrase);
     this.setState({ pinIsValid: true, wallet });
   };
 
   render() {
-    const { pinIsValid, wallet } = this.state;
+    const { pinIsValid, wallet: unlockedWallet } = this.state;
 
-    const { wallet: wlt, navigation } = this.props;
+    const { wallet: onboardingWallet, navigation } = this.props;
     const mnemonic = this._isBackingupViaSettings
-      ? wallet.mnemonic
-      : wlt.onboarding.mnemonic.original;
+      ? unlockedWallet?.mnemonic?.phrase
+      : onboardingWallet.onboarding.mnemonic.original;
 
     if (!pinIsValid) {
       return (

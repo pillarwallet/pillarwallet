@@ -28,11 +28,10 @@ import {
 } from '@smartwallet/sdk';
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
-import abi from 'ethjs-abi';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -41,6 +40,9 @@ import { ETH } from 'constants/assetsConstants';
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportLog, reportOrWarn } from 'utils/common';
+
+// services
+import { encodeContractMethod } from 'services/assets';
 
 // types
 import type { ConnectedSmartWalletAccount, SmartWalletAccount } from 'models/SmartWalletAccount';
@@ -237,8 +239,10 @@ class SmartWallet {
       .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
-  async deployAccount() {
+  async deployAccount(): Promise<{ error?: string, deployTxHash?: string }> {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
+    if (!deployEstimate) return { error: 'reverted' };
+
     return this.sdk.deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
@@ -247,8 +251,10 @@ class SmartWallet {
       });
   }
 
-  async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
+  async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false): Promise<?string> {
     const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
+    if (!deployEstimate) return null;
+
     return this.sdk.submitAccountTransaction(deployEstimate, payForGasWithToken)
       .catch((e) => {
         this.reportError('Unable to deploy device', { e });
@@ -464,9 +470,8 @@ class SmartWallet {
     } else if (!data) {
       const tokenTransferValue = decimals > 0
         ? utils.parseUnits(rawValue.toString(), decimals)
-        : utils.bigNumberify(rawValue.toString());
-      const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
-      data = abi.encodeMethod(transferMethod, [recipient, tokenTransferValue]);
+        : EthersBigNumber.from(rawValue.toString());
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, tokenTransferValue]);
       recipient = contractAddress;
       value = 0; // value is in encoded token transfer
     }

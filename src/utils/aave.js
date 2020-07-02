@@ -18,14 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import abiHelper from 'ethjs-abi';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 
 // services
-import { buildERC20ApproveTransactionData, getContract, getContractMethodAbi } from 'services/assets';
+import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
 import aaveService from 'services/aave';
 
 // utils
@@ -50,9 +49,12 @@ export const buildAaveDepositTransactionData = (
   amount: number,
   decimals: number,
 ): string => {
-  const methodAbi = getContractMethodAbi(AAVE_LENDING_POOL_CONTRACT_ABI, 'deposit');
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);
-  return abiHelper.encodeMethod(methodAbi, [assetAddress, contractAmount, aaveConfig.REFERRAL_CODE]);
+  return encodeContractMethod(AAVE_LENDING_POOL_CONTRACT_ABI, 'deposit', [
+    assetAddress,
+    contractAmount,
+    aaveConfig.REFERRAL_CODE,
+  ]);
 };
 
 export const buildAaveWithdrawTransactionData = (
@@ -60,13 +62,12 @@ export const buildAaveWithdrawTransactionData = (
   balance: number,
   decimals: number,
 ): string => {
-  const methodAbi = getContractMethodAbi(AAVE_TOKEN_ABI, 'redeem');
   const amountBN = parseTokenBigNumberAmount(amount, decimals);
   const balanceBN = parseTokenBigNumberAmount(balance, decimals);
   const withdrawAmount = balanceBN.sub(amountBN).gt(0)
     ? amountBN
     : -1; // -1 is all
-  return abiHelper.encodeMethod(methodAbi, [withdrawAmount]);
+  return encodeContractMethod(AAVE_TOKEN_ABI, 'redeem', [withdrawAmount]);
 };
 
 export const getAaveDepositTransactions = async (

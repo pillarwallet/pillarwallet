@@ -109,7 +109,7 @@ const mockWallet: Object = {
   connect: () => mockWallet,
 };
 
-Object.defineProperty(mockWallet, 'RNencrypt', {
+Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
@@ -121,13 +121,12 @@ jest.setMock('ethers', {
   ethers: {
     Wallet: {
       fromMnemonic: () => mockWallet,
-      RNfromEncryptedJson: () => mockWallet,
+      fromEncryptedJson: () => mockWallet,
     },
   },
   Contract: mocktract,
   utils: {
     parseEther: x => x,
-    bigNumberify: x => x,
     id: utils.id,
     getAddress: utils.getAddress,
     formatUnits: utils.formatUnits,
@@ -141,6 +140,9 @@ jest.setMock('ethers', {
     JsonRpcProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+  },
+  BigNumber: {
+    from: x => x,
   },
 });
 
@@ -295,7 +297,7 @@ jest.setMock('@smartwallet/sdk', {
 jest.setMock('react-native-keychain', {
   setGenericPassword: jest.fn().mockResolvedValue(),
   getGenericPassword: jest.fn(() => new Promise((resolve) => resolve({
-    pin: '123456', privateKey: 'testKey', mnemonic: 'testMnemonic',
+    pin: '123456', privateKey: 'testKey', mnemonic: { phrase: 'testMnemonic' },
   }))),
   resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {

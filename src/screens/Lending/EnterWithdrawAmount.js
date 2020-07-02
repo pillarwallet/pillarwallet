@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
+import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
@@ -223,10 +224,10 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  calculateLendingWithdrawTransactionEstimate: (
+  calculateLendingWithdrawTransactionEstimate: debounce((
     amount: number,
     depositedAsset: DepositedAsset,
-  ) => dispatch(calculateLendingWithdrawTransactionEstimateAction(amount, depositedAsset)),
+  ) => dispatch(calculateLendingWithdrawTransactionEstimateAction(amount, depositedAsset))),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EnterWithdrawAmount);

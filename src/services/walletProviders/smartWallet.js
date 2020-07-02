@@ -2,13 +2,12 @@
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
-import { utils } from 'ethers';
-import abi from 'ethjs-abi';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { sdkConstants } from '@smartwallet/sdk';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
 // services
-import { buildERC721TransactionData } from 'services/assets';
+import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 
 // constants
@@ -143,11 +142,10 @@ export default class SmartWalletProvider {
     }
     const value = decimals > 0
       ? utils.parseUnits(amount.toString(), decimals)
-      : utils.bigNumberify(amount.toString());
+      : EthersBigNumber.from(amount.toString());
 
     if (!data) {
-      const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
-      data = abi.encodeMethod(transferMethod, [recipient, value]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, value]);
       recipient = contractAddress;
     }
 

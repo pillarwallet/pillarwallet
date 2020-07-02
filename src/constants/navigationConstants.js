@@ -25,7 +25,6 @@ export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
 export const SERVICES_TAB = 'SERVICES_TAB';
 export const ME_TAB = 'ME_TAB';
-export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
 export const MARKET = 'MARKET';
 export const CONTACT_INFO = 'CONTACT_INFO';
@@ -47,6 +46,7 @@ export const PIN_CODE = 'PIN_CODE';
 // ASSETS FLOW
 export const ACCOUNTS = 'ACCOUNTS';
 export const UNSETTLED_ASSETS = 'UNSETTLED_ASSETS';
+export const ASSET_SEARCH = 'ASSET_SEARCH';
 
 // CHANGE PIN FLOW
 export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';
