@@ -30,7 +30,6 @@ import { withTheme } from 'styled-components';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import AssetSearchScreen from 'screens/Assets/AssetSearch';
-import PeopleScreen from 'screens/People';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
@@ -144,7 +143,6 @@ import {
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
-  PEOPLE,
   CONTACT,
   HOME,
   HOME_TAB,
@@ -264,7 +262,6 @@ const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
-const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
 
@@ -346,20 +343,6 @@ const referFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 referFlow.navigationOptions = hideTabNavigatorOnChildView;
-
-
-// PEOPLE FLOW
-const peopleFlow = createStackNavigator({
-  [PEOPLE]: PeopleScreen,
-  [CONTACT]: ContactScreen,
-  [COLLECTIBLE]: CollectibleScreen,
-  [BADGE]: BadgeScreen,
-  [CHAT]: ChatScreen,
-  [REFER_FLOW]: referFlow,
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
-}, StackNavigatorConfig);
-
-peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
@@ -483,17 +466,6 @@ const tabNavigation = createBottomTabNavigator(
           theme: screenProps.theme,
         }),
         tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
-      }),
-    },
-    [PEOPLE]: {
-      screen: peopleFlow,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon({
-          icon: iconPeople,
-          hasIndicator: !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
-          theme: screenProps.theme,
-        }),
-        tabBarLabel: tabBarLabel({ text: 'People', theme: screenProps.theme }),
       }),
     },
     [SERVICES_TAB]: {

@@ -47,7 +47,6 @@ import {
   SEND_COLLECTIBLE_CONTACTS,
   SEND_TOKEN_ASSETS,
 } from 'constants/navigationConstants';
-import { CHAT } from 'constants/chatConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
@@ -299,7 +298,6 @@ class SendTokenContacts extends React.Component<Props, State> {
   onContactPress = (user) => {
     const { navigation } = this.props;
     const {
-      username,
       hasSmartWallet,
       ethAddress,
     } = user;
@@ -308,7 +306,6 @@ class SendTokenContacts extends React.Component<Props, State> {
         'This user is not on Pillar Network',
         'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
         [
-          { text: 'Open Chat', onPress: () => navigation.navigate(CHAT, { username }) },
           { text: 'Switch to Ethereum Mainnet', onPress: () => navigation.navigate(ACCOUNTS) },
           { text: 'Cancel', style: 'cancel' },
         ],
