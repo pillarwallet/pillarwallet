@@ -462,7 +462,7 @@ exports[`Storyshots ActionModal default 1`] = `
                   ]
                 }
               >
-
+                
               </Text>
             </View>
           </View>
@@ -18499,9 +18499,9 @@ Array [
           ]
         }
       >
-        -
+        - 
         1
-
+         
         PLR
       </Text>
     </View>
@@ -18620,9 +18620,9 @@ Array [
           ]
         }
       >
-        -
+        - 
         2
-
+         
         ETH
       </Text>
     </View>
@@ -18689,9 +18689,9 @@ Array [
             ]
           }
         >
-          +
+          + 
           1.0
-
+           
           PLR
         </Text>
         <Text
@@ -18710,9 +18710,9 @@ Array [
             ]
           }
         >
-          +
+          + 
           2.0
-
+           
           ETH
         </Text>
       </View>
@@ -20642,19 +20642,7 @@ Array [
 `;
 
 exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
-<View
-  onLayout={[Function]}
-  pointerEvents="box-none"
-  style={
-    Object {
-      "alignItems": "center",
-      "paddingBottom": 40,
-      "paddingLeft": 0,
-      "paddingRight": 0,
-      "paddingTop": 16,
-    }
-  }
->
+Array [
   <View
     style={
       Array [
@@ -20737,7 +20725,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
         ]
       }
     />
-  </View>
+  </View>,
   <View
     h={10}
     style={
@@ -20749,7 +20737,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     accessible={true}
     focusable={true}
@@ -20798,7 +20786,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
       }
     />
     <View />
-  </View>
+  </View>,
   <View
     h={20}
     style={
@@ -20810,7 +20798,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -20897,7 +20885,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
         (1 ticket)
       </Text>
     </View>
-  </View>
+  </View>,
   <View
     h={32}
     style={
@@ -20909,7 +20897,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -21176,24 +21164,12 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
         ]
       }
     />
-  </View>
-</View>
+  </View>,
+]
 `;
 
 exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
-<View
-  onLayout={[Function]}
-  pointerEvents="box-none"
-  style={
-    Object {
-      "alignItems": "center",
-      "paddingBottom": 40,
-      "paddingLeft": 0,
-      "paddingRight": 0,
-      "paddingTop": 16,
-    }
-  }
->
+Array [
   <View
     style={
       Array [
@@ -21276,7 +21252,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
         ]
       }
     />
-  </View>
+  </View>,
   <View
     h={10}
     style={
@@ -21288,7 +21264,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     accessible={true}
     focusable={true}
@@ -21337,7 +21313,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
       }
     />
     <View />
-  </View>
+  </View>,
   <View
     h={20}
     style={
@@ -21349,7 +21325,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -21436,7 +21412,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
         (2 tickets)
       </Text>
     </View>
-  </View>
+  </View>,
   <View
     h={32}
     style={
@@ -21448,7 +21424,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -21715,24 +21691,12 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
         ]
       }
     />
-  </View>
-</View>
+  </View>,
+]
 `;
 
 exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
-<View
-  onLayout={[Function]}
-  pointerEvents="box-none"
-  style={
-    Object {
-      "alignItems": "center",
-      "paddingBottom": 40,
-      "paddingLeft": 0,
-      "paddingRight": 0,
-      "paddingTop": 16,
-    }
-  }
->
+Array [
   <View
     style={
       Array [
@@ -21815,7 +21779,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
         ]
       }
     />
-  </View>
+  </View>,
   <View
     h={10}
     style={
@@ -21827,7 +21791,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     accessible={true}
     focusable={true}
@@ -21876,7 +21840,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
       }
     />
     <View />
-  </View>
+  </View>,
   <View
     h={20}
     style={
@@ -21888,7 +21852,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -21975,7 +21939,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
         (1 ticket)
       </Text>
     </View>
-  </View>
+  </View>,
   <View
     h={32}
     style={
@@ -21987,7 +21951,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -22254,24 +22218,12 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
         ]
       }
     />
-  </View>
-</View>
+  </View>,
+]
 `;
 
 exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
-<View
-  onLayout={[Function]}
-  pointerEvents="box-none"
-  style={
-    Object {
-      "alignItems": "center",
-      "paddingBottom": 40,
-      "paddingLeft": 0,
-      "paddingRight": 0,
-      "paddingTop": 16,
-    }
-  }
->
+Array [
   <View
     style={
       Array [
@@ -22354,7 +22306,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
         ]
       }
     />
-  </View>
+  </View>,
   <View
     h={10}
     style={
@@ -22366,7 +22318,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     accessible={true}
     focusable={true}
@@ -22415,7 +22367,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
       }
     />
     <View />
-  </View>
+  </View>,
   <View
     h={20}
     style={
@@ -22427,7 +22379,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -22514,7 +22466,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
         (2 tickets)
       </Text>
     </View>
-  </View>
+  </View>,
   <View
     h={32}
     style={
@@ -22526,7 +22478,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
         undefined,
       ]
     }
-  />
+  />,
   <View
     style={
       Array [
@@ -22793,8 +22745,8 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
         ]
       }
     />
-  </View>
-</View>
+  </View>,
+]
 `;
 
 exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
@@ -29677,11 +29629,11 @@ Array [
                           "notice": "#ea480e",
                           "orange": "#f57c00",
                           "poolTogetherPink": "#e51fff",
-                            "popularSwaps": "#d08cb1",
+                          "popularSwaps": "#d08cb1",
                           "positive": "#2AA057",
                           "primary": "#007AFF",
-                            "progressBarEnd": "#f04cfa",
-                            "progressBarStart": "#ca17e1",
+                          "progressBarEnd": "#f04cfa",
+                          "progressBarStart": "#ca17e1",
                           "secondaryAccent": "#EBF0F5",
                           "secondaryText": "#8B939E",
                           "smartWallet": "#3C71FE",
@@ -29834,7 +29786,7 @@ Array [
                     ]
                   }
                 >
-
+                  
                 </Text>
               </View>
             </View>
@@ -31617,7 +31569,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                 ]
                               }
                             >
-
+                              
                             </Text>
                           </View>
                         </View>
@@ -31891,7 +31843,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                   }
                 >
                   54321
-
+                   
                   PLR
                    (
                   £ 80,395.08
@@ -32115,7 +32067,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           secondary={true}
                         >
                           54321
-
+                           
                           PLR
                            (
                           £ 80,395.08
@@ -33480,7 +33432,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                 ]
                               }
                             >
-
+                              
                             </Text>
                           </View>
                         </View>
@@ -35269,7 +35221,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                 ]
                               }
                             >
-
+                              
                             </Text>
                           </View>
                         </View>
