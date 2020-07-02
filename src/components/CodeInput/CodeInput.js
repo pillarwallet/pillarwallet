@@ -46,7 +46,7 @@ type State = {
 };
 
 
-const INPUT_SIDE = responsiveSize(46);
+const INPUT_SIDE = responsiveSize(56);
 const FONT_SIZE = responsiveSize(36);
 
 const Wrapper = styled.View`
