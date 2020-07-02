@@ -70,6 +70,7 @@ aliases:
     run:
       name: Create Vendor/bundle for gem dependencies
       command: |
+        gem "rake"
         cd ios && bundle check || bundle install --path vendor/bundle
       environment:
         BUNDLE_JOBS: 4
@@ -78,6 +79,7 @@ aliases:
     run:
       name: Bundle install
       command: |
+        gem "rake"
         cd android && bundle check || bundle install --path vendor/bundle
       environment:
         BUNDLE_JOBS: 4
