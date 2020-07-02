@@ -2269,7 +2269,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         ]
                       }
                     >
-
+                      
                     </Text>
                   </View>
                 </View>
@@ -2907,7 +2907,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         ]
                       }
                     >
-
+                      
                     </Text>
                   </View>
                 </View>
