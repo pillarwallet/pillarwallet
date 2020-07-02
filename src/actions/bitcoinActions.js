@@ -137,14 +137,12 @@ import {
   UPDATE_BITCOIN_BALANCE,
   REFRESH_THRESHOLD,
   SET_BITCOIN_ADDRESSES,
-  UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { ETHEREUM_PATH, NON_STANDARD_ETHEREUM_PATH } from 'constants/derivationPathConstants';
 import {
   keyPairAddress,
-  getAddressUtxos,
   getAddressBalance,
   rootFromMnemonic,
   transactionFromPlan,
@@ -158,14 +156,12 @@ import type {
   BitcoinReducerAction,
   SetBitcoinAddressesAction,
   UpdateBitcoinBalanceAction,
-  UpdateUnspentTransactionsAction,
   UpdateBTCTransactionsAction,
 } from 'reducers/bitcoinReducer';
 import type { EthereumWallet } from 'models/Wallet';
 import type {
   BitcoinAddress,
   BitcoinTransactionPlan,
-  BitcoinUtxo,
   BitcoinStore,
   BTCBalance,
   BTCTransaction,
@@ -191,15 +187,6 @@ const updateBitcoinBalance = (
   type: UPDATE_BITCOIN_BALANCE,
   address,
   balance,
-});
-
-const updateBitcoinUnspentTransactions = (
-  address: string,
-  unspentTransactions: BitcoinUtxo[],
-): UpdateUnspentTransactionsAction => ({
-  type: UPDATE_UNSPENT_TRANSACTIONS,
-  address,
-  unspentTransactions,
 });
 
 const updateBTCTransactions = (
@@ -254,11 +241,6 @@ const outdatedAddresses = (addresses: BitcoinAddress[]): BitcoinAddress[] => {
   return addresses.filter(({ updatedAt }) => updatedAt <= minDate);
 };
 
-const fetchUnspentTxAction = (address: string): Promise<BitcoinReducerAction> => {
-  return getAddressUtxos(address)
-    .then(unspentOutputs => updateBitcoinUnspentTransactions(address, unspentOutputs));
-};
-
 const fetchBalanceAction = (address: string): Promise<BitcoinReducerAction> => {
   return getAddressBalance(address)
     .then(balance => updateBitcoinBalance(address, balance));
@@ -274,15 +256,6 @@ const transactionSendingFailed = () => {
     message: 'There was an error sending the transaction',
     type: 'warning',
     title: 'Transaction could not be sent',
-    autoClose: false,
-  });
-};
-
-const fetchUnspentTxFailed = () => {
-  Toast.show({
-    message: 'There was an error fetching the Bitcoin unspent transactions',
-    type: 'warning',
-    title: 'Cannot fetch unspent transactions',
     autoClose: false,
   });
 };
@@ -331,23 +304,6 @@ export const sendTransactionAction = (wallet: EthereumWallet, plan: BitcoinTrans
         })
         .catch(transactionSendingFailed);
     }
-  };
-};
-
-export const refreshBitcoinUnspentTxAction = (force: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { bitcoin: { data: { addresses } } } = getState();
-
-    const addressesToUpdate = force ? addresses : outdatedAddresses(addresses);
-    if (!addressesToUpdate.length) {
-      return;
-    }
-
-    await Promise.all(addressesToUpdate.map(({ address }) => {
-      return fetchUnspentTxAction(address)
-        .then(action => dispatch(action))
-        .catch(fetchUnspentTxFailed);
-    }));
   };
 };
 
