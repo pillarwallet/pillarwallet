@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { FlatList, Keyboard } from 'react-native';
+import { FlatList, Keyboard, ScrollView, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
@@ -84,6 +84,8 @@ const EmptyStateWrapper = styled.View`
   width: 100%;
   align-items: center;
   padding: 20px 30px 30px;
+  flex: 1;
+  justify-content: center;
 `;
 
 const ButtonWrapper = styled.View`
@@ -252,6 +254,13 @@ class ReferralContacts extends React.PureComponent<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: 'Invite friends' }] }}
+        inset={{ bottom: 0 }}
+        footerContainerInset={{ bottom: 'always' }}
+        footer={showConfirmButton ? (
+          <ButtonWrapper>
+            <Button title="Confirm" onPress={this.setContactsForReferral} block />
+          </ButtonWrapper>) : <View />}
+        footerContainerStyle={{ flexWrap: 'nowrap' }}
       >
         {!!isFetchingPhoneContacts &&
         <Wrapper flex={1} center>
@@ -259,7 +268,10 @@ class ReferralContacts extends React.PureComponent<Props, State> {
         </Wrapper>}
 
         {!isFetchingPhoneContacts &&
-          <React.Fragment>
+          <ScrollView
+            stickyHeaderIndices={[0]}
+            contentContainerStyle={{ flexGrow: 1 }}
+          >
             <SearchBlock
               searchInputPlaceholder="Email or phone"
               onSearchChange={(q) => this.handleSearch(q)}
@@ -300,12 +312,9 @@ class ReferralContacts extends React.PureComponent<Props, State> {
                 </EmptyStateWrapper>
               )}
             />
-          </React.Fragment>
+          </ScrollView>
         }
-        {showConfirmButton && (
-          <ButtonWrapper>
-            <Button title="Confirm" onPress={this.setContactsForReferral} block />
-          </ButtonWrapper>)}
+
       </ContainerWithHeader>
     );
   }
