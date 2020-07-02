@@ -17,8 +17,31 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import * as React from 'react';
 import initStoryshots from '@storybook/addon-storyshots';
 
 jest.mock('global', () => global);
+jest.mock('react-navigation', () => {
+  return {
+    withOrientation: jest.fn().mockImplementation(component => component),
+    withNavigation: Component => props => (
+      <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />
+    ),
+    ThemeColors: {
+      light: {
+        bodyContent: '',
+      },
+      dark: {
+        bodyContent: '',
+      },
+    },
+    SafeAreaView: ({ children }) => <>{children}</>,
+  };
+});
+
+jest.mock('react-navigation-redux-helpers', () => ({
+  createReactNavigationReduxMiddleware: () => () => () => () => {},
+}));
 
 initStoryshots({ /* configuration options */ });
