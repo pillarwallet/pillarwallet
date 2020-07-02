@@ -357,7 +357,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
         >
           <ContentWrapper>
             <ContentRow>
-              <Text label style={{ textAlign: 'center' }}>
+              <Text label center>
                 If you withdraw you will no longer be eligible to win prizes.
               </Text>
             </ContentRow>
@@ -374,28 +374,28 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
               />
             </ContentRow>
             <ContentRow>
-              <Text label style={{ textAlign: 'center' }}>
+              <Text label center>
                 You will receive {poolToken} in your wallet.
               </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 22 }}>
               {(!hasAllowance && !isApprovalExecuting) &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   In order to join Pool Together you will need to automate transactions first.
                 </Text>
               }
               {!!isApprovalExecuting &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   Please wait for Pool Together automation
                 </Text>
               }
               {(!!hasAllowance && !withdrawPayload) &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   Fetching fee...
                 </Text>
               }
               {(!!hasAllowance && !!withdrawPayload) &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   {`Fee ${withdrawPayload.feeDisplayValue} (${withdrawPayload.feeInFiat})`}
                   {withdrawPayload.isDisabled && `\nNot enough ${withdrawPayload.feeSymbol} for the transaction fee`}
                 </Text>

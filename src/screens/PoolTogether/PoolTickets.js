@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
@@ -108,7 +108,7 @@ const PoolTickets = (props: Props) => {
   };
 
   const nextDate = new Date(Date.now() + remainingTimeMs);
-  const eligibleDate = moment(nextDate).format('MMMM D, Y');
+  const eligibleDate = format(nextDate, 'MMMM D, Y');
 
   return (
     <PoolTicketsWrapper
@@ -180,7 +180,7 @@ const PoolTickets = (props: Props) => {
         />
       </TicketCounterRow>
       <TicketCounterRow style={{ paddingTop: 0 }}>
-        <Text style={{ textAlign: 'center' }} label>
+        <Text center label>
           Tickets purchased today will be eligible for prizes starting after {eligibleDate}.
         </Text>
       </TicketCounterRow>

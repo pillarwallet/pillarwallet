@@ -26,7 +26,6 @@ import {
   USDC_ADDRESS,
 } from 'react-native-dotenv';
 import { utils as ptUtils } from 'pooltogetherjs';
-import abi from 'ethjs-abi';
 import { BigNumber } from 'bignumber.js';
 import * as Sentry from '@sentry/react-native';
 
@@ -47,13 +46,16 @@ import DAI_ABI from 'abi/DAI.json';
 import USDC_ABI from 'abi/USDC.json';
 
 import smartWalletService from './smartWallet';
+import { encodeContractMethod } from './assets';
 
 const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK_PROVIDER;
+const DAI_DECIMALS = 18;
+const USDC_DECIMALS = 6;
 
 const getPoolTogetherTokenContract = (symbol: string) => {
   const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
   const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
-  const unitType = symbol === DAI ? 18 : 6; // DAI 18 decimals, USDC 6 decimals
+  const unitType = symbol === DAI ? DAI_DECIMALS : USDC_DECIMALS;
   const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
   const poolContract = new Contract(poolContractAddress, poolAbi, provider);
 
@@ -128,7 +130,7 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
       totalPoolTicketsCount = parseInt(utils.formatUnits(totalSupply.toString(), unitType), 10);
       const { feeFraction, openedBlock } = currentDraw;
 
-      const prizeIntervalMs = symbol === DAI ? 604800000 : 86400000; // DAI weekly, USDC daily
+      const prizeIntervalMs = symbol === DAI ? 604800000 : 86400000; // DAI weekly, USDC daily in miliseconds
       const { timestamp: blockTimestamp } = await provider.getBlock(openedBlock.toNumber());
       drawDate = (blockTimestamp.toString() * 1000) + prizeIntervalMs; // adds 14 days to a timestamp in miliseconds
 
@@ -205,10 +207,9 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
     unitType: decimals,
     tokenABI,
   } = getPoolTogetherTokenContract(symbol);
-  const transferMethod = tokenABI.find(item => item.name === 'approve');
   const rawValue = 1000000000;
   const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
-  const data = abi.encodeMethod(transferMethod, [poolContractAddress, valueToApprove]);
+  const data = encodeContractMethod(tokenABI, 'approve', [poolContractAddress, valueToApprove]);
   let transactionPayload = {
     amount: 0,
     to: contractAddress,
@@ -272,9 +273,8 @@ export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, 
     unitType: decimals,
     poolContractAddress,
   } = getPoolTogetherTokenContract(symbol);
-  const depositMethod = poolAbi.find(item => item.name === 'depositPool');
   const valueToDeposit = utils.parseUnits(depositAmount.toString(), decimals);
-  const data = abi.encodeMethod(depositMethod, [valueToDeposit]);
+  const data = encodeContractMethod(poolAbi, 'depositPool', [valueToDeposit]);
   let transactionPayload = {
     amount: 0,
     to: poolContractAddress,
@@ -314,9 +314,8 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
     unitType: decimals,
     poolContractAddress,
   } = getPoolTogetherTokenContract(symbol);
-  const withdrawMethod = poolAbi.find(item => item.name === 'withdraw');
   const valueToWithdraw = utils.parseUnits(withdrawAmount.toString(), decimals);
-  const data = abi.encodeMethod(withdrawMethod, [valueToWithdraw]);
+  const data = encodeContractMethod(poolAbi, 'withdraw', [valueToWithdraw]);
   let transactionPayload = {
     amount: 0,
     to: poolContractAddress,

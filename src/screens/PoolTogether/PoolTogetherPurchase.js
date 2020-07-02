@@ -370,22 +370,22 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             </ContentRow>
             <ContentRow>
               {(!hasAllowance && !isApprovalExecuting) &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   In order to join Pool Together you will need to automate transactions first.
                 </Text>
               }
               {!!isApprovalExecuting &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   Please wait for Pool Together automation
                 </Text>
               }
               {(!!hasAllowance && !purchasePayload) &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   Fetching fee...
                 </Text>
               }
               {(!!hasAllowance && !!purchasePayload) &&
-                <Text style={{ textAlign: 'center' }} label>
+                <Text center label>
                   {`Fee ${purchasePayload.feeDisplayValue} (${purchasePayload.feeInFiat})`}
                   {purchasePayload.isDisabled && `\nNot enough ${purchasePayload.feeSymbol} for the transaction fee`}
                 </Text>
