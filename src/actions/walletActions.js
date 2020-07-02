@@ -270,7 +270,7 @@ export const encryptAndSaveWalletAction = (
 
     await delay(50);
     const saltedPin = await getSaltedPin(pin, dispatch);
-    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
+    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
@@ -288,7 +288,7 @@ export const encryptAndSaveWalletAction = (
 
     // save data to keychain
     const { mnemonic, privateKey } = wallet;
-    const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey, pin };
+    const keychainData: KeyChainData = { mnemonic: mnemonic?.phrase || '', privateKey, pin };
     if (enableBiometrics) {
       await dispatch(changeUseBiometricsAction(true, keychainData, true));
     } else {

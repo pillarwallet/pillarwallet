@@ -39,7 +39,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
-  return mnemonicPhrase || utils.HDNode.entropyToMnemonic(utils.randomBytes(16));
+  return mnemonicPhrase || utils.entropyToMnemonic(utils.randomBytes(16));
 }
 
 export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
@@ -134,9 +134,9 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
   };
 }
 
-export async function decryptWallet(encryptedWallet: Object, saltedPin: string, options?: Object) {
+export async function decryptWallet(encryptedWallet: Object, saltedPin: string) {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
-  let wallet = await ethers.Wallet.RNfromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
+  let wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
   if (wallet) {
     wallet = wallet.connect(provider);
   }

@@ -103,7 +103,6 @@ import {
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
-  CHAT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
@@ -462,11 +461,6 @@ export class EventDetail extends React.Component<Props, State> {
       return this.getFormattedGasFee(formattedBTCFee, BTC);
     }
     return null;
-  };
-
-  messageContact = (contact: ApiUser) => {
-    this.props.navigation.navigate(CHAT, { username: contact.username });
-    this.props.onClose();
   };
 
   sendTokensToContact = (contact: ApiUser) => {
@@ -969,11 +963,6 @@ export class EventDetail extends React.Component<Props, State> {
             } else {
               eventData.buttons = [
                 {
-                  title: 'Message',
-                  onPress: () => this.messageContact(contact),
-                  secondary: true,
-                },
-                {
                   title: 'Send back',
                   onPress: this.sendSynthetic,
                   squarePrimary: true,
@@ -999,12 +988,6 @@ export class EventDetail extends React.Component<Props, State> {
           const contactFound = Object.keys(contact).length > 0;
           const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
-          const messageButton = {
-            title: 'Message',
-            onPress: () => this.messageContact(contact),
-            secondary: true,
-          };
 
           const sendBackButtonSecondary = {
             title: 'Send back',
@@ -1081,9 +1064,7 @@ export class EventDetail extends React.Component<Props, State> {
                 buttons = [];
               }
             } else if (contactFound) {
-              buttons = isPending
-                ? [messageButton]
-                : [messageButton, sendBackButtonSecondary];
+              buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
@@ -1096,9 +1077,7 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [];
             }
           } else if (contactFound) {
-            buttons = isPending
-              ? [messageButton]
-              : [messageButton, sendMoreButtonSecondary];
+            buttons = [sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
@@ -1214,11 +1193,6 @@ export class EventDetail extends React.Component<Props, State> {
         profileImage,
         actionTitle: 'Connected',
         buttons: [
-          {
-            title: 'Message',
-            onPress: () => this.messageContact(acceptedContact),
-            secondary: true,
-          },
           {
             title: 'Send tokens',
             onPress: () => this.sendTokensToContact(acceptedContact),
