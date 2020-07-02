@@ -66,7 +66,6 @@ import {
 } from 'actions/referralsActions';
 import { toggleBadgesAction } from 'actions/appSettingsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 
 // selectors
@@ -125,7 +124,6 @@ type Props = {
   toggleBadges: () => void,
   walletConnectRequests: CallRequest[],
   fetchAllAccountsBalances: () => void,
-  refreshBitcoinBalance: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
   fetchReferralReward: () => void,
   isPillarRewardCampaignActive: boolean,
@@ -229,7 +227,6 @@ class HomeScreen extends React.Component<Props, State> {
       fetchBadges,
       fetchBadgeAwardHistory,
       fetchAllAccountsBalances,
-      refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
     } = this.props;
@@ -241,7 +238,6 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadgeAwardHistory();
     fetchTransactionsHistory();
     fetchAllAccountsBalances();
-    refreshBitcoinBalance();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
   };
@@ -552,7 +548,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
