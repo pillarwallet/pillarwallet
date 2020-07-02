@@ -59,7 +59,7 @@ import {
   COLLECTIBLE,
   BADGE,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
+import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
 import { ADD_WEBSOCKET_RECEIVED_MESSAGE, REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
 import { MESSAGE_DISCONNECTED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import {
@@ -99,9 +99,7 @@ let intercomNotificationsListener = null;
 const chat = new ChatService();
 
 const NOTIFICATION_ROUTES = {
-  [CONNECTION]: PEOPLE,
   [BCX]: HOME,
-  [SIGNAL]: CHAT,
   [COLLECTIBLE]: HOME,
 };
 

@@ -19,10 +19,7 @@
 */
 import merge from 'lodash.merge';
 import {
-  START_SEARCH,
-  FINISH_SEARCH,
   UPDATE_CONTACTS,
-  RESET_SEARCH_RESULTS,
   DISCONNECT_CONTACT,
   START_SYNC_CONTACTS_SMART_ADDRESSES,
   UPDATE_CONTACTS_SMART_ADDRESSES,
@@ -63,15 +60,6 @@ export default function contactsReducer(
   action: ContactsReducerAction,
 ): ContactsReducerState {
   switch (action.type) {
-    case START_SEARCH:
-      return { ...state, isSearching: true, searchResults: action.payload };
-
-    case FINISH_SEARCH:
-      return { ...state, isSearching: false, searchResults: action.payload };
-
-    case RESET_SEARCH_RESULTS:
-      return { ...state, searchResults: { apiUsers: [], localContacts: [] } };
-
     case UPDATE_CONTACTS:
       return { ...state, data: action.payload };
 
