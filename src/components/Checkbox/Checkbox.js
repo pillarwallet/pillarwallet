@@ -42,8 +42,11 @@ type Props = {
   positive?: boolean,
 };
 
-const getCheckboxBorderColor = (theme: Theme, active: boolean, positive: boolean) => {
+const getCheckboxBorderColor = (theme: Theme, active: boolean, positive: boolean, rounded: boolean) => {
   const colors = getThemeColors(theme);
+  if (rounded) {
+    return 'transparent';
+  }
   if (active) {
     if (positive) return colors.positive;
     return colors.primary;
@@ -58,7 +61,9 @@ const CheckboxBox = styled.View`
   border-radius: ${({ rounded }) => rounded ? 12 : 2}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${({ theme, active, positive }) => getCheckboxBorderColor(theme, active, positive)};
+  border-color: ${({
+    theme, active, positive, rounded,
+  }) => getCheckboxBorderColor(theme, active, positive, rounded)};
   justify-content: center;
   align-items: center;
   ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};
