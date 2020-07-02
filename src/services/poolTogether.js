@@ -85,9 +85,9 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
       poolContractAddress: contractAddress,
     } = getPoolTogetherTokenContract(symbol);
     const accountedBalance = await contract.accountedBalance();
-    const balanceCallData = contract.interface.functions.balance.encode([]);
+    const balanceCallData = contract.interface.encodeFunctionData('balance');
     const result = await provider.call({ to: contract.address, data: balanceCallData });
-    const balance = contract.interface.functions.balance.decode(result);
+    const balance = contract.interface.decodeFunctionResult('balance', result);
     const balanceTakenAt = new Date();
     const currentOpenDrawId = await contract.currentOpenDrawId();
     const currentDraw = await contract.getDraw(currentOpenDrawId);
@@ -175,7 +175,7 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
 }
 
 export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<Object> => {
-  const defaultResponse = { fee: new BigNumber(0), error: true };
+  const defaultResponse = { fee: new BigNumber('0'), error: true };
   const estimateTransaction = {
     data: transaction.data,
     recipient: transaction.to,
@@ -367,7 +367,7 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
       const parsedLog = contract.interface.parseLog(log);
       return {
         hash: log.transactionHash,
-        amount: parsedLog.values.amount.toString(),
+        amount: parsedLog.args.amount.toString(),
         symbol,
         decimals: unitType,
         tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
@@ -407,7 +407,7 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
       const parsedLog = contract.interface.parseLog(log);
       return {
         hash: log.transactionHash,
-        amount: parsedLog.values.amount.toString(),
+        amount: parsedLog.args.amount.toString(),
         symbol,
         decimals: unitType,
         tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
