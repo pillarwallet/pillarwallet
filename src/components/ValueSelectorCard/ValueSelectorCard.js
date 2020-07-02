@@ -271,7 +271,6 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     return { selectedAssetBalance, amountValueInFiat, selectedAssetSymbol };
   };
 
-
   handleUseMax = () => {
     const { getFormValue } = this.props;
     const { value, formOptions } = this.state;

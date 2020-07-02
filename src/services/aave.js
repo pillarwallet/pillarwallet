@@ -24,7 +24,7 @@ import axios from 'axios';
 
 // utils
 import { getAssetDataByAddress } from 'utils/assets';
-import { formatAmount } from 'utils/common';
+import { formatAmount, reportLog } from 'utils/common';
 
 // services
 import { getContract } from 'services/assets';
@@ -117,7 +117,7 @@ class AaveService {
     const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
     if (!lendingPoolCoreContract) return [];
 
-    const reserveAddresses = await lendingPoolCoreContract.getReserves().catch(() => []);
+    const reserveAddresses = await lendingPoolCoreContract.getReserves().catch((e) => this.handleError(e, []));
 
     await Promise.all(reserveAddresses.map((address) => this.getAaveTokenAddress(address)));
 
@@ -128,7 +128,7 @@ class AaveService {
     const lendingPoolCoreContract = await this.getLendingPoolCoreContract();
     if (!lendingPoolCoreContract) return Promise.resolve([]);
 
-    const poolAddresses = await lendingPoolCoreContract.getReserves().catch(() => []);
+    const poolAddresses = await lendingPoolCoreContract.getReserves().catch((e) => this.handleError(e, []));
 
     return poolAddresses.reduce((pool, reserveAddress) => {
       const assetData = getAssetDataByAddress(accountAssets, supportedAssets, reserveAddress);
@@ -146,7 +146,7 @@ class AaveService {
     return Promise.all(supportedDeposits.map(async (reserveAsset) => {
       const reserveData = await lendingPoolContract
         .getReserveData(reserveAsset.address)
-        .catch(() => ([]));
+        .catch((e) => this.handleError(e, []));
       const earnInterestRate = rayToNumeric(reserveData[4]) * 100; // %
       return {
         ...reserveAsset,
@@ -161,7 +161,7 @@ class AaveService {
 
     const depositedAssetData = await lendingPoolContract
       .getUserReserveData(asset.address, accountAddress)
-      .catch(() => ([]));
+      .catch((e) => this.handleError(e, []));
 
     const earnInterestRateBN = depositedAssetData[5];
     const earnInterestRate = rayToNumeric(earnInterestRateBN) * 100; // %
@@ -235,7 +235,12 @@ class AaveService {
       `,
       })
       .then(({ data: response }) => response.data)
-      .catch(() => ({}));
+      .catch((e) => this.handleError(e, {}));
+  }
+
+  handleError(error: any, result: any): any {
+    reportLog('AAVE service failed', { error });
+    return result;
   }
 }
 

@@ -37,6 +37,9 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import AAVE_LENDING_POOL_CONTRACT_ABI from 'abi/aaveLendingPool.json';
 import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 
+// config
+import aaveConfig from 'configs/aaveConfig';
+
 // types
 import type { Transaction } from 'models/Transaction';
 import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
@@ -49,8 +52,7 @@ export const buildAaveDepositTransactionData = (
 ): string => {
   const methodAbi = getContractMethodAbi(AAVE_LENDING_POOL_CONTRACT_ABI, 'deposit');
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);
-  const referralCode = 80; // Pillar's unique
-  return abiHelper.encodeMethod(methodAbi, [assetAddress, contractAmount, referralCode]);
+  return abiHelper.encodeMethod(methodAbi, [assetAddress, contractAmount, aaveConfig.REFERRAL_CODE]);
 };
 
 export const buildAaveWithdrawTransactionData = (

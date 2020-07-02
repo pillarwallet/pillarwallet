@@ -424,7 +424,8 @@ export const getContract = (
 ) => {
   try {
     return new Contract(address, abi, provider);
-  } catch {
+  } catch (error) {
+    reportLog('Failed to create Contract', { error });
     return null;
   }
 };

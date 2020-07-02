@@ -491,7 +491,8 @@ class SmartWallet {
 
     const estimated = await this.sdk
       .estimateAccountTransaction(...estimateMethodParams)
-      .then(parseEstimatePayload).catch(() => ({}));
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
 
     return formatEstimated(estimated);
   }

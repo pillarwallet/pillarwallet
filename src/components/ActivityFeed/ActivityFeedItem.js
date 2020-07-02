@@ -258,7 +258,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     return `${prefix} ${formatAmount(value, getDecimalPlaces(symbol))} ${symbol}`;
   };
 
-
   getAaveDepositedAssetImage = () => {
     const { event, supportedAssets } = this.props;
     if (!event?.extra?.symbol) return null;
