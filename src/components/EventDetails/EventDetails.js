@@ -53,14 +53,12 @@ import {
   formatAmount,
   formatUnits,
   formatTransactionFee,
-  reportOrWarn,
 } from 'utils/common';
 import {
   groupPPNTransactions,
   isPendingTransaction,
   isSWAddress,
   isKWAddress,
-  isBTCAddress,
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
@@ -100,7 +98,6 @@ import {
   SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
   SEND_TOKEN_FROM_CONTACT_FLOW,
@@ -110,7 +107,6 @@ import {
   SEND_SYNTHETIC_ASSET,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
-  SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   CONTACT,
 } from 'constants/navigationConstants';
 
@@ -141,7 +137,7 @@ import { updateCollectibleTransactionAction } from 'actions/collectiblesActions'
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, AssetData } from 'models/Asset';
+import type { Rates, Assets, Asset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -626,50 +622,6 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SETTLE_BALANCE);
   };
 
-  sendToBtc = async (btcReceiverAddress: string) => {
-    const {
-      onClose,
-      navigation,
-      supportedAssets,
-      setActiveBlockchainNetwork,
-      refreshBitcoinBalance,
-      isForAllAccounts,
-    } = this.props;
-    onClose();
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-    refreshBitcoinBalance();
-    const btcToken = supportedAssets.find(e => e.symbol === BTC);
-
-    if (!btcToken) {
-      reportOrWarn('BTC token not found', null, 'error');
-      return;
-    }
-
-    const { symbol: token, decimals } = btcToken;
-    const iconUrl = `${SDK_PROVIDER}/${btcToken.iconUrl}?size=2`;
-    const assetData: AssetData = {
-      token,
-      decimals,
-      iconColor: iconUrl,
-    };
-
-    if (isForAllAccounts) {
-      navigation.navigate(SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW, {
-        assetData,
-        receiver: btcReceiverAddress,
-        source: 'Home',
-        receiverEnsName: '',
-      });
-    } else {
-      navigation.navigate(SEND_TOKEN_AMOUNT, {
-        assetData,
-        receiver: btcReceiverAddress,
-        source: 'Home',
-        receiverEnsName: '',
-      });
-    }
-  };
-
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return 'Refer friends';
@@ -807,8 +759,6 @@ export class EventDetail extends React.Component<Props, State> {
       contactsSmartAddresses,
       isPPNActivated,
       itemData,
-      bitcoinAddresses,
-      bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
     } = this.props;
 
@@ -986,7 +936,6 @@ export class EventDetail extends React.Component<Props, State> {
 
           let buttons = [];
           const contactFound = Object.keys(contact).length > 0;
-          const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
           const sendBackButtonSecondary = {
@@ -1037,19 +986,6 @@ export class EventDetail extends React.Component<Props, State> {
             squarePrimary: true,
           };
 
-          const sendBackBtc = {
-            title: 'Send back',
-            onPress: () => this.sendToBtc(event.from),
-            secondary: true,
-          };
-
-          const sendMoreBtc = {
-            title: 'Send more',
-            onPress: () => this.sendToBtc(event.to),
-            secondary: true,
-          };
-
-
           if (isReferralRewardTransaction) {
             buttons = [];
           } else if (isReceived) {
@@ -1057,24 +993,12 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [sendFromSW, topUpMore];
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
-            } else if (isBitcoinTrx) {
-              if (bitcoinFeatureEnabled && !isPending) {
-                buttons = [sendBackBtc];
-              } else {
-                buttons = [];
-              }
             } else if (contactFound) {
               buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
-            }
-          } else if (isBitcoinTrx) {
-            if (bitcoinFeatureEnabled && !isPending) {
-              buttons = [sendMoreBtc];
-            } else {
-              buttons = [];
             }
           } else if (contactFound) {
             buttons = [sendMoreButtonSecondary];

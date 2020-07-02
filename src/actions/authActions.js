@@ -59,6 +59,7 @@ import { clearWebViewCookies } from 'utils/exchange';
 import {
   setKeychainDataObject, resetKeychainDataObject, getWalletFromPkByPin, canLoginWithPkFromPin,
 } from 'utils/keychain';
+import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // services
 import Storage from 'services/storage';
@@ -231,7 +232,7 @@ export const loginAction = (
          * set Ethereum network as active if we disable feature flag
          * or end beta testing program while user has set BTC as active network
          */
-        const revertToDefaultNetwork = !bitcoinFeatureEnabled && blockchainNetwork === BLOCKCHAIN_NETWORK_TYPES.BITCOIN;
+        const revertToDefaultNetwork = !bitcoinFeatureEnabled && !isSupportedBlockchain(blockchainNetwork);
         if (revertToDefaultNetwork || !blockchainNetwork) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
