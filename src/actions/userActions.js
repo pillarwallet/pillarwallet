@@ -29,6 +29,7 @@ import {
 } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { OTP_DIGITS } from 'constants/referralsConstants';
 import { logEventAction } from 'actions/analyticsActions';
 import { completeReferralsEventAction } from 'actions/referralsActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -101,7 +102,7 @@ export const createOneTimePasswordAction = (
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     dispatch(sendingOneTimePasswordAction());
 
-    const response = await api.createOneTimePassword({ walletId, ...field });
+    const response = await api.createOneTimePassword({ walletId, digits: OTP_DIGITS, ...field });
     const { responseStatus } = response;
 
     if (responseStatus === 200) {

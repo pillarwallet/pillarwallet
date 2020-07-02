@@ -25,7 +25,6 @@ export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
 export const SERVICES_TAB = 'SERVICES_TAB';
 export const ME_TAB = 'ME_TAB';
-export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
 export const MARKET = 'MARKET';
 export const CONTACT_INFO = 'CONTACT_INFO';

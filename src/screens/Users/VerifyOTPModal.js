@@ -41,6 +41,10 @@ import BoxBody from 'components/ModalBox/BoxBody';
 import StatusLabel from 'components/Verification/StatusLabel';
 import ResendMessage from 'components/Verification/ResendMessage';
 
+// constants
+import { OTP_DIGITS } from 'constants/referralsConstants';
+
+
 type Props = {
   verifyingField: string,
   createOneTimePassword: (walletId: string, field: Object) => void,
@@ -139,7 +143,7 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
       resetOneTimePassword();
     }
 
-    if (code.length === 5) {
+    if (code.length === OTP_DIGITS) {
       this.confirmOTP(code);
     }
   };
