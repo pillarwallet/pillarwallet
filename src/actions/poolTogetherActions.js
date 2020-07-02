@@ -51,11 +51,13 @@ export const fetchPoolPrizeInfo = (symbol: string) => {
       payload: true,
     });
     const newPoolStats = await getPoolTogetherInfo(symbol, activeAccountAddress);
-    const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
-    dispatch({
-      type: SET_POOL_TOGETHER_PRIZE_INFO,
-      payload: updatedPoolStats,
-    });
+    if (newPoolStats) {
+      const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
+      dispatch({
+        type: SET_POOL_TOGETHER_PRIZE_INFO,
+        payload: updatedPoolStats,
+      });
+    }
     dispatch({
       type: SET_POOL_TOGETHER_FETCHING_STATS,
       payload: false,
@@ -82,13 +84,15 @@ export const fetchPoolAllowanceStatusAction = (symbol: string) => {
     } = getState();
     const activeAccountAddress = activeAccountAddressSelector(getState());
     const hasAllowance = await checkPoolAllowance(symbol, activeAccountAddress);
-    const updatedAllowance = { ...currentPoolAllowance, [symbol]: hasAllowance };
-    dispatch({
-      type: SET_POOL_TOGETHER_ALLOWANCE,
-      payload: updatedAllowance,
-    });
-    if (hasAllowance) {
-      dispatch(setDismissApproveAction(symbol));
+    if (hasAllowance !== null) {
+      const updatedAllowance = { ...currentPoolAllowance, [symbol]: hasAllowance };
+      dispatch({
+        type: SET_POOL_TOGETHER_ALLOWANCE,
+        payload: updatedAllowance,
+      });
+      if (hasAllowance) {
+        dispatch(setDismissApproveAction(symbol));
+      }
     }
   };
 };

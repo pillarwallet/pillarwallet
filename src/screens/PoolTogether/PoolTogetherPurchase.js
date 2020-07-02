@@ -173,12 +173,18 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const { useGasToken, poolAllowance } = this.props;
     const hasAllowance = poolAllowance[poolToken];
     if (!hasAllowance) {
-      const { txFeeInWei, gasToken, transactionPayload } = await getApproveFeeAndTransaction(poolToken, useGasToken);
-      this.setState({
-        gasToken,
-        allowPayload: transactionPayload,
+      const {
         txFeeInWei,
-      });
+        gasToken,
+        transactionPayload,
+      } = await getApproveFeeAndTransaction(poolToken, useGasToken) || {};
+      if (txFeeInWei) {
+        this.setState({
+          gasToken,
+          allowPayload: transactionPayload,
+          txFeeInWei,
+        });
+      }
     }
   }
 
@@ -199,22 +205,24 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
           txFeeInWei,
           gasToken,
           transactionPayload,
-        } = await getPurchaseTicketFeeAndTransaction(tokenValue, poolToken, useGasToken);
-        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const feeSymbol = get(gasToken, 'symbol', ETH);
-        const feeDecimals = get(gasToken, 'decimals', 'ether');
-        const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-        const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-        const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-        const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
-        const purchasePayload = {
-          transactionPayload,
-          feeInFiat,
-          feeSymbol,
-          feeDisplayValue,
-          isDisabled,
-        };
-        this.setState({ purchasePayload });
+        } = await getPurchaseTicketFeeAndTransaction(tokenValue, poolToken, useGasToken) || {};
+        if (txFeeInWei) {
+          const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+          const feeSymbol = get(gasToken, 'symbol', ETH);
+          const feeDecimals = get(gasToken, 'decimals', 'ether');
+          const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+          const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+          const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+          const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+          const purchasePayload = {
+            transactionPayload,
+            feeInFiat,
+            feeSymbol,
+            feeDisplayValue,
+            isDisabled,
+          };
+          this.setState({ purchasePayload });
+        }
       });
     }
   }

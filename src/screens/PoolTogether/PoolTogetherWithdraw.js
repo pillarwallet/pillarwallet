@@ -172,12 +172,18 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     const { useGasToken, poolAllowance } = this.props;
     const hasAllowance = poolAllowance[poolToken];
     if (!hasAllowance) {
-      const { txFeeInWei, gasToken, transactionPayload } = await getApproveFeeAndTransaction(poolToken, useGasToken);
-      this.setState({
-        gasToken,
-        allowPayload: transactionPayload,
+      const {
         txFeeInWei,
-      });
+        gasToken,
+        transactionPayload,
+      } = await getApproveFeeAndTransaction(poolToken, useGasToken) || {};
+      if (txFeeInWei) {
+        this.setState({
+          gasToken,
+          allowPayload: transactionPayload,
+          txFeeInWei,
+        });
+      }
     }
   }
 
@@ -198,25 +204,27 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
           txFeeInWei,
           gasToken,
           transactionPayload,
-        } = await getWithdrawTicketFeeAndTransaction(tokenValue, poolToken, useGasToken);
-        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const feeSymbol = get(gasToken, 'symbol', ETH);
-        const feeDecimals = get(gasToken, 'decimals', 'ether');
-        const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-        const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-        const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-        const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
-        const tokenValueInFiat = formatFiat(tokenValue * getRate(rates, poolToken, fiatCurrency), fiatCurrency);
+        } = await getWithdrawTicketFeeAndTransaction(tokenValue, poolToken, useGasToken) || {};
+        if (txFeeInWei) {
+          const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+          const feeSymbol = get(gasToken, 'symbol', ETH);
+          const feeDecimals = get(gasToken, 'decimals', 'ether');
+          const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+          const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+          const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+          const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+          const tokenValueInFiat = formatFiat(tokenValue * getRate(rates, poolToken, fiatCurrency), fiatCurrency);
 
-        const withdrawPayload = {
-          transactionPayload,
-          feeInFiat,
-          feeSymbol,
-          feeDisplayValue,
-          isDisabled,
-          tokenValueInFiat,
-        };
-        this.setState({ withdrawPayload });
+          const withdrawPayload = {
+            transactionPayload,
+            feeInFiat,
+            feeSymbol,
+            feeDisplayValue,
+            isDisabled,
+            tokenValueInFiat,
+          };
+          this.setState({ withdrawPayload });
+        }
       });
     }
   }
@@ -322,7 +330,10 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     };
 
     const balanceOptions = {
-      [poolToken]: balances[poolToken],
+      [poolToken]: {
+        symbol: poolToken,
+        balance: userTickets.toString(),
+      },
     };
 
     return (
@@ -354,7 +365,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
               <ValueSelectorCard
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
-                maxLabel="Spend max"
+                maxLabel="Withdraw all"
                 assets={assetOptions}
                 balances={balanceOptions}
                 baseFiatCurrency={baseFiatCurrency}

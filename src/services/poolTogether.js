@@ -37,7 +37,6 @@ import {
 } from 'constants/poolTogetherConstants';
 
 import type { PoolInfo } from 'models/PoolTogether';
-import type { TransactionFeeInfo } from 'models/Transaction';
 
 import { getEthereumProvider, formatMoney, reportLog } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
@@ -75,98 +74,106 @@ const getPoolTogetherTokenContract = (symbol: string) => {
   };
 };
 
-export async function getPoolTogetherInfo(symbol: string, address: string): Promise<PoolInfo> {
-  const {
-    poolContract: contract,
-    unitType,
-    provider,
-    poolContractAddress: contractAddress,
-  } = getPoolTogetherTokenContract(symbol);
-  const accountedBalance = await contract.accountedBalance();
-  const balanceCallData = contract.interface.functions.balance.encode([]);
-  const result = await provider.call({ to: contract.address, data: balanceCallData });
-  const balance = contract.interface.functions.balance.decode(result);
-  const balanceTakenAt = new Date();
-  const currentOpenDrawId = await contract.currentOpenDrawId();
-  const currentDraw = await contract.getDraw(currentOpenDrawId);
-  const committedSupply = await contract.committedSupply();
-  const openSupply = await contract.openSupply();
-
-  let userInfo;
+export async function getPoolTogetherInfo(symbol: string, address: string): Promise<?PoolInfo> {
   try {
-    const totalBalance = await contract.totalBalanceOf(address); // balance including open, committed, fees, sponsorship
-    if (!totalBalance.eq(0)) {
-      const openBalance = await contract.openBalanceOf(address); // balance in the open Draw
-      const userCurrentPoolBalance = await contract.balanceOf(address); // balance in the current committed Draw
-      const ticketBalance = openBalance.add(userCurrentPoolBalance); // this is the current ticket balance in total
-      userInfo = {
-        openBalance: formatMoney(utils.formatUnits(openBalance.toString(), unitType)),
-        totalBalance: formatMoney(utils.formatUnits(totalBalance.toString(), unitType)),
-        userCurrentPoolBalance: formatMoney(utils.formatUnits(userCurrentPoolBalance.toString(), unitType)),
-        ticketBalance: formatMoney(utils.formatUnits(ticketBalance.toString(), unitType)),
-      };
+    const {
+      poolContract: contract,
+      unitType,
+      provider,
+      poolContractAddress: contractAddress,
+    } = getPoolTogetherTokenContract(symbol);
+    const accountedBalance = await contract.accountedBalance();
+    const balanceCallData = contract.interface.functions.balance.encode([]);
+    const result = await provider.call({ to: contract.address, data: balanceCallData });
+    const balance = contract.interface.functions.balance.decode(result);
+    const balanceTakenAt = new Date();
+    const currentOpenDrawId = await contract.currentOpenDrawId();
+    const currentDraw = await contract.getDraw(currentOpenDrawId);
+    const committedSupply = await contract.committedSupply();
+    const openSupply = await contract.openSupply();
+
+    let userInfo;
+    try {
+      const totalBalance = await contract.totalBalanceOf(address); // open, committed, fees, sponsorship balance
+      if (!totalBalance.eq(0)) {
+        const openBalance = await contract.openBalanceOf(address); // balance in the open Draw
+        const userCurrentPoolBalance = await contract.balanceOf(address); // balance in the current committed Draw
+        const ticketBalance = openBalance.add(userCurrentPoolBalance); // this is the current ticket balance in total
+        userInfo = {
+          openBalance: formatMoney(utils.formatUnits(openBalance.toString(), unitType)),
+          totalBalance: formatMoney(utils.formatUnits(totalBalance.toString(), unitType)),
+          userCurrentPoolBalance: formatMoney(utils.formatUnits(userCurrentPoolBalance.toString(), unitType)),
+          ticketBalance: formatMoney(utils.formatUnits(ticketBalance.toString(), unitType)),
+        };
+      }
+    } catch (e) {
+      reportLog('Error checking PoolTogether User Info', {
+        address,
+        contractAddress,
+        symbol,
+        message: e.message,
+      }, Sentry.Severity.Error);
+      return null;
     }
-  } catch (e) {
-    reportLog('Error checking PoolTogether User Info', {
-      address,
-      contractAddress,
-      symbol,
-      message: e.message,
+
+    const supplyRatePerBlock = await contract.supplyRatePerBlock();
+
+    let currentPrize = ptUtils.toBN(0);
+    let prizeEstimate = ptUtils.toBN(0);
+    let drawDate = 0;
+    let remainingTimeMs = 0;
+    let totalPoolTicketsCount = 0;
+    if (balance && openSupply && committedSupply && accountedBalance && currentDraw && supplyRatePerBlock) {
+      const totalSupply = openSupply.add(committedSupply);
+      totalPoolTicketsCount = parseInt(utils.formatUnits(totalSupply.toString(), unitType), 10);
+      const { feeFraction, openedBlock } = currentDraw;
+
+      const prizeIntervalMs = symbol === DAI ? 604800000 : 86400000; // DAI weekly, USDC daily
+      const { timestamp: blockTimestamp } = await provider.getBlock(openedBlock.toNumber());
+      drawDate = (blockTimestamp.toString() * 1000) + prizeIntervalMs; // adds 14 days to a timestamp in miliseconds
+
+      remainingTimeMs = drawDate - balanceTakenAt.getTime();
+      remainingTimeMs = remainingTimeMs < 0 ? 0 : remainingTimeMs;
+      const remainingTimeS = remainingTimeMs > 0 ? remainingTimeMs / 1000 : prizeIntervalMs / 1000;
+      const remainingBlocks = remainingTimeS / 15.0; // about 15 second block periods
+      const blockFixedPoint18 = utils.parseEther(remainingBlocks.toString());
+
+      const prizeSupplyRate = ptUtils.calculatePrizeSupplyRate(
+        supplyRatePerBlock,
+        feeFraction,
+      );
+
+      currentPrize = ptUtils.calculatePrize(
+        balance,
+        accountedBalance,
+        feeFraction,
+      );
+      prizeEstimate = ptUtils.calculatePrizeEstimate(
+        balance,
+        currentPrize,
+        blockFixedPoint18,
+        prizeSupplyRate,
+      );
+    }
+
+    return {
+      currentPrize: formatMoney(utils.formatUnits(currentPrize.toString(), unitType)),
+      prizeEstimate: formatMoney(utils.formatUnits(prizeEstimate.toString(), unitType)),
+      drawDate,
+      remainingTimeMs,
+      totalPoolTicketsCount,
+      userInfo,
+    };
+  } catch (e1) {
+    reportLog('Error fetching PoolTogether Info', {
+      message: e1.message,
     }, Sentry.Severity.Error);
+    return null;
   }
-
-  const supplyRatePerBlock = await contract.supplyRatePerBlock();
-
-  let currentPrize = ptUtils.toBN(0);
-  let prizeEstimate = ptUtils.toBN(0);
-  let drawDate = 0;
-  let remainingTimeMs = 0;
-  let totalPoolTicketsCount = 0;
-  if (balance && openSupply && committedSupply && accountedBalance && currentDraw && supplyRatePerBlock) {
-    const totalSupply = openSupply.add(committedSupply);
-    totalPoolTicketsCount = parseInt(utils.formatUnits(totalSupply.toString(), unitType), 10);
-    const { feeFraction, openedBlock } = currentDraw;
-
-    const prizeIntervalMs = symbol === DAI ? 604800000 : 86400000; // DAI weekly, USDC daily
-    const { timestamp: blockTimestamp } = await provider.getBlock(openedBlock.toNumber());
-    drawDate = (blockTimestamp.toString() * 1000) + prizeIntervalMs; // adds 14 days to a timestamp in miliseconds
-
-    remainingTimeMs = drawDate - balanceTakenAt.getTime();
-    remainingTimeMs = remainingTimeMs < 0 ? 0 : remainingTimeMs;
-    const remainingTimeS = remainingTimeMs > 0 ? remainingTimeMs / 1000 : prizeIntervalMs / 1000;
-    const remainingBlocks = remainingTimeS / 15.0; // about 15 second block periods
-    const blockFixedPoint18 = utils.parseEther(remainingBlocks.toString());
-
-    const prizeSupplyRate = ptUtils.calculatePrizeSupplyRate(
-      supplyRatePerBlock,
-      feeFraction,
-    );
-
-    currentPrize = ptUtils.calculatePrize(
-      balance,
-      accountedBalance,
-      feeFraction,
-    );
-    prizeEstimate = ptUtils.calculatePrizeEstimate(
-      balance,
-      currentPrize,
-      blockFixedPoint18,
-      prizeSupplyRate,
-    );
-  }
-
-  return {
-    currentPrize: formatMoney(utils.formatUnits(currentPrize.toString(), unitType)),
-    prizeEstimate: formatMoney(utils.formatUnits(prizeEstimate.toString(), unitType)),
-    drawDate,
-    remainingTimeMs,
-    totalPoolTicketsCount,
-    userInfo,
-  };
 }
 
-export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<TransactionFeeInfo> => {
-  const defaultResponse = { fee: new BigNumber(0) };
+export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<Object> => {
+  const defaultResponse = { fee: new BigNumber(0), error: true };
   const estimateTransaction = {
     data: transaction.data,
     recipient: transaction.to,
@@ -176,7 +183,13 @@ export const getSmartWalletTxFee = async (transaction: Object, useGasToken: bool
   const estimated = await smartWalletService
     .estimateAccountTransaction(estimateTransaction)
     .then(result => buildTxFeeInfo(result, useGasToken))
-    .catch(() => null);
+    .catch((e) => {
+      reportLog('Error getting PoolTogether fee for transaction', {
+        ...transaction,
+        message: e.message,
+      }, Sentry.Severity.Error);
+      return null;
+    });
 
   if (!estimated) {
     return defaultResponse;
@@ -210,9 +223,13 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
     },
   };
 
-  const { fee: txFeeInWei, gasToken } = await getSmartWalletTxFee(transactionPayload, useGasToken);
+  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(transactionPayload, useGasToken);
   if (gasToken) {
     transactionPayload = { ...transactionPayload, gasToken };
+  }
+
+  if (error) {
+    return null;
   }
 
   transactionPayload = { ...transactionPayload, txFeeInWei };
@@ -224,7 +241,7 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
   };
 }
 
-export const checkPoolAllowance = async (symbol: string, address: string): Promise<boolean> => {
+export const checkPoolAllowance = async (symbol: string, address: string): Promise<?boolean> => {
   const {
     poolContractAddress,
     tokenContractAddress: contractAddress,
@@ -244,7 +261,7 @@ export const checkPoolAllowance = async (symbol: string, address: string): Promi
       symbol,
       message: e.message,
     }, Sentry.Severity.Error);
-    hasAllowance = false;
+    return null;
   }
   return hasAllowance;
 };
@@ -273,9 +290,13 @@ export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, 
     tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
   };
 
-  const { fee: txFeeInWei, gasToken } = await getSmartWalletTxFee(transactionPayload, useGasToken);
+  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(transactionPayload, useGasToken);
   if (gasToken) {
     transactionPayload = { ...transactionPayload, gasToken };
+  }
+
+  if (error) {
+    return null;
   }
 
   transactionPayload = { ...transactionPayload, txFeeInWei };
@@ -311,12 +332,16 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
     tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
   };
 
-  const { fee: txFeeInWei, gasToken } = await getSmartWalletTxFee(transactionPayload, useGasToken);
+  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(transactionPayload, useGasToken);
   if (gasToken) {
     transactionPayload = { ...transactionPayload, gasToken };
   }
 
   transactionPayload = { ...transactionPayload, txFeeInWei };
+
+  if (error) {
+    return null;
+  }
 
   return {
     gasToken,
