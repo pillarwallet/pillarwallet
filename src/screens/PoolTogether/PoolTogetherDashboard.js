@@ -107,8 +107,7 @@ type State = {
   ticketsCount: Object,
 };
 
-class PoolTogetherDash extends React.Component<Props, State> {
-  isComponentMounted: boolean = false;
+class PoolTogetherDashboard extends React.Component<Props, State> {
   scroll: Object;
 
   constructor(props) {
@@ -136,10 +135,6 @@ class PoolTogetherDash extends React.Component<Props, State> {
     fetchPoolStats(DAI);
     fetchPoolAllowanceStatus(DAI);
     logScreenView('View PoolTogether', 'PoolTogether');
-  }
-
-  componentWillUnmount() {
-    this.isComponentMounted = false;
   }
 
   setActiveTab = (activeTab: string) => {
@@ -234,9 +229,7 @@ class PoolTogetherDash extends React.Component<Props, State> {
           refreshControl={
             <RefreshControl
               refreshing={isFetchingPoolStats}
-              onRefresh={() => {
-                fetchPoolStats(activeTab);
-              }}
+              onRefresh={() => fetchPoolStats(activeTab)}
             />
           }
           innerRef={ref => { this.scroll = ref; }}
@@ -361,4 +354,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolAllowanceStatus: (symbol: string) => dispatch(fetchPoolAllowanceStatusAction(symbol)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherDash);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherDashboard);

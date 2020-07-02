@@ -1,6 +1,6 @@
 {
-  "name": "PoolTogetherDash.js",
+  "name": "PoolTogetherDashboard.js",
   "version": "0.0.0",
   "private": true,
-  "main": "./PoolTogetherDash.js"
+  "main": "./PoolTogetherDashboard.js"
 }

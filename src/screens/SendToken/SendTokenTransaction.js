@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { TouchableOpacity } from 'react-native';
-import get from 'lodash.get';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
@@ -129,7 +128,7 @@ class SendTokenTransaction extends React.Component<Props> {
 
     const { isSuccess, transactionPayload, txHash = null } = navigation.state.params;
 
-    const poolToken = get(transactionPayload, 'extra.poolTogetherApproval.symbol', null);
+    const poolToken = transactionPayload?.extra?.poolTogetherApproval?.symbol;
     if (poolToken && !poolApproveExecuting[poolToken]) {
       if (isSuccess && txHash) {
         setExecutingPoolTogetherApprove(poolToken, txHash);
@@ -138,7 +137,7 @@ class SendTokenTransaction extends React.Component<Props> {
       }
     }
 
-    const txTag = get(transactionPayload, 'tag', '');
+    const txTag = transactionPayload?.tag || '';
     if (isSuccess && isPoolTogetherTag(txTag)) {
       const { extra: { symbol = DAI } = {} } = transactionPayload;
       navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });

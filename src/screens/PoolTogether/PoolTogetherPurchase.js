@@ -130,7 +130,6 @@ type State = {
 };
 
 class PoolTogetherPurchase extends React.Component<Props, State> {
-  isComponentMounted: boolean = false;
   scroll: Object;
 
   constructor(props) {
@@ -157,15 +156,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
   componentDidMount() {
     const { logScreenView } = this.props;
-    this.isComponentMounted = true;
     // check if poolTogether is already allowed and get fee if not
     this.updateFeeAndCheckAllowance();
     this.updatePurchaseFeeAndTransaction();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
-  }
-
-  componentWillUnmount() {
-    this.isComponentMounted = false;
   }
 
   updateFeeAndCheckAllowance = async () => {

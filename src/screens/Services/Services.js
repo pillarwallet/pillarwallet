@@ -129,7 +129,6 @@ class ServicesScreen extends React.Component<Props> {
         key: 'poolTogether',
         title: 'Pool Together savings game',
         body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
-        disabled: !isActiveAccountSmartWallet,
         hidden: !isActiveAccountSmartWallet,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       },

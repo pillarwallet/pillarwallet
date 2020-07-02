@@ -106,7 +106,7 @@ import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/Re
 import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
-import PoolTogetherDashScreen from 'screens/PoolTogether/PoolTogetherDash';
+import PoolTogetherDashboardScreen from 'screens/PoolTogether/PoolTogetherDashboard';
 import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
 import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
 import PoolTogetherWithdrawScreen from 'screens/PoolTogether/PoolTogetherWithdraw';
@@ -357,7 +357,7 @@ const servicesFlow = createStackNavigator({
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [FIAT_EXCHANGE]: FiatExchangeScreen,
   [FIAT_CRYPTO]: FiatCryptoScreen,
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
@@ -407,7 +407,7 @@ const homeFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
@@ -720,7 +720,7 @@ recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // POOLTOGETHER FLOW
 const poolTogetherFlow = createStackNavigator({
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,

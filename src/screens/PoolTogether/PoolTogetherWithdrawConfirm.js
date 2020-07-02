@@ -98,7 +98,6 @@ type State = {
 const poolTogetherLogo = require('assets/images/pool_together.png');
 
 class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
-  isComponentMounted: boolean = false;
   scroll: Object;
 
   constructor(props) {
@@ -126,12 +125,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
 
   componentDidMount() {
     const { logScreenView } = this.props;
-    this.isComponentMounted = true;
     logScreenView('View PoolTogether Withdraw Confirm', 'PoolTogetherWithdrawConfirm');
-  }
-
-  componentWillUnmount() {
-    this.isComponentMounted = false;
   }
 
   withdrawPoolAsset = () => {
