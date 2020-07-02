@@ -26,7 +26,7 @@ export const isPillarPaymentNetworkActive = (blockchainNetworks: BlockchainNetwo
 
 const getSupportedBlockchainNetworks = () => Object.values(BLOCKCHAIN_NETWORK_TYPES);
 
-export const isSupportedBlockchain = (activeBlockchain: string) => {
+export const isSupportedBlockchain = (activeBlockchain?: ?string) => {
   const supportedNetworks = getSupportedBlockchainNetworks();
-  return supportedNetworks.includes(activeBlockchain);
+  return !!activeBlockchain && supportedNetworks.includes(activeBlockchain);
 };

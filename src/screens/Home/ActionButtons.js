@@ -43,13 +43,12 @@ import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActio
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+import { isSupportedAccountType } from 'utils/accounts';
 
 // models, types
 import type { Account } from 'models/Account';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Asset, BalancesStore, Rates } from 'models/Asset';
-import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
@@ -58,9 +57,6 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   balances: BalancesStore,
-  bitcoinFeatureEnabled: boolean,
-  bitcoinBalances: BitcoinBalance,
-  bitcoinAddresses: BitcoinAddress[],
   supportedAssets: Asset[],
   wallets: Account[],
   activeWallet: Account,
@@ -196,7 +192,7 @@ class ActionButtons extends React.Component<Props, State> {
           };
         });
       case EXCHANGE:
-        return accountsInfo.filter(({ type }) => isSupportedBlockchain(type)).map((acc) => {
+        return accountsInfo.filter(({ type }) => isSupportedAccountType(type)).map((acc) => {
           const {
             type,
             formattedBalance,
@@ -257,15 +253,9 @@ class ActionButtons extends React.Component<Props, State> {
 
   render() {
     const { visibleActionModal, receiveAddress } = this.state;
-    const {
-      balances,
-      bitcoinBalances,
-      bitcoinFeatureEnabled,
-      bitcoinAddresses,
-    } = this.props;
+    const { balances } = this.props;
     const modalActions = this.getModalActions();
-    const isSendButtonActive = !!Object.keys(balances).length ||
-      (bitcoinFeatureEnabled && bitcoinAddresses.length > 0 && !!Object.keys(bitcoinBalances).length);
+    const isSendButtonActive = !!Object.keys(balances).length;
 
     return (
       <React.Fragment>
@@ -308,12 +298,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, blockchainNetwork } },
   rates: { data: rates },
   balances: { data: balances },
-  featureFlags: {
-    data: {
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
-    },
-  },
-  bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
   assets: {
     supportedAssets,
   },
@@ -322,9 +306,6 @@ const mapStateToProps = ({
   blockchainNetwork,
   rates,
   balances,
-  bitcoinFeatureEnabled,
-  bitcoinBalances,
-  bitcoinAddresses,
   supportedAssets,
 });
 
