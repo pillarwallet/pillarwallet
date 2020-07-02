@@ -43,7 +43,7 @@ import {
   SET_WALLET_RECOVERY_PENDING,
   SET_WALLET_RECOVERY_COMPLETE,
 } from 'constants/walletConstants';
-import { SigningKey } from 'ethers/utils/signing-key';
+import { utils } from 'ethers';
 
 export type Wallet = {|
   address: string,
@@ -57,7 +57,7 @@ export type BackupStatus = {|
 |};
 
 export type ImportedWallet = {
-  signingKey: SigningKey
+  signingKey: utils.SigningKey
 }
 
 export type WalletReducerState = {|
