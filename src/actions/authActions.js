@@ -39,9 +39,7 @@ import {
   AUTH_FLOW,
   ONBOARDING_FLOW,
   HOME,
-  CHAT,
   PIN_CODE_UNLOCK,
-  PEOPLE,
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
 } from 'constants/navigationConstants';
@@ -285,7 +283,6 @@ export const loginAction = (
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
-      const currentFlow = pathAndParams.path.split('/')[0];
 
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
@@ -294,17 +291,10 @@ export const loginAction = (
         params: lastActiveScreenParams,
       });
 
-      const isOpeningAChatNotification = lastActiveScreen === CHAT && currentFlow === AUTH_FLOW;
-      const navigateToRoute = isOpeningAChatNotification ?
-        NavigationActions.navigate({
-          routeName: PEOPLE,
-          params: {},
-          action: navigateToLastActiveScreen,
-        }) : navigateToLastActiveScreen;
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: navigateToRoute,
+        action: navigateToLastActiveScreen,
       });
 
       dispatch(checkForWalletBackupToastAction());
