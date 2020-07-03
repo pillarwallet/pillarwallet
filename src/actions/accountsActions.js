@@ -302,7 +302,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
 };
 
 export const fallbackToSmartOrKeyAccountAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const activeAccount = activeAccountSelector(getState());
     const { accounts: { data: accounts } } = getState();
     if (activeAccount && !isSupportedAccountType(activeAccount.type)) {

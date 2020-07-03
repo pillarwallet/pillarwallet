@@ -169,6 +169,4 @@ export const getSmartWalletAddress = (accounts: Accounts): ?string => {
 
 const getSupportedAccountTypes = () => Object.values(ACCOUNT_TYPES);
 
-export const isSupportedAccountType = (accountType: string) => {
-  return getSupportedAccountTypes().includes(accountType);
-};
+export const isSupportedAccountType = (accountType: string) => getSupportedAccountTypes().includes(accountType);
