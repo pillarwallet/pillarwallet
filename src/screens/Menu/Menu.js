@@ -258,7 +258,7 @@ class Menu extends React.Component<Props, State> {
 
   deleteWallet = () => {
     const { logoutUser, backupStatus, navigation } = this.props;
-    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp;
+    const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
     if (isBackedUp) {
       Alert.alert(
         'Logout',

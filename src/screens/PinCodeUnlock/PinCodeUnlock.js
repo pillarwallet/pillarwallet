@@ -88,7 +88,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     this.errorMessage = navigation.getParam('errorMessage', '');
     this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
 
-    if (!this.props.useBiometrics || navigation.getParam('forcePin')) {
+    if ((!this.props.useBiometrics || navigation.getParam('forcePin')) && !navigation.getParam('omitPin')) {
       this.state.showPin = true;
     }
   }
@@ -100,6 +100,19 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     if (navigation.getParam('forcePin')) return;
 
+    this.handleLocking(true);
+
+    if (navigation.getParam('omitPin')) {
+      getKeychainDataObject()
+        .then(data => {
+          this.loginWithPrivateKey(data);
+        })
+        .catch(() => {
+          this.triggerAuthentication();
+        });
+      return;
+    }
+
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
@@ -107,7 +120,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {
       this.triggerAuthentication();
     }
-    this.handleLocking(true);
   }
 
   componentWillUnmount() {

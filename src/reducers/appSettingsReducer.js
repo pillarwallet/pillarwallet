@@ -43,6 +43,7 @@ export type AppSettingsReducerState = {
     initialDeeplinkExecuted: boolean,
     hasSeenRecoveryPortalIntro?: boolean,
     hideLendingDeposits?: boolean,
+    omitPinOnLogin: boolean,
   },
   isFetched: boolean,
 };
@@ -73,6 +74,7 @@ export const initialState: AppSettingsReducerState = {
     initialDeeplinkExecuted: false,
     hasSeenRecoveryPortalIntro: false,
     hideLendingDeposits: false,
+    omitPinOnLogin: false,
   },
   isFetched: false,
 };
