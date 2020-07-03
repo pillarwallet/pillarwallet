@@ -98,9 +98,9 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
       >
         <ConfettiBackground>
           <Wrapper flex={1} center fullScreen>
-            {!!isGettingReward && <RewardBadge source={rewardBadge} />}
+            {isGettingReward && <RewardBadge source={rewardBadge} />}
             <Title>{title}</Title>
-            {!!isGettingReward &&
+            {isGettingReward &&
             <>
               <LoadingParagraph
                 isLoading={isFetchingRewards}
