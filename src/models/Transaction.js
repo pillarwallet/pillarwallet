@@ -26,6 +26,12 @@ export type TxSettlementItem = {
   hash: string,
 };
 
+export type TxPoolTogetherExtra = {
+  symbol: string,
+  decimals: number,
+  amount: string,
+}
+
 type TxWithdrawalExtra = {
   paymentHash: string,
 };
@@ -47,7 +53,18 @@ export type SyntheticTransactionExtra = {
   syntheticTransaction: $Shape<SyntheticTransaction>,
 };
 
-export type TransactionExtra = TxSettlementItem[] | TxWithdrawalExtra | SyntheticTransactionExtra | EnsTransactionExtra;
+export type AaveExtra = {
+  symbol: string,
+  decimals: number,
+  amount: string,
+};
+
+export type TransactionExtra = TxSettlementItem[]
+  | TxWithdrawalExtra
+  | SyntheticTransactionExtra
+  | EnsTransactionExtra
+  | AaveExtra
+  | TxPoolTogetherExtra;
 
 export type GasToken = {
   address: string,
@@ -102,9 +119,11 @@ export type TokenTransactionPayload = {
   signOnly?: ?boolean,
   signedHash?: ?string,
   data?: string,
+  tag?: string,
   extra?: Object,
   usePPN?: boolean,
   gasToken?: ?GasToken,
+  sequentialSmartWalletTransactions?: TokenTransactionPayload[],
 }
 
 export type CollectibleTransactionPayload = {

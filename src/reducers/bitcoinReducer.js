@@ -29,7 +29,6 @@ import {
   UPDATE_BITCOIN_BALANCE,
   SET_BITCOIN_ADDRESSES,
   BITCOIN_WALLET_CREATION_FAILED,
-  UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
   SET_BITCOIN_BALANCES,
 } from 'constants/bitcoinConstants';
@@ -42,12 +41,6 @@ export type BitcoinReducerState = {
     transactions: BTCTransaction[],
   },
   creationFailed?: boolean,
-};
-
-export type UpdateUnspentTransactionsAction = {
-  type: 'UPDATE_UNSPENT_TRANSACTIONS',
-  address: string,
-  unspentTransactions: BitcoinUtxo[],
 };
 
 export type UpdateBitcoinBalanceAction = {
@@ -84,7 +77,6 @@ export type UpdateBTCTransactionsAction = {
 
 export type BitcoinReducerAction =
   | UpdateBitcoinBalanceAction
-  | UpdateUnspentTransactionsAction
   | SetBitcoinAddressesAction
   | SetBitcoinBalancesAction
   | CreatedBitcoinAddressAction
@@ -118,42 +110,6 @@ const updateBalance = (
       addresses,
       unspentTransactions,
       transactions,
-    },
-  };
-};
-
-const updateUnspentTransactions = (
-  state: BitcoinReducerState,
-  action: UpdateUnspentTransactionsAction,
-): BitcoinReducerState => {
-  const { unspentTransactions, address } = action;
-  const {
-    data: {
-      addresses, unspentTransactions: transactions, balances, transactions: existingTxs,
-    },
-  } = state;
-
-  const filteredTransactions: BitcoinUtxo[] = transactions.filter(
-    ({ address: txAddress }) => address !== txAddress,
-  );
-
-  const matchingAddress = addresses.find(({ address: addr }) => addr === address);
-  if (!matchingAddress) {
-    return state;
-  }
-
-  const updatedAddress: BitcoinAddress = { address, updatedAt: Date.now() };
-  const filteredAddresses: BitcoinAddress[] = addresses.filter(
-    ({ address: addr }) => addr !== address,
-  );
-
-  return {
-    ...state,
-    data: {
-      balances,
-      addresses: [...filteredAddresses, updatedAddress],
-      unspentTransactions: filteredTransactions.concat(...unspentTransactions),
-      transactions: existingTxs,
     },
   };
 };
@@ -274,8 +230,6 @@ const bitcoinReducer = (
       return updateBalance(state, action);
     case UPDATE_BITCOIN_TRANSACTIONS:
       return updateBitcoinTransactions(state, action);
-    case UPDATE_UNSPENT_TRANSACTIONS:
-      return updateUnspentTransactions(state, action);
     case BITCOIN_WALLET_CREATION_FAILED:
       return { ...state, creationFailed: true };
     default:

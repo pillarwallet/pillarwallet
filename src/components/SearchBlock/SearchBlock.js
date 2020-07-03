@@ -39,6 +39,7 @@ type Props = {
   wrapperStyle?: Object,
   onSearchBlur?: Function,
   hideOverlay?: boolean,
+  disabled?: boolean,
 };
 
 const SearchBarWrapper = styled.View`
@@ -99,6 +100,7 @@ class SearchBlock extends React.Component<Props, State> {
       wrapperStyle,
       inputRef,
       hideOverlay,
+      disabled,
     } = this.props;
     const {
       query,
@@ -117,7 +119,11 @@ class SearchBlock extends React.Component<Props, State> {
           />
         )}
         {!hideSearch &&
-          <SearchBarWrapper style={wrapperStyle} isFocused={!!searchIsFocused && !inSearchMode}>
+          <SearchBarWrapper
+            style={wrapperStyle}
+            isFocused={!!searchIsFocused && !inSearchMode}
+            pointerEvents={disabled ? 'none' : 'auto'}
+          >
             <SearchBar
               inputProps={{
                 onChange: this.handleSearchChange,

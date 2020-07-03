@@ -24,6 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -44,6 +45,7 @@ import {
 import { findMatchingContact } from 'utils/contacts';
 import { findAccountByAddress, getAccountName } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
+import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // components
 import {
@@ -83,7 +85,12 @@ import {
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+import {
+  POOLTOGETHER_WITHDRAW_TRANSACTION,
+  POOLTOGETHER_DEPOSIT_TRANSACTION,
+} from 'constants/poolTogetherConstants';
+import { DAI } from 'constants/assetsConstants';
 
 // selectors
 import { activeAccountAddressSelector, bitcoinAddressSelector } from 'selectors';
@@ -100,6 +107,7 @@ import type { TransactionsGroup } from 'utils/feedData';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
+import type { AaveExtra } from 'models/Transaction';
 
 
 type Props = {
@@ -156,12 +164,15 @@ export type EventData = {
   collectibleUrl?: string,
   statusIconColor?: ?string,
   isFailed?: boolean,
+  itemImageRoundedSquare?: boolean,
+  cornerIcon?: any,
 };
 
 const NAMES = {
   SMART_WALLET: 'Smart Wallet',
   KEY_WALLET: 'Key wallet',
   PPN_NETWORK: 'Pillar Network',
+  AAVE_DEPOSIT: 'Aave Deposit',
 };
 
 const STATUSES = {
@@ -175,6 +186,10 @@ const STATUSES = {
   ACTIVATED: 'Activated',
 };
 
+const poolTogetherLogo = require('assets/images/pool_together.png');
+const daiIcon = require('assets/images/dai_color.png');
+const usdcIcon = require('assets/images/usdc_color.png');
+
 const ListWrapper = styled.View`
   align-items: flex-end;
   padding-left: ${spacing.mediumLarge}px;
@@ -186,6 +201,7 @@ const ItemValue = styled(BaseText)`
   text-align: right;
 `;
 
+const aaveImage = require('assets/images/apps/aave.png');
 
 export class ActivityFeedItem extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -241,6 +257,22 @@ export class ActivityFeedItem extends React.Component<Props> {
       symbol,
     }));
     return formattedValuesArray;
+  };
+
+  getAaveDisplayAmount = (prefix: string) => {
+    const { event } = this.props;
+    if (!event?.extra) return '';
+    const { amount, symbol, decimals }: AaveExtra = event.extra;
+    if (!amount || !symbol) return '';
+    const value = formatUnits(amount, decimals);
+    return `${prefix} ${formatAmount(value, getDecimalPlaces(symbol))} ${symbol}`;
+  };
+
+  getAaveDepositedAssetImage = () => {
+    const { event, supportedAssets } = this.props;
+    if (!event?.extra?.symbol) return null;
+    const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
+    return iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : null;
   };
 
   getWalletCreatedEventData = (event: Object) => {
@@ -466,6 +498,46 @@ export class ActivityFeedItem extends React.Component<Props> {
           actionLabel: 'Removed',
         };
         break;
+      case AAVE_LENDING_DEPOSIT_TRANSACTION:
+        const depositDisplayValue = this.getAaveDisplayAmount('-');
+        data = {
+          label: NAMES.AAVE_DEPOSIT,
+          itemValue: depositDisplayValue,
+          fullItemValue: depositDisplayValue,
+          valueColor: 'text',
+          itemImageSource: aaveImage,
+          itemImageRoundedSquare: true,
+          iconImageSize: 52,
+          cornerIcon: this.getAaveDepositedAssetImage(),
+        };
+        break;
+      case AAVE_LENDING_WITHDRAW_TRANSACTION:
+        const withdrawDisplayValue = this.getAaveDisplayAmount('+');
+        data = {
+          label: NAMES.AAVE_DEPOSIT,
+          itemValue: withdrawDisplayValue,
+          fullItemValue: withdrawDisplayValue,
+          valueColor: 'positive',
+          itemImageSource: aaveImage,
+          itemImageRoundedSquare: true,
+          iconImageSize: 52,
+          cornerIcon: this.getAaveDepositedAssetImage(),
+        };
+        break;
+      case POOLTOGETHER_DEPOSIT_TRANSACTION:
+      case POOLTOGETHER_WITHDRAW_TRANSACTION: {
+        const { symbol, decimals, amount } = event.extra;
+        directionSymbol = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? '-' : '+';
+        data = {
+          label: 'Pool Together',
+          itemImageSource: poolTogetherLogo,
+          cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
+          itemValue: `${directionSymbol} ${parseFloat(formatUnits(amount, decimals))} ${symbol}`,
+          itemImageRoundedSquare: true,
+          valueColor: event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? 'text' : 'positive',
+        };
+        break;
+      }
       default:
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]
@@ -513,6 +585,12 @@ export class ActivityFeedItem extends React.Component<Props> {
               );
             }
           }
+        } else if (isPoolTogetherAddress(event.to)) {
+          data = {
+            label: 'Pool Together',
+            itemImageSource: poolTogetherLogo,
+            itemImageRoundedSquare: true,
+          };
         } else {
           const additionalInfo = {};
           let itemLabel = usernameOrAddress;

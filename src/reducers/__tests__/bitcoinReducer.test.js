@@ -19,7 +19,6 @@
 */
 import {
   UPDATE_BITCOIN_BALANCE,
-  UPDATE_UNSPENT_TRANSACTIONS,
   CREATED_BITCOIN_ADDRESS,
   SET_BITCOIN_ADDRESSES,
   UPDATE_BITCOIN_TRANSACTIONS,
@@ -67,49 +66,6 @@ describe('Bitcoin reducer', () => {
         data: {
           addresses: [{ address, updatedAt: 0 }],
         },
-      });
-    });
-  });
-
-  describe(UPDATE_UNSPENT_TRANSACTIONS, () => {
-    const address = '<address>';
-
-    describe('transactions with enough confirmations', () => {
-      const utxo = {
-        address,
-        mintTxid: '2d742aa8409ee4cd8afcb2f59aac6ede47b478fafbca2335c9c04c6aedf94c9b',
-        mintIndex: 0,
-        scriptPubKey: '76a9146d622b371423d2e450c19d98059867d71e6aa87c88ac',
-        value: 130000000,
-        height: 1180957,
-        confirmations: 10,
-      };
-      const update: BitcoinReducerAction = {
-        type: UPDATE_UNSPENT_TRANSACTIONS,
-        address,
-        unspentTransactions: [utxo],
-      };
-
-      describe('for an unexistent address', () => {
-        it('does not add the transactions', () => {
-          expect(reducer(initialState, update)).toMatchObject({
-            data: { unspentTransactions: [] },
-          });
-        });
-      });
-
-      describe('for an existing address', () => {
-        it('adds the transactions', () => {
-          const setAddress: BitcoinReducerAction = {
-            type: SET_BITCOIN_ADDRESSES,
-            addresses: [address],
-          };
-          const state = reducer(initialState, setAddress);
-
-          expect(reducer(state, update)).toMatchObject({
-            data: { unspentTransactions: [utxo] },
-          });
-        });
       });
     });
   });

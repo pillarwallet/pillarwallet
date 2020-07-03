@@ -28,7 +28,7 @@ import { navigate } from 'services/navigation';
 import { migrate } from 'services/dataMigration';
 
 // constants
-import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
+import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   UPDATE_ASSETS,
@@ -73,14 +73,20 @@ import {
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
+import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
+import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+
+// selectors
+import { activeBlockchainSelector } from 'selectors';
 
 // actions
-import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from './bitcoinActions';
-
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+import { fallbackToSmartOrKeyAccountAction } from './accountsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -96,7 +102,6 @@ export const initAppAndRedirectAction = () => {
 
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
-    const navigateRouteOnFinish = walletTimestamp ? AUTH_FLOW : ONBOARDING_FLOW;
 
     if (walletTimestamp) {
       // migrations
@@ -195,6 +200,9 @@ export const initAppAndRedirectAction = () => {
       const { insights = {} } = get(storageData, 'insights', {});
       dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
 
+      const { depositedAssets = [] } = get(storageData, 'lending', []);
+      dispatch({ type: SET_LENDING_DEPOSITED_ASSETS, payload: depositedAssets });
+
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
@@ -204,9 +212,12 @@ export const initAppAndRedirectAction = () => {
         },
       });
 
-      dispatch(loadBitcoinAddressesAction());
-
-      dispatch(loadBitcoinBalancesAction());
+      // in case Bitcoin is set as active as we kill Bitcoin access
+      const activeBlockchain = activeBlockchainSelector(getState());
+      if (!isSupportedBlockchain(activeBlockchain)) {
+        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+        dispatch(fallbackToSmartOrKeyAccountAction());
+      }
 
       const {
         upgradeStatus = null,
@@ -228,7 +239,23 @@ export const initAppAndRedirectAction = () => {
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    navigate(NavigationActions.navigate({ routeName: navigateRouteOnFinish }));
+
+    let navAction;
+    if (walletTimestamp) {
+      navAction = {
+        routeName: AUTH_FLOW,
+        action: NavigationActions.navigate({
+          routeName: PIN_CODE_UNLOCK,
+          params: {
+            omitPin: appSettings.omitPinOnLogin,
+          },
+        }),
+      };
+    } else {
+      navAction = { routeName: ONBOARDING_FLOW };
+    }
+
+    navigate(NavigationActions.navigate(navAction));
     SplashScreen.hide();
   };
 };

@@ -65,6 +65,8 @@ import {
   parseSmartWalletTransactions,
 } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
+import { mapTransactionsHistoryWithAave } from 'utils/aave';
+import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -85,6 +87,7 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
+import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
@@ -93,6 +96,7 @@ const TRANSACTIONS_HISTORY_STEP = 10;
 const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
+    dispatch(checkPoolTogetherApprovalTransactionAction());
   };
 };
 
@@ -185,17 +189,21 @@ export const fetchSmartWalletTransactionsAction = () => {
     await dispatch(syncVirtualAccountTransactionsAction());
 
     const accountId = getAccountId(smartWalletAccount);
+    const accountAddress = getAccountAddress(smartWalletAccount);
 
     const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = smartAccountAssetsSelector(getState());
     const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     const assetsList = getAssetsAsList(accountAssets);
-    const history = parseSmartWalletTransactions(
+    const smartWalletTransactionHistory = parseSmartWalletTransactions(
       smartWalletTransactions,
       supportedAssets,
       assetsList,
       relayerExtensionDevice?.address,
     );
+    const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
+
+    const history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
 
     if (!history.length) return;
 
