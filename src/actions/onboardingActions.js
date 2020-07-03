@@ -26,8 +26,6 @@ import isEmpty from 'lodash.isempty';
 
 // constants
 import {
-  ENCRYPTING,
-  GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
   REGISTERING,
@@ -39,7 +37,13 @@ import {
   INVALID_USERNAME,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, HOME, REFERRAL_INCOMING_REWARD } from 'constants/navigationConstants';
+import {
+  APP_FLOW,
+  NEW_WALLET,
+  HOME,
+  REFERRAL_INCOMING_REWARD,
+  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
+} from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -57,16 +61,16 @@ import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConstants';
 
 // utils
-import { generateMnemonicPhrase, getSaltedPin, normalizeWalletAddress } from 'utils/wallet';
+import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
 import { delay } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
-import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging } from 'services/firebase';
+import smartWalletService from 'services/smartWallet';
 
 // actions
 import { signalInitAction } from 'actions/signalClientActions';
@@ -76,15 +80,15 @@ import {
   managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import { checkForWalletBackupToastAction, generateWalletMnemonicAction } from 'actions/walletActions';
+import {
+  checkForWalletBackupToastAction,
+  encryptAndSaveWalletAction,
+  generateWalletMnemonicAction,
+} from 'actions/walletActions';
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import {
-  setAppThemeAction,
-  changeUseBiometricsAction,
-  updateAppSettingsAction,
-} from 'actions/appSettingsActions';
+import { setAppThemeAction, updateAppSettingsAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -93,31 +97,37 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
+import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPortalActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
-import type { KeyChainData } from 'utils/keychain';
 
 
 const storage = Storage.getInstance('db');
 
-const getTokenWalletAndRegister = async (
+export const getTokenWalletAndRegister = async (
   privateKey: string,
   api: SDKWrapper,
-  user: Object,
+  user?: Object,
   dispatch: Dispatch,
-) => {
+  recover?: {
+    accountAddress: string,
+    deviceAddress: string,
+  },
+): Promise<Object> => {
   // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
   await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
   await firebaseMessaging.requestPermission().catch(() => {});
   const fcmToken = await firebaseMessaging.getToken().catch(() => null);
 
   if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user.username);
-  const registrationSucceed = !sdkWallet.error;
-  const userInfo = await api.userInfo(sdkWallet.walletId);
+
+  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user?.username, recover);
+
+  const registrationSucceed = !sdkWallet.error && sdkWallet.walletId;
+  const userInfo = registrationSucceed ? await api.userInfo(sdkWallet.walletId) : {};
   const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;
 
   if (userState === REGISTERED) {
@@ -153,26 +163,23 @@ const getTokenWalletAndRegister = async (
   // invalidate image cache
   ImageCacheManager().clearCache().catch(() => null);
 
-  return {
+  return Promise.resolve({
     sdkWallet,
     userInfo,
     userState,
     fcmToken,
     registrationSucceed,
     oAuthTokens,
-  };
+  });
 };
 
-const finishRegistration = async ({
+export const finishRegistration = async ({
   api,
   dispatch,
   userInfo,
-  mnemonic,
   privateKey,
   address,
   isImported,
-  enableBiometrics,
-  pin,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
@@ -180,9 +187,6 @@ const finishRegistration = async ({
   privateKey: string,
   address: string,
   isImported: boolean,
-  pin: string,
-  mnemonic?: string,
-  enableBiometrics?: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
@@ -216,6 +220,7 @@ const finishRegistration = async ({
   dispatch(loadFeatureFlagsAction(userInfo));
 
   // create smart wallet account only for new wallets
+  await smartWalletService.reset();
   const createNewAccount = !isImported;
   await dispatch(initSmartWalletSdkAction(privateKey));
   await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
@@ -231,17 +236,10 @@ const finishRegistration = async ({
     payload: DECRYPTED,
   });
 
-  // save data to keychain
-  const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey, pin };
-  if (enableBiometrics) {
-    await dispatch(changeUseBiometricsAction(true, keychainData, true));
-  } else {
-    await setKeychainDataObject(keychainData);
-  }
   dispatch(fetchReferralRewardAction());
 };
 
-const navigateToAppFlow = (showIncomingReward?: boolean) => {
+export const navigateToAppFlow = (showIncomingReward?: boolean) => {
   const navigateToHomeScreen = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
@@ -265,13 +263,18 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const currentState = getState();
     const {
-      mnemonic,
-      pin,
-      importedWallet,
-      apiUser,
-    } = currentState.wallet.onboarding;
-    const mnemonicPhrase = mnemonic.original;
-    const { isBackedUp, isImported } = currentState.wallet.backupStatus;
+      onboarding: {
+        mnemonic: { original: mnemonicPhrase },
+        pin,
+        importedWallet,
+        apiUser,
+      },
+      backupStatus: {
+        isBackedUp,
+        isImported,
+        isRecoveryPending,
+      },
+    } = currentState.wallet;
 
     // STEP 0: Clear local storage and reset app state
     if (isImported) {
@@ -316,38 +319,29 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     }
 
     // STEP 3: encrypt the wallet
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: ENCRYPTING,
-    });
-    await delay(50);
-    const saltedPin = await getSaltedPin(pin, dispatch);
-    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
-      .then(JSON.parse)
-      .catch(() => ({}));
-
-    dispatch(saveDbAction('wallet', {
-      wallet: {
-        ...encryptedWallet,
-        backupStatus: { isImported: !!importedWallet, isBackedUp },
-      },
-    }));
+    const backupStatus = { isImported: !!importedWallet, isBackedUp, isRecoveryPending };
+    await dispatch(encryptAndSaveWalletAction(pin, wallet, backupStatus, enableBiometrics));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
-    const user = apiUser.username ? { username: apiUser.username } : {};
-    dispatch(saveDbAction('user', { user }));
-    dispatch({
-      type: GENERATE_ENCRYPTED_WALLET,
-      payload: {
-        address: wallet.address,
-      },
-    });
+    // checks if wallet import is pending and in this state we don't want to auth any users yet
+    if (isRecoveryPending) {
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
+      }));
+      dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
+      return;
+    }
 
     // STEP 4: Initialize SDK and register user
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
     });
+
+    const user = apiUser.username ? { username: apiUser.username } : {};
+    dispatch(saveDbAction('user', { user }));
 
     api.init();
     const {
@@ -382,9 +376,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
       isImported,
-      enableBiometrics,
-      mnemonic: wallet.mnemonic,
-      pin,
     });
 
     // STEP 6: add wallet created / imported events
@@ -415,15 +406,12 @@ export const registerOnBackendAction = () => {
         data: walletData,
         onboarding: {
           apiUser,
-          mnemonic,
           privateKey,
           importedWallet,
-          pin,
         },
         backupStatus: { isImported },
       },
     } = getState();
-    const walletMnemonic = get(importedWallet, 'mnemonic') || get(mnemonic, 'original') || get(walletData, 'mnemonic');
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -450,10 +438,8 @@ export const registerOnBackendAction = () => {
       dispatch,
       userInfo,
       address: normalizeWalletAddress(walletData.address),
-      mnemonic: walletMnemonic,
       privateKey: walletPrivateKey,
       isImported,
-      pin,
     });
 
     dispatch(checkForWalletBackupToastAction());

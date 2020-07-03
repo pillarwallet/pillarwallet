@@ -45,6 +45,9 @@ import {
   PAYMENT_COMPLETED,
   PAYMENT_PROCESSED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
+  ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -78,6 +81,7 @@ import {
   PIN_CODE,
   WALLET_ACTIVATED,
 } from 'constants/navigationConstants';
+import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
 // configs
@@ -87,6 +91,7 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import smartWalletService from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
+import aaveService from 'services/aave';
 
 // selectors
 import { accountAssetsSelector, smartAccountAssetsSelector } from 'selectors/assets';
@@ -94,20 +99,19 @@ import { activeAccountAddressSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
-// actions
-import { addAccountAction, setActiveAccountAction, switchAccountAction } from 'actions/accountsActions';
-import { saveDbAction } from 'actions/dbActions';
-import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from 'actions/assetsActions';
-import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import { fetchSmartWalletTransactionsAction, insertTransactionAction } from 'actions/historyActions';
-
 // types
 import type { BalancesStore, Assets } from 'models/Asset';
-import type { SmartWalletDeploymentError, InitSmartWalletProps } from 'models/SmartWalletAccount';
+import type {
+  SmartWalletAccount,
+  SmartWalletAccountDevice,
+  SmartWalletDeploymentError,
+  InitSmartWalletProps,
+} from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
 import type { SendNavigateOptions } from 'models/Navigation';
+import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
@@ -117,8 +121,10 @@ import {
   getActiveAccountId,
   normalizeForEns,
   getAccountId,
+  getAccountAddress,
 } from 'utils/accounts';
 import {
+  isSmartWalletDeviceDeployed,
   buildSmartWalletTransactionEstimate,
   isConnectedToSmartAccount,
   isHiddenUnsettledTransaction,
@@ -143,7 +149,14 @@ import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getPrivateKeyFromPin } from 'utils/wallet';
 
 // actions
+import { addAccountAction, setActiveAccountAction, switchAccountAction } from './accountsActions';
+import { saveDbAction } from './dbActions';
+import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
+import { fetchCollectiblesAction } from './collectiblesActions';
+import { fetchSmartWalletTransactionsAction, insertTransactionAction } from './historyActions';
+import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
+import { fetchDepositedAssetsAction } from './lendingActions';
 
 
 const storage = Storage.getInstance('db');
@@ -160,6 +173,20 @@ const notifySmartWalletNotInitialized = () => {
     autoClose: false,
   });
 };
+
+const mapToConnectedDevices = (
+  smartWalletDevices: SmartWalletAccountDevice[],
+): ConnectedDevice[] => smartWalletDevices
+  // extensions are SDK internal device types which should not be managed manually
+  .filter(({ type }) => type !== sdkConstants.AccountDeviceTypes.Extension)
+  .map(({
+    device: { address },
+    updatedAt,
+  }: SmartWalletAccountDevice) => ({
+    category: DEVICE_CATEGORIES.SMART_WALLET_DEVICE,
+    address,
+    updatedAt,
+  }));
 
 export const loadSmartWalletAccountsAction = (privateKey?: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
@@ -198,18 +225,6 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
   };
 };
 
-export const fetchConnectedAccountAction = () => {
-  return async (dispatch: Dispatch) => {
-    const account = await smartWalletService.fetchConnectedAccount();
-    if (account) {
-      dispatch({
-        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-        payload: account,
-      });
-    }
-  };
-};
-
 export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(saveDbAction('smartWallet', { upgradeStatus }));
@@ -243,6 +258,23 @@ export const resetSmartWalletDeploymentDataAction = () => {
   };
 };
 
+export const setSmartWalletConnectedAccount = (connectedAccount: SmartWalletAccount) => {
+  return (dispatch: Dispatch) => {
+    const smartWalletAccountDevices = get(connectedAccount, 'devices', []);
+    const mapped = mapToConnectedDevices(smartWalletAccountDevices);
+    dispatch(setConnectedDevicesAction(mapped));
+    dispatch({ type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: connectedAccount });
+  };
+};
+
+export const fetchConnectedAccountAction = () => {
+  return async (dispatch: Dispatch) => {
+    const connectedAccount = await smartWalletService.fetchConnectedAccount();
+    if (isEmpty(connectedAccount)) return;
+    await dispatch(setSmartWalletConnectedAccount(connectedAccount));
+  };
+};
+
 export const connectSmartWalletAccountAction = (
   accountId: string,
   setAccountActive: boolean = true,
@@ -253,7 +285,7 @@ export const connectSmartWalletAccountAction = (
 
     if (isEmpty(connectedAccount)) {
       connectedAccount = await smartWalletService.connectAccount(accountId);
-      if (!connectedAccount) {
+      if (isEmpty(connectedAccount)) {
         Toast.show({
           message: 'Failed to connect to Smart Wallet account',
           type: 'warning',
@@ -262,10 +294,7 @@ export const connectSmartWalletAccountAction = (
         });
         return;
       }
-      dispatch({
-        type: SET_SMART_WALLET_CONNECTED_ACCOUNT,
-        payload: connectedAccount,
-      });
+      dispatch(setSmartWalletConnectedAccount(connectedAccount));
     }
 
     if (setAccountActive) dispatch(setActiveAccountAction(accountId));
@@ -300,7 +329,7 @@ export const deploySmartWalletAction = () => {
       return;
     }
 
-    const { deployTxHash, error } = await smartWalletService.deploy();
+    const { deployTxHash, error } = await smartWalletService.deployAccount();
 
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
@@ -519,6 +548,22 @@ export const syncVirtualAccountTransactionsAction = () => {
   };
 };
 
+export const removeSmartWalletAccountDeviceAction = (deviceAddress: string) => {
+  return async (dispatch: Dispatch) => {
+    const deviceRemoved = await smartWalletService.removeAccountDevice(deviceAddress);
+    if (!deviceRemoved) {
+      Toast.show({
+        message: 'Device remove failed',
+        type: 'warning',
+        title: 'Unable to remove device',
+        autoClose: false,
+      });
+      return;
+    }
+    await dispatch(fetchConnectedAccountAction());
+  };
+};
+
 export const onSmartWalletSdkEventAction = (event: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!event) return;
@@ -539,18 +584,44 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       reportLog('Missing Smart Wallet SDK constant', { path });
     }
 
-    // on wallet deployed or new device added
-    const accountState = get(getState(), 'smartWallet.upgrade.status', '');
+    /**
+     * This event can happen not just on single device deployment, but
+     * on initial account deployment as well, this is because initial account
+     * deployment deploys both.
+     *
+     * Before showing notification we must should properly find out if
+     * it's single device deployment or initial account deployment.
+     */
     if (event.name === ACCOUNT_DEVICE_UPDATED) {
-      const newAccountDeviceState = get(event, 'payload.state', '');
-      const deployedAccountDeviceState = get(sdkConstants, 'AccountDeviceStates.Deployed', '');
+      // current upgrade (initial account deployment) status and state
+      const accountUpgradeStatus = get(getState(), 'smartWallet.upgrade.status', '');
+      const currentAccountState = get(getState(), 'smartWallet.connectedAccount.state', '');
 
-      // check if new account device state updated to deployed
-      if (newAccountDeviceState === deployedAccountDeviceState) {
-        // smart wallet account deployment check
-        if (accountState !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+      // incoming deployment state from event
+      const newAccountDeviceState = get(event, 'payload.state', '');
+      const newAccountDeviceNextState = get(event, 'payload.nextState', '');
+      const eventAccountDeviceAddress = get(event, 'payload.device.address', '');
+
+      // just a constant for comparing deployed state
+      const deployedDeviceState = get(sdkConstants, 'AccountDeviceStates.Deployed', '');
+      const createdDeviceState = get(sdkConstants, 'AccountDeviceStates.Created', '');
+
+      // check if new account device state state is "deployed" and next state is not "created" (means undeployment)
+      if (newAccountDeviceState === deployedDeviceState
+        && newAccountDeviceNextState !== createdDeviceState) {
+        // check if current wallet smart wallet account device is deployed
+        if (currentAccountState !== deployedDeviceState
+          && accountUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
           dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
           navigate(WALLET_ACTIVATED);
+        } else {
+          // otherwise it's actual smart wallet device deployment
+          Toast.show({
+            message: 'New Smart Wallet device has been added', // do not confuse users about device "deployment"
+            type: 'success',
+            title: 'Success',
+            autoClose: true,
+          });
         }
 
         // gas relayer switch check
@@ -558,6 +629,16 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           // update connected devices
           await dispatch(fetchConnectedAccountAction());
         }
+      }
+
+      const removingConnectedDeviceAddress = get(getState(), 'connectedDevices.removingDeviceAddress');
+      if (removingConnectedDeviceAddress
+        && newAccountDeviceState === createdDeviceState
+        && addressesEqual(eventAccountDeviceAddress, removingConnectedDeviceAddress)) {
+        await dispatch(removeSmartWalletAccountDeviceAction(eventAccountDeviceAddress));
+        dispatch(completeConnectedDeviceRemoveAction());
+      } else {
+        dispatch(fetchConnectedAccountAction());
       }
     }
 
@@ -573,12 +654,16 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txStatus = get(event, 'payload.state', '');
       const txGasInfo = get(event, 'payload.gas', {});
       const txSenderAddress = get(event, 'payload.from.account.address', '');
+      const txReceiverAddress = get(event, 'payload.to.address', '');
       const txSenderEnsName = get(event, 'payload.from.account.ensName', '');
       const txType = get(event, 'payload.transactionType', '');
       const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
       if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
+        const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
+        const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
+
         let notificationMessage;
         if (txType === transactionTypes.TopUp) {
           notificationMessage = 'Your Pillar Tank was successfully funded!';
@@ -588,6 +673,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           notificationMessage = 'Settlement process completed!';
         } else if (txType === transactionTypes.Erc20Transfer) {
           notificationMessage = 'New transaction received!';
+        } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
+          notificationMessage = 'Your funds have been deposited!';
+          dispatch(fetchDepositedAssetsAction());
+        } else if (aaveTokenAddresses.some((aaveTokenAddress) => addressesEqual(txReceiverAddress, aaveTokenAddress))) {
+          notificationMessage = 'Your funds have been withdrawn!';
+          dispatch(fetchDepositedAssetsAction());
         } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
           notificationMessage = 'Transaction was successfully sent!';
         }
@@ -745,7 +836,7 @@ export const ensureSmartAccountConnectedAction = (privateKey?: string) => {
   };
 };
 
-export const estimateTopUpVirtualAccountAction = (amount?: string = '1') => {
+export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
@@ -1297,12 +1388,110 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
   };
 };
 
+export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWithGasToken: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    await dispatch(fetchConnectedAccountAction());
+
+    // checking new device
+    const accountDevices = get(getState(), 'smartWallet.connectedAccount.devices');
+    const existingDevice = accountDevices.find(({ device }) => addressesEqual(device.address, deviceAddress));
+    let accountDevice: SmartWalletAccountDevice;
+
+    if (existingDevice) {
+      // check if device is already deployed or being deployed
+      if (isSmartWalletDeviceDeployed(existingDevice)) return;
+      accountDevice = existingDevice;
+    }
+
+    if (!accountDevice) {
+      accountDevice = await smartWalletService.addAccountDevice(deviceAddress);
+      if (!accountDevice) {
+        Toast.show({
+          message: 'Failed to add device to Smart Wallet account',
+          type: 'warning',
+          title: 'Cannot add device',
+          autoClose: false,
+        });
+        return;
+      }
+      dispatch({ type: ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE, payload: accountDevice });
+    }
+
+    const accountDeviceDeploymentHash = await smartWalletService.deployAccountDevice(deviceAddress, payWithGasToken);
+    if (!accountDeviceDeploymentHash) {
+      // no transaction hash, unknown error occurred
+      Toast.show({
+        message: 'Failed to deploy Smart Wallet account device ',
+        type: 'warning',
+        title: 'Unable to deploy device',
+        autoClose: false,
+      });
+      return;
+    }
+
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+    const accountId = getAccountId(smartWalletAccount);
+    const accountAddress = getAccountAddress(smartWalletAccount);
+    const historyTx = buildHistoryTransaction({
+      from: accountAddress,
+      hash: accountDeviceDeploymentHash,
+      to: accountAddress,
+      value: '0',
+      asset: ETH,
+      tag: SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+    });
+    dispatch(insertTransactionAction(historyTx, accountId));
+
+    dispatch(fetchConnectedAccountAction());
+  };
+};
+
+export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: string, payWithGasToken: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accountDeviceUnDeploymentHash = await smartWalletService.unDeployAccountDevice(
+      deviceAddress,
+      payWithGasToken,
+    );
+    if (!accountDeviceUnDeploymentHash) {
+      // no transaction hash, unknown error occurred
+      Toast.show({
+        message: 'Failed to remove device to Smart Wallet account',
+        type: 'warning',
+        title: 'Unable to add device',
+        autoClose: false,
+      });
+      return;
+    }
+
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+    const accountId = getAccountId(smartWalletAccount);
+    const accountAddress = getAccountAddress(smartWalletAccount);
+    const historyTx = buildHistoryTransaction({
+      from: accountAddress,
+      hash: accountDeviceUnDeploymentHash,
+      to: accountAddress,
+      value: '0',
+      asset: ETH,
+      tag: SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
+    });
+    dispatch(insertTransactionAction(historyTx, accountId));
+
+    await dispatch(fetchConnectedAccountAction());
+  };
+};
+
 export const setSmartWalletEnsNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
     const { accounts: { data: accounts } } = getState();
-    const accountId = getActiveAccountId(accounts);
-    const accountAddress = getActiveAccountAddress(accounts);
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+    const accountId = getAccountId(smartWalletAccount);
+    const accountAddress = getAccountAddress(smartWalletAccount);
     const normalizedUsername = normalizeForEns(username);
 
     const hash = await smartWalletService.setAccountEnsName(username);
@@ -1339,8 +1528,10 @@ export const switchToGasTokenRelayerAction = () => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { accounts: { data: accounts } } = getState();
-    const accountId = getActiveAccountId(accounts);
-    const accountAddress = getActiveAccountAddress(accounts);
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+    const accountId = getAccountId(smartWalletAccount);
+    const accountAddress = getAccountAddress(smartWalletAccount);
 
     const hash = await smartWalletService.switchToGasTokenRelayer();
     if (!hash) {

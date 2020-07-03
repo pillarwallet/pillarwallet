@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Platform } from 'react-native';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { Notifications } from 'react-native-notifications';
 import isEmpty from 'lodash.isempty';
 // $FlowFixMe – throws "react-native-android-badge" not found
@@ -36,7 +36,7 @@ import {
   MESSAGE_DISCONNECTED,
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
-import { COLLECTIBLE, SIGNAL, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
+import { COLLECTIBLE, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
 
 // utils
 import { reportLog } from 'utils/common';
@@ -89,14 +89,6 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
-  if (!!parsedNotification.type && parsedNotification.type.toUpperCase() === SIGNAL) {
-    return {
-      message: 'New message',
-      title: parsedNotification.sender,
-      type: SIGNAL,
-      navigationParams: { username: parsedNotification.sender },
-    };
-  }
 
   if (connectionEvents.includes(parsedNotification.type)) {
     if (parsedNotification.type === 'connectionRequestedEvent') {
@@ -140,7 +132,7 @@ export const processNotification = (notification: Object, myEthAddress?: string)
     } = parsedNotification;
     const sender = parsedNotification.fromAddress.toUpperCase();
     const receiver = parsedNotification.toAddress.toUpperCase();
-    const amount = utils.formatUnits(utils.bigNumberify(value.toString()), decimals);
+    const amount = utils.formatUnits(EthersBigNumber.from(value.toString()), decimals);
 
     if (receiver === myEthAddress && status === 'pending') {
       title = `${amount} ${asset}`;

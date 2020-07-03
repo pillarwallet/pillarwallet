@@ -24,7 +24,6 @@ import PillarSdk from 'services/api';
 import { TYPE_SENT, UPDATE_INVITATIONS, TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import {
-  sendInvitationAction,
   acceptInvitationAction,
   cancelInvitationAction,
   rejectInvitationAction,
@@ -42,13 +41,6 @@ const mockContacts = [
     updatedAt: 111111112,
   },
 ];
-
-const mockApiUser = {
-  id: '22',
-  ethAddress: '0x0022',
-  username: 'targetUsername',
-  profileImage: 'https://google.com/logo.png',
-};
 
 const mockInvitations = [
   {
@@ -206,17 +198,6 @@ describe('Invitations Actions tests', () => {
       },
     };
     store = mockStore({ ...mockStoreData });
-  });
-
-  it('Should expect set of actions on sendInvitationAction.', () => {
-    const expectedActions = [
-      { type: ADD_NOTIFICATION, payload: { message: 'Invitation sent' } },
-    ];
-    return store.dispatch(sendInvitationAction(mockApiUser))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
   });
 
   it('Should expect set of actions on acceptInvitationAction.', () => {

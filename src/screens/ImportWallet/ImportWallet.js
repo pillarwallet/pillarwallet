@@ -20,12 +20,24 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
+
+// actions
 import {
   importWalletFromTWordsPhraseAction,
   resetWalletErrorAction,
 } from 'actions/walletActions';
+
+// components
+import { ScrollWrapper, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { BaseText, MediumText } from 'components/Typography';
+import TextInput from 'components/TextInput';
+import Tabs from 'components/Tabs';
+import Button from 'components/Button';
+
+// constants
 import {
   WALLET_ERROR,
   IMPORT_ERROR,
@@ -34,15 +46,14 @@ import {
   IMPORTING,
   IMPORTED,
 } from 'constants/walletConstants';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, MediumText } from 'components/Typography';
-import TextInput from 'components/TextInput';
-import Tabs from 'components/Tabs';
-import Button from 'components/Button';
+
+// utils
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
+// types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => void,
@@ -390,7 +401,11 @@ class ImportWallet extends React.Component<Props, State> {
           </FooterWrapper>
         )}
       >
-        <ScrollWrapper disableAutomaticScroll keyboardShouldPersistTaps="always">
+        <ScrollWrapper
+          contentContainerStyle={{ flex: 1 }}
+          disableAutomaticScroll
+          keyboardShouldPersistTaps="always"
+        >
           {__DEV__ && <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />}
           <Wrapper regularPadding>
             {!__DEV__ && <MediumText center style={{ marginTop: spacing.large }}>Enter your 12 words</MediumText>}

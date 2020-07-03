@@ -26,7 +26,11 @@ import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'util
 
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${BUILD_TYPE === 'staging' ? '.staging' : ''}`;
 const KEYCHAIN_DATA_KEY = 'data';
-const BIOMETRICS_PROMPT_MESSAGE = 'Continue';
+const BIOMETRICS_PROMPT_MESSAGE = {
+  title: 'Unlock with biometric sensor',
+  subtitle: '', // required as empty
+  description: '', // required as empty
+};
 
 export type KeyChainData = {
   privateKey?: string,
@@ -63,7 +67,7 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
 export const getKeychainDataObject = (errorHandler?: Function) => Keychain
   .getGenericPassword({
     service: KEYCHAIN_SERVICE,
-    authenticationPrompt: { title: BIOMETRICS_PROMPT_MESSAGE },
+    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
   })
   .then(({ password = '{}' }) => JSON.parse(password))
   .catch(errorHandler || (() => null));
@@ -84,11 +88,11 @@ export const shouldUpdateKeychainObject = (data: KeyChainData) => {
 export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) => {
   const keychainData: KeyChainData = await getKeychainDataObject();
   const { pin: pinFromKeychain, privateKey, mnemonic } = keychainData;
+  const mnemonicPhrase = typeof mnemonic === 'string' ? mnemonic : mnemonic?.phrase; // needed for ethers v5 migration
   if (pin && pin === pinFromKeychain && privateKey) {
-    const wallet = withMnemonic && mnemonic
-      ? constructWalletFromMnemonic(mnemonic)
+    return withMnemonic && mnemonicPhrase
+      ? constructWalletFromMnemonic(mnemonicPhrase)
       : constructWalletFromPrivateKey(privateKey);
-    return wallet;
   }
 
   throw new Error(); // wrong pin
@@ -99,5 +103,5 @@ export const getWalletFromPkByPin = async (pin: string, withMnemonic?: boolean) 
 export const canLoginWithPkFromPin = async (useBiometrics: boolean) => {
   if (useBiometrics) return false;
   const keychainData = await getKeychainDataObject();
-  return !!keychainData.pin;
+  return !!keychainData?.pin;
 };

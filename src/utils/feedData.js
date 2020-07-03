@@ -28,7 +28,7 @@ import type { Transaction } from 'models/Transaction';
 import type { BitcoinAddress } from 'models/Bitcoin';
 import type { CollectibleTrx } from 'models/Collectible';
 
-import { TX_PENDING_STATUS } from 'constants/historyConstants';
+import { TX_FAILED_STATUS, TX_PENDING_STATUS, TX_TIMEDOUT_STATUS } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
@@ -184,6 +184,14 @@ export const elipsizeAddress = (address: string) => {
 
 export const isPendingTransaction = ({ status }: Object) => {
   return status === TX_PENDING_STATUS;
+};
+
+export const isFailedTransaction = ({ status }: Object) => {
+  return status === TX_FAILED_STATUS;
+};
+
+export const isTimedOutTransaction = ({ status }: Object) => {
+  return status === TX_TIMEDOUT_STATUS;
 };
 
 export const isSWAddress = (address: string, accounts: Accounts) => {

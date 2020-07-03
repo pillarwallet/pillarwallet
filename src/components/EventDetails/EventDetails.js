@@ -61,12 +61,15 @@ import {
   isSWAddress,
   isKWAddress,
   isBTCAddress,
+  isFailedTransaction,
+  isTimedOutTransaction,
 } from 'utils/feedData';
 import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
+import { isAaveTransactionTag } from 'utils/aave';
 
 // constants
 import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -94,12 +97,13 @@ import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } 
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
   SET_SMART_WALLET_ACCOUNT_ENS,
+  SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
-  CHAT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
@@ -108,7 +112,12 @@ import {
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
+  CONTACT,
+  LENDING_ENTER_WITHDRAW_AMOUNT,
+  LENDING_ENTER_DEPOSIT_AMOUNT,
+  LENDING_VIEW_DEPOSITED_ASSET,
 } from 'constants/navigationConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 
 // selectors
 import {
@@ -122,7 +131,7 @@ import {
   bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
@@ -137,7 +146,7 @@ import { updateCollectibleTransactionAction } from 'actions/collectiblesActions'
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, AssetData } from 'models/Asset';
+import type { Rates, Assets, Asset, AssetData, DepositedAsset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -197,6 +206,8 @@ type Props = {
   updateCollectibleTransaction: (hash: string) => void,
   updatingTransaction: string,
   updatingCollectibleTransaction: string,
+  isSmartAccount: boolean,
+  depositedAssets: DepositedAsset[],
 };
 
 type State = {
@@ -225,6 +236,8 @@ type EventData = {
   imageBackground?: ?string,
   collectibleUrl?: ?string,
   transactionNote?: string,
+  isFailed?: boolean;
+  errorMessage?: string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -239,7 +252,7 @@ const ButtonsContainer = styled.View`
 const TokenImage = styled(CachedImage)`
   width: 64px;
   height: 64px;
-  border-radius: 64px;
+  border-radius: ${({ borderRadius }) => borderRadius || 64}px;
 `;
 
 const StyledCollectibleImage = styled(CollectibleImage)`
@@ -251,14 +264,15 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 const IconCircle = styled.View`
   width: 64px;
   height: 64px;
-  border-radius: 32px;
+  border-radius: ${({ borderRadius }) => borderRadius || 32}px;
   background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border &&
-  `border-color: ${theme.colors.border};
-    border-width: 1px;`};
+  ${({ border, theme }) => border && `
+    border-color: ${theme.colors.border};
+    border-width: 1px;
+  `}
   overflow: hidden;
 `;
 
@@ -269,7 +283,7 @@ const ItemIcon = styled(Icon)`
 
 const ActionIcon = styled(Icon)`
   margin-left: 4px;
-  color: ${themedColors.secondaryText};
+  color: ${({ iconColor, theme }) => iconColor || theme.colors.secondaryText};
   ${fontStyles.large};
 `;
 
@@ -309,6 +323,24 @@ const EventTimeHolder = styled.TouchableOpacity`
   padding: 0 8px;
 `;
 
+const AvatarWrapper = styled.TouchableOpacity`
+  align-items: center;
+`;
+
+const ErrorMessage = styled(BaseText)`
+  color: ${themedColors.negative};
+  margin-bottom: ${spacing.large}px;
+  width: 100%;
+  text-align: center;
+`;
+
+const CornerIcon = styled(CachedImage)`
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
 
 export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -358,8 +390,14 @@ export class EventDetail extends React.Component<Props, State> {
   }
 
   cleanup() {
-    if (this.timer) clearInterval(this.timer);
-    if (this.timeout) clearTimeout(this.timeout);
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
   }
 
   findTxInfo = (isCollectible?: boolean) => {
@@ -383,8 +421,11 @@ export class EventDetail extends React.Component<Props, State> {
 
   syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
     if (txInfo.status === TX_PENDING_STATUS) {
+      const { isSmartAccount } = this.props;
       this.timeout = setTimeout(this.updateTransaction, 500);
-      this.timer = setInterval(this.updateTransaction, 10000);
+      if (!isSmartAccount) {
+        this.timer = setInterval(this.updateTransaction, 10000);
+      }
     }
 
     if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
@@ -435,11 +476,6 @@ export class EventDetail extends React.Component<Props, State> {
       return this.getFormattedGasFee(formattedBTCFee, BTC);
     }
     return null;
-  };
-
-  messageContact = (contact: ApiUser) => {
-    this.props.navigation.navigate(CHAT, { username: contact.username });
-    this.props.onClose();
   };
 
   sendTokensToContact = (contact: ApiUser) => {
@@ -573,6 +609,26 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(TANK_FUND_FLOW);
   };
 
+  onAaveViewDeposit = (depositedAsset: ?DepositedAsset) => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
+  };
+
+  onAaveDepositMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
+  };
+
+  onAaveWithdrawMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
+  };
+
   PPNWithdraw = async () => {
     const { onClose, navigation } = this.props;
     onClose();
@@ -691,7 +747,6 @@ export class EventDetail extends React.Component<Props, State> {
         const activateButton = {
           title: 'Activate',
           onPress: this.activateSW,
-          secondary: true,
         };
 
         const topUpButton = {
@@ -700,14 +755,8 @@ export class EventDetail extends React.Component<Props, State> {
           secondary: true,
         };
 
-        const topUpButtonSecondary = {
-          title: 'Top Up',
-          onPress: this.topUpSW,
-          squarePrimary: true,
-        };
-
         return {
-          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton, topUpButtonSecondary],
+          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton],
         };
       case 'Wallet imported':
         return {
@@ -721,7 +770,7 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated } = this.props;
+    const { isPPNActivated, isSmartWalletActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -744,11 +793,22 @@ export class EventDetail extends React.Component<Props, State> {
             ],
           };
         }
+        if (!isSmartWalletActivated) {
+          return {
+            actionTitle: 'Created',
+            buttons: [
+              {
+                title: 'Activate',
+                onPress: this.activateSW,
+              },
+            ],
+          };
+        }
         return {
           actionTitle: 'Created',
           buttons: [
             {
-              title: 'Activate',
+              title: 'Top up',
               onPress: this.topUpPillarNetwork,
             },
           ],
@@ -785,6 +845,7 @@ export class EventDetail extends React.Component<Props, State> {
       bitcoinAddresses,
       bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
+      depositedAssets,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -800,8 +861,17 @@ export class EventDetail extends React.Component<Props, State> {
     }
 
     const isPending = isPendingTransaction(event);
+    const isFailed = isFailedTransaction(event);
+    const isTimedOut = isTimedOutTransaction(event);
 
     let eventData: ?EventData = null;
+
+    let aaveDepositedAsset;
+    if (isAaveTransactionTag(event?.tag)) {
+      aaveDepositedAsset = depositedAssets.find(({
+        symbol: depositedAssetSymbol,
+      }) => depositedAssetSymbol === event?.extra?.symbol);
+    }
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -881,8 +951,78 @@ export class EventDetail extends React.Component<Props, State> {
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
           name: 'Smart Wallet fees with PLR token',
-          actionTitle: 'Enabled',
+          actionTitle: isPending ? 'Enabling' : 'Enabled',
         };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
+        eventData = {
+          name: 'New Smart Wallet account device',
+          actionTitle: isPending ? 'Adding' : 'Added',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
+        eventData = {
+          name: 'Smart Wallet account device',
+          actionTitle: isPending ? 'Removing' : 'Removed',
+          buttons: [
+            {
+              title: 'View on the blockchain',
+              onPress: this.viewOnTheBlockchain,
+              secondary: true,
+            },
+          ],
+        };
+        break;
+      case AAVE_LENDING_DEPOSIT_TRANSACTION:
+        eventData = {
+          name: 'Aave deposit',
+          actionTitle: fullItemValue,
+        };
+        const aaveDepositButtons = [];
+        if (event?.asset) {
+          aaveDepositButtons.push({
+            title: 'Deposit more',
+            onPress: this.onAaveDepositMore,
+            secondary: true,
+          });
+          if (aaveDepositedAsset) {
+            aaveDepositButtons.push({
+              title: 'View deposit',
+              onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+              squarePrimary: true,
+            });
+          }
+        }
+        eventData.buttons = aaveDepositButtons;
+        break;
+      case AAVE_LENDING_WITHDRAW_TRANSACTION:
+        eventData = {
+          name: 'Aave deposit',
+          actionTitle: fullItemValue,
+        };
+        const aaveWithdrawButtons = [];
+        if (event?.asset && aaveDepositedAsset) {
+          if (aaveDepositedAsset?.currentBalance > 0) {
+            aaveWithdrawButtons.push({
+              title: 'Withdraw more',
+              onPress: this.onAaveWithdrawMore,
+              secondary: true,
+            });
+          }
+          aaveWithdrawButtons.push({
+            title: 'View deposit',
+            onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+            squarePrimary: true,
+          });
+        }
+        eventData.buttons = aaveWithdrawButtons;
         break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
@@ -910,11 +1050,6 @@ export class EventDetail extends React.Component<Props, State> {
             } else {
               eventData.buttons = [
                 {
-                  title: 'Message',
-                  onPress: () => this.messageContact(contact),
-                  secondary: true,
-                },
-                {
                   title: 'Send back',
                   onPress: this.sendSynthetic,
                   squarePrimary: true,
@@ -940,12 +1075,6 @@ export class EventDetail extends React.Component<Props, State> {
           const contactFound = Object.keys(contact).length > 0;
           const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
-          const messageButton = {
-            title: 'Message',
-            onPress: () => this.messageContact(contact),
-            secondary: true,
-          };
 
           const sendBackButtonSecondary = {
             title: 'Send back',
@@ -1022,9 +1151,7 @@ export class EventDetail extends React.Component<Props, State> {
                 buttons = [];
               }
             } else if (contactFound) {
-              buttons = isPending
-                ? [messageButton]
-                : [messageButton, sendBackButtonSecondary];
+              buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
@@ -1037,9 +1164,7 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [];
             }
           } else if (contactFound) {
-            buttons = isPending
-              ? [messageButton]
-              : [messageButton, sendMoreButtonSecondary];
+            buttons = [sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
@@ -1056,6 +1181,12 @@ export class EventDetail extends React.Component<Props, State> {
     if (isPending) {
       eventData.actionIcon = 'pending';
     }
+    if (isFailed || isTimedOut) {
+      eventData.isFailed = true;
+      eventData.errorMessage = isFailed ? 'Transaction failed' : 'Transaction timed out';
+      eventData.actionIcon = 'failed';
+    }
+
     return eventData;
   };
 
@@ -1150,11 +1281,6 @@ export class EventDetail extends React.Component<Props, State> {
         actionTitle: 'Connected',
         buttons: [
           {
-            title: 'Message',
-            onPress: () => this.messageContact(acceptedContact),
-            secondary: true,
-          },
-          {
             title: 'Send tokens',
             onPress: () => this.sendTokensToContact(acceptedContact),
             squarePrimary: true,
@@ -1212,31 +1338,51 @@ export class EventDetail extends React.Component<Props, State> {
       iconBackgroundColor,
       iconBorder,
       collectibleUrl,
+      itemImageRoundedSquare,
+      cornerIcon,
     } = itemData;
+    const borderRadius = itemImageRoundedSquare && 13;
 
     const { genericToken: fallbackSource } = images(theme);
     if (itemImageUrl) {
       return (
-        <IconCircle border={iconBorder} backgroundColor={this.getColor(iconBackgroundColor)}>
+        <IconCircle
+          borderRadius={borderRadius}
+          border={iconBorder}
+          backgroundColor={this.getColor(iconBackgroundColor)}
+        >
           <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
     if (itemImageSource) {
-      return <TokenImage source={itemImageSource} />;
+      return (
+        <View>
+          <TokenImage style={{ borderRadius }} source={itemImageSource} />
+          {cornerIcon && <CornerIcon source={cornerIcon} />}
+        </View>
+      );
     }
     if (iconName) {
       return (
-        <IconCircle>
-          <ItemIcon name={iconName} iconColor={this.getColor(iconColor)} />
+        <IconCircle borderRadius={borderRadius}>
+          <ItemIcon
+            borderRadius={borderRadius}
+            name={iconName}
+            iconColor={this.getColor(iconColor)}
+          />
         </IconCircle>
       );
     }
 
     if (collectibleUrl) {
       return (
-        <IconCircle border backgroundColor={this.getColor('card')}>
-          <StyledCollectibleImage source={{ uri: collectibleUrl }} fallbackSource={fallbackSource} />
+        <IconCircle borderRadius={borderRadius} border backgroundColor={this.getColor('card')}>
+          <StyledCollectibleImage
+            borderRadius={borderRadius}
+            source={{ uri: collectibleUrl }}
+            fallbackSource={fallbackSource}
+          />
         </IconCircle>
       );
     }
@@ -1259,8 +1405,9 @@ export class EventDetail extends React.Component<Props, State> {
     return colors[color] || color;
   };
 
-  renderSettle = (settleEventData: Object) => {
+  renderSettle = (settleEventData: Object, eventData: EventData) => {
     const { PPNTransactions, isForAllAccounts, mergedPPNTransactions } = this.props;
+    const { isFailed, errorMessage } = eventData;
     const mappedTransactions = isForAllAccounts
       ? settleEventData.extra.reduce((mapped, event) => {
         const relatedTrx = mergedPPNTransactions.find(tx => tx.hash === event.hash);
@@ -1274,6 +1421,7 @@ export class EventDetail extends React.Component<Props, State> {
       }, []);
 
     const groupedTransactions: TransactionsGroup[] = groupPPNTransactions(mappedTransactions);
+    const valueSymbol = isFailed ? '' : '- ';
 
     return (
       <SettleWrapper>
@@ -1282,9 +1430,10 @@ export class EventDetail extends React.Component<Props, State> {
             <Row marginBottom={10}>
               <BaseText regular synthetic>From Pillar Tank</BaseText>
               <TankAssetBalance
-                amount={`- ${formatUnits(group.value.toString(), 18)} ${group.symbol}`}
+                amount={`${valueSymbol}${formatUnits(group.value.toString(), 18)} ${group.symbol}`}
                 textStyle={{ fontSize: fontSizes.big }}
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
+                secondary={isFailed}
               />
             </Row>
             {group.transactions.map(({
@@ -1295,21 +1444,25 @@ export class EventDetail extends React.Component<Props, State> {
               return (
                 <Row marginBottom={13} key={hash}>
                   <BaseText secondary tiny>{formattedDate}</BaseText>
-                  <BaseText secondary small>-{formattedAmount} {asset}</BaseText>
+                  <BaseText secondary small>{valueSymbol}{formattedAmount} {asset}</BaseText>
                 </Row>
               );
             })}
           </React.Fragment>
         ))}
-        <Divider />
-        <Row>
-          <BaseText regular positive>To Smart Wallet</BaseText>
-          <View>
-            {groupedTransactions.map(({ value, symbol }) => (
-              <BaseText positive large key={symbol}>+ {formatUnits(value.toString(), 18)} {symbol}</BaseText>
-            ))}
-          </View>
-        </Row>
+        {!isFailed &&
+        <>
+          <Divider />
+          <Row>
+            <BaseText regular positive>To Smart Wallet</BaseText>
+            <View>
+              {groupedTransactions.map(({ value, symbol }) => (
+                <BaseText positive large key={symbol}>+ {formatUnits(value.toString(), 18)} {symbol}</BaseText>
+              ))}
+            </View>
+          </Row>
+        </>}
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </SettleWrapper>
     );
   };
@@ -1324,14 +1477,24 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  renderFee = (hash: string, fee: ?string) => {
+  renderFee = (hash: string, fee: ?string, isReceived?: boolean) => {
     const { updatingTransaction, updatingCollectibleTransaction } = this.props;
+    if (isReceived) return null;
     if (fee) {
       return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
     } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
       return (<Spinner height={20} width={20} style={{ marginBottom: 32 }} />);
     }
     return null;
+  };
+
+  goToProfile = () => {
+    const { navigation, itemData: { username }, onClose } = this.props;
+
+    if (username) {
+      onClose();
+      navigation.navigate(CONTACT, { username });
+    }
   };
 
   renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
@@ -1341,6 +1504,7 @@ export class EventDetail extends React.Component<Props, State> {
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
       transactionNote,
+      errorMessage,
     } = eventData;
 
     const {
@@ -1349,6 +1513,9 @@ export class EventDetail extends React.Component<Props, State> {
       fullItemValue,
       subtext,
       valueColor,
+      username,
+      isReceived,
+      statusIconColor,
     } = itemData;
 
     const title = actionTitle || actionLabel || fullItemValue;
@@ -1371,27 +1538,30 @@ export class EventDetail extends React.Component<Props, State> {
           </ButtonHolder>
         </Row>
         <Spacing h={10} />
-        <BaseText medium>{label}</BaseText>
+        <AvatarWrapper onPress={this.goToProfile} disabled={!username}>
+          <BaseText medium>{label}</BaseText>
+          <Spacing h={20} />
+          {this.renderImage(itemData)}
+        </AvatarWrapper>
         <Spacing h={20} />
-        {this.renderImage(itemData)}
-        <Spacing h={20} />
-        {settleEventData ? this.renderSettle(settleEventData) : (
+        {settleEventData ? this.renderSettle(settleEventData, eventData) : (
           <React.Fragment>
             <ActionWrapper>
               {!!title && <MediumText large color={titleColor}>{title}</MediumText>}
               {customActionTitle}
-              {!!actionIcon && <ActionIcon name={actionIcon} />}
+              {!!actionIcon && <ActionIcon name={actionIcon} iconColor={statusIconColor} />}
             </ActionWrapper>
             {subtitle ? (
               <React.Fragment>
                 <Spacing h={4} />
                 <BaseText regular secondary>{subtitle}</BaseText>
-                <Spacing h={24} />
+                <Spacing h={16} />
               </React.Fragment>
             ) : (
               <Spacing h={32} />
             )}
-            {this.renderFee(event.hash, fee)}
+            {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            {this.renderFee(event.hash, fee, isReceived)}
           </React.Fragment>
         )}
         <ButtonsContainer>
@@ -1475,6 +1645,7 @@ const mapStateToProps = ({
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
+  lending: { depositedAssets },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1491,6 +1662,7 @@ const mapStateToProps = ({
   txNotes,
   updatingTransaction,
   updatingCollectibleTransaction,
+  depositedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1504,6 +1676,7 @@ const structuredSelector = createStructuredSelector({
   bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
+  isSmartAccount: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({

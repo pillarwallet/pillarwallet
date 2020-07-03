@@ -18,42 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import orderBy from 'lodash.orderby';
 import get from 'lodash.get';
 import { STATUS_BLOCKED } from 'constants/connectionsConstants';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import { addressesEqual } from './assets';
 import { isCaseInsensitiveMatch } from './common';
-
-export const sortLocalContacts = (contacts: Object[], chats: Object[]) => {
-  const localContactsWithUnreads = contacts.map((contact) => {
-    const chatWithUserInfo = chats.find((chat) => chat.username === contact.username) || {};
-    return {
-      ...contact,
-      unread: chatWithUserInfo.unread || 0,
-      lastMessage: chatWithUserInfo.lastMessage || null,
-    };
-  });
-
-  return orderBy(
-    localContactsWithUnreads,
-    [(user) => {
-      if (user.lastMessage) {
-        return user.lastMessage.serverTimestamp;
-      }
-
-      return user.createdAt * 1000;
-    }],
-    'desc');
-};
-
-export const excludeLocalContacts = (globalContacts: ApiUser[] = [], localContacts: Object[] = []): Object[] => {
-  const localContactsIds = localContacts.map(contact => contact.id);
-
-  return globalContacts.filter((globalContact) => {
-    return !localContactsIds.includes(globalContact.id);
-  });
-};
 
 export const getUserName = (contact: ?Object) => {
   if (!contact || !contact.username) {

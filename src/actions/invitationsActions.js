@@ -23,9 +23,6 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 // utils
 import { reportLog } from 'utils/common';
 
-// models
-import type { ApiUser } from 'models/Contacts';
-
 // actions
 import { updateConnectionsAction } from 'actions/connectionsActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -35,38 +32,6 @@ import { saveDbAction } from './dbActions';
 export const fetchInviteNotificationsAction = () => {
   return async (dispatch: Function) => {
     await dispatch(updateConnectionsAction());
-  };
-};
-
-export const sendInvitationAction = (user: ApiUser) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-    } = getState();
-
-    const index = invitations.findIndex(el => el.id === user.id);
-    if (index >= 0) {
-      dispatch(({
-        type: ADD_NOTIFICATION,
-        payload: { message: 'Invitation has already been sent' },
-      }));
-      return;
-    }
-
-    const sentInvitation = await api.sendInvitation(user.id, walletId);
-    if (!sentInvitation) {
-      return;
-    }
-
-    dispatch(logEventAction('connection_requested'));
-
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation sent' },
-    }));
-
-    dispatch(updateConnectionsAction());
   };
 };
 

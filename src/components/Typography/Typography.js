@@ -77,6 +77,9 @@ const getTextStyle = (props) => {
     textProps.lineHeight = getLineHeight(props);
   }
 
+  // other
+  if (props.lineThrough) textProps.textDecoration = 'line-through';
+
   return { ...textProps };
 };
 
@@ -154,6 +157,6 @@ export const Label = styled(MediumText)`
 
 export const HelpText = styled(BaseText)`
   ${fontStyles.regular};
-  padding: 10px;
-  color: grey;
+  ${({ noPadding }) => !noPadding && 'padding: 10px;'}
+  color: ${({ color }) => color || 'grey'};
 `;

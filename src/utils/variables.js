@@ -164,6 +164,7 @@ export const fontSizes = {
   rRegular: responsiveSize(14),
   rBig: responsiveSize(18),
   rLarge: responsiveSize(24),
+  rGiant: responsiveSize(56),
   rJumbo: responsiveSize(64),
 };
 
@@ -179,6 +180,7 @@ export const lineHeights = {
   rRegular: responsiveSize(22),
   rBig: responsiveSize(28),
   rLarge: responsiveSize(38),
+  rGiant: responsiveSize(64),
   rJumbo: responsiveSize(74),
 };
 
@@ -194,6 +196,7 @@ export const fontStyles = {
   rRegular: { fontSize: fontSizes.rRegular, lineHeight: lineHeights.rRegular },
   rBig: { fontSize: fontSizes.rBig, lineHeight: lineHeights.rBig },
   rLarge: { fontSize: fontSizes.rLarge, lineHeight: lineHeights.rLarge },
+  rGiant: { fontSize: fontSizes.rGiant, lineHeight: lineHeights.rGiant },
   rJumbo: { fontSize: fontSizes.rJumbo, lineHeight: lineHeights.rJumbo },
 };
 

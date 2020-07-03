@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
@@ -144,7 +144,7 @@ export const calculateMaxAmount = (
 
   // we need to convert txFeeInWei to BigNumber as ethers.js utils use different library for Big Numbers
   const decimals = get(gasToken, 'decimals', 'ether');
-  const maxAmount = utils.parseUnits(balance, decimals).sub(utils.bigNumberify(txFeeInWei.toString()));
+  const maxAmount = utils.parseUnits(balance, decimals).sub(EthersBigNumber.from(txFeeInWei.toString()));
   if (maxAmount.lt(0)) return 0;
 
   return new BigNumber(utils.formatUnits(maxAmount, decimals)).toNumber();

@@ -47,6 +47,7 @@ import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
 import { reportLog, uniqBy } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
+import { normalizeWalletAddress } from 'utils/wallet';
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -58,7 +59,8 @@ import type { ClaimTokenAction } from 'actions/referralsActions';
 
 // services
 import {
-  fetchAssetBalances,
+  fetchAddressBalancesFromProxyContract,
+  fetchAssetBalancesOnChain,
   fetchLastBlockNumber,
   fetchTransactionInfo,
   fetchTransactionReceipt,
@@ -107,6 +109,15 @@ type SendReferralInvitationParams = {|
   email?: string,
   phone?: string,
 |};
+
+type ValidatedUserResponse = $Shape<{
+  id: string,
+  walletId: string,
+  username: string,
+  profileImage: string,
+  profileLargeImage: string,
+  error: boolean,
+}>;
 
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
@@ -175,14 +186,22 @@ class SDKWrapper {
       }));
   }
 
-  registerOnAuthServer(walletPrivateKey: string, fcmToken: ?string, username: string) {
+  registerOnAuthServer(
+    walletPrivateKey: string,
+    fcmToken: ?string,
+    username: ?string,
+    recovery?: {
+      accountAddress: string,
+      deviceAddress: string,
+    },
+  ) {
     const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
-    let requestPayload = { privateKey, username };
+    let requestPayload = { privateKey };
+    if (username) requestPayload = { ...requestPayload, username };
     if (!isEmpty(fcmToken)) requestPayload = { ...requestPayload, fcmToken };
+    if (!isEmpty(recovery)) requestPayload = { ...requestPayload, recovery };
     return Promise.resolve()
-      .then(() => {
-        return this.pillarWalletSdk.wallet.registerAuthServer(requestPayload);
-      })
+      .then(() => this.pillarWalletSdk.wallet.registerAuthServer(requestPayload))
       .then(({ data }) => data)
       .catch((error) => {
         reportLog('Registration error', { error }, Sentry.Severity.Error);
@@ -369,7 +388,7 @@ class SDKWrapper {
       .catch(() => null);
   }
 
-  userInfo(walletId: string) {
+  userInfo(walletId: string): Promise<Object> {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.info({ walletId }))
       .then(({ data }) => ({ ...data, walletId }))
@@ -409,14 +428,12 @@ class SDKWrapper {
     // TODO: handle 404 and other errors in different ways (e.response.status === 404)
   }
 
-  validateAddress(blockchainAddress: string): Object {
+  validateAddress(blockchainAddress: string): Promise<ValidatedUserResponse> {
+    blockchainAddress = normalizeWalletAddress(blockchainAddress);
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
       .then(({ data }) => data)
-      .catch(error => {
-        reportLog('Unable to restore user wallet', { blockchainAddress, error });
-        return { error: true };
-      });
+      .catch(() => ({ error: true }));
   }
 
   fetchSupportedAssets(walletId: string) {
@@ -552,15 +569,13 @@ class SDKWrapper {
     return fetchLastBlockNumber(network);
   }
 
-  fetchBalances({ address, assets }: BalancePayload) {
-    // TEMPORARY FETCH FROM BLOCKCHAIN DIRECTLY
-    return fetchAssetBalances(assets, address);
-    // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
-    //   const payload = { contractAddress, address, asset: symbol };
-    //   const { balance: response } = await this.BCXSdk.getBalance(payload);
-    //   return { balance: response.balance, symbol: response.ticker };
-    // });
-    // return Promise.all(promises).catch(() => []);
+  async fetchBalances({ address, assets }: BalancePayload) {
+    // try to get all the balances in one call (mainnet and ropsten only)
+    const balances = await fetchAddressBalancesFromProxyContract(assets, address);
+    if (!isEmpty(balances)) return balances;
+
+    // if we fail to get the balances in one call, let's use the fallback method
+    return fetchAssetBalancesOnChain(assets, address);
   }
 
   fetchBadges(walletId: string): Promise<UserBadgesResponse> {

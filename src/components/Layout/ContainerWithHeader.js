@@ -52,6 +52,8 @@ type Props = {
     lightTheme?: string
   },
   keyboardShouldPersistTaps?: string,
+  footerContainerStyle?: Object,
+  footerContainerInset?: Object,
 };
 
 type State = {
@@ -184,6 +186,8 @@ class ContainerWithHeader extends React.Component<Props, State> {
       putContentInScrollView,
       shouldFooterAvoidKeyboard = true,
       tab,
+      footerContainerStyle,
+      footerContainerInset,
     } = this.props;
 
     const colors = getThemeColors(theme);
@@ -229,11 +233,14 @@ class ContainerWithHeader extends React.Component<Props, State> {
           keyboardVerticalOffset={isIphoneX() ? -40 : 0}
         >
           <SafeAreaView
-            forceInset={{ top: 'never', bottom: 'always', ...inset }}
+            forceInset={{
+              top: 'never', bottom: 'always', ...inset, ...footerContainerInset,
+            }}
             style={{
               backgroundColor: backgroundColor || colors.surface,
               width: '100%',
               flexWrap: 'wrap',
+              ...footerContainerStyle,
             }}
           >
             {footer}

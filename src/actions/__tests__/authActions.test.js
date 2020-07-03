@@ -49,7 +49,7 @@ const registeredMockUser: Object = {
   walletId: 'walletIdUnique',
 };
 
-Object.defineProperty(mockWallet, 'RNencrypt', {
+Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
@@ -83,6 +83,7 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: SET_USERNAME, payload: mockUser.username },
+      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       {
         type: DECRYPT_WALLET,
@@ -91,7 +92,6 @@ describe('Auth actions', () => {
           privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
         },
       },
-      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
     ];
 
     const pin = '123456';
@@ -110,9 +110,9 @@ describe('Auth actions', () => {
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: SET_USERNAME, payload: registeredMockUser.username },
       { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
+      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: { ...mockWallet, privateKey: undefined } },
-      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
     ];
 

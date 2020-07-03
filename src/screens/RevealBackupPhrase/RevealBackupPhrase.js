@@ -83,7 +83,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       );
     }
 
-    if (wallet.mnemonic && !showPrivateKey) {
+    if (wallet?.mnemonic?.phrase && !showPrivateKey) {
       return (
         <Container>
           <Header title="Backup phrase" onClose={this.handleScreenDismissal} />
@@ -93,7 +93,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
               Keep it secure as it&#39;s the only way to recover your account in an emergency.
               Don&#39;t email or screenshot it.
             </Paragraph>
-            <MnemonicPhrase phrase={wallet.mnemonic} />
+            <MnemonicPhrase phrase={wallet.mnemonic.phrase} />
           </ScrollWrapper>
         </Container>
       );

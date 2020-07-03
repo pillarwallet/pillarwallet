@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { Linking } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import merge from 'lodash.merge';
 import get from 'lodash.get';
@@ -31,7 +32,6 @@ import {
   DECRYPTING,
   INVALID_PASSWORD,
   ENCRYPTING,
-  GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
 import {
@@ -39,16 +39,16 @@ import {
   AUTH_FLOW,
   ONBOARDING_FLOW,
   HOME,
-  CHAT,
   PIN_CODE_UNLOCK,
-  PEOPLE,
   LOGOUT_PENDING,
+  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
 } from 'constants/navigationConstants';
 import { SET_USERNAME, UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { DARK_THEME, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+import { SET_RECOVERY_PORTAL_TEMPORARY_WALLET } from 'constants/recoveryPortalConstants';
 
 // utils
 import { delay, reportOrWarn } from 'utils/common';
@@ -77,7 +77,11 @@ import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
 import { signalInitAction } from './signalClientActions';
 import { initOnLoginSmartWalletAccountAction } from './accountsActions';
-import { checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
+import {
+  encryptAndSaveWalletAction,
+  checkForWalletBackupToastAction,
+  updatePinAttemptsAction,
+} from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
@@ -86,6 +90,11 @@ import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
 import { updateConnectionsAction } from './connectionsActions';
 import { fetchReferralRewardAction } from './referralsActions';
+import { executeDeepLinkAction } from './deepLinkActions';
+import {
+  checkIfRecoveredSmartWalletFinishedAction,
+  checkRecoveredSmartWalletStateAction,
+} from './recoveryPortalActions';
 
 
 const storage = Storage.getInstance('db');
@@ -115,7 +124,7 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting } },
+      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
@@ -136,14 +145,14 @@ export const loginAction = (
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
+        wallet = await decryptWallet(encryptedWallet, saltedPin);
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access OR fallback for biometrics login
         await setKeychainDataObject(
           {
             pin,
             privateKey: wallet.privateKey,
-            mnemonic: wallet.mnemonic || '',
+            mnemonic: wallet?.mnemonic?.phrase || '',
           },
           useBiometrics);
       } else if (privateKey) {
@@ -230,6 +239,8 @@ export const loginAction = (
         api.init();
       }
 
+      dispatch(updatePinAttemptsAction(false));
+
       firebaseCrashlytics.setUserId(user.username);
       dispatch({
         type: UPDATE_USER,
@@ -248,10 +259,22 @@ export const loginAction = (
           privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
         },
       });
-      dispatch(updatePinAttemptsAction(false));
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
+      }
+
+      const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
+      if (isWalletRecoveryPending) {
+        dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
+        api.init();
+        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
+        await smartWalletService.init(
+          wallet.privateKey,
+          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
+        );
+        dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
+        return;
       }
 
       dispatch(fetchTransactionsHistoryAction());
@@ -260,7 +283,6 @@ export const loginAction = (
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
-      const currentFlow = pathAndParams.path.split('/')[0];
 
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({
@@ -269,21 +291,22 @@ export const loginAction = (
         params: lastActiveScreenParams,
       });
 
-      const isOpeningAChatNotification = lastActiveScreen === CHAT && currentFlow === AUTH_FLOW;
-      const navigateToRoute = isOpeningAChatNotification ?
-        NavigationActions.navigate({
-          routeName: PEOPLE,
-          params: {},
-          action: navigateToLastActiveScreen,
-        }) : navigateToLastActiveScreen;
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: navigateToRoute,
+        action: navigateToLastActiveScreen,
       });
 
       dispatch(checkForWalletBackupToastAction());
       dispatch(getWalletsCreationEventsAction());
+
+      if (!initialDeeplinkExecuted) {
+        Linking.getInitialURL()
+          .then(url => {
+            if (url) dispatch(executeDeepLinkAction(url, true));
+          })
+          .catch(() => {});
+      }
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch(updatePinAttemptsAction(true));
@@ -295,19 +318,11 @@ export const loginAction = (
   };
 };
 
-type DecryptionSettings = {
-  mnemonic: boolean,
-};
-
-const defaultDecryptionSettings = {
-  mnemonic: false,
-};
-
 export const checkAuthAction = (
   pin: ?string,
   privateKey: ?string,
   onValidPin?: Function,
-  options: DecryptionSettings = defaultDecryptionSettings,
+  withMnemonic: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { appSettings: { data: { useBiometrics } } } = getState();
@@ -322,9 +337,9 @@ export const checkAuthAction = (
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin, options);
+        wallet = await decryptWallet(encryptedWallet, saltedPin);
       } else if (pin) {
-        wallet = await getWalletFromPkByPin(pin, options.mnemonic);
+        wallet = await getWalletFromPkByPin(pin, withMnemonic);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       }
@@ -354,32 +369,14 @@ export const changePinAction = (newPin: string, currentPin: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { appSettings: { data: { useBiometrics } } } = getState();
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: ENCRYPTING,
-    });
+    const backupStatus = get(encryptedWallet, 'backupStatus', {});
+
+    dispatch({ type: UPDATE_WALLET_STATE, payload: ENCRYPTING });
     await delay(50);
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
-    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin, {
-      mnemonic: true,
-    });
+    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin);
 
-    const newSaltedPin = await getSaltedPin(newPin, dispatch);
-    const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
-      .then(JSON.parse)
-      .catch(() => ({}));
-
-    dispatch(saveDbAction('wallet', { wallet: newEncryptedWallet }));
-
-    const { privateKey, mnemonic } = wallet;
-    await setKeychainDataObject({ privateKey, mnemonic, pin: newPin }, useBiometrics);
-
-    dispatch({
-      type: GENERATE_ENCRYPTED_WALLET,
-      payload: {
-        address: wallet.address,
-      },
-    });
+    await dispatch(encryptAndSaveWalletAction(newPin, wallet, backupStatus, useBiometrics));
   };
 };
 
@@ -393,7 +390,7 @@ export const resetIncorrectPasswordAction = () => {
 };
 
 export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: string) => {
-  return async () => {
+  return () => {
     navigate(NavigationActions.navigate({
       routeName: AUTH_FLOW,
       params: {},

@@ -62,7 +62,8 @@ type Props = {
   itemStatusIcon?: string,
   valueColor?: ?string,
   buttonActionLabel?: string,
-  labelAsButton?: boolean,
+  actionLabelAsButton?: boolean,
+  customLabel?: React.Node,
   buttonAction?: Function,
   secondaryButton?: boolean,
   actionLabel?: ?string,
@@ -97,7 +98,12 @@ type Props = {
   iconBorder?: boolean,
   address?: string,
   collectibleUrl?: string,
-}
+  iconImageResizeMode?: string,
+  iconImageSize?: number,
+  statusIconColor?: string,
+  itemImageRoundedSquare?: boolean,
+  cornerIcon?: any,
+};
 
 type AddonProps = {
   unreadCount?: number | string,
@@ -105,7 +111,7 @@ type AddonProps = {
   itemStatusIcon?: string,
   valueColor?: ?string,
   buttonActionLabel?: string,
-  labelAsButton?: boolean,
+  actionLabelAsButton?: boolean,
   buttonAction?: () => void,
   secondaryButton?: boolean,
   actionLabel?: ?string,
@@ -114,6 +120,7 @@ type AddonProps = {
   acceptInvitation?: ?() => void,
   balance?: Object,
   colors: ThemeColors,
+  statusIconColor?: string,
 };
 
 type ImageWrapperProps = {
@@ -122,7 +129,6 @@ type ImageWrapperProps = {
   imageDiameter?: number,
   imageWrapperStyle?: Object,
 };
-
 
 const ItemWrapper = styled.View`
   flex-direction: column;
@@ -184,17 +190,20 @@ const ItemSubText = styled(BaseText)`
   font-size: ${fontSizes.regular}px;
 `;
 
-const IconCircle = styled.View`
-  width: ${props => props.diameter || 52}px;
-  height: ${props => props.diameter || 52}px;
-  border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
+const IconRounded = styled.View`
+  ${({ diameter, borderRadius }) => `
+    width: ${(!borderRadius && diameter) || 52}px;
+    height: ${(!borderRadius && diameter) || 52}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 26)}px;
+  `}
   background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border &&
-    `border-color: ${theme.colors.border};
-    border-width: 1px;`};
+  ${({ border, theme }) => border && `
+    border-color: ${theme.colors.border};
+    border-width: 1px;
+  `}
   overflow: hidden;
 `;
 
@@ -204,20 +213,26 @@ const ItemIcon = styled(Icon)`
 `;
 
 const IconImage = styled(CachedImage)`
-  width: 24px;
-  height: 24px;
+  ${({ size }) => `
+    height: ${size || 24}px;
+    width: ${size || 24}px;
+  `}
 `;
 
 const TokenImage = styled(CachedImage)`
-  width: ${props => props.diameter || 54}px;
-  height: ${props => props.diameter || 54}px;
-  border-radius: ${props => props.diameter / 2 || 27}px;
+  ${({ borderRadius, diameter }) => `
+    width: ${(!borderRadius && diameter) || 54}px;
+    height: ${(!borderRadius && diameter) || 54}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 27)}px;
+  `}
 `;
 
 const StyledCollectibleImage = styled(CollectibleImage)`
-  width: ${props => props.diameter || 54}px;
-  height: ${props => props.diameter || 54}px;
-  border-radius: ${props => props.diameter / 2 || 27}px;
+  ${({ borderRadius, diameter }) => `
+    width: ${(!borderRadius && diameter) || 54}px;
+    height: ${(!borderRadius && diameter) || 54}px;
+    border-radius: ${borderRadius || (diameter ? diameter / 2 : 27)}px;
+  `}
 `;
 
 const TimeWrapper = styled.View`
@@ -269,7 +284,7 @@ const BalanceFiatValue = styled(BaseText)`
 
 const ItemValueStatus = styled(Icon)`
   margin-left: 12px;
-  color: ${themedColors.secondaryText};
+  color: ${({ iconColor }) => iconColor || themedColors.secondaryText};
   ${fontStyles.big};
 `;
 
@@ -315,6 +330,13 @@ const ImageAddonHolder = styled.View`
   right: 10px;
 `;
 
+const CornerIcon = styled(CachedImage)`
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
 
 const ImageWrapper = (props: ImageWrapperProps) => {
   const {
@@ -369,24 +391,43 @@ const ItemImage = (props: Props) => {
     iconBackgroundColor,
     iconBorder,
     collectibleUrl,
+    iconImageResizeMode,
+    iconImageSize,
+    itemImageRoundedSquare,
+    cornerIcon,
   } = props;
 
   let { fallbackSource } = props;
   if (fallbackToGenericToken) ({ genericToken: fallbackSource } = images(theme));
+  const roundedImageCustomBorderRadius = itemImageRoundedSquare && 13;
 
   if (iconName) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
         <ItemIcon name={iconName} iconColor={iconColor} />
-      </IconCircle>
+      </IconRounded>
     );
   }
 
   if (iconSource) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
-        <IconImage source={iconSource} />
-      </IconCircle>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
+        <IconImage
+          source={iconSource}
+          size={iconImageSize}
+          resizeMode={iconImageResizeMode}
+        />
+      </IconRounded>
     );
   }
 
@@ -394,27 +435,47 @@ const ItemImage = (props: Props) => {
 
   if (itemImageUrl) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
         <TokenImage diameter={diameter} source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
-      </IconCircle>
+      </IconRounded>
     );
   }
 
   if (collectibleUrl) {
     return (
-      <IconCircle diameter={diameter} backgroundColor={iconBackgroundColor} border={iconBorder}>
+      <IconRounded
+        diameter={diameter}
+        backgroundColor={iconBackgroundColor}
+        border={iconBorder}
+        borderRadius={roundedImageCustomBorderRadius}
+      >
         <StyledCollectibleImage
           width={diameter}
           height={diameter}
           diameter={diameter}
           source={{ uri: collectibleUrl }}
         />
-      </IconCircle>
+      </IconRounded>
     );
   }
 
   if (itemImageSource) {
-    return (<TokenImage diameter={diameter} source={itemImageSource} fallbackSource={fallbackSource} />);
+    return (
+      <View>
+        <TokenImage
+          diameter={diameter}
+          source={itemImageSource}
+          fallbackSource={fallbackSource}
+          borderRadius={roundedImageCustomBorderRadius}
+        />
+        {cornerIcon && <CornerIcon source={cornerIcon} />}
+      </View>
+    );
   }
 
   const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;
@@ -444,14 +505,14 @@ const ImageAddon = (props: Props) => {
   if (imageAddonIconName) {
     return (
       <ImageAddonHolder>
-        <IconCircle diameter={22}>
+        <IconRounded diameter={22}>
           <ItemIcon
             name={imageAddonIconName}
             color={iconColor}
             fontSize={30}
             style={{ lineHeight: 30, width: 30, height: 30 }}
           />
-        </IconCircle>
+        </IconRounded>
       </ImageAddonHolder>
     );
   }
@@ -476,9 +537,10 @@ const Addon = (props: AddonProps) => {
     unreadCount,
     itemValue,
     itemStatusIcon,
+    statusIconColor,
     valueColor,
     buttonActionLabel,
-    labelAsButton,
+    actionLabelAsButton,
     buttonAction,
     secondaryButton,
     actionLabel,
@@ -496,15 +558,15 @@ const Addon = (props: AddonProps) => {
             {itemValue}
           </ItemValue>
         }
-        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} />}
+        {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} iconColor={statusIconColor} />}
       </Wrapper>
     );
   }
 
   if (actionLabel) {
     return (
-      <ActionLabel button={labelAsButton}>
-        <ActionLabelText button={labelAsButton} color={labelAsButton ? colors.primary : actionLabelColor}>
+      <ActionLabel button={actionLabelAsButton}>
+        <ActionLabelText button={actionLabelAsButton} color={actionLabelAsButton ? colors.primary : actionLabelColor}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>
@@ -575,7 +637,6 @@ const Addon = (props: AddonProps) => {
             {!!tokenBalance.toString() && <BalanceValue>{`${roundedBalance} ${token}`}</BalanceValue>}
             {!!syntheticBalance.toString() &&
             <TankAssetBalance
-              monoColor
               amount={syntheticBalance}
               token={token}
             />}
@@ -632,24 +693,27 @@ class ListItemWithImage extends React.Component<Props, {}> {
       imageWrapperStyle,
       theme,
       badge,
+      customLabel,
     } = this.props;
 
     const type = getType(this.props);
     const colors = getThemeColors(theme);
+    const hasImageAddon = !!(imageAddonUrl || imageAddonIconName || imageAddonName);
 
     return (
       <ItemWrapper wrapperOpacity={wrapperOpacity}>
         <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
           <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
             <ItemImage {...this.props} />
-            {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
+            {hasImageAddon && <ImageAddon {...this.props} />}
           </ImageWrapper>
           <View style={{ flex: 1 }}>
             <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
               <Column type={type} style={{ flexGrow: 1 }}>
-                {!!label &&
+                {(!!label || !!customLabel) &&
                 <Row>
-                  <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>
+                  {!!customLabel && customLabel}
+                  {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
                   {(type === CHAT_ITEM && !!timeSent) &&
                   <TimeWrapper>
                     <TimeSent>{timeSent}</TimeSent>
