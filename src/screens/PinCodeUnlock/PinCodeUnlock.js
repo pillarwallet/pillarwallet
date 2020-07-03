@@ -44,6 +44,7 @@ import {
 } from 'utils/keychain';
 
 import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
+import omit from 'lodash.omit';
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
@@ -84,11 +85,13 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    const { navigation } = this.props;
+    const { navigation, useBiometrics } = this.props;
     this.errorMessage = navigation.getParam('errorMessage', '');
     this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
+    const forcePinParam = navigation.getParam('forcePin');
+    const omitPinParam = navigation.getParam('omitPin');
 
-    if ((!this.props.useBiometrics || navigation.getParam('forcePin')) && !navigation.getParam('omitPin')) {
+    if ((!useBiometrics || forcePinParam) && !omitPinParam) {
       this.state.showPin = true;
     }
   }
