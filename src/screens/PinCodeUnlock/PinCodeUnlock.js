@@ -44,7 +44,7 @@ import {
 } from 'utils/keychain';
 
 import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
-import omit from 'lodash.omit';
+
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
