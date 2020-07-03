@@ -115,7 +115,6 @@ const FormWrapper = styled.View`
 const Row = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
-  flex: 1;
   margin-bottom: ${spacing.large}px;
 `;
 
