@@ -30,7 +30,6 @@ import {
   USER_JOINED_BETA_SETTING,
 } from 'constants/appSettingsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -39,11 +38,12 @@ import Toast from 'components/Toast';
 import { firebaseAnalytics } from 'services/firebase';
 
 // selectors
-import { activeAccountSelector, activeBlockchainSelector } from 'selectors';
+import { activeBlockchainSelector } from 'selectors';
 
 // utils
 import { setKeychainDataObject } from 'utils/keychain';
 import { delay } from 'utils/common';
+import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -53,7 +53,7 @@ import type { KeyChainData } from 'utils/keychain';
 // actions
 import { saveDbAction } from './dbActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { switchAccountAction } from './accountsActions';
+import { fallbackToSmartOrKeyAccountAction } from './accountsActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { logUserPropertyAction, logEventAction } from './analyticsActions';
 
@@ -152,7 +152,6 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
-      accounts: { data: accounts },
       session: { data: { isOnline } },
     } = getState();
 
@@ -172,14 +171,9 @@ export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
     } else {
       // in case user opts out when Bitcoin is set as active
       const activeBlockchain = activeBlockchainSelector(getState());
-      if (activeBlockchain === BLOCKCHAIN_NETWORK_TYPES.BITCOIN) {
+      if (!isSupportedBlockchain(activeBlockchain)) {
         dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-      }
-      const activeAccount = activeAccountSelector(getState());
-      if (activeAccount && activeAccount.type === ACCOUNT_TYPES.BITCOIN_WALLET) {
-        const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET)
-         || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-        if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
+        dispatch(fallbackToSmartOrKeyAccountAction());
       }
       message = 'You have successfully left Early Access program.';
     }

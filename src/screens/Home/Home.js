@@ -76,7 +76,6 @@ import {
 } from 'actions/referralsActions';
 import { toggleBadgesAction, toggleLendingDepositsAction } from 'actions/appSettingsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
 
@@ -139,7 +138,6 @@ type Props = {
   toggleBadges: () => void,
   walletConnectRequests: CallRequest[],
   fetchAllAccountsBalances: () => void,
-  refreshBitcoinBalance: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
   fetchReferralReward: () => void,
   isPillarRewardCampaignActive: boolean,
@@ -256,7 +254,6 @@ class HomeScreen extends React.Component<Props, State> {
       fetchBadges,
       fetchBadgeAwardHistory,
       fetchAllAccountsBalances,
-      refreshBitcoinBalance,
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
       fetchDepositedAssets,
@@ -269,7 +266,6 @@ class HomeScreen extends React.Component<Props, State> {
     fetchBadgeAwardHistory();
     fetchTransactionsHistory();
     fetchAllAccountsBalances();
-    refreshBitcoinBalance();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
     fetchDepositedAssets();
@@ -355,8 +351,9 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
-
-    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const tokenTxHistory = history
+      .filter(({ tranType }) => tranType !== 'collectible')
+      .filter(historyItem => historyItem.asset !== 'BTC');
     const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
     const transactionsOnMainnet = mapTransactionsHistory(
@@ -634,7 +631,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
