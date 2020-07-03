@@ -54,6 +54,7 @@ import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { activeAccountSelector } from 'selectors';
+import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { setUserEnsIfEmptyAction } from './ensRegistryActions';
 
@@ -289,9 +290,10 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     dispatch(fetchVirtualAccountBalanceAction());
 
     if (setAccountActive && blockchainNetwork) {
+      const shouldChangeNetwork = !isSupportedBlockchain(blockchainNetwork);
       dispatch({
         type: SET_ACTIVE_NETWORK,
-        payload: blockchainNetwork,
+        payload: shouldChangeNetwork ? BLOCKCHAIN_NETWORK_TYPES.ETHEREUM : blockchainNetwork,
       });
     }
 
