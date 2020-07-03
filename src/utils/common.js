@@ -307,6 +307,7 @@ const DEFAULT_TRANSITION_SCREENS = [
   NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
   NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   NAVSCREENS.SEND_BITCOIN_FLOW,
+  NAVSCREENS.POOLTOGETHER_FLOW,
 ];
 
 const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {

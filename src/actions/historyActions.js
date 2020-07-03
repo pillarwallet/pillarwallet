@@ -66,6 +66,7 @@ import {
 } from 'utils/smartWallet';
 import { extractBitcoinTransactions } from 'utils/bitcoin';
 import { mapTransactionsHistoryWithAave } from 'utils/aave';
+import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -86,6 +87,7 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
+import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
@@ -94,6 +96,7 @@ const TRANSACTIONS_HISTORY_STEP = 10;
 const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
+    dispatch(checkPoolTogetherApprovalTransactionAction());
   };
 };
 
@@ -198,7 +201,9 @@ export const fetchSmartWalletTransactionsAction = () => {
       assetsList,
       relayerExtensionDevice?.address,
     );
-    const history = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
+    const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
+
+    const history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
 
     if (!history.length) return;
 

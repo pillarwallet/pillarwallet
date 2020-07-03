@@ -49,10 +49,12 @@ import {
   LENDING_VIEW_DEPOSITED_ASSET,
   MENU,
   WALLETCONNECT,
+  POOLTOGETHER_DASHBOARD,
 } from 'constants/navigationConstants';
 import { ALL, TRANSACTIONS } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+import { DAI, USDC } from 'constants/assetsConstants';
 
 // actions
 import {
@@ -74,14 +76,21 @@ import {
   fetchReferralRewardsIssuerAddressesAction,
   fetchReferralRewardAction,
 } from 'actions/referralsActions';
-import { toggleBadgesAction, toggleLendingDepositsAction } from 'actions/appSettingsActions';
+import {
+  toggleBadgesAction,
+  toggleLendingDepositsAction,
+  togglePoolTogetherAction,
+} from 'actions/appSettingsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
+import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
+import { poolTogetherUserStatsSelector } from 'selectors/poolTogether';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -135,7 +144,9 @@ type Props = {
   baseFiatCurrency: ?string,
   goToInvitationFlow: () => void,
   hideBadges: boolean,
+  hidePoolTogether: boolean,
   toggleBadges: () => void,
+  togglePoolTogether: () => void,
   walletConnectRequests: CallRequest[],
   fetchAllAccountsBalances: () => void,
   fetchReferralRewardsIssuerAddresses: () => void,
@@ -148,6 +159,10 @@ type Props = {
   fetchDepositedAssets: () => void,
   toggleLendingDeposits: () => void,
   isFetchingDepositedAssets: boolean,
+  isFetchingPoolStats: boolean,
+  poolTogetherUserStats: Object[],
+  fetchPoolStats: (string) => void,
+  isSmartWalletActive: boolean,
 };
 
 type State = {
@@ -191,6 +206,10 @@ const DepositedAssetGain = styled(BaseText)`
 const referralImage = require('assets/images/referral_gift.png');
 const aaveImage = require('assets/images/apps/aave.png');
 
+const poolTogetherLogo = require('assets/images/pool_together.png');
+const daiIcon = require('assets/images/dai_color.png');
+const usdcIcon = require('assets/images/usdc_color.png');
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
@@ -208,6 +227,8 @@ class HomeScreen extends React.Component<Props, State> {
       fetchTransactionsHistory,
       fetchReferralRewardsIssuerAddresses,
       fetchDepositedAssets,
+      isSmartWalletActive,
+      fetchPoolStats,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -217,6 +238,10 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.setUnreadNotificationsStatus(false);
     });
+    if (isSmartWalletActive) {
+      fetchPoolStats(DAI);
+      fetchPoolStats(USDC);
+    }
     fetchTransactionsHistory();
     fetchBadges();
     fetchBadgeAwardHistory();
@@ -257,6 +282,8 @@ class HomeScreen extends React.Component<Props, State> {
       fetchReferralRewardsIssuerAddresses,
       fetchReferralReward,
       fetchDepositedAssets,
+      fetchPoolStats,
+      isSmartWalletActive,
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
@@ -269,6 +296,10 @@ class HomeScreen extends React.Component<Props, State> {
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
     fetchDepositedAssets();
+    if (isSmartWalletActive) {
+      fetchPoolStats(DAI);
+      fetchPoolStats(USDC);
+    }
   };
 
   setActiveTab = (activeTab) => {
@@ -320,6 +351,31 @@ class HomeScreen extends React.Component<Props, State> {
     this.setState({ loaderMessage });
   };
 
+  renderPoolTogetherItem = ({ item: poolTogetherStats }: { item: Object }) => {
+    const {
+      symbol,
+      currentPrize,
+      winChance,
+      remainingTime,
+      userTickets,
+    } = poolTogetherStats;
+    return (
+      <ListItemWithImage
+        label={`Prize $${currentPrize}`}
+        subtext={remainingTime}
+        onPress={() => this.props.navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol })}
+        iconImageSize={52}
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+        itemImageSource={poolTogetherLogo}
+        cornerIcon={symbol === DAI ? daiIcon : usdcIcon}
+        itemImageRoundedSquare
+      >
+        <BaseText fontSize={fontSizes.big} primary>{userTickets} tickets</BaseText>
+        <BaseText secondary>{winChance} chance</BaseText>
+      </ListItemWithImage>
+    );
+  }
+
   render() {
     const {
       cancelInvitation,
@@ -337,7 +393,9 @@ class HomeScreen extends React.Component<Props, State> {
       badgesEvents,
       theme,
       hideBadges,
+      hidePoolTogether,
       toggleBadges,
+      togglePoolTogether,
       walletConnectRequests,
       user,
       goToInvitationFlow,
@@ -348,6 +406,9 @@ class HomeScreen extends React.Component<Props, State> {
       depositedAssets,
       toggleLendingDeposits,
       isFetchingDepositedAssets,
+      poolTogetherUserStats = [],
+      isFetchingPoolStats,
+      isSmartWalletActive,
     } = this.props;
 
     const { activeTab, loaderMessage } = this.state;
@@ -415,6 +476,8 @@ class HomeScreen extends React.Component<Props, State> {
     const referralBannerText = isPillarRewardCampaignActive
       ? 'Refer friends and earn rewards, free PLR and more.'
       : 'Invite friends to Pillar';
+
+    const hasPoolTickets = poolTogetherUserStats.some(({ userTickets }) => userTickets > 0);
 
     return (
       <React.Fragment>
@@ -545,6 +608,22 @@ class HomeScreen extends React.Component<Props, State> {
                       open={!hideLendingDeposits}
                     />
                   }
+                  {!!hasPoolTickets && !!isSmartWalletActive &&
+                  <CollapsibleSection
+                    label="PoolTogether savings game"
+                    showLoadingSpinner={isFetchingPoolStats}
+                    collapseContent={
+                      <FlatList
+                        data={poolTogetherUserStats}
+                        keyExtractor={(item) => item.symbol}
+                        renderItem={this.renderPoolTogetherItem}
+                        initialNumToRender={2}
+                      />
+                    }
+                    onPress={togglePoolTogether}
+                    open={!hidePoolTogether}
+                  />
+                  }
                 </React.Fragment>
               )}
               tabsComponent={(
@@ -582,11 +661,16 @@ const mapStateToProps = ({
   badges: { data: badges, badgesEvents },
   accounts: { data: accounts },
   userEvents: { data: userEvents },
-  appSettings: { data: { baseFiatCurrency, hideBadges, hideLendingDeposits } },
+  appSettings: {
+    data: {
+      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether,
+    },
+  },
   walletConnect: { requests: walletConnectRequests },
   referrals: { isPillarRewardCampaignActive },
   insights: { referFriendsOnHomeScreenDismissed },
   lending: { depositedAssets, isFetchingDepositedAssets },
+  poolTogether: { isFetchingPoolStats },
 }: RootReducerState): $Shape<Props> => ({
   contacts,
   user,
@@ -598,17 +682,21 @@ const mapStateToProps = ({
   userEvents,
   baseFiatCurrency,
   hideBadges,
+  hidePoolTogether,
   walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
   hideLendingDeposits,
   depositedAssets,
   isFetchingDepositedAssets,
+  isFetchingPoolStats,
 });
 
 const structuredSelector = createStructuredSelector({
   history: combinedHistorySelector,
   openSeaTxHistory: combinedCollectiblesHistorySelector,
+  poolTogetherUserStats: poolTogetherUserStatsSelector,
+  isSmartWalletActive: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -630,12 +718,14 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   toggleBadges: () => dispatch(toggleBadgesAction()),
+  togglePoolTogether: () => dispatch(togglePoolTogetherAction()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
   fetchReferralReward: () => dispatch(fetchReferralRewardAction()),
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
   fetchDepositedAssets: () => dispatch(fetchDepositedAssetsAction()),
   toggleLendingDeposits: () => dispatch(toggleLendingDepositsAction()),
+  fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

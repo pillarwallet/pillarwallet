@@ -68,9 +68,10 @@ import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'ut
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
+import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -112,8 +113,12 @@ import {
   LENDING_ENTER_WITHDRAW_AMOUNT,
   LENDING_ENTER_DEPOSIT_AMOUNT,
   LENDING_VIEW_DEPOSITED_ASSET,
+  POOLTOGETHER_DASHBOARD,
+  POOLTOGETHER_PURCHASE,
+  POOLTOGETHER_WITHDRAW,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
 
 // selectors
 import {
@@ -152,6 +157,7 @@ import type { EventData as PassedEventData } from 'components/ActivityFeed/Activ
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { TxNote } from 'reducers/txNoteReducer';
+import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 
 type Props = {
@@ -197,6 +203,7 @@ type Props = {
   updatingCollectibleTransaction: string,
   isSmartAccount: boolean,
   depositedAssets: DepositedAsset[],
+  poolStats: PoolPrizeInfo,
 };
 
 type State = {
@@ -321,6 +328,10 @@ const ErrorMessage = styled(BaseText)`
   margin-bottom: ${spacing.large}px;
   width: 100%;
   text-align: center;
+`;
+
+const PoolTogetherTicketsWrapper = styled.View`
+  align-items: center;
 `;
 
 const CornerIcon = styled(CachedImage)`
@@ -643,6 +654,66 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SETTLE_BALANCE);
   };
 
+  goToPoolTogetherPurcharse = (symbol: string) => {
+    const {
+      onClose,
+      navigation,
+      poolStats = {},
+    } = this.props;
+
+    const {
+      totalPoolTicketsCount,
+      userInfo,
+    } = poolStats[symbol];
+
+    let userTickets = 0;
+    if (userInfo) {
+      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
+    }
+
+    onClose();
+
+    navigation.navigate(POOLTOGETHER_PURCHASE, {
+      poolToken: symbol,
+      poolTicketsCount: 0,
+      totalPoolTicketsCount,
+      userTickets,
+    });
+  }
+
+  goToPoolTogetherWithdraw = (symbol: string) => {
+    const {
+      onClose,
+      navigation,
+      poolStats = {},
+    } = this.props;
+
+    const {
+      totalPoolTicketsCount,
+      userInfo,
+    } = poolStats[symbol];
+
+    let userTickets = 0;
+    if (userInfo) {
+      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
+    }
+
+    onClose();
+
+    navigation.navigate(POOLTOGETHER_WITHDRAW, {
+      poolToken: symbol,
+      poolTicketsCount: 0,
+      totalPoolTicketsCount,
+      userTickets,
+    });
+  }
+
+  goToPoolTogetherPool = (symbol: string) => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
+  }
+
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return 'Refer friends';
@@ -660,6 +731,24 @@ export class EventDetail extends React.Component<Props, State> {
     }
     return transactionNote;
   };
+
+  renderPoolTogetherTickets = (event: Object) => {
+    const { symbol, amount, decimals } = event.extra;
+    const formattedAmount = parseFloat(formatUnits(amount, decimals));
+    const directionSymbol = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? '-' : '+';
+    const amountText = `${directionSymbol} ${formattedAmount} ${symbol}`;
+    const ticketsText = `(${formattedAmount} ticket${formattedAmount === 1 ? '' : 's'})`;
+    const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
+    const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? 'Purcharse' : 'Withdraw';
+
+    return (
+      <PoolTogetherTicketsWrapper>
+        <BaseText secondary regular>{title}</BaseText>
+        <MediumText large color={this.getColor(amountTextColor)}>{amountText}</MediumText>
+        <BaseText secondary medium>{ticketsText}</BaseText>
+      </PoolTogetherTicketsWrapper>
+    );
+  }
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
@@ -782,6 +871,7 @@ export class EventDetail extends React.Component<Props, State> {
       itemData,
       referralRewardIssuersAddresses,
       depositedAssets,
+      isSmartAccount,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -960,6 +1050,39 @@ export class EventDetail extends React.Component<Props, State> {
         }
         eventData.buttons = aaveWithdrawButtons;
         break;
+      case POOLTOGETHER_DEPOSIT_TRANSACTION:
+      case POOLTOGETHER_WITHDRAW_TRANSACTION: {
+        const buttons = [];
+        if (isSmartAccount) {
+          const { extra: { symbol } } = event;
+          if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+            buttons.push({
+              title: 'Purchase more',
+              onPress: () => this.goToPoolTogetherPurcharse(symbol),
+              secondary: true,
+            });
+          } else {
+            buttons.push({
+              title: 'Withdraw more',
+              onPress: () => this.goToPoolTogetherWithdraw(symbol),
+              secondary: true,
+            });
+          }
+          buttons.push(
+            {
+              title: 'View pool',
+              onPress: () => this.goToPoolTogetherPool(symbol),
+              squarePrimary: true,
+            },
+          );
+        }
+        eventData = {
+          name: 'Pool Together',
+          customActionTitle: this.renderPoolTogetherTickets(event),
+          buttons,
+        };
+        break;
+      }
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
@@ -1001,6 +1124,16 @@ export class EventDetail extends React.Component<Props, State> {
               },
             ];
           }
+        } else if (isPoolTogetherAddress(event.to)) {
+          const buttons = [{
+            title: 'View pool',
+            onPress: () => this.goToPoolTogetherPool(DAI),
+            squarePrimary: true,
+          }];
+          eventData = {
+            name: 'Pool Together',
+            buttons,
+          };
         } else {
           eventData = {
             actionTitle: fullItemValue,
@@ -1551,6 +1684,7 @@ const mapStateToProps = ({
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
+  poolTogether: { poolStats },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1567,6 +1701,7 @@ const mapStateToProps = ({
   updatingTransaction,
   updatingCollectibleTransaction,
   depositedAssets,
+  poolStats,
 });
 
 const structuredSelector = createStructuredSelector({

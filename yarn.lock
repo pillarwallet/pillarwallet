@@ -15566,6 +15566,13 @@ polished@^3.3.1:
   dependencies:
     "@babel/runtime" "^7.9.2"
 
+pooltogetherjs@0.2.0:
+  version "0.2.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/pooltogetherjs/-/pooltogetherjs-0.2.0.tgz#e4cb358293410492fd48481f5fd1d863b84e77a4"
+  integrity sha1-5Ms1gpNBBJL9SEgfX9HYY7hOd6Q=
+  dependencies:
+    bn.js "^4.11.0"
+
 popper.js@^1.14.4, popper.js@^1.14.7:
   version "1.16.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"

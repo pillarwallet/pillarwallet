@@ -34,6 +34,8 @@ type Props = {
   circle: boolean,
   children?: React.Node,
   theme: Theme,
+  showLabel?: boolean,
+  activeTab?: string,
 };
 
 
@@ -45,18 +47,19 @@ type State = {
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
-  background-color: ${themedColors.card};
+  background-color: ${themedColors.surface};
   padding: 1px 0;
   align-items: center;
   justify-content: flex-start;
   margin-bottom: ${spacing.rhythm / 2}px;
+  border-radius: 10;
+  width: 100%;
 `;
 
 const StyledLinearGradient = styled(LinearGradient)`
   padding: 1px;
   height: 11px;
-  border-top-right-radius: ${props => props.full ? 0 : '9px'};
-  border-bottom-right-radius: ${props => props.full ? 0 : '9px'};
+  border-radius: 10;
   overflow: hidden;
 `;
 
@@ -94,14 +97,15 @@ const AnimatedProgressCircle = Animated.createAnimatedComponent(ProgressCircle);
 class Progress extends React.Component<Props, State> {
   static defaultProps = {
     circle: false,
+    showLabel: false,
   };
 
   constructor(props: Props) {
     super(props);
     this.state = {
       label: '0',
-      progress: this.props.circle ? 0.5 : BACKGROUND_FOR_LABEL,
-      progressAnimated: new Animated.Value(this.props.circle ? 0.5 : BACKGROUND_FOR_LABEL),
+      progress: this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL,
+      progressAnimated: new Animated.Value(this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL),
     };
   }
 
@@ -120,26 +124,43 @@ class Progress extends React.Component<Props, State> {
       isPending,
       fullStatusValue,
       currentStatusValue,
+      activeTab,
     } = this.props;
 
-    if (prevProps.currentStatusValue !== currentStatusValue || prevProps.isPending !== isPending) {
-      this.handleStatusValue(fullStatusValue, currentStatusValue);
+    if (prevProps.currentStatusValue !== currentStatusValue
+      || prevProps.isPending !== isPending
+      || prevProps.activeTab !== activeTab
+    ) {
+      if (prevProps.activeTab !== activeTab) {
+        // eslint-disable-next-line react/no-did-update-set-state
+        this.setState({
+          label: '0',
+          progress: this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL,
+          progressAnimated: new Animated.Value(this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL),
+        }, () => {
+          this.handleStatusValue(fullStatusValue, currentStatusValue);
+        });
+      } else {
+        this.handleStatusValue(fullStatusValue, currentStatusValue);
+      }
     }
   }
 
   handleStatusValue = (full: number, current: number) => {
-    const currentStatus = Math.floor((current * 100) / full);
-    const adjustedCurrentStatus = currentStatus > 100 ? 100 : currentStatus;
-    const adjustedBarProgress = adjustedCurrentStatus < BACKGROUND_FOR_LABEL
-      ? BACKGROUND_FOR_LABEL
-      : adjustedCurrentStatus;
-    const adjustedCircleProgress = getAdjustedProgressInPercent(adjustedCurrentStatus);
-    const thisProgress = this.props.circle ? adjustedCircleProgress : adjustedBarProgress;
-    this.setState({
-      label: adjustedCurrentStatus.toString(),
-      progress: thisProgress,
-    });
-    this.animateProgress(thisProgress);
+    if (full > 0) {
+      const currentStatus = Math.floor((current * 100) / full);
+      const adjustedCurrentStatus = currentStatus > 100 ? 100 : currentStatus;
+      const adjustedBarProgress = adjustedCurrentStatus < BACKGROUND_FOR_LABEL
+        ? BACKGROUND_FOR_LABEL
+        : adjustedCurrentStatus;
+      const adjustedCircleProgress = getAdjustedProgressInPercent(adjustedCurrentStatus);
+      const thisProgress = this.props.circle ? adjustedCircleProgress : adjustedBarProgress;
+      this.setState({
+        label: adjustedCurrentStatus.toString(),
+        progress: thisProgress,
+      });
+      this.animateProgress(thisProgress);
+    }
   };
 
   animateProgress = (newProgress: number) => {
@@ -148,7 +169,7 @@ class Progress extends React.Component<Props, State> {
       {
         toValue: newProgress,
         easing: Easing.linear,
-        duration: 800,
+        duration: 500,
       },
     ).start();
   };
@@ -164,6 +185,7 @@ class Progress extends React.Component<Props, State> {
       circle,
       children,
       theme,
+      showLabel = false,
     } = this.props;
 
     const colors = getThemeColors(theme);
@@ -184,7 +206,7 @@ class Progress extends React.Component<Props, State> {
         <AnimatedStyledLinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          colors={[colors.primary, colors.accent]}
+          colors={[colors.progressBarStart, colors.progressBarEnd]}
           full={progress === 100}
           style={{
             width: progressAnimated.interpolate({
@@ -193,7 +215,9 @@ class Progress extends React.Component<Props, State> {
             }),
           }}
         >
-          <ProgressLabel>{label}%</ProgressLabel>
+          {!!showLabel &&
+            <ProgressLabel>{label}%</ProgressLabel>
+          }
         </AnimatedStyledLinearGradient>
       </ProgressBarWrapper>
     );

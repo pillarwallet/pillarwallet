@@ -106,6 +106,11 @@ import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/Re
 import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
+import PoolTogetherDashboardScreen from 'screens/PoolTogether/PoolTogetherDashboard';
+import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
+import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
+import PoolTogetherWithdrawScreen from 'screens/PoolTogether/PoolTogetherWithdraw';
+import PoolTogetherWithdrawConfirmScreen from 'screens/PoolTogether/PoolTogetherWithdrawConfirm';
 import ChooseAssetDepositScreen from 'screens/Lending/ChooseAssetDeposit';
 import DepositedAssetsListScreen from 'screens/Lending/DepositedAssetsList';
 import ViewDepositedAssetScreen from 'screens/Lending/ViewDepositedAsset';
@@ -258,6 +263,12 @@ import {
   LENDING_ENTER_WITHDRAW_AMOUNT,
   LENDING_WITHDRAW_DEPOSIT_FLOW,
   LENDING_WITHDRAW_TRANSACTION_CONFIRM,
+  POOLTOGETHER_FLOW,
+  POOLTOGETHER_DASHBOARD,
+  POOLTOGETHER_PURCHASE,
+  POOLTOGETHER_PURCHASE_CONFIRM,
+  POOLTOGETHER_WITHDRAW,
+  POOLTOGETHER_WITHDRAW_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -346,6 +357,11 @@ const servicesFlow = createStackNavigator({
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [FIAT_EXCHANGE]: FiatExchangeScreen,
   [FIAT_CRYPTO]: FiatCryptoScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -391,6 +407,11 @@ const homeFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -697,6 +718,17 @@ const recoveryPortalRecoveryFlow = createStackNavigator({
 
 recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// POOLTOGETHER FLOW
+const poolTogetherFlow = createStackNavigator({
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+}, StackNavigatorConfig);
+
+poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 const lendingAddDepositsFlow = createStackNavigator({
   [LENDING_ENTER_DEPOSIT_AMOUNT]: EnterDepositAmountScreen,
   [LENDING_DEPOSIT_TRANSACTION_CONFIRM]: DepositTransactionConfirmScreen,
@@ -742,6 +774,7 @@ const AppFlowNavigation = createStackNavigator(
     [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
     [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
     [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
+    [POOLTOGETHER_FLOW]: poolTogetherFlow,
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,

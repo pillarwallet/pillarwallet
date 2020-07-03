@@ -45,6 +45,7 @@ import {
 import { findMatchingContact } from 'utils/contacts';
 import { findAccountByAddress, getAccountName } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
+import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // components
 import {
@@ -85,6 +86,11 @@ import {
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+import {
+  POOLTOGETHER_WITHDRAW_TRANSACTION,
+  POOLTOGETHER_DEPOSIT_TRANSACTION,
+} from 'constants/poolTogetherConstants';
+import { DAI } from 'constants/assetsConstants';
 
 // selectors
 import { activeAccountAddressSelector, bitcoinAddressSelector } from 'selectors';
@@ -179,6 +185,10 @@ const STATUSES = {
   BACKUP: 'Backup secured',
   ACTIVATED: 'Activated',
 };
+
+const poolTogetherLogo = require('assets/images/pool_together.png');
+const daiIcon = require('assets/images/dai_color.png');
+const usdcIcon = require('assets/images/usdc_color.png');
 
 const ListWrapper = styled.View`
   align-items: flex-end;
@@ -514,6 +524,20 @@ export class ActivityFeedItem extends React.Component<Props> {
           cornerIcon: this.getAaveDepositedAssetImage(),
         };
         break;
+      case POOLTOGETHER_DEPOSIT_TRANSACTION:
+      case POOLTOGETHER_WITHDRAW_TRANSACTION: {
+        const { symbol, decimals, amount } = event.extra;
+        directionSymbol = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? '-' : '+';
+        data = {
+          label: 'Pool Together',
+          itemImageSource: poolTogetherLogo,
+          cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
+          itemValue: `${directionSymbol} ${parseFloat(formatUnits(amount, decimals))} ${symbol}`,
+          itemImageRoundedSquare: true,
+          valueColor: event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? 'text' : 'positive',
+        };
+        break;
+      }
       default:
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]
@@ -561,6 +585,12 @@ export class ActivityFeedItem extends React.Component<Props> {
               );
             }
           }
+        } else if (isPoolTogetherAddress(event.to)) {
+          data = {
+            label: 'Pool Together',
+            itemImageSource: poolTogetherLogo,
+            itemImageRoundedSquare: true,
+          };
         } else {
           const additionalInfo = {};
           let itemLabel = usernameOrAddress;

@@ -64,6 +64,7 @@ import phoneContactsReducer from './phoneContactsReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
 import recoveryPortalReducer from './recoveryPortalReducer';
 import lendingReducer from './lendingReducer';
+import poolTogetherReducer from './poolTogetherReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -107,6 +108,7 @@ import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './ph
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
 import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
 import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
+import type { PoolTogetherReducerState } from './poolTogetherReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -147,6 +149,7 @@ export type RootReducerState = {|
   connectedDevices: ConnectedDevicesReducerState,
   recoveryPortal: RecoveryPortalReducerState,
   lending: LendingReducerState,
+  poolTogether: PoolTogetherReducerState,
 |};
 
 type RootReducerAction =
@@ -227,6 +230,7 @@ const appReducer = combineReducers({
   connectedDevices: connectedDevicesReducer,
   recoveryPortal: recoveryPortalReducer,
   lending: lendingReducer,
+  poolTogether: poolTogetherReducer,
 });
 
 export const initialState = appReducer(undefined, {});

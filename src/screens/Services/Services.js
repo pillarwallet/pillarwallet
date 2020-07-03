@@ -33,7 +33,7 @@ import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // constants
-import { EXCHANGE, LENDING_CHOOSE_DEPOSIT } from 'constants/navigationConstants';
+import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // utils
@@ -47,7 +47,6 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-
 
 type Props = {
   theme: Theme,
@@ -127,6 +126,13 @@ class ServicesScreen extends React.Component<Props> {
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       },
       {
+        key: 'poolTogether',
+        title: 'Pool Together savings game',
+        body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
+        hidden: !isActiveAccountSmartWallet,
+        action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
+      },
+      {
         key: 'peerToPeerTrading',
         title: 'Peer-to-peer trading',
         body: 'Swap tokens directly with others. Safe, secure, anonymous',
@@ -144,8 +150,12 @@ class ServicesScreen extends React.Component<Props> {
       disabled,
       label,
       labelBadge,
+      hidden = false,
     } = item;
 
+    if (hidden) {
+      return null;
+    }
     return (
       <ListCard
         title={title}
