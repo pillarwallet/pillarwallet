@@ -23,16 +23,14 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import PillarSdk from 'services/api';
 import {
   refreshBitcoinBalanceAction,
-  refreshBitcoinUnspentTxAction,
   refreshBTCTransactionsAction,
 } from 'actions/bitcoinActions';
 import type { BitcoinReducerState } from 'reducers/bitcoinReducer';
 import {
   UPDATE_BITCOIN_BALANCE,
-  UPDATE_UNSPENT_TRANSACTIONS,
   UPDATE_BITCOIN_TRANSACTIONS,
 } from 'constants/bitcoinConstants';
-import { getAddressUtxos, getAddressBalance, getBTCTransactions } from 'services/bitcoin';
+import { getAddressBalance, getBTCTransactions } from 'services/bitcoin';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -60,26 +58,6 @@ describe('Bitcoin actions', () => {
 
   beforeEach(() => {
     store = mockStore(initialState);
-  });
-
-  describe('refreshBitcoinUnspentTxAction', () => {
-    describe('for existing address', () => {
-      it('updates the unspent transactions', async () => {
-        await store.dispatch(refreshBitcoinUnspentTxAction(false));
-
-        const actions = store.getActions();
-
-        expect(actions.length).toEqual(1);
-
-        const utxos = await getAddressUtxos(address);
-
-        expect(actions[0]).toMatchObject({
-          type: UPDATE_UNSPENT_TRANSACTIONS,
-          address,
-          unspentTransactions: utxos,
-        });
-      });
-    });
   });
 
   describe('refreshBitcoinBalanceAction', () => {

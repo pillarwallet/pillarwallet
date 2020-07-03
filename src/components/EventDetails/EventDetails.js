@@ -28,7 +28,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
+import { TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -53,14 +53,12 @@ import {
   formatAmount,
   formatUnits,
   formatTransactionFee,
-  reportOrWarn,
 } from 'utils/common';
 import {
   groupPPNTransactions,
   isPendingTransaction,
   isSWAddress,
   isKWAddress,
-  isBTCAddress,
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
@@ -73,7 +71,7 @@ import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // constants
-import { BTC, defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -102,7 +100,6 @@ import {
   SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
   SEND_TOKEN_FROM_CONTACT_FLOW,
@@ -112,7 +109,6 @@ import {
   SEND_SYNTHETIC_ASSET,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
-  SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   CONTACT,
   LENDING_ENTER_WITHDRAW_AMOUNT,
   LENDING_ENTER_DEPOSIT_AMOUNT,
@@ -133,7 +129,6 @@ import {
 import {
   activeAccountAddressSelector,
   activeBlockchainSelector,
-  bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -144,20 +139,17 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, AssetData, DepositedAsset } from 'models/Asset';
+import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
-import type { BitcoinAddress } from 'models/Bitcoin';
 import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -191,7 +183,6 @@ type Props = {
   activeAccountAddress: string,
   accountAssets: Assets,
   activeBlockchainNetwork: string,
-  bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
   isPPNActivated: boolean,
@@ -200,9 +191,7 @@ type Props = {
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
-  bitcoinFeatureEnabled?: boolean,
   setActiveBlockchainNetwork: (id: string) => void,
-  refreshBitcoinBalance: () => void,
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
@@ -353,7 +342,6 @@ const CornerIcon = styled(CachedImage)`
   right: 0;
 `;
 
-
 export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
@@ -470,9 +458,8 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getFeeLabel = (event: Object) => {
-    const { assetDecimals } = this.props;
     const {
-      gasUsed, gasPrice, btcFee, feeWithGasToken,
+      gasUsed, gasPrice, feeWithGasToken,
     } = event;
 
     if (!isEmpty(feeWithGasToken)) {
@@ -483,9 +470,6 @@ export class EventDetail extends React.Component<Props, State> {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const formattedFee = parseFloat(utils.formatEther(fee.toString()));
       return this.getFormattedGasFee(formattedFee, ETH);
-    } else if (btcFee) {
-      const formattedBTCFee = parseFloat(formatUnits(btcFee, assetDecimals));
-      return this.getFormattedGasFee(formattedBTCFee, BTC);
     }
     return null;
   };
@@ -521,11 +505,8 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   viewOnTheBlockchain = () => {
-    const { hash, asset } = this.props.event;
-    let url = TX_DETAILS_URL + hash;
-    if (asset && asset === 'BTC') {
-      url = BITCOIN_TX_DETAILS_URL + hash;
-    }
+    const { hash } = this.props.event;
+    const url = TX_DETAILS_URL + hash;
     Linking.openURL(url);
   };
 
@@ -671,50 +652,6 @@ export class EventDetail extends React.Component<Props, State> {
     onClose();
     await this.switchToSW();
     navigation.navigate(SETTLE_BALANCE);
-  };
-
-  sendToBtc = async (btcReceiverAddress: string) => {
-    const {
-      onClose,
-      navigation,
-      supportedAssets,
-      setActiveBlockchainNetwork,
-      refreshBitcoinBalance,
-      isForAllAccounts,
-    } = this.props;
-    onClose();
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-    refreshBitcoinBalance();
-    const btcToken = supportedAssets.find(e => e.symbol === BTC);
-
-    if (!btcToken) {
-      reportOrWarn('BTC token not found', null, 'error');
-      return;
-    }
-
-    const { symbol: token, decimals } = btcToken;
-    const iconUrl = `${SDK_PROVIDER}/${btcToken.iconUrl}?size=2`;
-    const assetData: AssetData = {
-      token,
-      decimals,
-      iconColor: iconUrl,
-    };
-
-    if (isForAllAccounts) {
-      navigation.navigate(SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW, {
-        assetData,
-        receiver: btcReceiverAddress,
-        source: 'Home',
-        receiverEnsName: '',
-      });
-    } else {
-      navigation.navigate(SEND_TOKEN_AMOUNT, {
-        assetData,
-        receiver: btcReceiverAddress,
-        source: 'Home',
-        receiverEnsName: '',
-      });
-    }
   };
 
   goToPoolTogetherPurcharse = (symbol: string) => {
@@ -932,8 +869,6 @@ export class EventDetail extends React.Component<Props, State> {
       contactsSmartAddresses,
       isPPNActivated,
       itemData,
-      bitcoinAddresses,
-      bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
       depositedAssets,
       isSmartAccount,
@@ -1207,7 +1142,6 @@ export class EventDetail extends React.Component<Props, State> {
 
           let buttons = [];
           const contactFound = Object.keys(contact).length > 0;
-          const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
           const sendBackButtonSecondary = {
@@ -1258,19 +1192,6 @@ export class EventDetail extends React.Component<Props, State> {
             squarePrimary: true,
           };
 
-          const sendBackBtc = {
-            title: 'Send back',
-            onPress: () => this.sendToBtc(event.from),
-            secondary: true,
-          };
-
-          const sendMoreBtc = {
-            title: 'Send more',
-            onPress: () => this.sendToBtc(event.to),
-            secondary: true,
-          };
-
-
           if (isReferralRewardTransaction) {
             buttons = [];
           } else if (isReceived) {
@@ -1278,24 +1199,12 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [sendFromSW, topUpMore];
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
-            } else if (isBitcoinTrx) {
-              if (bitcoinFeatureEnabled && !isPending) {
-                buttons = [sendBackBtc];
-              } else {
-                buttons = [];
-              }
             } else if (contactFound) {
               buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
-            }
-          } else if (isBitcoinTrx) {
-            if (bitcoinFeatureEnabled && !isPending) {
-              buttons = [sendMoreBtc];
-            } else {
-              buttons = [];
             }
           } else if (contactFound) {
             buttons = [sendMoreButtonSecondary];
@@ -1771,11 +1680,6 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history, updatingTransaction },
-  featureFlags: {
-    data: {
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
-    },
-  },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
@@ -1791,7 +1695,6 @@ const mapStateToProps = ({
   ensRegistry,
   supportedAssets,
   history,
-  bitcoinFeatureEnabled,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
   txNotes,
@@ -1809,7 +1712,6 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
-  bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
@@ -1826,8 +1728,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 

@@ -462,7 +462,7 @@ exports[`Storyshots ActionModal default 1`] = `
                   ]
                 }
               >
-                
+
               </Text>
             </View>
           </View>
@@ -11942,590 +11942,6 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
 </View>
 `;
 
-exports[`Storyshots EventDetail Bitcoin Wallet Incoming 1`] = `
-Array [
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
-  </View>,
-  <View
-    h={10}
-    style={
-      Array [
-        Object {
-          "height": 10,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <View
-    accessible={true}
-    focusable={true}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "opacity": 1,
-      }
-    }
-  >
-    <Text
-      medium={true}
-      style={
-        Array [
-          Object {
-            "color": "#0A1427",
-            "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 16,
-            "lineHeight": 24,
-            "textAlignVertical": "center",
-          },
-          undefined,
-        ]
-      }
-    >
-      someBitcoinAddress
-    </Text>
-    <View
-      h={20}
-      style={
-        Array [
-          Object {
-            "height": 20,
-            "width": 0,
-          },
-          undefined,
-        ]
-      }
-    />
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "backgroundColor": "#EBF0F6",
-            "borderRadius": 32,
-            "height": 64,
-            "justifyContent": "center",
-            "overflow": "hidden",
-            "textAlign": "center",
-            "width": 64,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        name="received"
-        style={
-          Array [
-            Object {
-              "color": "#497391",
-              "fontSize": 64,
-            },
-            undefined,
-          ]
-        }
-      />
-    </View>
-  </View>,
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    <Text
-      color="#2AA057"
-      large={true}
-      style={
-        Array [
-          Object {
-            "color": "#2AA057",
-            "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 24,
-            "lineHeight": 38,
-            "textAlignVertical": "center",
-          },
-          Array [
-            Object {
-              "color": "#2AA057",
-              "fontFamily": "EuclidCircularB-Medium",
-              "fontSize": 24,
-              "lineHeight": 38,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ],
-        ]
-      }
-    >
-      + 0.1 BTC
-    </Text>
-  </View>,
-  <View
-    h={4}
-    style={
-      Array [
-        Object {
-          "height": 4,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <Text
-    regular={true}
-    secondary={true}
-    style={
-      Array [
-        Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 14,
-          "lineHeight": 22,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    to Bitcoin Wallet
-  </Text>,
-  <View
-    h={16}
-    style={
-      Array [
-        Object {
-          "height": 16,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <View
-    style={
-      Array [
-        Object {
-          "alignSelf": "stretch",
-        },
-        undefined,
-      ]
-    }
-  />,
-]
-`;
-
-exports[`Storyshots EventDetail Bitcoin Wallet Outgoing 1`] = `
-Array [
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
-  </View>,
-  <View
-    h={10}
-    style={
-      Array [
-        Object {
-          "height": 10,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <View
-    accessible={true}
-    focusable={true}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "opacity": 1,
-      }
-    }
-  >
-    <Text
-      medium={true}
-      style={
-        Array [
-          Object {
-            "color": "#0A1427",
-            "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 16,
-            "lineHeight": 24,
-            "textAlignVertical": "center",
-          },
-          undefined,
-        ]
-      }
-    >
-      someBitcoinAddress
-    </Text>
-    <View
-      h={20}
-      style={
-        Array [
-          Object {
-            "height": 20,
-            "width": 0,
-          },
-          undefined,
-        ]
-      }
-    />
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "backgroundColor": "#EBF0F6",
-            "borderRadius": 32,
-            "height": 64,
-            "justifyContent": "center",
-            "overflow": "hidden",
-            "textAlign": "center",
-            "width": 64,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        name="sent"
-        style={
-          Array [
-            Object {
-              "color": "#BD573A",
-              "fontSize": 64,
-            },
-            undefined,
-          ]
-        }
-      />
-    </View>
-  </View>,
-  <View
-    h={20}
-    style={
-      Array [
-        Object {
-          "height": 20,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    <Text
-      color="#0A1427"
-      large={true}
-      style={
-        Array [
-          Object {
-            "color": "#0A1427",
-            "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 24,
-            "lineHeight": 38,
-            "textAlignVertical": "center",
-          },
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Medium",
-              "fontSize": 24,
-              "lineHeight": 38,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ],
-        ]
-      }
-    >
-      - 0.1 BTC
-    </Text>
-  </View>,
-  <View
-    h={4}
-    style={
-      Array [
-        Object {
-          "height": 4,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <Text
-    regular={true}
-    secondary={true}
-    style={
-      Array [
-        Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 14,
-          "lineHeight": 22,
-          "textAlignVertical": "center",
-        },
-        undefined,
-      ]
-    }
-  >
-    from Bitcoin Wallet
-  </Text>,
-  <View
-    h={16}
-    style={
-      Array [
-        Object {
-          "height": 16,
-          "width": 0,
-        },
-        undefined,
-      ]
-    }
-  />,
-  <Text
-    regular={true}
-    secondary={true}
-    style={
-      Array [
-        Object {
-          "color": "#8B939E",
-          "fontFamily": "EuclidCircularB-Regular",
-          "fontSize": 14,
-          "lineHeight": 22,
-          "textAlignVertical": "center",
-        },
-        Object {
-          "marginBottom": 32,
-        },
-      ]
-    }
-  >
-    Fee 0.00005915 BTC (£ 0)
-  </Text>,
-  <View
-    style={
-      Array [
-        Object {
-          "alignSelf": "stretch",
-        },
-        undefined,
-      ]
-    }
-  />,
-]
-`;
-
 exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
 Array [
   <View
@@ -18499,9 +17915,9 @@ Array [
           ]
         }
       >
-        - 
+        -
         1
-         
+
         PLR
       </Text>
     </View>
@@ -18620,9 +18036,9 @@ Array [
           ]
         }
       >
-        - 
+        -
         2
-         
+
         ETH
       </Text>
     </View>
@@ -18689,9 +18105,9 @@ Array [
             ]
           }
         >
-          + 
+          +
           1.0
-           
+
           PLR
         </Text>
         <Text
@@ -18710,9 +18126,9 @@ Array [
             ]
           }
         >
-          + 
+          +
           2.0
-           
+
           ETH
         </Text>
       </View>
@@ -29786,7 +29202,7 @@ Array [
                     ]
                   }
                 >
-                  
+
                 </Text>
               </View>
             </View>
@@ -31569,7 +30985,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                 ]
                               }
                             >
-                              
+
                             </Text>
                           </View>
                         </View>
@@ -31843,7 +31259,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                   }
                 >
                   54321
-                   
+
                   PLR
                    (
                   £ 80,395.08
@@ -32067,7 +31483,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           secondary={true}
                         >
                           54321
-                           
+
                           PLR
                            (
                           £ 80,395.08
@@ -33432,7 +32848,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                 ]
                               }
                             >
-                              
+
                             </Text>
                           </View>
                         </View>
@@ -35221,7 +34637,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                 ]
                               }
                             >
-                              
+
                             </Text>
                           </View>
                         </View>

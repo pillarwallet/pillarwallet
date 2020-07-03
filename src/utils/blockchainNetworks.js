@@ -23,3 +23,10 @@ import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 export const isPillarPaymentNetworkActive = (blockchainNetworks: BlockchainNetwork[]): boolean => {
   return blockchainNetworks.some(({ isActive, id }) => !!isActive && id === BLOCKCHAIN_NETWORK_TYPES.PILLAR_NETWORK);
 };
+
+const getSupportedBlockchainNetworks = () => Object.values(BLOCKCHAIN_NETWORK_TYPES);
+
+export const isSupportedBlockchain = (activeBlockchain?: ?string) => {
+  const supportedNetworks = getSupportedBlockchainNetworks();
+  return !!activeBlockchain && supportedNetworks.includes(activeBlockchain);
+};

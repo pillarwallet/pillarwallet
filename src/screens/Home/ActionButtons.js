@@ -28,11 +28,10 @@ import CircleButton from 'components/CircleButton';
 import ActionModal from 'components/ActionModal';
 import { LabelBadge } from 'components/LabelBadge';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import Toast from 'components/Toast';
 
 // constants
-import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
-import { SEND_BITCOIN_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 import { RECEIVE, SEND } from 'constants/walletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
@@ -44,13 +43,12 @@ import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActio
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
 import { formatFiat } from 'utils/common';
-import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
+import { isSupportedAccountType } from 'utils/accounts';
 
 // models, types
 import type { Account } from 'models/Account';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Asset, AssetData, BalancesStore, Rates } from 'models/Asset';
-import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
+import type { Asset, BalancesStore, Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
@@ -59,9 +57,6 @@ type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,
   balances: BalancesStore,
-  bitcoinFeatureEnabled: boolean,
-  bitcoinBalances: BitcoinBalance,
-  bitcoinAddresses: BitcoinAddress[],
   supportedAssets: Asset[],
   wallets: Account[],
   activeWallet: Account,
@@ -106,11 +101,6 @@ const getModalActionsInfo = (actionType: string) => {
         title: 'Key Wallet',
         paragraph: 'Needs to be backed up in order to enable Smart Wallet recovery.',
       };
-
-    case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-      return {
-        title: 'Bitcoin Wallet',
-      };
     default:
       return {};
   }
@@ -148,17 +138,13 @@ class ActionButtons extends React.Component<Props, State> {
       rates,
       balances,
       baseFiatCurrency,
-      bitcoinBalances,
       wallets,
     } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const accountsInfo = wallets.map((account) => {
       const { type, id } = account;
-      const isBitcoin = type === BLOCKCHAIN_NETWORK_TYPES.BITCOIN;
-      const accBalance = isBitcoin
-        ? calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency)
-        : calculateBalanceInFiat(rates, balances[id] || {}, fiatCurrency);
+      const accBalance = calculateBalanceInFiat(rates, balances[id] || {}, fiatCurrency);
 
       return {
         ...account,
@@ -166,7 +152,7 @@ class ActionButtons extends React.Component<Props, State> {
         formattedBalance: formatFiat(accBalance, fiatCurrency),
         address: id,
         additionalInfo: getModalActionsInfo(type),
-        sendFlow: isBitcoin ? SEND_BITCOIN_FLOW : SEND_TOKEN_FROM_HOME_FLOW,
+        sendFlow: SEND_TOKEN_FROM_HOME_FLOW,
         exchangeFlow: EXCHANGE,
       };
     });
@@ -206,7 +192,7 @@ class ActionButtons extends React.Component<Props, State> {
           };
         });
       case EXCHANGE:
-        return accountsInfo.filter(({ type }) => type !== BLOCKCHAIN_NETWORK_TYPES.BITCOIN).map((acc) => {
+        return accountsInfo.filter(({ type }) => isSupportedAccountType(type)).map((acc) => {
           const {
             type,
             formattedBalance,
@@ -230,7 +216,6 @@ class ActionButtons extends React.Component<Props, State> {
     const {
       navigation,
       activeWallet,
-      supportedAssets,
       changeWalletAction,
       blockchainNetwork,
       setActiveBlockchainNetwork,
@@ -261,31 +246,6 @@ class ActionButtons extends React.Component<Props, State> {
         }
         break;
 
-      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        changeWalletAction(acc, () => {
-          if (navigateTo === SEND_BITCOIN_FLOW) {
-            const btcToken = supportedAssets.find(asset => asset.symbol === BTC);
-            if (!btcToken) {
-              Toast.show({
-                message: 'Bitcoin is not supported',
-                type: 'warning',
-                title: 'Can not send Bitcoin',
-                autoClose: false,
-              });
-              return;
-            }
-            const { symbol: token, decimals } = btcToken;
-            const assetData: AssetData = {
-              token,
-              decimals,
-            };
-            navigation.navigate(SEND_BITCOIN_FLOW, { assetData });
-          } else {
-            navigation.navigate(navigateTo);
-          }
-        });
-        break;
-
       default:
         break;
     }
@@ -293,15 +253,9 @@ class ActionButtons extends React.Component<Props, State> {
 
   render() {
     const { visibleActionModal, receiveAddress } = this.state;
-    const {
-      balances,
-      bitcoinBalances,
-      bitcoinFeatureEnabled,
-      bitcoinAddresses,
-    } = this.props;
+    const { balances } = this.props;
     const modalActions = this.getModalActions();
-    const isSendButtonActive = !!Object.keys(balances).length ||
-      (bitcoinFeatureEnabled && bitcoinAddresses.length > 0 && !!Object.keys(bitcoinBalances).length);
+    const isSendButtonActive = !!Object.keys(balances).length;
 
     return (
       <React.Fragment>
@@ -344,12 +298,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, blockchainNetwork } },
   rates: { data: rates },
   balances: { data: balances },
-  featureFlags: {
-    data: {
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
-    },
-  },
-  bitcoin: { data: { addresses: bitcoinAddresses, balances: bitcoinBalances } },
   assets: {
     supportedAssets,
   },
@@ -358,9 +306,6 @@ const mapStateToProps = ({
   blockchainNetwork,
   rates,
   balances,
-  bitcoinFeatureEnabled,
-  bitcoinBalances,
-  bitcoinAddresses,
   supportedAssets,
 });
 

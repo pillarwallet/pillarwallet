@@ -73,14 +73,20 @@ import {
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
+
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
+import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+
+// selectors
+import { activeBlockchainSelector } from 'selectors';
 
 // actions
-import { loadBitcoinAddressesAction, loadBitcoinBalancesAction } from './bitcoinActions';
-
+import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
+import { fallbackToSmartOrKeyAccountAction } from './accountsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -206,9 +212,12 @@ export const initAppAndRedirectAction = () => {
         },
       });
 
-      dispatch(loadBitcoinAddressesAction());
-
-      dispatch(loadBitcoinBalancesAction());
+      // in case Bitcoin is set as active as we kill Bitcoin access
+      const activeBlockchain = activeBlockchainSelector(getState());
+      if (!isSupportedBlockchain(activeBlockchain)) {
+        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+        dispatch(fallbackToSmartOrKeyAccountAction());
+      }
 
       const {
         upgradeStatus = null,

@@ -758,59 +758,6 @@ storiesOf('EventDetail', module)
       }}
     />
   ))
-
-// BITCOIN WALLET
-  .add('Bitcoin Wallet Incoming', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: 'someBitcoinAddress',
-        to: 'bitcoinAddress',
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: 'someBitcoinAddress',
-        fullItemValue: '+ 0.1 BTC',
-        subtext: 'to Bitcoin Wallet',
-        valueColor: 'positive',
-        avatarUrl: '',
-        iconName: 'received',
-        iconColor: 'transactionReceivedIcon',
-        isReceived: true,
-      }}
-    />
-  ))
-  .add('Bitcoin Wallet Outgoing', () => (
-    <EventDetailsStoryItem
-      {...reduxData}
-      {...actions}
-      {...commonProps}
-      event={{
-        type: TRANSACTION_EVENT,
-        from: 'someBitcoinAddress',
-        to: 'bitcoinAddress',
-        asset: 'BTC',
-        btcFee: 5915,
-        nbConfirmations: 25,
-        status: 'confirmed',
-        isPPNTransaction: false,
-        hash: '0xHash',
-      }}
-      itemData={{
-        label: 'someBitcoinAddress',
-        fullItemValue: '- 0.1 BTC',
-        subtext: 'from Bitcoin Wallet',
-        valueColor: 'text',
-        avatarUrl: '',
-        iconName: 'sent',
-        iconColor: 'negative',
-      }}
-      assetDecimals={8}
-    />
-  ))
   .add('PoolTogether Deposit DAI', () => (
     <EventDetailsStoryItem
       {...reduxData}

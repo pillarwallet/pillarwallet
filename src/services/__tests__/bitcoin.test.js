@@ -180,20 +180,6 @@ describe('bitcoin service', () => {
   });
 
   describe('rootFromMnemonic', () => {
-    it('returns a root node', async () => {
-      const root = await rootFromMnemonic(mnemonic, 'testnet');
-
-      expect(keyPairAddress(root)).toEqual('mhQ51TfiyTdwxYDq42Wrz1LvLY7PbSEJ9w');
-    });
-
-    it('can be used to derive an address', async () => {
-      const root = await rootFromMnemonic(mnemonic, 'testnet');
-      const keyPair = root.derivePath("m/49'/1/0");
-      const derivedAddress = keyPairAddress(keyPair);
-
-      expect(derivedAddress).toEqual('mzhBnfzkgEMpKMn7VrZCi7JQ2Sn7wwfV9w');
-    });
-
     it('returns same values each time', async () => {
       const root1 = await rootFromMnemonic(mnemonic);
       const root2 = await rootFromMnemonic(mnemonic);

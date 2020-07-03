@@ -44,11 +44,6 @@ const initialState: BlockchainNetworkReducerState = {
       title: 'Pillar network',
       isActive: false,
     },
-    {
-      id: BLOCKCHAIN_NETWORK_TYPES.BITCOIN,
-      title: 'Bitcoin',
-      isActive: false,
-    },
   ],
 };
 
