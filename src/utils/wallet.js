@@ -39,7 +39,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
-  return mnemonicPhrase || utils.HDNode.entropyToMnemonic(utils.randomBytes(16));
+  return mnemonicPhrase || utils.entropyToMnemonic(utils.randomBytes(16));
 }
 
 export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
@@ -104,11 +104,9 @@ export function signPersonalMessage(message: string, walletInstance: Object): Pr
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
 
-// we use basic AsyncStorage implementation just to prevent backup being stored in same manner
-export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch, api: Object) {
+export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch) {
   const { wallet = {} } = get(storageData, 'wallet', {});
   const { appSettings = {} } = get(storageData, 'app_settings', {});
-  const { user = {} } = get(storageData, 'user', {});
   const isWalletEmpty = isEmpty(wallet);
 
   // missing wallet timestamp causes 'welcome screen'
@@ -130,37 +128,15 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
     reportToSentry('Empty wallet timestamp (auto-fix)');
   }
 
-  // TODO: remove this if there will be no reports in Sentry
-  if (isEmpty(user) || !user.username || !user.walletId) {
-    if (!isEmpty(wallet)) {
-      printLog('RESTORING USER FROM API');
-      api.init();
-      const apiUser = await api.validateAddress(normalizeWalletAddress(wallet.address));
-      if (apiUser.walletId) {
-        const restoredUser = {
-          id: apiUser.id,
-          walletId: apiUser.walletId,
-          username: apiUser.username,
-          profileLargeImage: apiUser.profileImage,
-        };
-        await dispatch(saveDbAction('user', { user: restoredUser }, true));
-        printLog('USER RESTORED FROM API');
-      } else {
-        printLog('UNABLE TO RESTORE USER FROM API');
-      }
-      reportToSentry('Empty user object');
-    }
-  }
-
   return {
     wallet,
     walletTimestamp,
   };
 }
 
-export async function decryptWallet(encryptedWallet: Object, saltedPin: string, options?: Object) {
+export async function decryptWallet(encryptedWallet: Object, saltedPin: string) {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
-  let wallet = await ethers.Wallet.RNfromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
+  let wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
   if (wallet) {
     wallet = wallet.connect(provider);
   }

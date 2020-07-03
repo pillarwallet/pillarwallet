@@ -145,21 +145,18 @@ export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash
 };
 
 export const getTrxInfo = async (api: SDKWrapper, hash: string, network?: string) => {
-  const [txInfo, txReceipt, lastBlockNumber] = await Promise.all([
+  const [txInfo, txReceipt] = await Promise.all([
     api.fetchTxInfo(hash, network),
     api.fetchTransactionReceipt(hash, network),
-    api.fetchLastBlockNumber(network),
   ]);
 
-  if (!txInfo || !txReceipt || !lastBlockNumber) return null;
+  if (!txInfo || !txReceipt) return null;
 
-  const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
   const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
 
   return {
     txInfo,
     txReceipt,
-    nbConfirmations,
     status,
   };
 };

@@ -22,15 +22,11 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
-import isEqual from 'lodash.isequal';
-
-// actions
-import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import { Footer, ScrollWrapper } from 'components/Layout';
@@ -41,7 +37,6 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 
 // utils
-import { findKeyBasedAccount, getAccountAddress } from 'utils/accounts';
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { getUserName } from 'utils/contacts';
@@ -51,7 +46,6 @@ import { formatTransactionFee } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // services
-import { calculateGasEstimate } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 
 // constants
@@ -59,53 +53,43 @@ import { ETH } from 'constants/assetsConstants';
 
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
-import type { Accounts } from 'models/Account';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
-import type { GasInfo } from 'models/GasInfo';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { Account } from 'models/Account';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import {
-  // isActiveAccountSmartWalletSelector,
-  useGasTokenSelector,
-} from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // local components
 import withWCRequests from './withWCRequests';
 
 
 type Props = {
+  accounts: Account[],
   navigation: NavigationScreenProp<*>,
   requests: CallRequest[],
   session: Object,
   contacts: Object[],
   balances: Balances,
-  activeAccountAddress: string,
   theme: Theme,
   note: ?string,
   handleNoteChange: (text: string) => void,
   getTransactionDetails: (request: ?CallRequest) => Object,
   getTransactionPayload: (estimate: Object, request: ?CallRequest) => TokenTransactionPayload,
   isUnsupportedTransaction: (transaction: Object) => boolean,
-  gasInfo: GasInfo,
-  fetchGasInfo: () => void,
   rejectWCRequest: (request: CallRequest) => void,
   acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  // isSmartAccount: boolean,
-  accounts: Accounts,
   useGasToken: boolean,
 };
 
 type State = {
   txFeeInfo: ?TransactionFeeInfo,
-  gasLimit: number,
   gettingFee: boolean,
 };
 
@@ -146,7 +130,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   state = {
     txFeeInfo: null,
-    gasLimit: 0,
     gettingFee: false,
   };
 
@@ -167,31 +150,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      fetchGasInfo,
-      // TODO: if we introduce both KW and SW support, we need to properly tell which account is connected
-      // (not which is active). If we drop KW, delete all the non-SW code.
-      // isSmartAccount,
-    } = this.props;
     const requestMethod = get(this.request, 'method');
     if (['eth_sendTransaction', 'eth_signTransaction'].includes(requestMethod)) {
-      // if (!isSmartAccount) {
-      fetchGasInfo();
-      // }
-      this.fetchTransactionEstimate();
-    }
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const {
-      session: { isOnline },
-      gasInfo,
-      fetchGasInfo,
-    } = this.props;
-    if (prevProps.session.isOnline !== isOnline) {
-      fetchGasInfo();
-    }
-    if (!isEqual(prevProps.gasInfo, gasInfo)) {
       this.fetchTransactionEstimate();
     }
   }
@@ -200,89 +160,20 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (this.unsupportedTransaction) return;
     this.setState({ gettingFee: true });
 
-    const {
-      accounts,
-      // activeAccountAddress,
-      // isSmartAccount
-    } = this.props;
-
-    // let gasLimit;
-    // if (!isSmartAccount) {
-    const keyBasedAccount = findKeyBasedAccount(accounts);
-    if (!keyBasedAccount) return;
-    const accountAddress = getAccountAddress(keyBasedAccount);
-    const gasLimit = await calculateGasEstimate({ ...this.transactionDetails, from: accountAddress });
-    this.setState({ gasLimit });
-    // }
-
-    // const txFeeInfo = isSmartAccount
-    //   ? await this.getSmartWalletTxFee()
-    //   : this.getKeyWalletTxFee(gasLimit);
-
-    const txFeeInfo = this.getKeyWalletTxFee(gasLimit);
-
+    const txFeeInfo = await this.getSmartWalletTxFee();
     this.setState({ txFeeInfo, gettingFee: false });
-  };
-
-  getGasPriceWei = () => {
-    const useRequestPrice = this.shouldUseGasInfoFromRequest();
-    if (!useRequestPrice) {
-      const avgGasPrice = this.props.gasInfo.gasPrice.avg || 0;
-      return utils.parseUnits(avgGasPrice.toString(), 'gwei');
-    }
-    const gasPriceFromRequestHex = this.getGasPriceFromRequest();
-    return utils.bigNumberify(gasPriceFromRequestHex);
-  };
-
-  getGasLimit = () => {
-    const { gasLimit: estGasLimit } = this.state;
-    if (!this.shouldUseGasInfoFromRequest()) return estGasLimit;
-    return this.getGasLimitFromRequest();
-  };
-
-  getRequestParams = () => get(this, 'request.params') || [];
-
-  getGasLimitFromRequest = () => {
-    const params = this.getRequestParams();
-    const requestGasLimit = params[0]?.gas || params[0]?.gasLimit;
-    return requestGasLimit || this.state.gasLimit;
-  };
-
-  shouldUseGasInfoFromRequest = () => {
-    const params = this.getRequestParams();
-    if (!params.length || !params[0].gasPrice) return false;
-    return true;
-  };
-
-  getGasPriceFromRequest = () => {
-    const params = this.getRequestParams();
-    return params[0].gasPrice;
-  };
-
-  getKeyWalletTxFee = (gasLimit?: number): TransactionFeeInfo => {
-    if (this.shouldUseGasInfoFromRequest()) {
-      // fallbacks to this.state.gasLimit if no gasLimit provided in WC request
-      gasLimit = this.getGasLimitFromRequest();
-    } else {
-      gasLimit = gasLimit || this.state.gasLimit || 0;
-    }
-    const gasPriceWei = this.getGasPriceWei();
-
-    return {
-      fee: gasPriceWei.mul(gasLimit),
-    };
   };
 
   getSmartWalletTxFee = async (): Promise<TransactionFeeInfo> => {
     const { accountAssets, supportedAssets, useGasToken } = this.props;
     const defaultResponse = { fee: new BigNumber(0) };
-
     const {
       amount,
       to: recipient,
       contractAddress,
       data,
     } = this.transactionDetails;
+
     const value = Number(amount || 0);
 
     const { symbol, decimals } =
@@ -294,12 +185,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       value,
       data,
     };
-
-    if (this.shouldUseGasInfoFromRequest()) {
-      const gasPrice = this.getGasPriceFromRequest();
-      const gasLimit = this.getGasLimit();
-      return { fee: gasPrice.mul(gasLimit) };
-    }
 
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
@@ -326,8 +211,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     if (request) {
       rejectWCRequest(request);
     }
-
-    navigation.dismiss();
+    navigation.goBack();
   };
 
   render() {
@@ -341,7 +225,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       handleNoteChange,
     } = this.props;
 
-    const { txFeeInfo, gasLimit, gettingFee } = this.state;
+    const { txFeeInfo, gettingFee } = this.state;
 
     const colors = getThemeColors(theme);
 
@@ -368,11 +252,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       case 'eth_signTransaction':
         type = 'Transaction';
 
-        const gasPrice = this.getGasPriceWei();
         const estimatePart = {
           txFeeInWei,
-          gasLimit,
-          gasPrice,
           gasToken: {},
         };
         if (gasToken) estimatePart.gasToken = gasToken;
@@ -389,7 +270,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         if (this.unsupportedTransaction) {
           errorMessage = 'This data transaction or token is not supported in Pillar Wallet yet';
         } else {
-          const txFeeInWeiBN = utils.bigNumberify(txFeeInWei.toString()); // BN compatibility
+          const txFeeInWeiBN = EthersBigNumber.from(txFeeInWei.toString()); // BN compatibility
           if (!isEnoughBalanceForTransactionFee(balances, {
             amount,
             symbol,
@@ -556,24 +437,20 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  accounts: { data: accounts },
   contacts: { data: contacts },
   session: { data: session },
-  history: { gasInfo },
   assets: { supportedAssets },
+  accounts: { data: accounts },
 }) => ({
   accounts,
   contacts,
   session,
-  gasInfo,
   supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
-  // isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
 });
 
@@ -582,10 +459,6 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-});
-
 export default withWCRequests(
-  withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen)),
+  withTheme(connect(combinedMapStateToProps)(WalletConnectCallRequestScreen)),
 );

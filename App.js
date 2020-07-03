@@ -125,14 +125,14 @@ class App extends React.Component<Props, *> {
     Linking.removeEventListener('url', this.handleDeepLinkEvent);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
-      executeDeepLink,
       startReferralsListener,
     } = this.props;
-    NetInfo.fetch()
+    // hold the UI and wait until network status finished for later app connectivity checks
+    await NetInfo.fetch()
       .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
@@ -143,11 +143,6 @@ class App extends React.Component<Props, *> {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');
     }
-    Linking.getInitialURL()
-      .then(url => {
-        if (url) executeDeepLink(url);
-      })
-      .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
   }

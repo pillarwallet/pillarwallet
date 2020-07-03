@@ -49,6 +49,9 @@ import { getActiveAccountAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
 import { isFiatCurrency } from 'utils/exchange';
 
+// selectors
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+
 // services
 import ExchangeService from 'services/exchange';
 
@@ -56,6 +59,9 @@ import ExchangeService from 'services/exchange';
 import type SDKWrapper from 'services/api';
 import type { Offer, OfferOrder } from 'models/Offer';
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
+
+// config
+import { EXCLUDED_SMARTWALLET_PROVIDERS, EXCLUDED_KEYWALLET_PROVIDERS } from 'configs/exchangeConfig';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -188,6 +194,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     } = getState();
 
     const activeWalletId = getPreferredWalletId(accounts);
+    const isSmartWallet = isActiveAccountSmartWalletSelector(getState());
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
     dispatch({
       type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -252,10 +259,12 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
         toAddress = prodAssetsAddress[toAssetCode];
       }
 
+      const excludedProviders = isSmartWallet ? EXCLUDED_SMARTWALLET_PROVIDERS : EXCLUDED_KEYWALLET_PROVIDERS;
+
       connectExchangeService(getState());
       exchangeService.onOffers(offers =>
         offers
-          .filter(({ askRate }) => !!askRate)
+          .filter(({ askRate, provider }) => !!askRate && !excludedProviders.includes(provider))
           .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
       );
       // we're requesting although it will start delivering when connection is established

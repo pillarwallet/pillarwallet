@@ -201,6 +201,8 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          extra: transaction.extra || null,
+          tag: transaction.tag || null,
           feeWithGasToken,
         });
       }
@@ -232,6 +234,7 @@ export const sendAssetAction = (
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
           extra: transaction.extra || null,
+          tag: transaction.tag || null,
           feeWithGasToken,
         });
       }
@@ -461,6 +464,40 @@ export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) 
   };
 };
 
+export const addMultipleAssetsAction = (assetsToAdd: Asset[]) => {
+  return async (dispatch: Dispatch, getState: () => Object) => {
+    const {
+      assets: { data: assets },
+      accounts: { data: accounts },
+    } = getState();
+
+    const accountId = getActiveAccountId(accounts);
+    if (!accountId) return;
+
+    const accountAssets = accountAssetsSelector(getState());
+    const updatedAssets = {
+      ...assets,
+      [accountId]: {
+        ...accountAssets,
+        ...assetsToAdd.reduce((newAssets, asset) => ({ ...newAssets, [asset.symbol]: { ...asset } }), {}),
+      },
+    };
+
+    assetsToAdd.forEach(asset => {
+      dispatch(showAssetAction(asset));
+    });
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+
+    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
+
+    dispatch(fetchAssetsBalancesAction());
+
+    assetsToAdd.forEach(asset => {
+      dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
+    });
+  };
+};
+
 export const addAssetAction = (asset: Asset) => {
   return async (dispatch: Dispatch, getState: () => Object) => {
     const {
@@ -621,11 +658,28 @@ export const checkForMissedAssetsAction = () => {
       .map((acc) => ({ id: acc, ...accountUpdatedAssets[acc], ...allAccountAssets[acc] }))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
-    dispatch({
-      type: UPDATE_ASSETS,
-      payload: updatedAssets,
+    let newAssetsFound = false;
+    Object.keys(updatedAssets).forEach(account => {
+      if (!accountsAssets[account] || !updatedAssets[account]) {
+        newAssetsFound = true;
+        return;
+      }
+
+      const assetsInAccountBefore = Object.keys(accountsAssets[account]).length;
+      const assetsInAccountAfter = Object.keys(updatedAssets[account]).length;
+
+      if (assetsInAccountBefore !== assetsInAccountAfter) {
+        newAssetsFound = true;
+      }
     });
-    dispatch(fetchAssetsBalancesAction());
-    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+
+    if (newAssetsFound) {
+      dispatch({
+        type: UPDATE_ASSETS,
+        payload: updatedAssets,
+      });
+      dispatch(fetchAssetsBalancesAction());
+      dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+    }
   };
 };

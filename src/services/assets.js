@@ -17,20 +17,26 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Contract, utils } from 'ethers';
-import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import ethers, { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
+import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK, BALANCE_CHECK_CONTRACT } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
-import abiHelper from 'ethjs-abi';
 
+// constants
 import { BTC, ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+
+// utils
 import { getEthereumProvider, parseTokenBigNumberAmount, reportLog } from 'utils/common';
 
+// abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
+import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
 
+// types
 import type { Asset } from 'models/Asset';
+
 
 type Address = string;
 
@@ -75,6 +81,16 @@ type FetchBalancesResponse = Array<{
   symbol: string,
 }>;
 
+
+export const encodeContractMethod = (
+  contractAbi: string,
+  method: string,
+  params: any,
+) => {
+  const contractInterface = new ethers.utils.Interface(contractAbi);
+  return contractInterface.encodeFunctionData(method, params);
+};
+
 function contractHasMethod(contractCode, encodedMethodName) {
   return contractCode.includes(encodedMethodName);
 }
@@ -93,12 +109,11 @@ export async function transferERC20(options: ERC20TransferOptions) {
   let { data, to } = options;
 
   const wallet = walletInstance.connect(getEthereumProvider(NETWORK_PROVIDER));
-  const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
   if (!data) {
     try {
-      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, contractAmount]);
     } catch (e) {
       //
     }
@@ -107,7 +122,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
 
   const transaction = {
     gasLimit,
-    gasPrice: utils.bigNumberify(gasPrice),
+    gasPrice: EthersBigNumber.from(gasPrice),
     to,
     nonce,
     data,
@@ -147,7 +162,7 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
   return '';
 }
 
-const getERC721MethodAbi = (
+export const getContractMethodAbi = (
   contractAbi: Object[],
   methodName: string,
 ): ?Object => contractAbi.find(item => item.name === methodName);
@@ -160,8 +175,8 @@ export const buildERC721TransactionData = async (transaction: Object, provider: 
     contractAddress,
   } = transaction;
 
-  let methodAbi;
-  let data;
+  let contractAbi;
+  let params;
 
   const code = await provider.getCode(contractAddress);
   const receiverCode = await provider.getCode(contractAddress);
@@ -172,16 +187,16 @@ export const buildERC721TransactionData = async (transaction: Object, provider: 
   try {
     switch (contractTransferMethod) {
       case 'safeTransferFrom':
-        methodAbi = getERC721MethodAbi(ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, contractTransferMethod);
-        data = abiHelper.encodeMethod(methodAbi, [from, to, tokenId]);
+        contractAbi = ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM;
+        params = [from, to, tokenId];
         break;
       case 'transfer':
-        methodAbi = getERC721MethodAbi(ERC721_CONTRACT_ABI, contractTransferMethod);
-        data = abiHelper.encodeMethod(methodAbi, [to, tokenId]);
+        contractAbi = ERC721_CONTRACT_ABI;
+        params = [to, tokenId];
         break;
       case 'transferFrom':
-        methodAbi = getERC721MethodAbi(ERC721_CONTRACT_ABI_TRANSFER_FROM, contractTransferMethod);
-        data = abiHelper.encodeMethod(methodAbi, [from, to, tokenId]);
+        contractAbi = ERC721_CONTRACT_ABI_TRANSFER_FROM;
+        params = [from, to, tokenId];
         break;
       default:
     }
@@ -189,7 +204,8 @@ export const buildERC721TransactionData = async (transaction: Object, provider: 
     // unable to transfer
   }
 
-  return data;
+  // $FlowFixMe – asks for contractAbi to be surely initialized
+  return encodeContractMethod(contractAbi, contractTransferMethod, params);
 };
 
 export async function transferERC721(options: ERC721TransferOptions) {
@@ -209,7 +225,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   if (data) {
     const transaction = {
       gasLimit,
-      gasPrice: utils.bigNumberify(gasPrice),
+      gasPrice: EthersBigNumber.from(gasPrice),
       to: contractAddress,
       nonce,
       data,
@@ -242,7 +258,7 @@ export async function transferETH(options: ETHTransferOptions) {
   const value = utils.parseEther(amount.toString());
   const trx = {
     gasLimit,
-    gasPrice: utils.bigNumberify(gasPrice),
+    gasPrice: EthersBigNumber.from(gasPrice),
     value,
     to,
     nonce,
@@ -276,7 +292,7 @@ export function fetchERC20Balance(
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
-export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
+export function fetchAssetBalancesOnChain(assets: Asset[], walletAddress: string): Promise<FetchBalancesResponse> {
   const promises = assets
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
@@ -290,6 +306,26 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
   return Promise.all(promises)
     .then(balances => balances.filter(({ balance }) => balance !== null))
     .catch(() => []);
+}
+
+export async function fetchAddressBalancesFromProxyContract(
+  assets: Asset[],
+  accountAddress: string,
+): Promise<FetchBalancesResponse> {
+  if (!['homestead', 'ropsten'].includes(NETWORK_PROVIDER)) return [];
+
+  const tokens = assets.map(({ address }) => address);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const contract = new Contract(BALANCE_CHECK_CONTRACT, BALANCE_CHECKER_CONTRACT_ABI, provider);
+
+  const balances = await contract.balances([accountAddress], tokens)
+    .then(values =>
+      assets.map((asset, assetIdx) => ({
+        symbol: asset.symbol,
+        balance: utils.formatUnits(values[assetIdx], asset.decimals),
+      })))
+    .catch(() => []);
+  return balances;
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
@@ -369,9 +405,8 @@ export async function calculateGasEstimate(transaction: Object) {
        * we check `symbol !== ETH` because our assets list also includes ETH contract address
        * so want to check if it's also not ETH send flow
        */
-      const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
       const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
-      data = await contract.interface.functions.transfer.encode([to, contractAmount]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, contractAmount]);
       to = contractAddress;
     }
   } catch (e) {
@@ -385,7 +420,30 @@ export async function calculateGasEstimate(transaction: Object) {
     value,
   })
     .then(calculatedGasLimit =>
-      Math.round(utils.bigNumberify(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
+      Math.round(EthersBigNumber.from(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
     )
     .catch(() => DEFAULT_GAS_LIMIT);
 }
+
+export const getContract = (
+  address: string,
+  abi: string,
+  // for wallet calls set wallet provider, for general purpose use default
+  provider: Object = getEthereumProvider(NETWORK_PROVIDER),
+) => {
+  try {
+    return new Contract(address, abi, provider);
+  } catch (error) {
+    reportLog('Failed to create Contract', { error });
+    return null;
+  }
+};
+
+export const buildERC20ApproveTransactionData = (
+  spenderAddress: string,
+  amount: number,
+  decimals: number,
+): string => {
+  const contractAmount = parseTokenBigNumberAmount(amount, decimals);
+  return encodeContractMethod(ERC20_CONTRACT_ABI, 'approve', [spenderAddress, contractAmount]);
+};

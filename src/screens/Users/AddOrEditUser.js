@@ -43,7 +43,6 @@ import Flag from 'components/Flag';
 import Button from 'components/Button';
 import { LabelBadge } from 'components/LabelBadge';
 import InsightWithButton from 'components/InsightWithButton';
-import InviteBanner from 'screens/People/InviteBanner';
 import { Note } from 'components/Note';
 
 // utils
@@ -66,6 +65,7 @@ import type { Theme } from 'models/Theme';
 import VerifyOTPModal from './VerifyOTPModal';
 import CautionModal from './CautionModal';
 import VerifiedModal from './VerifiedModal';
+import InviteBanner from './InviteBanner';
 
 
 type Props = {

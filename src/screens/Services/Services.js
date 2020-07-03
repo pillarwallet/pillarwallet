@@ -17,23 +17,36 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
 import { FlatList, Image } from 'react-native';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import { withTheme } from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
+import { createStructuredSelector } from 'reselect';
+
+// actions
+import { getMetaDataAction } from 'actions/exchangeActions';
+
+// components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { EXCHANGE } from 'constants/navigationConstants';
+
+// constants
+import { EXCHANGE, LENDING_CHOOSE_DEPOSIT } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+
+// utils
 import { getThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
+
+// selectors
+import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+
+// types
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
-import { withTheme } from 'styled-components/native';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import { spacing } from 'utils/variables';
-import { getMetaDataAction } from 'actions/exchangeActions';
 
 
 type Props = {
@@ -42,6 +55,8 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   getMetaData: () => void,
+  isActiveAccountSmartWallet: boolean,
+  isSmartWalletActivated: boolean,
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -57,7 +72,12 @@ class ServicesScreen extends React.Component<Props> {
 
   getServices = () => {
     const {
-      navigation, theme, baseFiatCurrency, providersMeta,
+      navigation,
+      theme,
+      baseFiatCurrency,
+      providersMeta,
+      isActiveAccountSmartWallet,
+      isSmartWalletActivated,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -65,6 +85,12 @@ class ServicesScreen extends React.Component<Props> {
       label: `${providersMeta.length} exchanges`,
       color: colors.primary,
     } : null;
+
+    const aaveServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
+    let aaveServiceLabel;
+    if (aaveServiceDisabled) {
+      aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
+    }
 
     return [
       {
@@ -91,6 +117,14 @@ class ServicesScreen extends React.Component<Props> {
             toAssetCode: ETH,
             displayFiatOptionsFirst: true,
           }),
+      },
+      {
+        key: 'depositPool',
+        title: 'AAVE Deposit',
+        body: 'Deposit crypto and earn interest in real-time',
+        disabled: aaveServiceDisabled,
+        label: aaveServiceLabel,
+        action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       },
       {
         key: 'peerToPeerTrading',
@@ -159,8 +193,18 @@ const mapStateToProps = ({
   baseFiatCurrency,
 });
 
+const structuredSelector = createStructuredSelector({
+  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
+  isSmartWalletActivated: isSmartWalletActivatedSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getMetaData: () => dispatch(getMetaDataAction()),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ServicesScreen));
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));

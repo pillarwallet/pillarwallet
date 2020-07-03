@@ -48,6 +48,7 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Input from 'components/Input';
+import ButtonText from 'components/ButtonText';
 
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -86,6 +87,8 @@ type Props = {
   renderOption?: (item: Object, selectOption: () => void) => React.Node,
   renderSelector?: (selector: Object) => React.Node,
   optionKeyExtractor?: (item: Object) => string,
+  hasError?: boolean,
+  customInputHeight?: number,
 };
 
 type State = {
@@ -193,7 +196,7 @@ const Selector = styled.TouchableOpacity`
   justify-content: space-between;
   align-items: center;
   padding-left: 16px;
-  padding-right: 10px;
+  padding-right: ${({ paddingRight }) => paddingRight || 10}px;
   background-color: ${themedColors.card};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
@@ -520,13 +523,44 @@ class TextInput extends React.Component<Props, State> {
       return optionKeyExtractor(option);
     }
     return option.value;
-  }
+  };
+
+  renderInputHeader = () => {
+    const { inputProps } = this.props;
+    const {
+      label,
+      onPressRightLabel,
+      rightLabel,
+      inputHeaderStyle = {},
+      customLabel,
+    } = inputProps;
+
+    if (!label && !rightLabel && !customLabel) return null;
+    const justifyContent = rightLabel && !(label || customLabel) ? 'flex-end' : 'space-between';
+
+    return (
+      <View style={{
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent,
+        ...inputHeaderStyle,
+      }}
+      >
+        {customLabel}
+        {!!label && <InputLabel>{label}</InputLabel>}
+        {!!rightLabel &&
+          <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />
+        }
+      </View>
+    );
+  };
 
   render() {
     const { isFocused, query, showOptionsSelector } = this.state;
     const {
       inputProps,
       errorMessage,
+      hasError,
       autoCorrect,
       loading,
       onLayout,
@@ -543,13 +577,14 @@ class TextInput extends React.Component<Props, State> {
       rightPlaceholder,
       selectorOptions = {},
       errorMessageOnTop,
+      customInputHeight,
       inputWrapperStyle = {},
     } = this.props;
     let { fallbackSource } = this.props;
 
     const colors = getThemeColors(theme);
     const {
-      value = '', selectorValue = {}, label, multiline, onSelectorClose,
+      value = '', selectorValue = {}, multiline, onSelectorClose,
     } = inputProps;
     const { input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
@@ -557,7 +592,9 @@ class TextInput extends React.Component<Props, State> {
     if (fallbackToGenericToken) fallbackSource = genericToken;
 
     let inputHeight = 54;
-    if (multiline) {
+    if (customInputHeight) {
+      inputHeight = customInputHeight;
+    } else if (multiline) {
       inputHeight = Platform.OS === 'ios' ? 120 : 100;
     }
 
@@ -618,16 +655,18 @@ class TextInput extends React.Component<Props, State> {
       allFeedListData = [extendedHeaderItems, ...filteredListData];
     }
 
+
+    const errorTop = !!errorMessage && !!errorMessageOnTop;
+    const errorBottom = !!errorMessage && !errorMessageOnTop;
+    const showErrorIndicator = hasError || !!errorMessage;
+    const disabledSelector = selectorOptionsCount <= 1;
+
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
-        {!!errorMessage && !!errorMessageOnTop &&
-          <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>
-        }
-        {!!label &&
-          <InputLabel>{label}</InputLabel>
-        }
-        <InputBorder error={!!errorMessage}>
-          <ItemHolder error={!!errorMessage}>
+        {errorTop && <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>}
+        {this.renderInputHeader()}
+        <InputBorder error={showErrorIndicator}>
+          <ItemHolder error={showErrorIndicator}>
             <Item
               isFocused={isFocused}
               height={inputHeight}
@@ -635,9 +674,10 @@ class TextInput extends React.Component<Props, State> {
               {!!Object.keys(selectorOptions).length &&
               <Selector
                 fullWidth={fullWidthSelector}
-                onPress={selectorOptionsCount > 1 ? this.openSelector : noop}
-                disabled={selectorOptionsCount < 1}
+                onPress={!disabledSelector ? this.openSelector : noop}
+                disabled={disabledSelector}
                 height={inputHeight}
+                paddingRight={disabledSelector && 16}
               >
                 {this.renderSelector()}
                 {selectorOptionsCount > 1 && <SelectorChevron name="selector" />}
@@ -700,11 +740,11 @@ class TextInput extends React.Component<Props, State> {
             />}
           </ItemHolder>
         </InputBorder>
+        {errorBottom &&
         <InputFooter>
-          {!!errorMessage && !errorMessageOnTop &&
-            <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
-          }
-        </InputFooter>
+          <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
+        </InputFooter>}
+
         <SlideModal
           isVisible={showOptionsSelector}
           fullScreen

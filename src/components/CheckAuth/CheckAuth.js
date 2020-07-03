@@ -196,7 +196,7 @@ class CheckAuth extends React.Component<Props, State> {
 
   handlePinSubmit = (pin: string) => {
     const { checkPin, revealMnemonic } = this.props;
-    checkPin(pin, this.onPinValidSuccess, { mnemonic: revealMnemonic });
+    checkPin(pin, this.onPinValidSuccess, revealMnemonic);
   };
 
   onPinValidSuccess = (pin: string, wallet: EthereumWallet) => {
@@ -305,8 +305,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  checkPin: (pin: string, onValidPin: ValidPinCallback, options: Object) => {
-    dispatch(checkAuthAction(pin, null, onValidPin, options));
+  checkPin: (pin: string, onValidPin: ValidPinCallback, withMnemonic: boolean) => {
+    dispatch(checkAuthAction(pin, null, onValidPin, withMnemonic));
   },
   checkPrivateKey: (privateKey: string, onValidPin: ValidPinCallback) => {
     dispatch(checkAuthAction(null, privateKey, onValidPin));

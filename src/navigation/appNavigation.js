@@ -29,7 +29,7 @@ import { withTheme } from 'styled-components';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import PeopleScreen from 'screens/People';
+import AssetSearchScreen from 'screens/Assets/AssetSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
@@ -96,8 +96,23 @@ import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
 import WalletActivatedScreen from 'screens/WalletActivated';
+import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
+import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
+import RecoveryPortalSetupConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalSetupConnectDevice';
+import RecoveryPortalSetupCompleteScreen from 'screens/RecoveryPortal/RecoveryPortalSetupComplete';
+import ManageConnectedDevicesScreen from 'screens/ConnectedDevices/ManageConnectedDevices';
+import RemoveSmartWalletConnectedDeviceScreen from 'screens/ConnectedDevices/RemoveSmartWalletConnectedDevice';
+import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryPending';
+import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
+import ChooseAssetDepositScreen from 'screens/Lending/ChooseAssetDeposit';
+import DepositedAssetsListScreen from 'screens/Lending/DepositedAssetsList';
+import ViewDepositedAssetScreen from 'screens/Lending/ViewDepositedAsset';
+import EnterDepositAmountScreen from 'screens/Lending/EnterDepositAmount';
+import EnterWithdrawAmountScreen from 'screens/Lending/EnterWithdrawAmount';
+import DepositTransactionConfirmScreen from 'screens/Lending/DepositTransactionConfirm';
+import WithdrawTransactionConfirmScreen from 'screens/Lending/WithdrawTransactionConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -129,12 +144,12 @@ import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions
 import {
   ASSETS,
   ASSET,
+  ASSET_SEARCH,
   SERVICES_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
-  PEOPLE,
   CONTACT,
   HOME,
   HOME_TAB,
@@ -220,9 +235,29 @@ import {
   EXPLORE_APPS,
   WALLET_ACTIVATED,
   REFERRAL_SENT,
+  RECOVERY_PORTAL_SETUP_FLOW,
+  RECOVERY_PORTAL_RECOVERY_FLOW,
+  RECOVERY_PORTAL_SETUP_INTRO,
+  RECOVERY_PORTAL_SETUP_SIGN_UP,
+  RECOVERY_PORTAL_SETUP_CONNECT_DEVICE,
+  RECOVERY_PORTAL_SETUP_COMPLETE,
+  MANAGE_CONNECTED_DEVICES,
+  CONNECTED_DEVICES_FLOW,
+  REMOVE_SMART_WALLET_CONNECTED_DEVICE,
+  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
+  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
+  LENDING_CHOOSE_DEPOSIT,
+  LENDING_DEPOSITED_ASSETS_LIST,
+  LENDING_ADD_DEPOSIT_FLOW,
+  LENDING_VIEW_DEPOSITED_ASSET,
+  LENDING_ENTER_DEPOSIT_AMOUNT,
+  LENDING_DEPOSIT_TRANSACTION_CONFIRM,
+  LENDING_ENTER_WITHDRAW_AMOUNT,
+  LENDING_WITHDRAW_DEPOSIT_FLOW,
+  LENDING_WITHDRAW_TRANSACTION_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -243,7 +278,6 @@ const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
-const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
 
@@ -288,6 +322,7 @@ const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
+    [ASSET_SEARCH]: AssetSearchScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [EXCHANGE]: ExchangeScreen,
@@ -324,20 +359,6 @@ const referFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 referFlow.navigationOptions = hideTabNavigatorOnChildView;
-
-
-// PEOPLE FLOW
-const peopleFlow = createStackNavigator({
-  [PEOPLE]: PeopleScreen,
-  [CONTACT]: ContactScreen,
-  [COLLECTIBLE]: CollectibleScreen,
-  [BADGE]: BadgeScreen,
-  [CHAT]: ChatScreen,
-  [REFER_FLOW]: referFlow,
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
-}, StackNavigatorConfig);
-
-peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
@@ -461,17 +482,6 @@ const tabNavigation = createBottomTabNavigator(
           theme: screenProps.theme,
         }),
         tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
-      }),
-    },
-    [PEOPLE]: {
-      screen: peopleFlow,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon({
-          icon: iconPeople,
-          hasIndicator: !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
-          theme: screenProps.theme,
-        }),
-        tabBarLabel: tabBarLabel({ text: 'People', theme: screenProps.theme }),
       }),
     },
     [SERVICES_TAB]: {
@@ -665,6 +675,46 @@ const menuFlow = createStackNavigator({
   [ADD_EDIT_USER]: AddOrEditUserScreen,
 }, StackNavigatorConfig);
 
+const recoveryPortalSetupFlow = createStackNavigator({
+  [RECOVERY_PORTAL_SETUP_SIGN_UP]: RecoveryPortalSetupSignUpScreen,
+  [RECOVERY_PORTAL_SETUP_CONNECT_DEVICE]: RecoveryPortalSetupConnectDeviceScreen,
+  [RECOVERY_PORTAL_SETUP_COMPLETE]: RecoveryPortalSetupCompleteScreen,
+}, StackNavigatorConfig);
+
+recoveryPortalSetupFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const connectedDevicesFlow = createStackNavigator({
+  [MANAGE_CONNECTED_DEVICES]: ManageConnectedDevicesScreen,
+  [REMOVE_SMART_WALLET_CONNECTED_DEVICE]: RemoveSmartWalletConnectedDeviceScreen,
+}, StackNavigatorConfig);
+
+connectedDevicesFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const recoveryPortalRecoveryFlow = createStackNavigator({
+  [RECOVERY_PORTAL_WALLET_RECOVERY_STARTED]: RecoveryPortalWalletRecoveryStartedSceeen,
+  [RECOVERY_PORTAL_WALLET_RECOVERY_PENDING]: RecoveryPortalWalletRecoveryPendingScreen,
+}, StackNavigatorConfig);
+
+recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const lendingAddDepositsFlow = createStackNavigator({
+  [LENDING_ENTER_DEPOSIT_AMOUNT]: EnterDepositAmountScreen,
+  [LENDING_DEPOSIT_TRANSACTION_CONFIRM]: DepositTransactionConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+lendingAddDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const lendingWithdrawDepositsFlow = createStackNavigator({
+  [LENDING_ENTER_WITHDRAW_AMOUNT]: EnterWithdrawAmountScreen,
+  [LENDING_WITHDRAW_TRANSACTION_CONFIRM]: WithdrawTransactionConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -689,6 +739,10 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
+    [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
+    [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
+    [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
+    [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
@@ -697,6 +751,11 @@ const AppFlowNavigation = createStackNavigator(
     [REFERRAL_SENT]: ReferralSentScreen,
     [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
     [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
+    [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDepositScreen,
+    [LENDING_VIEW_DEPOSITED_ASSET]: ViewDepositedAssetScreen,
+    [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
+    [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
+    [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
   },
   modalTransition,
 );
@@ -756,7 +815,18 @@ class AppFlow extends React.Component<Props, State> {
       getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
+      backupStatus,
     } = this.props;
+
+    /**
+     * If wallet recovery is pending do not initiate any listeners
+     * as we block user from accessing wallet, only pending screen is accessed.
+     *
+     * In future we can maybe unlock certain listeners/actions
+     * depending on chosen product/business logic.
+     */
+    if (backupStatus.isRecoveryPending) return;
+
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchAllAccountsBalances();
@@ -819,7 +889,12 @@ class AppFlow extends React.Component<Props, State> {
       stopListeningIntercomNotifications,
       stopListeningChatWebSocket,
       updateSignalInitiatedState,
+      backupStatus,
     } = this.props;
+
+    // case per what's defined on componentWillMount
+    if (backupStatus.isRecoveryPending) return;
+
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     stopListeningChatWebSocket();
@@ -872,9 +947,11 @@ class AppFlow extends React.Component<Props, State> {
       backupStatus,
       theme,
     } = this.props;
-    if (!userState) return null;
-    if (userState === PENDING) {
-      return <RetryApiRegistration />;
+
+    // wallet might be created, but recovery is pending and no user assigned yet
+    if (!backupStatus.isRecoveryPending) {
+      if (!userState) return null;
+      if (userState === PENDING) return <RetryApiRegistration />;
     }
 
     const { isImported, isBackedUp } = backupStatus;

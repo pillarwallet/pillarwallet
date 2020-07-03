@@ -28,11 +28,10 @@ import {
 } from '@smartwallet/sdk';
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
-import abi from 'ethjs-abi';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -42,8 +41,11 @@ import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
 import { printLog, reportLog, reportOrWarn } from 'utils/common';
 
+// services
+import { encodeContractMethod } from 'services/assets';
+
 // types
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
+import type { ConnectedSmartWalletAccount, SmartWalletAccount } from 'models/SmartWalletAccount';
 import type SDKWrapper from 'services/api';
 import type { AssetData } from 'models/Asset';
 import type { EstimatedTransactionFee, GasToken } from 'models/Transaction';
@@ -72,6 +74,7 @@ export type AccountTransaction = {
   data?: string | Buffer,
   transactionSpeed?: $Keys<typeof TransactionSpeeds>,
   gasToken?: ?GasToken,
+  sequentialTransactions?: AccountTransaction[],
 };
 
 export type EstimatePayload = {
@@ -112,6 +115,21 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   };
 };
 
+export const formatEstimated = (estimated: ParsedEstimate) => {
+  let { gasTokenCost, totalCost } = estimated;
+  const { gasToken, relayerFeatures } = estimated;
+  const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
+
+  // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
+  gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
+  totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
+
+  return {
+    ethCost: totalCost,
+    gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
+    gasToken: hasGasTokenSupport ? gasToken : null,
+  };
+};
 
 class SmartWallet {
   sdk: Sdk;
@@ -182,18 +200,18 @@ class SmartWallet {
       });
   }
 
+  getConnectedAccountDevices() {
+    return this.sdk.getConnectedAccountDevices()
+      .then((result) => get(result, 'items', []))
+      .catch(this.handleError);
+  }
+
   async connectAccount(address: string) {
-    try {
-      const account = this.sdk.state.account || await this.sdk.connectAccount(address);
-      const devices = await this.sdk.getConnectedAccountDevices();
-      return {
-        ...account,
-        devices: get(devices, 'items', []),
-      };
-    } catch (e) {
-      this.handleError(e);
+    if (!get(this.sdk, 'state.account')) {
+      await this.sdk.connectAccount(address).catch(this.handleError);
     }
-    return null;
+
+    return this.fetchConnectedAccount();
   }
 
   async syncSmartAccountsWithBackend(
@@ -221,22 +239,36 @@ class SmartWallet {
       .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
-  async deploy() {
+  async deployAccount(): Promise<{ error?: string, deployTxHash?: string }> {
     const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
+    if (!deployEstimate) return { error: 'reverted' };
+
     return this.sdk.deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
-        this.reportError('Unable to deploy', { e });
+        this.reportError('Unable to deploy account', { e });
         return { error: e.message };
       });
   }
 
-  getAccountRealBalance() {
-    return get(this.sdk, 'state.account.balance.real', new BigNumber(0));
+  async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false): Promise<?string> {
+    const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
+    if (!deployEstimate) return null;
+
+    return this.sdk.submitAccountTransaction(deployEstimate, payForGasWithToken)
+      .catch((e) => {
+        this.reportError('Unable to deploy device', { e });
+        return null;
+      });
   }
 
-  getAccountVirtualBalance() {
-    return get(this.sdk, 'state.account.balance.virtual', new BigNumber(0));
+  async unDeployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
+    const unDeployEstimate = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress).catch(this.handleError);
+    return this.sdk.submitAccountTransaction(unDeployEstimate, payForGasWithToken)
+      .catch((e) => {
+        this.reportError('Unable to undeploy device', { e });
+        return null;
+      });
   }
 
   getAccountStakedAmount(tokenAddress: ?string): BigNumber {
@@ -265,14 +297,12 @@ class SmartWallet {
       });
   }
 
-  async fetchConnectedAccount() {
+  async fetchConnectedAccount(): Promise<ConnectedSmartWalletAccount> {
     try {
-      const { state: { account } } = this.sdk;
-      const devices = await this.sdk.getConnectedAccountDevices();
-      return {
-        ...account,
-        devices: get(devices, 'items', []),
-      };
+      const { state: { account: accountData } } = this.sdk;
+      const devices = await this.getConnectedAccountDevices();
+      const activeDeviceAddress = get(this.sdk, 'state.accountDevice.device.address');
+      return { ...accountData, devices, activeDeviceAddress };
     } catch (e) {
       this.handleError(e);
     }
@@ -287,13 +317,30 @@ class SmartWallet {
       data,
       transactionSpeed = TransactionSpeeds[AVG],
       gasToken,
+      sequentialTransactions = [],
     } = transaction;
-    const estimatedTransaction = await this.sdk.estimateAccountTransaction(
+
+    let estimateMethodParams = [
       recipient,
       value,
       data,
-      transactionSpeed,
-    ).catch((e) => { estimateError = e; });
+    ];
+
+    // supporting 2, can be added up to 5
+    if (sequentialTransactions.length) {
+      estimateMethodParams = [
+        ...estimateMethodParams,
+        sequentialTransactions[0].recipient,
+        sequentialTransactions[0].value,
+        sequentialTransactions[0].data,
+      ];
+    }
+
+    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
+
+    const estimatedTransaction = await this.sdk
+      .estimateAccountTransaction(...estimateMethodParams)
+      .catch((e) => { estimateError = e; });
 
     if (!estimatedTransaction) {
       return Promise.reject(new Error(estimateError));
@@ -335,7 +382,7 @@ class SmartWallet {
   }
 
   withdrawAccountPayment(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
+    return this.sdk.accountTransaction.submitAccountProxyTransaction(estimated, payForGasWithToken);
   }
 
   searchAccount(address: string) {
@@ -406,54 +453,74 @@ class SmartWallet {
     transaction: AccountTransaction,
     assetData?: AssetData,
   ): Promise<EstimatedTransactionFee> {
-    const { value: rawValue, transactionSpeed = TransactionSpeeds[AVG] } = transaction;
+    const {
+      value: rawValue,
+      sequentialTransactions = [],
+      transactionSpeed = TransactionSpeeds[AVG],
+    } = transaction;
     let { data, recipient } = transaction;
     const decimals = get(assetData, 'decimals');
     const assetSymbol = get(assetData, 'token');
     const contractAddress = get(assetData, 'contractAddress');
 
     let value;
-
     // eth or token transfer
     if (assetSymbol === ETH) {
       value = ethToWei(rawValue);
     } else if (!data) {
       const tokenTransferValue = decimals > 0
         ? utils.parseUnits(rawValue.toString(), decimals)
-        : utils.bigNumberify(rawValue.toString());
-      const transferMethod = ERC20_CONTRACT_ABI.find(item => item.name === 'transfer');
-      data = abi.encodeMethod(transferMethod, [recipient, tokenTransferValue]);
+        : EthersBigNumber.from(rawValue.toString());
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [recipient, tokenTransferValue]);
       recipient = contractAddress;
       value = 0; // value is in encoded token transfer
     }
 
-    const estimated = await this.sdk.estimateAccountTransaction(
+    let estimateMethodParams = [
       recipient,
       value,
       data,
-      transactionSpeed,
-    ).then(parseEstimatePayload).catch(() => ({}));
+    ];
 
-    let { gasTokenCost, totalCost } = estimated;
-    const { gasToken, relayerFeatures } = estimated;
-    const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
+    // supporting 2, can be added up to 5
+    if (sequentialTransactions.length) {
+      estimateMethodParams = [
+        ...estimateMethodParams,
+        sequentialTransactions[0].recipient,
+        sequentialTransactions[0].value,
+        sequentialTransactions[0].data,
+      ];
+    }
 
-    // NOTE: change all numbers to app used `BigNumber` lib as it is different between SDK and ethers
-    gasTokenCost = new BigNumber(gasTokenCost ? gasTokenCost.toString() : 0);
-    totalCost = new BigNumber(totalCost ? totalCost.toString() : 0);
+    estimateMethodParams = [...estimateMethodParams, transactionSpeed];
 
-    return {
-      ethCost: totalCost,
-      gasTokenCost: hasGasTokenSupport ? gasTokenCost : null,
-      gasToken: hasGasTokenSupport ? gasToken : null,
-    };
+    const estimated = await this.sdk
+      .estimateAccountTransaction(...estimateMethodParams)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
+
+    return formatEstimated(estimated);
   }
 
-  getTransactionStatus(hash: string) {
+  async estimateAccountDeviceDeployment(deviceAddress: string) {
+    const estimated = await this.sdk.estimateAccountDeviceDeployment(deviceAddress)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
+
+    return formatEstimated(estimated);
+  }
+
+  async estimateAccountDeviceUnDeployment(deviceAddress: string) {
+    const estimated = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress)
+      .then(parseEstimatePayload)
+      .catch(() => ({}));
+
+    return formatEstimated(estimated);
+  }
+
+  getTransactionInfo(hash: string) {
     if (!this.sdkInitialized) return null;
-    return this.sdk.getConnectedAccountTransaction(hash)
-      .then(({ state }) => state)
-      .catch(() => null);
+    return this.sdk.getConnectedAccountTransaction(hash).catch(() => null);
   }
 
   async setAccountEnsName(username: string) {
@@ -472,6 +539,14 @@ class SmartWallet {
 
   switchToGasTokenRelayer() {
     return this.sdk.switchToGasTokenRelayer().catch(() => null);
+  }
+
+  addAccountDevice(address: string) {
+    return this.sdk.createAccountDevice(address).catch(() => null);
+  }
+
+  removeAccountDevice(address: string) {
+    return this.sdk.removeAccountDevice(address).catch(() => null);
   }
 
   handleError(error: any) {

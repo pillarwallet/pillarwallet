@@ -24,6 +24,7 @@ import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
 import { utils } from 'ethers';
+import mocktract from 'mocktract';
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
 
@@ -108,7 +109,7 @@ const mockWallet: Object = {
   connect: () => mockWallet,
 };
 
-Object.defineProperty(mockWallet, 'RNencrypt', {
+Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
@@ -120,12 +121,12 @@ jest.setMock('ethers', {
   ethers: {
     Wallet: {
       fromMnemonic: () => mockWallet,
-      RNfromEncryptedJson: () => mockWallet,
+      fromEncryptedJson: () => mockWallet,
     },
   },
+  Contract: mocktract,
   utils: {
     parseEther: x => x,
-    bigNumberify: x => x,
     id: utils.id,
     getAddress: utils.getAddress,
     formatUnits: utils.formatUnits,
@@ -139,6 +140,9 @@ jest.setMock('ethers', {
     JsonRpcProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+  },
+  BigNumber: {
+    from: x => x,
   },
 });
 
@@ -234,7 +238,6 @@ jest.setMock('react-native-cached-image', {
 const mockSmartWalletAccount = {
   id: 123,
   address: 'publicAddress',
-  deployMode: 'Unsecured',
   ensName: null,
   state: 'Created',
   nextState: null,
@@ -278,20 +281,23 @@ jest.setMock('@smartwallet/sdk', {
     initialize: () => Promise.resolve(),
     getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccount] }),
     createAccount: () => Promise.resolve(mockSmartWalletAccount),
+    connectAccount: () => Promise.resolve(),
     event$: {
       subscribe: jest.fn(),
+      next: jest.fn(),
     },
     estimateAccountTransaction: () => Promise.resolve({
       gasFee: new BN(70000),
       signedGasPrice: { gasPrice: new BN(5000000000) },
     }),
+    reset: () => Promise.resolve(),
   }),
 });
 
 jest.setMock('react-native-keychain', {
   setGenericPassword: jest.fn().mockResolvedValue(),
   getGenericPassword: jest.fn(() => new Promise((resolve) => resolve({
-    pin: '123456', privateKey: 'testKey', mnemonic: 'testMnemonic',
+    pin: '123456', privateKey: 'testKey', mnemonic: { phrase: 'testMnemonic' },
   }))),
   resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {

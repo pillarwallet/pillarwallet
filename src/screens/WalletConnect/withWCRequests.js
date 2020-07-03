@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
-import { utils, Interface } from 'ethers';
+import { utils, Interface, BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -37,7 +37,7 @@ import { ETH } from 'constants/assetsConstants';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
-import { getAssetDataByAddress } from 'utils/assets';
+import { getAssetDataByAddress, getAssetData } from 'utils/assets';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -84,7 +84,7 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
         : {};
 
       if (isEmpty(assetData)) {
-        amount = utils.formatEther(utils.bigNumberify(value).toString());
+        amount = utils.formatEther(EthersBigNumber.from(value).toString());
       } else {
         const iface = new Interface(ERC20_CONTRACT_ABI);
         const parsedTransaction = iface.parseTransaction({ data, value }) || {};
@@ -99,9 +99,10 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
         to = methodToAddress;
       }
 
+      const ethAssetData = getAssetData([], supportedAssets, ETH);
       const {
         symbol = ETH,
-        address: contractAddress = '',
+        address: contractAddress = ethAssetData.address,
         decimals = 18,
       } = assetData;
 

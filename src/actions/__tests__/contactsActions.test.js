@@ -17,12 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  START_SEARCH,
-  FINISH_SEARCH,
-  RESET_SEARCH_RESULTS,
-  UPDATE_CONTACTS,
-} from 'constants/contactsConstants';
+import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { initialState } from 'reducers/rootReducer';
 import * as chatActions from '../chatActions';
 import * as dbActions from '../dbActions';
@@ -81,33 +76,6 @@ describe('Contacts Actions', () => {
 
   afterEach(() => {
     dispatchMock.mockClear();
-  });
-
-  describe('Search', () => {
-    it('should search contacts', async () => {
-      await actions.searchContactsAction('')(dispatchMock, getStateMock, apiMock);
-
-      expect(dispatchMock).toBeCalledWith({
-        type: START_SEARCH,
-        payload: { localContacts: mockLocalContacts, apiUsers: [] },
-      });
-
-      expect(dispatchMock).toBeCalledWith({
-        type: FINISH_SEARCH,
-        payload: {
-          apiUsers: [],
-          localContacts: mockLocalContacts,
-        },
-      });
-    });
-
-    it('should reset search contacts', async () => {
-      await actions.resetSearchContactsStateAction()(dispatchMock);
-
-      expect(dispatchMock).toBeCalledWith({
-        type: RESET_SEARCH_RESULTS,
-      });
-    });
   });
 
   describe('Sync', () => {

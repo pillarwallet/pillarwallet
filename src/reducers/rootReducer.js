@@ -61,6 +61,9 @@ import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
+import connectedDevicesReducer from './connectedDevicesReducer';
+import recoveryPortalReducer from './recoveryPortalReducer';
+import lendingReducer from './lendingReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -101,6 +104,9 @@ import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensReg
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
+import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
+import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
+import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -138,6 +144,9 @@ export type RootReducerState = {|
   referrals: ReferralsReducerState,
   insights: InsightsReducerState,
   phoneContacts: PhoneContactsReducerState,
+  connectedDevices: ConnectedDevicesReducerState,
+  recoveryPortal: RecoveryPortalReducerState,
+  lending: LendingReducerState,
 |};
 
 type RootReducerAction =
@@ -164,7 +173,10 @@ type RootReducerAction =
   | EnsRegistryReducerAction
   | InsightsReducerAction
   | ReferralsReducerAction
-  | PhoneContactsReducerAction;
+  | PhoneContactsReducerAction
+  | ConnectedDevicesReducerAction
+  | RecoveryPortalReducerAction
+  | LendingReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -212,6 +224,9 @@ const appReducer = combineReducers({
   insights: insightsReducer,
   referrals: referralsReducer,
   phoneContacts: phoneContactsReducer,
+  connectedDevices: connectedDevicesReducer,
+  recoveryPortal: recoveryPortalReducer,
+  lending: lendingReducer,
 });
 
 export const initialState = appReducer(undefined, {});
