@@ -70,9 +70,10 @@ import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'ut
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
+import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // constants
-import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { BTC, defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -1188,6 +1189,16 @@ export class EventDetail extends React.Component<Props, State> {
               },
             ];
           }
+        } else if (isPoolTogetherAddress(event.to)) {
+          const buttons = [{
+            title: 'View pool',
+            onPress: () => this.goToPoolTogetherPool(DAI),
+            squarePrimary: true,
+          }];
+          eventData = {
+            name: 'Pool Together',
+            buttons,
+          };
         } else {
           eventData = {
             actionTitle: fullItemValue,

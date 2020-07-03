@@ -59,7 +59,7 @@ export const isPoolTogetherTag = (tag: ?string) => {
   return tag && (tag === POOLTOGETHER_WITHDRAW_TRANSACTION || tag === POOLTOGETHER_DEPOSIT_TRANSACTION);
 };
 
-const isPoolTogetherAddress = (address: string) => {
+export const isPoolTogetherAddress = (address: string) => {
   return addressesEqual(POOL_DAI_CONTRACT_ADDRESS, address) || addressesEqual(POOL_USDC_CONTRACT_ADDRESS, address);
 };
 

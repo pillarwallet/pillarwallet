@@ -45,6 +45,7 @@ import {
 import { findMatchingContact } from 'utils/contacts';
 import { findAccountByAddress, getAccountName } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
+import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // components
 import {
@@ -584,6 +585,12 @@ export class ActivityFeedItem extends React.Component<Props> {
               );
             }
           }
+        } else if (isPoolTogetherAddress(event.to)) {
+          data = {
+            label: 'Pool Together',
+            itemImageSource: poolTogetherLogo,
+            itemImageRoundedSquare: true,
+          };
         } else {
           const additionalInfo = {};
           let itemLabel = usernameOrAddress;
