@@ -28,7 +28,7 @@ import { navigate } from 'services/navigation';
 import { migrate } from 'services/dataMigration';
 
 // constants
-import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
+import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   UPDATE_ASSETS,
@@ -102,7 +102,6 @@ export const initAppAndRedirectAction = () => {
 
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
-    const navigateRouteOnFinish = walletTimestamp ? AUTH_FLOW : ONBOARDING_FLOW;
 
     if (walletTimestamp) {
       // migrations
@@ -240,7 +239,23 @@ export const initAppAndRedirectAction = () => {
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    navigate(NavigationActions.navigate({ routeName: navigateRouteOnFinish }));
+
+    let navAction;
+    if (walletTimestamp) {
+      navAction = {
+        routeName: AUTH_FLOW,
+        action: NavigationActions.navigate({
+          routeName: PIN_CODE_UNLOCK,
+          params: {
+            omitPin: appSettings.omitPinOnLogin,
+          },
+        }),
+      };
+    } else {
+      navAction = { routeName: ONBOARDING_FLOW };
+    }
+
+    navigate(NavigationActions.navigate(navAction));
     SplashScreen.hide();
   };
 };
