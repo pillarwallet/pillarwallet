@@ -413,7 +413,7 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
         tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
       };
     });
-    withdrawals = allWithdrawals.reduce((txs, tx, i) => {
+    withdrawals = allWithdrawals.reduce((txs, tx) => {
       const index = txs.findIndex(({ hash }) => hash === tx.hash);
       if (index > -1) {
         txs[index] = {
@@ -421,7 +421,7 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
           amount: ptUtils.toBN(txs[index].amount).add(ptUtils.toBN(tx.amount)).toString(),
         };
       } else {
-        txs[i] = tx;
+        txs[txs.length] = tx;
       }
       return txs;
     }, []);
