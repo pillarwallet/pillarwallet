@@ -45,6 +45,7 @@ import {
 
 import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
 
+
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
@@ -84,11 +85,13 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    const { navigation } = this.props;
+    const { navigation, useBiometrics } = this.props;
     this.errorMessage = navigation.getParam('errorMessage', '');
     this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
+    const forcePinParam = navigation.getParam('forcePin');
+    const omitPinParam = navigation.getParam('omitPin');
 
-    if (!this.props.useBiometrics || navigation.getParam('forcePin')) {
+    if ((!useBiometrics || forcePinParam) && !omitPinParam) {
       this.state.showPin = true;
     }
   }
@@ -100,6 +103,19 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     if (navigation.getParam('forcePin')) return;
 
+    this.handleLocking(true);
+
+    if (navigation.getParam('omitPin')) {
+      getKeychainDataObject()
+        .then(data => {
+          this.loginWithPrivateKey(data);
+        })
+        .catch(() => {
+          this.triggerAuthentication();
+        });
+      return;
+    }
+
     if (!this.errorMessage && DEFAULT_PIN) {
       this.handlePinSubmit(DEFAULT_PIN);
     }
@@ -107,7 +123,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {
       this.triggerAuthentication();
     }
-    this.handleLocking(true);
   }
 
   componentWillUnmount() {

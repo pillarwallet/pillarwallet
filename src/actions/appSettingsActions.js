@@ -294,3 +294,11 @@ export const toggleLendingDepositsAction = () => {
     dispatch(updateAppSettingsAction('hideLendingDeposits', !hideLendingDeposits));
   };
 };
+
+export const toggleOmitPinOnLoginAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { omitPinOnLogin } } } = getState();
+    dispatch(saveDbAction('app_settings', { appSettings: { omitPinOnLogin: !omitPinOnLogin } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { omitPinOnLogin: !omitPinOnLogin } });
+  };
+};

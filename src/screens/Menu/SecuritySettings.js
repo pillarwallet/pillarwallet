@@ -25,7 +25,7 @@ import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, request as requestPermission, RESULTS } from 'react-native-permissions';
 
 // actions
-import { changeUseBiometricsAction } from 'actions/appSettingsActions';
+import { changeUseBiometricsAction, toggleOmitPinOnLoginAction } from 'actions/appSettingsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // constants
@@ -57,6 +57,8 @@ type Props = {
   useBiometrics: ?boolean,
   changeUseBiometrics: (enabled: boolean, data: KeyChainData) => void,
   resetIncorrectPassword: () => void,
+  toggleOmitPinOnLogin: () => void,
+  omitPinOnLogin?: boolean,
 };
 
 const showFaceIDFailedMessage = (message) => {
@@ -110,7 +112,9 @@ class SecuritySettings extends React.Component<Props, State> {
   };
 
   getGlobalSettings = () => {
-    const { navigation, useBiometrics } = this.props;
+    const {
+      navigation, useBiometrics, omitPinOnLogin, toggleOmitPinOnLogin,
+    } = this.props;
     const { supportedBiometryType } = this.state;
 
     return [
@@ -126,6 +130,13 @@ class SecuritySettings extends React.Component<Props, State> {
         value: useBiometrics,
         toggle: true,
         hidden: !supportedBiometryType,
+      },
+      {
+        key: 'requirePINonLogin',
+        title: 'Require PIN on login',
+        onPress: toggleOmitPinOnLogin,
+        value: !omitPinOnLogin,
+        toggle: true,
       },
     ];
   };
@@ -196,9 +207,10 @@ class SecuritySettings extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { useBiometrics } },
+  appSettings: { data: { useBiometrics, omitPinOnLogin } },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
+  omitPinOnLogin,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -206,6 +218,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     changeUseBiometricsAction(enabled, data),
   ),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  toggleOmitPinOnLogin: () => dispatch(toggleOmitPinOnLoginAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SecuritySettings);
