@@ -201,6 +201,8 @@ export const sendAssetAction = (
           gasLimit: transaction.gasLimit,
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+          extra: transaction.extra || null,
+          tag: transaction.tag || null,
           feeWithGasToken,
         });
       }
@@ -232,6 +234,7 @@ export const sendAssetAction = (
           isPPNTransaction: usePPN,
           status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
           extra: transaction.extra || null,
+          tag: transaction.tag || null,
           feeWithGasToken,
         });
       }
@@ -458,6 +461,40 @@ export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) 
       },
     });
     dispatch(fetchAssetsBalancesAction(showToastIfIncreased));
+  };
+};
+
+export const addMultipleAssetsAction = (assetsToAdd: Asset[]) => {
+  return async (dispatch: Dispatch, getState: () => Object) => {
+    const {
+      assets: { data: assets },
+      accounts: { data: accounts },
+    } = getState();
+
+    const accountId = getActiveAccountId(accounts);
+    if (!accountId) return;
+
+    const accountAssets = accountAssetsSelector(getState());
+    const updatedAssets = {
+      ...assets,
+      [accountId]: {
+        ...accountAssets,
+        ...assetsToAdd.reduce((newAssets, asset) => ({ ...newAssets, [asset.symbol]: { ...asset } }), {}),
+      },
+    };
+
+    assetsToAdd.forEach(asset => {
+      dispatch(showAssetAction(asset));
+    });
+    dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+
+    dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
+
+    dispatch(fetchAssetsBalancesAction());
+
+    assetsToAdd.forEach(asset => {
+      dispatch(logEventAction('asset_token_added', { symbol: asset.symbol }));
+    });
   };
 };
 

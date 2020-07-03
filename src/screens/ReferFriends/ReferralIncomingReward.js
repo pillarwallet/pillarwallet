@@ -85,7 +85,7 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
     const relatedCampaign = rewardsByCampaign['1world'] ? '1world' : 'pillar';
 
     const rewardText = getRewardText(rewardsByCampaign, relatedCampaign);
-    const isGettingReward = rewardText;
+    const isGettingReward = !!rewardText;
     const title = isGettingReward ? 'Your reward is on the way' : 'Thanks for joining Pillar';
 
     return (
@@ -98,9 +98,9 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
       >
         <ConfettiBackground>
           <Wrapper flex={1} center fullScreen>
-            {!!isGettingReward && <RewardBadge source={rewardBadge} />}
+            {isGettingReward && <RewardBadge source={rewardBadge} />}
             <Title>{title}</Title>
-            {!!isGettingReward &&
+            {isGettingReward &&
             <>
               <LoadingParagraph
                 isLoading={isFetchingRewards}

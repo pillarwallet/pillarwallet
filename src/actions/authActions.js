@@ -146,14 +146,14 @@ export const loginAction = (
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin, { mnemonic: true });
+        wallet = await decryptWallet(encryptedWallet, saltedPin);
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access OR fallback for biometrics login
         await setKeychainDataObject(
           {
             pin,
             privateKey: wallet.privateKey,
-            mnemonic: wallet.mnemonic || '',
+            mnemonic: wallet?.mnemonic?.phrase || '',
           },
           useBiometrics);
       } else if (privateKey) {
@@ -319,19 +319,11 @@ export const loginAction = (
   };
 };
 
-type DecryptionSettings = {
-  mnemonic: boolean,
-};
-
-const defaultDecryptionSettings = {
-  mnemonic: false,
-};
-
 export const checkAuthAction = (
   pin: ?string,
   privateKey: ?string,
   onValidPin?: Function,
-  options: DecryptionSettings = defaultDecryptionSettings,
+  withMnemonic: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { appSettings: { data: { useBiometrics } } } = getState();
@@ -346,9 +338,9 @@ export const checkAuthAction = (
         const { wallet: encryptedWallet } = await storage.get('wallet');
         await delay(100);
         const saltedPin = await getSaltedPin(pin, dispatch);
-        wallet = await decryptWallet(encryptedWallet, saltedPin, options);
+        wallet = await decryptWallet(encryptedWallet, saltedPin);
       } else if (pin) {
-        wallet = await getWalletFromPkByPin(pin, options.mnemonic);
+        wallet = await getWalletFromPkByPin(pin, withMnemonic);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       }
@@ -383,9 +375,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     dispatch({ type: UPDATE_WALLET_STATE, payload: ENCRYPTING });
     await delay(50);
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
-    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin, {
-      mnemonic: true,
-    });
+    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin);
 
     await dispatch(encryptAndSaveWalletAction(newPin, wallet, backupStatus, useBiometrics));
   };

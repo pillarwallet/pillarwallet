@@ -281,3 +281,10 @@ export const hasSeenRecoveryPortalIntroAction = () => {
     dispatch(updateAppSettingsAction('hasSeenRecoveryPortalIntro', true));
   };
 };
+
+export const toggleLendingDepositsAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { appSettings: { data: { hideLendingDeposits } } } = getState();
+    dispatch(updateAppSettingsAction('hideLendingDeposits', !hideLendingDeposits));
+  };
+};

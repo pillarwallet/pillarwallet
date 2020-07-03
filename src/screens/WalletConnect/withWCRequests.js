@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
-import { utils, Interface } from 'ethers';
+import { utils, Interface, BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -84,7 +84,7 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
         : {};
 
       if (isEmpty(assetData)) {
-        amount = utils.formatEther(utils.bigNumberify(value).toString());
+        amount = utils.formatEther(EthersBigNumber.from(value).toString());
       } else {
         const iface = new Interface(ERC20_CONTRACT_ABI);
         const parsedTransaction = iface.parseTransaction({ data, value }) || {};
