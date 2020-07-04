@@ -36,6 +36,9 @@ export type PoolTogetherReducerState = {
     [string]: string | boolean,
   },
   isFetchingPoolStats: boolean,
+  lastSynced: {
+    [string]: number,
+  },
 }
 
 export type PoolTogetherReducerAction = {
@@ -71,6 +74,10 @@ const initialState = {
     USDC: false,
   },
   isFetchingPoolStats: false,
+  lastSynced: {
+    DAI: 0,
+    USDC: 0,
+  },
 };
 
 export default function poolTogetherReducer(
@@ -81,7 +88,11 @@ export default function poolTogetherReducer(
     case SET_POOL_TOGETHER_PRIZE_INFO:
       return {
         ...state,
-        poolStats: action.payload,
+        poolStats: action.payload.updatedPoolStats,
+        lastSynced: {
+          ...state.lastSynced,
+          [action.payload.symbol]: Date.now(),
+        },
       };
     case SET_POOL_TOGETHER_ALLOWANCE:
       return {

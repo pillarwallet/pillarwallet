@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Contract, utils } from 'ethers';
+import axios from 'axios';
+import isEmpty from 'lodash.isempty';
 import {
   NETWORK_PROVIDER,
   POOL_DAI_CONTRACT_ADDRESS,
@@ -76,6 +78,39 @@ const getPoolTogetherTokenContract = (symbol: string) => {
   };
 };
 
+const fetchPoolTogetherGraph = async (
+  contractAddress: string,
+  accountAddress: string,
+  openDrawId: string): Promise<Object> => {
+  const url = 'https://api.thegraph.com/subgraphs/id/QmecFPxMeFeHETwJdrivTNecBTCko5nyRGgidRrVp4BSfc';
+  return axios
+    .post(url, {
+      timeout: 5000,
+      query: `
+      {
+          poolContract(id: "${contractAddress.toLowerCase()}") {
+            openDrawId,
+            openBalance,
+            committedBalance,
+            sponsorshipAndFeeBalance,
+            playersCount,
+          },
+          players(where: { address:"${accountAddress}"}) {
+            consolidatedBalance,
+            latestBalance,
+            winnings,
+          },
+          draws(where: {drawId: "${openDrawId}", poolContract: "${contractAddress.toLowerCase()}"}){
+            feeFraction,
+            drawId,
+            openedAt,
+            balance,
+          }
+      }`,
+    })
+    .then(({ data: response }) => response.data);
+};
+
 export async function getPoolTogetherInfo(symbol: string, address: string): Promise<?PoolInfo> {
   try {
     const {
@@ -84,29 +119,34 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
       provider,
       poolContractAddress: contractAddress,
     } = getPoolTogetherTokenContract(symbol);
-    const accountedBalance = await contract.accountedBalance();
-    const balanceCallData = contract.interface.encodeFunctionData('balance');
-    const result = await provider.call({ to: contract.address, data: balanceCallData });
-    const balance = contract.interface.decodeFunctionResult('balance', result);
-    const balanceTakenAt = new Date();
     const currentOpenDrawId = await contract.currentOpenDrawId();
-    const currentDraw = await contract.getDraw(currentOpenDrawId);
-    const committedSupply = await contract.committedSupply();
-    const openSupply = await contract.openSupply();
+    if (!currentOpenDrawId) {
+      return null;
+    }
+    const {
+      poolContract: poolContractInfo,
+      players,
+      draws,
+    } = await fetchPoolTogetherGraph(contractAddress, address, currentOpenDrawId.toString());
+    if (isEmpty(poolContractInfo) || isEmpty(draws)) {
+      return null;
+    }
+    const {
+      openBalance,
+      committedBalance,
+    } = poolContractInfo;
 
     let userInfo;
     try {
-      const totalBalance = await contract.totalBalanceOf(address); // open, committed, fees, sponsorship balance
-      if (!totalBalance.eq(0)) {
-        const openBalance = await contract.openBalanceOf(address); // balance in the open Draw
-        const userCurrentPoolBalance = await contract.balanceOf(address); // balance in the current committed Draw
-        const ticketBalance = openBalance.add(userCurrentPoolBalance); // this is the current ticket balance in total
-        userInfo = {
-          openBalance: formatMoney(utils.formatUnits(openBalance.toString(), unitType)),
-          totalBalance: formatMoney(utils.formatUnits(totalBalance.toString(), unitType)),
-          userCurrentPoolBalance: formatMoney(utils.formatUnits(userCurrentPoolBalance.toString(), unitType)),
-          ticketBalance: formatMoney(utils.formatUnits(ticketBalance.toString(), unitType)),
-        };
+      // TODO user players[0].latestBalance / consolidatedBalance when it gets fixed and deployed on thegraph.com
+      if (!isEmpty(players)) {
+        const totalBalance = await contract.totalBalanceOf(address); // open, committed, fees, sponsorship balance
+        if (!totalBalance.eq(0)) {
+          userInfo = {
+            totalBalance: formatMoney(utils.formatUnits(totalBalance.toString(), unitType)),
+            ticketBalance: formatMoney(utils.formatUnits(totalBalance.toString(), unitType)),
+          };
+        }
       }
     } catch (e) {
       reportLog('Error checking PoolTogether User Info', {
@@ -117,22 +157,28 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
       }, Sentry.Severity.Error);
       return null;
     }
-
+    const accountedBalance = await contract.accountedBalance();
+    const balanceCallData = contract.interface.encodeFunctionData('balance');
+    const result = await provider.call({ to: contract.address, data: balanceCallData });
+    const balance = contract.interface.decodeFunctionResult('balance', result);
+    const balanceTakenAt = new Date();
     const supplyRatePerBlock = await contract.supplyRatePerBlock();
 
     let currentPrize = ptUtils.toBN(0);
     let prizeEstimate = ptUtils.toBN(0);
+    const openSupply = ptUtils.toBN(openBalance);
+    const committedSupply = ptUtils.toBN(committedBalance);
     let drawDate = 0;
     let remainingTimeMs = 0;
     let totalPoolTicketsCount = 0;
-    if (balance && openSupply && committedSupply && accountedBalance && currentDraw && supplyRatePerBlock) {
+    if (supplyRatePerBlock) {
       const totalSupply = openSupply.add(committedSupply);
       totalPoolTicketsCount = parseInt(utils.formatUnits(totalSupply.toString(), unitType), 10);
-      const { feeFraction, openedBlock } = currentDraw;
+      const { feeFraction: feeFracString = '0', openedAt } = draws[0];
+      const feeFraction = new BigNumber(feeFracString);
 
       const prizeIntervalMs = symbol === DAI ? 604800000 : 86400000; // DAI weekly, USDC daily in miliseconds
-      const { timestamp: blockTimestamp } = await provider.getBlock(openedBlock.toNumber());
-      drawDate = (blockTimestamp.toString() * 1000) + prizeIntervalMs; // adds 14 days to a timestamp in miliseconds
+      drawDate = (parseFloat(openedAt) * 1000) + prizeIntervalMs; // adds 14 days to a timestamp in miliseconds
 
       remainingTimeMs = drawDate - balanceTakenAt.getTime();
       remainingTimeMs = remainingTimeMs < 0 ? 0 : remainingTimeMs;
@@ -358,11 +404,7 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
   let deposits = [];
   try {
     const depositedFilter = contract.filters.Deposited(address);
-    const depositsLogs = await contract.provider.getLogs({
-      fromBlock: 0,
-      toBlock: 'latest',
-      ...depositedFilter,
-    });
+    const depositsLogs = await contract.queryFilter(depositedFilter, 0, 'latest');
     deposits = depositsLogs.map((log) => {
       const parsedLog = contract.interface.parseLog(log);
       return {
@@ -387,22 +429,16 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
     const withdrawnCommitedFilter = contract.filters.CommittedDepositWithdrawn(address);
     const withdrawnOpenFilter = contract.filters.OpenDepositWithdrawn(address);
     const withdrawnSponsorFilter = contract.filters.SponsorshipAndFeesWithdrawn(address);
-    const commitedWithdrawLogs = await contract.provider.getLogs({
-      fromBlock: 0,
-      toBlock: 'latest',
-      ...withdrawnCommitedFilter,
-    });
-    const openWithdrawLogs = await contract.provider.getLogs({
-      fromBlock: 0,
-      toBlock: 'latest',
-      ...withdrawnOpenFilter,
-    });
-    const sponsorWithdrawLogs = await contract.provider.getLogs({
-      fromBlock: 0,
-      toBlock: 'latest',
-      ...withdrawnSponsorFilter,
-    });
-    const withdrawalsLogs = [].concat(commitedWithdrawLogs, openWithdrawLogs, sponsorWithdrawLogs);
+    const withdrawalsLogs = await contract.queryFilter({
+      topics: [
+        [
+          withdrawnCommitedFilter.topics[0],
+          withdrawnOpenFilter.topics[0],
+          withdrawnSponsorFilter.topics[0],
+        ],
+        withdrawnCommitedFilter.topics[1], // the address topic (second arg in any of the filters)
+      ],
+    }, 0, 'latest');
     const allWithdrawals = withdrawalsLogs.map((log) => {
       const parsedLog = contract.interface.parseLog(log);
       return {

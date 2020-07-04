@@ -19,9 +19,9 @@
 */
 
 export type PoolUserInfo = {
-  openBalance: string,
-  totalBalance: string,
-  userCurrentPoolBalance: string,
+  openBalance?: string,
+  totalBalance?: string,
+  userCurrentPoolBalance?: string,
   ticketBalance: string,
 }
 

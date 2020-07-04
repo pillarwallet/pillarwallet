@@ -44,19 +44,21 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 export const fetchPoolPrizeInfo = (symbol: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { poolTogether: { poolStats: currentPoolStats = {} } } = getState();
+    const { poolTogether: { poolStats: currentPoolStats = {}, lastSynced = {} } } = getState();
     const activeAccountAddress = activeAccountAddressSelector(getState());
     dispatch({
       type: SET_POOL_TOGETHER_FETCHING_STATS,
       payload: true,
     });
-    const newPoolStats = await getPoolTogetherInfo(symbol, activeAccountAddress);
-    if (newPoolStats) {
-      const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
-      dispatch({
-        type: SET_POOL_TOGETHER_PRIZE_INFO,
-        payload: updatedPoolStats,
-      });
+    if (Date.now() - 15000 > lastSynced[symbol]) {
+      const newPoolStats = await getPoolTogetherInfo(symbol, activeAccountAddress);
+      if (newPoolStats) {
+        const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
+        dispatch({
+          type: SET_POOL_TOGETHER_PRIZE_INFO,
+          payload: { updatedPoolStats, symbol },
+        });
+      }
     }
     dispatch({
       type: SET_POOL_TOGETHER_FETCHING_STATS,
