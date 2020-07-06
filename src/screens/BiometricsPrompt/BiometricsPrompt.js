@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Platform } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
@@ -39,19 +39,18 @@ import Toast from 'components/Toast';
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getBiometryType } from 'utils/settings';
+import { images } from 'utils/images';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-
+import type { Theme } from 'models/Theme';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   registerWallet: (setBiometrics: boolean, themeToStore: string) => void,
   themeType: string,
+  theme: Theme,
 };
-
-const touchIdImageSource = require('assets/images/touchId.png');
-const faceIdImageSource = require('assets/images/faceId.png');
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
@@ -77,13 +76,13 @@ const TouchIdImage = styled(CachedImage)`
   height: 164px;
 `;
 
-const getBiometryImage = (biometryType: string) => {
+const getBiometryImage = (biometryType: string, theme: Theme) => {
   switch (biometryType) {
     case Keychain.BIOMETRY_TYPE.TOUCH_ID:
     case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      return touchIdImageSource;
+      return images(theme).touchIdIcon;
     case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return faceIdImageSource;
+      return images(theme).faceIdIcon;
     default:
       return '';
   }
@@ -127,7 +126,7 @@ class BiometricsPrompt extends React.Component<Props> {
     const { navigation } = this.props;
     const biometryType = navigation.getParam('biometryType');
     const biometryTypeTitle = getBiometryType(biometryType);
-    const imageSource = getBiometryImage(biometryType);
+    const imageSource = getBiometryImage(biometryType, this.props.theme);
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Make crypto easy' }] }}>
         <ContentWrapper contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30, flexGrow: 1 }}>
@@ -162,4 +161,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BiometricsPrompt);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(BiometricsPrompt));

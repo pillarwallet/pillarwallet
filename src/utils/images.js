@@ -49,6 +49,12 @@ const emailIconLight = require('assets/icons/icon_email_light.png');
 const emailIconDark = require('assets/icons/icon_email_dark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
 const phoneIconDark = require('assets/icons/icon_phone_dark.png');
+const faceIdIconLight = require('assets/images/faceId.png');
+const faceIdIconDark = require('assets/images/faceId_dark.png');
+const touchIdIconLight = require('assets/images/touchId.png');
+const touchIdIconDark = require('assets/images/touchId_dark.png');
+const recoveryIconLight = require('assets/images/recovery.png');
+const recoveryIconDark = require('assets/images/recovery_dark.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -112,6 +118,18 @@ export const images = (theme: Theme) => {
     roundedPhoneIcon: getImageByTheme(currentTheme, {
       lightTheme: phoneIconLight,
       darkTheme: phoneIconDark,
+    }),
+    touchIdIcon: getImageByTheme(currentTheme, {
+      lightTheme: touchIdIconLight,
+      darkTheme: touchIdIconDark,
+    }),
+    faceIdIcon: getImageByTheme(currentTheme, {
+      lightTheme: faceIdIconLight,
+      darkTheme: faceIdIconDark,
+    }),
+    recoveryIcon: getImageByTheme(currentTheme, {
+      lightTheme: recoveryIconLight,
+      darkTheme: recoveryIconDark,
     }),
   };
 };
