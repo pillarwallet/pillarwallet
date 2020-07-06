@@ -26,8 +26,7 @@ import {
   POOL_USDC_CONTRACT_ADDRESS,
   DAI_ADDRESS,
   USDC_ADDRESS,
-  POOL_TOGETHER_SUBGRAPH_ID,
-  POOL_TOGETHER_HISTORY_ID,
+  POOLTOGETHER_GRAPH_ID,
 } from 'react-native-dotenv';
 import { utils as ptUtils } from 'pooltogetherjs';
 import { BigNumber } from 'bignumber.js';
@@ -84,7 +83,7 @@ const fetchPoolTogetherGraph = async (
   contractAddress: string,
   accountAddress: string,
   openDrawId: string): Promise<Object> => {
-  const url = `https://api.thegraph.com/subgraphs/id/${POOL_TOGETHER_SUBGRAPH_ID}`;
+  const url = `https://api.thegraph.com/subgraphs/id/${POOLTOGETHER_GRAPH_ID}`;
   return axios
     .post(url, {
       timeout: 5000,
@@ -107,31 +106,33 @@ const fetchPoolTogetherGraph = async (
             drawId,
             openedAt,
             balance,
-          }
+          },
       }`,
     })
     .then(({ data: response }) => response.data);
 };
 
 const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress: string): Promise<Object> => {
-  const url = `https://api.thegraph.com/subgraphs/id/${POOL_TOGETHER_HISTORY_ID}`;
+  const url = `https://api.thegraph.com/subgraphs/id/${POOLTOGETHER_GRAPH_ID}`;
+  const poolAddress = contractAddress.toLowerCase();
+  const sender = accountAddress.toLowerCase();
   return axios
     .post(url, {
       timeout: 5000,
       query: `
       {
-        deposits(where: {sender: "${accountAddress}", assetAddress: "${contractAddress}"}) {
-          id
-          assetAddress
+        deposits(where: {sender: "${sender}", contractAddress: "${poolAddress}"}) {
+          hash
+          contractAddress
           sender
           amount
-        }
-        withdraws(where: {sender: "${accountAddress}", assetAddress: "${contractAddress}"}) {
-          id
-          assetAddress
+        },
+        withdrawals(where: {sender: "${sender}", contractAddress: "${poolAddress}"}) {
+          hash
+          contractAddress
           sender
           amount
-        }
+        },
       }`,
     })
     .then(({ data: response }) => response.data);
@@ -421,16 +422,16 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
   };
 }
 
-export async function getPoolTogetherHistory(symbol: string, address: string): Promise<Object> {
+export async function getPoolTogetherTransactions(symbol: string, address: string): Promise<Object> {
   const { unitType, poolContractAddress: contractAddress } = getPoolTogetherTokenContract(symbol);
   let deposits = [];
   let withdrawals = [];
   try {
     const rawHistory = await fetchPoolTogetherHistory(contractAddress, address);
-    const { deposists: rawDeposists, withdraws: rawWithdraws } = rawHistory;
-    deposits = rawDeposists.map(tx => {
+    const { deposits: rawDeposits, withdrawals: rawWithdraws } = rawHistory;
+    deposits = rawDeposits.map(tx => {
       return {
-        hash: tx.id,
+        hash: tx.hash,
         amount: tx.amount,
         symbol,
         decimals: unitType,
@@ -439,7 +440,7 @@ export async function getPoolTogetherHistory(symbol: string, address: string): P
     });
     const allWithdrawals = rawWithdraws.map(tx => {
       return {
-        hash: tx.id,
+        hash: tx.hash,
         amount: tx.amount,
         symbol,
         decimals: unitType,
@@ -469,86 +470,5 @@ export async function getPoolTogetherHistory(symbol: string, address: string): P
   return {
     deposits,
     withdrawals,
-  };
-}
-
-export async function getPoolTogetherTransactions(symbol: string, address: string): Promise<Object> {
-  const {
-    poolContract: contract,
-    unitType,
-    poolContractAddress: contractAddress,
-  } = getPoolTogetherTokenContract(symbol);
-  // getPoolTogetherHistory(symbol, address); TODO: change function to this when all withdrawals are shown in thegraph
-  let deposits = [];
-  try {
-    const depositedFilter = contract.filters.Deposited(address);
-    const depositsLogs = await contract.queryFilter(depositedFilter, 0, 'latest');
-    deposits = depositsLogs.map((log) => {
-      const parsedLog = contract.interface.parseLog(log);
-      return {
-        hash: log.transactionHash,
-        amount: parsedLog.args.amount.toString(),
-        symbol,
-        decimals: unitType,
-        tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
-      };
-    });
-  } catch (e1) {
-    reportLog('Error getting PoolTogether deposit transaction logs', {
-      address,
-      contractAddress,
-      symbol,
-      message: e1.message,
-    }, Sentry.Severity.Error);
-  }
-
-  let withdrawals = [];
-  try {
-    const withdrawnCommitedFilter = contract.filters.CommittedDepositWithdrawn(address);
-    const withdrawnOpenFilter = contract.filters.OpenDepositWithdrawn(address);
-    const withdrawnSponsorFilter = contract.filters.SponsorshipAndFeesWithdrawn(address);
-    const withdrawalsLogs = await contract.queryFilter({
-      topics: [
-        [
-          withdrawnCommitedFilter.topics[0],
-          withdrawnOpenFilter.topics[0],
-          withdrawnSponsorFilter.topics[0],
-        ],
-        withdrawnCommitedFilter.topics[1], // the address topic (second arg in any of the filters)
-      ],
-    }, 0, 'latest');
-    const allWithdrawals = withdrawalsLogs.map((log) => {
-      const parsedLog = contract.interface.parseLog(log);
-      return {
-        hash: log.transactionHash,
-        amount: parsedLog.args.amount.toString(),
-        symbol,
-        decimals: unitType,
-        tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
-      };
-    });
-    withdrawals = allWithdrawals.reduce((txs, tx) => {
-      const index = txs.findIndex(({ hash }) => hash === tx.hash);
-      if (index > -1) {
-        txs[index] = {
-          ...txs[index],
-          amount: ptUtils.toBN(txs[index].amount).add(ptUtils.toBN(tx.amount)).toString(),
-        };
-      } else {
-        txs[txs.length] = tx;
-      }
-      return txs;
-    }, []);
-  } catch (e2) {
-    reportLog('Error getting PoolTogether withdrawal transaction logs', {
-      address,
-      contractAddress,
-      symbol,
-      message: e2.message,
-    }, Sentry.Severity.Error);
-  }
-  return {
-    withdrawals,
-    deposits,
   };
 }
