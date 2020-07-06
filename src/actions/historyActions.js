@@ -87,7 +87,7 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
+import { checkPoolTogetherApprovalTransactionAction, setWithdrawalsDepositsSync } from './poolTogetherActions';
 import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
@@ -178,6 +178,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedTransactionId, connectedAccount: { devices = [] } },
+      poolTogether: { lastSynced },
     } = getState();
 
     const smartWalletAccount = findFirstSmartAccount(accounts);
@@ -203,7 +204,11 @@ export const fetchSmartWalletTransactionsAction = () => {
     );
     const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
 
-    const history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+    let history = aaveHistory;
+    if (Date.now() - 15000 > lastSynced.withdrawalsDeposits) {
+      dispatch(setWithdrawalsDepositsSync());
+      history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+    }
 
     if (!history.length) return;
 

@@ -23,6 +23,7 @@ import {
   SET_EXECUTING_POOL_APPROVE,
   SET_DISMISS_POOL_APPROVE,
   SET_POOL_TOGETHER_FETCHING_STATS,
+  SET_WITHDRAWALS_DEPOSITS_SYNC,
 } from 'constants/poolTogetherConstants';
 
 import type { PoolPrizeInfo } from 'models/PoolTogether';
@@ -77,6 +78,7 @@ const initialState = {
   lastSynced: {
     DAI: 0,
     USDC: 0,
+    withdrawalsDeposits: 0,
   },
 };
 
@@ -118,6 +120,14 @@ export default function poolTogetherReducer(
         poolApproveExecuting: {
           ...state.poolApproveExecuting,
           [action.payload]: false,
+        },
+      };
+    case SET_WITHDRAWALS_DEPOSITS_SYNC:
+      return {
+        ...state,
+        lastSynced: {
+          ...state.lastSynced,
+          withdrawalsDeposits: Date.now(),
         },
       };
     default:

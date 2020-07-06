@@ -18,12 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const SET_POOL_TOGETHER_PRIZE_INFO = 'SET_POOL_TOGETHER_PRIZE_INFO';
-export const SET_EXECUTING_POOL_APPROVE = 'SET_EXECUTING_POOL_APPROVE';
-export const SET_DISMISS_POOL_APPROVE = 'SET_DISMISS_POOL_APPROVE';
-export const SET_POOL_TOGETHER_ALLOWANCE = 'SET_POOL_TOGETHER_ALLOWANCE';
-export const POOL_TOGETHER_ALLOW = 'POOL_TOGETHER_ALLOW';
-export const POOLTOGETHER_DEPOSIT_TRANSACTION = 'POOLTOGETHER_DEPOSIT_TRANSACTION';
-export const POOLTOGETHER_WITHDRAW_TRANSACTION = 'POOLTOGETHER_WITHDRAW_TRANSACTION';
-export const SET_POOL_TOGETHER_FETCHING_STATS = 'SET_POOL_TOGETHER_FETCHING_STATS';
-export const SET_WITHDRAWALS_DEPOSITS_SYNC = 'SET_WITHDRAWALS_DEPOSITS_SYNC';
+export default {
+  // $FlowFixMe
+  0: (state) => { // 0 is the redux persist version to migrate to
+    return {
+      ...state,
+      poolTogether: {
+        ...state.poolTogether, // all the state keys of the reducer should be spread to the active storage
+        lastSynced: { // the newly added keys to the reducer with initial values
+          DAI: 0,
+          USDC: 0,
+          withdrawalsDeposits: 0,
+        },
+      },
+    };
+  },
+};

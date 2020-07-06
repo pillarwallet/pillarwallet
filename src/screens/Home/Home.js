@@ -161,7 +161,7 @@ type Props = {
   isFetchingDepositedAssets: boolean,
   isFetchingPoolStats: boolean,
   poolTogetherUserStats: Object[],
-  fetchPoolStats: (string) => void,
+  fetchPoolStats: (string, sequence?: boolean) => void,
   isSmartWalletActive: boolean,
 };
 
@@ -240,7 +240,7 @@ class HomeScreen extends React.Component<Props, State> {
     });
     if (isSmartWalletActive) {
       fetchPoolStats(DAI);
-      fetchPoolStats(USDC);
+      fetchPoolStats(USDC, true); // nonblocking sequence parameter in this case.
     }
     fetchTransactionsHistory();
     fetchBadges();
@@ -298,7 +298,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchDepositedAssets();
     if (isSmartWalletActive) {
       fetchPoolStats(DAI);
-      fetchPoolStats(USDC);
+      fetchPoolStats(USDC, true);
     }
   };
 
@@ -725,7 +725,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
   fetchDepositedAssets: () => dispatch(fetchDepositedAssetsAction()),
   toggleLendingDeposits: () => dispatch(toggleLendingDepositsAction()),
-  fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
+  fetchPoolStats: (symbol: string, sequence?: boolean) => dispatch(fetchPoolPrizeInfo(symbol, sequence)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

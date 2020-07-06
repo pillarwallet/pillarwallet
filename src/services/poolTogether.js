@@ -26,6 +26,8 @@ import {
   POOL_USDC_CONTRACT_ADDRESS,
   DAI_ADDRESS,
   USDC_ADDRESS,
+  POOL_TOGETHER_SUBGRAPH_ID,
+  POOL_TOGETHER_HISTORY_ID,
 } from 'react-native-dotenv';
 import { utils as ptUtils } from 'pooltogetherjs';
 import { BigNumber } from 'bignumber.js';
@@ -82,7 +84,7 @@ const fetchPoolTogetherGraph = async (
   contractAddress: string,
   accountAddress: string,
   openDrawId: string): Promise<Object> => {
-  const url = 'https://api.thegraph.com/subgraphs/id/QmecFPxMeFeHETwJdrivTNecBTCko5nyRGgidRrVp4BSfc';
+  const url = `https://api.thegraph.com/subgraphs/id/${POOL_TOGETHER_SUBGRAPH_ID}`;
   return axios
     .post(url, {
       timeout: 5000,
@@ -106,6 +108,30 @@ const fetchPoolTogetherGraph = async (
             openedAt,
             balance,
           }
+      }`,
+    })
+    .then(({ data: response }) => response.data);
+};
+
+const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress: string): Promise<Object> => {
+  const url = `https://api.thegraph.com/subgraphs/id/${POOL_TOGETHER_HISTORY_ID}`;
+  return axios
+    .post(url, {
+      timeout: 5000,
+      query: `
+      {
+        deposits(where: {sender: "${accountAddress}", assetAddress: "${contractAddress}"}) {
+          id
+          assetAddress
+          sender
+          amount
+        }
+        withdraws(where: {sender: "${accountAddress}", assetAddress: "${contractAddress}"}) {
+          id
+          assetAddress
+          sender
+          amount
+        }
       }`,
     })
     .then(({ data: response }) => response.data);
@@ -395,12 +421,64 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
   };
 }
 
+export async function getPoolTogetherHistory(symbol: string, address: string): Promise<Object> {
+  const { unitType, poolContractAddress: contractAddress } = getPoolTogetherTokenContract(symbol);
+  let deposits = [];
+  let withdrawals = [];
+  try {
+    const rawHistory = await fetchPoolTogetherHistory(contractAddress, address);
+    const { deposists: rawDeposists, withdraws: rawWithdraws } = rawHistory;
+    deposits = rawDeposists.map(tx => {
+      return {
+        hash: tx.id,
+        amount: tx.amount,
+        symbol,
+        decimals: unitType,
+        tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
+      };
+    });
+    const allWithdrawals = rawWithdraws.map(tx => {
+      return {
+        hash: tx.id,
+        amount: tx.amount,
+        symbol,
+        decimals: unitType,
+        tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
+      };
+    });
+    withdrawals = allWithdrawals.reduce((txs, tx) => {
+      const index = txs.findIndex(({ hash }) => hash === tx.hash);
+      if (index > -1) {
+        txs[index] = {
+          ...txs[index],
+          amount: ptUtils.toBN(txs[index].amount).add(ptUtils.toBN(tx.amount)).toString(),
+        };
+      } else {
+        txs[txs.length] = tx;
+      }
+      return txs;
+    }, []);
+  } catch (e) {
+    reportLog('Error getting PoolTogether transaction history', {
+      address,
+      contractAddress,
+      symbol,
+      message: e.message,
+    }, Sentry.Severity.Error);
+  }
+  return {
+    deposits,
+    withdrawals,
+  };
+}
+
 export async function getPoolTogetherTransactions(symbol: string, address: string): Promise<Object> {
   const {
     poolContract: contract,
     unitType,
     poolContractAddress: contractAddress,
   } = getPoolTogetherTokenContract(symbol);
+  // getPoolTogetherHistory(symbol, address); TODO: change function to this when all withdrawals are shown in thegraph
   let deposits = [];
   try {
     const depositedFilter = contract.filters.Deposited(address);

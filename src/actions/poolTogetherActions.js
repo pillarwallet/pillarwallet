@@ -24,6 +24,7 @@ import {
   SET_DISMISS_POOL_APPROVE,
   SET_POOL_TOGETHER_ALLOWANCE,
   SET_POOL_TOGETHER_FETCHING_STATS,
+  SET_WITHDRAWALS_DEPOSITS_SYNC,
 } from 'constants/poolTogetherConstants';
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 
@@ -42,10 +43,17 @@ import { activeAccountAddressSelector } from 'selectors/selectors';
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-export const fetchPoolPrizeInfo = (symbol: string) => {
+export const fetchPoolPrizeInfo = (symbol: string, sequence?: boolean) => { // sequence calls in rare sync events
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { poolTogether: { poolStats: currentPoolStats = {}, lastSynced = {} } } = getState();
+    const {
+      poolTogether: {
+        poolStats: currentPoolStats = {},
+        lastSynced = {},
+        isFetchingPoolStats = false,
+      },
+    } = getState();
     const activeAccountAddress = activeAccountAddressSelector(getState());
+    if (isFetchingPoolStats && !sequence) return;
     dispatch({
       type: SET_POOL_TOGETHER_FETCHING_STATS,
       payload: true,
@@ -70,6 +78,10 @@ export const fetchPoolPrizeInfo = (symbol: string) => {
 export const setExecutingApproveAction = (poolToken: string, txHash: string) => ({
   type: SET_EXECUTING_POOL_APPROVE,
   payload: { poolToken, txHash },
+});
+
+export const setWithdrawalsDepositsSync = () => ({
+  type: SET_WITHDRAWALS_DEPOSITS_SYNC,
 });
 
 export const setDismissApproveAction = (poolToken: string) => ({
