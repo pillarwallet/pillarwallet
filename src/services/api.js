@@ -750,7 +750,7 @@ class SDKWrapper {
   }
 
   getAddressErc20TokensInfo(walletAddress: string) {
-    if (NETWORK_PROVIDER === 'homestead') {
+    if (NETWORK_PROVIDER !== 'homestead') {
       const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
       return Promise.resolve()
         .then(() => axios.get(url, defaultAxiosRequestConfig))
