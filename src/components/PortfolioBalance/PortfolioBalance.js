@@ -33,7 +33,6 @@ import BalanceView from 'components/PortfolioBalance/BalanceView';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { calculateBalanceInFiat } from 'utils/assets';
-import { calculateBitcoinBalanceInFiat } from 'utils/bitcoin';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { allBalancesSelector } from 'selectors/balances';
@@ -90,11 +89,9 @@ const getCombinedBalances = (props: Props): number => {
     balances,
     fiatCurrency,
     rates,
-    bitcoinBalances,
   } = props;
 
-  return calculateBitcoinBalanceInFiat(rates, bitcoinBalances, fiatCurrency)
-    + calculateBalanceInFiat(rates, balances, fiatCurrency);
+  return calculateBalanceInFiat(rates, balances, fiatCurrency);
 };
 
 class PortfolioBalance extends React.PureComponent<Props> {

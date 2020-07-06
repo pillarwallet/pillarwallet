@@ -19,7 +19,6 @@
 */
 import {
   ECPair,
-  payments,
   networks,
   TransactionBuilder,
 } from 'bitcoinjs-lib';
@@ -40,7 +39,6 @@ import {
   getBTCTransactionsFromNode,
 } from 'services/insight';
 
-const bip39 = require('bip39');
 const bip32 = require('bip32');
 const coinselect = require('coinselect');
 
@@ -140,27 +138,8 @@ export const transactionFromPlan = (
   return built.toHex();
 };
 
-export const rootFromMnemonic = async (mnemonic: string, networkName?: string): ECPair => {
-  const seed = await bip39.mnemonicToSeed(mnemonic);
-
-  return bip32.fromSeed(seed, selectNetwork(networkName));
-};
-
 export const rootFromPrivateKey = async (privateKey: string, networkName?: string): ECPair => {
   return bip32.fromSeed(Buffer.from(privateKey.substr(2)), selectNetwork(networkName));
-};
-
-export const keyPairAddress = (keyPair: ECPair): ?string => {
-  try {
-    const { address } = payments.p2pkh({
-      pubkey: keyPair.publicKey,
-      network: keyPair.network,
-    });
-
-    return address;
-  } catch (e) {
-    return null;
-  }
 };
 
 export const importKeyPair = (s: string, networkName?: string): ECPair => ECPair.fromWIF(s, selectNetwork(networkName));

@@ -135,10 +135,6 @@ const decodeAddress = (prefix: string, encodedAddress: string): string => {
   return encodedAddress;
 };
 
-export const decodeBTCAddress = (encodedAddress: string): string => {
-  return decodeAddress(BITCOIN_ADDRESS_PREFIX, encodedAddress);
-};
-
 export const decodeETHAddress = (encodedAddress: string): string => {
   return decodeAddress(ETHEREUM_ADDRESS_PREFIX, encodedAddress);
 };

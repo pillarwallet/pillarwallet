@@ -12443,7 +12443,7 @@ jsqr@^1.3.1:
 
 jssha@2.3.1:
   version "2.3.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/jssha/-/jssha-2.3.1.tgz#147b2125369035ca4b2f7d210dc539f009b3de9a"
+  resolved "https://registry.yarnpkg.com/jssha/-/jssha-2.3.1.tgz#147b2125369035ca4b2f7d210dc539f009b3de9a"
   integrity sha1-FHshJTaQNcpLL30hDcU58Amz3po=
 
 jsx-ast-utils@^2.0.1, jsx-ast-utils@^2.2.1, jsx-ast-utils@^2.2.3:
@@ -20508,8 +20508,8 @@ walker@^1.0.7, walker@~1.0.5:
 
 wallet-address-validator@^0.2.4:
   version "0.2.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/wallet-address-validator/-/wallet-address-validator-0.2.4.tgz#717ce316143b679645639986cc0847a107255881"
-  integrity sha1-cXzjFhQ7Z5ZFY5mGzAhHoQclWIE=
+  resolved "https://registry.yarnpkg.com/wallet-address-validator/-/wallet-address-validator-0.2.4.tgz#717ce316143b679645639986cc0847a107255881"
+  integrity sha512-3fp0pVdhaCA6UoPK3CQFx9Y+ckQgFlCa9rOQ7DZr2Uzlh0kYKs3NaSwIDn4FSceDsi1g6W28EWDrlr9Pr3mI3Q==
   dependencies:
     base-x "^3.0.4"
     jssha "2.3.1"
