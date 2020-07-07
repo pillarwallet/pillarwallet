@@ -46,8 +46,6 @@ import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetwork
 
 import Toast from 'components/Toast';
 
-import { initialAssets as assetFixtures } from 'fixtures/assets';
-
 import CryptoWallet from 'services/cryptoWallet';
 
 import type {
@@ -614,13 +612,6 @@ export const loadSupportedAssetsAction = () => {
 
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;
-
-    if (!supportedAssets.some(e => e.symbol === BTC)) {
-      const btcAsset = assetFixtures.find(e => e.symbol === BTC);
-      if (btcAsset) {
-        supportedAssets.push(btcAsset);
-      }
-    }
 
     dispatch({
       type: UPDATE_SUPPORTED_ASSETS,

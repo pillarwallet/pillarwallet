@@ -27,7 +27,7 @@ import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { CollectibleTrx } from 'models/Collectible';
 
-import { TX_FAILED_STATUS, TX_PENDING_STATUS, TX_TIMEDOUT_STATUS } from 'constants/historyConstants';
+import { TX_FAILED_STATUS, TX_PENDING_STATUS, TX_TIMEDOUT_STATUS, TRANSACTION_EVENT } from 'constants/historyConstants';
 import { PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
@@ -55,6 +55,12 @@ export function mapTransactionsHistory(
   duplicatePPN?: boolean,
 ) {
   const concatedHistory = history
+    .map(({ type, ...rest }) => {
+      if (eventType === TRANSACTION_EVENT) {
+        return { ...rest, transactionType: type };
+      }
+      return rest;
+    })
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
     .map(({ to, from, ...rest }) => {
       const contact = findMatchingContact(to, contacts, contactsSmartAddresses)

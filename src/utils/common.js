@@ -44,6 +44,9 @@ import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
+  ETH,
+  WBTC,
+  sBTC,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
 
@@ -200,8 +203,15 @@ export const isValidNumber = (amount: string = '0') => {
 };
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
-  if (assetSymbol === 'ETH') return 4;
-  return 2;
+  switch (assetSymbol) {
+    case ETH:
+      return 4;
+    case WBTC:
+    case sBTC:
+      return 8;
+    default:
+      return 2;
+  }
 };
 
 export const formatAmount = (amount: string | number, precision: number = 6): string => {

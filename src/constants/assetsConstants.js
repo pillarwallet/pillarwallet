@@ -39,6 +39,8 @@ export const GBP = 'GBP';
 export const USD = 'USD';
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
+export const WBTC = 'WBTC';
+export const sBTC = 'sBTC';
 
 const LINK = 'LINK';
 const BAT = 'BAT';
