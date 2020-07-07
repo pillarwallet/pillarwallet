@@ -514,6 +514,7 @@ export const restoreTransactionHistoryAction = () => {
         asset: ETH,
         createdAt: tx.timestamp,
         status: tx.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
+        type: tx.type,
       })),
       ...erc20Transactions.map(tx => {
         const tokenAddress = get(tx, 'tokenInfo.address');
@@ -526,6 +527,7 @@ export const restoreTransactionHistoryAction = () => {
           status: TX_CONFIRMED_STATUS,
           to: tx.to,
           value: tx.value,
+          type: tx.type,
         });
       }),
     ];
