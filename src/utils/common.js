@@ -213,7 +213,6 @@ export const getDecimalPlaces = (assetSymbol: ?string): number => {
     case ETH:
       return 4;
     case BTC:
-      return 8;
     case WBTC:
       return 8;
     default:
