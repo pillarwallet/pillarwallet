@@ -21,10 +21,5 @@
 export const SET_FEATURE_FLAGS = 'SET_FEATURE_FLAGS';
 export const ENABLE_FEATURE_FLAG = 'ENABLE_FEATURE_FLAG';
 export const DISABLE_FEATURE_FLAG = 'DISABLE_FEATURE_FLAG';
-export const INITIAL_FEATURE_FLAGS = {
-  // TODO: review 'bitcoin coming soon' message on accounts list when BTC goes live
-  BITCOIN_ENABLED: false,
-};
-export const DEVELOPMENT_FEATURE_FLAGS = {
-  BITCOIN_ENABLED: true,
-};
+export const INITIAL_FEATURE_FLAGS = {};
+export const DEVELOPMENT_FEATURE_FLAGS = {};
