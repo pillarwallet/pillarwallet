@@ -48,6 +48,7 @@ import {
   ETH,
   BTC,
   WBTC,
+  sBTC,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
 
@@ -214,6 +215,7 @@ export const getDecimalPlaces = (assetSymbol: ?string): number => {
       return 4;
     case BTC:
     case WBTC:
+    case sBTC:
       return 8;
     default:
       return 2;
