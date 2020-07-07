@@ -39,7 +39,7 @@ import Toast from 'components/Toast';
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getBiometryType } from 'utils/settings';
-import { getThemeColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -77,6 +77,7 @@ const ButtonsWrapper = styled.View`
 const TouchIdImage = styled(CachedImage)`
   width: 164px;
   height: 164px;
+  tintColor: ${themedColors.positive};
 `;
 
 const getBiometryImage = (biometryType: string) => {
@@ -130,16 +131,12 @@ class BiometricsPrompt extends React.Component<Props> {
     const biometryType = navigation.getParam('biometryType');
     const biometryTypeTitle = getBiometryType(biometryType);
     const imageSource = getBiometryImage(biometryType);
-    const colors = getThemeColors(this.props.theme);
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Make crypto easy' }] }}>
         <ContentWrapper contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30, flexGrow: 1 }}>
           <HeaderText>{`Would you like to use\n${biometryTypeTitle} with your\nwallet?`}</HeaderText>
           <ContentInnerWrapper>
-            <TouchIdImage
-              source={imageSource}
-              style={{ tintColor: colors.positive }}
-            />
+            <TouchIdImage source={imageSource} />
             <ButtonsWrapper>
               <Button title="Yes, please" onPress={() => this.proceedToRegisterWallet(true)} />
               <ButtonText

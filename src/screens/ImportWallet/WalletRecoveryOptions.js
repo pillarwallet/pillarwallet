@@ -15,8 +15,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Image } from 'react-native';
-import { withTheme } from 'styled-components';
+import { FlatList } from 'react-native';
+import styled, { withTheme } from 'styled-components';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
@@ -28,7 +28,7 @@ import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { ScrollWrapper } from 'components/Layout';
 
 // utils
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -36,6 +36,13 @@ import type { Theme } from 'models/Theme';
 // images
 const imageRecovery = require('assets/images/recovery.png');
 
+const RecoveryIcon = styled.Image`
+  width: 73px;
+  height: 73px;
+  alignSelf: center;
+  marginVertical: 50px;
+  tintColor: ${themedColors.positive};
+`;
 
 type Props = {
   navigation: NavigationScreenProp,
@@ -68,14 +75,7 @@ const WalletRecoveryOptions = (props: Props) => {
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Recovery options' }] }}>
       <ScrollWrapper>
-        <Image
-          style={{
-            width: 73,
-            height: 73,
-            alignSelf: 'center',
-            marginVertical: 50,
-            tintColor: colors.positive,
-          }}
+        <RecoveryIcon
           source={imageRecovery}
           resizeMode="contain"
         />
