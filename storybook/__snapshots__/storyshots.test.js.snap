@@ -36132,7 +36132,47 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                         undefined,
                                       ]
                                     }
-                                  />
+                                  >
+                                    <View
+                                      style={
+                                        Object {
+                                          "flexDirection": "row",
+                                          "flexWrap": "wrap",
+                                        }
+                                      }
+                                    >
+                                      <Text
+                                        centerText={true}
+                                        style={
+                                          Array [
+                                            Object {
+                                              "color": "#0A1427",
+                                              "fontFamily": "EuclidCircularB-Regular",
+                                              "textAlignVertical": "center",
+                                            },
+                                            Array [
+                                              Object {
+                                                "color": "#0A1427",
+                                                "fontFamily": "EuclidCircularB-Medium",
+                                                "textAlignVertical": "center",
+                                              },
+                                              Array [
+                                                Object {
+                                                  "color": "#0A1427",
+                                                  "fontSize": 16,
+                                                  "lineHeight": 26,
+                                                  "textAlign": "center",
+                                                },
+                                                Object {},
+                                              ],
+                                            ],
+                                          ]
+                                        }
+                                      >
+                                        Select
+                                      </Text>
+                                    </View>
+                                  </View>
                                   <View
                                     style={
                                       Array [
@@ -36167,22 +36207,62 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                     inputRef={[Function]}
                                     marginBottom="0"
                                     noClose={true}
+                                    placeholder="Asset search"
                                   />
                                 </SelectorOptions__SearchBarWrapper>
                               }
                               data={
                                 Array [
                                   Object {
-                                    "component": <React.Fragment>
-                                      <SelectorOptions__EmptyStateWrapper
-                                        fullScreen={true}
-                                      >
-                                        <EmptyStateParagraph
-                                          title="Nothing found"
-                                        />
-                                      </SelectorOptions__EmptyStateWrapper>
-                                    </React.Fragment>,
+                                    "component": <React.Fragment />,
                                     "value": "extendedHeaderItems",
+                                  },
+                                  Object {
+                                    "address": "0x0000000000000000000000000000000000000000",
+                                    "decimals": 18,
+                                    "description": "Ethereum is a decentralized platform that runs smart contracts: applications that run exactlyasprogrammed without any possibility of downtime, censorship, fraud or third-party interference.",
+                                    "email": "",
+                                    "iconMonoUrl": "asset/images/tokens/icons/eth.png",
+                                    "iconUrl": "asset/images/tokens/icons/ethColor.png",
+                                    "icos": Array [],
+                                    "id": "5c65a07d000204d2f9481c1c",
+                                    "isDefault": true,
+                                    "isPreferred": false,
+                                    "name": "Ethereum",
+                                    "patternUrl": "asset/images/patternIcons/eth.png",
+                                    "socialMedia": Array [],
+                                    "symbol": "ETH",
+                                    "telegram": "",
+                                    "twitter": "https://twitter.com/ethereum",
+                                    "updatedAt": "2019-08-30T10:20:13.866Z",
+                                    "value": "ETH",
+                                    "wallpaperUrl": "asset/images/tokens/wallpaper/ethBg.png",
+                                    "website": "https://ethereum.org/",
+                                    "whitepaper": "",
+                                  },
+                                  Object {
+                                    "address": "0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75",
+                                    "decimals": 18,
+                                    "description": "Pillar is developing a decentralised solution for digital asset and personal data management.",
+                                    "email": "info@pillarproject.io",
+                                    "iconMonoUrl": "asset/images/tokens/icons/plr.png",
+                                    "iconUrl": "asset/images/tokens/icons/plrColor.png",
+                                    "icos": Array [],
+                                    "id": "5c65a07d000204d2f9481c1d",
+                                    "isDefault": true,
+                                    "isPreferred": false,
+                                    "name": "Pillar",
+                                    "patternUrl": "asset/images/patternIcons/plr.png",
+                                    "socialMedia": Array [],
+                                    "symbol": "PLR",
+                                    "telegram": "https://t.me/pillarofficial",
+                                    "totalSupply": "",
+                                    "twitter": "https://twitter.com/PillarWallet",
+                                    "updatedAt": "2019-07-19T12:43:23.540Z",
+                                    "value": "PLR",
+                                    "wallpaperUrl": "asset/images/tokens/wallpaper/plrBg.png",
+                                    "website": "https://pillarproject.io/",
+                                    "whitepaper": "https://pillarproject.io/documents/Pillar-Gray-Paper.pdf",
                                   },
                                 ]
                               }
@@ -36280,7 +36360,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          placeholder="Search or add new contact"
+                                          placeholder="Asset search"
                                           placeholderTextColor="#8B939E"
                                           rejectResponderTermination={true}
                                           style={
@@ -36354,68 +36434,422 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                 <View
                                   onLayout={[Function]}
                                   style={null}
+                                />
+                                <View
+                                  onLayout={[Function]}
+                                  style={null}
                                 >
                                   <View
-                                    fullScreen={true}
                                     style={
                                       Array [
                                         Object {
-                                          "alignItems": "center",
-                                          "paddingBottom": 90,
-                                          "paddingTop": 90,
+                                          "flexDirection": "column",
+                                          "width": "100%",
                                         },
                                         undefined,
                                       ]
                                     }
                                   >
                                     <View
+                                      accessible={true}
+                                      focusable={true}
+                                      isTVSelectable={true}
+                                      onClick={[Function]}
+                                      onResponderGrant={[Function]}
+                                      onResponderMove={[Function]}
+                                      onResponderRelease={[Function]}
+                                      onResponderTerminate={[Function]}
+                                      onResponderTerminationRequest={[Function]}
+                                      onStartShouldSetResponder={[Function]}
                                       style={
-                                        Array [
-                                          Object {
-                                            "alignItems": "center",
-                                            "justifyContent": "center",
-                                            "width": 234,
-                                          },
-                                          undefined,
-                                        ]
+                                        Object {
+                                          "alignItems": "center",
+                                          "flexDirection": "row",
+                                          "justifyContent": "center",
+                                          "opacity": 1,
+                                          "paddingBottom": 14,
+                                          "paddingLeft": 20,
+                                          "paddingRight": 20,
+                                          "paddingTop": 14,
+                                          "width": "100%",
+                                        }
                                       }
                                     >
-                                      <Text
+                                      <View
                                         style={
                                           Array [
                                             Object {
-                                              "color": "#0A1427",
-                                              "fontFamily": "EuclidCircularB-Regular",
-                                              "fontSize": 24,
-                                              "lineHeight": 38,
-                                              "textAlignVertical": "center",
+                                              "alignItems": "center",
+                                              "justifyContent": "center",
+                                              "paddingRight": 12,
                                             },
-                                            Array [
-                                              Object {
-                                                "color": "#0A1427",
-                                                "fontFamily": "EuclidCircularB-Medium",
-                                                "fontSize": 24,
-                                                "lineHeight": 38,
-                                                "textAlignVertical": "center",
-                                              },
-                                              Array [
-                                                Object {
-                                                  "fontSize": 18,
-                                                  "lineHeight": 28,
-                                                  "marginBottom": 6,
-                                                  "textAlign": "center",
-                                                },
-                                                undefined,
-                                              ],
-                                            ],
+                                            undefined,
                                           ]
                                         }
                                       >
-                                        Nothing found
-                                      </Text>
+                                        <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
+                                          style={
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
+                                          }
+                                        />
+                                      </View>
+                                      <View
+                                        style={
+                                          Object {
+                                            "flex": 1,
+                                          }
+                                        }
+                                      >
+                                        <View
+                                          style={
+                                            Array [
+                                              Object {
+                                                "alignItems": "center",
+                                                "flexDirection": "row",
+                                                "justifyContent": "space-between",
+                                                "width": "100%",
+                                              },
+                                              undefined,
+                                            ]
+                                          }
+                                          type="DEFAULT"
+                                        >
+                                          <View
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-start",
+                                                  "flexBasis": 0,
+                                                  "flexDirection": "column",
+                                                  "flexGrow": 1,
+                                                  "flexShrink": 1,
+                                                  "justifyContent": "center",
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "flexGrow": 1,
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  Object {
+                                                    "alignItems": "center",
+                                                    "flexDirection": "row",
+                                                    "justifyContent": "space-between",
+                                                  },
+                                                  undefined,
+                                                ]
+                                              }
+                                            >
+                                              <Text
+                                                ellipsizeMode="tail"
+                                                numberOfLines={2}
+                                                style={
+                                                  Array [
+                                                    Object {
+                                                      "color": "#0A1427",
+                                                      "fontFamily": "EuclidCircularB-Regular",
+                                                      "textAlignVertical": "center",
+                                                    },
+                                                    Array [
+                                                      Object {
+                                                        "color": "#0A1427",
+                                                        "fontFamily": "EuclidCircularB-Medium",
+                                                        "textAlignVertical": "center",
+                                                      },
+                                                      Array [
+                                                        Object {
+                                                          "color": "#0A1427",
+                                                          "fontSize": 18,
+                                                          "lineHeight": 28,
+                                                          "width": "100%",
+                                                        },
+                                                        undefined,
+                                                      ],
+                                                    ],
+                                                  ]
+                                                }
+                                                type="DEFAULT"
+                                              >
+                                                Ethereum
+                                              </Text>
+                                            </View>
+                                          </View>
+                                          <View
+                                            rightColumn={true}
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-end",
+                                                  "flexDirection": "column",
+                                                  "justifyContent": "center",
+                                                  "marginLeft": 10,
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "maxWidth": "50%",
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  undefined,
+                                                  Object {
+                                                    "flexWrap": "wrap",
+                                                  },
+                                                ]
+                                              }
+                                            />
+                                          </View>
+                                        </View>
+                                      </View>
                                     </View>
                                   </View>
                                 </View>
+                                <View
+                                  onLayout={[Function]}
+                                  style={null}
+                                >
+                                  <View
+                                    style={
+                                      Array [
+                                        Object {
+                                          "flexDirection": "column",
+                                          "width": "100%",
+                                        },
+                                        undefined,
+                                      ]
+                                    }
+                                  >
+                                    <View
+                                      accessible={true}
+                                      focusable={true}
+                                      isTVSelectable={true}
+                                      onClick={[Function]}
+                                      onResponderGrant={[Function]}
+                                      onResponderMove={[Function]}
+                                      onResponderRelease={[Function]}
+                                      onResponderTerminate={[Function]}
+                                      onResponderTerminationRequest={[Function]}
+                                      onStartShouldSetResponder={[Function]}
+                                      style={
+                                        Object {
+                                          "alignItems": "center",
+                                          "flexDirection": "row",
+                                          "justifyContent": "center",
+                                          "opacity": 1,
+                                          "paddingBottom": 14,
+                                          "paddingLeft": 20,
+                                          "paddingRight": 20,
+                                          "paddingTop": 14,
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                      <View
+                                        style={
+                                          Array [
+                                            Object {
+                                              "alignItems": "center",
+                                              "justifyContent": "center",
+                                              "paddingRight": 12,
+                                            },
+                                            undefined,
+                                          ]
+                                        }
+                                      >
+                                        <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
+                                          style={
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
+                                          }
+                                        />
+                                      </View>
+                                      <View
+                                        style={
+                                          Object {
+                                            "flex": 1,
+                                          }
+                                        }
+                                      >
+                                        <View
+                                          style={
+                                            Array [
+                                              Object {
+                                                "alignItems": "center",
+                                                "flexDirection": "row",
+                                                "justifyContent": "space-between",
+                                                "width": "100%",
+                                              },
+                                              undefined,
+                                            ]
+                                          }
+                                          type="DEFAULT"
+                                        >
+                                          <View
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-start",
+                                                  "flexBasis": 0,
+                                                  "flexDirection": "column",
+                                                  "flexGrow": 1,
+                                                  "flexShrink": 1,
+                                                  "justifyContent": "center",
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "flexGrow": 1,
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  Object {
+                                                    "alignItems": "center",
+                                                    "flexDirection": "row",
+                                                    "justifyContent": "space-between",
+                                                  },
+                                                  undefined,
+                                                ]
+                                              }
+                                            >
+                                              <Text
+                                                ellipsizeMode="tail"
+                                                numberOfLines={2}
+                                                style={
+                                                  Array [
+                                                    Object {
+                                                      "color": "#0A1427",
+                                                      "fontFamily": "EuclidCircularB-Regular",
+                                                      "textAlignVertical": "center",
+                                                    },
+                                                    Array [
+                                                      Object {
+                                                        "color": "#0A1427",
+                                                        "fontFamily": "EuclidCircularB-Medium",
+                                                        "textAlignVertical": "center",
+                                                      },
+                                                      Array [
+                                                        Object {
+                                                          "color": "#0A1427",
+                                                          "fontSize": 18,
+                                                          "lineHeight": 28,
+                                                          "width": "100%",
+                                                        },
+                                                        undefined,
+                                                      ],
+                                                    ],
+                                                  ]
+                                                }
+                                                type="DEFAULT"
+                                              >
+                                                Pillar
+                                              </Text>
+                                            </View>
+                                          </View>
+                                          <View
+                                            rightColumn={true}
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-end",
+                                                  "flexDirection": "column",
+                                                  "justifyContent": "center",
+                                                  "marginLeft": 10,
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "maxWidth": "50%",
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  undefined,
+                                                  Object {
+                                                    "flexWrap": "wrap",
+                                                  },
+                                                ]
+                                              }
+                                            />
+                                          </View>
+                                        </View>
+                                      </View>
+                                    </View>
+                                  </View>
+                                </View>
+                                <View
+                                  style={
+                                    Object {
+                                      "height": 0,
+                                    }
+                                  }
+                                />
                               </View>
                             </RCTScrollView>
                           </View>
@@ -37413,7 +37847,47 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                         undefined,
                                       ]
                                     }
-                                  />
+                                  >
+                                    <View
+                                      style={
+                                        Object {
+                                          "flexDirection": "row",
+                                          "flexWrap": "wrap",
+                                        }
+                                      }
+                                    >
+                                      <Text
+                                        centerText={true}
+                                        style={
+                                          Array [
+                                            Object {
+                                              "color": "#0A1427",
+                                              "fontFamily": "EuclidCircularB-Regular",
+                                              "textAlignVertical": "center",
+                                            },
+                                            Array [
+                                              Object {
+                                                "color": "#0A1427",
+                                                "fontFamily": "EuclidCircularB-Medium",
+                                                "textAlignVertical": "center",
+                                              },
+                                              Array [
+                                                Object {
+                                                  "color": "#0A1427",
+                                                  "fontSize": 16,
+                                                  "lineHeight": 26,
+                                                  "textAlign": "center",
+                                                },
+                                                Object {},
+                                              ],
+                                            ],
+                                          ]
+                                        }
+                                      >
+                                        Select
+                                      </Text>
+                                    </View>
+                                  </View>
                                   <View
                                     style={
                                       Array [
@@ -37448,22 +37922,62 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                     inputRef={[Function]}
                                     marginBottom="0"
                                     noClose={true}
+                                    placeholder="Asset search"
                                   />
                                 </SelectorOptions__SearchBarWrapper>
                               }
                               data={
                                 Array [
                                   Object {
-                                    "component": <React.Fragment>
-                                      <SelectorOptions__EmptyStateWrapper
-                                        fullScreen={true}
-                                      >
-                                        <EmptyStateParagraph
-                                          title="Nothing found"
-                                        />
-                                      </SelectorOptions__EmptyStateWrapper>
-                                    </React.Fragment>,
+                                    "component": <React.Fragment />,
                                     "value": "extendedHeaderItems",
+                                  },
+                                  Object {
+                                    "address": "0x0000000000000000000000000000000000000000",
+                                    "decimals": 18,
+                                    "description": "Ethereum is a decentralized platform that runs smart contracts: applications that run exactlyasprogrammed without any possibility of downtime, censorship, fraud or third-party interference.",
+                                    "email": "",
+                                    "iconMonoUrl": "asset/images/tokens/icons/eth.png",
+                                    "iconUrl": "asset/images/tokens/icons/ethColor.png",
+                                    "icos": Array [],
+                                    "id": "5c65a07d000204d2f9481c1c",
+                                    "isDefault": true,
+                                    "isPreferred": false,
+                                    "name": "Ethereum",
+                                    "patternUrl": "asset/images/patternIcons/eth.png",
+                                    "socialMedia": Array [],
+                                    "symbol": "ETH",
+                                    "telegram": "",
+                                    "twitter": "https://twitter.com/ethereum",
+                                    "updatedAt": "2019-08-30T10:20:13.866Z",
+                                    "value": "ETH",
+                                    "wallpaperUrl": "asset/images/tokens/wallpaper/ethBg.png",
+                                    "website": "https://ethereum.org/",
+                                    "whitepaper": "",
+                                  },
+                                  Object {
+                                    "address": "0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75",
+                                    "decimals": 18,
+                                    "description": "Pillar is developing a decentralised solution for digital asset and personal data management.",
+                                    "email": "info@pillarproject.io",
+                                    "iconMonoUrl": "asset/images/tokens/icons/plr.png",
+                                    "iconUrl": "asset/images/tokens/icons/plrColor.png",
+                                    "icos": Array [],
+                                    "id": "5c65a07d000204d2f9481c1d",
+                                    "isDefault": true,
+                                    "isPreferred": false,
+                                    "name": "Pillar",
+                                    "patternUrl": "asset/images/patternIcons/plr.png",
+                                    "socialMedia": Array [],
+                                    "symbol": "PLR",
+                                    "telegram": "https://t.me/pillarofficial",
+                                    "totalSupply": "",
+                                    "twitter": "https://twitter.com/PillarWallet",
+                                    "updatedAt": "2019-07-19T12:43:23.540Z",
+                                    "value": "PLR",
+                                    "wallpaperUrl": "asset/images/tokens/wallpaper/plrBg.png",
+                                    "website": "https://pillarproject.io/",
+                                    "whitepaper": "https://pillarproject.io/documents/Pillar-Gray-Paper.pdf",
                                   },
                                 ]
                               }
@@ -37561,7 +38075,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          placeholder="Search or add new contact"
+                                          placeholder="Asset search"
                                           placeholderTextColor="#8B939E"
                                           rejectResponderTermination={true}
                                           style={
@@ -37635,68 +38149,422 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                 <View
                                   onLayout={[Function]}
                                   style={null}
+                                />
+                                <View
+                                  onLayout={[Function]}
+                                  style={null}
                                 >
                                   <View
-                                    fullScreen={true}
                                     style={
                                       Array [
                                         Object {
-                                          "alignItems": "center",
-                                          "paddingBottom": 90,
-                                          "paddingTop": 90,
+                                          "flexDirection": "column",
+                                          "width": "100%",
                                         },
                                         undefined,
                                       ]
                                     }
                                   >
                                     <View
+                                      accessible={true}
+                                      focusable={true}
+                                      isTVSelectable={true}
+                                      onClick={[Function]}
+                                      onResponderGrant={[Function]}
+                                      onResponderMove={[Function]}
+                                      onResponderRelease={[Function]}
+                                      onResponderTerminate={[Function]}
+                                      onResponderTerminationRequest={[Function]}
+                                      onStartShouldSetResponder={[Function]}
                                       style={
-                                        Array [
-                                          Object {
-                                            "alignItems": "center",
-                                            "justifyContent": "center",
-                                            "width": 234,
-                                          },
-                                          undefined,
-                                        ]
+                                        Object {
+                                          "alignItems": "center",
+                                          "flexDirection": "row",
+                                          "justifyContent": "center",
+                                          "opacity": 1,
+                                          "paddingBottom": 14,
+                                          "paddingLeft": 20,
+                                          "paddingRight": 20,
+                                          "paddingTop": 14,
+                                          "width": "100%",
+                                        }
                                       }
                                     >
-                                      <Text
+                                      <View
                                         style={
                                           Array [
                                             Object {
-                                              "color": "#0A1427",
-                                              "fontFamily": "EuclidCircularB-Regular",
-                                              "fontSize": 24,
-                                              "lineHeight": 38,
-                                              "textAlignVertical": "center",
+                                              "alignItems": "center",
+                                              "justifyContent": "center",
+                                              "paddingRight": 12,
                                             },
-                                            Array [
-                                              Object {
-                                                "color": "#0A1427",
-                                                "fontFamily": "EuclidCircularB-Medium",
-                                                "fontSize": 24,
-                                                "lineHeight": 38,
-                                                "textAlignVertical": "center",
-                                              },
-                                              Array [
-                                                Object {
-                                                  "fontSize": 18,
-                                                  "lineHeight": 28,
-                                                  "marginBottom": 6,
-                                                  "textAlign": "center",
-                                                },
-                                                undefined,
-                                              ],
-                                            ],
+                                            undefined,
                                           ]
                                         }
                                       >
-                                        Nothing found
-                                      </Text>
+                                        <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
+                                          style={
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
+                                          }
+                                        />
+                                      </View>
+                                      <View
+                                        style={
+                                          Object {
+                                            "flex": 1,
+                                          }
+                                        }
+                                      >
+                                        <View
+                                          style={
+                                            Array [
+                                              Object {
+                                                "alignItems": "center",
+                                                "flexDirection": "row",
+                                                "justifyContent": "space-between",
+                                                "width": "100%",
+                                              },
+                                              undefined,
+                                            ]
+                                          }
+                                          type="DEFAULT"
+                                        >
+                                          <View
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-start",
+                                                  "flexBasis": 0,
+                                                  "flexDirection": "column",
+                                                  "flexGrow": 1,
+                                                  "flexShrink": 1,
+                                                  "justifyContent": "center",
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "flexGrow": 1,
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  Object {
+                                                    "alignItems": "center",
+                                                    "flexDirection": "row",
+                                                    "justifyContent": "space-between",
+                                                  },
+                                                  undefined,
+                                                ]
+                                              }
+                                            >
+                                              <Text
+                                                ellipsizeMode="tail"
+                                                numberOfLines={2}
+                                                style={
+                                                  Array [
+                                                    Object {
+                                                      "color": "#0A1427",
+                                                      "fontFamily": "EuclidCircularB-Regular",
+                                                      "textAlignVertical": "center",
+                                                    },
+                                                    Array [
+                                                      Object {
+                                                        "color": "#0A1427",
+                                                        "fontFamily": "EuclidCircularB-Medium",
+                                                        "textAlignVertical": "center",
+                                                      },
+                                                      Array [
+                                                        Object {
+                                                          "color": "#0A1427",
+                                                          "fontSize": 18,
+                                                          "lineHeight": 28,
+                                                          "width": "100%",
+                                                        },
+                                                        undefined,
+                                                      ],
+                                                    ],
+                                                  ]
+                                                }
+                                                type="DEFAULT"
+                                              >
+                                                Ethereum
+                                              </Text>
+                                            </View>
+                                          </View>
+                                          <View
+                                            rightColumn={true}
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-end",
+                                                  "flexDirection": "column",
+                                                  "justifyContent": "center",
+                                                  "marginLeft": 10,
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "maxWidth": "50%",
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  undefined,
+                                                  Object {
+                                                    "flexWrap": "wrap",
+                                                  },
+                                                ]
+                                              }
+                                            />
+                                          </View>
+                                        </View>
+                                      </View>
                                     </View>
                                   </View>
                                 </View>
+                                <View
+                                  onLayout={[Function]}
+                                  style={null}
+                                >
+                                  <View
+                                    style={
+                                      Array [
+                                        Object {
+                                          "flexDirection": "column",
+                                          "width": "100%",
+                                        },
+                                        undefined,
+                                      ]
+                                    }
+                                  >
+                                    <View
+                                      accessible={true}
+                                      focusable={true}
+                                      isTVSelectable={true}
+                                      onClick={[Function]}
+                                      onResponderGrant={[Function]}
+                                      onResponderMove={[Function]}
+                                      onResponderRelease={[Function]}
+                                      onResponderTerminate={[Function]}
+                                      onResponderTerminationRequest={[Function]}
+                                      onStartShouldSetResponder={[Function]}
+                                      style={
+                                        Object {
+                                          "alignItems": "center",
+                                          "flexDirection": "row",
+                                          "justifyContent": "center",
+                                          "opacity": 1,
+                                          "paddingBottom": 14,
+                                          "paddingLeft": 20,
+                                          "paddingRight": 20,
+                                          "paddingTop": 14,
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                      <View
+                                        style={
+                                          Array [
+                                            Object {
+                                              "alignItems": "center",
+                                              "justifyContent": "center",
+                                              "paddingRight": 12,
+                                            },
+                                            undefined,
+                                          ]
+                                        }
+                                      >
+                                        <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
+                                          style={
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
+                                          }
+                                        />
+                                      </View>
+                                      <View
+                                        style={
+                                          Object {
+                                            "flex": 1,
+                                          }
+                                        }
+                                      >
+                                        <View
+                                          style={
+                                            Array [
+                                              Object {
+                                                "alignItems": "center",
+                                                "flexDirection": "row",
+                                                "justifyContent": "space-between",
+                                                "width": "100%",
+                                              },
+                                              undefined,
+                                            ]
+                                          }
+                                          type="DEFAULT"
+                                        >
+                                          <View
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-start",
+                                                  "flexBasis": 0,
+                                                  "flexDirection": "column",
+                                                  "flexGrow": 1,
+                                                  "flexShrink": 1,
+                                                  "justifyContent": "center",
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "flexGrow": 1,
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  Object {
+                                                    "alignItems": "center",
+                                                    "flexDirection": "row",
+                                                    "justifyContent": "space-between",
+                                                  },
+                                                  undefined,
+                                                ]
+                                              }
+                                            >
+                                              <Text
+                                                ellipsizeMode="tail"
+                                                numberOfLines={2}
+                                                style={
+                                                  Array [
+                                                    Object {
+                                                      "color": "#0A1427",
+                                                      "fontFamily": "EuclidCircularB-Regular",
+                                                      "textAlignVertical": "center",
+                                                    },
+                                                    Array [
+                                                      Object {
+                                                        "color": "#0A1427",
+                                                        "fontFamily": "EuclidCircularB-Medium",
+                                                        "textAlignVertical": "center",
+                                                      },
+                                                      Array [
+                                                        Object {
+                                                          "color": "#0A1427",
+                                                          "fontSize": 18,
+                                                          "lineHeight": 28,
+                                                          "width": "100%",
+                                                        },
+                                                        undefined,
+                                                      ],
+                                                    ],
+                                                  ]
+                                                }
+                                                type="DEFAULT"
+                                              >
+                                                Pillar
+                                              </Text>
+                                            </View>
+                                          </View>
+                                          <View
+                                            rightColumn={true}
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-end",
+                                                  "flexDirection": "column",
+                                                  "justifyContent": "center",
+                                                  "marginLeft": 10,
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "maxWidth": "50%",
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  undefined,
+                                                  Object {
+                                                    "flexWrap": "wrap",
+                                                  },
+                                                ]
+                                              }
+                                            />
+                                          </View>
+                                        </View>
+                                      </View>
+                                    </View>
+                                  </View>
+                                </View>
+                                <View
+                                  style={
+                                    Object {
+                                      "height": 0,
+                                    }
+                                  }
+                                />
                               </View>
                             </RCTScrollView>
                           </View>
@@ -38554,7 +39422,47 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                         undefined,
                                       ]
                                     }
-                                  />
+                                  >
+                                    <View
+                                      style={
+                                        Object {
+                                          "flexDirection": "row",
+                                          "flexWrap": "wrap",
+                                        }
+                                      }
+                                    >
+                                      <Text
+                                        centerText={true}
+                                        style={
+                                          Array [
+                                            Object {
+                                              "color": "#0A1427",
+                                              "fontFamily": "EuclidCircularB-Regular",
+                                              "textAlignVertical": "center",
+                                            },
+                                            Array [
+                                              Object {
+                                                "color": "#0A1427",
+                                                "fontFamily": "EuclidCircularB-Medium",
+                                                "textAlignVertical": "center",
+                                              },
+                                              Array [
+                                                Object {
+                                                  "color": "#0A1427",
+                                                  "fontSize": 16,
+                                                  "lineHeight": 26,
+                                                  "textAlign": "center",
+                                                },
+                                                Object {},
+                                              ],
+                                            ],
+                                          ]
+                                        }
+                                      >
+                                        Select
+                                      </Text>
+                                    </View>
+                                  </View>
                                   <View
                                     style={
                                       Array [
@@ -38589,22 +39497,62 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                     inputRef={[Function]}
                                     marginBottom="0"
                                     noClose={true}
+                                    placeholder="Asset search"
                                   />
                                 </SelectorOptions__SearchBarWrapper>
                               }
                               data={
                                 Array [
                                   Object {
-                                    "component": <React.Fragment>
-                                      <SelectorOptions__EmptyStateWrapper
-                                        fullScreen={true}
-                                      >
-                                        <EmptyStateParagraph
-                                          title="Nothing found"
-                                        />
-                                      </SelectorOptions__EmptyStateWrapper>
-                                    </React.Fragment>,
+                                    "component": <React.Fragment />,
                                     "value": "extendedHeaderItems",
+                                  },
+                                  Object {
+                                    "address": "0x0000000000000000000000000000000000000000",
+                                    "decimals": 18,
+                                    "description": "Ethereum is a decentralized platform that runs smart contracts: applications that run exactlyasprogrammed without any possibility of downtime, censorship, fraud or third-party interference.",
+                                    "email": "",
+                                    "iconMonoUrl": "asset/images/tokens/icons/eth.png",
+                                    "iconUrl": "asset/images/tokens/icons/ethColor.png",
+                                    "icos": Array [],
+                                    "id": "5c65a07d000204d2f9481c1c",
+                                    "isDefault": true,
+                                    "isPreferred": false,
+                                    "name": "Ethereum",
+                                    "patternUrl": "asset/images/patternIcons/eth.png",
+                                    "socialMedia": Array [],
+                                    "symbol": "ETH",
+                                    "telegram": "",
+                                    "twitter": "https://twitter.com/ethereum",
+                                    "updatedAt": "2019-08-30T10:20:13.866Z",
+                                    "value": "ETH",
+                                    "wallpaperUrl": "asset/images/tokens/wallpaper/ethBg.png",
+                                    "website": "https://ethereum.org/",
+                                    "whitepaper": "",
+                                  },
+                                  Object {
+                                    "address": "0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75",
+                                    "decimals": 18,
+                                    "description": "Pillar is developing a decentralised solution for digital asset and personal data management.",
+                                    "email": "info@pillarproject.io",
+                                    "iconMonoUrl": "asset/images/tokens/icons/plr.png",
+                                    "iconUrl": "asset/images/tokens/icons/plrColor.png",
+                                    "icos": Array [],
+                                    "id": "5c65a07d000204d2f9481c1d",
+                                    "isDefault": true,
+                                    "isPreferred": false,
+                                    "name": "Pillar",
+                                    "patternUrl": "asset/images/patternIcons/plr.png",
+                                    "socialMedia": Array [],
+                                    "symbol": "PLR",
+                                    "telegram": "https://t.me/pillarofficial",
+                                    "totalSupply": "",
+                                    "twitter": "https://twitter.com/PillarWallet",
+                                    "updatedAt": "2019-07-19T12:43:23.540Z",
+                                    "value": "PLR",
+                                    "wallpaperUrl": "asset/images/tokens/wallpaper/plrBg.png",
+                                    "website": "https://pillarproject.io/",
+                                    "whitepaper": "https://pillarproject.io/documents/Pillar-Gray-Paper.pdf",
                                   },
                                 ]
                               }
@@ -38702,7 +39650,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           onBlur={[Function]}
                                           onChange={[Function]}
                                           onFocus={[Function]}
-                                          placeholder="Search or add new contact"
+                                          placeholder="Asset search"
                                           placeholderTextColor="#8B939E"
                                           rejectResponderTermination={true}
                                           style={
@@ -38776,68 +39724,422 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                 <View
                                   onLayout={[Function]}
                                   style={null}
+                                />
+                                <View
+                                  onLayout={[Function]}
+                                  style={null}
                                 >
                                   <View
-                                    fullScreen={true}
                                     style={
                                       Array [
                                         Object {
-                                          "alignItems": "center",
-                                          "paddingBottom": 90,
-                                          "paddingTop": 90,
+                                          "flexDirection": "column",
+                                          "width": "100%",
                                         },
                                         undefined,
                                       ]
                                     }
                                   >
                                     <View
+                                      accessible={true}
+                                      focusable={true}
+                                      isTVSelectable={true}
+                                      onClick={[Function]}
+                                      onResponderGrant={[Function]}
+                                      onResponderMove={[Function]}
+                                      onResponderRelease={[Function]}
+                                      onResponderTerminate={[Function]}
+                                      onResponderTerminationRequest={[Function]}
+                                      onStartShouldSetResponder={[Function]}
                                       style={
-                                        Array [
-                                          Object {
-                                            "alignItems": "center",
-                                            "justifyContent": "center",
-                                            "width": 234,
-                                          },
-                                          undefined,
-                                        ]
+                                        Object {
+                                          "alignItems": "center",
+                                          "flexDirection": "row",
+                                          "justifyContent": "center",
+                                          "opacity": 1,
+                                          "paddingBottom": 14,
+                                          "paddingLeft": 20,
+                                          "paddingRight": 20,
+                                          "paddingTop": 14,
+                                          "width": "100%",
+                                        }
                                       }
                                     >
-                                      <Text
+                                      <View
                                         style={
                                           Array [
                                             Object {
-                                              "color": "#0A1427",
-                                              "fontFamily": "EuclidCircularB-Regular",
-                                              "fontSize": 24,
-                                              "lineHeight": 38,
-                                              "textAlignVertical": "center",
+                                              "alignItems": "center",
+                                              "justifyContent": "center",
+                                              "paddingRight": 12,
                                             },
-                                            Array [
-                                              Object {
-                                                "color": "#0A1427",
-                                                "fontFamily": "EuclidCircularB-Medium",
-                                                "fontSize": 24,
-                                                "lineHeight": 38,
-                                                "textAlignVertical": "center",
-                                              },
-                                              Array [
-                                                Object {
-                                                  "fontSize": 18,
-                                                  "lineHeight": 28,
-                                                  "marginBottom": 6,
-                                                  "textAlign": "center",
-                                                },
-                                                undefined,
-                                              ],
-                                            ],
+                                            undefined,
                                           ]
                                         }
                                       >
-                                        Nothing found
-                                      </Text>
+                                        <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
+                                          style={
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
+                                          }
+                                        />
+                                      </View>
+                                      <View
+                                        style={
+                                          Object {
+                                            "flex": 1,
+                                          }
+                                        }
+                                      >
+                                        <View
+                                          style={
+                                            Array [
+                                              Object {
+                                                "alignItems": "center",
+                                                "flexDirection": "row",
+                                                "justifyContent": "space-between",
+                                                "width": "100%",
+                                              },
+                                              undefined,
+                                            ]
+                                          }
+                                          type="DEFAULT"
+                                        >
+                                          <View
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-start",
+                                                  "flexBasis": 0,
+                                                  "flexDirection": "column",
+                                                  "flexGrow": 1,
+                                                  "flexShrink": 1,
+                                                  "justifyContent": "center",
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "flexGrow": 1,
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  Object {
+                                                    "alignItems": "center",
+                                                    "flexDirection": "row",
+                                                    "justifyContent": "space-between",
+                                                  },
+                                                  undefined,
+                                                ]
+                                              }
+                                            >
+                                              <Text
+                                                ellipsizeMode="tail"
+                                                numberOfLines={2}
+                                                style={
+                                                  Array [
+                                                    Object {
+                                                      "color": "#0A1427",
+                                                      "fontFamily": "EuclidCircularB-Regular",
+                                                      "textAlignVertical": "center",
+                                                    },
+                                                    Array [
+                                                      Object {
+                                                        "color": "#0A1427",
+                                                        "fontFamily": "EuclidCircularB-Medium",
+                                                        "textAlignVertical": "center",
+                                                      },
+                                                      Array [
+                                                        Object {
+                                                          "color": "#0A1427",
+                                                          "fontSize": 18,
+                                                          "lineHeight": 28,
+                                                          "width": "100%",
+                                                        },
+                                                        undefined,
+                                                      ],
+                                                    ],
+                                                  ]
+                                                }
+                                                type="DEFAULT"
+                                              >
+                                                Ethereum
+                                              </Text>
+                                            </View>
+                                          </View>
+                                          <View
+                                            rightColumn={true}
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-end",
+                                                  "flexDirection": "column",
+                                                  "justifyContent": "center",
+                                                  "marginLeft": 10,
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "maxWidth": "50%",
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  undefined,
+                                                  Object {
+                                                    "flexWrap": "wrap",
+                                                  },
+                                                ]
+                                              }
+                                            />
+                                          </View>
+                                        </View>
+                                      </View>
                                     </View>
                                   </View>
                                 </View>
+                                <View
+                                  onLayout={[Function]}
+                                  style={null}
+                                >
+                                  <View
+                                    style={
+                                      Array [
+                                        Object {
+                                          "flexDirection": "column",
+                                          "width": "100%",
+                                        },
+                                        undefined,
+                                      ]
+                                    }
+                                  >
+                                    <View
+                                      accessible={true}
+                                      focusable={true}
+                                      isTVSelectable={true}
+                                      onClick={[Function]}
+                                      onResponderGrant={[Function]}
+                                      onResponderMove={[Function]}
+                                      onResponderRelease={[Function]}
+                                      onResponderTerminate={[Function]}
+                                      onResponderTerminationRequest={[Function]}
+                                      onStartShouldSetResponder={[Function]}
+                                      style={
+                                        Object {
+                                          "alignItems": "center",
+                                          "flexDirection": "row",
+                                          "justifyContent": "center",
+                                          "opacity": 1,
+                                          "paddingBottom": 14,
+                                          "paddingLeft": 20,
+                                          "paddingRight": 20,
+                                          "paddingTop": 14,
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                      <View
+                                        style={
+                                          Array [
+                                            Object {
+                                              "alignItems": "center",
+                                              "justifyContent": "center",
+                                              "paddingRight": 12,
+                                            },
+                                            undefined,
+                                          ]
+                                        }
+                                      >
+                                        <View
+                                          accessible={true}
+                                          focusable={false}
+                                          isTVSelectable={true}
+                                          onClick={[Function]}
+                                          onResponderGrant={[Function]}
+                                          onResponderMove={[Function]}
+                                          onResponderRelease={[Function]}
+                                          onResponderTerminate={[Function]}
+                                          onResponderTerminationRequest={[Function]}
+                                          onStartShouldSetResponder={[Function]}
+                                          style={
+                                            Object {
+                                              "alignItems": "center",
+                                              "backgroundColor": "#d1d9e4",
+                                              "borderColor": "#FFFFFF",
+                                              "borderRadius": 26,
+                                              "borderStyle": "solid",
+                                              "borderWidth": 0,
+                                              "display": "flex",
+                                              "height": 52,
+                                              "justifyContent": "center",
+                                              "opacity": 1,
+                                              "overflow": "hidden",
+                                              "position": "relative",
+                                              "width": 52,
+                                            }
+                                          }
+                                        />
+                                      </View>
+                                      <View
+                                        style={
+                                          Object {
+                                            "flex": 1,
+                                          }
+                                        }
+                                      >
+                                        <View
+                                          style={
+                                            Array [
+                                              Object {
+                                                "alignItems": "center",
+                                                "flexDirection": "row",
+                                                "justifyContent": "space-between",
+                                                "width": "100%",
+                                              },
+                                              undefined,
+                                            ]
+                                          }
+                                          type="DEFAULT"
+                                        >
+                                          <View
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-start",
+                                                  "flexBasis": 0,
+                                                  "flexDirection": "column",
+                                                  "flexGrow": 1,
+                                                  "flexShrink": 1,
+                                                  "justifyContent": "center",
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "flexGrow": 1,
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  Object {
+                                                    "alignItems": "center",
+                                                    "flexDirection": "row",
+                                                    "justifyContent": "space-between",
+                                                  },
+                                                  undefined,
+                                                ]
+                                              }
+                                            >
+                                              <Text
+                                                ellipsizeMode="tail"
+                                                numberOfLines={2}
+                                                style={
+                                                  Array [
+                                                    Object {
+                                                      "color": "#0A1427",
+                                                      "fontFamily": "EuclidCircularB-Regular",
+                                                      "textAlignVertical": "center",
+                                                    },
+                                                    Array [
+                                                      Object {
+                                                        "color": "#0A1427",
+                                                        "fontFamily": "EuclidCircularB-Medium",
+                                                        "textAlignVertical": "center",
+                                                      },
+                                                      Array [
+                                                        Object {
+                                                          "color": "#0A1427",
+                                                          "fontSize": 18,
+                                                          "lineHeight": 28,
+                                                          "width": "100%",
+                                                        },
+                                                        undefined,
+                                                      ],
+                                                    ],
+                                                  ]
+                                                }
+                                                type="DEFAULT"
+                                              >
+                                                Pillar
+                                              </Text>
+                                            </View>
+                                          </View>
+                                          <View
+                                            rightColumn={true}
+                                            style={
+                                              Array [
+                                                Object {
+                                                  "alignItems": "flex-end",
+                                                  "flexDirection": "column",
+                                                  "justifyContent": "center",
+                                                  "marginLeft": 10,
+                                                  "marginTop": 0,
+                                                  "minHeight": 54,
+                                                },
+                                                Object {
+                                                  "maxWidth": "50%",
+                                                },
+                                              ]
+                                            }
+                                            type="DEFAULT"
+                                          >
+                                            <View
+                                              style={
+                                                Array [
+                                                  undefined,
+                                                  Object {
+                                                    "flexWrap": "wrap",
+                                                  },
+                                                ]
+                                              }
+                                            />
+                                          </View>
+                                        </View>
+                                      </View>
+                                    </View>
+                                  </View>
+                                </View>
+                                <View
+                                  style={
+                                    Object {
+                                      "height": 0,
+                                    }
+                                  }
+                                />
                               </View>
                             </RCTScrollView>
                           </View>

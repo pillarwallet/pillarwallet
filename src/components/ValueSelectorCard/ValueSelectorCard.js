@@ -111,7 +111,8 @@ const getFormStructure = (balances: Balances, txFeeInfo: ?TransactionFeeInfo) =>
 };
 
 const formatOptions = (options: Object[], balances: Balances, rates: Rates, baseFiatCurrency: ?string) => {
-  options.map((option) => {
+  if (!options) return [];
+  return options.map((option) => {
     const { iconUrl, symbol, address } = option;
     const assetBalance = getBalance(balances, symbol);
     const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
@@ -203,8 +204,10 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
     const { formOptions, value } = this.state;
+
     const customOptionsFormatted = customOptions && formatOptions(customOptions, balances, rates, baseFiatCurrency);
     const assetsAsOptions = showSyntheticOptions ? syntheticAssets : assets;
+
 
     const options: Option[] = customOptionsFormatted || assetsAsOptions || [];
 

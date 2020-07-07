@@ -435,6 +435,7 @@ class TextInput extends React.Component<Props, State> {
       errorMessageOnTop,
       customInputHeight,
       inputWrapperStyle = {},
+      renderOption,
     } = this.props;
     let { fallbackSource } = this.props;
 
@@ -457,6 +458,8 @@ class TextInput extends React.Component<Props, State> {
     const {
       options = [],
       fullWidth: fullWidthSelector,
+      selectorModalTitle,
+      optionsSearchPlaceholder,
       horizontalOptions,
     } = selectorOptions;
 
@@ -562,7 +565,13 @@ class TextInput extends React.Component<Props, State> {
         <SelectorOptions
           isVisible={showOptionsSelector}
           onHide={this.closeSelector}
+          title={selectorModalTitle}
+          options={options}
+          searchPlaceholder={optionsSearchPlaceholder}
+          optionKeyExtractor={this.optionKeyExtractor}
           onOptionSelect={this.selectValue}
+          renderOption={renderOption}
+          horizontalOptionsData={horizontalOptions}
         />
       </View>
     );
