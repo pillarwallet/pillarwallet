@@ -39,7 +39,7 @@ import Toast from 'components/Toast';
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getBiometryType } from 'utils/settings';
-import { images } from 'utils/images';
+import { getThemeColors } from 'utils/themes';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -51,6 +51,9 @@ type Props = {
   themeType: string,
   theme: Theme,
 };
+
+const touchIdImageSource = require('assets/images/touchId.png');
+const faceIdImageSource = require('assets/images/faceId.png');
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
@@ -76,13 +79,13 @@ const TouchIdImage = styled(CachedImage)`
   height: 164px;
 `;
 
-const getBiometryImage = (biometryType: string, theme: Theme) => {
+const getBiometryImage = (biometryType: string) => {
   switch (biometryType) {
     case Keychain.BIOMETRY_TYPE.TOUCH_ID:
     case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      return images(theme).touchIdIcon;
+      return touchIdImageSource;
     case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return images(theme).faceIdIcon;
+      return faceIdImageSource;
     default:
       return '';
   }
@@ -126,13 +129,17 @@ class BiometricsPrompt extends React.Component<Props> {
     const { navigation } = this.props;
     const biometryType = navigation.getParam('biometryType');
     const biometryTypeTitle = getBiometryType(biometryType);
-    const imageSource = getBiometryImage(biometryType, this.props.theme);
+    const imageSource = getBiometryImage(biometryType);
+    const colors = getThemeColors(this.props.theme);
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Make crypto easy' }] }}>
         <ContentWrapper contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30, flexGrow: 1 }}>
           <HeaderText>{`Would you like to use\n${biometryTypeTitle} with your\nwallet?`}</HeaderText>
           <ContentInnerWrapper>
-            <TouchIdImage source={imageSource} />
+            <TouchIdImage
+              source={imageSource}
+              style={{ tintColor: colors.positive }}
+            />
             <ButtonsWrapper>
               <Button title="Yes, please" onPress={() => this.proceedToRegisterWallet(true)} />
               <ButtonText

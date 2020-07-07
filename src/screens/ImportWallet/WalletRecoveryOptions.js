@@ -29,10 +29,13 @@ import { ScrollWrapper } from 'components/Layout';
 
 // utils
 import { getThemeColors } from 'utils/themes';
-import { images } from 'utils/images';
 
 // types
 import type { Theme } from 'models/Theme';
+
+// images
+const imageRecovery = require('assets/images/recovery.png');
+
 
 type Props = {
   navigation: NavigationScreenProp,
@@ -62,8 +65,6 @@ const WalletRecoveryOptions = (props: Props) => {
     { title: 'Use Recovery Portal (for Smart Wallet only)', route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO },
   ];
 
-  const { recoveryIcon } = images(theme);
-
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Recovery options' }] }}>
       <ScrollWrapper>
@@ -73,8 +74,9 @@ const WalletRecoveryOptions = (props: Props) => {
             height: 73,
             alignSelf: 'center',
             marginVertical: 50,
+            tintColor: colors.positive,
           }}
-          source={recoveryIcon}
+          source={imageRecovery}
           resizeMode="contain"
         />
         <FlatList
