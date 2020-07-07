@@ -70,11 +70,6 @@ describe('Common utils', () => {
   });
 
   describe('decodeSupportedAddress', () => {
-    it('decodes bitcoin address', () => {
-      const expectedAddress = 'BITCOIN_ADDRESS';
-      expect(decodeSupportedAddress('bitcoin:BITCOIN_ADDRESS')).toBe(expectedAddress);
-    });
-
     it('decodes ethereum address', () => {
       const expectedAddress = 'ETHEREUM_ADDRESS';
       expect(decodeSupportedAddress('ethereum:ETHEREUM_ADDRESS')).toBe(expectedAddress);
