@@ -47,7 +47,6 @@
     "bignumber.js": "^7.2.1",
     "bip32": "^2.0.4",
     "bip39": "^3.0.2",
-    "bitcoinjs-lib": "^5.1.6",
     "blockchain-explorer-sdk": "^0.1.163",
     "browserify-zlib": "~0.1.4",
     "buffer": "^4.9.1",

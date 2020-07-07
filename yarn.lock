@@ -5196,11 +5196,6 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bech32@^1.1.2:
-  version "1.1.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bech32/-/bech32-1.1.4.tgz#e38c9f37bf179b8eb16ae3a772b40c356d4832e9"
-  integrity sha1-44yfN78Xm46xauOncrQMNW1IMuk=
-
 better-assert@~1.0.0:
   version "1.0.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/better-assert/-/better-assert-1.0.2.tgz#40866b9e1b9e0b55b481894311e68faffaebc522"
@@ -5265,11 +5260,6 @@ bindings@^1.2.1, bindings@^1.3.0, bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-bip174@^1.0.1:
-  version "1.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bip174/-/bip174-1.0.1.tgz#858a587f9529e22ee9b0572fd884e5783696824d"
-  integrity sha1-hYpYf5Up4i7psFcv2ITleDaWgk0=
-
 bip32@^2.0.4:
   version "2.0.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bip32/-/bip32-2.0.5.tgz#e3808a9e97a880dbafd0f5f09ca4a1e14ee275d2"
@@ -5304,38 +5294,12 @@ bip39@^3.0.2:
     pbkdf2 "^3.0.9"
     randombytes "^2.0.1"
 
-bip66@^1.1.0, bip66@^1.1.5:
+bip66@^1.1.5:
   version "1.1.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bip66/-/bip66-1.1.5.tgz#01fa8748785ca70955d5011217d1b3139969ca22"
   integrity sha1-AfqHSHhcpwlV1QESF9GzE5lpyiI=
   dependencies:
     safe-buffer "^5.0.1"
-
-bitcoin-ops@^1.3.0, bitcoin-ops@^1.4.0:
-  version "1.4.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bitcoin-ops/-/bitcoin-ops-1.4.1.tgz#e45de620398e22fd4ca6023de43974ff42240278"
-  integrity sha1-5F3mIDmOIv1MpgI95Dl0/0IkAng=
-
-bitcoinjs-lib@^5.1.6:
-  version "5.1.10"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bitcoinjs-lib/-/bitcoinjs-lib-5.1.10.tgz#91ec7cde308007008b22ed9117c5f26970cbad54"
-  integrity sha1-kex83jCABwCLIu2RF8XyaXDLrVQ=
-  dependencies:
-    bech32 "^1.1.2"
-    bip174 "^1.0.1"
-    bip32 "^2.0.4"
-    bip66 "^1.1.0"
-    bitcoin-ops "^1.4.0"
-    bs58check "^2.0.0"
-    create-hash "^1.1.0"
-    create-hmac "^1.1.3"
-    merkle-lib "^2.0.10"
-    pushdata-bitcoin "^1.0.1"
-    randombytes "^2.0.1"
-    tiny-secp256k1 "^1.1.1"
-    typeforce "^1.11.3"
-    varuint-bitcoin "^1.0.4"
-    wif "^2.0.1"
 
 bl@~0.8.1:
   version "0.8.2"
@@ -5628,7 +5592,7 @@ bs58@^4.0.0:
   dependencies:
     base-x "^3.0.2"
 
-bs58check@<3.0.0, bs58check@^2.0.0, bs58check@^2.1.1, bs58check@^2.1.2:
+bs58check@<3.0.0, bs58check@^2.1.1, bs58check@^2.1.2:
   version "2.1.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bs58check/-/bs58check-2.1.2.tgz#53b018291228d82a5aa08e7d796fdafda54aebfc"
   integrity sha1-U7AYKRIo2CpaoI59eW/a/aVK6/w=
@@ -6691,7 +6655,7 @@ create-hash@^1.1.0, create-hash@^1.1.2, create-hash@^1.2.0:
     ripemd160 "^2.0.1"
     sha.js "^2.4.0"
 
-create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.3, create-hmac@^1.1.4, create-hmac@^1.1.7:
+create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4, create-hmac@^1.1.7:
   version "1.1.7"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/create-hmac/-/create-hmac-1.1.7.tgz#69170c78b3ab957147b2b8b04572e47ead2243ff"
   integrity sha1-aRcMeLOrlXFHsriwRXLkfq0iQ/8=
@@ -13497,11 +13461,6 @@ merge@^1.2.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/merge/-/merge-1.2.1.tgz#38bebf80c3220a8a487b6fcfb3941bb11720c145"
   integrity sha1-OL6/gMMiCopIe2/Ps5QbsRcgwUU=
 
-merkle-lib@^2.0.10:
-  version "2.0.10"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/merkle-lib/-/merkle-lib-2.0.10.tgz#82b8dbae75e27a7785388b73f9d7725d0f6f3326"
-  integrity sha1-grjbrnXieneFOItz+ddyXQ9vMyY=
-
 merkle-patricia-tree@^2.1.2, merkle-patricia-tree@^2.3.2:
   version "2.3.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/merkle-patricia-tree/-/merkle-patricia-tree-2.3.2.tgz#982ca1b5a0fde00eed2f6aeed1f9152860b8208a"
@@ -16238,13 +16197,6 @@ punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha1-tYsBCsQMIsVldhbI0sLALHv0eew=
-
-pushdata-bitcoin@^1.0.1:
-  version "1.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/pushdata-bitcoin/-/pushdata-bitcoin-1.0.1.tgz#15931d3cd967ade52206f523aa7331aef7d43af7"
-  integrity sha1-FZMdPNlnreUiBvUjqnMxrvfUOvc=
-  dependencies:
-    bitcoin-ops "^1.3.0"
 
 qrcode-terminal@^0.12.0:
   version "0.12.0"
@@ -19604,7 +19556,7 @@ tiny-relative-date@^1.3.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tiny-relative-date/-/tiny-relative-date-1.3.0.tgz#fa08aad501ed730f31cc043181d995c39a935e07"
   integrity sha1-+giq1QHtcw8xzAQxgdmVw5qTXgc=
 
-tiny-secp256k1@^1.1.1, tiny-secp256k1@^1.1.3:
+tiny-secp256k1@^1.1.3:
   version "1.1.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tiny-secp256k1/-/tiny-secp256k1-1.1.4.tgz#772a7711baaa9e2bffa92708cafadc9d372907a3"
   integrity sha1-dyp3Ebqqniv/qScIyvrcnTcpB6M=
@@ -19975,7 +19927,7 @@ typedarray@^0.0.6:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typeforce@^1.11.3, typeforce@^1.11.5:
+typeforce@^1.11.5:
   version "1.18.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/typeforce/-/typeforce-1.18.0.tgz#d7416a2c5845e085034d70fcc5b6cc4a90edbfdc"
   integrity sha1-10FqLFhF4IUDTXD8xbbMSpDtv9w=
@@ -20433,13 +20385,6 @@ varify@0.2.0:
     redeyed "~1.0.1"
     through "~2.3.4"
 
-varuint-bitcoin@^1.0.4:
-  version "1.1.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/varuint-bitcoin/-/varuint-bitcoin-1.1.2.tgz#e76c138249d06138b480d4c5b40ef53693e24e92"
-  integrity sha1-52wTgknQYTi0gNTFtA71NpPiTpI=
-  dependencies:
-    safe-buffer "^5.1.1"
-
 vary@~1.1.2:
   version "1.1.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
@@ -20880,7 +20825,7 @@ widest-line@^3.1.0:
   dependencies:
     string-width "^4.0.0"
 
-wif@^2.0.1, wif@^2.0.6:
+wif@^2.0.6:
   version "2.0.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/wif/-/wif-2.0.6.tgz#08d3f52056c66679299726fade0d432ae74b4704"
   integrity sha1-CNP1IFbGZnkplyb63g1DKudLRwQ=
