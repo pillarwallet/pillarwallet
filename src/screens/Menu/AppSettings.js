@@ -312,12 +312,10 @@ class AppSettings extends React.Component<Props, State> {
         >
           <StyledWrapper regularPadding flex={1}>
             <Paragraph small>
-              By confirming, you will leave the Early Access program. As a result, your access to the
-              Bitcoin Wallet and any funds stored on them will be lost.
+              By confirming, you will leave the Early Access program.
             </Paragraph>
             <Paragraph small>
-              If you wish to re-gain early access to Bitcoin Wallet (and re-gain access to the funds
-              on your Bitcoin Wallet), you will need to apply again.
+              If you wish to re-gain early access, you will need to apply again.
             </Paragraph>
             <Button
               title="Leave Program"

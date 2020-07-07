@@ -65,9 +65,6 @@ export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
 export const supportedAssetsSelector = ({ assets }: RootReducerState) =>
   get(assets, 'supportedAssets', []);
 
-export const bitcoinAddressSelector = ({ bitcoin }: RootReducerState) =>
-  get(bitcoin, 'data.addresses', []);
-
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
 

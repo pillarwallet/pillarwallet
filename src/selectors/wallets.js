@@ -24,14 +24,12 @@ import {
   accountsSelector,
   activeAccountSelector,
   activeBlockchainSelector,
-  bitcoinAddressSelector,
   featureFlagsSelector,
 } from './selectors';
 
 export const activeWalletSelector = createSelector(
   activeAccountSelector,
   activeBlockchainSelector,
-  bitcoinAddressSelector,
   (activeAccount) => {
     return activeAccount;
   },
@@ -39,7 +37,6 @@ export const activeWalletSelector = createSelector(
 
 export const availableWalletsSelector = createSelector(
   accountsSelector,
-  bitcoinAddressSelector,
   featureFlagsSelector,
   activeBlockchainSelector,
   (accounts) => {

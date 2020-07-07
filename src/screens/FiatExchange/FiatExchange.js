@@ -34,7 +34,6 @@ import { getActiveAccountAddress } from 'utils/accounts';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
-import type { BitcoinAddress } from 'models/Bitcoin';
 
 type Props = {
   wallet: Object,
@@ -43,7 +42,6 @@ type Props = {
   user: Object,
   accounts: Accounts,
   setBrowsingWebView: Function,
-  btcAddresses: BitcoinAddress[],
 };
 
 type State = {
@@ -145,12 +143,10 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   user: { data: user },
   accounts: { data: accounts },
-  bitcoin: { data: { addresses: btcAddresses } },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   user,
   accounts,
-  btcAddresses,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
