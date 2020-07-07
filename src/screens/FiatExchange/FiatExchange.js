@@ -59,7 +59,7 @@ class FiatExchange extends React.Component<Props, State> {
 
   componentDidMount = () => {
     const {
-      user, accounts, navigation, btcAddresses,
+      user, accounts, navigation,
     } = this.props;
 
     const {
@@ -75,12 +75,7 @@ class FiatExchange extends React.Component<Props, State> {
 
     const { email = '' } = user;
 
-    let destAddress;
-    if (destCurrency === 'BTC') {
-      destAddress = btcAddresses[0].address;
-    } else {
-      destAddress = getActiveAccountAddress(accounts);
-    }
+    const destAddress = getActiveAccountAddress(accounts);
 
     const moonPayURL = `${MOONPAY_WIDGET_URL}`
       + `?apiKey=${MOONPAY_KEY}`
