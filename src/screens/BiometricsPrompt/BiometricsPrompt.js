@@ -39,6 +39,7 @@ import Toast from 'components/Toast';
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getBiometryType } from 'utils/settings';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -75,6 +76,7 @@ const ButtonsWrapper = styled.View`
 const TouchIdImage = styled(CachedImage)`
   width: 164px;
   height: 164px;
+  tintColor: ${themedColors.positive};
 `;
 
 const getBiometryImage = (biometryType: string) => {
