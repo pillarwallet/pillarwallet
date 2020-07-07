@@ -344,7 +344,11 @@ export class ActivityFeedItem extends React.Component<Props> {
     } = this.props;
 
     const isReceived = this.isReceived(event);
-    const value = formatUnits(event.value, assetDecimals);
+    let value = formatUnits(event.value, assetDecimals);
+    if (event.transactionType === 'approve') {
+      // if it's approval transaction, the value is some rubbish, so we hide it from the user
+      value = '0';
+    }
     const relevantAddress = this.getRelevantAddress(event);
     const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const avatarUrl = contact && contact.profileImage;
