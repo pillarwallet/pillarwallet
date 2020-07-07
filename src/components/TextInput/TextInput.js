@@ -324,11 +324,12 @@ class TextInput extends React.Component<Props, State> {
     if (onSelectorClose) onSelectorClose();
   };
 
-  selectValue = (selectedValue: Object) => {
+  selectValue = (selectedValue: Object, onSuccess: () => void) => {
     const { inputProps: { onChange, selectorValue } } = this.props;
     const { input } = selectorValue;
     if (onChange) onChange({ selector: selectedValue, input });
     this.setState({ showOptionsSelector: false });
+    if (onSuccess) onSuccess();
   };
 
   focusInput = () => {
@@ -558,7 +559,11 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
         </InputFooter>}
-        <SelectorOptions />
+        <SelectorOptions
+          isVisible={showOptionsSelector}
+          onHide={this.closeSelector}
+          onOptionSelect={this.selectValue}
+        />
       </View>
     );
   }

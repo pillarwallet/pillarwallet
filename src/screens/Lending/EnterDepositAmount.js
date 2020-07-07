@@ -148,11 +148,6 @@ const EnterDepositAmount = ({
     { amount: depositAmount, asset: assetToDeposit },
   );
 
-  const assetSelectOptions = assetsToDeposit.reduce((assetsObject, asset) => ({
-    ...assetsObject,
-    [asset.symbol]: asset,
-  }), {});
-
   const onValueChanged = (value: Object) => {
     if (!value) {
       if (depositAmount) setDepositAmount(0);
@@ -210,7 +205,7 @@ const EnterDepositAmount = ({
       {!isFetchingAssetsToDeposit && (
         <ValueSelectorCard
           preselectedAsset={preselectedAssetSymbol}
-          assets={assetSelectOptions}
+          customOptions={assetsToDeposit}
           balances={balances}
           baseFiatCurrency={baseFiatCurrency}
           rates={rates}

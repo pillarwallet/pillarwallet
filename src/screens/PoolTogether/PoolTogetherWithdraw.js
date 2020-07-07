@@ -43,7 +43,7 @@ import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 // components
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ValueSelectorCard } from 'components/ValueSelectorCard';
+import ValueSelectorCard from 'components/ValueSelectorCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
@@ -319,9 +319,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       };
     }
 
-    const assetOptions = {
-      [poolToken]: assets[poolToken],
-    };
+    const assetOptions = assets[poolToken];
 
     const balanceOptions = {
       [poolToken]: {
@@ -360,11 +358,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
                 maxLabel="Withdraw all"
-                assets={assetOptions}
-                balances={balanceOptions}
-                baseFiatCurrency={baseFiatCurrency}
-                rates={rates}
-                txFeeInfo={null}
+                customOptions={assetOptions}
+                customBalances={balanceOptions}
               />
             </ContentRow>
             <ContentRow>

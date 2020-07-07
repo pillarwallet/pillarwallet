@@ -43,7 +43,7 @@ import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 // components
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ValueSelectorCard } from 'components/ValueSelectorCard';
+import ValueSelectorCard from 'components/ValueSelectorCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
@@ -322,9 +322,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       };
     }
 
-    const assetOptions = {
-      [poolToken]: assets[poolToken],
-    };
+    const assetOptions = assets[poolToken];
 
     return (
       <ContainerWithHeader
@@ -351,11 +349,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
                 maxLabel="Spend max"
-                assets={assetOptions}
-                balances={balances}
-                baseFiatCurrency={baseFiatCurrency}
-                rates={rates}
-                txFeeInfo={null}
+                customOptions={assetOptions}
               />
             </ContentRow>
             <ContentRow>
