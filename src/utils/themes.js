@@ -59,6 +59,9 @@ export const lightThemeColors = {
   avatarPlaceholderBackground: '#e0eeff',
   avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
+  progressBarStart: '#ca17e1',
+  progressBarEnd: '#f04cfa',
+  poolTogetherPink: '#e51fff',
 };
 
 export const darkThemeColors = {
@@ -99,6 +102,9 @@ export const darkThemeColors = {
   avatarPlaceholderBackground: '#181f31',
   avatarPlaceholderText: '#6690eb',
   labelTertiary: '#818eb3',
+  progressBarStart: '#ca17e1',
+  progressBarEnd: '#f04cfa',
+  poolTogetherPink: '#e51fff',
 };
 
 export const themedColors = {

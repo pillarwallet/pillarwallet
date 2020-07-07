@@ -434,14 +434,11 @@ class TextInput extends React.Component<Props, State> {
       errorMessageOnTop,
       customInputHeight,
       inputWrapperStyle = {},
-      renderOption,
     } = this.props;
     let { fallbackSource } = this.props;
 
     const colors = getThemeColors(theme);
-    const {
-      value = '', selectorValue = {}, multiline,
-    } = inputProps;
+    const { value = '', selectorValue = {}, multiline } = inputProps;
     const { input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
     const { genericToken } = images(theme);
@@ -459,8 +456,6 @@ class TextInput extends React.Component<Props, State> {
     const {
       options = [],
       fullWidth: fullWidthSelector,
-      selectorModalTitle,
-      optionsSearchPlaceholder,
       horizontalOptions,
     } = selectorOptions;
 
@@ -563,17 +558,7 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
         </InputFooter>}
-        <SelectorOptions
-          isVisible={showOptionsSelector}
-          onHide={this.closeSelector}
-          title={selectorModalTitle}
-          options={options}
-          searchPlaceholder={optionsSearchPlaceholder}
-          optionKeyExtractor={this.optionKeyExtractor}
-          onOptionSelect={this.selectValue}
-          renderOption={renderOption}
-          horizontalOptionsData={horizontalOptions}
-        />
+        <SelectorOptions />
       </View>
     );
   }

@@ -28,6 +28,7 @@ import get from 'lodash.get';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
+
 import Spinner from 'components/Spinner';
 
 import type { Balances, Rates } from 'models/Asset';
@@ -59,6 +60,7 @@ export type ExternalProps = {
   wrapperStyle?: Object,
   renderOption?: () => void,
   isLoading?: boolean,
+  hideZeroBalanceAssets?: boolean,
 };
 
 type Props = ExternalProps & {
@@ -130,6 +132,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               inputWrapperStyle: { width: '100%', paddingTop: 4, paddingBottom: 0 },
               rightLabel: '',
               customInputHeight: 56,
+              selectorModalTitle: 'Select',
               inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
               onPressRightLabel: this.handleUseMax,
             },
@@ -175,7 +178,6 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
     const thisStateFormOptionsCopy = { ...formOptions };
     thisStateFormOptionsCopy.fields.formSelector.config.options = assetsOptions || [];
-
     const newValue = { ...value };
 
     const preselectedOption = preselectedAsset &&
@@ -211,7 +213,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       amountValueInFiat,
       selectedAssetSymbol,
     } = this.getMaxBalanceOfSelectedAsset(false, symbol);
-    if (!selectedAssetBalance) return null;
+
+    if (!selectedAssetBalance || !symbol) return null;
 
     return (
       <BaseText regular secondary>{selectedAssetBalance} {selectedAssetSymbol} ({amountValueInFiat})</BaseText>
@@ -226,6 +229,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       maxLabel,
       getError,
     } = this.props;
+
     const { errorMessage, formOptions } = this.state;
     const formValue = this.form.getValue();
     const validation = this.form.validate();
@@ -276,6 +280,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       txFeeInfo,
       showSyntheticOptions,
       syntheticAssets,
+
     } = this.props;
     const { value } = this.state;
     const selectedAssetSymbol = symbol || get(value, 'formSelector.selector.symbol');
@@ -295,17 +300,16 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
         : formatAmount(rawSelectedAssetBalance);
     }
-
     const totalInFiat = parseFloat(rawSelectedAssetBalance) * getRate(rates, selectedAssetSymbol, fiatCurrency);
     const amountValueInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     return { selectedAssetBalance, amountValueInFiat, selectedAssetSymbol };
   };
 
-
   handleUseMax = () => {
     const { value, formOptions } = this.state;
     const { getFormValue } = this.props;
+
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
     const newValue = { ...value };
@@ -322,7 +326,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     });
 
     this.setState({ value: newValue, formOptions: newOptions });
-    getFormValue(newValue.formSelector);
+    getFormValue(newValue?.formSelector);
   };
 
   render() {

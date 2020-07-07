@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
@@ -270,7 +270,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         if (this.unsupportedTransaction) {
           errorMessage = 'This data transaction or token is not supported in Pillar Wallet yet';
         } else {
-          const txFeeInWeiBN = utils.bigNumberify(txFeeInWei.toString()); // BN compatibility
+          const txFeeInWeiBN = EthersBigNumber.from(txFeeInWei.toString()); // BN compatibility
           if (!isEnoughBalanceForTransactionFee(balances, {
             amount,
             symbol,

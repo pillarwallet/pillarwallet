@@ -33,7 +33,7 @@ import {
   AppState,
   DeviceEventEmitter,
 } from 'react-native';
-import { providers, utils } from 'ethers';
+import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
 import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
@@ -230,7 +230,7 @@ export const parseTokenBigNumberAmount = (amount: number | string, decimals: num
   const formatted = amount.toString();
   return decimals > 0
     ? utils.parseUnits(formatted, decimals)
-    : utils.bigNumberify(formatted);
+    : EthersBigNumber.from(formatted);
 };
 
 export const parseTokenAmount = (amount: number | string, decimals: number): number => {
@@ -307,6 +307,7 @@ const DEFAULT_TRANSITION_SCREENS = [
   NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
   NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   NAVSCREENS.SEND_BITCOIN_FLOW,
+  NAVSCREENS.POOLTOGETHER_FLOW,
 ];
 
 const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
@@ -459,7 +460,7 @@ export const ethSign = (msgHex: String, privateKeyHex: string): string => {
 };
 
 export const getRandomString = (): string => {
-  return utils.bigNumberify(utils.randomBytes(32)).toHexString().slice(2);
+  return EthersBigNumber.from(utils.randomBytes(32)).toHexString().slice(2);
 };
 
 export const extractJwtPayload = (jwtToken: string): Object => {

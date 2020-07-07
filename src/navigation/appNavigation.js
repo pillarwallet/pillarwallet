@@ -29,7 +29,7 @@ import { withTheme } from 'styled-components';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import PeopleScreen from 'screens/People';
+import AssetSearchScreen from 'screens/Assets/AssetSearch';
 import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
@@ -104,6 +104,18 @@ import RecoveryPortalWalletRecoveryPendingScreen from 'screens/RecoveryPortal/Re
 import RecoveryPortalWalletRecoveryStartedSceeen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryStarted';
 import EmailPhoneMissingScreen from 'screens/ReferFriends/EmailPhoneMissing';
 import ReferralIncomingRewardScreen from 'screens/ReferFriends/ReferralIncomingReward';
+import PoolTogetherDashboardScreen from 'screens/PoolTogether/PoolTogetherDashboard';
+import PoolTogetherPurchaseScreen from 'screens/PoolTogether/PoolTogetherPurchase';
+import PoolTogetherPurchaseConfirmScreen from 'screens/PoolTogether/PoolTogetherPurchaseConfirm';
+import PoolTogetherWithdrawScreen from 'screens/PoolTogether/PoolTogetherWithdraw';
+import PoolTogetherWithdrawConfirmScreen from 'screens/PoolTogether/PoolTogetherWithdrawConfirm';
+import ChooseAssetDepositScreen from 'screens/Lending/ChooseAssetDeposit';
+import DepositedAssetsListScreen from 'screens/Lending/DepositedAssetsList';
+import ViewDepositedAssetScreen from 'screens/Lending/ViewDepositedAsset';
+import EnterDepositAmountScreen from 'screens/Lending/EnterDepositAmount';
+import EnterWithdrawAmountScreen from 'screens/Lending/EnterWithdrawAmount';
+import DepositTransactionConfirmScreen from 'screens/Lending/DepositTransactionConfirm';
+import WithdrawTransactionConfirmScreen from 'screens/Lending/WithdrawTransactionConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -135,12 +147,12 @@ import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions
 import {
   ASSETS,
   ASSET,
+  ASSET_SEARCH,
   SERVICES_TAB,
   EXCHANGE,
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
-  PEOPLE,
   CONTACT,
   HOME,
   HOME_TAB,
@@ -238,6 +250,21 @@ import {
   REFERRAL_CONTACT_INFO_MISSING,
   REFERRAL_INCOMING_REWARD,
   SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
+  LENDING_CHOOSE_DEPOSIT,
+  LENDING_DEPOSITED_ASSETS_LIST,
+  LENDING_ADD_DEPOSIT_FLOW,
+  LENDING_VIEW_DEPOSITED_ASSET,
+  LENDING_ENTER_DEPOSIT_AMOUNT,
+  LENDING_DEPOSIT_TRANSACTION_CONFIRM,
+  LENDING_ENTER_WITHDRAW_AMOUNT,
+  LENDING_WITHDRAW_DEPOSIT_FLOW,
+  LENDING_WITHDRAW_TRANSACTION_CONFIRM,
+  POOLTOGETHER_FLOW,
+  POOLTOGETHER_DASHBOARD,
+  POOLTOGETHER_PURCHASE,
+  POOLTOGETHER_PURCHASE_CONFIRM,
+  POOLTOGETHER_WITHDRAW,
+  POOLTOGETHER_WITHDRAW_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -258,7 +285,6 @@ const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
-const iconPeople = require('assets/icons/icon_people_smrt.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
 
@@ -303,6 +329,7 @@ const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
+    [ASSET_SEARCH]: AssetSearchScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [CONTACT]: ContactScreen,
     [EXCHANGE]: ExchangeScreen,
@@ -326,6 +353,11 @@ const servicesFlow = createStackNavigator({
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [FIAT_EXCHANGE]: FiatExchangeScreen,
   [FIAT_CRYPTO]: FiatCryptoScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -339,20 +371,6 @@ const referFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 referFlow.navigationOptions = hideTabNavigatorOnChildView;
-
-
-// PEOPLE FLOW
-const peopleFlow = createStackNavigator({
-  [PEOPLE]: PeopleScreen,
-  [CONTACT]: ContactScreen,
-  [COLLECTIBLE]: CollectibleScreen,
-  [BADGE]: BadgeScreen,
-  [CHAT]: ChatScreen,
-  [REFER_FLOW]: referFlow,
-  [ADD_EDIT_USER]: AddOrEditUserScreen,
-}, StackNavigatorConfig);
-
-peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
@@ -385,6 +403,11 @@ const homeFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -476,17 +499,6 @@ const tabNavigation = createBottomTabNavigator(
           theme: screenProps.theme,
         }),
         tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
-      }),
-    },
-    [PEOPLE]: {
-      screen: peopleFlow,
-      navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon({
-          icon: iconPeople,
-          hasIndicator: !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
-          theme: screenProps.theme,
-        }),
-        tabBarLabel: tabBarLabel({ text: 'People', theme: screenProps.theme }),
       }),
     },
     [SERVICES_TAB]: {
@@ -697,6 +709,35 @@ const recoveryPortalRecoveryFlow = createStackNavigator({
 
 recoveryPortalRecoveryFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// POOLTOGETHER FLOW
+const poolTogetherFlow = createStackNavigator({
+  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
+  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
+  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
+  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
+  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+}, StackNavigatorConfig);
+
+poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const lendingAddDepositsFlow = createStackNavigator({
+  [LENDING_ENTER_DEPOSIT_AMOUNT]: EnterDepositAmountScreen,
+  [LENDING_DEPOSIT_TRANSACTION_CONFIRM]: DepositTransactionConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+lendingAddDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const lendingWithdrawDepositsFlow = createStackNavigator({
+  [LENDING_ENTER_WITHDRAW_AMOUNT]: EnterWithdrawAmountScreen,
+  [LENDING_WITHDRAW_TRANSACTION_CONFIRM]: WithdrawTransactionConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -724,6 +765,7 @@ const AppFlowNavigation = createStackNavigator(
     [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
     [RECOVERY_PORTAL_SETUP_FLOW]: recoveryPortalSetupFlow,
     [RECOVERY_PORTAL_RECOVERY_FLOW]: recoveryPortalRecoveryFlow,
+    [POOLTOGETHER_FLOW]: poolTogetherFlow,
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
@@ -733,6 +775,11 @@ const AppFlowNavigation = createStackNavigator(
     [REFERRAL_SENT]: ReferralSentScreen,
     [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
     [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,
+    [LENDING_CHOOSE_DEPOSIT]: ChooseAssetDepositScreen,
+    [LENDING_VIEW_DEPOSITED_ASSET]: ViewDepositedAssetScreen,
+    [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
+    [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
+    [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
   },
   modalTransition,
 );

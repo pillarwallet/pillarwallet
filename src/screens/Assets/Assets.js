@@ -70,7 +70,6 @@ import { activeAccountSelector } from 'selectors';
 
 // local components
 import PPNView from 'screens/Assets/PPNView';
-import BTCView from 'screens/Assets/BTCView';
 import WalletView from 'screens/Assets/WalletView';
 import WalletActivation from 'screens/Assets/WalletActivation';
 
@@ -104,7 +103,6 @@ const VIEWS = {
   KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
   SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
   PPN_VIEW: 'PPN_VIEW',
-  BTC_VIEW: 'BTC_VIEW',
 };
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -184,14 +182,6 @@ class AssetsScreen extends React.Component<Props, State> {
           customHeaderButtonProps: {
             backgroundColor: walletType === ACCOUNT_TYPES.KEY_BASED ? colors.legacyWallet : colors.smartWallet,
           },
-        };
-
-      case BLOCKCHAIN_NETWORK_TYPES.BITCOIN:
-        return {
-          label: 'Bitcoin wallet',
-          action: () => navigation.navigate(ACCOUNTS),
-          screenView: VIEWS.BTC_VIEW,
-          customHeaderButtonProps: { backgroundColor: colors.bitcoinWallet },
         };
 
       default:
@@ -285,8 +275,6 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     switch (viewType) {
-      case VIEWS.BTC_VIEW:
-        return <BTCView onScroll={onScroll} />;
       case VIEWS.PPN_VIEW:
         return <PPNView onScroll={onScroll} />;
       case VIEWS.SMART_WALLET_VIEW:

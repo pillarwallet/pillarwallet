@@ -64,6 +64,7 @@ import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { isSWAddress, mapTransactionsHistory } from 'utils/feedData';
+import { isAaveTransactionTag } from 'utils/aave';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -359,7 +360,8 @@ class AssetScreen extends React.Component<Props, State> {
         tag,
       }) => {
         return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-        && (!isPPNTransaction || (isPPNTransaction && (isSWAddress(from, accounts) && isSWAddress(to, accounts))));
+        && (!isPPNTransaction || (isPPNTransaction && (isSWAddress(from, accounts) && isSWAddress(to, accounts))))
+        && !isAaveTransactionTag(tag);
       });
 
     const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {

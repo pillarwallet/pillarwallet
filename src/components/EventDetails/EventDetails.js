@@ -28,7 +28,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { TX_DETAILS_URL, BITCOIN_TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
+import { TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -53,14 +53,12 @@ import {
   formatAmount,
   formatUnits,
   formatTransactionFee,
-  reportOrWarn,
 } from 'utils/common';
 import {
   groupPPNTransactions,
   isPendingTransaction,
   isSWAddress,
   isKWAddress,
-  isBTCAddress,
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
@@ -69,9 +67,11 @@ import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
+import { isAaveTransactionTag } from 'utils/aave';
+import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // constants
-import { BTC, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -100,10 +100,8 @@ import {
   SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER,
 } from 'constants/smartWalletConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import {
   BADGE,
-  CHAT,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
@@ -111,9 +109,16 @@ import {
   SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
-  SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW,
   CONTACT,
+  LENDING_ENTER_WITHDRAW_AMOUNT,
+  LENDING_ENTER_DEPOSIT_AMOUNT,
+  LENDING_VIEW_DEPOSITED_ASSET,
+  POOLTOGETHER_DASHBOARD,
+  POOLTOGETHER_PURCHASE,
+  POOLTOGETHER_WITHDRAW,
 } from 'constants/navigationConstants';
+import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
+import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
 
 // selectors
 import {
@@ -124,7 +129,6 @@ import {
 import {
   activeAccountAddressSelector,
   activeBlockchainSelector,
-  bitcoinAddressSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -135,20 +139,17 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { refreshBitcoinBalanceAction } from 'actions/bitcoinActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Rates, Assets, Asset, AssetData } from 'models/Asset';
+import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
 import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { Transaction, TransactionsStore } from 'models/Transaction';
-import type { BitcoinAddress } from 'models/Bitcoin';
 import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -156,6 +157,8 @@ import type { EventData as PassedEventData } from 'components/ActivityFeed/Activ
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { TxNote } from 'reducers/txNoteReducer';
+import type { PoolPrizeInfo } from 'models/PoolTogether';
+
 
 type Props = {
   theme: Theme,
@@ -180,7 +183,6 @@ type Props = {
   activeAccountAddress: string,
   accountAssets: Assets,
   activeBlockchainNetwork: string,
-  bitcoinAddresses: BitcoinAddress[],
   switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
   isPPNActivated: boolean,
@@ -189,9 +191,7 @@ type Props = {
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
-  bitcoinFeatureEnabled?: boolean,
   setActiveBlockchainNetwork: (id: string) => void,
-  refreshBitcoinBalance: () => void,
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
@@ -202,6 +202,8 @@ type Props = {
   updatingTransaction: string,
   updatingCollectibleTransaction: string,
   isSmartAccount: boolean,
+  depositedAssets: DepositedAsset[],
+  poolStats: PoolPrizeInfo,
 };
 
 type State = {
@@ -246,7 +248,7 @@ const ButtonsContainer = styled.View`
 const TokenImage = styled(CachedImage)`
   width: 64px;
   height: 64px;
-  border-radius: 64px;
+  border-radius: ${({ borderRadius }) => borderRadius || 64}px;
 `;
 
 const StyledCollectibleImage = styled(CollectibleImage)`
@@ -258,14 +260,15 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 const IconCircle = styled.View`
   width: 64px;
   height: 64px;
-  border-radius: 32px;
+  border-radius: ${({ borderRadius }) => borderRadius || 32}px;
   background-color: ${props => props.backgroundColor || themedColors.tertiary};
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border &&
-  `border-color: ${theme.colors.border};
-    border-width: 1px;`};
+  ${({ border, theme }) => border && `
+    border-color: ${theme.colors.border};
+    border-width: 1px;
+  `}
   overflow: hidden;
 `;
 
@@ -327,6 +330,17 @@ const ErrorMessage = styled(BaseText)`
   text-align: center;
 `;
 
+const PoolTogetherTicketsWrapper = styled.View`
+  align-items: center;
+`;
+
+const CornerIcon = styled(CachedImage)`
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
 
 export class EventDetail extends React.Component<Props, State> {
   timer: ?IntervalID;
@@ -444,9 +458,8 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getFeeLabel = (event: Object) => {
-    const { assetDecimals } = this.props;
     const {
-      gasUsed, gasPrice, btcFee, feeWithGasToken,
+      gasUsed, gasPrice, feeWithGasToken,
     } = event;
 
     if (!isEmpty(feeWithGasToken)) {
@@ -457,16 +470,8 @@ export class EventDetail extends React.Component<Props, State> {
       const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       const formattedFee = parseFloat(utils.formatEther(fee.toString()));
       return this.getFormattedGasFee(formattedFee, ETH);
-    } else if (btcFee) {
-      const formattedBTCFee = parseFloat(formatUnits(btcFee, assetDecimals));
-      return this.getFormattedGasFee(formattedBTCFee, BTC);
     }
     return null;
-  };
-
-  messageContact = (contact: ApiUser) => {
-    this.props.navigation.navigate(CHAT, { username: contact.username });
-    this.props.onClose();
   };
 
   sendTokensToContact = (contact: ApiUser) => {
@@ -500,11 +505,8 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   viewOnTheBlockchain = () => {
-    const { hash, asset } = this.props.event;
-    let url = TX_DETAILS_URL + hash;
-    if (asset && asset === 'BTC') {
-      url = BITCOIN_TX_DETAILS_URL + hash;
-    }
+    const { hash } = this.props.event;
+    const url = TX_DETAILS_URL + hash;
     Linking.openURL(url);
   };
 
@@ -600,6 +602,26 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(TANK_FUND_FLOW);
   };
 
+  onAaveViewDeposit = (depositedAsset: ?DepositedAsset) => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
+  };
+
+  onAaveDepositMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
+  };
+
+  onAaveWithdrawMore = async () => {
+    const { onClose, navigation, event } = this.props;
+    onClose();
+    await this.switchToSW();
+    navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
+  };
+
   PPNWithdraw = async () => {
     const { onClose, navigation } = this.props;
     onClose();
@@ -632,49 +654,65 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SETTLE_BALANCE);
   };
 
-  sendToBtc = async (btcReceiverAddress: string) => {
+  goToPoolTogetherPurcharse = (symbol: string) => {
     const {
       onClose,
       navigation,
-      supportedAssets,
-      setActiveBlockchainNetwork,
-      refreshBitcoinBalance,
-      isForAllAccounts,
+      poolStats = {},
     } = this.props;
+
+    const {
+      totalPoolTicketsCount,
+      userInfo,
+    } = poolStats[symbol];
+
+    let userTickets = 0;
+    if (userInfo) {
+      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
+    }
+
     onClose();
-    setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.BITCOIN);
-    refreshBitcoinBalance();
-    const btcToken = supportedAssets.find(e => e.symbol === BTC);
 
-    if (!btcToken) {
-      reportOrWarn('BTC token not found', null, 'error');
-      return;
+    navigation.navigate(POOLTOGETHER_PURCHASE, {
+      poolToken: symbol,
+      poolTicketsCount: 0,
+      totalPoolTicketsCount,
+      userTickets,
+    });
+  }
+
+  goToPoolTogetherWithdraw = (symbol: string) => {
+    const {
+      onClose,
+      navigation,
+      poolStats = {},
+    } = this.props;
+
+    const {
+      totalPoolTicketsCount,
+      userInfo,
+    } = poolStats[symbol];
+
+    let userTickets = 0;
+    if (userInfo) {
+      userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
     }
 
-    const { symbol: token, decimals } = btcToken;
-    const iconUrl = `${SDK_PROVIDER}/${btcToken.iconUrl}?size=2`;
-    const assetData: AssetData = {
-      token,
-      decimals,
-      iconColor: iconUrl,
-    };
+    onClose();
 
-    if (isForAllAccounts) {
-      navigation.navigate(SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW, {
-        assetData,
-        receiver: btcReceiverAddress,
-        source: 'Home',
-        receiverEnsName: '',
-      });
-    } else {
-      navigation.navigate(SEND_TOKEN_AMOUNT, {
-        assetData,
-        receiver: btcReceiverAddress,
-        source: 'Home',
-        receiverEnsName: '',
-      });
-    }
-  };
+    navigation.navigate(POOLTOGETHER_WITHDRAW, {
+      poolToken: symbol,
+      poolTicketsCount: 0,
+      totalPoolTicketsCount,
+      userTickets,
+    });
+  }
+
+  goToPoolTogetherPool = (symbol: string) => {
+    const { onClose, navigation } = this.props;
+    onClose();
+    navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
+  }
 
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
@@ -693,6 +731,24 @@ export class EventDetail extends React.Component<Props, State> {
     }
     return transactionNote;
   };
+
+  renderPoolTogetherTickets = (event: Object) => {
+    const { symbol, amount, decimals } = event.extra;
+    const formattedAmount = parseFloat(formatUnits(amount, decimals));
+    const directionSymbol = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? '-' : '+';
+    const amountText = `${directionSymbol} ${formattedAmount} ${symbol}`;
+    const ticketsText = `(${formattedAmount} ticket${formattedAmount === 1 ? '' : 's'})`;
+    const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
+    const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? 'Purcharse' : 'Withdraw';
+
+    return (
+      <PoolTogetherTicketsWrapper>
+        <BaseText secondary regular>{title}</BaseText>
+        <MediumText large color={this.getColor(amountTextColor)}>{amountText}</MediumText>
+        <BaseText secondary medium>{ticketsText}</BaseText>
+      </PoolTogetherTicketsWrapper>
+    );
+  }
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
@@ -718,7 +774,6 @@ export class EventDetail extends React.Component<Props, State> {
         const activateButton = {
           title: 'Activate',
           onPress: this.activateSW,
-          secondary: true,
         };
 
         const topUpButton = {
@@ -727,14 +782,8 @@ export class EventDetail extends React.Component<Props, State> {
           secondary: true,
         };
 
-        const topUpButtonSecondary = {
-          title: 'Top Up',
-          onPress: this.topUpSW,
-          squarePrimary: true,
-        };
-
         return {
-          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton, topUpButtonSecondary],
+          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton],
         };
       case 'Wallet imported':
         return {
@@ -748,7 +797,7 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated } = this.props;
+    const { isPPNActivated, isSmartWalletActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -771,11 +820,22 @@ export class EventDetail extends React.Component<Props, State> {
             ],
           };
         }
+        if (!isSmartWalletActivated) {
+          return {
+            actionTitle: 'Created',
+            buttons: [
+              {
+                title: 'Activate',
+                onPress: this.activateSW,
+              },
+            ],
+          };
+        }
         return {
           actionTitle: 'Created',
           buttons: [
             {
-              title: 'Activate',
+              title: 'Top up',
               onPress: this.topUpPillarNetwork,
             },
           ],
@@ -809,9 +869,9 @@ export class EventDetail extends React.Component<Props, State> {
       contactsSmartAddresses,
       isPPNActivated,
       itemData,
-      bitcoinAddresses,
-      bitcoinFeatureEnabled,
       referralRewardIssuersAddresses,
+      depositedAssets,
+      isSmartAccount,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -831,6 +891,13 @@ export class EventDetail extends React.Component<Props, State> {
     const isTimedOut = isTimedOutTransaction(event);
 
     let eventData: ?EventData = null;
+
+    let aaveDepositedAsset;
+    if (isAaveTransactionTag(event?.tag)) {
+      aaveDepositedAsset = depositedAssets.find(({
+        symbol: depositedAssetSymbol,
+      }) => depositedAssetSymbol === event?.extra?.symbol);
+    }
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -939,6 +1006,83 @@ export class EventDetail extends React.Component<Props, State> {
           ],
         };
         break;
+      case AAVE_LENDING_DEPOSIT_TRANSACTION:
+        eventData = {
+          name: 'Aave deposit',
+          actionTitle: fullItemValue,
+        };
+        const aaveDepositButtons = [];
+        if (event?.asset) {
+          aaveDepositButtons.push({
+            title: 'Deposit more',
+            onPress: this.onAaveDepositMore,
+            secondary: true,
+          });
+          if (aaveDepositedAsset) {
+            aaveDepositButtons.push({
+              title: 'View deposit',
+              onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+              squarePrimary: true,
+            });
+          }
+        }
+        eventData.buttons = aaveDepositButtons;
+        break;
+      case AAVE_LENDING_WITHDRAW_TRANSACTION:
+        eventData = {
+          name: 'Aave deposit',
+          actionTitle: fullItemValue,
+        };
+        const aaveWithdrawButtons = [];
+        if (event?.asset && aaveDepositedAsset) {
+          if (aaveDepositedAsset?.currentBalance > 0) {
+            aaveWithdrawButtons.push({
+              title: 'Withdraw more',
+              onPress: this.onAaveWithdrawMore,
+              secondary: true,
+            });
+          }
+          aaveWithdrawButtons.push({
+            title: 'View deposit',
+            onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
+            squarePrimary: true,
+          });
+        }
+        eventData.buttons = aaveWithdrawButtons;
+        break;
+      case POOLTOGETHER_DEPOSIT_TRANSACTION:
+      case POOLTOGETHER_WITHDRAW_TRANSACTION: {
+        const buttons = [];
+        if (isSmartAccount) {
+          const { extra: { symbol } } = event;
+          if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+            buttons.push({
+              title: 'Purchase more',
+              onPress: () => this.goToPoolTogetherPurcharse(symbol),
+              secondary: true,
+            });
+          } else {
+            buttons.push({
+              title: 'Withdraw more',
+              onPress: () => this.goToPoolTogetherWithdraw(symbol),
+              secondary: true,
+            });
+          }
+          buttons.push(
+            {
+              title: 'View pool',
+              onPress: () => this.goToPoolTogetherPool(symbol),
+              squarePrimary: true,
+            },
+          );
+        }
+        eventData = {
+          name: 'Pool Together',
+          customActionTitle: this.renderPoolTogetherTickets(event),
+          buttons,
+        };
+        break;
+      }
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
@@ -965,11 +1109,6 @@ export class EventDetail extends React.Component<Props, State> {
             } else {
               eventData.buttons = [
                 {
-                  title: 'Message',
-                  onPress: () => this.messageContact(contact),
-                  secondary: true,
-                },
-                {
                   title: 'Send back',
                   onPress: this.sendSynthetic,
                   squarePrimary: true,
@@ -985,6 +1124,16 @@ export class EventDetail extends React.Component<Props, State> {
               },
             ];
           }
+        } else if (isPoolTogetherAddress(event.to)) {
+          const buttons = [{
+            title: 'View pool',
+            onPress: () => this.goToPoolTogetherPool(DAI),
+            squarePrimary: true,
+          }];
+          eventData = {
+            name: 'Pool Together',
+            buttons,
+          };
         } else {
           eventData = {
             actionTitle: fullItemValue,
@@ -993,14 +1142,7 @@ export class EventDetail extends React.Component<Props, State> {
 
           let buttons = [];
           const contactFound = Object.keys(contact).length > 0;
-          const isBitcoinTrx = isBTCAddress(event.to, bitcoinAddresses) || isBTCAddress(event.from, bitcoinAddresses);
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
-          const messageButton = {
-            title: 'Message',
-            onPress: () => this.messageContact(contact),
-            secondary: true,
-          };
 
           const sendBackButtonSecondary = {
             title: 'Send back',
@@ -1050,19 +1192,6 @@ export class EventDetail extends React.Component<Props, State> {
             squarePrimary: true,
           };
 
-          const sendBackBtc = {
-            title: 'Send back',
-            onPress: () => this.sendToBtc(event.from),
-            secondary: true,
-          };
-
-          const sendMoreBtc = {
-            title: 'Send more',
-            onPress: () => this.sendToBtc(event.to),
-            secondary: true,
-          };
-
-
           if (isReferralRewardTransaction) {
             buttons = [];
           } else if (isReceived) {
@@ -1070,31 +1199,15 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [sendFromSW, topUpMore];
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
-            } else if (isBitcoinTrx) {
-              if (bitcoinFeatureEnabled && !isPending) {
-                buttons = [sendBackBtc];
-              } else {
-                buttons = [];
-              }
             } else if (contactFound) {
-              buttons = isPending
-                ? [messageButton]
-                : [messageButton, sendBackButtonSecondary];
+              buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
-          } else if (isBitcoinTrx) {
-            if (bitcoinFeatureEnabled && !isPending) {
-              buttons = [sendMoreBtc];
-            } else {
-              buttons = [];
-            }
           } else if (contactFound) {
-            buttons = isPending
-              ? [messageButton]
-              : [messageButton, sendMoreButtonSecondary];
+            buttons = [sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
@@ -1211,11 +1324,6 @@ export class EventDetail extends React.Component<Props, State> {
         actionTitle: 'Connected',
         buttons: [
           {
-            title: 'Message',
-            onPress: () => this.messageContact(acceptedContact),
-            secondary: true,
-          },
-          {
             title: 'Send tokens',
             onPress: () => this.sendTokensToContact(acceptedContact),
             squarePrimary: true,
@@ -1273,31 +1381,51 @@ export class EventDetail extends React.Component<Props, State> {
       iconBackgroundColor,
       iconBorder,
       collectibleUrl,
+      itemImageRoundedSquare,
+      cornerIcon,
     } = itemData;
+    const borderRadius = itemImageRoundedSquare && 13;
 
     const { genericToken: fallbackSource } = images(theme);
     if (itemImageUrl) {
       return (
-        <IconCircle border={iconBorder} backgroundColor={this.getColor(iconBackgroundColor)}>
+        <IconCircle
+          borderRadius={borderRadius}
+          border={iconBorder}
+          backgroundColor={this.getColor(iconBackgroundColor)}
+        >
           <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </IconCircle>
       );
     }
     if (itemImageSource) {
-      return <TokenImage source={itemImageSource} />;
+      return (
+        <View>
+          <TokenImage style={{ borderRadius }} source={itemImageSource} />
+          {cornerIcon && <CornerIcon source={cornerIcon} />}
+        </View>
+      );
     }
     if (iconName) {
       return (
-        <IconCircle>
-          <ItemIcon name={iconName} iconColor={this.getColor(iconColor)} />
+        <IconCircle borderRadius={borderRadius}>
+          <ItemIcon
+            borderRadius={borderRadius}
+            name={iconName}
+            iconColor={this.getColor(iconColor)}
+          />
         </IconCircle>
       );
     }
 
     if (collectibleUrl) {
       return (
-        <IconCircle border backgroundColor={this.getColor('card')}>
-          <StyledCollectibleImage source={{ uri: collectibleUrl }} fallbackSource={fallbackSource} />
+        <IconCircle borderRadius={borderRadius} border backgroundColor={this.getColor('card')}>
+          <StyledCollectibleImage
+            borderRadius={borderRadius}
+            source={{ uri: collectibleUrl }}
+            fallbackSource={fallbackSource}
+          />
         </IconCircle>
       );
     }
@@ -1552,14 +1680,11 @@ const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history, updatingTransaction },
-  featureFlags: {
-    data: {
-      BITCOIN_ENABLED: bitcoinFeatureEnabled,
-    },
-  },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
   txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
+  lending: { depositedAssets },
+  poolTogether: { poolStats },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1570,12 +1695,13 @@ const mapStateToProps = ({
   ensRegistry,
   supportedAssets,
   history,
-  bitcoinFeatureEnabled,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
   txNotes,
   updatingTransaction,
   updatingCollectibleTransaction,
+  depositedAssets,
+  poolStats,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1586,7 +1712,6 @@ const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,
   activeBlockchainNetwork: activeBlockchainSelector,
-  bitcoinAddresses: bitcoinAddressSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
@@ -1603,8 +1728,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
-  refreshBitcoinBalance: () => dispatch(refreshBitcoinBalanceAction(false)),
   getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 

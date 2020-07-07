@@ -41,6 +41,10 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import { SET_SMART_WALLET_ACCOUNT_ENS } from 'constants/smartWalletConstants';
+import {
+  POOLTOGETHER_WITHDRAW_TRANSACTION,
+  POOLTOGETHER_DEPOSIT_TRANSACTION,
+} from 'constants/poolTogetherConstants';
 import { withTheme } from 'styled-components/native';
 
 
@@ -603,6 +607,62 @@ storiesOf('ActivityFeedItem', module)
         accountType: ACCOUNT_TYPES.KEY_BASED,
         asset: 'PLR',
         value: '250000000000000000000',
+      }}
+    />
+  ))
+  .add('PoolTogether deposit DAI', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
+        extra: {
+          symbol: 'DAI',
+          decimals: 18,
+          amount: '1000000000000000000',
+        },
+      }}
+    />
+  ))
+  .add('PoolTogether deposit USDC', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
+        extra: {
+          symbol: 'USDC',
+          decimals: 18,
+          amount: '1000000000000000000',
+        },
+      }}
+    />
+  ))
+  .add('PoolTogether withdraw DAI', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
+        extra: {
+          symbol: 'DAI',
+          decimals: 18,
+          amount: '1000000000000000000',
+        },
+      }}
+    />
+  ))
+  .add('PoolTogether withdraw USDC', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
+        extra: {
+          symbol: 'USDC',
+          decimals: 18,
+          amount: '1000000000000000000',
+        },
       }}
     />
   ));

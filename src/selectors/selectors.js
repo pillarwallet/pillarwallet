@@ -84,3 +84,5 @@ export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => a
 
 export const ratesSelector = ({ rates }: RootReducerState) => rates.data;
 
+export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
+  get(poolTogether, 'poolStats', {});
