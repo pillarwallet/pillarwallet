@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
-import { decodeETHAddress } from 'utils/common';
+import { ETH } from 'constants/assetsConstants';
+import { pipe, decodeETHAddress } from 'utils/common';
 
 type AddressValidator = {
   validator: (address: string) => boolean,

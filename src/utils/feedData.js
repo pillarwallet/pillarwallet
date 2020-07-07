@@ -204,10 +204,6 @@ export const isKWAddress = (address: string, accounts: Accounts) => {
   return (!!account && checkIfKeyBasedAccount(account));
 };
 
-export const isBTCAddress = (address: string, bitcoinAddresses: BitcoinAddress[]) => {
-  return bitcoinAddresses.some(e => e.address === address);
-};
-
 export const getContactWithAddress = (contacts: ApiUser[], address: string) => {
   return contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress));
 };

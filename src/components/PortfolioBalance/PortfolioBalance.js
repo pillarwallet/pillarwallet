@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 
-import type { BitcoinBalance } from 'models/Bitcoin';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type {
   Balances,
@@ -41,7 +40,6 @@ import { allBalancesSelector } from 'selectors/balances';
 type Props = {
   rates: Rates,
   balances: Balances,
-  bitcoinBalances: BitcoinBalance,
   fiatCurrency: string,
   style: Object,
   showBalance: boolean,
@@ -131,10 +129,8 @@ class PortfolioBalance extends React.PureComponent<Props> {
 
 const mapStateToProps = ({
   rates: { data: rates },
-  bitcoin: { data: { balances: bitcoinBalances } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
-  bitcoinBalances,
 });
 
 const structuredSelector = createStructuredSelector({

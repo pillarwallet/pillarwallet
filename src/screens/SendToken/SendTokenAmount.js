@@ -25,11 +25,10 @@ import { createStructuredSelector } from 'reselect';
 import { updateAppSettingsAction } from 'actions/appSettingsActions';
 
 // constants
-import { BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // components
 import SendEthereumTokens from 'components/SendTokens/EthereumTokens';
-import SendBTCAmount from 'components/SendTokens/BTCAmount';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -82,13 +81,6 @@ class SendTokenAmount extends React.Component<Props> {
     this.props.updateAppSettings('transactionSpeed', speed);
   };
 
-  selectAmountComponent = (token: string) => {
-    if (token === BTC) {
-      return SendBTCAmount;
-    }
-    return SendEthereumTokens;
-  };
-
   render() {
     const {
       session,
@@ -100,13 +92,11 @@ class SendTokenAmount extends React.Component<Props> {
       accountAssets,
       accountHistory,
     } = this.props;
-    const { token } = this.assetData;
-    const AmountComponent = this.selectAmountComponent(token);
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
-      <AmountComponent
+      <SendEthereumTokens
         navigation={navigation}
         assetData={this.assetData}
         receiver={this.receiver}

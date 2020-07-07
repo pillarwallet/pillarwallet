@@ -71,7 +71,6 @@ const reduxData = {
   activeBlockchainNetwork: '',
   isSmartWalletActivated: false,
   accounts: [],
-  bitcoinAddresses: [],
   referralRewardIssuersAddresses: ['0x123456'],
   supportedAssets: [],
 };
@@ -344,32 +343,6 @@ storiesOf('ActivityFeedItem', module)
         asset: 'PLR',
         value: '1000000000000000000',
         isPPNTransaction: true,
-      }}
-    />
-  ))
-  .add('Bitcoin received', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      activeBlockchainNetwork="BITCOIN"
-      event={{
-        type: TRANSACTION_EVENT,
-        from: '0x111111',
-        to: '0x000000',
-        asset: 'BTC',
-        value: '1000000000000000000',
-      }}
-    />
-  ))
-  .add('Bitcoin sent', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      activeBlockchainNetwork="BITCOIN"
-      event={{
-        type: TRANSACTION_EVENT,
-        to: '0x111111',
-        from: '0x000000',
-        asset: 'BTC',
-        value: '1000000000000000000',
       }}
     />
   ))
