@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Platform } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
@@ -43,13 +43,12 @@ import { themedColors } from 'utils/themes';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   registerWallet: (setBiometrics: boolean, themeToStore: string) => void,
   themeType: string,
-  theme: Theme,
 };
 
 const touchIdImageSource = require('assets/images/touchId.png');
@@ -165,4 +164,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(BiometricsPrompt));
+export default connect(mapStateToProps, mapDispatchToProps)(BiometricsPrompt);

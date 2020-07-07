@@ -16,7 +16,7 @@
 */
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import styled, { withTheme } from 'styled-components';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // constants
