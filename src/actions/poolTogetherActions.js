@@ -27,6 +27,7 @@ import {
   SET_WITHDRAWALS_DEPOSITS_SYNC,
 } from 'constants/poolTogetherConstants';
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
+import { DAI, USDC } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -72,6 +73,20 @@ export const fetchPoolPrizeInfo = (symbol: string, sequence?: boolean) => { // s
       type: SET_POOL_TOGETHER_FETCHING_STATS,
       payload: false,
     });
+  };
+};
+
+export const fetchAllPoolsPrizes = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      poolTogether: {
+        isFetchingPoolStats = false,
+      },
+    } = getState();
+    if (!isFetchingPoolStats) {
+      await dispatch(fetchPoolPrizeInfo(DAI));
+      await dispatch(fetchPoolPrizeInfo(USDC, true));
+    }
   };
 };
 
