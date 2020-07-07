@@ -44,7 +44,6 @@ import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
-  BITCOIN_ADDRESS_PREFIX,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
 
@@ -58,7 +57,7 @@ import { isProdEnv, isTest } from './environment';
 
 const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(
-  `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
+  `^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi',
 );
 
 export const printLog = (...params: any) => {
@@ -116,7 +115,6 @@ export const getRandomInt = (min: number, max: number): number => {
  *
  * Examples:
  *   decodeAddress('ethereum', 'ethereum:0xaddress') -> 0xaddress
- *   decodeAddress('bitcoin', 'bitcoin:1address') -> 1address
  *
  * @param prefix         String the prefix part
  * @param encodedAddress String the '[prefx]:[address]' string
@@ -202,14 +200,8 @@ export const isValidNumber = (amount: string = '0') => {
 };
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
-  switch (assetSymbol) {
-    case 'ETH':
-      return 4;
-    case 'BTC':
-      return 8;
-    default:
-      return 2;
-  }
+  if (assetSymbol === 'ETH') return 4;
+  return 2;
 };
 
 export const formatAmount = (amount: string | number, precision: number = 6): string => {
