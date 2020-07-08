@@ -128,7 +128,6 @@ import {
   startListeningChatWebSocketAction,
   stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
-import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
@@ -764,7 +763,6 @@ type Props = {
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
-  fetchInviteNotifications: Function,
   getExistingChats: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
@@ -800,7 +798,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
-      fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAllAccountsBalances,
       getExistingChats,
@@ -821,7 +818,6 @@ class AppFlow extends React.Component<Props, State> {
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchAllAccountsBalances();
-    fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
     fetchAllCollectiblesData();
@@ -1000,9 +996,6 @@ const mapDispatchToProps = dispatch => ({
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
-  },
-  fetchInviteNotifications: () => {
-    dispatch(fetchInviteNotificationsAction());
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),

@@ -95,7 +95,6 @@ import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
-import { updateConnectionsAction } from 'actions/connectionsActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPortalActions';
 
@@ -221,7 +220,6 @@ export const finishRegistration = async ({
   await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
 
   await dispatch(fetchTransactionsHistoryAction());
-  dispatch(updateConnectionsAction());
   dispatch(labelUserAsLegacyAction());
 
   dispatch(managePPNInitFlagAction());

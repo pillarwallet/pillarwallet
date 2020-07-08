@@ -63,12 +63,6 @@ import {
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import {
-  cancelInvitationAction,
-  acceptInvitationAction,
-  rejectInvitationAction,
-  fetchInviteNotificationsAction,
-} from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import {
@@ -120,10 +114,6 @@ type Props = {
   user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
-  fetchInviteNotifications: Function,
-  acceptInvitation: Function,
-  cancelInvitation: Function,
-  rejectInvitation: Function,
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   intercomNotificationsCount: number,
@@ -272,7 +262,6 @@ class HomeScreen extends React.Component<Props, State> {
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
-      fetchInviteNotifications,
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
@@ -286,7 +275,6 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
-    fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
     fetchBadgeAwardHistory();
@@ -376,9 +364,6 @@ class HomeScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      cancelInvitation,
-      acceptInvitation,
-      rejectInvitation,
       intercomNotificationsCount,
       navigation,
       history,
@@ -525,9 +510,6 @@ class HomeScreen extends React.Component<Props, State> {
         >
           {onScroll => (
             <ActivityFeed
-              onCancelInvitation={cancelInvitation}
-              onRejectInvitation={rejectInvitation}
-              onAcceptInvitation={acceptInvitation}
               navigation={navigation}
               tabs={activityFeedTabs}
               activeTab={activeTab}
@@ -703,12 +685,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
-  acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
-  rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction(true)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction(true)),
   fetchBadges: () => dispatch(fetchBadgesAction()),

@@ -26,7 +26,6 @@ import get from 'lodash.get';
 import { Notifications } from 'react-native-notifications';
 
 // actions
-import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
   fetchSmartWalletTransactionsAction,
   fetchTransactionsHistoryNotificationsAction,
@@ -34,12 +33,10 @@ import {
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { updateConnectionsAction } from 'actions/connectionsActions';
 import {
   getExistingChatsAction,
   getChatByContactAction,
   addContactAndSendWebSocketChatMessageAction,
-  deleteChatAction,
 } from 'actions/chatActions';
 import {
   addContactAndSendWebSocketTxNoteMessageAction,
@@ -53,7 +50,6 @@ import {
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
-  CONNECTION,
   SIGNAL,
   BCX,
   COLLECTIBLE,
@@ -61,12 +57,7 @@ import {
 } from 'constants/notificationConstants';
 import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
 import { ADD_WEBSOCKET_RECEIVED_MESSAGE, REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
-import { MESSAGE_DISCONNECTED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import {
-  CONNECTION_ACCEPTED_EVENT,
-  CONNECTION_CANCELLED_EVENT,
-  CONNECTION_DISCONNECTED_EVENT,
-  CONNECTION_REJECTED_EVENT,
   CONNECTION_REQUESTED_EVENT,
   COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
@@ -158,14 +149,12 @@ export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
     dispatch(fetchSmartWalletTransactionsAction());
-    dispatch(fetchInviteNotificationsAction());
     dispatch(fetchAllCollectiblesDataAction());
   };
 };
 
 export const subscribeToSocketEventsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { invitations: { data: invitations } } = getState();
+  return async (dispatch: Dispatch) => {
     if (get(SOCKET, 'socket.readyState') !== 1) return;
 
     SOCKET.onMessage((response) => {
@@ -176,28 +165,6 @@ export const subscribeToSocketEventsAction = () => {
         // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
         reportLog('Platform WebSocket notification parse failed', { response, error });
         return; // unable to parse data, do not proceed
-      }
-
-      const senderUserId = get(data, 'senderUserData.id');
-
-      if (data.type === CONNECTION_REQUESTED_EVENT) {
-        dispatch(fetchInviteNotificationsAction());
-      }
-      if (
-        data.type === CONNECTION_CANCELLED_EVENT ||
-        data.type === CONNECTION_REJECTED_EVENT
-      ) {
-        const updatedInvitations = invitations.filter(({ id }) => id !== senderUserId);
-        dispatch({
-          type: UPDATE_INVITATIONS,
-          payload: updatedInvitations,
-        });
-      }
-      if (
-        data.type === CONNECTION_ACCEPTED_EVENT ||
-        data.type === CONNECTION_DISCONNECTED_EVENT
-      ) {
-        dispatch(updateConnectionsAction());
       }
       if (data.type === COLLECTIBLE_EVENT) {
         dispatch(fetchAllCollectiblesDataAction());
@@ -291,13 +258,6 @@ export const subscribeToPushNotificationsAction = () => {
           }
         }
       }
-      if (notification.type === CONNECTION) {
-        if (notification.message === MESSAGE_DISCONNECTED) {
-          dispatch(deleteChatAction(notification.title));
-        }
-
-        dispatch(fetchInviteNotificationsAction());
-      }
       if (notification.type !== SIGNAL) {
         dispatch({ type: ADD_NOTIFICATION, payload: notification });
         dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
@@ -369,9 +329,6 @@ export const startListeningOnOpenNotificationAction = () => {
         }
         if (type === COLLECTIBLE) {
           dispatch(fetchAllCollectiblesDataAction());
-        }
-        if (type === CONNECTION) {
-          dispatch(fetchInviteNotificationsAction());
         }
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
