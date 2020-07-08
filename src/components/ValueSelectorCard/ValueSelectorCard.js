@@ -52,6 +52,7 @@ type Props = {
   baseFiatCurrency: ?string,
   maxLabel?: string,
   preselectedAsset?: string,
+  preselectedValue?: number,
   rates: Rates,
   getFormValue: (?FormSelector) => void,
   txFeeInfo?: ?TransactionFeeInfo,
@@ -145,6 +146,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       maxLabel,
       preselectedAsset,
       hideZeroBalanceAssets,
+      preselectedValue,
     } = this.props;
     const { formOptions, value } = this.state;
 
@@ -177,6 +179,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
     const pickedAsset = preselectedOption || singleOption || {};
     newValue.formSelector.selector = pickedAsset;
+    if (preselectedValue) {
+      newValue.formSelector.input = preselectedValue.toString();
+    }
     const { symbol } = pickedAsset;
 
     const newOptions = t.update(formOptions, {

@@ -18,22 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type PoolUserInfo = {
-  openBalance?: string,
-  totalBalance?: string,
-  userCurrentPoolBalance?: string,
-  ticketBalance: string,
-}
-
-export type PoolInfo = {
-  currentPrize: string,
-  prizeEstimate: string,
-  drawDate: number,
-  remainingTimeMs: number,
-  totalPoolTicketsCount: number,
-  userInfo: ?PoolUserInfo,
+export default {
+  // $FlowFixMe
+  0: (state) => { // 0 is the redux persist version to migrate to
+    return {
+      ...state,
+      poolTogether: {
+        ...state.poolTogether, // all the state keys of the reducer should be spread to the active storage
+        lastSynced: { // the newly added keys to the reducer with initial values
+          DAI: 0,
+          USDC: 0,
+          withdrawalsDeposits: 0,
+        },
+      },
+    };
+  },
 };
-
-export type PoolPrizeInfo = {
-  [symbol: string]: PoolInfo,
-}

@@ -356,6 +356,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 baseFiatCurrency={baseFiatCurrency}
                 rates={rates}
                 txFeeInfo={null}
+                preselectedValue={tokenValue}
               />
             </ContentRow>
             <ContentRow>
