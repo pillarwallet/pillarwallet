@@ -43,11 +43,6 @@ import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // constants
-import {
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-  TYPE_SENT,
-} from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { USER_EVENT } from 'constants/userEventsConstants';
@@ -104,9 +99,6 @@ type Tab = {|
 |};
 
 type Props = {
-  onAcceptInvitation: Function,
-  onCancelInvitation: Function,
-  onRejectInvitation: Function,
   navigation: NavigationScreenProp<*>,
   feedTitle?: string,
   wrapperStyle?: Object,
@@ -216,7 +208,6 @@ class ActivityFeed extends React.Component<Props, State> {
   shouldRenderActivityItem = (item: Object) => {
     const typesThatRender = [
       USER_EVENT, TRANSACTION_EVENT, COLLECTIBLE_TRANSACTION, BADGE_REWARD_EVENT,
-      TYPE_SENT, TYPE_RECEIVED, TYPE_ACCEPTED,
     ];
     return typesThatRender.includes(item.type);
   };
@@ -241,8 +232,6 @@ class ActivityFeed extends React.Component<Props, State> {
         );
       default:
         const {
-          onRejectInvitation,
-          onAcceptInvitation,
           isPPNView,
           isForAllAccounts,
           isAssetView,
@@ -251,8 +240,6 @@ class ActivityFeed extends React.Component<Props, State> {
           <ActivityFeedItem
             event={item.item}
             selectEvent={this.selectEvent}
-            rejectInvitation={onRejectInvitation}
-            acceptInvitation={onAcceptInvitation}
             isPPNView={isPPNView}
             isAssetView={isAssetView}
             isForAllAccounts={isForAllAccounts}
@@ -306,8 +293,6 @@ class ActivityFeed extends React.Component<Props, State> {
       headerComponent,
       tabsComponent,
       flatListProps,
-      onRejectInvitation,
-      onAcceptInvitation,
       isForAllAccounts,
     } = this.props;
 
@@ -361,8 +346,6 @@ class ActivityFeed extends React.Component<Props, State> {
             itemData={selectedEventItemData}
             navigation={navigation}
             onClose={this.handleClose}
-            rejectInvitation={onRejectInvitation}
-            acceptInvitation={onAcceptInvitation}
             isForAllAccounts={isForAllAccounts}
           />
         }

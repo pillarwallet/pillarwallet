@@ -29,7 +29,6 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
 import { addressesEqual } from 'utils/assets';
-import { createAlert } from 'utils/alerts';
 import { fontSizes, spacing } from 'utils/variables';
 import {
   elipsizeAddress,
@@ -57,12 +56,6 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import { BaseText } from 'components/Typography';
 
 // constants
-import {
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-  TYPE_REJECTED,
-  TYPE_SENT,
-} from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -119,8 +112,6 @@ type Props = {
   theme: Theme,
   event: Object,
   feedType?: string,
-  acceptInvitation: Function,
-  rejectInvitation: Function,
   activeAccountAddress: string,
   accounts: Accounts,
   isSmartWalletActivated: boolean,
@@ -139,8 +130,6 @@ export type EventData = {
   badge?: ?string,
   subtext?: string,
   labelAsButton?: boolean,
-  rejectInvitation?: Function,
-  acceptInvitation?: Function,
   avatarUrl?: string,
   username?: string,
   itemImageUrl?: string,
@@ -719,38 +708,6 @@ export class ActivityFeedItem extends React.Component<Props> {
     };
   };
 
-  getSocialEventData = (event: Object): ?EventData => {
-    const { rejectInvitation, acceptInvitation } = this.props;
-    const { type, username, profileImage } = event;
-
-    let actionLabel;
-    if (type === TYPE_ACCEPTED) {
-      actionLabel = STATUSES.CONNECTED;
-    } else {
-      actionLabel = null;
-    }
-
-    const data: EventData = {
-      label: username,
-      actionLabel,
-      avatarUrl: profileImage,
-      username,
-    };
-
-    if (type === TYPE_SENT) {
-      data.buttonActionLabel = STATUSES.REQUESTED;
-      data.secondaryButton = true;
-    }
-
-    if (type === TYPE_RECEIVED) {
-      data.subtext = 'Connection request';
-      data.rejectInvitation = () => createAlert(TYPE_REJECTED, event, () => rejectInvitation(event));
-      data.acceptInvitation = () => acceptInvitation(event);
-    }
-
-    return data;
-  };
-
   getEventData = (event: Object): ?EventData => {
     switch (event.type) {
       case USER_EVENT:
@@ -761,10 +718,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         return this.getCollectibleTransactionEventData(event);
       case BADGE_REWARD_EVENT:
         return this.getBadgeRewardEventData(event);
-      case TYPE_SENT:
-      case TYPE_RECEIVED:
-      case TYPE_ACCEPTED:
-        return this.getSocialEventData(event);
       default:
         return null;
     }

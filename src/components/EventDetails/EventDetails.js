@@ -62,7 +62,6 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { createAlert } from 'utils/alerts';
 import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
@@ -72,12 +71,6 @@ import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
-import {
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-  TYPE_REJECTED,
-  TYPE_SENT,
-} from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -166,8 +159,6 @@ type Props = {
   event: Object,
   isVisible: boolean,
   onClose: (?(() => void)) => void,
-  rejectInvitation: (event: Object) => void,
-  acceptInvitation: (event: Object) => void,
   rates: Rates,
   baseFiatCurrency: ?string,
   contacts: ApiUser[],
@@ -488,20 +479,6 @@ export class EventDetail extends React.Component<Props, State> {
       },
     });
     this.props.onClose();
-  };
-
-  acceptInvitation = () => {
-    const { event, onClose, acceptInvitation } = this.props;
-    onClose();
-    acceptInvitation(event);
-  };
-
-  rejectInvitation = () => {
-    const { event, onClose, rejectInvitation } = this.props;
-    createAlert(TYPE_REJECTED, event, () => {
-      onClose();
-      rejectInvitation(event);
-    });
   };
 
   viewOnTheBlockchain = () => {
@@ -1289,53 +1266,6 @@ export class EventDetail extends React.Component<Props, State> {
     };
   };
 
-  getSocialEventData = (event: Object): ?EventData => {
-    const { contacts } = this.props;
-    const { type, username, profileImage } = event;
-    const acceptedContact = contacts.find(contact => contact.username === username);
-
-    if (type === TYPE_RECEIVED) {
-      return {
-        name: username,
-        profileImage,
-        actionTitle: 'Connection request',
-        buttons: [
-          {
-            title: 'Accept',
-            onPress: this.acceptInvitation,
-            secondary: true,
-          },
-          {
-            title: 'Reject',
-            onPress: this.rejectInvitation,
-            secondaryDanger: true,
-          },
-        ],
-        username,
-      };
-    }
-
-    if (!acceptedContact) return null;
-
-    if (type === TYPE_ACCEPTED) {
-      return {
-        name: username,
-        profileImage,
-        actionTitle: 'Connected',
-        buttons: [
-          {
-            title: 'Send tokens',
-            onPress: () => this.sendTokensToContact(acceptedContact),
-            squarePrimary: true,
-          },
-        ],
-        username,
-      };
-    }
-
-    return null;
-  };
-
   getEventData = (event: Object): ?EventData => {
     let eventData = null;
     switch (event.type) {
@@ -1351,11 +1281,6 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case BADGE_REWARD_EVENT:
         eventData = this.getBadgeRewardEventData(event);
-        break;
-      case TYPE_SENT:
-      case TYPE_RECEIVED:
-      case TYPE_ACCEPTED:
-        eventData = this.getSocialEventData(event);
         break;
       default:
         eventData = null;
