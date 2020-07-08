@@ -54,7 +54,7 @@ import {
 import { ALL, TRANSACTIONS } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { DAI, USDC } from 'constants/assetsConstants';
+import { DAI } from 'constants/assetsConstants';
 
 // actions
 import {
@@ -84,7 +84,7 @@ import {
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
-import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
+import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -161,7 +161,7 @@ type Props = {
   isFetchingDepositedAssets: boolean,
   isFetchingPoolStats: boolean,
   poolTogetherUserStats: Object[],
-  fetchPoolStats: (string) => void,
+  fetchPoolStats: () => void,
   isSmartWalletActive: boolean,
 };
 
@@ -239,8 +239,7 @@ class HomeScreen extends React.Component<Props, State> {
       this.props.setUnreadNotificationsStatus(false);
     });
     if (isSmartWalletActive) {
-      fetchPoolStats(DAI);
-      fetchPoolStats(USDC);
+      fetchPoolStats();
     }
     fetchTransactionsHistory();
     fetchBadges();
@@ -297,8 +296,7 @@ class HomeScreen extends React.Component<Props, State> {
     fetchReferralReward();
     fetchDepositedAssets();
     if (isSmartWalletActive) {
-      fetchPoolStats(DAI);
-      fetchPoolStats(USDC);
+      fetchPoolStats();
     }
   };
 
@@ -725,7 +723,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
   fetchDepositedAssets: () => dispatch(fetchDepositedAssetsAction()),
   toggleLendingDeposits: () => dispatch(toggleLendingDepositsAction()),
-  fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
+  fetchPoolStats: () => dispatch(fetchAllPoolsPrizes()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));
