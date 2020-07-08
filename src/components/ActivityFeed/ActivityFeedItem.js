@@ -36,11 +36,10 @@ import {
   isSWAddress,
   isKWAddress,
   groupPPNTransactions,
-  getUsernameOrAddress,
+  getElipsizeAddress,
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { findMatchingContact } from 'utils/contacts';
 import { findAccountByAddress, getAccountName } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
@@ -90,7 +89,6 @@ import { assetDecimalsSelector } from 'selectors/assets';
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
-import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -106,8 +104,6 @@ type Props = {
   asset?: string,
   isPending?: boolean,
   selectEvent: Function,
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   ensRegistry: EnsRegistry,
   theme: Theme,
   event: Object,
@@ -316,8 +312,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       ensRegistry,
       assetDecimals,
       accounts,
-      contacts,
-      contactsSmartAddresses,
       theme,
       isPPNView,
       isForAllAccounts,
@@ -333,8 +327,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       value = '0';
     }
     const relevantAddress = this.getRelevantAddress(event);
-    const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
-    const avatarUrl = contact && contact.profileImage;
 
     const assetSymbol = event ? event.asset : null;
     const decimalPlaces = getDecimalPlaces(assetSymbol);
@@ -551,9 +543,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           } else {
             data = {
               label: usernameOrAddress,
-              avatarUrl,
               isReceived,
-              username: contact?.username,
             };
 
             if (event.extra) {
@@ -619,7 +609,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           }
 
           if (!isTrxBetweenAccounts) {
-            additionalInfo.iconName = !avatarUrl ? directionIcon : null;
+            additionalInfo.iconName = directionIcon;
             additionalInfo.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
           }
 
@@ -638,8 +628,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           data = {
             label: itemLabel,
             subtext,
-            avatarUrl,
-            username: contact?.username,
             fullItemValue: `${directionSymbol}${formattedFullValue} ${event.asset}`,
             itemValue: `${directionSymbol}${formattedValue} ${event.asset}`,
             valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
@@ -658,7 +646,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   getCollectibleTransactionEventData = (event: Object) => {
-    const { contacts, accounts } = this.props;
+    const { accounts } = this.props;
     const isReceived = this.isReceived(event);
     const {
       asset,
@@ -680,7 +668,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         : (findAccountByAddress(event.to, accounts) || {}).type;
       usernameOrAddress = getAccountName(relatedAccountType);
     } else {
-      usernameOrAddress = getUsernameOrAddress(event, relevantAddress, contacts);
+      usernameOrAddress = getElipsizeAddress(relevantAddress);
     }
 
     const subtext = `Collectible ${isReceived ? 'from' : 'to'} ${usernameOrAddress}`;
@@ -758,14 +746,11 @@ export class ActivityFeedItem extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
   referrals: { referralRewardIssuersAddresses },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
-  contacts,
-  contactsSmartAddresses,
   ensRegistry,
   accounts,
   referralRewardIssuersAddresses,

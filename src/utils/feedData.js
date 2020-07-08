@@ -213,13 +213,6 @@ export const getContactWithAddress = (contacts: ApiUser[], address: string) => {
   return contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress));
 };
 
-export const getUsernameOrAddress = (event: Object, address: string, contacts: ApiUser[]) => {
-  if (event.username) {
-    return event.username;
-  }
-  const contact = getContactWithAddress(contacts, address);
-  if (contact) {
-    return contact.username;
-  }
+export const getElipsizeAddress = (address: string) => {
   return elipsizeAddress(address);
 };

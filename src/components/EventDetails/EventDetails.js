@@ -35,7 +35,6 @@ import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
-import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
@@ -62,7 +61,6 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
@@ -102,7 +100,6 @@ import {
   SEND_SYNTHETIC_ASSET,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
-  CONTACT,
   LENDING_ENTER_WITHDRAW_AMOUNT,
   LENDING_ENTER_DEPOSIT_AMOUNT,
   LENDING_VIEW_DEPOSITED_ASSET,
@@ -137,7 +134,6 @@ import { updateCollectibleTransactionAction } from 'actions/collectiblesActions'
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
-import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
@@ -148,7 +144,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
-import type { TxNote } from 'reducers/txNoteReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 
@@ -160,8 +155,6 @@ type Props = {
   onClose: (?(() => void)) => void,
   rates: Rates,
   baseFiatCurrency: ?string,
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   user: Object,
   accounts: Accounts,
   ensRegistry: EnsRegistry,
@@ -185,7 +178,6 @@ type Props = {
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
-  txNotes: TxNote[],
   collectiblesHistory: CollectibleTrx[],
   updateCollectibleTransaction: (hash: string) => void,
   updatingTransaction: string,
@@ -461,11 +453,6 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
-  sendTokensToContact = (contact: ApiUser) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
-    this.props.onClose();
-  };
-
   sendTokensToAddress = (address: string) => {
     const { ensRegistry } = this.props;
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, {
@@ -694,15 +681,7 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   getTrxNote = (event: Object) => {
-    const { txNotes } = this.props;
-    let transactionNote = event.note;
-    if (txNotes && txNotes.length > 0) {
-      const txNote = txNotes.find(txn => txn.txHash === event.hash);
-      if (txNote) {
-        transactionNote = txNote.text;
-      }
-    }
-    return transactionNote;
+    return event.note;
   };
 
   renderPoolTogetherTickets = (event: Object) => {
@@ -838,8 +817,6 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       assetDecimals,
       accounts,
-      contacts,
-      contactsSmartAddresses,
       isPPNActivated,
       itemData,
       referralRewardIssuersAddresses,
@@ -849,7 +826,6 @@ export class EventDetail extends React.Component<Props, State> {
 
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
-    const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const { fullItemValue, isBetweenAccounts, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
@@ -1114,24 +1090,11 @@ export class EventDetail extends React.Component<Props, State> {
           };
 
           let buttons = [];
-          const contactFound = Object.keys(contact).length > 0;
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
-          const sendBackButtonSecondary = {
-            title: 'Send back',
-            onPress: () => this.sendTokensToContact(contact),
-            squarePrimary: true,
-          };
 
           const inviteToPillarButton = {
             title: 'Invite to Pillar',
             onPress: this.referFriends,
-            squarePrimary: true,
-          };
-
-          const sendMoreButtonSecondary = {
-            title: 'Send more',
-            onPress: () => this.sendTokensToContact(contact),
             squarePrimary: true,
           };
 
@@ -1172,15 +1135,11 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [sendFromSW, topUpMore];
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
-            } else if (contactFound) {
-              buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
-          } else if (contactFound) {
-            buttons = [sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
@@ -1295,8 +1254,6 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       itemImageUrl,
       itemImageSource,
-      avatarUrl,
-      label,
       iconName,
       iconColor,
       iconBackgroundColor,
@@ -1350,16 +1307,7 @@ export class EventDetail extends React.Component<Props, State> {
         </IconCircle>
       );
     }
-
-    return (
-      <ProfileImage
-        uri={avatarUrl}
-        userName={label}
-        noShadow
-        borderWidth={0}
-        diameter={64}
-      />
-    );
+    return null;
   };
 
   getColor = (color: ?string): ?string => {
@@ -1452,15 +1400,6 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
-  goToProfile = () => {
-    const { navigation, itemData: { username }, onClose } = this.props;
-
-    if (username) {
-      onClose();
-      navigation.navigate(CONTACT, { username });
-    }
-  };
-
   renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
     const {
@@ -1477,7 +1416,6 @@ export class EventDetail extends React.Component<Props, State> {
       fullItemValue,
       subtext,
       valueColor,
-      username,
       isReceived,
       statusIconColor,
     } = itemData;
@@ -1502,7 +1440,7 @@ export class EventDetail extends React.Component<Props, State> {
           </ButtonHolder>
         </Row>
         <Spacing h={10} />
-        <AvatarWrapper onPress={this.goToProfile} disabled={!username}>
+        <AvatarWrapper disabled>
           <BaseText medium>{label}</BaseText>
           <Spacing h={20} />
           {this.renderImage(itemData)}
@@ -1595,22 +1533,18 @@ export class EventDetail extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   user: { data: user },
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history, updatingTransaction },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
-  txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  contacts,
-  contactsSmartAddresses,
   user,
   accounts,
   ensRegistry,
@@ -1618,7 +1552,6 @@ const mapStateToProps = ({
   history,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
-  txNotes,
   updatingTransaction,
   updatingCollectibleTransaction,
   depositedAssets,
