@@ -38,7 +38,6 @@ import {
   isKWAddress,
   groupPPNTransactions,
   getUsernameOrAddress,
-  isBTCAddress,
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
@@ -93,7 +92,7 @@ import {
 import { DAI } from 'constants/assetsConstants';
 
 // selectors
-import { activeAccountAddressSelector, bitcoinAddressSelector } from 'selectors';
+import { activeAccountAddressSelector } from 'selectors';
 import { assetDecimalsSelector } from 'selectors/assets';
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
@@ -104,7 +103,6 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
 import type { TransactionsGroup } from 'utils/feedData';
-import type { BitcoinAddress } from 'models/Bitcoin';
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
 import type { AaveExtra } from 'models/Transaction';
@@ -127,7 +125,6 @@ type Props = {
   accounts: Accounts,
   isSmartWalletActivated: boolean,
   assetDecimals: number,
-  bitcoinAddresses: BitcoinAddress[],
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
@@ -212,7 +209,6 @@ export class ActivityFeedItem extends React.Component<Props> {
   isReceived = (event: Object): boolean => {
     const { to, isReceived, from } = event;
     const {
-      bitcoinAddresses,
       activeAccountAddress,
       isForAllAccounts,
       accounts,
@@ -223,11 +219,10 @@ export class ActivityFeedItem extends React.Component<Props> {
         || (isSWAddress(from, accounts) && isKWAddress(to, accounts));
       return (isBetweenAccounts && isReceived)
         || (!isBetweenAccounts && isKWAddress(to, accounts))
-        || (!isBetweenAccounts && isSWAddress(to, accounts))
-        || bitcoinAddresses.some(e => e.address === to);
+        || (!isBetweenAccounts && isSWAddress(to, accounts));
     }
 
-    return addressesEqual(to, activeAccountAddress) || bitcoinAddresses.some(e => e.address === to);
+    return addressesEqual(to, activeAccountAddress);
   };
 
   isZeroValue(value: string): boolean {
@@ -336,7 +331,6 @@ export class ActivityFeedItem extends React.Component<Props> {
       contactsSmartAddresses,
       theme,
       isPPNView,
-      bitcoinAddresses,
       isForAllAccounts,
       isAssetView,
       referralRewardIssuersAddresses,
@@ -633,10 +627,6 @@ export class ActivityFeedItem extends React.Component<Props> {
             subtext = `from ${smartWallet}`;
           } else if (!isReceived && isKWAddress(event.from, accounts)) {
             subtext = `from ${keyWallet}`;
-          } else if (isReceived && isBTCAddress(event.to, bitcoinAddresses)) {
-            subtext = 'to Bitcoin wallet';
-          } else if (!isReceived && isBTCAddress(event.from, bitcoinAddresses)) {
-            subtext = 'from Bitcoin wallet';
           }
 
           if (!isTrxBetweenAccounts) {
@@ -831,7 +821,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  bitcoinAddresses: bitcoinAddressSelector,
   isSmartWalletActivated: isSmartWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
 });

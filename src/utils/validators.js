@@ -18,10 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
-import addressValidation from 'wallet-address-validator';
-import { DEFAULT_BTC_NETWORK } from 'constants/bitcoinConstants';
-import { BTC, ETH } from 'constants/assetsConstants';
-import { pipe, decodeBTCAddress, decodeETHAddress } from 'utils/common';
+import { ETH } from 'constants/assetsConstants';
+import { pipe, decodeETHAddress } from 'utils/common';
 
 type AddressValidator = {
   validator: (address: string) => boolean,
@@ -52,19 +50,6 @@ export const isEnsName = (input: string): boolean => {
   return false;
 };
 
-export const isValidBTCAddress = (address: string, network?: string): boolean => {
-  const useNetwork = network || DEFAULT_BTC_NETWORK;
-
-  switch (useNetwork) {
-    case 'bitcoin':
-      return addressValidation.validate(address, 'bitcoin', 'prod');
-    case 'testnet':
-      return addressValidation.validate(address, 'bitcoin', 'testnet');
-    default:
-      return false;
-  }
-};
-
 export const isValidETHAddress = (address: string): boolean => {
   let result = true;
   try {
@@ -79,14 +64,11 @@ export const isValidETHAddress = (address: string): boolean => {
 };
 
 export const isValidAddress = (address: string): boolean => {
-  return isValidETHAddress(address) || isValidBTCAddress(address);
+  return isValidETHAddress(address);
 };
 
 export const supportedAddressValidator = (address: string): boolean => {
   if (pipe(decodeETHAddress, isValidETHAddress)(address)) {
-    return true;
-  }
-  if (pipe(decodeBTCAddress, isValidBTCAddress)(address)) {
     return true;
   }
   return false;
@@ -97,10 +79,6 @@ export const addressValidator = (token: string): AddressValidator => {
     [ETH]: {
       validator: isValidETHAddress,
       message: 'Invalid Ethereum address',
-    },
-    [BTC]: {
-      validator: isValidBTCAddress,
-      message: 'Invalid Bitcoin address',
     },
   };
 

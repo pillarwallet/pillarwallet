@@ -221,8 +221,6 @@ export const loginAction = (
         // perform signal init
         dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
 
-        const bitcoinFeatureEnabled = get(getState(), 'featureFlags.data.BITCOIN_ENABLED');
-
         // init smart wallet
         if (wallet.privateKey && userHasSmartWallet(accounts)) {
           await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
@@ -232,7 +230,7 @@ export const loginAction = (
          * set Ethereum network as active if we disable feature flag
          * or end beta testing program while user has set BTC as active network
          */
-        const revertToDefaultNetwork = !bitcoinFeatureEnabled && !isSupportedBlockchain(blockchainNetwork);
+        const revertToDefaultNetwork = !isSupportedBlockchain(blockchainNetwork);
         if (revertToDefaultNetwork || !blockchainNetwork) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }

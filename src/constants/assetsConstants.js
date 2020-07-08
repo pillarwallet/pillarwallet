@@ -63,7 +63,6 @@ export const POPULAR_EXCHANGE_TOKENS = [
 ];
 
 export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
-export const BITCOIN_ADDRESS_PREFIX = 'bitcoin';
 
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 export const defaultFiatCurrency = GBP;

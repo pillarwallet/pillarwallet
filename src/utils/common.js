@@ -44,9 +44,7 @@ import {
   defaultFiatCurrency,
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
-  BITCOIN_ADDRESS_PREFIX,
   ETH,
-  BTC,
   WBTC,
   sBTC,
 } from 'constants/assetsConstants';
@@ -62,7 +60,7 @@ import { isProdEnv, isTest } from './environment';
 
 const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(
-  `^(?:${ETHEREUM_ADDRESS_PREFIX}|${BITCOIN_ADDRESS_PREFIX}):`, 'gi',
+  `^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi',
 );
 
 export const printLog = (...params: any) => {
@@ -120,7 +118,6 @@ export const getRandomInt = (min: number, max: number): number => {
  *
  * Examples:
  *   decodeAddress('ethereum', 'ethereum:0xaddress') -> 0xaddress
- *   decodeAddress('bitcoin', 'bitcoin:1address') -> 1address
  *
  * @param prefix         String the prefix part
  * @param encodedAddress String the '[prefx]:[address]' string
@@ -137,10 +134,6 @@ const decodeAddress = (prefix: string, encodedAddress: string): string => {
   }
 
   return encodedAddress;
-};
-
-export const decodeBTCAddress = (encodedAddress: string): string => {
-  return decodeAddress(BITCOIN_ADDRESS_PREFIX, encodedAddress);
 };
 
 export const decodeETHAddress = (encodedAddress: string): string => {
@@ -213,7 +206,6 @@ export const getDecimalPlaces = (assetSymbol: ?string): number => {
   switch (assetSymbol) {
     case ETH:
       return 4;
-    case BTC:
     case WBTC:
     case sBTC:
       return 8;
@@ -312,7 +304,6 @@ const DEFAULT_TRANSITION_SCREENS = [
   NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
   NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
   NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
-  NAVSCREENS.SEND_BITCOIN_FLOW,
   NAVSCREENS.POOLTOGETHER_FLOW,
 ];
 

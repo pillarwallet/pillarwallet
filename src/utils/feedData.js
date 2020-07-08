@@ -25,7 +25,6 @@ import get from 'lodash.get';
 import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
-import type { BitcoinAddress } from 'models/Bitcoin';
 import type { CollectibleTrx } from 'models/Collectible';
 
 import { TX_FAILED_STATUS, TX_PENDING_STATUS, TX_TIMEDOUT_STATUS, TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -208,10 +207,6 @@ export const isSWAddress = (address: string, accounts: Accounts) => {
 export const isKWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
   return (!!account && checkIfKeyBasedAccount(account));
-};
-
-export const isBTCAddress = (address: string, bitcoinAddresses: BitcoinAddress[]) => {
-  return bitcoinAddresses.some(e => e.address === address);
 };
 
 export const getContactWithAddress = (contacts: ApiUser[], address: string) => {
