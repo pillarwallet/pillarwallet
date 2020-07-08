@@ -600,6 +600,7 @@ class HomeScreen extends React.Component<Props, State> {
                           keyExtractor={(item) => item.symbol}
                           renderItem={this.renderDepositedAsset}
                           initialNumToRender={5}
+                          listKey="aave_deposits"
                         />
                       }
                       onPress={toggleLendingDeposits}
@@ -616,6 +617,7 @@ class HomeScreen extends React.Component<Props, State> {
                         keyExtractor={(item) => item.symbol}
                         renderItem={this.renderPoolTogetherItem}
                         initialNumToRender={2}
+                        listKey="pool_together"
                       />
                     }
                     onPress={togglePoolTogether}
