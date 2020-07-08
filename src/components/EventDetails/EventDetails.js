@@ -132,7 +132,6 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
-import { getTxNoteByContactAction } from 'actions/txNoteActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
 // types
@@ -186,7 +185,6 @@ type Props = {
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
-  getTxNoteByContact: (username: string) => void,
   txNotes: TxNote[],
   collectiblesHistory: CollectibleTrx[],
   updateCollectibleTransaction: (hash: string) => void,
@@ -344,10 +342,9 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { event, getTxNoteByContact } = this.props;
-    const { type, username } = event;
+    const { event } = this.props;
+    const { type } = event;
     if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
-    getTxNoteByContact(username);
     const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
     if (!txInfo) return;
     this.syncEnsRegistry(txInfo);
@@ -355,8 +352,8 @@ export class EventDetail extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { event, isVisible, getTxNoteByContact } = this.props;
-    const { type, username } = event;
+    const { event, isVisible } = this.props;
+    const { type } = event;
     if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
     const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
     const trxStatus = txInfo?.status;
@@ -365,7 +362,6 @@ export class EventDetail extends React.Component<Props, State> {
         this.syncEnsRegistry(txInfo);
         this.syncTxStatus(txInfo);
       }
-      getTxNoteByContact(username);
     }
     if (prevProps.isVisible && !isVisible) {
       this.cleanup();
@@ -1653,7 +1649,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));

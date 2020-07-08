@@ -75,7 +75,6 @@ import {
   getAccountId,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
-import { findMatchingContact } from 'utils/contacts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { logEventAction } from 'actions/analyticsActions';
@@ -85,7 +84,6 @@ import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
-import { sendTxNoteByContactAction } from './txNoteActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
@@ -316,23 +314,6 @@ export const sendAssetAction = (
     if (Object.keys(allowancePayload).length && tokenTx.hash) {
       const { provider, fromAssetCode, toAssetCode } = allowancePayload;
       dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, tokenTx.hash));
-    }
-
-    // send note
-    if (tokenTx.hash && note) {
-      const {
-        contacts: {
-          data: contacts,
-          contactsSmartAddresses: { addresses: contactsSmartAddresses },
-        },
-      } = getState();
-      const toUser = findMatchingContact(to, contacts, contactsSmartAddresses);
-      if (toUser) {
-        dispatch(sendTxNoteByContactAction(toUser.username, {
-          text: note,
-          txHash: tokenTx.hash,
-        }));
-      }
     }
 
     callback(txStatus);
