@@ -109,7 +109,6 @@
     "react-native-emoji": "^1.6.0",
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-fast-image": "^8.1.5",
-    "react-native-gifted-chat": "https://github.com/FaridSafi/react-native-gifted-chat#v0.7.3",
     "react-native-htmlview": "^0.13.0",
     "react-native-image-crop-picker": "^0.26.2",
     "react-native-image-zoom-viewer": "^3.0.0",

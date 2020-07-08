@@ -69,7 +69,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
@@ -198,7 +197,6 @@ import {
   MANAGE_USERS_FLOW,
   ADD_EDIT_USER,
   MENU,
-  CHAT,
   FIAT_EXCHANGE,
   FIAT_CRYPTO,
   SMART_WALLET_INTRO,
@@ -332,7 +330,6 @@ const assetsFlow = createStackNavigator(
     [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
-    [CHAT]: ChatScreen,
     [EXCHANGE_INFO]: ExchangeInfoScreen,
   },
   StackNavigatorConfig,
@@ -391,7 +388,6 @@ const homeFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
-  [CHAT]: ChatScreen,
   [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
@@ -537,7 +533,6 @@ const sendTokenFromAssetFlow = createStackNavigator(
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [CHAT]: ChatScreen,
     [CONTACT]: ContactScreen,
   },
   StackNavigatorModalConfig,
@@ -552,7 +547,6 @@ const sendTokenFromHomeFlow = createStackNavigator(
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [CHAT]: ChatScreen,
     [CONTACT]: ContactScreen,
   },
   StackNavigatorModalConfig,

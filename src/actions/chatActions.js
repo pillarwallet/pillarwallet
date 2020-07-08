@@ -19,7 +19,6 @@
 */
 
 import isEmpty from 'lodash.isempty';
-import partition from 'lodash.partition';
 
 // actions
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
@@ -30,22 +29,17 @@ import Toast from 'components/Toast';
 // constants
 import {
   UPDATE_CHATS,
-  ADD_MESSAGE,
   UPDATE_MESSAGES,
   FETCHING_CHATS,
   DELETE_CHAT,
-  ADD_WEBSOCKET_SENT_MESSAGE,
   DELETE_CONTACT,
   CHAT_DECRYPTING_FINISHED,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
-  ADD_CHAT_DRAFT,
-  CLEAR_CHAT_DRAFT,
   RESET_UNREAD_MESSAGE,
 } from 'constants/chatConstants';
 
 // services
 import ChatService from 'services/chat';
-import Storage from 'services/storage';
 
 // utils
 import { isCaseInsensitiveMatch } from 'utils/common';
@@ -54,11 +48,7 @@ import { isContactAvailable, findContactIdByUsername } from 'utils/contacts';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-import { saveDbAction } from './dbActions';
-
-
 const chat = new ChatService();
-const storage = Storage.getInstance('db');
 
 const mergeNewChats = (newChats, existingChats) => {
   return Object.keys(newChats)
@@ -117,103 +107,6 @@ export const getExistingChatsAction = () => {
       type: UPDATE_CHATS,
       payload: augmentedChats,
     });
-  };
-};
-
-export const sendMessageByContactAction = (username: string, contactId: string, message: Object) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      session: { data: { isOnline } },
-      user: { data: { id: userId } },
-    } = getState();
-
-    if (!isOnline) {
-      Toast.show({
-        message: 'Cannot send message offline',
-        type: 'warning',
-        autoClose: false,
-      });
-      return;
-    }
-
-    try {
-      const params = {
-        username,
-        message: message.text,
-        userId,
-        targetUserId: contactId,
-      };
-      await chat.sendMessage('chat', params, false, (requestId) => {
-        // callback is ran if websocket message sent
-        dispatch({
-          type: ADD_WEBSOCKET_SENT_MESSAGE,
-          payload: {
-            tag: 'chat',
-            params,
-            requestId,
-          },
-        });
-      });
-    } catch (e) {
-      Toast.show({
-        message: 'Unable to contact the server',
-        type: 'warning',
-        title: 'Cannot send the message',
-        autoClose: false,
-      });
-      return;
-    }
-
-    const timestamp = new Date(message.createdAt).getTime();
-    const msg = {
-      _id: timestamp.toString(),
-      createdAt: timestamp,
-      text: message.text,
-      user: {
-        _id: message.user._id,
-        name: message.user._id,
-      },
-    };
-
-    dispatch({
-      type: ADD_MESSAGE,
-      payload: { message: msg, username },
-    });
-  };
-};
-
-export const getChatDraftByContactAction = (contactId: string) => {
-  return async (dispatch: Dispatch) => {
-    const { drafts = {} } = await storage.get('chat');
-    const [chatDraft, chatDrafts] = partition(drafts, { contactId });
-    const { draftText = '' } = chatDraft[0] || {};
-
-    if (!draftText) { return; }
-
-    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
-    dispatch({
-      type: ADD_CHAT_DRAFT,
-      payload: { draftText },
-    });
-  };
-};
-
-export const clearChatDraftStateAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: CLEAR_CHAT_DRAFT,
-    });
-  };
-};
-
-export const saveDraftAction = (contactId: string, draftText: string) => {
-  return async (dispatch: Dispatch) => {
-    const chatStorage = await storage.get('chat');
-    const { drafts = [] } = chatStorage || {};
-
-    const chatDrafts = drafts.filter((draft) => draft.contactId !== contactId);
-    chatDrafts.push({ contactId, draftText });
-    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
   };
 };
 

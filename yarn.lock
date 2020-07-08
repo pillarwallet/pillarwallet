@@ -1605,14 +1605,6 @@
     "@ethersproject/properties" "^5.0.0"
     "@ethersproject/strings" "^5.0.0"
 
-"@expo/react-native-action-sheet@^2.0.1":
-  version "2.1.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@expo/react-native-action-sheet/-/react-native-action-sheet-2.1.0.tgz#7c3f6def52aee15ca7bd9e03cc0529e64618592c"
-  integrity sha1-fD9t71Ku4VynvZ4DzAUp5kYYWSw=
-  dependencies:
-    hoist-non-react-statics "^2.2.2"
-    prop-types "^15.5.10"
-
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -4698,13 +4690,6 @@ babel-plugin-add-react-displayname@^0.0.5:
   version "0.0.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babel-plugin-add-react-displayname/-/babel-plugin-add-react-displayname-0.0.5.tgz#339d4cddb7b65fd62d1df9db9fe04de134122bd5"
   integrity sha1-M51M3be2X9YtHfnbn+BN4TQSK9U=
-
-babel-plugin-check-es2015-constants@6.22.0:
-  version "6.22.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babel-plugin-check-es2015-constants/-/babel-plugin-check-es2015-constants-6.22.0.tgz#35157b101426fd2ffd3da3f75c7d1e91835bbf8a"
-  integrity sha1-NRV7EBQm/S/9PaP3XH0ekYNbv4o=
-  dependencies:
-    babel-runtime "^6.22.0"
 
 babel-plugin-dotenv@0.1.1:
   version "0.1.1"
@@ -10004,7 +9989,7 @@ hoist-non-react-statics@^1.0.5:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/hoist-non-react-statics/-/hoist-non-react-statics-1.2.0.tgz#aa448cf0986d55cc40773b17174b7dd066cb7cfb"
   integrity sha1-qkSM8JhtVcxAdzsXF0t90GbLfPs=
 
-hoist-non-react-statics@^2.2.2, hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
+hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
   version "2.5.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
   integrity sha1-xZA89AnA39kI84jmGdhrnBF0y0c=
@@ -12438,11 +12423,6 @@ keccak@^2.0.0:
     nan "^2.14.0"
     safe-buffer "^5.2.0"
 
-keymirror@0.1.1:
-  version "0.1.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/keymirror/-/keymirror-0.1.1.tgz#918889ea13f8d0a42e7c557250eee713adc95c35"
-  integrity sha1-kYiJ6hP40KQufFVyUO7nE63JXDU=
-
 kind-of@^1.1.0:
   version "1.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/kind-of/-/kind-of-1.1.0.tgz#140a3d2d41a36d2efcfa9377b62c24f8495a5c44"
@@ -14010,11 +13990,6 @@ moment@2.19.3:
   version "2.19.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/moment/-/moment-2.19.3.tgz#bdb99d270d6d7fda78cc0fbace855e27fe7da69f"
   integrity sha1-vbmdJw1tf9p4zA+6zoVeJ/59pp8=
-
-moment@^2.19.0:
-  version "2.26.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/moment/-/moment-2.26.0.tgz#5e1f82c6bafca6e83e808b30c8705eed0dcbd39a"
-  integrity sha1-Xh+Cxrr8pug+gIswyHBe7Q3L05o=
 
 moo@^0.5.0:
   version "0.5.1"
@@ -16568,11 +16543,6 @@ react-native-color-matrix-image-filters@^5.1.4:
     concat-color-matrices "^1.0.0"
     rn-color-matrices "^4.0.0"
 
-react-native-communications@2.2.1:
-  version "2.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
-  integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
-
 react-native-contacts@5.0.7:
   version "5.0.7"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-contacts/-/react-native-contacts-5.0.7.tgz#19b59edd3702ebdc389db266089e5f9370ea7501"
@@ -16654,18 +16624,6 @@ react-native-gesture-handler@1.6.1:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-"react-native-gifted-chat@https://github.com/FaridSafi/react-native-gifted-chat#v0.7.3":
-  version "0.7.2"
-  resolved "https://github.com/FaridSafi/react-native-gifted-chat#c90f86ab452f5f128ec43721953aa5006d0d5469"
-  dependencies:
-    "@expo/react-native-action-sheet" "^2.0.1"
-    moment "^2.19.0"
-    react-native-communications "2.2.1"
-    react-native-lightbox "^0.7.0"
-    react-native-parsed-text "^0.0.20"
-    react-native-video "^3.2.1"
-    uuid "3.3.0"
-
 react-native-htmlview@^0.13.0:
   version "0.13.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-htmlview/-/react-native-htmlview-0.13.0.tgz#2c34646c35bbe94386db9aaebbb3930ec58c8bcf"
@@ -16722,13 +16680,6 @@ react-native-level-fs@^3.0.0:
     level-filesystem "^1.0.1"
     levelup "^0.18.2"
 
-react-native-lightbox@^0.7.0:
-  version "0.7.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-lightbox/-/react-native-lightbox-0.7.0.tgz#e52b4d7fcc141f59d7b23f0180de535e35b20ec9"
-  integrity sha1-5StNf8wUH1nXsj8BgN5TXjWyDsk=
-  dependencies:
-    prop-types "^15.5.10"
-
 react-native-linear-gradient@2.5.4:
   version "2.5.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-linear-gradient/-/react-native-linear-gradient-2.5.4.tgz#dce133526f5a5510a639af94544f1ed0c984bd1e"
@@ -16751,14 +16702,6 @@ react-native-os@^1.0.1:
   version "1.2.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-os/-/react-native-os-1.2.6.tgz#1bb16d78ccad1143972183a04f443cf1af9fbefa"
   integrity sha1-G7FteMytEUOXIYOgT0Q88a+fvvo=
-
-react-native-parsed-text@^0.0.20:
-  version "0.0.20"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-parsed-text/-/react-native-parsed-text-0.0.20.tgz#7bd35fec88c3ca0eb0e8250a98e24092b4ee7fef"
-  integrity sha1-e9Nf7IjDyg6w6CUKmOJAkrTuf+8=
-  dependencies:
-    babel-plugin-check-es2015-constants "6.22.0"
-    prop-types "^15.5.10"
 
 react-native-parsed-text@^0.0.21:
   version "0.0.21"
@@ -16926,14 +16869,6 @@ react-native-vector-icons@^6.6.0:
     lodash "^4.0.0"
     prop-types "^15.6.2"
     yargs "^13.2.2"
-
-react-native-video@^3.2.1:
-  version "3.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-video/-/react-native-video-3.2.1.tgz#7ba3cbdfc5c747b5b00452811e98193824b16ce3"
-  integrity sha1-e6PL38XHR7WwBFKBHpgZOCSxbOM=
-  dependencies:
-    keymirror "0.1.1"
-    prop-types "^15.5.10"
 
 react-native-webview@^10.1.0:
   version "10.2.3"
@@ -20322,11 +20257,6 @@ uuid@3.2.1:
   version "3.2.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
   integrity sha1-EsUou51Y0LkmXZovbw/ovhf/HxQ=
-
-uuid@3.3.0:
-  version "3.3.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uuid/-/uuid-3.3.0.tgz#b237147804881d7b86f40a7ff8f590f15c37de32"
-  integrity sha1-sjcUeASIHXuG9Ap/+PWQ8Vw33jI=
 
 uuid@3.3.2:
   version "3.3.2"
