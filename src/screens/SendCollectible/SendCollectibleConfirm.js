@@ -21,7 +21,6 @@ import { SEND_COLLECTIBLE_CONTACTS, SEND_TOKEN_ASSETS, SEND_TOKEN_PIN_CONFIRM } 
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
-import { findMatchingContact, getUserName } from 'utils/contacts';
 import { formatTransactionFee, getEthereumProvider, noop } from 'utils/common';
 import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
@@ -46,13 +45,10 @@ import type { GasInfo } from 'models/GasInfo';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Asset, Assets, Balances } from 'models/Asset';
-import type { ContactSmartAddressData } from 'models/Contacts';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
-  contacts: Object[],
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   wallet: Object,
@@ -61,7 +57,6 @@ type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   balances: Balances,
-  contactsSmartAddresses: ContactSmartAddressData[],
   isSmartAccount: boolean,
   useGasToken: boolean,
 };
@@ -153,20 +148,14 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   };
 
   handleBackAction = () => {
-    const { navigation, contacts } = this.props;
+    const { navigation } = this.props;
     const backTo = navigation.getParam('backTo');
     switch (backTo) {
       case SEND_COLLECTIBLE_CONTACTS:
         navigation.navigate(SEND_COLLECTIBLE_CONTACTS, { assetData: this.assetData });
         break;
       case SEND_TOKEN_ASSETS:
-        const contact = contacts.find(({ ethAddress }) => addressesEqual(this.receiver, ethAddress));
-        if (!contact) {
-          // this is impossible, but rather dismiss whole flow than follow faulty
-          navigation.dismiss();
-          break;
-        }
-        navigation.navigate(SEND_TOKEN_ASSETS, { contact });
+        navigation.dismiss();
         break;
       default:
         navigation.goBack();
@@ -270,10 +259,8 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   render() {
     const {
-      contacts,
       session,
       accounts,
-      contactsSmartAddresses,
       balances,
     } = this.props;
     const {
@@ -286,9 +273,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     // recipient
     const to = this.receiver;
-    const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
-    const recipientUsername = getUserName(contact);
-    const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
+    const userAccount = accounts.find(({ id }) => addressesEqual(id, to));
 
     let isEnoughForFee = true;
     let feeDisplayValue = '';
@@ -322,13 +307,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         value: name,
       },
     ];
-
-    if (recipientUsername) {
-      reviewData.push({
-        label: 'Recipient Username',
-        value: recipientUsername,
-      });
-    }
 
     if (this.receiverEnsName) {
       reviewData.push({
@@ -372,7 +350,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         contentContainerStyle={{ marginTop: 40 }}
         customOnBack={this.handleBackAction}
         errorMessage={errorMessage}
-        onTextChange={session.isOnline && !!recipientUsername ? this.handleNoteChange : noop}
+        onTextChange={session.isOnline ? this.handleNoteChange : noop}
         textInputValue={note}
       />
     );
@@ -380,23 +358,17 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: {
-    data: contacts,
-    contactsSmartAddresses: { addresses: contactsSmartAddresses },
-  },
   session: { data: session },
   history: { gasInfo },
   wallet: { data: wallet },
   accounts: { data: accounts },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
-  contacts,
   session,
   gasInfo,
   wallet,
   accounts,
   supportedAssets,
-  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
