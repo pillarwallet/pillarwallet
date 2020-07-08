@@ -1633,7 +1633,7 @@ export class EventDetail extends React.Component<Props, State> {
 
     if (event.type === TRANSACTION_EVENT || event.type === COLLECTIBLE_TRANSACTION) {
       const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION) || {};
-      event = { ...event, ...txInfo };
+      event = { ...event, ...txInfo, type: event.type };
     }
 
     const eventData = this.getEventData(event);
