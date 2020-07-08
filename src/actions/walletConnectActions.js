@@ -596,7 +596,7 @@ export const initWalletConnectSessions = () => {
 
     if (connectors.length !== initialConnectors.length) {
       Toast.show({
-        type: 'error',
+        type: 'warning',
         title: 'Session error',
         message: 'Some WalletConnect sessions could not be started',
         autoClose: false,

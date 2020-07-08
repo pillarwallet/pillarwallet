@@ -29367,6 +29367,7 @@ exports[`Storyshots Selector default 1`] = `
                           Object {
                             "autoCapitalize": "none",
                             "onChange": [Function],
+                            "validator": [Function],
                             "value": "",
                           }
                         }
@@ -29457,8 +29458,6 @@ exports[`Storyshots Selector default 1`] = `
                               Object {
                                 "alignItems": "center",
                                 "display": "flex",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
                                 "marginBottom": 0,
                                 "marginTop": 0,
                               },
@@ -29505,11 +29504,13 @@ exports[`Storyshots Selector default 1`] = `
                                     "fontSize": 14,
                                     "height": 42,
                                     "paddingLeft": 14,
+                                    "paddingRight": 46,
                                   },
                                   undefined,
                                 ]
                               }
                               underlineColorAndroid="transparent"
+                              validator={[Function]}
                               value=""
                             />
                             <View
@@ -30669,6 +30670,7 @@ exports[`Storyshots Selector no options 1`] = `
                           Object {
                             "autoCapitalize": "none",
                             "onChange": [Function],
+                            "validator": [Function],
                             "value": "",
                           }
                         }
@@ -30755,8 +30757,6 @@ exports[`Storyshots Selector no options 1`] = `
                               Object {
                                 "alignItems": "center",
                                 "display": "flex",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
                                 "marginBottom": 0,
                                 "marginTop": 0,
                               },
@@ -30803,11 +30803,13 @@ exports[`Storyshots Selector no options 1`] = `
                                     "fontSize": 14,
                                     "height": 42,
                                     "paddingLeft": 14,
+                                    "paddingRight": 46,
                                   },
                                   undefined,
                                 ]
                               }
                               underlineColorAndroid="transparent"
+                              validator={[Function]}
                               value=""
                             />
                             <View
@@ -31814,6 +31816,7 @@ exports[`Storyshots Selector selected option 1`] = `
                           Object {
                             "autoCapitalize": "none",
                             "onChange": [Function],
+                            "validator": [Function],
                             "value": "",
                           }
                         }
@@ -31904,8 +31907,6 @@ exports[`Storyshots Selector selected option 1`] = `
                               Object {
                                 "alignItems": "center",
                                 "display": "flex",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
                                 "marginBottom": 0,
                                 "marginTop": 0,
                               },
@@ -31952,11 +31953,13 @@ exports[`Storyshots Selector selected option 1`] = `
                                     "fontSize": 14,
                                     "height": 42,
                                     "paddingLeft": 14,
+                                    "paddingRight": 46,
                                   },
                                   undefined,
                                 ]
                               }
                               underlineColorAndroid="transparent"
+                              validator={[Function]}
                               value=""
                             />
                             <View
@@ -33116,6 +33119,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                           Object {
                             "autoCapitalize": "none",
                             "onChange": [Function],
+                            "validator": [Function],
                             "value": "",
                           }
                         }
@@ -33206,8 +33210,6 @@ exports[`Storyshots Selector with custom wording 1`] = `
                               Object {
                                 "alignItems": "center",
                                 "display": "flex",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
                                 "marginBottom": 0,
                                 "marginTop": 0,
                               },
@@ -33254,11 +33256,13 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                     "fontSize": 14,
                                     "height": 42,
                                     "paddingLeft": 14,
+                                    "paddingRight": 46,
                                   },
                                   undefined,
                                 ]
                               }
                               underlineColorAndroid="transparent"
+                              validator={[Function]}
                               value=""
                             />
                             <View
@@ -34418,6 +34422,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                           Object {
                             "autoCapitalize": "none",
                             "onChange": [Function],
+                            "validator": [Function],
                             "value": "",
                           }
                         }
@@ -34549,8 +34554,6 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               Object {
                                 "alignItems": "center",
                                 "display": "flex",
-                                "flexDirection": "row",
-                                "justifyContent": "space-between",
                                 "marginBottom": 0,
                                 "marginTop": 0,
                               },
@@ -34597,11 +34600,13 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                     "fontSize": 14,
                                     "height": 42,
                                     "paddingLeft": 14,
+                                    "paddingRight": 46,
                                   },
                                   undefined,
                                 ]
                               }
                               underlineColorAndroid="transparent"
+                              validator={[Function]}
                               value=""
                             />
                             <View
@@ -36201,6 +36206,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                       Object {
                                         "autoCapitalize": "none",
                                         "onChange": [Function],
+                                        "validator": [Function],
                                         "value": "",
                                       }
                                     }
@@ -36326,8 +36332,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           Object {
                                             "alignItems": "center",
                                             "display": "flex",
-                                            "flexDirection": "row",
-                                            "justifyContent": "space-between",
                                             "marginBottom": 0,
                                             "marginTop": 0,
                                           },
@@ -36374,11 +36378,13 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                                 "fontSize": 14,
                                                 "height": 42,
                                                 "paddingLeft": 14,
+                                                "paddingRight": 46,
                                               },
                                               undefined,
                                             ]
                                           }
                                           underlineColorAndroid="transparent"
+                                          validator={[Function]}
                                           value=""
                                         />
                                         <View
@@ -37916,6 +37922,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                       Object {
                                         "autoCapitalize": "none",
                                         "onChange": [Function],
+                                        "validator": [Function],
                                         "value": "",
                                       }
                                     }
@@ -38041,8 +38048,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           Object {
                                             "alignItems": "center",
                                             "display": "flex",
-                                            "flexDirection": "row",
-                                            "justifyContent": "space-between",
                                             "marginBottom": 0,
                                             "marginTop": 0,
                                           },
@@ -38089,11 +38094,13 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                                 "fontSize": 14,
                                                 "height": 42,
                                                 "paddingLeft": 14,
+                                                "paddingRight": 46,
                                               },
                                               undefined,
                                             ]
                                           }
                                           underlineColorAndroid="transparent"
+                                          validator={[Function]}
                                           value=""
                                         />
                                         <View
@@ -39491,6 +39498,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                       Object {
                                         "autoCapitalize": "none",
                                         "onChange": [Function],
+                                        "validator": [Function],
                                         "value": "",
                                       }
                                     }
@@ -39616,8 +39624,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           Object {
                                             "alignItems": "center",
                                             "display": "flex",
-                                            "flexDirection": "row",
-                                            "justifyContent": "space-between",
                                             "marginBottom": 0,
                                             "marginTop": 0,
                                           },
@@ -39664,11 +39670,13 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                                 "fontSize": 14,
                                                 "height": 42,
                                                 "paddingLeft": 14,
+                                                "paddingRight": 46,
                                               },
                                               undefined,
                                             ]
                                           }
                                           underlineColorAndroid="transparent"
+                                          validator={[Function]}
                                           value=""
                                         />
                                         <View

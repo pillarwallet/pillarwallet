@@ -91,8 +91,10 @@ const SendContainer = (props: Props) => {
       <Selector
         label="To"
         placeholder="Choose contact"
+        searchPlaceholder="Username or wallet address"
         wrapperStyle={{ marginTop: spacing.medium }}
         noOptionImageFallback
+        hasQRScanner
         {...customSelectorProps}
       />
       <ValueSelectorCard

@@ -19,20 +19,23 @@
 */
 
 import * as React from 'react';
+import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 
 import { MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SelectorOptions from 'components/SelectorOptions';
+import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 
 import { spacing } from 'utils/variables';
+
 import type { HorizontalOption, Option } from 'models/Selector';
 
 
 export type Props = {
   selectedOption?: ?Option,
-  onOptionSelect?: (option: Option, onSuccess: () => void) => void,
+  onOptionSelect?: (option: Option, onSuccess?: () => void) => void,
   onOptionImagePress?: (option: Option) => void,
   label?: string,
   placeholder?: string,
@@ -42,9 +45,12 @@ export type Props = {
   horizontalOptionsData?: HorizontalOption[],
   wrapperStyle?: Object,
   noOptionImageFallback?: boolean,
+  hasQRScanner?: boolean,
+  allowSelectSelf?: boolean,
 };
 type State = {
   areOptionsVisible: boolean,
+  isScanning: boolean,
 };
 
 const Wrapper = styled.View`
@@ -60,11 +66,15 @@ const SelectedOption = styled.TouchableOpacity`
 `;
 
 class Selector extends React.Component<Props, State> {
+  switchBetweenModals: boolean;
+
   state = {
     areOptionsVisible: false,
+    isScanning: false,
   };
 
   closeOptions = () => {
+    this.switchBetweenModals = false;
     this.setState({ areOptionsVisible: false });
   };
 
@@ -72,6 +82,9 @@ class Selector extends React.Component<Props, State> {
     this.setState({ areOptionsVisible: true });
   };
 
+  handleOptionsHidden = () => {
+    if (this.switchBetweenModals) this.setState({ isScanning: true });
+  };
 
   onOptionSelect = (option: Option, onSuccess: () => void) => {
     const { onOptionSelect } = this.props;
@@ -101,6 +114,32 @@ class Selector extends React.Component<Props, State> {
     );
   };
 
+  handleQRRead = (address: string) => {
+    const { onOptionSelect } = this.props;
+    const option = {
+      value: address,
+      ethAddress: address,
+      name: address,
+    };
+    if (onOptionSelect) onOptionSelect(option);
+    this.closeOptions();
+  };
+
+  handleScannerOpen = () => {
+    this.switchBetweenModals = true;
+    Keyboard.dismiss();
+    this.setState({ areOptionsVisible: false });
+  };
+
+  handleQRScannerHidden = () => {
+    if (this.switchBetweenModals) this.openOptions();
+    this.switchBetweenModals = false;
+  };
+
+  handleQRScannerCancel = () => {
+    this.setState({ isScanning: false });
+  };
+
   render() {
     const {
       label = 'Select',
@@ -112,8 +151,10 @@ class Selector extends React.Component<Props, State> {
       horizontalOptionsData,
       wrapperStyle,
       noOptionImageFallback,
+      hasQRScanner,
+      allowSelectSelf,
     } = this.props;
-    const { areOptionsVisible } = this.state;
+    const { areOptionsVisible, isScanning } = this.state;
     const hasValue = !isEmpty(selectedOption);
     const hasOptions = !!options?.length;
     const placeholderText = hasOptions ? `${placeholder}...` : 'no options to select';
@@ -131,6 +172,7 @@ class Selector extends React.Component<Props, State> {
         <SelectorOptions
           isVisible={areOptionsVisible}
           onHide={this.closeOptions}
+          onHidden={this.handleOptionsHidden}
           title={optionsTitle || placeholder}
           options={options}
           searchPlaceholder={searchPlaceholder}
@@ -138,6 +180,18 @@ class Selector extends React.Component<Props, State> {
           horizontalOptionsData={horizontalOptionsData}
           onOptionSelect={this.onOptionSelect}
           noImageFallback={noOptionImageFallback}
+          iconProps={hasQRScanner && {
+            icon: 'qrcode',
+            style: { fontSize: 20, marginTop: 2 },
+            onPress: this.handleScannerOpen,
+          }}
+          allowSelectSelf={allowSelectSelf}
+        />
+        <AddressScanner
+          isActive={isScanning}
+          onCancel={this.handleQRScannerCancel}
+          onRead={this.handleQRRead}
+          onModalHidden={this.handleQRScannerHidden}
         />
       </>
     );

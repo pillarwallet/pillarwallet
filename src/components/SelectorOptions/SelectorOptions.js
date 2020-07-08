@@ -27,6 +27,8 @@ import {
   FlatList,
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 
 import { BaseText, MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
@@ -40,6 +42,8 @@ import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { getMatchingSortedData } from 'utils/textInput';
+import { isValidAddress } from 'utils/validators';
+import { activeAccountAddressSelector } from 'selectors';
 
 import type { Theme } from 'models/Theme';
 import type { HorizontalOption, Option } from 'models/Selector';
@@ -59,10 +63,17 @@ type Props = {
   searchPlaceholder?: string,
   theme: Theme,
   noImageFallback?: boolean,
+  inputIconName?: string,
+  iconProps?: Object,
+  activeAccountAddress: string,
+  allowSelectSelf?: boolean,
+  onHidden: () => void,
 };
 
 type State = {
   query: string,
+  hasSearchError: boolean,
+  customAddressAsAnOption: ?Option,
 };
 
 
@@ -135,6 +146,8 @@ class SelectorOptions extends React.Component<Props, State> {
 
   state = {
     query: '',
+    customAddressAsAnOption: null,
+    hasSearchError: false,
   };
 
   focusInput = () => {
@@ -147,6 +160,36 @@ class SelectorOptions extends React.Component<Props, State> {
     this.setState({
       query: formattedQuery,
     });
+  };
+
+  handleInputChange = (query: string) => {
+    this.handleSearch(query);
+    this.handleCustomAddress(query);
+  };
+
+  handleCustomAddress = (query: string) => {
+    const isValid = isValidAddress(query);
+    const address = (isValid && query) ? query : null;
+    this.handleCustomAddressAsAnOption(address);
+  };
+
+  handleCustomAddressAsAnOption = (address: ?string) => {
+    const { customAddressAsAnOption } = this.state;
+    if (!customAddressAsAnOption && !address) return;
+    if (!!customAddressAsAnOption && !address) {
+      this.setState({ customAddressAsAnOption: null });
+      return;
+    }
+    if (address) this.addCustomOption(address);
+  };
+
+  addCustomOption = async (address) => {
+    const option = {
+      value: address,
+      name: address,
+      ethAddress: address,
+    };
+    this.setState({ customAddressAsAnOption: option });
   };
 
   renderHorizontalOptions = (horizontalOptionsData) => {
@@ -247,8 +290,10 @@ class SelectorOptions extends React.Component<Props, State> {
   };
 
   resetOptions = () => {
+    const { onHidden } = this.props;
     this.setState({ query: '' });
     Keyboard.dismiss();
+    if (onHidden) onHidden();
   };
 
   closeOptions = () => {
@@ -270,6 +315,19 @@ class SelectorOptions extends React.Component<Props, State> {
     return option.value;
   };
 
+  validateSearch = (val: string) => {
+    const { allowSelectSelf, activeAccountAddress } = this.props;
+    const { hasSearchError } = this.state;
+    if (allowSelectSelf) return null;
+    if (val === activeAccountAddress) {
+      this.setState({ hasSearchError: true });
+      return 'Can not send assets to yourself';
+    } else if (hasSearchError) {
+      this.setState({ hasSearchError: false });
+    }
+    return null;
+  };
+
   render() {
     const {
       isVisible,
@@ -280,8 +338,9 @@ class SelectorOptions extends React.Component<Props, State> {
       optionsTitle,
       horizontalOptionsData = [],
       searchPlaceholder,
+      iconProps,
     } = this.props;
-    const { query } = this.state;
+    const { query, customAddressAsAnOption, hasSearchError } = this.state;
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
 
@@ -296,7 +355,8 @@ class SelectorOptions extends React.Component<Props, State> {
       }, [])
       : horizontalOptionsData;
 
-    const showEmptyState = !filteredOptions?.length && !filteredHorizontalOptionsData.some(({ data }) => data.length);
+    const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length
+      && !filteredHorizontalOptionsData.some(({ data }) => data.length);
 
     const extendedHeaderItems = {
       value: 'extendedHeaderItems',
@@ -316,6 +376,8 @@ class SelectorOptions extends React.Component<Props, State> {
     let allFeedListData = [extendedHeaderItems];
     if (filteredOptions.length) {
       allFeedListData = [extendedHeaderItems, ...filteredOptions];
+    } else if (!hasSearchError && customAddressAsAnOption) {
+      allFeedListData = [extendedHeaderItems, customAddressAsAnOption];
     }
 
     return (
@@ -347,14 +409,16 @@ class SelectorOptions extends React.Component<Props, State> {
               <SearchBarWrapper>
                 <SearchBar
                   inputProps={{
-                    onChange: this.handleSearch,
+                    onChange: this.handleInputChange,
                     value: query,
                     autoCapitalize: 'none',
+                    validator: this.validateSearch,
                   }}
                   placeholder={searchPlaceholder}
                   inputRef={ref => { this.searchInput = ref; }}
                   noClose
                   marginBottom="0"
+                  iconProps={iconProps}
                 />
               </SearchBarWrapper>}
             windowSize={10}
@@ -366,4 +430,8 @@ class SelectorOptions extends React.Component<Props, State> {
   }
 }
 
-export default withTheme(SelectorOptions);
+const structuredSelector = createStructuredSelector({
+  activeAccountAddress: activeAccountAddressSelector,
+});
+
+export default withTheme(connect(structuredSelector)(SelectorOptions));

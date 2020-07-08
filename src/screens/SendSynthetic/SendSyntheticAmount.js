@@ -114,13 +114,12 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     fetchAvailableSyntheticAssets();
   }
 
-  handleReceiverSelect = (value: Option, onSuccess: () => void) => {
+  handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
     const { navigation } = this.props;
     const { name, hasSmartWallet } = value;
 
     if (hasSmartWallet) {
       this.setReceiver(value, onSuccess);
-      onSuccess();
     } else {
       Alert.alert(
         'This user is not on Pillar Network',
@@ -135,21 +134,21 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     }
   };
 
-  setReceiver = async (value: Option, onSuccess: () => void) => {
+  setReceiver = async (value: Option, onSuccess?: () => void) => {
     const { receiverEnsName, receiver } = await getContactsEnsName(value?.ethAddress);
     let stateToUpdate = {};
     if (!receiver) {
       Toast.show({
         title: 'Invalid ENS Name',
         message: 'Could not get address',
-        type: 'error',
+        type: 'warning',
         autoClose: false,
       });
       stateToUpdate = { selectedContact: null, receiver: '', receiverEnsName: '' };
     } else {
       stateToUpdate = { selectedContact: value, receiver, receiverEnsName };
     }
-    this.setState(stateToUpdate, () => { onSuccess(); });
+    this.setState(stateToUpdate, () => { if (onSuccess) onSuccess(); });
   };
 
   handleAssetValueSelect = (value?: Object) => {

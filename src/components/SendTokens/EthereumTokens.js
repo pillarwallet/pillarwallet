@@ -37,7 +37,6 @@ import Spinner from 'components/Spinner';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import { Spacing } from 'components/Layout';
-import Toast from 'components/Toast';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
@@ -124,7 +123,6 @@ type Props = {
 type State = {
   amount: ?string,
   assetData: ?AssetData,
-  receiverEnsName: string,
   showTransactionSpeedModal: boolean,
   gasLimit: number,
   gettingFee: boolean,
@@ -221,26 +219,18 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   setReceiver = async (value: Option, onSuccess?: () => void) => {
     const { receiverEnsName, receiver } = await getContactsEnsName(value?.ethAddress);
-    if (!receiver) {
-      Toast.show({
-        title: 'Invalid ENS Name',
-        message: 'Could not get address',
-        type: 'error',
-        autoClose: false,
-      });
-      this.setState({ selectedContact: null, receiver: '', receiverEnsName: '' });
-    } else {
+    if (receiver) {
       this.setState({ selectedContact: value, receiver, receiverEnsName }, () => {
-        if (receiver) this.updateTxFee();
+        this.updateTxFee();
+        if (onSuccess) onSuccess();
       });
     }
-    if (onSuccess) onSuccess();
   };
 
-  handleReceiverSelect = (value: Option, onSuccess: () => void) => {
+  handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
     if (!value?.ethAddress) {
       this.setState({ selectedContact: null, receiver: '', receiverEnsName: '' }, () => {
-        onSuccess();
+        if (onSuccess) onSuccess();
         this.updateTxFee();
       });
     } else {

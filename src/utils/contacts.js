@@ -63,7 +63,7 @@ export const findContactIdByUsername = (contacts: ApiUser[], username: string): 
 
 export const getContactsEnsName = async (address: ?string) => {
   let receiverEnsName = '';
-  let receiver = address;
+  let receiver = '';
   if (!address) return Promise.resolve({ receiverEnsName, receiver });
 
   if (isEnsName(address)) {
@@ -72,13 +72,15 @@ export const getContactsEnsName = async (address: ?string) => {
       Toast.show({
         title: 'Invalid ENS name',
         message: 'Could not get address',
-        type: 'error',
+        type: 'warning',
         autoClose: false,
       });
       return Promise.resolve({ receiverEnsName, receiver });
     }
     receiverEnsName = address;
     receiver = resolvedAddress;
+  } else {
+    receiver = address;
   }
 
   return { receiverEnsName, receiver };
