@@ -22,7 +22,6 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
-import { startListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 // utils
 import { getActiveAccountAddress } from 'utils/accounts';
@@ -78,7 +77,6 @@ export const signalInitAction = (credentials?: SignalCredentials) => {
     await chat.init(credentials)
       .then(() => chat.client.registerAccount())
       .then(() => fcmToken && chat.client.setFcmId(fcmToken))
-      .then(() => dispatch(startListeningChatWebSocketAction()))
       .then(() => dispatch(updateSignalInitiatedStateAction(true)))
       .catch(() => null);
   };

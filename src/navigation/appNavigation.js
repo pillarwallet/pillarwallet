@@ -125,12 +125,9 @@ import {
   startListeningNotificationsAction,
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
-  startListeningChatWebSocketAction,
-  stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
-import { getExistingChatsAction } from 'actions/chatActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
@@ -754,12 +751,9 @@ type Props = {
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
-  startListeningChatWebSocket: Function,
-  stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
-  getExistingChats: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
@@ -796,7 +790,6 @@ class AppFlow extends React.Component<Props, State> {
       startListeningIntercomNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAllAccountsBalances,
-      getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
       backupStatus,
@@ -815,7 +808,6 @@ class AppFlow extends React.Component<Props, State> {
     startListeningIntercomNotifications();
     fetchAllAccountsBalances();
     fetchTransactionsHistoryNotifications();
-    getExistingChats();
     fetchAllCollectiblesData();
     initWalletConnect();
     addAppStateChangeListener(this.handleAppStateChange);
@@ -828,7 +820,6 @@ class AppFlow extends React.Component<Props, State> {
       wallet,
       removePrivateKeyFromMemory,
       isOnline,
-      stopListeningChatWebSocket,
       initSignal,
     } = this.props;
     const { notifications: prevNotifications, isOnline: prevIsOnline } = prevProps;
@@ -845,8 +836,6 @@ class AppFlow extends React.Component<Props, State> {
          * this action also includes chat websocket listener action
          */
         initSignal();
-      } else {
-        stopListeningChatWebSocket();
       }
     }
 
@@ -866,7 +855,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
-      stopListeningChatWebSocket,
       updateSignalInitiatedState,
       backupStatus,
     } = this.props;
@@ -876,7 +864,6 @@ class AppFlow extends React.Component<Props, State> {
 
     stopListeningNotifications();
     stopListeningIntercomNotifications();
-    stopListeningChatWebSocket();
     updateSignalInitiatedState(false);
     removeAppStateChangeListener(this.handleAppStateChange);
   }
@@ -885,8 +872,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
-      startListeningChatWebSocket,
-      stopListeningChatWebSocket,
       updateSignalInitiatedState,
       isPickingImage,
       isBrowsingWebView,
@@ -898,8 +883,6 @@ class AppFlow extends React.Component<Props, State> {
     if (isPickingImage || isBrowsingWebView) return;
     // only checking if background state for logout or websocket channel close
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
-      // close websocket channel instantly to receive PN while in background
-      stopListeningChatWebSocket();
       // close walkthrough shade or tooltips
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
@@ -909,7 +892,6 @@ class AppFlow extends React.Component<Props, State> {
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
-      startListeningChatWebSocket();
       handleSystemDefaultThemeChange();
     }
     this.setState({ lastAppState: nextAppState });
@@ -982,14 +964,11 @@ const mapDispatchToProps = dispatch => ({
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
-  stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
-  startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },
-  getExistingChats: () => dispatch(getExistingChatsAction()),
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),

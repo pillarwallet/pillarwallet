@@ -33,15 +33,6 @@ import {
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import {
-  getExistingChatsAction,
-  getChatByContactAction,
-  addContactAndSendWebSocketChatMessageAction,
-} from 'actions/chatActions';
-import {
-  addContactAndSendWebSocketTxNoteMessageAction,
-  decryptReceivedWebSocketTxNoteMessageAction,
-} from 'actions/txNoteActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 
 // constants
@@ -56,18 +47,14 @@ import {
   BADGE,
 } from 'constants/notificationConstants';
 import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
-import { ADD_WEBSOCKET_RECEIVED_MESSAGE, REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
 import {
   CONNECTION_REQUESTED_EVENT,
   COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
-import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 // services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
-import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
-import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
 import { firebaseMessaging } from 'services/firebase';
 
@@ -86,8 +73,6 @@ let notificationsListener = null;
 let disabledPushNotificationsListener;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
-
-const chat = new ChatService();
 
 const NOTIFICATION_ROUTES = {
   [BCX]: HOME,
@@ -199,7 +184,6 @@ export const subscribeToPushNotificationsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { data: wallet },
-      contacts: { data: contacts },
     } = getState();
 
     const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
@@ -234,29 +218,6 @@ export const subscribeToPushNotificationsAction = () => {
       }
       if (notification.type === BADGE) {
         dispatch(fetchBadgesAction());
-      }
-      if (notification.type === SIGNAL) {
-        dispatch(getExistingChatsAction());
-        const { params: navParams = null } = getNavigationPathAndParamsState() || {};
-        if (!navParams) return;
-        dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        const contact = contacts.find(c => c.username === notification.navigationParams.username);
-        if (contact) {
-          if (!!navParams.username && navParams.username === contact.username) {
-            // $FlowFixMe - profileImage can be undefined
-            dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
-            return;
-          }
-          if (contact.status !== STATUS_MUTED) {
-            dispatch({
-              type: ADD_NOTIFICATION,
-              payload: {
-                ...notification,
-                message: `${notification.message} from ${contact.username}`,
-              },
-            });
-          }
-        }
       }
       if (notification.type !== SIGNAL) {
         dispatch({ type: ADD_NOTIFICATION, payload: notification });
@@ -294,9 +255,6 @@ export const startListeningOnOpenNotificationAction = () => {
     if (!isEmpty(initialNotification)) {
       checkForSupportAlert(initialNotification.payload);
       const { type, navigationParams } = processNotification(initialNotification.payload) || {};
-      if (type === SIGNAL) {
-        dispatch(getExistingChatsAction());
-      }
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
@@ -330,9 +288,6 @@ export const startListeningOnOpenNotificationAction = () => {
         if (type === COLLECTIBLE) {
           dispatch(fetchAllCollectiblesDataAction());
         }
-        if (type === SIGNAL) {
-          dispatch(getExistingChatsAction());
-        }
 
         if (type === BADGE) {
           dispatch(fetchBadgesAction(false));
@@ -362,108 +317,3 @@ export const stopListeningOnOpenNotificationAction = () => {
   };
 };
 
-export const startListeningChatWebSocketAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { session: { data: { isOnline } } } = getState();
-    if (!isOnline) return;
-    const chatWebSocket = chat.getWebSocketInstance();
-    chatWebSocket.start(({
-      type: messageType,
-      response: messageResponse,
-      request: messageRequest,
-      receivedSignalMessage,
-    }) => {
-      const {
-        contacts: { data: contacts },
-      } = getState();
-      if (messageType === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
-        if (messageResponse.message.toLowerCase() === 'gone') {
-          const {
-            chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
-          } = getState();
-          const messageSent = webSocketMessagesSent.find(
-            wsMessageSent => wsMessageSent.requestId === messageResponse.id,
-          );
-          if (messageSent) {
-            const { tag, params } = messageSent;
-            switch (tag) {
-              case 'chat':
-                dispatch(addContactAndSendWebSocketChatMessageAction(tag, params));
-                break;
-              case 'tx-note':
-                dispatch(addContactAndSendWebSocketTxNoteMessageAction(tag, params));
-                break;
-              default:
-                break;
-            }
-          }
-        }
-        if (messageResponse.status === 200) {
-          dispatch({
-            type: REMOVE_WEBSOCKET_SENT_MESSAGE,
-            payload: messageResponse.id,
-          });
-        }
-      }
-      if (!isEmpty(receivedSignalMessage)) {
-        const messageTag = Array.isArray(messageRequest.headers)
-          ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
-          : '';
-        const { source: senderUsername } = receivedSignalMessage;
-        receivedSignalMessage.tag = messageTag;
-        receivedSignalMessage.requestId = messageRequest.id;
-        switch (messageTag) {
-          case 'chat':
-            dispatch({
-              type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
-              payload: receivedSignalMessage,
-            });
-            const { params: navParams = null } = getNavigationPathAndParamsState() || {};
-
-            if (!navParams) return;
-            dispatch({
-              type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
-              payload: true,
-            });
-
-            dispatch(getExistingChatsAction());
-
-            const contact = contacts.find(c => c.username === senderUsername) || {};
-
-            if (contact) {
-              if (!!navParams.username && navParams.username === contact.username) {
-                // $FlowFixMe - profileImage can be undefined
-                dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
-                return;
-              }
-
-              const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
-
-              if (notification == null || contact.status === STATUS_MUTED) return;
-
-              dispatch({
-                type: ADD_NOTIFICATION,
-                payload: {
-                  ...notification,
-                  message: `${notification.message} from ${senderUsername}`,
-                },
-              });
-            }
-            break;
-          case 'tx-note':
-            dispatch(decryptReceivedWebSocketTxNoteMessageAction(receivedSignalMessage));
-            break;
-          default:
-            break;
-        }
-      }
-    });
-  };
-};
-
-export const stopListeningChatWebSocketAction = () => {
-  return () => {
-    const chatWebSocket = chat.getWebSocketInstance();
-    chatWebSocket.stop();
-  };
-};
