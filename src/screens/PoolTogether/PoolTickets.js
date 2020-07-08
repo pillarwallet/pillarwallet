@@ -53,7 +53,7 @@ const ActionCircleButton = styled(IconButton)`
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
-  background: ${({ theme }) => theme.colors.activeTabBarIcon};
+  background: ${themedColors.primary}
   opacity: ${({ active }) => active ? '1' : '0.5'};
 `;
 
@@ -124,7 +124,7 @@ const PoolTickets = (props: Props) => {
         <TicketCounterColumn>
           {!!canSubtract &&
             <ActionCircleButton
-              color={colors.control}
+              color={colors.surface}
               margin={0}
               active={canSubtract}
               icon="count-minus"
@@ -134,7 +134,7 @@ const PoolTickets = (props: Props) => {
           }
           {!canSubtract && // must rerender like this so it will not stay active before a double action
             <ActionCircleButton
-              color={colors.control}
+              color={colors.surface}
               margin={0}
               active={canSubtract}
               icon="count-minus"
@@ -148,7 +148,7 @@ const PoolTickets = (props: Props) => {
         <TicketCounterColumn>
           {!!canAdd &&
             <ActionCircleButton
-              color={colors.control}
+              color={colors.surface}
               margin={0}
               active={canAdd}
               icon="count-plus"
@@ -158,7 +158,7 @@ const PoolTickets = (props: Props) => {
           }
           {!canAdd &&
             <ActionCircleButton
-              color={colors.control}
+              color={colors.surface}
               margin={0}
               active={canAdd}
               icon="count-plus"
