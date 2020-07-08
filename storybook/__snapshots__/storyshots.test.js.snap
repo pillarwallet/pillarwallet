@@ -30361,7 +30361,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             "description": "Pillar is developing a decentralised solution for digital asset and personal data management.",
                             "email": "info@pillarproject.io",
                             "formattedBalanceInFiat": "£ 80,395.08",
-                            "icon": "https://api-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3",
+                            "icon": "https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3",
                             "iconMonoUrl": "asset/images/tokens/icons/plr.png",
                             "iconUrl": "asset/images/tokens/icons/plrColor.png",
                             "icos": Array [],
