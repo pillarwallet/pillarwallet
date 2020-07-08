@@ -131,7 +131,6 @@ import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActi
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
-import { signalInitAction } from 'actions/signalClientActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
@@ -767,7 +766,6 @@ type Props = {
   removePrivateKeyFromMemory: Function,
   isBrowsingWebView: boolean,
   isOnline: boolean,
-  initSignal: Function,
   endWalkthrough: () => void,
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
@@ -819,24 +817,11 @@ class AppFlow extends React.Component<Props, State> {
       userState,
       wallet,
       removePrivateKeyFromMemory,
-      isOnline,
-      initSignal,
     } = this.props;
-    const { notifications: prevNotifications, isOnline: prevIsOnline } = prevProps;
+    const { notifications: prevNotifications } = prevProps;
 
     if (userState === REGISTERED && wallet.privateKey) {
       removePrivateKeyFromMemory();
-    }
-
-    if (prevIsOnline !== isOnline) {
-      if (isOnline) {
-        /**
-         * try initializing Signal in case of user user logged
-         * to wallet while being offline and then switched,
-         * this action also includes chat websocket listener action
-         */
-        initSignal();
-      }
     }
 
     if (notifications.length && notifications.length !== prevNotifications.length) {
@@ -972,7 +957,6 @@ const mapDispatchToProps = dispatch => ({
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
-  initSignal: () => dispatch(signalInitAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });

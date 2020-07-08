@@ -75,7 +75,6 @@ import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
-import { signalInitAction } from './signalClientActions';
 import { initOnLoginSmartWalletAccountAction } from './accountsActions';
 import {
   encryptAndSaveWalletAction,
@@ -214,9 +213,6 @@ export const loginAction = (
           // and show exchange button on supported asset screen only
           dispatch(getExchangeSupportedAssetsAction());
         }
-
-        // perform signal init
-        dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
 
         // init smart wallet
         if (wallet.privateKey && userHasSmartWallet(accounts)) {

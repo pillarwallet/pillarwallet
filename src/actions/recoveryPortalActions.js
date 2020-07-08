@@ -29,7 +29,6 @@ import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { finishRegistration, getTokenWalletAndRegister, navigateToAppFlow } from 'actions/onboardingActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { saveDbAction } from 'actions/dbActions';
-import { signalInitAction } from 'actions/signalClientActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 
 // constants
@@ -143,7 +142,6 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       fcmToken,
       ...oAuthTokens,
     };
-    await dispatch(signalInitAction(signalCredentials));
 
     // reinit oauth
     const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);

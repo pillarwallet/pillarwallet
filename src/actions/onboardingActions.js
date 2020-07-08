@@ -72,7 +72,6 @@ import { firebaseMessaging } from 'services/firebase';
 import smartWalletService from 'services/smartWallet';
 
 // actions
-import { signalInitAction } from 'actions/signalClientActions';
 import {
   initSmartWalletSdkAction,
   importSmartWalletAccountsAction,
@@ -353,8 +352,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       fcmToken,
       ...oAuthTokens,
     };
-
-    await dispatch(signalInitAction(signalCredentials));
 
     // re-init API with OAuth update callback
     const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
