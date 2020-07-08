@@ -98,7 +98,6 @@ import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPorta
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 
 
@@ -335,26 +334,15 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     api.init();
     const {
-      sdkWallet,
       userInfo,
-      fcmToken,
       registrationSucceed,
       oAuthTokens,
     } = await getTokenWalletAndRegister(wallet.privateKey, api, user, dispatch);
 
     if (!registrationSucceed) { return; }
 
-    const signalCredentials: SignalCredentials = {
-      userId: sdkWallet.userId,
-      username: user.username,
-      walletId: sdkWallet.walletId,
-      ethAddress: wallet.address,
-      fcmToken,
-      ...oAuthTokens,
-    };
-
     // re-init API with OAuth update callback
-    const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+    const updateOAuth = updateOAuthTokensCB(dispatch);
     api.init(updateOAuth, oAuthTokens);
     // STEP 5: finish registration
     await finishRegistration({

@@ -61,8 +61,6 @@ import smartWalletService from 'services/smartWallet';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { EthereumWallet } from 'models/Wallet';
 import type SDKWrapper from 'services/api';
-import type { SignalCredentials } from 'models/Config';
-
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasToken: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -116,9 +114,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     dispatch({ type: UPDATE_WALLET_STATE, payload: REGISTERING });
     api.init();
     const {
-      sdkWallet,
       userInfo,
-      fcmToken,
       registrationSucceed,
       oAuthTokens,
     } = await getTokenWalletAndRegister(
@@ -133,18 +129,8 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
 
     dispatch(logEventAction('user_created'));
 
-    // initiate chat
-    const signalCredentials: SignalCredentials = {
-      userId: sdkWallet.userId,
-      username: userInfo.username,
-      walletId: sdkWallet.walletId,
-      ethAddress: wallet.address,
-      fcmToken,
-      ...oAuthTokens,
-    };
-
     // reinit oauth
-    const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+    const updateOAuth = updateOAuthTokensCB(dispatch);
     api.init(updateOAuth, oAuthTokens);
 
     // finish reg

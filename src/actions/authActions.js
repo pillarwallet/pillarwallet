@@ -167,16 +167,8 @@ export const loginAction = (
       }
 
       if (userState === REGISTERED) {
-        // signal credentials
-        const signalCredentials = {
-          userId: user.id,
-          username: user.username,
-          walletId: user.walletId,
-          ethAddress: wallet.address,
-        };
-
         // oauth fallback method for expired access token
-        const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+        const updateOAuth = updateOAuthTokensCB(dispatch);
 
         // oauth fallback method for all tokens expired or invalid
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
