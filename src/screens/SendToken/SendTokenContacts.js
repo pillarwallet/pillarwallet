@@ -20,8 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
-import { Keyboard, Alert, FlatList } from 'react-native';
-import isEmpty from 'lodash.isempty';
+import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
@@ -30,60 +29,48 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
-import Separator from 'components/Separator';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import TextInput from 'components/TextInput';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Spinner from 'components/Spinner';
 
 // constants
 import { COLLECTIBLES, BTC } from 'constants/assetsConstants';
 import {
-  ACCOUNTS,
   SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_COLLECTIBLE_CONTACTS,
   SEND_TOKEN_ASSETS,
 } from 'constants/navigationConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { navigateToSendTokenAmountAction } from 'actions/smartWalletActions';
-import { syncContactsSmartAddressesAction } from 'actions/contactsActions';
 
 // utils
 import { addressValidator, isEnsName } from 'utils/validators';
-import { resolveEnsName, isCaseInsensitiveMatch } from 'utils/common';
+import { resolveEnsName } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { getAccountName } from 'utils/accounts';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { images } from 'utils/images';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
-import type { ContactSmartAddressData } from 'models/Contacts';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { SendNavigateOptions } from 'models/Navigation';
 import type { AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import { findMatchingContact } from 'utils/contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   accounts: Accounts,
-  localContacts: Object[],
   wallet: Object,
   navigateToSendTokenAmount: (options: SendNavigateOptions) => void,
-  contactsSmartAddressesSynced: boolean,
-  syncContactsSmartAddresses: () => void,
-  contactsSmartAddresses: ContactSmartAddressData[],
   isOnline: boolean,
   blockchainNetworks: BlockchainNetwork[],
   activeAccount: ?Account,
@@ -203,13 +190,6 @@ class SendTokenContacts extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    const { isOnline, syncContactsSmartAddresses } = this.props;
-    if (isOnline) {
-      syncContactsSmartAddresses();
-    }
-  }
-
   componentDidUpdate() {
     const navigationAssetData = this.props.navigation.getParam('assetData');
     if (navigationAssetData && !isEqual(navigationAssetData, this.assetData)) {
@@ -295,63 +275,10 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   };
 
-  onContactPress = (user) => {
-    const { navigation } = this.props;
-    const {
-      hasSmartWallet,
-      ethAddress,
-    } = user;
-    if (this.isPPNTransaction && !hasSmartWallet) {
-      Alert.alert(
-        'This user is not on Pillar Network',
-        'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
-        [
-          { text: 'Switch to Ethereum Mainnet', onPress: () => navigation.navigate(ACCOUNTS) },
-          { text: 'Cancel', style: 'cancel' },
-        ],
-        { cancelable: true },
-      );
-      return;
-    }
-    this.navigateToNextScreen(ethAddress);
-  };
-
-  renderContact = ({ item: user }) => {
-    const { theme } = this.props;
-    const { keyWalletIcon, smartWalletIcon } = images(theme);
-
-    const {
-      username,
-      hasSmartWallet,
-      profileImage,
-      isUserAccount,
-      type,
-    } = user;
-
-    const customProps = {};
-    if (isUserAccount) {
-      customProps.itemImageSource = type === ACCOUNT_TYPES.KEY_BASED ? keyWalletIcon : smartWalletIcon;
-      customProps.noImageBorder = true;
-    } else {
-      customProps.avatarUrl = profileImage;
-    }
-
-    return (
-      <ListItemWithImage
-        onPress={() => this.onContactPress(user)}
-        wrapperOpacity={this.isPPNTransaction && !hasSmartWallet ? 0.3 : 1}
-        label={username}
-        {...customProps}
-      />
-    );
-  };
-
   navigateToNextScreen(receiverAddress: string, receiverEnsName?: string) {
     const {
       navigation,
       navigateToSendTokenAmount,
-      localContacts,
-      contactsSmartAddresses,
       accounts,
     } = this.props;
 
@@ -366,13 +293,12 @@ class SendTokenContacts extends React.Component<Props, State> {
       return;
     }
     if (this.isSendingFromHomeFlow) {
-      const { username } = findMatchingContact(receiverAddress, localContacts, contactsSmartAddresses) || {};
       const userWallet = accounts.find(({ id }) => id === receiverAddress) || {};
       const userWalletName = getAccountName(userWallet.type);
       navigation.navigate(SEND_TOKEN_ASSETS, {
         contact: {
           ethAddress: receiverAddress,
-          username: username || userWalletName || receiverAddress,
+          username: userWalletName || receiverAddress,
         },
       });
       return;
@@ -383,71 +309,6 @@ class SendTokenContacts extends React.Component<Props, State> {
       source: 'Contact',
       receiverEnsName,
     });
-  }
-
-  renderContacts() {
-    const { localContacts = [], contactsSmartAddresses, accounts } = this.props;
-    const { value } = this.state;
-
-    const isSearchQueryProvided = !!(value && value.address.length);
-    const userAccounts = getInactiveUserAccounts(accounts).map(account => ({
-      ...account,
-      ethAddress: getAccountAddress(account),
-      username: getAccountName(account.type),
-      sortToTop: true,
-      isUserAccount: true,
-    }));
-
-    let contactsToRender = this.isPPNTransaction
-      ? [...localContacts]
-      : [...userAccounts, ...localContacts];
-
-    if (isSearchQueryProvided) {
-      const searchStr = value.address.toLowerCase();
-      contactsToRender = contactsToRender.filter(({ username, ethAddress }) => {
-        // $FlowFixMe
-        const usernameFound = username.toLowerCase().includes(searchStr);
-        if (value.address.length < 3) return usernameFound;
-        return usernameFound || ethAddress.toLowerCase().startsWith(searchStr);
-      });
-    }
-
-    if (contactsSmartAddresses) {
-      contactsToRender = contactsToRender
-        .map(contact => {
-          const { smartWallets = [] } = contactsSmartAddresses.find(
-            ({ userId }) => contact.id && isCaseInsensitiveMatch(userId, contact.id),
-          ) || {};
-          return {
-            ...contact,
-            ethAddress: smartWallets[0] || contact.ethAddress,
-            hasSmartWallet: !!smartWallets.length,
-          };
-        })
-        .sort((a, b) => {
-          // keep as it is
-          if (a.hasSmartWallet === b.hasSmartWallet
-            || (a.sortToTop && a.sortToTop === b.sortToTop)) return 0;
-          // sort user accounts to top
-          if (a.sortToTop || b.sortToTop) return 1;
-          // sort smart wallet contacts to top
-          return a.hasSmartWallet ? -1 : 1;
-        });
-    }
-
-    if (!contactsToRender.length) {
-      return null;
-    }
-
-    return (
-      <FlatList
-        data={contactsToRender}
-        renderItem={this.renderContact}
-        keyExtractor={({ username }) => username}
-        ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-        contentContainerStyle={{ paddingTop: spacing.mediumLarge, paddingBottom: 40 }}
-      />
-    );
   }
 
   getHeaderItems = () => {
@@ -489,8 +350,6 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   render() {
     const {
-      localContacts = [],
-      contactsSmartAddressesSynced,
       isOnline,
       isChanging,
     } = this.props;
@@ -501,13 +360,9 @@ class SendTokenContacts extends React.Component<Props, State> {
       value,
     } = this.state;
 
-    const { tokenType, token } = this.assetData;
-    const isCollectible = tokenType === COLLECTIBLES;
-
-    const showContacts = !isChanging && (isCollectible || token !== BTC);
     const headerTitleItems = this.getHeaderItems();
 
-    const showSpinner = isOnline && ((!contactsSmartAddressesSynced && !isEmpty(localContacts)) || isChanging);
+    const showSpinner = isOnline && isChanging;
 
     return (
       <ContainerWithHeader
@@ -529,7 +384,6 @@ class SendTokenContacts extends React.Component<Props, State> {
           />
         </FormWrapper>}
         {showSpinner && <Container center><Spinner /></Container>}
-        {showContacts && this.renderContacts()}
         <AddressScanner
           isActive={isScanning}
           onCancel={this.handleQRScannerClose}
@@ -542,16 +396,12 @@ class SendTokenContacts extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts, isChanging },
-  contacts: { data: localContacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   wallet: { data: wallet },
-  session: { data: { contactsSmartAddressesSynced, isOnline } },
+  session: { data: { isOnline } },
   blockchainNetwork: { data: blockchainNetworks },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
-  localContacts,
   wallet,
-  contactsSmartAddresses,
-  contactsSmartAddressesSynced,
   isOnline,
   blockchainNetworks,
   isChanging,
@@ -568,7 +418,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   navigateToSendTokenAmount: (options: SendNavigateOptions) => dispatch(navigateToSendTokenAmountAction(options)),
-  syncContactsSmartAddresses: () => dispatch(syncContactsSmartAddressesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenContacts));
