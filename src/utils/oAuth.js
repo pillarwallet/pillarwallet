@@ -23,7 +23,6 @@ import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from 'actions/dbActions';
 import { lockScreenAction } from 'actions/authActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
-import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
 import type { SignalCredentials } from 'models/Config';
@@ -49,7 +48,6 @@ export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: Sign
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
-    dispatch(stopListeningChatWebSocketAction());
     dispatch(updateSignalInitiatedStateAction(false));
     dispatch(lockScreenAction(
       refreshTokensCallback,

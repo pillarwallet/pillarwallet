@@ -63,7 +63,6 @@ import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // services
 import Storage from 'services/storage';
-import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
@@ -98,7 +97,6 @@ import {
 
 
 const storage = Storage.getInstance('db');
-const chat = new ChatService();
 
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -406,7 +404,6 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 export const resetAppState = async () => {
   Intercom.logout();
   await firebaseIid.delete().catch(() => {});
-  await chat.client.resetAccount().catch(() => null);
   await storage.removeAll();
   await smartWalletService.reset();
   clearWebViewCookies();
