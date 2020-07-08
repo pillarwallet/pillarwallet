@@ -201,12 +201,10 @@ class SelectorOptions extends React.Component<Props, State> {
       if (!data?.length) return null;
       return (
         <HorizontalOptions key={title || index.toString()}>
-          {(showOptionsTitles && !!title) &&
-          <OptionsHeader>{title}</OptionsHeader>
-          }
+          {(showOptionsTitles && !!title) && <OptionsHeader>{title}</OptionsHeader>}
           <FlatList
             data={data}
-            keyExtractor={({ value }) => value}
+            keyExtractor={({ value, id }) => value || id}
             keyboardShouldPersistTaps="always"
             renderItem={this.renderHorizontalOption}
             horizontal

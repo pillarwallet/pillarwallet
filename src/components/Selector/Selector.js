@@ -176,7 +176,7 @@ class Selector extends React.Component<Props, State> {
           title={optionsTitle || placeholder}
           options={options}
           searchPlaceholder={searchPlaceholder}
-          optionKeyExtractor={({ name }) => name}
+          optionKeyExtractor={({ name, value }) => name || value}
           horizontalOptionsData={horizontalOptionsData}
           onOptionSelect={this.onOptionSelect}
           noImageFallback={noOptionImageFallback}

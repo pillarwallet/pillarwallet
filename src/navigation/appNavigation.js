@@ -41,7 +41,6 @@ import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
-import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
@@ -167,7 +166,6 @@ import {
   SEND_BITCOIN_PIN_CONFIRM,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
-  SEND_TOKEN_ASSETS,
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_TRANSACTION,
   SEND_TOKEN_FROM_ASSET_FLOW,
@@ -549,8 +547,6 @@ const sendTokenFromAssetFlow = createStackNavigator(
 // SEND TOKEN FROM HOME FLOW
 const sendTokenFromHomeFlow = createStackNavigator(
   {
-    [SEND_TOKEN_CONTACTS]: { screen: SendTokenContactsScreen, params: { sendFromHomeFlow: true } },
-    [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
