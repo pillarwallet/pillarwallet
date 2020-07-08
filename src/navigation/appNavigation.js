@@ -257,8 +257,6 @@ import {
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
-import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
-
 // utils
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
@@ -276,8 +274,6 @@ const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
-
-const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
 const StackNavigatorModalConfig = {
   transitionConfig: () => ({
@@ -856,10 +852,6 @@ class AppFlow extends React.Component<Props, State> {
 
     if (notifications.length && notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-
-      if (lastNotification.type === 'CONNECTION' && connectionMessagesToExclude.includes(lastNotification.status)) {
-        return;
-      }
 
       Toast.show({
         message: lastNotification.message,

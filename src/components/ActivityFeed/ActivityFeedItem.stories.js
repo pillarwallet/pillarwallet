@@ -21,11 +21,6 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { ActivityFeedItem as ActivityFeedItemNoTheme } from 'components/ActivityFeed/ActivityFeedItem';
 
-import {
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-  TYPE_SENT,
-} from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -343,36 +338,6 @@ storiesOf('ActivityFeedItem', module)
         asset: 'PLR',
         value: '1000000000000000000',
         isPPNTransaction: true,
-      }}
-    />
-  ))
-  .add('Connection request', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TYPE_RECEIVED,
-        username: 'john',
-        profileImage: placeholderImage,
-      }}
-    />
-  ))
-  .add('Connection established', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TYPE_ACCEPTED,
-        username: 'john',
-        profileImage: placeholderImage,
-      }}
-    />
-  ))
-  .add('Connection outgoing request', () => (
-    <ActivityFeedItem
-      {...reduxData}
-      event={{
-        type: TYPE_SENT,
-        username: 'john',
-        profileImage: placeholderImage,
       }}
     />
   ))

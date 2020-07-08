@@ -46,7 +46,6 @@ import {
 } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -278,7 +277,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     dispatch({ type: UPDATE_ACCOUNTS, payload: [] });
     dispatch({ type: UPDATE_CONTACTS, payload: [] });
-    dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: RESET_APP_SETTINGS, payload: {} });
 

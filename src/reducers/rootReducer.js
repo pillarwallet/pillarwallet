@@ -38,7 +38,6 @@ import userReducer from './userReducer';
 import historyReducer from './historyReducer';
 import notificationsReducer from './notificationsReducer';
 import contactsReducer from './contactsReducer';
-import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
 import sessionReducer from './sessionReducer';
 import txNoteReducer from './txNoteReducer';
@@ -81,7 +80,6 @@ import type { UserReducerState } from './userReducer';
 import type { HistoryReducerState, HistoryAction } from './historyReducer';
 import type { NotificationsReducerState } from './notificationsReducer';
 import type { ContactsReducerState } from './contactsReducer';
-import type { InvitationsReducerState } from './invitationsReducer';
 import type { ChatReducerState } from './chatReducer';
 import type { SessionReducerState } from './sessionReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
@@ -121,7 +119,6 @@ export type RootReducerState = {|
   history: HistoryReducerState,
   notifications: NotificationsReducerState,
   contacts: ContactsReducerState,
-  invitations: InvitationsReducerState,
   chat: ChatReducerState,
   session: SessionReducerState,
   txNotes: TxNoteReducerState,
@@ -200,7 +197,6 @@ const appReducer = combineReducers({
   history: historyReducer,
   notifications: notificationsReducer,
   contacts: contactsReducer,
-  invitations: invitationsReducer,
   chat: chatReducer,
   session: sessionReducer,
   txNotes: txNoteReducer,

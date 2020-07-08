@@ -31,7 +31,6 @@ import {
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { SET_USER, REGISTERED } from 'constants/userConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -159,7 +158,6 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
       { type: UPDATE_CONTACTS, payload: [] },
-      { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
       { type: SET_HISTORY, payload: {} },
@@ -234,7 +232,6 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
       { type: UPDATE_CONTACTS, payload: [] },
-      { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
       { type: SET_HISTORY, payload: {} },
