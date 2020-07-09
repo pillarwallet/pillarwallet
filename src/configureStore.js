@@ -52,7 +52,7 @@ const migrations = {
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  version: 0, // bump up the version when new changes are made with migrations
+  version: 1, // bump up the version when new changes are made with migrations
   stateReconciler: autoMergeLevel2,
   whitelist: ['history', 'walletConnectSessions', 'referrals', 'poolTogether'],
   migrate: createMigrate(migrations, { debug: false }),
