@@ -112,7 +112,17 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const { initSyntheticsService, fetchAvailableSyntheticAssets } = this.props;
     initSyntheticsService();
     fetchAvailableSyntheticAssets();
+    this.setPreselectedValues();
   }
+
+  setPreselectedValues = () => {
+    const { navigation, contactsByWallet } = this.props;
+    const contact = navigation.getParam('contact');
+    if (contact) {
+      const formattedContact = contactsByWallet.find(({ name }) => name === contact.username);
+      if (formattedContact) this.setReceiver(formattedContact);
+    }
+  };
 
   handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
     const { navigation } = this.props;

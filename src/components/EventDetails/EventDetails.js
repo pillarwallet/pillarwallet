@@ -640,11 +640,15 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
   };
 
-  sendSynthetic = async () => {
-    const { onClose, navigation } = this.props;
+  sendSynthetic = async (_contact: ?ApiUser, relatedAddress: string) => {
+    const { onClose, navigation, ensRegistry } = this.props;
     onClose();
     await this.switchToSW();
-    navigation.navigate(SEND_SYNTHETIC_AMOUNT);
+
+    const contactFromAddress = relatedAddress
+      && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
+    const contact = _contact || contactFromAddress;
+    navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
   };
 
   settle = async () => {
@@ -1110,7 +1114,7 @@ export class EventDetail extends React.Component<Props, State> {
               eventData.buttons = [
                 {
                   title: 'Send back',
-                  onPress: this.sendSynthetic,
+                  onPress: () => this.sendSynthetic(contact, relevantAddress),
                   squarePrimary: true,
                 },
               ];
@@ -1119,7 +1123,7 @@ export class EventDetail extends React.Component<Props, State> {
             eventData.buttons = [
               {
                 title: 'Send more',
-                onPress: this.sendSynthetic,
+                onPress: () => this.sendSynthetic(contact, relevantAddress),
                 secondary: true,
               },
             ];
