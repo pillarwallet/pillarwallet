@@ -104,48 +104,37 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#FAFAFA",
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
               },
               undefined,
             ]
           }
         >
-          <View
+          <Text
             style={
               Array [
                 Object {
-                  "paddingBottom": 8,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
-                  "paddingTop": 8,
-                  "width": "100%",
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                  },
+                  undefined,
+                ],
               ]
             }
           >
-            <Text
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              Invalid Date
-            </Text>
-          </View>
+            Invalid Date
+          </Text>
         </View>
       </View>
       <View
@@ -156,45 +145,87 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#FAFAFA",
+                "flexDirection": "column",
+                "width": "100%",
               },
               undefined,
             ]
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "flexDirection": "column",
-                  "width": "100%",
-                },
-                undefined,
-              ]
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "opacity": 1,
+                "paddingBottom": 14,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 14,
+                "width": "100%",
+              }
             }
           >
             <View
-              accessible={true}
-              focusable={true}
-              isTVSelectable={true}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                    "paddingRight": 12,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                backgroundColor={null}
+                diameter={48}
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 24,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "overflow": "hidden",
+                      "textAlign": "center",
+                      "width": 48,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  name="sent"
+                  style={
+                    Array [
+                      Object {
+                        "color": "#BD573A",
+                        "fontSize": 48,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+              </View>
+            </View>
+            <View
               style={
                 Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "center",
-                  "opacity": 1,
-                  "paddingBottom": 14,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
-                  "paddingTop": 14,
-                  "width": "100%",
+                  "flex": 1,
                 }
               }
             >
@@ -203,63 +234,31 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   Array [
                     Object {
                       "alignItems": "center",
-                      "justifyContent": "center",
-                      "paddingRight": 12,
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                      "width": "100%",
                     },
                     undefined,
                   ]
                 }
+                type="ACTION"
               >
                 <View
-                  backgroundColor={null}
-                  diameter={48}
                   style={
                     Array [
                       Object {
-                        "alignItems": "center",
-                        "backgroundColor": "#EBF0F6",
-                        "borderRadius": 24,
-                        "height": 48,
+                        "alignItems": "flex-start",
+                        "flexBasis": 0,
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "flexShrink": 1,
                         "justifyContent": "center",
-                        "overflow": "hidden",
-                        "textAlign": "center",
-                        "width": 48,
+                        "marginTop": 0,
+                        "minHeight": 54,
                       },
-                      undefined,
-                    ]
-                  }
-                >
-                  <View
-                    name="sent"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#BD573A",
-                          "fontSize": 48,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-              <View
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Array [
                       Object {
-                        "alignItems": "center",
-                        "flexDirection": "row",
-                        "justifyContent": "space-between",
-                        "width": "100%",
+                        "flexGrow": 1,
                       },
-                      undefined,
                     ]
                   }
                   type="ACTION"
@@ -268,35 +267,98 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                     style={
                       Array [
                         Object {
-                          "alignItems": "flex-start",
-                          "flexBasis": 0,
-                          "flexDirection": "column",
-                          "flexGrow": 1,
-                          "flexShrink": 1,
-                          "justifyContent": "center",
-                          "marginTop": 0,
-                          "minHeight": 54,
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
                         },
-                        Object {
-                          "flexGrow": 1,
-                        },
+                        undefined,
                       ]
                     }
-                    type="ACTION"
                   >
-                    <View
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={2}
                       style={
                         Array [
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "textAlignVertical": "center",
                           },
-                          undefined,
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                                "width": "100%",
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                      type="ACTION"
+                    >
+                      0x0000…000000
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  rightColumn={true}
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "marginLeft": 10,
+                        "marginTop": 0,
+                        "minHeight": 54,
+                      },
+                      Object {
+                        "maxWidth": "50%",
+                      },
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  <View
+                    style={
+                      Array [
+                        undefined,
+                        Object {
+                          "flexWrap": "wrap",
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      horizontal={true}
+                      style={
+                        Array [
+                          Object {
+                            "flexDirection": "row",
+                            "marginBottom": 0,
+                            "marginLeft": 0,
+                            "marginRight": 0,
+                            "marginTop": 0,
+                          },
+                          Object {
+                            "alignItems": "center",
+                            "flexWrap": "wrap",
+                            "justifyContent": "flex-end",
+                          },
                         ]
                       }
                     >
                       <Text
+                        color="#0A1427"
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
@@ -309,101 +371,17 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "textAlignVertical": "center",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                                "textAlign": "right",
                               },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ],
+                              undefined,
                             ],
                           ]
                         }
-                        type="ACTION"
                       >
-                        0x0000…000000
+                        0 undefined
                       </Text>
-                    </View>
-                  </View>
-                  <View
-                    rightColumn={true}
-                    style={
-                      Array [
-                        Object {
-                          "alignItems": "flex-end",
-                          "flexDirection": "column",
-                          "justifyContent": "center",
-                          "marginLeft": 10,
-                          "marginTop": 0,
-                          "minHeight": 54,
-                        },
-                        Object {
-                          "maxWidth": "50%",
-                        },
-                      ]
-                    }
-                    type="ACTION"
-                  >
-                    <View
-                      style={
-                        Array [
-                          undefined,
-                          Object {
-                            "flexWrap": "wrap",
-                          },
-                        ]
-                      }
-                    >
-                      <View
-                        horizontal={true}
-                        style={
-                          Array [
-                            Object {
-                              "flexDirection": "row",
-                              "marginBottom": 0,
-                              "marginLeft": 0,
-                              "marginRight": 0,
-                              "marginTop": 0,
-                            },
-                            Object {
-                              "alignItems": "center",
-                              "flexWrap": "wrap",
-                              "justifyContent": "flex-end",
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          color="#0A1427"
-                          ellipsizeMode="tail"
-                          numberOfLines={2}
-                          style={
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlign": "right",
-                                },
-                                undefined,
-                              ],
-                            ]
-                          }
-                        >
-                          0 undefined
-                        </Text>
-                      </View>
                     </View>
                   </View>
                 </View>
@@ -521,48 +499,37 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#FAFAFA",
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
               },
               undefined,
             ]
           }
         >
-          <View
+          <Text
             style={
               Array [
                 Object {
-                  "paddingBottom": 8,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
-                  "paddingTop": 8,
-                  "width": "100%",
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                  },
+                  undefined,
+                ],
               ]
             }
           >
-            <Text
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              Invalid Date
-            </Text>
-          </View>
+            Invalid Date
+          </Text>
         </View>
       </View>
       <View
@@ -573,45 +540,87 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#FAFAFA",
+                "flexDirection": "column",
+                "width": "100%",
               },
               undefined,
             ]
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "flexDirection": "column",
-                  "width": "100%",
-                },
-                undefined,
-              ]
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "opacity": 1,
+                "paddingBottom": 14,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 14,
+                "width": "100%",
+              }
             }
           >
             <View
-              accessible={true}
-              focusable={true}
-              isTVSelectable={true}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                    "paddingRight": 12,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                backgroundColor={null}
+                diameter={48}
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 24,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "overflow": "hidden",
+                      "textAlign": "center",
+                      "width": 48,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  name="sent"
+                  style={
+                    Array [
+                      Object {
+                        "color": "#BD573A",
+                        "fontSize": 48,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+              </View>
+            </View>
+            <View
               style={
                 Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "center",
-                  "opacity": 1,
-                  "paddingBottom": 14,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
-                  "paddingTop": 14,
-                  "width": "100%",
+                  "flex": 1,
                 }
               }
             >
@@ -620,63 +629,31 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   Array [
                     Object {
                       "alignItems": "center",
-                      "justifyContent": "center",
-                      "paddingRight": 12,
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                      "width": "100%",
                     },
                     undefined,
                   ]
                 }
+                type="ACTION"
               >
                 <View
-                  backgroundColor={null}
-                  diameter={48}
                   style={
                     Array [
                       Object {
-                        "alignItems": "center",
-                        "backgroundColor": "#EBF0F6",
-                        "borderRadius": 24,
-                        "height": 48,
+                        "alignItems": "flex-start",
+                        "flexBasis": 0,
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "flexShrink": 1,
                         "justifyContent": "center",
-                        "overflow": "hidden",
-                        "textAlign": "center",
-                        "width": 48,
+                        "marginTop": 0,
+                        "minHeight": 54,
                       },
-                      undefined,
-                    ]
-                  }
-                >
-                  <View
-                    name="sent"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#BD573A",
-                          "fontSize": 48,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-              <View
-                style={
-                  Object {
-                    "flex": 1,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Array [
                       Object {
-                        "alignItems": "center",
-                        "flexDirection": "row",
-                        "justifyContent": "space-between",
-                        "width": "100%",
+                        "flexGrow": 1,
                       },
-                      undefined,
                     ]
                   }
                   type="ACTION"
@@ -685,35 +662,98 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                     style={
                       Array [
                         Object {
-                          "alignItems": "flex-start",
-                          "flexBasis": 0,
-                          "flexDirection": "column",
-                          "flexGrow": 1,
-                          "flexShrink": 1,
-                          "justifyContent": "center",
-                          "marginTop": 0,
-                          "minHeight": 54,
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
                         },
-                        Object {
-                          "flexGrow": 1,
-                        },
+                        undefined,
                       ]
                     }
-                    type="ACTION"
                   >
-                    <View
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={2}
                       style={
                         Array [
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "textAlignVertical": "center",
                           },
-                          undefined,
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                                "width": "100%",
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                      type="ACTION"
+                    >
+                      0x0000…000000
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  rightColumn={true}
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "flexDirection": "column",
+                        "justifyContent": "center",
+                        "marginLeft": 10,
+                        "marginTop": 0,
+                        "minHeight": 54,
+                      },
+                      Object {
+                        "maxWidth": "50%",
+                      },
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  <View
+                    style={
+                      Array [
+                        undefined,
+                        Object {
+                          "flexWrap": "wrap",
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      horizontal={true}
+                      style={
+                        Array [
+                          Object {
+                            "flexDirection": "row",
+                            "marginBottom": 0,
+                            "marginLeft": 0,
+                            "marginRight": 0,
+                            "marginTop": 0,
+                          },
+                          Object {
+                            "alignItems": "center",
+                            "flexWrap": "wrap",
+                            "justifyContent": "flex-end",
+                          },
                         ]
                       }
                     >
                       <Text
+                        color="#0A1427"
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
@@ -726,101 +766,17 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
-                                "textAlignVertical": "center",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                                "textAlign": "right",
                               },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ],
+                              undefined,
                             ],
                           ]
                         }
-                        type="ACTION"
                       >
-                        0x0000…000000
+                        0 undefined
                       </Text>
-                    </View>
-                  </View>
-                  <View
-                    rightColumn={true}
-                    style={
-                      Array [
-                        Object {
-                          "alignItems": "flex-end",
-                          "flexDirection": "column",
-                          "justifyContent": "center",
-                          "marginLeft": 10,
-                          "marginTop": 0,
-                          "minHeight": 54,
-                        },
-                        Object {
-                          "maxWidth": "50%",
-                        },
-                      ]
-                    }
-                    type="ACTION"
-                  >
-                    <View
-                      style={
-                        Array [
-                          undefined,
-                          Object {
-                            "flexWrap": "wrap",
-                          },
-                        ]
-                      }
-                    >
-                      <View
-                        horizontal={true}
-                        style={
-                          Array [
-                            Object {
-                              "flexDirection": "row",
-                              "marginBottom": 0,
-                              "marginLeft": 0,
-                              "marginRight": 0,
-                              "marginTop": 0,
-                            },
-                            Object {
-                              "alignItems": "center",
-                              "flexWrap": "wrap",
-                              "justifyContent": "flex-end",
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          color="#0A1427"
-                          ellipsizeMode="tail"
-                          numberOfLines={2}
-                          style={
-                            Array [
-                              Object {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "textAlignVertical": "center",
-                              },
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
-                                  "textAlign": "right",
-                                },
-                                undefined,
-                              ],
-                            ]
-                          }
-                        >
-                          0 undefined
-                        </Text>
-                      </View>
                     </View>
                   </View>
                 </View>
