@@ -21,7 +21,7 @@ import { SEND_COLLECTIBLE_CONTACTS, SEND_TOKEN_ASSETS, SEND_TOKEN_PIN_CONFIRM } 
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
-import { formatTransactionFee, getEthereumProvider, noop } from 'utils/common';
+import { formatTransactionFee, getEthereumProvider } from 'utils/common';
 import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
 import { buildTxFeeInfo } from 'utils/smartWallet';
