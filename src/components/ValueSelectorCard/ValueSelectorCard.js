@@ -42,19 +42,28 @@ import { formatAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getBalance, getRate, calculateMaxAmount } from 'utils/assets';
 import { themedColors } from 'utils/themes';
-import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
+import {
+  SelectorInputTemplate,
+  selectorStructure,
+  inputFormatter,
+  inputParser,
+  ItemSelectorTemplate,
+} from 'utils/formHelpers';
 import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
+import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
+import { ASSETS } from 'constants/navigationConstants';
 
 
 export type ExternalProps = {
   maxLabel?: string,
   preselectedAsset?: string,
+  preselectedCollectible?: string,
   getFormValue: (?FormSelector) => void,
   txFeeInfo?: ?TransactionFeeInfo,
   selectorModalTitle?: string,
@@ -65,10 +74,13 @@ export type ExternalProps = {
   hideZeroBalanceAssets?: boolean,
   customOptions?: Object[],
   customBalances?: Balances,
+  activeTokenType?: string,
+  showAllAssetTypes?: boolean,
 };
 
 type Props = ExternalProps & {
   assets?: Option[],
+  collectibles?: Option[],
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
@@ -85,6 +97,7 @@ type State = {
   formOptions: Object,
   value: FormValue,
   errorMessage: string,
+  tokenType: string,
 };
 
 const Wrapper = styled.View`
@@ -143,6 +156,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         formSelector: {
           selector: {},
           input: '',
+          dontCheckBalance: false,
         },
       },
       formOptions: {
@@ -171,30 +185,40 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         },
       },
       errorMessage: '',
+      tokenType: ASSETS,
     };
   }
 
   componentDidMount() {
-    this.addCustomFormInfo();
+    this.handleCustomInfo();
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { preselectedAsset, isLoading } = this.props;
+    const { preselectedAsset, preselectedCollectible, isLoading } = this.props;
     const { value } = this.state;
     const selectedAsset = get(value, 'formSelector.selector.symbol');
-    const preselectedAssetChanged = !prevProps.preselectedAsset && preselectedAsset && !selectedAsset;
+    const preselectedAssetChanged = !selectedAsset && ((!prevProps.preselectedAsset && preselectedAsset)
+      || (!prevProps.preselectedCollectible && preselectedCollectible));
     const finishedLoading = prevProps.isLoading && !isLoading;
     if (preselectedAssetChanged || finishedLoading) {
-      this.addCustomFormInfo();
+      this.handleCustomInfo();
     }
   }
+
+  handleCustomInfo = () => {
+    const { value } = this.state;
+    const { activeTokenType, preselectedCollectible } = this.props;
+    const selectedTokenType = preselectedCollectible || activeTokenType === COLLECTIBLES
+      ? COLLECTIBLES
+      : ASSETS;
+    this.manageFormType(selectedTokenType, value, this.addCustomFormInfo);
+  };
 
   addCustomFormInfo = () => {
     const {
       assets,
       syntheticAssets,
       maxLabel,
-      preselectedAsset,
       selectorModalTitle,
       renderOption,
       showSyntheticOptions,
@@ -202,25 +226,48 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       balances,
       rates,
       baseFiatCurrency,
+      showAllAssetTypes,
+      collectibles = [],
+      preselectedAsset,
+      preselectedCollectible,
     } = this.props;
     const { formOptions, value } = this.state;
 
     const customOptionsFormatted = customOptions && formatOptions(customOptions, balances, rates, baseFiatCurrency);
     const assetsAsOptions = showSyntheticOptions ? syntheticAssets : assets;
 
+    const basicOptions: Option[] = customOptionsFormatted || assetsAsOptions || [];
 
-    const options: Option[] = customOptionsFormatted || assetsAsOptions || [];
+    let options = [];
+    let optionTabs;
+    if (showAllAssetTypes) {
+      optionTabs = [
+        { name: 'Assets', options: basicOptions, id: ASSETS },
+        { name: 'Collectibles', options: collectibles, id: COLLECTIBLES },
+      ];
+    } else {
+      options = basicOptions;
+    }
 
-    const thisStateFormOptionsCopy = { ...formOptions };
-    thisStateFormOptionsCopy.fields.formSelector.config.options = options || [];
     const newValue = { ...value };
 
-    const preselectedOption = preselectedAsset &&
-      options.find(({ symbol }) => symbol === preselectedAsset);
+    const allOptions = optionTabs
+      ? optionTabs.reduce((combinedOptions, tab) => {
+        const tabOptions = tab.options || [];
+        return [...combinedOptions, ...tabOptions];
+      }, [])
+      : options;
 
-    const singleOption = options?.length === 1 && options[0];
+    let preselectedOption;
+    if (preselectedAsset) {
+      preselectedOption = allOptions.find(({ symbol }) => symbol === preselectedAsset);
+    } else if (preselectedCollectible) {
+      preselectedOption = allOptions.find(({ tokenId }) => tokenId === preselectedCollectible);
+    }
 
+    const singleOption = allOptions.length === 1 && allOptions[0];
     const pickedAsset = preselectedOption || singleOption || {};
+
     newValue.formSelector.selector = pickedAsset;
     const { symbol } = pickedAsset;
     const label = maxLabel || 'Max';
@@ -230,8 +277,10 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         formSelector: {
           config: {
             options: { $set: options },
+            optionTabs: { $set: optionTabs },
             rightLabel: { $set: !isEmpty(pickedAsset) ? label : '' },
             customLabel: { $set: this.renderCustomLabel(symbol) },
+            optionsOpenText: { $set: 'Send token instead' },
             selectorModalTitle: { $set: selectorModalTitle || 'Select' },
             renderOption: { $set: renderOption },
           },
@@ -239,7 +288,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       },
     });
 
-    this.setState({ formOptions: newOptions, value: newValue });
+    // this.setState({ formOptions: newOptions, value: newValue });
+    this.setState({ formOptions: newOptions });
   };
 
   renderCustomLabel = (symbol?: string) => {
@@ -256,7 +306,55 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     );
   };
 
-  handleFromChange = (value: FormValue) => {
+  onFromChange = (value: FormValue) => {
+    const { formSelector } = value;
+    const { selector } = formSelector;
+    const selectedTokenType = selector.tokenType || ASSETS;
+
+    this.manageFormType(selectedTokenType, value, this.handleFormChange);
+  };
+
+  manageFormType = (newTokenType: string, value: FormValue, callback: (value: FormValue) => void) => {
+    const { tokenType, formOptions } = this.state;
+
+    if (newTokenType !== tokenType) {
+      const updatedValue = { ...value };
+      let newOptions = t.update(formOptions, {
+        fields: {
+          formSelector: {
+            template: { $set: SelectorInputTemplate },
+            config: {
+              label: { $set: '' },
+            },
+          },
+        },
+      });
+
+      if (newTokenType === COLLECTIBLES) {
+        updatedValue.formSelector.input = '1';
+        updatedValue.formSelector.dontCheckBalance = true;
+        newOptions = t.update(formOptions, {
+          fields: {
+            formSelector: {
+              template: { $set: ItemSelectorTemplate },
+              config: {
+                label: { $set: 'Collectible' },
+              },
+            },
+          },
+        });
+      } else {
+        updatedValue.formSelector.input = '0';
+        updatedValue.formSelector.dontCheckBalance = false;
+      }
+      this.setState({ formOptions: newOptions, tokenType: newTokenType, value: updatedValue },
+        () => callback(updatedValue));
+    } else {
+      callback(value);
+    }
+  };
+
+  handleFormChange = (value: FormValue) => {
     const {
       getFormValue,
       baseFiatCurrency,
@@ -265,8 +363,12 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       getError,
     } = this.props;
 
+    const { formSelector } = value;
+    const { selector, input: amount } = formSelector;
+
     const { errorMessage, formOptions } = this.state;
     const formValue = this.form.getValue();
+
     const validation = this.form.validate();
     const currentErrorMessage = get(validation, 'errors[0].message', '');
     if (getError) getError(currentErrorMessage);
@@ -277,8 +379,6 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       stateUpdates.errorMessage = currentErrorMessage;
     }
 
-    const { formSelector } = value;
-    const { selector, input: amount } = formSelector;
     let valueInFiat;
 
     if (amount && parseFloat(amount) > 0 && !isEmpty(selector)) {
@@ -406,7 +506,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
                   type={formStructure}
                   options={formOptions}
                   value={value}
-                  onChange={this.handleFromChange}
+                  onChange={this.onFromChange}
                 />
               )
             }
@@ -429,6 +529,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: visibleActiveAccountAssetsWithBalanceSelector,
+  collectibles: activeAccountMappedCollectiblesSelector,
   syntheticAssets: activeSyntheticAssetsSelector,
 });
 

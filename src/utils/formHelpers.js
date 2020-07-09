@@ -29,6 +29,7 @@ import { ETH } from 'constants/assetsConstants';
 
 // components
 import TextInput from 'components/TextInput';
+import ItemSelector from 'components/ItemSelector';
 
 // models
 import type { TransactionFeeInfo } from 'models/Transaction';
@@ -156,14 +157,13 @@ export function SelectorInputTemplate(locals: Object) {
       optionsTitle,
       selectorModalTitle,
       inputWrapperStyle,
-      fiatOptions,
-      fiatOptionsTitle,
       rightLabel,
       onPressRightLabel,
       customInputHeight,
       inputHeaderStyle,
       noErrorText,
       renderOption,
+      optionTabs,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -203,11 +203,10 @@ export function SelectorInputTemplate(locals: Object) {
       selectorOptions={{
         options,
         horizontalOptions,
+        optionTabs,
         showOptionsTitles: !isEmpty(horizontalOptions),
         optionsTitle,
         horizontalOptionsTitle,
-        fiatOptions,
-        fiatOptionsTitle,
         fullWidth: !hasInput,
         selectorModalTitle: selectorModalTitle || label,
         selectorPlaceholder: placeholderSelector,
@@ -216,6 +215,60 @@ export function SelectorInputTemplate(locals: Object) {
       getInputRef={inputRef}
       inputWrapperStyle={inputWrapperStyle}
       customInputHeight={customInputHeight}
+      renderOption={renderOption}
+    />
+  );
+}
+
+export function ItemSelectorTemplate(locals: Object) {
+  const {
+    config: {
+      label,
+      optionsOpenText,
+      placeholderSelector,
+      options,
+      horizontalOptions = [],
+      onSelectorOpen,
+      horizontalOptionsTitle,
+      optionsTitle,
+      selectorModalTitle,
+      renderOption,
+      optionTabs,
+    },
+  } = locals;
+
+  const value = get(locals, 'value', {});
+  const { selector = {} } = value;
+  const { imageUrl } = selector;
+  const selectorValue = {
+    ...value,
+    selector: { ...selector, icon: imageUrl },
+  };
+  const inputProps = {
+    onChange: locals.onChange,
+    label,
+    placeholderSelector,
+    onSelectorOpen,
+    selectorValue,
+    optionsOpenText,
+  };
+
+  return (
+    <ItemSelector
+      style={{ width: '100%' }}
+      errorMessage={locals.error}
+      inputProps={inputProps}
+      selectorOptions={{
+        options,
+        horizontalOptions,
+        optionTabs,
+        showOptionsTitles: !isEmpty(horizontalOptions),
+        optionsTitle,
+        horizontalOptionsTitle,
+        selectorModalTitle: selectorModalTitle || label,
+        selectorPlaceholder: placeholderSelector,
+        optionsSearchPlaceholder: 'Asset search',
+      }}
       renderOption={renderOption}
     />
   );
@@ -230,7 +283,7 @@ export const selectorStructure = (
   let maxAmount;
   let amount;
 
-  const Selector = t.refinement(t.Object, ({ selector, input }) => {
+  const Selector = t.refinement(t.Object, ({ selector, input, dontCheckBalance }) => {
     if (!selector
       || isEmpty(selector)
       || !input
@@ -238,7 +291,7 @@ export const selectorStructure = (
 
     const { symbol, decimals } = selector;
 
-    if (isFiatCurrency(symbol)) return true;
+    if (isFiatCurrency(symbol) || dontCheckBalance) return true;
 
     amount = parseFloat(input);
 

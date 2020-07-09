@@ -23,6 +23,7 @@ export type Option = {
   value: string,
   token?: string,
   symbol?: string,
+  tokenId?: string,
   imageUrl?: string,
   lastUpdateTime?: string,
   imageSource?: string,
@@ -36,3 +37,9 @@ export type HorizontalOption = {
   title?: string,
   data: Option[],
 };
+
+export type OptionTabs = {
+  name: string,
+  id: string,
+  options?: Option[],
+}

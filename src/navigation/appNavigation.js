@@ -178,7 +178,6 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
-  SEND_COLLECTIBLE_CONTACTS,
   WALLETCONNECT_FLOW,
   WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
@@ -228,7 +227,6 @@ import {
   ADDRESS_BOOK_PERMISSION,
   REFERRAL_CONTACTS,
   CONNECT_TAB,
-  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   EXPLORE_APPS,
@@ -531,23 +529,11 @@ const tabNavigation = createBottomTabNavigator(
   },
 );
 
-// SEND TOKEN FROM ASSET FLOW
-const sendTokenFromAssetFlow = createStackNavigator(
+// SEND TOKEN FLOW
+const sendTokenFlow = createStackNavigator(
   {
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [CHAT]: ChatScreen,
-    [CONTACT]: ContactScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-// SEND TOKEN FROM HOME FLOW
-const sendTokenFromHomeFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -572,23 +558,6 @@ const sendBitcoinWhenReceiverIsKnownFlow = createStackNavigator({
   [SEND_BITCOIN_CONFIRM]: SendBitcoinConfirmScreen,
   [SEND_BITCOIN_PIN_CONFIRM]: SendBitcoinPinConfirmScreen,
   [SEND_BITCOIN_TRANSACTION]: SendBitcoinTransactionScreen,
-}, StackNavigatorModalConfig);
-
-// SEND COLLECTIBLE FROM ASSET FLOW
-const sendCollectibleFromAssetFlow = createStackNavigator({
-  [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
-  [SEND_COLLECTIBLE_CONTACTS_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorModalConfig);
-
-// SEND TOKEN FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
 
 const changePinFlow = createStackNavigator({
@@ -738,13 +707,13 @@ lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
-    [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
+    [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [SEND_BITCOIN_FLOW]: sendBitcoinFromAssetFlow,
     [SEND_BITCOIN_WITH_RECEIVER_ADDRESS_FLOW]: sendBitcoinWhenReceiverIsKnownFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
-    [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
-    [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
+    [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFlow,
+    [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
@@ -765,7 +734,7 @@ const AppFlowNavigation = createStackNavigator(
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
-    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
+    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
     [REFERRAL_SENT]: ReferralSentScreen,

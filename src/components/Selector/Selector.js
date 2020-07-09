@@ -22,6 +22,8 @@ import * as React from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 
 import { MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -31,6 +33,7 @@ import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import { spacing } from 'utils/variables';
 
 import type { HorizontalOption, Option } from 'models/Selector';
+import { activeAccountAddressSelector } from 'selectors';
 
 
 export type Props = {
@@ -46,7 +49,9 @@ export type Props = {
   wrapperStyle?: Object,
   noOptionImageFallback?: boolean,
   hasQRScanner?: boolean,
-  allowSelectSelf?: boolean,
+  disableSelfSelect?: boolean,
+  activeAccountAddress?: string,
+  allowEnteringCustomAddress?: boolean,
 };
 type State = {
   areOptionsVisible: boolean,
@@ -140,6 +145,16 @@ class Selector extends React.Component<Props, State> {
     this.setState({ isScanning: false });
   };
 
+  handleSearchValidation = (val) => {
+    const { disableSelfSelect, activeAccountAddress } = this.props;
+    if (disableSelfSelect) {
+      if (val === activeAccountAddress) {
+        return 'Can not send to yourself';
+      }
+    }
+    return null;
+  };
+
   render() {
     const {
       label = 'Select',
@@ -152,7 +167,7 @@ class Selector extends React.Component<Props, State> {
       wrapperStyle,
       noOptionImageFallback,
       hasQRScanner,
-      allowSelectSelf,
+      allowEnteringCustomAddress,
     } = this.props;
     const { areOptionsVisible, isScanning } = this.state;
     const hasValue = !isEmpty(selectedOption);
@@ -185,7 +200,8 @@ class Selector extends React.Component<Props, State> {
             style: { fontSize: 20, marginTop: 2 },
             onPress: this.handleScannerOpen,
           }}
-          allowSelectSelf={allowSelectSelf}
+          validator={this.handleSearchValidation}
+          allowEnteringCustomAddress={allowEnteringCustomAddress}
         />
         <AddressScanner
           isActive={isScanning}
@@ -198,5 +214,8 @@ class Selector extends React.Component<Props, State> {
   }
 }
 
+const structuredSelector = createStructuredSelector({
+  activeAccountAddress: activeAccountAddressSelector,
+});
 
-export default Selector;
+export default connect(structuredSelector)(Selector);

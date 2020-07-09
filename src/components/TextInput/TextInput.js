@@ -457,6 +457,7 @@ class TextInput extends React.Component<Props, State> {
 
     const {
       options = [],
+      optionTabs,
       fullWidth: fullWidthSelector,
       selectorModalTitle,
       optionsSearchPlaceholder,
@@ -469,8 +470,12 @@ class TextInput extends React.Component<Props, State> {
       if (item.data?.length) sum += item.data?.length;
       return sum;
     }, 0);
+    const optionsInTabsLength = !optionTabs ? 0 : optionTabs.reduce((sum, tab) => {
+      if (tab.options?.length) sum += tab.options?.length;
+      return sum;
+    }, 0);
 
-    const selectorOptionsCount = options.length + horizontalOptionsLength;
+    const selectorOptionsCount = options.length + horizontalOptionsLength + optionsInTabsLength;
 
     const imageSource = resolveAssetSource(innerImageURI);
 
@@ -567,11 +572,13 @@ class TextInput extends React.Component<Props, State> {
           onHide={this.closeSelector}
           title={selectorModalTitle}
           options={options}
+          optionTabs={optionTabs}
           searchPlaceholder={optionsSearchPlaceholder}
           optionKeyExtractor={this.optionKeyExtractor}
           onOptionSelect={this.selectValue}
           renderOption={renderOption}
           horizontalOptionsData={horizontalOptions}
+
         />
       </View>
     );

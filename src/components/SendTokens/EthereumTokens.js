@@ -37,6 +37,7 @@ import Spinner from 'components/Spinner';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import { Spacing } from 'components/Layout';
+import SendContainer from 'containers/SendContainer';
 
 // utils
 import { formatAmount, formatFiat } from 'utils/common';
@@ -44,6 +45,7 @@ import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getContactsEnsName } from 'utils/contacts';
+import { getAccountName } from 'utils/accounts';
 
 // services
 import { calculateGasEstimate } from 'services/assets';
@@ -59,6 +61,7 @@ import { activeAccountAddressSelector } from 'selectors';
 import { contactsForSendFlowSelector } from 'selectors/contacts';
 import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -70,14 +73,11 @@ import type { SessionData } from 'models/Session';
 import type { Option } from 'models/Selector';
 
 // constants
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, SPEED_TYPES, SPEED_TYPE_LABELS } from 'constants/assetsConstants';
+import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { ETH, SPEED_TYPES, SPEED_TYPE_LABELS, COLLECTIBLES } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
-
-import { getAccountName } from 'utils/accounts';
-import SendContainer from 'containers/SendContainer';
 
 
 const SendTokenDetailsValue = styled(BaseText)`
@@ -117,6 +117,7 @@ type Props = {
   contacts: Option[],
   inactiveUserAccounts: Option[],
   assetsWithBalance: Option[],
+  collectibles: Option[],
   baseFiatCurrency: ?string,
 };
 
@@ -200,11 +201,17 @@ class SendEthereumTokens extends React.Component<Props, State> {
       assetsWithBalance,
       contacts,
       inactiveUserAccounts,
+      collectibles,
     } = this.props;
     const assetData = navigation.getParam('assetData');
     const contact = navigation.getParam('contact');
     if (assetData) {
-      const formattedSelectedAsset = assetsWithBalance.find(({ token }) => assetData.token === token);
+      let formattedSelectedAsset;
+      if (assetData.tokenType === COLLECTIBLES) {
+        formattedSelectedAsset = collectibles.find(({ tokenId }) => assetData.id === tokenId);
+      } else {
+        formattedSelectedAsset = assetsWithBalance.find(({ token }) => assetData.token === token);
+      }
       if (formattedSelectedAsset) this.handleAmountChange({ selector: formattedSelectedAsset, input: '' });
     }
     if (contact) {
@@ -362,6 +369,19 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     const { source, navigation, isSmartAccount } = this.props;
 
+
+    if (assetData.tokenType === COLLECTIBLES) {
+      this.setState({ submitPressed: false }, () => {
+        navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+          assetData,
+          receiver,
+          source,
+          receiverEnsName,
+        });
+      });
+      return;
+    }
+
     // $FlowFixMe
     let transactionPayload: TokenTransactionPayload = {
       to: receiver,
@@ -507,6 +527,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     } = this.props;
 
     const token = get(assetData, 'token');
+    const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
     // value
     const currentValue = parseFloat(amount || 0);
@@ -535,6 +556,8 @@ class SendEthereumTokens extends React.Component<Props, State> {
           getError: this.manageFormErrorState,
           txFeeInfo,
           preselectedAsset: token,
+          preselectedCollectible,
+          showAllAssetTypes: true,
         }}
         footerProps={{
           isNextButtonVisible: showNextButton,
@@ -592,6 +615,7 @@ const structuredSelector = createStructuredSelector({
   contacts: contactsForSendFlowSelector,
   inactiveUserAccounts: innactiveUserWalletForSendSellector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
+  collectibles: activeAccountMappedCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

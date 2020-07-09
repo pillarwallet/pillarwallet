@@ -29361,22 +29361,24 @@ exports[`Storyshots Selector default 1`] = `
                 </View>
                 <RCTScrollView
                   ListHeaderComponent={
-                    <SelectorOptions__SearchBarWrapper>
-                      <WithTheme(SearchBar)
-                        inputProps={
-                          Object {
-                            "autoCapitalize": "none",
-                            "onChange": [Function],
-                            "validator": [Function],
-                            "value": "",
+                    <React.Fragment>
+                      <SelectorOptions__SearchBarWrapper>
+                        <WithTheme(SearchBar)
+                          inputProps={
+                            Object {
+                              "autoCapitalize": "none",
+                              "onChange": [Function],
+                              "validator": [Function],
+                              "value": "",
+                            }
                           }
-                        }
-                        inputRef={[Function]}
-                        marginBottom="0"
-                        noClose={true}
-                        placeholder="Search"
-                      />
-                    </SelectorOptions__SearchBarWrapper>
+                          inputRef={[Function]}
+                          marginBottom="0"
+                          noClose={true}
+                          placeholder="Search"
+                        />
+                      </SelectorOptions__SearchBarWrapper>
+                    </React.Fragment>
                   }
                   data={
                     Array [
@@ -30664,22 +30666,24 @@ exports[`Storyshots Selector no options 1`] = `
                 </View>
                 <RCTScrollView
                   ListHeaderComponent={
-                    <SelectorOptions__SearchBarWrapper>
-                      <WithTheme(SearchBar)
-                        inputProps={
-                          Object {
-                            "autoCapitalize": "none",
-                            "onChange": [Function],
-                            "validator": [Function],
-                            "value": "",
+                    <React.Fragment>
+                      <SelectorOptions__SearchBarWrapper>
+                        <WithTheme(SearchBar)
+                          inputProps={
+                            Object {
+                              "autoCapitalize": "none",
+                              "onChange": [Function],
+                              "validator": [Function],
+                              "value": "",
+                            }
                           }
-                        }
-                        inputRef={[Function]}
-                        marginBottom="0"
-                        noClose={true}
-                        placeholder="Search"
-                      />
-                    </SelectorOptions__SearchBarWrapper>
+                          inputRef={[Function]}
+                          marginBottom="0"
+                          noClose={true}
+                          placeholder="Search"
+                        />
+                      </SelectorOptions__SearchBarWrapper>
+                    </React.Fragment>
                   }
                   data={
                     Array [
@@ -31810,22 +31814,24 @@ exports[`Storyshots Selector selected option 1`] = `
                 </View>
                 <RCTScrollView
                   ListHeaderComponent={
-                    <SelectorOptions__SearchBarWrapper>
-                      <WithTheme(SearchBar)
-                        inputProps={
-                          Object {
-                            "autoCapitalize": "none",
-                            "onChange": [Function],
-                            "validator": [Function],
-                            "value": "",
+                    <React.Fragment>
+                      <SelectorOptions__SearchBarWrapper>
+                        <WithTheme(SearchBar)
+                          inputProps={
+                            Object {
+                              "autoCapitalize": "none",
+                              "onChange": [Function],
+                              "validator": [Function],
+                              "value": "",
+                            }
                           }
-                        }
-                        inputRef={[Function]}
-                        marginBottom="0"
-                        noClose={true}
-                        placeholder="Search"
-                      />
-                    </SelectorOptions__SearchBarWrapper>
+                          inputRef={[Function]}
+                          marginBottom="0"
+                          noClose={true}
+                          placeholder="Search"
+                        />
+                      </SelectorOptions__SearchBarWrapper>
+                    </React.Fragment>
                   }
                   data={
                     Array [
@@ -33113,22 +33119,24 @@ exports[`Storyshots Selector with custom wording 1`] = `
                 </View>
                 <RCTScrollView
                   ListHeaderComponent={
-                    <SelectorOptions__SearchBarWrapper>
-                      <WithTheme(SearchBar)
-                        inputProps={
-                          Object {
-                            "autoCapitalize": "none",
-                            "onChange": [Function],
-                            "validator": [Function],
-                            "value": "",
+                    <React.Fragment>
+                      <SelectorOptions__SearchBarWrapper>
+                        <WithTheme(SearchBar)
+                          inputProps={
+                            Object {
+                              "autoCapitalize": "none",
+                              "onChange": [Function],
+                              "validator": [Function],
+                              "value": "",
+                            }
                           }
-                        }
-                        inputRef={[Function]}
-                        marginBottom="0"
-                        noClose={true}
-                        placeholder="Username or wallet address"
-                      />
-                    </SelectorOptions__SearchBarWrapper>
+                          inputRef={[Function]}
+                          marginBottom="0"
+                          noClose={true}
+                          placeholder="Username or wallet address"
+                        />
+                      </SelectorOptions__SearchBarWrapper>
+                    </React.Fragment>
                   }
                   data={
                     Array [
@@ -34416,22 +34424,24 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                 </View>
                 <RCTScrollView
                   ListHeaderComponent={
-                    <SelectorOptions__SearchBarWrapper>
-                      <WithTheme(SearchBar)
-                        inputProps={
-                          Object {
-                            "autoCapitalize": "none",
-                            "onChange": [Function],
-                            "validator": [Function],
-                            "value": "",
+                    <React.Fragment>
+                      <SelectorOptions__SearchBarWrapper>
+                        <WithTheme(SearchBar)
+                          inputProps={
+                            Object {
+                              "autoCapitalize": "none",
+                              "onChange": [Function],
+                              "validator": [Function],
+                              "value": "",
+                            }
                           }
-                        }
-                        inputRef={[Function]}
-                        marginBottom="0"
-                        noClose={true}
-                        placeholder="Search"
-                      />
-                    </SelectorOptions__SearchBarWrapper>
+                          inputRef={[Function]}
+                          marginBottom="0"
+                          noClose={true}
+                          placeholder="Search"
+                        />
+                      </SelectorOptions__SearchBarWrapper>
+                    </React.Fragment>
                   }
                   data={
                     Array [
@@ -35823,6 +35833,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       rightLabel=""
                       selectorValue={
                         Object {
+                          "dontCheckBalance": false,
                           "input": "",
                           "selector": Object {
                             "icon": "",
@@ -36200,22 +36211,24 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                             </View>
                             <RCTScrollView
                               ListHeaderComponent={
-                                <SelectorOptions__SearchBarWrapper>
-                                  <WithTheme(SearchBar)
-                                    inputProps={
-                                      Object {
-                                        "autoCapitalize": "none",
-                                        "onChange": [Function],
-                                        "validator": [Function],
-                                        "value": "",
+                                <React.Fragment>
+                                  <SelectorOptions__SearchBarWrapper>
+                                    <WithTheme(SearchBar)
+                                      inputProps={
+                                        Object {
+                                          "autoCapitalize": "none",
+                                          "onChange": [Function],
+                                          "validator": [Function],
+                                          "value": "",
+                                        }
                                       }
-                                    }
-                                    inputRef={[Function]}
-                                    marginBottom="0"
-                                    noClose={true}
-                                    placeholder="Asset search"
-                                  />
-                                </SelectorOptions__SearchBarWrapper>
+                                      inputRef={[Function]}
+                                      marginBottom="0"
+                                      noClose={true}
+                                      placeholder="Asset search"
+                                    />
+                                  </SelectorOptions__SearchBarWrapper>
+                                </React.Fragment>
                               }
                               data={
                                 Array [
@@ -37517,6 +37530,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       rightLabel="Max"
                       selectorValue={
                         Object {
+                          "dontCheckBalance": false,
                           "input": "",
                           "selector": Object {
                             "address": "0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75",
@@ -37916,22 +37930,24 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             </View>
                             <RCTScrollView
                               ListHeaderComponent={
-                                <SelectorOptions__SearchBarWrapper>
-                                  <WithTheme(SearchBar)
-                                    inputProps={
-                                      Object {
-                                        "autoCapitalize": "none",
-                                        "onChange": [Function],
-                                        "validator": [Function],
-                                        "value": "",
+                                <React.Fragment>
+                                  <SelectorOptions__SearchBarWrapper>
+                                    <WithTheme(SearchBar)
+                                      inputProps={
+                                        Object {
+                                          "autoCapitalize": "none",
+                                          "onChange": [Function],
+                                          "validator": [Function],
+                                          "value": "",
+                                        }
                                       }
-                                    }
-                                    inputRef={[Function]}
-                                    marginBottom="0"
-                                    noClose={true}
-                                    placeholder="Asset search"
-                                  />
-                                </SelectorOptions__SearchBarWrapper>
+                                      inputRef={[Function]}
+                                      marginBottom="0"
+                                      noClose={true}
+                                      placeholder="Asset search"
+                                    />
+                                  </SelectorOptions__SearchBarWrapper>
+                                </React.Fragment>
                               }
                               data={
                                 Array [
@@ -39115,6 +39131,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       rightLabel=""
                       selectorValue={
                         Object {
+                          "dontCheckBalance": false,
                           "input": "",
                           "selector": Object {
                             "icon": "",
@@ -39492,22 +39509,24 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                             </View>
                             <RCTScrollView
                               ListHeaderComponent={
-                                <SelectorOptions__SearchBarWrapper>
-                                  <WithTheme(SearchBar)
-                                    inputProps={
-                                      Object {
-                                        "autoCapitalize": "none",
-                                        "onChange": [Function],
-                                        "validator": [Function],
-                                        "value": "",
+                                <React.Fragment>
+                                  <SelectorOptions__SearchBarWrapper>
+                                    <WithTheme(SearchBar)
+                                      inputProps={
+                                        Object {
+                                          "autoCapitalize": "none",
+                                          "onChange": [Function],
+                                          "validator": [Function],
+                                          "value": "",
+                                        }
                                       }
-                                    }
-                                    inputRef={[Function]}
-                                    marginBottom="0"
-                                    noClose={true}
-                                    placeholder="Asset search"
-                                  />
-                                </SelectorOptions__SearchBarWrapper>
+                                      inputRef={[Function]}
+                                      marginBottom="0"
+                                      noClose={true}
+                                      placeholder="Asset search"
+                                    />
+                                  </SelectorOptions__SearchBarWrapper>
+                                </React.Fragment>
                               }
                               data={
                                 Array [

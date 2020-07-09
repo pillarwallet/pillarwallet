@@ -27,8 +27,6 @@ import {
   FlatList,
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 
 import { BaseText, MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
@@ -37,16 +35,16 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Tabs from 'components/Tabs';
 
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { getMatchingSortedData } from 'utils/textInput';
 import { isValidAddress } from 'utils/validators';
-import { activeAccountAddressSelector } from 'selectors';
 
 import type { Theme } from 'models/Theme';
-import type { HorizontalOption, Option } from 'models/Selector';
+import type { HorizontalOption, Option, OptionTabs } from 'models/Selector';
 
 
 type Props = {
@@ -59,6 +57,7 @@ type Props = {
   isVisible: boolean,
   title: string,
   options?: Option[],
+  optionTabs?: OptionTabs[],
   optionsTitle?: string,
   searchPlaceholder?: string,
   theme: Theme,
@@ -66,14 +65,16 @@ type Props = {
   inputIconName?: string,
   iconProps?: Object,
   activeAccountAddress: string,
-  allowSelectSelf?: boolean,
   onHidden: () => void,
+  validator?: (value: string) => string,
+  allowEnteringCustomAddress?: boolean,
 };
 
 type State = {
   query: string,
   hasSearchError: boolean,
   customAddressAsAnOption: ?Option,
+  activeTab?: string,
 };
 
 
@@ -144,11 +145,24 @@ const MIN_QUERY_LENGTH = 2;
 class SelectorOptions extends React.Component<Props, State> {
   searchInput: TextInput;
 
-  state = {
-    query: '',
-    customAddressAsAnOption: null,
-    hasSearchError: false,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      query: '',
+      customAddressAsAnOption: null,
+      hasSearchError: false,
+      activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : '',
+    };
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { activeTab } = this.state;
+    const { optionTabs } = this.props;
+    if (!activeTab && !prevProps.optionTabs && optionTabs && !!optionTabs.length) {
+      this.setActiveTab(optionTabs[0]?.id);
+    }
+  }
+
 
   focusInput = () => {
     if (this.searchInput) this.searchInput.focus();
@@ -163,8 +177,9 @@ class SelectorOptions extends React.Component<Props, State> {
   };
 
   handleInputChange = (query: string) => {
+    const { allowEnteringCustomAddress } = this.props;
     this.handleSearch(query);
-    this.handleCustomAddress(query);
+    if (allowEnteringCustomAddress) this.handleCustomAddress(query);
   };
 
   handleCustomAddress = (query: string) => {
@@ -314,16 +329,21 @@ class SelectorOptions extends React.Component<Props, State> {
   };
 
   validateSearch = (val: string) => {
-    const { allowSelectSelf, activeAccountAddress } = this.props;
+    const { validator } = this.props;
     const { hasSearchError } = this.state;
-    if (allowSelectSelf) return null;
-    if (val === activeAccountAddress) {
-      this.setState({ hasSearchError: true });
-      return 'Can not send assets to yourself';
+    if (!validator) return null;
+    const hasError = validator(val);
+    if (hasError) {
+      this.setState({ hasSearchError: !!hasError });
+      return hasError;
     } else if (hasSearchError) {
       this.setState({ hasSearchError: false });
     }
     return null;
+  };
+
+  setActiveTab = (tabId) => {
+    this.setState({ activeTab: tabId });
   };
 
   render() {
@@ -332,17 +352,30 @@ class SelectorOptions extends React.Component<Props, State> {
       theme,
       title,
       options = [],
+      optionTabs,
       showOptionsTitles,
       optionsTitle,
       horizontalOptionsData = [],
       searchPlaceholder,
       iconProps,
     } = this.props;
-    const { query, customAddressAsAnOption, hasSearchError } = this.state;
+    const {
+      query,
+      customAddressAsAnOption,
+      hasSearchError,
+      activeTab,
+    } = this.state;
     const colors = getThemeColors(theme);
     const isSearching = query && query.length >= MIN_QUERY_LENGTH;
+    const updatedOptionTabs = !!optionTabs && optionTabs.length
+      ? optionTabs.map(({ id, ...rest }) => ({ ...rest, onPress: () => this.setActiveTab(id), id }))
+      : [];
 
-    const filteredOptions = isSearching ? getMatchingSortedData(options, query) : options;
+    const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
+    const activeTabOptions = activeTabInfo?.options;
+    const relatedOptions = activeTabOptions || options || [];
+
+    const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
     const filteredHorizontalOptionsData = isSearching && horizontalOptionsData.length
       ? horizontalOptionsData.reduce((mappedInfo, info) => {
         const { data } = info;
@@ -404,21 +437,28 @@ class SelectorOptions extends React.Component<Props, State> {
             initialNumToRender={10}
             viewabilityConfig={viewConfig}
             ListHeaderComponent={
-              <SearchBarWrapper>
-                <SearchBar
-                  inputProps={{
-                    onChange: this.handleInputChange,
-                    value: query,
-                    autoCapitalize: 'none',
-                    validator: this.validateSearch,
-                  }}
-                  placeholder={searchPlaceholder}
-                  inputRef={ref => { this.searchInput = ref; }}
-                  noClose
-                  marginBottom="0"
-                  iconProps={iconProps}
-                />
-              </SearchBarWrapper>}
+              <>
+                <SearchBarWrapper>
+                  <SearchBar
+                    inputProps={{
+                      onChange: this.handleInputChange,
+                      value: query,
+                      autoCapitalize: 'none',
+                      validator: this.validateSearch,
+                    }}
+                    placeholder={searchPlaceholder}
+                    inputRef={ref => { this.searchInput = ref; }}
+                    noClose
+                    marginBottom="0"
+                    iconProps={iconProps}
+                  />
+                </SearchBarWrapper>
+                {!!optionTabs && <Tabs
+                  tabs={updatedOptionTabs}
+                  wrapperStyle={{ paddingTop: 16 }}
+                  activeTab={activeTab || updatedOptionTabs[0].name}
+                />}
+              </>}
             windowSize={10}
             hideModalContentWhileAnimating
           />
@@ -428,8 +468,4 @@ class SelectorOptions extends React.Component<Props, State> {
   }
 }
 
-const structuredSelector = createStructuredSelector({
-  activeAccountAddress: activeAccountAddressSelector,
-});
-
-export default withTheme(connect(structuredSelector)(SelectorOptions));
+export default withTheme(SelectorOptions);

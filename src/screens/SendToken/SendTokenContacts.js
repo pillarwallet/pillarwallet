@@ -41,12 +41,7 @@ import Spinner from 'components/Spinner';
 
 // constants
 import { COLLECTIBLES, BTC } from 'constants/assetsConstants';
-import {
-  ACCOUNTS,
-  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
-  SEND_COLLECTIBLE_CONTACTS,
-  SEND_TOKEN_ASSETS, SEND_TOKEN_AMOUNT,
-} from 'constants/navigationConstants';
+import { ACCOUNTS, SEND_TOKEN_ASSETS, SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
@@ -351,16 +346,6 @@ class SendTokenContacts extends React.Component<Props, State> {
       accounts,
     } = this.props;
 
-    if (this.assetData.tokenType === COLLECTIBLES) {
-      navigation.navigate(SEND_COLLECTIBLE_CONTACTS_CONFIRM, {
-        assetData: this.assetData,
-        receiver: receiverAddress,
-        source: 'Contact',
-        receiverEnsName,
-        backTo: SEND_COLLECTIBLE_CONTACTS,
-      });
-      return;
-    }
     if (this.isSendingFromHomeFlow) {
       const { username } = findMatchingContact(receiverAddress, localContacts, contactsSmartAddresses) || {};
       const userWallet = accounts.find(({ id }) => id === receiverAddress) || {};

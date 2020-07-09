@@ -95,6 +95,8 @@ const SendContainer = (props: Props) => {
         wrapperStyle={{ marginTop: spacing.medium }}
         noOptionImageFallback
         hasQRScanner
+        disableSelfSelect
+        allowEnteringCustomAddress
         {...customSelectorProps}
       />
       <ValueSelectorCard
