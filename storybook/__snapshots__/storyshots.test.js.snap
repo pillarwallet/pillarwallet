@@ -455,500 +455,6 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
 </View>
 `;
 
-exports[`Storyshots ActivityFeedItem Bitcoin received 1`] = `
-<View
-  style={
-    Array [
-      Object {
-        "flexDirection": "column",
-        "width": "100%",
-      },
-      undefined,
-    ]
-  }
->
-  <View
-    accessible={true}
-    focusable={true}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "flexDirection": "row",
-        "justifyContent": "center",
-        "opacity": 1,
-        "paddingBottom": 14,
-        "paddingLeft": 20,
-        "paddingRight": 20,
-        "paddingTop": 14,
-        "width": "100%",
-      }
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "justifyContent": "center",
-            "paddingRight": 12,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
-        }
-      />
-    </View>
-    <View
-      style={
-        Object {
-          "flex": 1,
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            },
-            undefined,
-          ]
-        }
-        type="DEFAULT"
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexBasis": 0,
-                "flexDirection": "column",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "flexGrow": 1,
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "space-between",
-                },
-                undefined,
-              ]
-            }
-          >
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "width": "100%",
-                      },
-                      undefined,
-                    ],
-                  ],
-                ]
-              }
-              type="DEFAULT"
-            >
-              john
-            </Text>
-          </View>
-        </View>
-        <View
-          rightColumn={true}
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-end",
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "marginLeft": 10,
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "maxWidth": "50%",
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                undefined,
-                Object {
-                  "flexWrap": "wrap",
-                },
-              ]
-            }
-          >
-            <View
-              horizontal={true}
-              style={
-                Array [
-                  Object {
-                    "flexDirection": "row",
-                    "marginBottom": 0,
-                    "marginLeft": 0,
-                    "marginRight": 0,
-                    "marginTop": 0,
-                  },
-                  Object {
-                    "alignItems": "center",
-                    "flexWrap": "wrap",
-                    "justifyContent": "flex-end",
-                  },
-                ]
-              }
-            >
-              <Text
-                color="#2AA057"
-                ellipsizeMode="tail"
-                numberOfLines={2}
-                style={
-                  Array [
-                    Object {
-                      "color": "#2AA057",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#2AA057",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "textAlign": "right",
-                      },
-                      undefined,
-                    ],
-                  ]
-                }
-              >
-                + 1 BTC
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>
-</View>
-`;
-
-exports[`Storyshots ActivityFeedItem Bitcoin sent 1`] = `
-<View
-  style={
-    Array [
-      Object {
-        "flexDirection": "column",
-        "width": "100%",
-      },
-      undefined,
-    ]
-  }
->
-  <View
-    accessible={true}
-    focusable={true}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "flexDirection": "row",
-        "justifyContent": "center",
-        "opacity": 1,
-        "paddingBottom": 14,
-        "paddingLeft": 20,
-        "paddingRight": 20,
-        "paddingTop": 14,
-        "width": "100%",
-      }
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "justifyContent": "center",
-            "paddingRight": 12,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
-        }
-      />
-    </View>
-    <View
-      style={
-        Object {
-          "flex": 1,
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            },
-            undefined,
-          ]
-        }
-        type="DEFAULT"
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexBasis": 0,
-                "flexDirection": "column",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "flexGrow": 1,
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "space-between",
-                },
-                undefined,
-              ]
-            }
-          >
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "width": "100%",
-                      },
-                      undefined,
-                    ],
-                  ],
-                ]
-              }
-              type="DEFAULT"
-            >
-              john
-            </Text>
-          </View>
-        </View>
-        <View
-          rightColumn={true}
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-end",
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "marginLeft": 10,
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "maxWidth": "50%",
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                undefined,
-                Object {
-                  "flexWrap": "wrap",
-                },
-              ]
-            }
-          >
-            <View
-              horizontal={true}
-              style={
-                Array [
-                  Object {
-                    "flexDirection": "row",
-                    "marginBottom": 0,
-                    "marginLeft": 0,
-                    "marginRight": 0,
-                    "marginTop": 0,
-                  },
-                  Object {
-                    "alignItems": "center",
-                    "flexWrap": "wrap",
-                    "justifyContent": "flex-end",
-                  },
-                ]
-              }
-            >
-              <Text
-                color="#0A1427"
-                ellipsizeMode="tail"
-                numberOfLines={2}
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "textAlign": "right",
-                      },
-                      undefined,
-                    ],
-                  ]
-                }
-              >
-                - 1 BTC
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>
-</View>
-`;
-
 exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
 <View
   style={
@@ -3611,7 +3117,6 @@ exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
                       "activeTabBarIcon": "#007AFF",
                       "avatarPlaceholderBackground": "#e0eeff",
                       "avatarPlaceholderText": "#6690eb",
-                      "bitcoinWallet": "#F79319",
                       "border": "#EDEDED",
                       "buttonSecondaryBackground": "#e6f1f9",
                       "card": "#FFFFFF",
@@ -12118,7 +11623,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -12781,7 +12285,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -13191,7 +12694,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -13320,7 +12822,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -13730,7 +13231,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -13859,7 +13359,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -14254,7 +13753,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -14383,7 +13881,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -14734,7 +14231,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -14863,7 +14359,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -15258,7 +14753,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -15387,7 +14881,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -15782,7 +15275,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -15911,7 +15403,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -16314,7 +15805,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#007AFF",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -16733,7 +16223,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -17150,7 +16639,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -17797,7 +17285,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -18178,7 +17665,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -18307,7 +17793,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -18688,7 +18173,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -18817,7 +18301,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -19198,7 +18681,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -19579,7 +19061,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -19977,7 +19458,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -20106,7 +19586,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -20504,7 +19983,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -20633,7 +20111,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -21031,7 +20508,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -21160,7 +20636,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -21558,7 +21033,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -21687,7 +21161,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -22111,7 +21584,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -22521,7 +21993,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -22947,7 +22418,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -23357,7 +22827,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -23486,7 +22955,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -23910,7 +23378,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -24320,7 +23787,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -24746,7 +24212,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -25156,7 +24621,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -25285,7 +24749,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -25668,7 +25131,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -26049,7 +25511,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -26178,7 +25639,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -26529,7 +25989,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -26658,7 +26117,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "transparent",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -27009,7 +26467,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#EDEDED",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -27368,7 +26825,6 @@ Array [
               "activeTabBarIcon": "#007AFF",
               "avatarPlaceholderBackground": "#e0eeff",
               "avatarPlaceholderText": "#6690eb",
-              "bitcoinWallet": "#F79319",
               "border": "#007AFF",
               "buttonSecondaryBackground": "#e6f1f9",
               "card": "#FFFFFF",
@@ -27749,7 +27205,6 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "activeTabBarIcon": "#007AFF",
                       "avatarPlaceholderBackground": "#e0eeff",
                       "avatarPlaceholderText": "#6690eb",
-                      "bitcoinWallet": "#F79319",
                       "border": "#007AFF",
                       "buttonSecondaryBackground": "#e6f1f9",
                       "card": "#FFFFFF",
@@ -27987,7 +27442,6 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       "activeTabBarIcon": "#007AFF",
                       "avatarPlaceholderBackground": "#e0eeff",
                       "avatarPlaceholderText": "#6690eb",
-                      "bitcoinWallet": "#F79319",
                       "border": "#EDEDED",
                       "buttonSecondaryBackground": "#e6f1f9",
                       "card": "#FFFFFF",
@@ -28217,7 +27671,6 @@ Array [
                       "activeTabBarIcon": "#007AFF",
                       "avatarPlaceholderBackground": "#e0eeff",
                       "avatarPlaceholderText": "#6690eb",
-                      "bitcoinWallet": "#F79319",
                       "border": "#007AFF",
                       "buttonSecondaryBackground": "#e6f1f9",
                       "card": "#FFFFFF",
@@ -28608,7 +28061,6 @@ Array [
                           "activeTabBarIcon": "#007AFF",
                           "avatarPlaceholderBackground": "#e0eeff",
                           "avatarPlaceholderText": "#6690eb",
-                          "bitcoinWallet": "#F79319",
                           "border": "#EDEDED",
                           "buttonSecondaryBackground": "#e6f1f9",
                           "card": "#FFFFFF",

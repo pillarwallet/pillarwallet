@@ -39,6 +39,8 @@ export const GBP = 'GBP';
 export const USD = 'USD';
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
+export const WBTC = 'WBTC';
+export const sBTC = 'sBTC';
 
 const LINK = 'LINK';
 const BAT = 'BAT';
@@ -61,7 +63,6 @@ export const POPULAR_EXCHANGE_TOKENS = [
 ];
 
 export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
-export const BITCOIN_ADDRESS_PREFIX = 'bitcoin';
 
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 export const defaultFiatCurrency = GBP;

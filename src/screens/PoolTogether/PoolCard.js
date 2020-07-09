@@ -25,14 +25,14 @@ import styled, { withTheme } from 'styled-components/native';
 import { DAI } from 'constants/assetsConstants';
 
 import ShadowedCard from 'components/ShadowedCard';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import Progress from 'components/Progress';
+import { Spacing } from 'components/Layout';
 
 import type { Theme } from 'models/Theme';
 
 import { getThemeColors, themedColors } from 'utils/themes';
 import { countDownDHMS, getWinChance } from 'utils/poolTogether';
-import { fontStyles } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 
 const CardRow = styled.View`
@@ -40,28 +40,17 @@ const CardRow = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
-  ${({ withBorder, theme }) => withBorder
-    ? `border-bottom-width: 1px;
-     border-bottom-color: ${theme.colors.border};`
-    : ''}
 `;
 
 const CardColumn = styled.View`
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
-  ${({ withBorder, theme }) => withBorder
-    ? `border-right-width: 1px;
-       border-right-color: ${theme.colors.border};`
-    : ''}
 `;
 
-const CardText = styled(BaseText)`
-  ${({ label }) => label ? fontStyles.regular : fontStyles.large};
-  letter-spacing: 0.18px;
-  color: ${({ label }) => label ? themedColors.secondaryText : themedColors.text};
+const Separator = styled.View`
+  width: 1px;
+  height: 40px;
+  background-color: ${themedColors.border};
 `;
 
 type Props = {
@@ -113,38 +102,42 @@ const PoolCard = (props: Props) => {
   return (
     <ShadowedCard
       wrapperStyle={{
-          marginTop: 8,
-          marginBottom: 10,
-          paddingHorizontal: 16,
-        }}
-      contentWrapperStyle={{ paddingLeft: 20, paddingRight: 20 }}
+        marginTop: 4,
+        marginBottom: 10,
+        paddingHorizontal: 16,
+      }}
+      contentWrapperStyle={{ paddingLeft: 20, paddingRight: 20, paddingVertical: 16 }}
     >
       <CardRow style={{ width: '100%' }}>
-        <CardColumn style={{ width: '50%' }} withBorder>
+        <CardColumn style={{ width: '50%' }}>
           <CardRow>
-            <CardText label>Prize est.</CardText>
+            <BaseText regular secondary>Prize est.</BaseText>
           </CardRow>
+          <Spacing h={6} />
           <CardRow>
-            <CardText>${prizeEstimate}</CardText>
+            <MediumText large>${prizeEstimate}</MediumText>
             <Image
               source={iconSrc}
               style={{
-                margin: 6,
+                marginLeft: 6,
                 height: 24,
                 width: 24,
               }}
             />
           </CardRow>
         </CardColumn>
+        <Separator />
         <CardColumn style={{ width: '50%' }}>
           <CardRow>
-            <CardText label>Current prize</CardText>
+            <BaseText regular secondary>Current prize</BaseText>
           </CardRow>
+          <Spacing h={6} />
           <CardRow>
-            <CardText style={{ color: colors.poolTogetherPink }}>${currentPrize}</CardText>
+            <MediumText big color={colors.poolTogetherPink}>${currentPrize}</MediumText>
           </CardRow>
         </CardColumn>
       </CardRow>
+      <Spacing h={14} />
       <CardRow style={{ width: '100%' }}>
         <Progress
           fullStatusValue={prizeEstimate}
@@ -152,20 +145,24 @@ const PoolCard = (props: Props) => {
           activeTab={symbol}
         />
       </CardRow>
-      <CardRow style={{ paddingBottom: 16 }}>
-        <CardText label>{remainingTime}</CardText>
+      <Spacing h={16} />
+      <CardRow>
+        <BaseText regular secondary>{remainingTime}</BaseText>
       </CardRow>
       {userTickets > 0 &&
         <>
+          <Spacing h={16} />
           <CardRow>
-            <CardText style={{ paddingRight: 4 }}>{userTickets} tickets</CardText>
-            <CardText style={{ paddingTop: 4 }} label>({userTickets} {symbol})</CardText>
+            <MediumText big>{userTickets} tickets</MediumText>
+            <Spacing w={4} />
+            <BaseText medium secondary>({userTickets} {symbol})</BaseText>
           </CardRow>
-          <CardRow style={{ paddingTop: 0, marginBottom: 16 }}>
-            <CardText label style={{ color: colors.primary, paddingRight: 4 }}>
+          <CardRow>
+            <BaseText regular primary>
               {formatAmount(winChance, 6)} %
-            </CardText>
-            <CardText label>chance of win </CardText>
+            </BaseText>
+            <Spacing w={4} />
+            <BaseText regular>chance of win </BaseText>
           </CardRow>
         </>
       }

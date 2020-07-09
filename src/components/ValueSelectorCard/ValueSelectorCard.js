@@ -64,6 +64,7 @@ export type ExternalProps = {
   maxLabel?: string,
   preselectedAsset?: string,
   preselectedCollectible?: string,
+  preselectedValue?: number,
   getFormValue: (?FormSelector) => void,
   txFeeInfo?: ?TransactionFeeInfo,
   selectorModalTitle?: string,
@@ -71,7 +72,6 @@ export type ExternalProps = {
   wrapperStyle?: Object,
   renderOption?: () => void,
   isLoading?: boolean,
-  hideZeroBalanceAssets?: boolean,
   customOptions?: Object[],
   customBalances?: Balances,
   activeTokenType?: string,
@@ -230,6 +230,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       collectibles = [],
       preselectedAsset,
       preselectedCollectible,
+      preselectedValue,
     } = this.props;
     const { formOptions, value } = this.state;
 
@@ -269,6 +270,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     const pickedAsset = preselectedOption || singleOption || {};
 
     newValue.formSelector.selector = pickedAsset;
+    if (preselectedValue) {
+      newValue.formSelector.input = preselectedValue.toString();
+    }
     const { symbol } = pickedAsset;
     const label = maxLabel || 'Max';
 

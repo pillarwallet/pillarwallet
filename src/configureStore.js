@@ -22,8 +22,7 @@
  */
 import { createStore, applyMiddleware } from 'redux';
 import AsyncStorage from '@react-native-community/async-storage';
-import { persistStore, persistReducer } from 'redux-persist';
-// import { createMigrate } from 'redux-persist';
+import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -32,6 +31,8 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import offlineMiddleware from 'utils/offlineMiddleware';
 import PillarSdk from 'services/api';
 import rootReducer from './reducers/rootReducer';
+
+import migrations from './redux-migrations/migrations';
 
 // migration example
 /*
@@ -51,10 +52,10 @@ const migrations = {
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  // version: 0,
+  version: 1, // bump up the version when new changes are made with migrations
   stateReconciler: autoMergeLevel2,
   whitelist: ['history', 'walletConnectSessions', 'referrals', 'poolTogether'],
-  // migrate: createMigrate(migrations, { debug: true }),
+  migrate: createMigrate(migrations, { debug: false }),
   timeout: 0, // HACK: wait until the storage responds
 };
 const pReducer = persistReducer(persistConfig, rootReducer);

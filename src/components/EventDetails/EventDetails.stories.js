@@ -58,10 +58,6 @@ const reduxData = {
   activeAccountAddress: '',
   activeBlockchainNetwork: '',
   isSmartWalletActivated: true,
-  bitcoinAddresses: [{
-    address: 'bitcoinAddress',
-    updatedAt: 0,
-  }],
   accounts: [
     {
       id: '0xKeyWallet',

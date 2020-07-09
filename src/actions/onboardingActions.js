@@ -47,7 +47,7 @@ import {
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { RESET_APP_SETTINGS, USER_JOINED_BETA_SETTING } from 'constants/appSettingsConstants';
+import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -88,7 +88,7 @@ import {
 import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction, updateAppSettingsAction } from 'actions/appSettingsActions';
+import { setAppThemeAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -211,11 +211,6 @@ export const finishRegistration = async ({
   dispatch(saveDbAction('assets', { assets }, true));
 
   dispatch(fetchBadgesAction(false));
-
-  // user might be already joined to beta program before
-  if (isImported && userInfo.betaProgramParticipant) {
-    dispatch(updateAppSettingsAction(USER_JOINED_BETA_SETTING, true));
-  }
 
   dispatch(loadFeatureFlagsAction(userInfo));
 

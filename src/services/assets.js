@@ -22,7 +22,7 @@ import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK, BALANCE_CHECK_CONTRACT } from '
 import cryptocompare from 'cryptocompare';
 
 // constants
-import { BTC, ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, reportLog } from 'utils/common';
@@ -339,7 +339,6 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
     }
     return token;
   });
-  assets = assets.concat(BTC);
 
   return cryptocompare.priceMulti(assets, targetCurrencies)
     .then(data => {

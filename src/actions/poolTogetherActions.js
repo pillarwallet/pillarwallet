@@ -26,6 +26,7 @@ import {
   SET_POOL_TOGETHER_FETCHING_STATS,
 } from 'constants/poolTogetherConstants';
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
+import { DAI, USDC } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -42,26 +43,55 @@ import { activeAccountAddressSelector } from 'selectors/selectors';
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-export const fetchPoolPrizeInfo = (symbol: string) => {
+export const fetchPoolPrizeInfo = (symbol: string, sequence?: boolean) => { // sequence calls in rare sync events
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { poolTogether: { poolStats: currentPoolStats = {} } } = getState();
+    const {
+      poolTogether: {
+        poolStats: currentPoolStats = {},
+        lastSynced = {},
+        isFetchingPoolStats = false,
+      },
+    } = getState();
     const activeAccountAddress = activeAccountAddressSelector(getState());
+    if (isFetchingPoolStats && !sequence) return;
     dispatch({
       type: SET_POOL_TOGETHER_FETCHING_STATS,
       payload: true,
     });
-    const newPoolStats = await getPoolTogetherInfo(symbol, activeAccountAddress);
-    if (newPoolStats) {
-      const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
-      dispatch({
-        type: SET_POOL_TOGETHER_PRIZE_INFO,
-        payload: updatedPoolStats,
-      });
+    if (Date.now() - 15000 > lastSynced[symbol]) {
+      const newPoolStats = await getPoolTogetherInfo(symbol, activeAccountAddress);
+      if (newPoolStats) {
+        const updatedPoolStats = { ...currentPoolStats, [symbol]: newPoolStats };
+        dispatch({
+          type: SET_POOL_TOGETHER_PRIZE_INFO,
+          payload: { updatedPoolStats, symbol },
+        });
+      }
     }
     dispatch({
       type: SET_POOL_TOGETHER_FETCHING_STATS,
       payload: false,
     });
+  };
+};
+
+export const fetchAllPoolsPrizes = (firstRun?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      poolTogether: {
+        isFetchingPoolStats = false,
+      },
+    } = getState();
+    if (!isFetchingPoolStats) {
+      await dispatch(fetchPoolPrizeInfo(DAI));
+      await dispatch(fetchPoolPrizeInfo(USDC, true));
+    }
+    if (firstRun) {
+      dispatch({
+        type: SET_POOL_TOGETHER_FETCHING_STATS,
+        payload: false,
+      });
+    }
   };
 };
 

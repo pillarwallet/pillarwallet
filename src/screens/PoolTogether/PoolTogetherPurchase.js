@@ -25,6 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 
 // actions
@@ -49,7 +50,7 @@ import Button from 'components/Button';
 
 // models
 import type { Accounts } from 'models/Account';
-import type { Balances, Rates, Assets } from 'models/Asset';
+import type { Balances, Rates, Assets, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -65,7 +66,7 @@ import { themedColors, getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
-import { getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { getRate, isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
 
 // services
 import {
@@ -115,6 +116,7 @@ type Props = {
   poolApproveExecuting: { [string]: boolean | string },
   rates: Rates,
   assets: Assets,
+  supportedAssets: Asset[],
 };
 
 type State = {
@@ -263,6 +265,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       poolApproveExecuting,
       fetchPoolAllowanceStatus,
       assets,
+      supportedAssets,
     } = this.props;
 
     const {
@@ -322,7 +325,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       };
     }
 
-    const assetOptions = assets[poolToken] ? [assets[poolToken]] : [];
+    const poolTokenItem = getAssetData(getAssetsAsList(assets), supportedAssets, poolToken);
+    const assetOptions = !isEmpty(poolTokenItem) ? [poolTokenItem] : [];
 
     return (
       <ContainerWithHeader
@@ -354,6 +358,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 baseFiatCurrency={baseFiatCurrency}
                 rates={rates}
                 txFeeInfo={null}
+                preselectedValue={tokenValue}
               />
             </ContentRow>
             <ContentRow>
@@ -429,6 +434,7 @@ const mapStateToProps = ({
     poolApproveExecuting,
   },
   rates: { data: rates },
+  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   session,
@@ -437,6 +443,7 @@ const mapStateToProps = ({
   poolAllowance,
   poolApproveExecuting,
   rates,
+  supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({

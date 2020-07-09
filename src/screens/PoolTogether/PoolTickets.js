@@ -25,6 +25,7 @@ import { format } from 'date-fns';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import Button from 'components/Button';
+import { Spacing } from 'components/Layout';
 
 import type { Theme } from 'models/Theme';
 
@@ -41,7 +42,7 @@ const PoolTicketsWrapper = styled.View`
 `;
 
 const Text = styled(BaseText)`
-  ${({ label }) => label ? fontStyles.regular : fontStyles.large};
+  ${({ label }) => label ? fontStyles.regular : fontStyles.giant};
   letter-spacing: 0.18px;
   color: ${({ label }) => label ? themedColors.secondaryText : themedColors.text};
 `;
@@ -50,23 +51,20 @@ const ActionCircleButton = styled(IconButton)`
   height: 24px;
   width: 24px;
   border-radius: 12px;
-  margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
-  background: ${({ theme }) => theme.colors.activeTabBarIcon};
+  background: ${themedColors.primary}
   opacity: ${({ active }) => active ? '1' : '0.5'};
 `;
 
 const TicketCounterRow = styled.View`
   flex-direction: row;
   justify-content: center;
-  padding: 8px 0;
 `;
 
 const TicketCounterColumn = styled.View`
   flex-direction: column;
   justify-content: center;
-  padding: 8px 8px;
 `;
 
 type Props = {
@@ -113,19 +111,18 @@ const PoolTickets = (props: Props) => {
   return (
     <PoolTicketsWrapper
       style={{
-          marginTop: 40,
-          paddingHorizontal: 20,
-        }}
+        paddingHorizontal: 20,
+      }}
     >
       <TicketCounterRow>
         <Text label>Purchase tickets for pool</Text>
       </TicketCounterRow>
-      <TicketCounterRow style={{ paddingBottom: 0 }}>
+      <Spacing h={16} />
+      <TicketCounterRow>
         <TicketCounterColumn>
           {!!canSubtract &&
             <ActionCircleButton
-              color={colors.control}
-              margin={0}
+              color={colors.surface}
               active={canSubtract}
               icon="count-minus"
               fontSize={fontSizes.large}
@@ -134,22 +131,22 @@ const PoolTickets = (props: Props) => {
           }
           {!canSubtract && // must rerender like this so it will not stay active before a double action
             <ActionCircleButton
-              color={colors.control}
-              margin={0}
+              color={colors.surface}
               active={canSubtract}
               icon="count-minus"
               fontSize={fontSizes.large}
             />
           }
         </TicketCounterColumn>
+        <Spacing w={16} />
         <TicketCounterColumn>
           <Text>{currentCount} Tickets</Text>
         </TicketCounterColumn>
+        <Spacing w={16} />
         <TicketCounterColumn>
           {!!canAdd &&
             <ActionCircleButton
-              color={colors.control}
-              margin={0}
+              color={colors.surface}
               active={canAdd}
               icon="count-plus"
               fontSize={fontSizes.large}
@@ -158,8 +155,7 @@ const PoolTickets = (props: Props) => {
           }
           {!canAdd &&
             <ActionCircleButton
-              color={colors.control}
-              margin={0}
+              color={colors.surface}
               active={canAdd}
               icon="count-plus"
               fontSize={fontSizes.large}
@@ -167,19 +163,21 @@ const PoolTickets = (props: Props) => {
           }
         </TicketCounterColumn>
       </TicketCounterRow>
-      <TicketCounterRow style={{ paddingTop: 0 }}>
+      <TicketCounterRow>
         <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
         <Text label>chance of win</Text>
       </TicketCounterRow>
-      <TicketCounterRow style={{ marginTop: 40 }}>
+      <Spacing h={48} />
+      <TicketCounterRow>
         <Button
           title={currentCount > 0 ? 'Next' : 'Join Pool'}
           disabled={currentCount === 0}
           onPress={onPressCallback}
-          style={{ marginBottom: 13, width: '100%' }}
+          style={{ width: '100%' }}
         />
       </TicketCounterRow>
-      <TicketCounterRow style={{ paddingTop: 0 }}>
+      <Spacing h={16} />
+      <TicketCounterRow>
         <Text center label>
           Tickets purchased today will be eligible for prizes starting after {eligibleDate}.
         </Text>
